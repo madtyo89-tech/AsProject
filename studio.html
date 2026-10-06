@@ -137,12 +137,9 @@ function patCss(t){
  if(t.pat==='confetti')return `background-image:radial-gradient(#E5737366 2px,transparent 2.6px),radial-gradient(#64B5F666 2px,transparent 2.6px),radial-gradient(#8BC34A66 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
  return ''}
 
-/* ===== MUSIK DEMO (tersimpan di repo /music) ===== */
+/* ===== MUSIK DEMO (dari Google Drive user, tersimpan di repo /music) ===== */
 const DEMO_MUSIC=[
- {id:'demo-wed',name:'Romantic Piano — Demo Pernikahan',url:'music/romantic-piano-wedding.wav',dur:'0:48',demo:true},
- {id:'demo-khi',name:'Islamic Chill — Demo Khitanan',url:'music/islamic-chill-khitanan.wav',dur:'0:40',demo:true},
- {id:'demo-ult',name:'Happy Kids — Demo Ultah',url:'music/happy-kids-ultah.wav',dur:'0:32',demo:true},
- {id:'demo-aqi',name:'Baby Lullaby — Demo Aqiqah',url:'music/baby-lullaby-aqiqah.wav',dur:'0:45',demo:true}];
+ {id:'demo-main',name:'Backsound AsProject — rtyo',url:'music/backsound-asproject.mp3',dur:'9:40',demo:true}];
 
 /* ============ STATE ============ */
 const DEF={
@@ -177,6 +174,8 @@ try{state=Object.assign({},DEF,JSON.parse(localStorage.getItem('asproject_studio
 if(!state.tpl||!TPL.some(t=>t.id===state.tpl))state.tpl=TPL[0].id;
 if(!Array.isArray(state.katalog)||!state.katalog.length||!state.katalog[0].tpl)state.katalog=JSON.parse(JSON.stringify(DEF.katalog));
 if(!Array.isArray(state.musicDb))state.musicDb=[];
+state.musicDb=state.musicDb.filter(m=>!m.demo||DEMO_MUSIC.some(d=>d.url===m.url));
+if(state.music&&state.music.demo&&!DEMO_MUSIC.some(d=>d.url===state.music.url)){state.music=null;state.playing=false}
 DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.push(Object.assign({},d))});
 function save(){try{const c=Object.assign({},state);localStorage.setItem('asproject_studio_v3',JSON.stringify(c))}catch(e){}}
 
