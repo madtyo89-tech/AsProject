@@ -114,9 +114,39 @@ const DOA={
 const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ultah Anak',aqiqah:'Aqiqah'};
 const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶'};
 
+/* ===== 12 TEMPLATE SESUAI KATALOG ===== */
+const TPL=[
+ {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',badge:'BEST SELLER',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},
+ {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',badge:'',deco:'🌿',pat:'',ft:'inter',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet'},
+ {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',badge:'LUXURY',deco:'✨ ◆ ✨',pat:'',ft:'playfair',desc:'Glam soft luxury, emboss gold & black tie vibe'},
+ {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',badge:'',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
+ {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',badge:'FAVORIT',deco:'⭐ 🕌 ⭐',pat:'',ft:'poppins',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},
+ {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#2e4228',badge:'',deco:'☪ ✦ ☪',pat:'arab',ft:'lora',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},
+ {id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',badge:'CERIA',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins',desc:'Warna-warni happy, balon & confetti buat si kecil'},
+ {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',badge:'AESTHETIC',deco:'💖 ✨ 💖',pat:'',ft:'playfair',desc:'Pink soft, aesthetic banget buat sweet seventeen-mu, beb'},
+ {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#3a3835',badge:'',deco:'◆',pat:'',ft:'inter',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},
+ {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',badge:'',deco:'🍼 ☁️ 🍼',pat:'',ft:'poppins',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},
+ {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',badge:'FAVORIT',deco:'🎀 🍼 🎀',pat:'',ft:'playfair',desc:'Pink blush super lembut buat si putri kecil kesayangan'},
+ {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#4e452e',badge:'',deco:'☪ ❖ ☪',pat:'arab',ft:'lora',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'}];
+function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
+function tplsFor(ev){return TPL.filter(t=>t.ev===ev)}
+function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
+function patCss(t){
+ if(t.pat==='batik')return `background-image:radial-gradient(${t.accent}26 1.5px,transparent 1.8px),radial-gradient(${t.accent}1c 1px,transparent 1.3px);background-size:26px 26px,13px 13px;background-position:0 0,13px 13px;`;
+ if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}12 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0d 0 2px,transparent 2px 16px);`;
+ if(t.pat==='confetti')return `background-image:radial-gradient(#E5737366 2px,transparent 2.6px),radial-gradient(#64B5F666 2px,transparent 2.6px),radial-gradient(#8BC34A66 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
+ return ''}
+
+/* ===== MUSIK DEMO (tersimpan di repo /music) ===== */
+const DEMO_MUSIC=[
+ {id:'demo-wed',name:'Romantic Piano — Demo Pernikahan',url:'music/romantic-piano-wedding.wav',dur:'0:48',demo:true},
+ {id:'demo-khi',name:'Islamic Chill — Demo Khitanan',url:'music/islamic-chill-khitanan.wav',dur:'0:40',demo:true},
+ {id:'demo-ult',name:'Happy Kids — Demo Ultah',url:'music/happy-kids-ultah.wav',dur:'0:32',demo:true},
+ {id:'demo-aqi',name:'Baby Lullaby — Demo Aqiqah',url:'music/baby-lullaby-aqiqah.wav',dur:'0:45',demo:true}];
+
 /* ============ STATE ============ */
 const DEF={
- page:'editor',tab:'info',event:'pernikahan',theme:'iceBlue',accent:'#D4AF37',
+ page:'editor',tab:'info',event:'pernikahan',theme:'iceBlue',tpl:'jawa-elegan',accent:'#7A5C3E',
  fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,dblBorder:true,darkMode:false,
  form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
   putraPutri:'Putra dari Bpk. Hartono & Ibu Sulastri',putriDari:'Putri dari Bpk. Faisal & Ibu Dewi',
@@ -126,18 +156,14 @@ const DEF={
   alamat:'Jl. Jend. Sudirman No. 1, Jakarta Selatan',mapsLink:'https://maps.app.goo.gl/example',
   showMapsBtn:true,sesiKedua:false,jamAkad:'08:00',jamResepsi:'11:00',showBismillah:true,
   ucapanCustom:'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.'},
- musicDb:[],music:null,playing:false,cover:'',gallery:[],videoLink:'https://youtube.com/watch?v=example',
+ musicDb:DEMO_MUSIC.slice(),music:null,playing:false,cover:'',gallery:[],videoLink:'https://youtube.com/watch?v=example',
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'Bapak Budi Santoso\nIbu Siti Aminah\nKak Alif & Keluarga\nTim Kantor Pusat',
  guestCodes:{},selGuest:null,showNameQr:true,
  waTemplate:'Assalamualaikum {nama_tamu} 🙏\n\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara {acara} kami:\n\n{link_undangan}\n\nMerupakan kebahagiaan bagi kami atas kehadiran & doanya.\n\nTerima kasih 🤍\n{nama_pengantin}',
  amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true},
  slug:'rangga-alya',customDomain:'',published:false,
- katalog:[
-  {id:'k1',nama:'Royal Emerald Gold',tema:'emerald',hargaNormal:150000,hargaPromo:75000,promoActive:true,badge:'BEST SELLER',terjual:342},
-  {id:'k2',nama:'Ice Blue Dreamy',tema:'iceBlue',hargaNormal:120000,hargaPromo:75000,promoActive:true,badge:'NEW',terjual:298},
-  {id:'k3',nama:'Luxe Cream Gold',tema:'iceGold',hargaNormal:200000,hargaPromo:75000,promoActive:true,badge:'LUXURY',terjual:187},
-  {id:'k4',nama:'Minimal White',tema:'basic',hargaNormal:99000,hargaPromo:75000,promoActive:false,badge:'',terjual:94}],
+ katalog:TPL.map((t,i)=>({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:340-i*23})),
  promo:{diskon:50,tglMulai:'2026-10-01',tglSelesai:'2026-12-31',badgeText:'FLASH SALE 50%'},
  arsip:[
   {id:'f1',jenis:'pernikahan',nama:'Rangga & Alya',tanggal:'2026-12-28',status:'Published',snap:null},
@@ -146,8 +172,13 @@ const DEF={
   {id:'f4',jenis:'aqiqah',nama:'Baby Kayla Aqiqah',tanggal:'2026-09-20',status:'Draft',snap:null}],
  search:''};
 let state;
-try{state=Object.assign({},DEF,JSON.parse(localStorage.getItem('asproject_studio_v2')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
-function save(){try{const c=Object.assign({},state);localStorage.setItem('asproject_studio_v2',JSON.stringify(c))}catch(e){}}
+try{state=Object.assign({},DEF,JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
+/* migrasi ringan: pastikan template valid, katalog pakai struktur TPL, & musik demo selalu tersedia */
+if(!state.tpl||!TPL.some(t=>t.id===state.tpl))state.tpl=TPL[0].id;
+if(!Array.isArray(state.katalog)||!state.katalog.length||!state.katalog[0].tpl)state.katalog=JSON.parse(JSON.stringify(DEF.katalog));
+if(!Array.isArray(state.musicDb))state.musicDb=[];
+DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.push(Object.assign({},d))});
+function save(){try{const c=Object.assign({},state);localStorage.setItem('asproject_studio_v3',JSON.stringify(c))}catch(e){}}
 
 /* ============ HELPERS ============ */
 const $=id=>document.getElementById(id);
@@ -178,6 +209,9 @@ function qrData(g){const cv=document.createElement('canvas');cv.width=300;cv.hei
 
 /* state setters */
 function set(k,v){state[k]=v;save();render()}
+function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Template: '+t.nama)}
+function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle}save();render()}
+function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;state.event=t.ev;state.doa=t.ev;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Preview: '+t.nama)}
 function upd(k,v){state[k]=v;save();renderPreview()}
 function updF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();renderPreview()}
 function setF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();render()}
@@ -212,7 +246,7 @@ async function publish(){
   name2:state.event==='pernikahan'?state.form.namaWanita:'',venue:state.form.venue,
   event_date:state.form.tanggalAcara,event_time:state.form.jamAcara,
   music_url:state.music&&!state.music.local?state.music.url:'',music_name:state.music?state.music.name:'',
-  theme:Object.keys(THEMES).indexOf(state.theme)};
+  theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl))};
  if(db){const {error}=await db.from('invitation_drafts').upsert(payload,{onConflict:'slug'});
   if(error){notify('Gagal publish: '+error.message);return}}
  state.published=true;
@@ -230,7 +264,7 @@ function dlQr(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a
 function copyTxt(t,msg){navigator.clipboard?.writeText(t);notify(msg||'Disalin ✓')}
 function waLink(g){const txt=state.waTemplate.replace('{nama_tamu}',g.nama).replace('{link_undangan}',g.link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf());return 'https://wa.me/?text='+encodeURIComponent(txt)}
 function updKat(id,k,v){const it=state.katalog.find(x=>x.id===id);if(!it)return;it[k]=(k==='hargaNormal'||k==='hargaPromo')?Number(v):k==='promoActive'?v:v;save()}
-function addKat(){state.katalog=[{id:'k'+Date.now(),nama:'Template Baru',tema:state.theme,hargaNormal:120000,hargaPromo:75000,promoActive:true,badge:'NEW',terjual:0},...state.katalog];save();render()}
+function addKat(){state.katalog=[{id:'k'+Date.now(),nama:'Template Baru',tpl:state.tpl,ev:state.event,hargaNormal:120000,hargaPromo:75000,promoActive:true,badge:'NEW',terjual:0},...state.katalog];save();render()}
 function importCsv(){const i=document.createElement('input');i.type='file';i.accept='.csv,.txt';i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.guestsRaw=String(r.result||'');save();render()};r.readAsText(f)};i.click()}
 function exportCsv(){const blob=new Blob([guests().map(g=>`${g.nama},${g.link}`).join('\n')],{type:'text/csv'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=`tamu-${state.slug}.csv`;a.click()}
 
@@ -266,17 +300,19 @@ function sidebar(){
    <span class="lbl">Jenis Acara • 4in1</span><span class="chip">NEW Aqiqah</span>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-  ${evs.map(([id,ic,sub])=>`<button class="evbtn ${state.event===id?'on':''}" onclick="state.event='${id}';state.doa='${id}';state.page='editor';state.tab='info';save();render()">
+  ${evs.map(([id,ic,sub])=>`<button class="evbtn ${state.event===id?'on':''}" onclick="evPick('${id}')">
    <div style="font-size:16px">${ic}</div><div style="font-size:12px;font-weight:600;margin-top:4px">${EV_LABEL[id]}</div><div class="sub">${sub}</div></button>`).join('')}
   </div>
  </div>
  <div style="margin-bottom:24px">
-  <div class="lbl" style="display:block;margin-bottom:12px">Tema Premium</div>
-  ${Object.entries(THEMES).map(([k,t])=>`<button class="thbtn ${state.theme===k?'on':''}" onclick="set('theme','${k}')">
-   <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.theme===k?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:${k==='iceGold'?'linear-gradient(135deg,#FFFBEB,#FDE68A)':t.color}"></div>
-   <div style="flex:1"><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">${t.name}${t.badge?`<span style="font-size:8px;padding:2px 6px;border-radius:99px;background:var(--gold);color:#000;font-weight:700">${t.badge}</span>`:''}</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+   <span class="lbl">Template ${EV_LABEL[state.event]}</span><span class="chip">${tplsFor(state.event).length} desain</span>
+  </div>
+  ${tplsFor(state.event).map(t=>`<button class="thbtn ${state.tpl===t.id?'on':''}" onclick="pickTpl('${t.id}')">
+   <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:13px">${t.deco.split(' ')[0]||''}</div>
+   <div style="flex:1"><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">${t.nama}${t.badge?`<span style="font-size:8px;padding:2px 6px;border-radius:99px;background:var(--gold);color:#000;font-weight:700">${t.badge}</span>`:''}</div>
    <div class="sub">${t.desc}</div></div>
-   <div style="width:20px;height:20px;border-radius:99px;display:grid;place-items:center;border:1px solid ${state.theme===k?'#fff':'#ddd'};background:#fff;color:#000;font-size:11px">${state.theme===k?'✓':''}</div></button>`).join('')}
+   <div style="width:20px;height:20px;border-radius:99px;display:grid;place-items:center;border:1px solid ${state.tpl===t.id?'#fff':'#ddd'};background:#fff;color:#000;font-size:11px">${state.tpl===t.id?'✓':''}</div></button>`).join('')}
  </div>
  <div>
   <div class="lbl" style="display:block;margin-bottom:12px">Menu Studio</div>
@@ -375,7 +411,7 @@ function tabMusik(){const d=DOA[state.doa];return `<div style="display:grid;gap:
    ${state.musicDb.map(m=>`<div class="guestrow ${state.music?.id===m.id?'sel':''}">
     <button onclick="pickMusic('${m.id}')" style="width:32px;height:32px;border-radius:99px;background:#111;color:#fff;display:grid;place-items:center;font-size:12px;flex:none">${state.music?.id===m.id&&state.playing?'❚❚':'▶'}</button>
     <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(m.name)}</div>
-    <div style="font-size:10px;color:var(--mut)">${m.local?'lokal (belum ke Supabase)':'Supabase ✓'} • mp3</div></div>
+    <div style="font-size:10px;color:var(--mut)">${m.demo?'🎵 Demo bawaan'+(m.dur?' • '+m.dur:''):m.local?'lokal (belum ke Supabase)':'Supabase ✓ • mp3'}</div></div>
     <button class="sm-btn dark" onclick="pickMusic('${m.id}')">Pakai</button></div>`).join('')}
    </div>
    ${state.music?`<div style="margin-top:12px;padding:10px 12px;border-radius:12px;background:#111;color:#fff;display:flex;align-items:center;gap:8px;font-size:11px">
@@ -552,13 +588,12 @@ function katalog(){return `<div style="padding:16px;display:grid;gap:16px">
    <div style="font-size:13px;font-weight:600">Daftar Template</div>
    <div style="font-size:11px;color:var(--mut)">Klik Preview untuk lihat di phone kanan • Edit inline harga & promo</div>
   </div>
-  ${state.katalog.map(k=>`<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0">
-   <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:${k.tema==='iceGold'?'linear-gradient(135deg,#FFFBEB,#FDE68A)':THEMES[k.tema]?.color||'#fff'}"></div>
+  ${state.katalog.map(k=>{const t=TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0];return `<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0">
+   <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:13px">${t.deco.split(' ')[0]||''}</div>
    <div style="flex:1;min-width:0">
     <input value="${esc(k.nama)}" oninput="updKat('${k.id}','nama',this.value)" style="width:100%;font-size:12px;font-weight:500;border:0;background:transparent;padding:0">
     <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-     <select onchange="updKat('${k.id}','tema',this.value)" style="font-size:10px;border-radius:99px;border:1px solid var(--line);padding:2px 8px;background:var(--soft)">
-      ${Object.entries(THEMES).map(([tk,tv])=>`<option value="${tk}" ${k.tema===tk?'selected':''}>${tv.name}</option>`).join('')}</select>
+     <span style="font-size:10px;border-radius:99px;border:1px solid var(--line);padding:2px 8px;background:var(--soft)">${EV_ICON[t.ev]} ${EV_LABEL[t.ev]}</span>
      <span style="font-size:10px;color:var(--mut)">${k.terjual} terjual</span>
     </div></div>
    <div style="text-align:right">
@@ -567,8 +602,8 @@ function katalog(){return `<div style="padding:16px;display:grid;gap:16px">
    </div>
    <label style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px"><input type="checkbox" ${k.promoActive?'checked':''} onchange="updKat('${k.id}','promoActive',this.checked)">Promo</label>
    <input value="${esc(k.badge)}" placeholder="Badge" oninput="updKat('${k.id}','badge',this.value)" style="width:84px;height:28px;border-radius:99px;border:1px solid var(--line);padding:0 8px;font-size:10px">
-   <button class="sm-btn dark" onclick="set('theme','${k.tema}')">Preview</button>
-  </div>`).join('')}
+   <button class="sm-btn dark" onclick="prevKat('${k.id}')">Preview</button>
+  </div>`}).join('')}
  </div></div>`}
 
 /* ============ VIEW: ARSIP ============ */
@@ -610,15 +645,15 @@ function arsip(){
 
 /* ============ VIEW: PHONE PREVIEW ============ */
 function phoneHtml(){
- const f=state.form,th=state.theme,g=selGuest(),single=state.linkMode==='single';
- const dark=th==='emerald'||state.darkMode;
- const bg=dark?'':th==='iceGold'?'background:#FFFBEB;color:#5a3e0a':th==='iceBlue'?'background:linear-gradient(to bottom,#f0f9ff,#fff);color:#0c4a6e':'background:#fff;color:#111';
+ const f=state.form,tp=tplOf(),g=selGuest(),single=state.linkMode==='single';
+ const dark=state.darkMode;
+ const bg=dark?'':`background:${tplGrad(tp)};color:${tp.ink}`;
  const tF=fontFam(state.fontTitle),bF=fontFam(state.fontBody);
  const nameColor=dark?'#FDE68A':state.accent;
  const dt=new Date(f.tanggalAcara);
  return `
  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;width:340px">
-  <span class="lbl">Live Preview • 360px</span>
+  <span class="lbl">Live Preview • ${esc(tp.nama)}</span>
   <span class="pill" style="background:#fff;border:1px solid var(--line);font-size:10px"><span class="dot pulse" style="width:6px;height:6px;background:#10b981"></span>Live update</span>
  </div>
  <div class="phone"><div class="screen">
@@ -629,10 +664,11 @@ function phoneHtml(){
   </div>
   <div class="notch"></div>
   <div class="${dark?'emerald-bg':''}" style="flex:1;${dark?'color:#FDE68A':bg};${state.dblBorder?`border:6px double ${state.accent}`:''}">
-   <div style="padding:20px;text-align:center;font-family:${tF}">
+   <div style="padding:20px;text-align:center;font-family:${tF};${dark?'':patCss(tp)}">
     ${f.showBismillah?`<div style="margin-bottom:12px"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
      <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}
-    ${state.goldOrn?'<div class="gold" style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px"></div>':''}
+    ${tp.deco?`<div style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px">${tp.deco}</div>`:''}
+    ${state.goldOrn?`<div style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent)"></div>`:''}
     <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF}">${titleOf()}</div>
     <h1 style="margin-top:12px;font-size:28px;line-height:.95;font-weight:700;color:${nameColor}">
     ${state.event==='pernikahan'
