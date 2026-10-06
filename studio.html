@@ -256,21 +256,36 @@ function updA(k,v){state.amplop[k]=v;save();renderPreview()}
 function setA(k,v){state.amplop[k]=v;save();render()}
 
 /* ============ SUPABASE: MUSIK & PUBLISH ============ */
+function audioExt(file){
+ const map={'audio/mpeg':'mp3','audio/mp3':'mp3','audio/mp4':'m4a','audio/x-m4a':'m4a','audio/aac':'aac','audio/x-aac':'aac','audio/wav':'wav','audio/x-wav':'wav','audio/wave':'wav','audio/ogg':'ogg','audio/opus':'ogg','audio/webm':'webm','audio/flac':'flac','audio/x-flac':'flac'};
+ const fromName=(String(file.name||'').match(/\.([a-z0-9]{2,5})$/i)||[])[1];
+ return (fromName||map[file.type]||'mp3').toLowerCase()}
+function audioMime(ext){const m={mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg',webm:'audio/webm',flac:'audio/flac'};return m[ext]||'audio/mpeg'}
+function notifyErr(msg,ms){document.querySelectorAll('.notice').forEach(n=>n.remove());const n=document.createElement('div');n.className='notice';n.style.maxWidth='340px';n.style.lineHeight='1.5';n.innerHTML='<span style="width:20px;height:20px;border-radius:99px;background:#ef4444;display:grid;place-items:center;font-size:12px;flex:none">!</span><span>'+msg+'</span>';document.body.append(n);setTimeout(()=>n.remove(),ms||8000)}
 async function uploadMusic(input){
  const file=input.files&&input.files[0];if(!file)return;
- const okType=file.type.startsWith('audio/')||/\.(mp3|m4a|aac|ogg|wav)$/i.test(file.name);
+ const okType=file.type.startsWith('audio/')||/\.(mp3|m4a|aac|ogg|wav|flac)$/i.test(file.name)||!/\./.test(file.name);
  if(!okType){notify('Pilih file audio (MP3/M4A)');input.value='';return}
  if(file.size>15*1024*1024){notify('Ukuran audio maksimal 15 MB');input.value='';return}
+ const ext=audioExt(file);
+ const base=String(file.name||'musik').replace(/\.[a-z0-9]{2,5}$/i,'').replace(/[^a-zA-Z0-9._-]/g,'-').replace(/-+/g,'-').replace(/^[-.]+|[-.]+$/g,'')||'musik';
+ const displayNm=base.replace(/-/g,' ');
  if(db){notify('Mengupload musik ke Supabase...');
-  const path=`${state.slug||'demo'}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'-')}`;
-  const r=await db.storage.from('music').upload(path,file,{contentType:file.type||'audio/mpeg'});
+  const path=`${state.slug||'demo'}/${Date.now()}-${base}.${ext}`;
+  const r=await db.storage.from('music').upload(path,file,{contentType:file.type&&file.type.startsWith('audio/')?file.type:audioMime(ext),cacheControl:'3600',upsert:false});
   if(!r.error){const pub=db.storage.from('music').getPublicUrl(path);
-   const item={id:'m'+Date.now(),name:file.name.replace(/\.[^/.]+$/,''),url:pub.data.publicUrl,dur:'—'};
+   const item={id:'m'+Date.now(),name:displayNm,url:pub.data.publicUrl,dur:'—'};
    state.musicDb=[item,...state.musicDb];state.music=item;state.playing=false;save();syncAudio();render();
    notify('Musik berhasil diupload ke Supabase ✓');return}
   console.error('Upload error:',r.error);
-  notify('Upload gagal: '+(r.error.message||'error')+' — pakai preview lokal')}
- const rd=new FileReader();rd.onload=()=>{const item={id:'m'+Date.now(),name:file.name.replace(/\.[^/.]+$/,''),url:rd.result,dur:'—',local:true};
+  const em=String(r.error.message||r.error.error||'error');
+  if(/security|policy|row.?level|unauthor|denied|violates|403|400/i.test(em)){
+   notifyErr('Upload ditolak Supabase ('+esc(em)+').<br><b>Perbaikan:</b> buka Dashboard Supabase → Storage → bucket <b>music</b> → Policies → buat policy <b>INSERT</b> &amp; <b>SELECT</b> untuk role <b>anon</b>. Sementara ini musik dipakai secara lokal dulu.',12000);
+  }else if(/mime|content.?type|not.?supported/i.test(em)){
+   notifyErr('Format ditolak bucket ('+esc(em)+'). Cek setting bucket music → Allowed MIME types → kosongkan atau isi audio/*.',12000);
+  }else{notifyErr('Upload gagal: '+esc(em)+' — musik dipakai secara lokal dulu.',9000)}
+ }
+ const rd=new FileReader();rd.onload=()=>{const item={id:'m'+Date.now(),name:displayNm,url:rd.result,dur:'—',local:true};
   state.musicDb=[item,...state.musicDb];state.music=item;state.playing=false;syncAudio();render();notify('Musik siap diputar (lokal)')};
  rd.readAsDataURL(file)}
 function pickMusic(id){const m=state.musicDb.find(x=>x.id===id);if(!m)return;state.music=m;state.playing=true;save();syncAudio();render();notify('Memutar: '+m.name)}
