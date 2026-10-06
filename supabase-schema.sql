@@ -1,4 +1,6 @@
--- Jalankan sekali di Supabase SQL Editor.
+-- ============================================================
+-- BAGIAN 1 — Tabel draft (jalankan di Supabase SQL Editor)
+-- ============================================================
 create table if not exists public.invitation_drafts (
   slug text primary key,
   name1 text not null default '', name2 text not null default '',
@@ -15,9 +17,28 @@ create policy "public can read drafts" on public.invitation_drafts for select us
 create policy "public can insert drafts" on public.invitation_drafts for insert with check (true);
 create policy "public can update drafts" on public.invitation_drafts for update using (true) with check (true);
 
+-- Bucket music (aman dijalankan ulang)
 insert into storage.buckets (id,name,public) values ('music','music',true)
 on conflict (id) do update set public=true;
+
+-- ============================================================
+-- BAGIAN 2 — Policy upload storage
+-- ============================================================
+-- Coba jalankan blok di bawah. JIKA MUNCUL ERROR
+-- "must be owner of table objects", JANGAN PANIK — itu normal
+-- di project Supabase baru. Buat policy lewat Dashboard:
+--
+--   Storage -> Buckets -> music -> Policies -> New policy
+--   1) Policy name : public upload music
+--      Operation   : INSERT
+--      Target roles: anon  (atau biarkan default/public)
+--      WITH CHECK  : bucket_id = 'music'
+--   2) Policy name : public read music
+--      Operation   : SELECT
+--      Target roles: anon
+--      USING       : bucket_id = 'music'
+-- ============================================================
 drop policy if exists "public upload music" on storage.objects;
 drop policy if exists "public read music" on storage.objects;
-create policy "public upload music" on storage.objects for insert with check (bucket_id='music');
-create policy "public read music" on storage.objects for select using (bucket_id='music');
+create policy "public upload music" on storage.objects for insert to anon, authenticated with check (bucket_id='music');
+create policy "public read music" on storage.objects for select to anon, authenticated using (bucket_id='music');

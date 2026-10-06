@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111">
+<title>asproject.my.id — Studio Undangan Premium 4in1</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<style>
+:root{--bg:#fafaf8;--card:#fff;--line:#eee;--line2:#e9e9e9;--ink:#1a1a1a;--mut:#737373;--mut2:#a3a3a3;--gold:#D4AF37;--cream:#FFFBEB;--cream2:#FDE68A;--soft:#f5f5f4}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:13px/1.5 Inter,system-ui,sans-serif}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:transparent}
+input,textarea,select{outline:0}
+::selection{background:rgba(212,175,55,.3)}
+.sb::-webkit-scrollbar{width:5px;height:5px}.sb::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:10px}
+.gold{background:linear-gradient(135deg,#D4AF37,#F9E79F,#D4AF37)}
+.emerald-bg{background:radial-gradient(120% 120% at 50% 0%,#12372a 0%,#0a1f18 70%)}
+.hdr{position:sticky;top:0;z-index:40;backdrop-filter:blur(24px);background:rgba(255,255,255,.85);border-bottom:1px solid var(--line);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:10px}
+.logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:700;color:#5a4a12;font-size:13px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:10px;padding:2px 8px;border-radius:99px}
+.pill.dark{background:#111;color:#fff;font-weight:600;letter-spacing:.1em}
+.pill.cream{background:#FFF6D6;color:#8a6d0f;border:1px solid #F3E5AB}
+.btn-pub{height:36px;padding:0 16px;border-radius:99px;background:#111;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.btn-pub:hover{background:#000}
+.layout{max-width:1600px;margin:auto;display:grid;grid-template-columns:300px 480px 1fr;min-height:calc(100vh - 64px)}
+.aside{border-right:1px solid var(--line);background:#fff;padding:16px;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto}
+.mainc{background:#fbfaf8;border-right:1px solid var(--line);overflow-y:auto;height:calc(100vh - 64px)}
+.prevc{background:#f5f5f0;position:sticky;top:64px;height:calc(100vh - 64px);padding:16px;overflow-y:auto;display:flex;flex-direction:column;align-items:center}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.evbtn{text-align:left;border-radius:16px;border:1px solid var(--line);padding:12px;background:#fbfaf8;transition:.15s;width:100%}
+.evbtn:hover{background:#fff}
+.evbtn.on{background:#111;color:#fff;border-color:#111;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.evbtn.on .sub{color:rgba(255,255,255,.6)}
+.evbtn .sub{font-size:10px;color:var(--mut)}
+.thbtn{width:100%;display:flex;align-items:center;gap:12px;border-radius:16px;border:1px solid var(--line);padding:10px;text-align:left;background:#fbfaf8;transition:.15s;margin-bottom:8px}
+.thbtn:hover{background:#fff}
+.thbtn.on{background:#111;color:#fff;border-color:#111}
+.thbtn.on .sub{color:rgba(255,255,255,.6)}
+.thbtn .sub{font-size:10px;color:var(--mut)}
+.menubtn{width:100%;display:flex;align-items:center;gap:12px;border-radius:16px;border:1px solid var(--line);padding:12px;text-align:left;background:#fff;transition:.15s;margin-bottom:6px}
+.menubtn:hover{background:#fbfaf8}
+.menubtn.on{background:#111;color:#fff;border-color:#111}
+.menubtn.on .sub{color:rgba(255,255,255,.6)}
+.menubtn .sub{font-size:11px;color:var(--mut)}
+.icbox{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;font-size:14px;background:var(--soft)}
+.menubtn.on .icbox{background:#fff;color:#000}
+.tabbar{position:sticky;top:0;z-index:20;background:rgba(251,250,248,.9);backdrop-filter:blur(24px);border-bottom:1px solid var(--line);padding:8px;display:flex;gap:6px;overflow-x:auto}
+.tabbtn{white-space:nowrap;padding:8px 14px;border-radius:99px;font-size:12px;font-weight:500;border:1px solid var(--line2);background:#fff}
+.tabbtn.on{background:#111;color:#fff;border-color:#111}
+.card{border-radius:20px;background:#fff;border:1px solid var(--line);padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.04)}
+.card h4{font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.f{font-size:11px;font-weight:500;display:block}
+.f input,.f select,.f textarea{margin-top:4px;width:100%;border:1px solid var(--line2);border-radius:12px;padding:0 12px;height:40px;font-size:13px;background:#fff}
+.f textarea{height:auto;padding:8px 12px;resize:vertical}
+.f input:focus,.f textarea:focus,.f select:focus{box-shadow:0 0 0 2px rgba(212,175,55,.3)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.span2{grid-column:span 2}
+.chip{font-size:10px;padding:4px 8px;border-radius:99px;background:var(--soft)}
+.sm-btn{font-size:11px;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:#fbfaf8}
+.sm-btn.dark{background:#111;color:#fff;border-color:#111}
+.sm-btn.wa{background:#25D366;color:#fff;border-color:#25D366}
+.togglerow{display:flex;align-items:center;justify-content:space-between;background:#fbfaf8;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:12px;font-weight:500;cursor:pointer;margin-bottom:8px}
+.phone{width:340px;border-radius:2.5rem;background:#000;padding:8px;box-shadow:0 20px 60px rgba(0,0,0,.25);margin:auto}
+.screen{border-radius:2rem;background:#fff;overflow:hidden;position:relative;min-height:680px;display:flex;flex-direction:column}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:90px;height:22px;background:#111;border-radius:0 0 14px 14px;z-index:5}
+.urlbar{height:36px;background:var(--soft);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 12px;gap:8px}
+.urlpill{flex:1;min-width:0;font-family:ui-monospace,monospace;font-size:10px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.notice{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:99px;z-index:99;font-size:12px;font-weight:500;box-shadow:0 12px 40px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px}
+.guestrow{border-radius:12px;border:1px solid var(--line);padding:10px;display:flex;align-items:center;gap:8px;background:#fbfaf8;margin-bottom:8px}
+.guestrow.sel{border-color:var(--gold);background:var(--cream)}
+.upload-dash{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:12px;border:2px dashed rgba(212,175,55,.4);background:rgba(255,251,235,.5);cursor:pointer;font-size:13px;transition:.15s}
+.upload-dash:hover{background:var(--cream)}
+.dot{width:8px;height:8px;border-radius:99px}
+@keyframes pulse{50%{opacity:.5}}.pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
+.modebtn{text-align:left;border-radius:12px;padding:12px;display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid transparent;transition:.15s;width:100%}
+.modebtn:hover{background:#fbfaf8}
+.modebtn.on{background:#111;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.radio{margin-top:2px;width:20px;height:20px;border-radius:99px;border:2px solid #ddd;background:#fff;display:grid;place-items:center;flex:none}
+.modebtn.on .radio{border-color:#fff}
+.radio i{width:8px;height:8px;border-radius:99px;background:#000;display:block}
+@media(max-width:1200px){.layout{grid-template-columns:260px 1fr}.prevc{display:none}}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.aside{position:static;height:auto}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div id="root"></div>
+<!-- ===== GERBANG SANDI STUDIO ===== -->
+<div id="lockscreen" style="position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:linear-gradient(160deg,#faf9f7,#f0ede7);font-family:'Inter',system-ui,sans-serif">
+ <form id="lockform" style="width:min(340px,90vw);background:#fff;border:1px solid #e8e4dc;border-radius:24px;padding:32px 28px;box-shadow:0 20px 60px rgba(0,0,0,.08);text-align:center">
+  <div style="width:84px;height:84px;border-radius:99px;background:#0a0a0a;display:grid;place-items:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(0,0,0,.25)"><img src="assets/logo-asproject.svg" alt="AsProject" style="width:66px;height:66px"></div>
+  <div style="font-size:17px;font-weight:700;font-family:'Playfair Display',serif;letter-spacing:.04em">AsProject Studio</div>
+  <div style="font-size:12px;color:#8a8577;margin-top:4px">Area khusus admin — masukkan sandi untuk melanjutkan</div>
+  <input id="lockpass" type="password" placeholder="Sandi studio" autocomplete="current-password" style="width:100%;height:44px;margin-top:20px;border-radius:99px;border:1px solid #ddd8ce;padding:0 16px;font-size:13px;text-align:center;outline:none" onfocus="this.style.borderColor='#111'" onblur="this.style.borderColor='#ddd8ce'">
+  <label style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;font-size:11px;color:#6b665a;cursor:pointer"><input id="lockremember" type="checkbox" checked style="accent-color:#111">Ingat perangkat ini</label>
+  <button type="submit" style="width:100%;height:44px;margin-top:14px;border-radius:99px;background:#111;color:#fff;font-size:13px;font-weight:600;border:0;cursor:pointer">Masuk Studio →</button>
+  <div id="lockerr" style="font-size:11px;color:#c0392b;margin-top:10px;min-height:14px"></div>
+  <a href="./" style="display:inline-block;margin-top:8px;font-size:11px;color:#8a8577;text-decoration:none">← Kembali ke Katalog</a>
+ </form>
+</div>
+<script>
+(function(){
+ var HASH='31282510d0c10140f7413a0573fdade727453ec37c3c386e4363e7e598090d8e',KEY='asproject_studio_auth';
+ var ls=document.getElementById('lockscreen'),root=document.getElementById('root');
+ function unlock(){ls.remove();root.style.visibility=''}
+ root.style.visibility='hidden';
+ try{if(localStorage.getItem(KEY)===HASH||sessionStorage.getItem(KEY)===HASH){unlock();return}}catch(e){}
+ function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
+ document.getElementById('lockform').addEventListener('submit',function(ev){
+  ev.preventDefault();
+  if(!(window.crypto&&crypto.subtle)){document.getElementById('lockerr').textContent='Browser butuh koneksi HTTPS untuk verifikasi sandi — buka via https://asproject.my.id/studio.html';return}
+  var v=document.getElementById('lockpass').value||'';
+  sha256(v).then(function(h){
+   if(h===HASH){
+    try{(document.getElementById('lockremember').checked?localStorage:sessionStorage).setItem(KEY,HASH)}catch(e){}
+    unlock();
+   }else{
+    document.getElementById('lockerr').textContent='Sandi salah — coba lagi ya';
+    document.getElementById('lockpass').value='';document.getElementById('lockpass').focus();
+   }
+  });
+ });
+ setTimeout(function(){var p=document.getElementById('lockpass');if(p)p.focus()},100);
+})();
+</script>
+<audio id="player" loop style="display:none"></audio>
+<script>
+/* ============ SUPABASE ============ */
+const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
+const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+/* ============ DATA ============ */
+const THEMES={
+ iceBlue:{name:'Ice Blue',badge:'BEST SELLER',color:'#E0F2FE',desc:'Fresh & modern'},
+ iceGold:{name:'Ice Gold',badge:'LUXURY',color:'#FFF9E6',desc:'Cream + Gold #D4AF37'},
+ emerald:{name:'Emerald Dark',badge:'MEWAH',color:'#0a1f18',desc:'Dark + Gold'},
+ basic:{name:'Basic Clean',badge:'',color:'#ffffff',desc:'Minimalis Putih'}};
+const FONTS=[
+ {id:'cormorant',name:'Cormorant Garamond',fam:'"Cormorant Garamond",serif'},
+ {id:'playfair',name:'Playfair Display',fam:'"Playfair Display",serif'},
+ {id:'poppins',name:'Poppins Bold',fam:'"Poppins",sans-serif'},
+ {id:'inter',name:'Inter',fam:'"Inter",sans-serif'},
+ {id:'lora',name:'Lora',fam:'"Lora",serif'}];
+const DOA={
+ pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu...'},
+ khitanan:{ar:'اللَّهُمَّ اجْعَلْهُ مِنَ الصَّالِحِيْنَ',latin:'Allahummaj\u2018alhu minash shalihin',arti:'Ya Allah jadikanlah ia anak yang shalih...'},
+ ultah:{ar:'اللَّهُمَّ طَوِّلْ عُمْرَهُ وَصَحِّحْ جَسَدَهُ',latin:'Allahumma thawwil \u2018umrahu...',arti:'Ya Allah panjangkan umurnya...'},
+ aqiqah:{ar:'أُعِيْذُكَ بِكَلِمَاتِ اللهِ التَّامَّةِ',latin:'U\u2018idzuka bikalimatillahit tammah',arti:'Aku memohon perlindungan...'}};
+const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ultah Anak',aqiqah:'Aqiqah'};
+const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶'};
+
+/* ===== 12 TEMPLATE SESUAI KATALOG ===== */
+const TPL=[
+ {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',badge:'BEST SELLER',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},
+ {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',badge:'',deco:'🌿',pat:'',ft:'inter',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet'},
+ {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',badge:'LUXURY',deco:'✨ ◆ ✨',pat:'',ft:'playfair',desc:'Glam soft luxury, emboss gold & black tie vibe'},
+ {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',badge:'',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
+ {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',badge:'FAVORIT',deco:'⭐ 🕌 ⭐',pat:'',ft:'poppins',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},
+ {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#2e4228',badge:'',deco:'☪ ✦ ☪',pat:'arab',ft:'lora',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},
+ {id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',badge:'CERIA',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins',desc:'Warna-warni happy, balon & confetti buat si kecil'},
+ {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',badge:'AESTHETIC',deco:'💖 ✨ 💖',pat:'',ft:'playfair',desc:'Pink soft, aesthetic banget buat sweet seventeen-mu, beb'},
+ {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#3a3835',badge:'',deco:'◆',pat:'',ft:'inter',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},
+ {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',badge:'',deco:'🍼 ☁️ 🍼',pat:'',ft:'poppins',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},
+ {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',badge:'FAVORIT',deco:'🎀 🍼 🎀',pat:'',ft:'playfair',desc:'Pink blush super lembut buat si putri kecil kesayangan'},
+ {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#4e452e',badge:'',deco:'☪ ❖ ☪',pat:'arab',ft:'lora',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'}];
+function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
+function tplsFor(ev){return TPL.filter(t=>t.ev===ev)}
+function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
+function patCss(t){
+ if(t.pat==='batik')return `background-image:radial-gradient(${t.accent}26 1.5px,transparent 1.8px),radial-gradient(${t.accent}1c 1px,transparent 1.3px);background-size:26px 26px,13px 13px;background-position:0 0,13px 13px;`;
+ if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}12 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0d 0 2px,transparent 2px 16px);`;
+ if(t.pat==='confetti')return `background-image:radial-gradient(#E5737366 2px,transparent 2.6px),radial-gradient(#64B5F666 2px,transparent 2.6px),radial-gradient(#8BC34A66 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
+ return ''}
+
+/* ===== MUSIK DEMO (dari Google Drive user, tersimpan di repo /music) ===== */
+const DEMO_MUSIC=[
+ {id:'demo-main',name:'Backsound AsProject — rtyo',url:'music/backsound-asproject.mp3',dur:'9:40',demo:true}];
+
+/* ============ STATE ============ */
+const DEF={
+ page:'editor',tab:'info',event:'pernikahan',theme:'iceBlue',tpl:'jawa-elegan',accent:'#7A5C3E',
+ fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,dblBorder:true,darkMode:false,
+ form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
+  putraPutri:'Putra dari Bpk. Hartono & Ibu Sulastri',putriDari:'Putri dari Bpk. Faisal & Ibu Dewi',
+  namaAnak:'Muhammad Zaidan Al-Fatih',putraDari:'Putra dari Bpk. Andi & Ibu Sari',umurAnak:'8 Tahun',
+  usia:'5',temaUltah:'Unicorn Pastel Dream',tglLahir:'2026-01-12',temaAqiqah:'Tema Islami Modern',
+  tanggalAcara:'2026-12-28',jamAcara:'08:00',zona:'WIB',venue:'The Ballroom at Ritz Carlton',
+  alamat:'Jl. Jend. Sudirman No. 1, Jakarta Selatan',mapsLink:'https://maps.app.goo.gl/example',
+  showMapsBtn:true,sesiKedua:false,jamAkad:'08:00',jamResepsi:'11:00',showBismillah:true,
+  ucapanCustom:'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.'},
+ musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',gallery:[],videoLink:'https://youtube.com/watch?v=example',
+ doa:'pernikahan',
+ linkMode:'personal',guestsRaw:'Bapak Budi Santoso\nIbu Siti Aminah\nKak Alif & Keluarga\nTim Kantor Pusat',
+ guestCodes:{},selGuest:null,showNameQr:true,
+ waTemplate:'Assalamualaikum {nama_tamu} 🙏\n\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara {acara} kami:\n\n{link_undangan}\n\nMerupakan kebahagiaan bagi kami atas kehadiran & doanya.\n\nTerima kasih 🤍\n{nama_pengantin}',
+ amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true},
+ slug:'rangga-alya',customDomain:'',published:false,
+ katalog:TPL.map((t,i)=>({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:340-i*23})),
+ promo:{diskon:50,tglMulai:'2026-10-01',tglSelesai:'2026-12-31',badgeText:'FLASH SALE 50%'},
+ arsip:[
+  {id:'f1',jenis:'pernikahan',nama:'Rangga & Alya',tanggal:'2026-12-28',status:'Published',snap:null},
+  {id:'f2',jenis:'khitanan',nama:'Zaidan Al-Fatih',tanggal:'2026-11-10',status:'Draft',snap:null},
+  {id:'f3',jenis:'ultah',nama:'Ameena 5th Birthday',tanggal:'2026-10-05',status:'Published',snap:null},
+  {id:'f4',jenis:'aqiqah',nama:'Baby Kayla Aqiqah',tanggal:'2026-09-20',status:'Draft',snap:null}],
+ search:''};
+let state;
+try{state=Object.assign({},DEF,JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
+/* migrasi ringan: pastikan template valid, katalog pakai struktur TPL, & musik demo selalu tersedia */
+if(!state.tpl||!TPL.some(t=>t.id===state.tpl))state.tpl=TPL[0].id;
+if(!Array.isArray(state.katalog)||!state.katalog.length||!state.katalog[0].tpl)state.katalog=JSON.parse(JSON.stringify(DEF.katalog));
+if(!Array.isArray(state.musicDb))state.musicDb=[];
+state.musicDb=state.musicDb.filter(m=>!m.demo||DEMO_MUSIC.some(d=>d.url===m.url));
+if(state.music&&state.music.demo&&!DEMO_MUSIC.some(d=>d.url===state.music.url)){state.music=null;state.playing=false}
+DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.push(Object.assign({},d))});
+function save(){try{const c=Object.assign({},state);localStorage.setItem('asproject_studio_v3',JSON.stringify(c))}catch(e){}}
+
+/* ============ HELPERS ============ */
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function slugify(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,32)}
+function notify(msg){document.querySelectorAll('.notice').forEach(n=>n.remove());const n=document.createElement('div');n.className='notice';n.innerHTML='<span style="width:20px;height:20px;border-radius:99px;background:#10b981;display:grid;place-items:center;font-size:12px">✓</span>'+esc(msg);document.body.append(n);setTimeout(()=>n.remove(),3000)}
+function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
+function titleOf(){return state.event==='pernikahan'?'The Wedding Of':state.event==='khitanan'?'Tasyakuran Khitanan':state.event==='ultah'?'Sweet Birthday Party':'Tasyakuran Aqiqah'}
+function displayName(){return state.event==='pernikahan'?`${state.form.namaPria} & ${state.form.namaWanita}`:state.form.namaAnak}
+function baseUrl(){return 'https://'+(state.customDomain?state.customDomain.replace(/^https?:\/\//,''):`${state.slug||'demo'}.asproject.my.id`)}
+function previewUrl(){const g=selGuest();return state.linkMode==='single'?baseUrl():baseUrl()+'?to='+encodeURIComponent(g?g.nama:'NamaTamu')}
+function daysLeft(){try{const d=new Date(state.form.tanggalAcara).getTime()-Date.now();return Math.max(0,Math.floor(d/86400000))}catch(e){return 0}}
+function guests(){return state.guestsRaw.split('\n').map(s=>s.trim()).filter(Boolean).map(nama=>{
+ if(!state.guestCodes[nama]){state.guestCodes[nama]=Math.random().toString(36).substring(2,10).toUpperCase()}
+ const code=state.guestCodes[nama];
+ return {nama,code,link:state.linkMode==='single'?baseUrl():baseUrl()+'?to='+encodeURIComponent(nama),
+  checkin:baseUrl()+'/checkin?id='+code+'&guest='+encodeURIComponent(nama)}})}
+function selGuest(){return guests().find(g=>g.nama===state.selGuest)||null}
+function autoSlug(){let n=state.event==='pernikahan'?`${state.form.namaPria} ${state.form.namaWanita}`:state.form.namaAnak;const s=slugify(n);if(s)state.slug=s}
+function qrData(g){const cv=document.createElement('canvas');cv.width=300;cv.height=300;const x=cv.getContext('2d');
+ x.fillStyle='#fff';x.fillRect(0,0,300,300);let T=0;for(const ch of g.nama+g.code)T+=ch.charCodeAt(0);
+ const rnd=n=>{T=(T*9301+49297)%233280;return T/233280*n};x.fillStyle='#111';const N=21,C=300/N;
+ for(let r=0;r<N;r++)for(let c=0;c<N;c++){if(c<2||r<2||c>N-3||r>N-3)continue;
+  if((c<7&&r<7)||(c>N-8&&r<7)||(c<7&&r>N-8)){if(c%6===0||r%6===0||(c>1&&c<5&&r>1&&r<5)){if(!(c===3&&r===3))x.fillRect(c*C,r*C,C-1,C-1)}continue}
+  if(rnd(1)>.55)x.fillRect(c*C,r*C,C-1,C-1)}
+ x.fillStyle='#D4AF37';x.fillRect(0,276,300,24);x.fillStyle='#fff';x.font='bold 10px Inter';
+ x.fillText(state.showNameQr?`${g.code} • ${g.nama.slice(0,14)}`:g.code,10,291);return cv.toDataURL()}
+
+/* state setters */
+function set(k,v){state[k]=v;save();render()}
+function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Template: '+t.nama)}
+function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle}save();render()}
+function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;state.event=t.ev;state.doa=t.ev;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Preview: '+t.nama)}
+function upd(k,v){state[k]=v;save();renderPreview()}
+function updF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();renderPreview()}
+function setF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();render()}
+function updA(k,v){state.amplop[k]=v;save();renderPreview()}
+function setA(k,v){state.amplop[k]=v;save();render()}
+
+/* ============ SUPABASE: MUSIK & PUBLISH ============ */
+function audioExt(file){
+ const map={'audio/mpeg':'mp3','audio/mp3':'mp3','audio/mp4':'m4a','audio/x-m4a':'m4a','audio/aac':'aac','audio/x-aac':'aac','audio/wav':'wav','audio/x-wav':'wav','audio/wave':'wav','audio/ogg':'ogg','audio/opus':'ogg','audio/webm':'webm','audio/flac':'flac','audio/x-flac':'flac'};
+ const fromName=(String(file.name||'').match(/\.([a-z0-9]{2,5})$/i)||[])[1];
+ return (fromName||map[file.type]||'mp3').toLowerCase()}
+function audioMime(ext){const m={mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg',webm:'audio/webm',flac:'audio/flac'};return m[ext]||'audio/mpeg'}
+function notifyErr(msg,ms){document.querySelectorAll('.notice').forEach(n=>n.remove());const n=document.createElement('div');n.className='notice';n.style.maxWidth='340px';n.style.lineHeight='1.5';n.innerHTML='<span style="width:20px;height:20px;border-radius:99px;background:#ef4444;display:grid;place-items:center;font-size:12px;flex:none">!</span><span>'+msg+'</span>';document.body.append(n);setTimeout(()=>n.remove(),ms||8000)}
+async function uploadMusic(input){
+ const file=input.files&&input.files[0];if(!file)return;
+ const okType=file.type.startsWith('audio/')||/\.(mp3|m4a|aac|ogg|wav|flac)$/i.test(file.name)||!/\./.test(file.name);
+ if(!okType){notify('Pilih file audio (MP3/M4A)');input.value='';return}
+ if(file.size>15*1024*1024){notify('Ukuran audio maksimal 15 MB');input.value='';return}
+ const ext=audioExt(file);
+ const base=String(file.name||'musik').replace(/\.[a-z0-9]{2,5}$/i,'').replace(/[^a-zA-Z0-9._-]/g,'-').replace(/-+/g,'-').replace(/^[-.]+|[-.]+$/g,'')||'musik';
+ const displayNm=base.replace(/-/g,' ');
+ const addLocal=showNotif=>{const rd=new FileReader();rd.onload=()=>{const item={id:'m'+Date.now(),name:displayNm,url:rd.result,dur:'—',local:true};
+  state.musicDb=[item,...state.musicDb];state.music=item;state.playing=false;syncAudio();render();if(showNotif)notify('Musik siap diputar (lokal)')};
+  rd.readAsDataURL(file)};
+ if(db){notify('Mengupload musik ke Supabase...');
+  try{
+   const path=`${state.slug||'demo'}/${Date.now()}-${base}.${ext}`;
+   const r=await db.storage.from('music').upload(path,file,{contentType:file.type&&file.type.startsWith('audio/')?file.type:audioMime(ext),cacheControl:'3600',upsert:false});
+   if(!r.error){const pub=db.storage.from('music').getPublicUrl(path);
+    const item={id:'m'+Date.now(),name:displayNm,url:pub.data.publicUrl,dur:'—'};
+    state.musicDb=[item,...state.musicDb];state.music=item;state.playing=false;save();syncAudio();render();
+    notify('Musik berhasil diupload ke Supabase ✓');return}
+   console.error('Upload error:',r.error);
+   addLocal(false);
+   const em=String(r.error.message||r.error.error||'error');
+   if(/security|policy|row.?level|unauthor|denied|violates|403|400/i.test(em)){
+    setTimeout(()=>notifyErr('Upload ditolak Supabase ('+esc(em)+').<br><b>Perbaikan:</b> buka Dashboard Supabase → Storage → bucket <b>music</b> → Policies → buat policy <b>INSERT</b> &amp; <b>SELECT</b> untuk role <b>anon</b>. Sementara ini musik dipakai secara lokal dulu.',12000),400);
+   }else if(/mime|content.?type|not.?supported/i.test(em)){
+    setTimeout(()=>notifyErr('Format ditolak bucket ('+esc(em)+'). Cek setting bucket music → Allowed MIME types → kosongkan atau isi audio/*.',12000),400);
+   }else{setTimeout(()=>notifyErr('Upload gagal: '+esc(em)+' — musik dipakai secara lokal dulu.',9000),400)}
+   return;
+  }catch(e){console.error(e);addLocal(false);setTimeout(()=>notifyErr('Koneksi Supabase bermasalah: '+esc(e.message||e)+' — musik dipakai secara lokal dulu.',9000),400);return}
+ }
+ addLocal(true)}
+function pickMusic(id){const m=state.musicDb.find(x=>x.id===id);if(!m)return;state.music=m;state.playing=true;save();syncAudio();render();notify('Memutar: '+m.name)}
+function togglePlay(){if(!state.music){notify('Belum ada musik — upload dulu di tab Musik');return}state.playing=!state.playing;syncAudio();render()}
+function syncAudio(){const p=$('player');if(!p)return;if(state.music){const abs=new URL(state.music.url,location.href).href;if(p.src!==abs)p.src=abs}if(state.playing&&state.music){p.play().catch(()=>{})}else{p.pause()}}
+function uploadCover(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.cover=r.result;save();render()};r.readAsDataURL(f)}
+function uploadGallery(input){const fs=Array.from(input.files||[]);let left=fs.length;fs.forEach(f=>{const r=new FileReader();r.onload=()=>{state.gallery.push(r.result);if(--left===0){save();render()}};r.readAsDataURL(f)})}
+async function publish(){
+ const payload={slug:state.slug,name1:state.event==='pernikahan'?state.form.namaPria:state.form.namaAnak,
+  name2:state.event==='pernikahan'?state.form.namaWanita:'',venue:state.form.venue,
+  event_date:state.form.tanggalAcara,event_time:state.form.jamAcara,
+  music_url:state.music&&!state.music.local?new URL(state.music.url,location.href).href:'',music_name:state.music?state.music.name:'',
+  theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl))};
+ if(db){const {error}=await db.from('invitation_drafts').upsert(payload,{onConflict:'slug'});
+  if(error){notify('Gagal publish: '+error.message);return}}
+ state.published=true;
+ const nama=displayName();
+ const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
+  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody}};
+ state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
+ save();render();notify('Berhasil Publish! '+baseUrl()+' tersimpan di Folder Arsip')}
+function unpublish(){state.published=false;save();render();notify('Status kembali ke Draft')}
+function loadArsip(id){const a=state.arsip.find(x=>x.id===id);if(!a)return;
+ if(a.snap){state.form=Object.assign({},DEF.form,a.snap.form);state.event=a.snap.event;
+  if(a.snap.tpl&&TPL.some(t=>t.id===a.snap.tpl))state.tpl=a.snap.tpl;else{const ft=tplsFor(a.snap.event)[0];if(ft)state.tpl=ft.id}
+  state.doa=a.snap.doa||a.snap.event;state.accent=a.snap.accent||tplOf().accent;state.slug=a.snap.slug;
+  if(a.snap.fontTitle)state.fontTitle=a.snap.fontTitle;if(a.snap.fontBody)state.fontBody=a.snap.fontBody}
+ else{state.event=a.jenis}
+ state.page='editor';state.tab='info';save();render();window.scrollTo(0,0);notify('Membuka: '+a.nama)}
+function dlQr(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrData(g);a.download=`QR-Checkin-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
+function copyTxt(t,msg){navigator.clipboard?.writeText(t);notify(msg||'Disalin ✓')}
+function waLink(g){const txt=state.waTemplate.replace('{nama_tamu}',g.nama).replace('{link_undangan}',g.link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf());return 'https://wa.me/?text='+encodeURIComponent(txt)}
+function updKat(id,k,v){const it=state.katalog.find(x=>x.id===id);if(!it)return;it[k]=(k==='hargaNormal'||k==='hargaPromo')?Number(v):k==='promoActive'?v:v;save()}
+function addKat(){state.katalog=[{id:'k'+Date.now(),nama:'Template Baru',tpl:state.tpl,ev:state.event,hargaNormal:120000,hargaPromo:75000,promoActive:true,badge:'NEW',terjual:0},...state.katalog];save();render()}
+function importCsv(){const i=document.createElement('input');i.type='file';i.accept='.csv,.txt';i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.guestsRaw=String(r.result||'');save();render()};r.readAsText(f)};i.click()}
+function exportCsv(){const blob=new Blob([guests().map(g=>`${g.nama},${g.link}`).join('\n')],{type:'text/csv'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=`tamu-${state.slug}.csv`;a.click()}
+
+/* ============ VIEW: HEADER ============ */
+function header(){return `
+<header class="hdr">
+ <div style="display:flex;align-items:center;gap:12px">
+  <div style="width:40px;height:40px;border-radius:12px;background:#0a0a0a;display:grid;place-items:center;flex:none"><img src="assets/logo-asproject.svg" alt="AS" style="width:30px;height:30px"></div>
+  <div style="line-height:1.2">
+   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span style="font-weight:600;font-size:15px;letter-spacing:-.02em">asproject<span style="color:#999">.my.id</span></span>
+    <span class="pill dark">PREMIUM</span>
+    <span class="pill cream">v2 • 4in1</span>
+   </div>
+   <div style="font-size:11px;color:var(--mut)">Rp75rb • Unlimited revisi • Domain custom</div>
+  </div>
+ </div>
+ <div style="display:flex;align-items:center;gap:8px">
+  <div class="pill" style="background:var(--soft);border:1px solid var(--line);font-size:11px;padding:6px 12px">
+   <span class="dot pulse" style="background:${state.published?'#10b981':'#fbbf24'}"></span>${state.published?'Published':'Draft • Auto-save'}
+  </div>
+  <a href="./" class="pill" style="background:#fff;border:1px solid var(--line);font-size:12px;padding:8px 14px;text-decoration:none;font-weight:500">Katalog ↗</a>
+  <button class="btn-pub" onclick="publish()"><span style="width:20px;height:20px;border-radius:99px;background:#fff;color:#000;display:grid;place-items:center;font-size:12px">↗</span>Publish Premium Rp75rb</button>
+ </div>
+</header>`}
+
+/* ============ VIEW: SIDEBAR ============ */
+function sidebar(){
+ const evs=[['pernikahan','💍','Wedding'],['khitanan','🕌','Tasyakuran'],['ultah','🎂','Birthday'],['aqiqah','👶','Baru lahir']];
+ return `<aside class="aside sb">
+ <div style="margin-bottom:24px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+   <span class="lbl">Jenis Acara • 4in1</span><span class="chip">NEW Aqiqah</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+  ${evs.map(([id,ic,sub])=>`<button class="evbtn ${state.event===id?'on':''}" onclick="evPick('${id}')">
+   <div style="font-size:16px">${ic}</div><div style="font-size:12px;font-weight:600;margin-top:4px">${EV_LABEL[id]}</div><div class="sub">${sub}</div></button>`).join('')}
+  </div>
+ </div>
+ <div style="margin-bottom:24px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+   <span class="lbl">Template ${EV_LABEL[state.event]}</span><span class="chip">${tplsFor(state.event).length} desain</span>
+  </div>
+  ${tplsFor(state.event).map(t=>`<button class="thbtn ${state.tpl===t.id?'on':''}" onclick="pickTpl('${t.id}')">
+   <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:13px">${t.deco.split(' ')[0]||''}</div>
+   <div style="flex:1"><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">${t.nama}${t.badge?`<span style="font-size:8px;padding:2px 6px;border-radius:99px;background:var(--gold);color:#000;font-weight:700">${t.badge}</span>`:''}</div>
+   <div class="sub">${t.desc}</div></div>
+   <div style="width:20px;height:20px;border-radius:99px;display:grid;place-items:center;border:1px solid ${state.tpl===t.id?'#fff':'#ddd'};background:#fff;color:#000;font-size:11px">${state.tpl===t.id?'✓':''}</div></button>`).join('')}
+ </div>
+ <div>
+  <div class="lbl" style="display:block;margin-bottom:12px">Menu Studio</div>
+  ${[['editor','✦','Editor Undangan','Info, Desain, Musik...',''],['katalog','◫','Katalog Template','Harga & promosi',state.katalog.length],['arsip','⧉','Folder / Arsip','Kelompok per jenis',state.arsip.length]]
+   .map(([id,ic,l,d,b])=>`<button class="menubtn ${state.page===id?'on':''}" onclick="set('page','${id}')">
+   <div class="icbox">${ic}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${l}</div><div class="sub">${d}</div></div>
+   ${b!==''?`<span class="chip" style="${state.page===id?'background:#fff;color:#000':''}">${b}</span>`:''}</button>`).join('')}
+  <div style="margin-top:24px;border-radius:16px;background:var(--cream);border:1px solid var(--cream2);padding:12px">
+   <div style="font-size:12px;font-weight:600">✨ Tips Premium</div>
+   <div style="font-size:11px;color:#8a6d0f;margin-top:4px;line-height:1.6">Upload musik dari folder HP akan tersimpan otomatis di Supabase untuk dipakai ulang di undangan lain.</div>
+  </div>
+ </div>
+</aside>`}
+
+/* ============ VIEW: EDITOR TABS ============ */
+function tabInfo(){const f=state.form,e=state.event;
+ let fields='';
+ if(e==='pernikahan')fields=`<div class="grid2">
+  <label class="f span2">Nama Pria<input value="${esc(f.namaPria)}" oninput="updF('namaPria',this.value)"></label>
+  <label class="f span2">Gelar Pria<input value="${esc(f.gelarPria)}" oninput="updF('gelarPria',this.value)"></label>
+  <label class="f span2">Nama Wanita<input value="${esc(f.namaWanita)}" oninput="updF('namaWanita',this.value)"></label>
+  <label class="f span2">Gelar Wanita<input value="${esc(f.gelarWanita)}" oninput="updF('gelarWanita',this.value)"></label>
+  <label class="f span2">Putra Dari<input value="${esc(f.putraPutri)}" oninput="updF('putraPutri',this.value)"></label>
+  <label class="f span2">Putri Dari<input value="${esc(f.putriDari)}" oninput="updF('putriDari',this.value)"></label></div>`;
+ if(e==='khitanan')fields=`<div style="display:grid;gap:12px">
+  <label class="f">Nama Anak Lengkap<input value="${esc(f.namaAnak)}" oninput="updF('namaAnak',this.value)"></label>
+  <label class="f">Putra Dari Bapak/Ibu<input value="${esc(f.putraDari)}" oninput="updF('putraDari',this.value)"></label>
+  <label class="f">Umur Anak<input value="${esc(f.umurAnak)}" oninput="updF('umurAnak',this.value)"></label></div>`;
+ if(e==='ultah')fields=`<div style="display:grid;gap:12px">
+  <label class="f">Nama Anak<input value="${esc(f.namaAnak)}" oninput="updF('namaAnak',this.value)"></label>
+  <div class="grid2"><label class="f">Usia<input value="${esc(f.usia)}" oninput="updF('usia',this.value)"></label>
+  <label class="f">Putra/Putri Dari<input value="${esc(f.putraDari)}" oninput="updF('putraDari',this.value)"></label></div>
+  <label class="f">Tema Ulang Tahun<input value="${esc(f.temaUltah)}" placeholder="Unicorn, Spiderman..." oninput="updF('temaUltah',this.value)"></label></div>`;
+ if(e==='aqiqah')fields=`<div style="display:grid;gap:12px">
+  <label class="f">Nama Anak<input value="${esc(f.namaAnak)}" oninput="updF('namaAnak',this.value)"></label>
+  <label class="f">Tanggal Lahir<input type="date" value="${esc(f.tglLahir)}" oninput="updF('tglLahir',this.value)"></label>
+  <label class="f">Putra/Putri Dari<input value="${esc(f.putraDari)}" oninput="updF('putraDari',this.value)"></label>
+  <label class="f">Tema Aqiqah<select onchange="updF('temaAqiqah',this.value)">${['Tema Islami Modern','Tema Minimalis Putih','Tema Floral Pastel','Tema Biru Langit','Tema Gold Luxury'].map(t=>`<option ${f.temaAqiqah===t?'selected':''}>${t}</option>`).join('')}</select></label></div>`;
+ return `<div style="display:grid;gap:16px">
+ <div class="card">
+  <h4><span style="width:28px;height:28px;border-radius:99px;display:grid;place-items:center;font-size:12px" class="gold">✦</span>
+  Data ${e==='pernikahan'?'Mempelai':e==='khitanan'?'Anak Khitan':e==='ultah'?'Anak Ultah':'Aqiqah'}
+  <span class="chip" style="margin-left:auto">${e.toUpperCase()}</span></h4>${fields}
+ </div>
+ <div class="card"><h4>🗓️ Waktu & Lokasi</h4>
+  <div class="grid2">
+   <label class="f">Tanggal Acara<input type="date" value="${esc(f.tanggalAcara)}" oninput="updF('tanggalAcara',this.value)"></label>
+   <label class="f">Jam<input type="time" value="${esc(f.jamAcara)}" oninput="updF('jamAcara',this.value)"></label>
+   <label class="f">Zona<select onchange="updF('zona',this.value)">${['WIB','WITA','WIT'].map(z=>`<option ${f.zona===z?'selected':''}>${z}</option>`).join('')}</select></label>
+   <label class="f" style="display:flex;align-items:center;gap:8px;margin-top:24px"><input type="checkbox" style="width:auto;height:auto" ${f.showMapsBtn?'checked':''} onchange="setF('showMapsBtn',this.checked)"> Tombol Maps</label>
+   <label class="f span2">Nama Venue / Gedung<input value="${esc(f.venue)}" oninput="updF('venue',this.value)"></label>
+   <label class="f span2">Alamat Lengkap<textarea rows="2" oninput="updF('alamat',this.value)">${esc(f.alamat)}</textarea></label>
+   <label class="f span2">Link Google Maps<input value="${esc(f.mapsLink)}" placeholder="https://maps.app.goo.gl/..." oninput="updF('mapsLink',this.value)"></label>
+  </div>
+  <label class="togglerow" style="margin-top:16px">Tambah Sesi Kedua (Akad & Resepsi terpisah)<input type="checkbox" ${f.sesiKedua?'checked':''} onchange="setF('sesiKedua',this.checked)"></label>
+  ${f.sesiKedua?`<div class="grid2" style="padding:12px;border-radius:12px;background:var(--cream);border:1px solid var(--cream2)">
+   <label class="f">Jam Akad<input type="time" value="${esc(f.jamAkad)}" oninput="updF('jamAkad',this.value)"></label>
+   <label class="f">Jam Resepsi<input type="time" value="${esc(f.jamResepsi)}" oninput="updF('jamResepsi',this.value)"></label></div>`:''}
+ </div></div>`}
+
+function tabDesain(){return `<div style="display:grid;gap:16px">
+ <div class="card"><h4>🎨 Warna & Font</h4>
+  <div style="display:grid;gap:16px">
+   <div><div class="f" style="margin-bottom:8px">Warna Aksen Custom</div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+     <input type="color" value="${state.accent}" onchange="set('accent',this.value)" style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);padding:2px;cursor:pointer">
+     <div style="display:flex;gap:8px">${['#D4AF37','#0EA5E9','#10B981','#EC4899','#111827'].map(c=>`<button onclick="set('accent','${c}')" style="width:32px;height:32px;border-radius:99px;background:${c};border:2px solid ${state.accent===c?'#000':'#fff'};box-shadow:0 1px 2px rgba(0,0,0,.1);${state.accent===c?'transform:scale(1.1)':''}"></button>`).join('')}</div>
+     <span class="chip" style="font-family:ui-monospace,monospace">${state.accent}</span>
+    </div></div>
+   <div class="grid2">
+    <label class="f">Font Judul<select onchange="set('fontTitle',this.value)">${FONTS.slice(0,3).map(ft=>`<option value="${ft.id}" ${state.fontTitle===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+    <label class="f">Font Isi<select onchange="set('fontBody',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" ${state.fontBody===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+   </div>
+   <div><div class="f" style="margin-bottom:8px">Background Type</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+    ${[['polos','Polos'],['gradient','Gradient'],['foto','Foto'],['pattern','Batik']].map(([id,l])=>`<button class="tabbtn ${state.bgType===id?'on':''}" style="height:40px;border-radius:12px" onclick="set('bgType','${id}')">${l}</button>`).join('')}</div></div>
+   <div style="border-top:1px solid var(--line);padding-top:12px">
+    ${[['goldOrn','Ornamen Gold Foil'],['dblBorder','Border Double Gold'],['darkMode','Mode Gelap (Emerald)']].map(([k,l])=>`<label class="togglerow">${l}<input type="checkbox" ${state[k]?'checked':''} onchange="set('${k}',this.checked)"></label>`).join('')}
+   </div>
+  </div>
+ </div>
+ <div class="card" style="background:#111;color:#fff;border-color:#111">
+  <div style="font-size:12px;font-weight:600">Preview Font</div>
+  <div style="margin-top:12px;font-size:22px;line-height:1.2;font-family:${fontFam(state.fontTitle)}">The Beauty of ${esc(state.form.namaWanita)}</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:8px;font-family:${fontFam(state.fontBody)}">Font isi untuk alamat, doa, ucapan dan detail acara — rapi & readable di HP.</div>
+ </div></div>`}
+
+function tabMusik(){const d=DOA[state.doa]||DOA.pernikahan;return `<div style="display:grid;gap:16px">
+ <div class="card"><h4>🎵 Musik Autoplay — Upload ke Supabase</h4>
+  <p style="font-size:11px;color:var(--mut);margin-bottom:12px">Pilih file mp3/m4a dari HP, otomatis tersimpan di Supabase Storage untuk dipakai ulang.</p>
+  <label class="upload-dash">📁 Upload Musik dari HP<input type="file" accept="audio/*,.mp3" style="display:none" onchange="uploadMusic(this)"></label>
+  <div style="margin-top:16px">
+   <div class="lbl" style="display:block;margin-bottom:8px">Database Musik Tersimpan</div>
+   <div class="sb" style="max-height:180px;overflow-y:auto;padding-right:4px">
+   ${state.musicDb.length===0?'<div style="font-size:11px;color:var(--mut2);text-align:center;padding:16px;border:1px dashed var(--line);border-radius:12px">Belum ada musik — upload dulu di atas</div>':''}
+   ${state.musicDb.map(m=>`<div class="guestrow ${state.music?.id===m.id?'sel':''}">
+    <button onclick="pickMusic('${m.id}')" style="width:32px;height:32px;border-radius:99px;background:#111;color:#fff;display:grid;place-items:center;font-size:12px;flex:none">${state.music?.id===m.id&&state.playing?'❚❚':'▶'}</button>
+    <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(m.name)}</div>
+    <div style="font-size:10px;color:var(--mut)">${m.demo?'🎵 Demo bawaan'+(m.dur?' • '+m.dur:''):m.local?'lokal (belum ke Supabase)':'Supabase ✓ • mp3'}</div></div>
+    <button class="sm-btn dark" onclick="pickMusic('${m.id}')">Pakai</button></div>`).join('')}
+   </div>
+   ${state.music?`<div style="margin-top:12px;padding:10px 12px;border-radius:12px;background:#111;color:#fff;display:flex;align-items:center;gap:8px;font-size:11px">
+    <span class="dot pulse" style="background:#34d399"></span>Memutar: ${esc(state.music.name)}
+    <button onclick="togglePlay()" style="margin-left:auto;font-size:11px;padding:4px 10px;border-radius:99px;background:#fff;color:#000">${state.playing?'Pause':'Play'}</button></div>`:''}
+  </div>
+ </div>
+ <div class="card"><h4>🖼️ Foto & Galeri</h4>
+  <div class="grid2">
+   <label style="display:block"><div class="f" style="margin-bottom:4px">Foto Utama / Cover</div>
+    <div style="height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fbfaf8;overflow:hidden;cursor:pointer;position:relative">
+    ${state.cover?`<img src="${state.cover}" style="width:100%;height:100%;object-fit:cover">`:'<span style="font-size:11px;color:var(--mut2)">Upload foto</span>'}
+    <input type="file" accept="image/*" onchange="uploadCover(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div></label>
+   <label style="display:block"><div class="f" style="margin-bottom:4px">Galeri Unlimited + Lightbox</div>
+    <div style="height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fbfaf8;cursor:pointer;position:relative">
+    <span style="font-size:11px;color:var(--mut)">+ ${state.gallery.length} foto</span>
+    <input type="file" accept="image/*" multiple onchange="uploadGallery(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div></label>
+  </div>
+  ${state.gallery.length?`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px">${state.gallery.map(g=>`<img src="${g}" style="height:64px;width:100%;object-fit:cover;border-radius:12px;border:1px solid var(--line)">`).join('')}</div>`:''}
+  <label class="f" style="margin-top:16px">Link Video (YouTube/TikTok/IG)<input value="${esc(state.videoLink)}" placeholder="https://..." oninput="upd('videoLink',this.value)"></label>
+ </div>
+ <div class="card"><h4>🤲 Doa & Bismillah</h4>
+  <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:12px"><input type="checkbox" ${state.form.showBismillah?'checked':''} onchange="setF('showBismillah',this.checked)"> Tampilkan Bismillah Arab + Latin</label>
+  <div class="grid2">${Object.keys(DOA).map(k=>`<button class="evbtn ${state.doa===k?'on':''}" style="padding:10px" onclick="set('doa','${k}')">
+   <div style="font-size:11px;font-weight:500;text-transform:capitalize">Doa ${k}</div>
+   <div class="sub" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.7">${DOA[k].ar.slice(0,18)}...</div></button>`).join('')}</div>
+  <div style="margin-top:12px;padding:12px;border-radius:12px;background:var(--cream);border:1px solid var(--cream2);font-size:12px;line-height:1.7">
+   <div style="text-align:right;font-size:14px;font-weight:600;font-family:'Lora',serif">${d.ar}</div>
+   <div style="font-size:11px;color:#8a6d0f;margin-top:8px">${d.latin}</div>
+   <div style="font-size:11px;margin-top:4px">${d.arti}</div>
+  </div>
+  <label class="f" style="margin-top:12px">Ucapan & Doa Custom<textarea rows="3" oninput="updF('ucapanCustom',this.value)">${esc(state.form.ucapanCustom)}</textarea></label>
+ </div></div>`}
+
+function tabTamu(){const gs=guests(),g=selGuest(),single=state.linkMode==='single';return `<div style="display:grid;gap:16px">
+ <div class="card"><h4>⚙️ Mode Link Undangan • BARU</h4>
+  <div style="display:grid;gap:8px;padding:4px;border-radius:16px;background:var(--soft);border:1px solid var(--line)">
+   <button class="modebtn ${!single?'on':''}" onclick="set('linkMode','personal')">
+    <div class="radio">${!single?'<i></i>':''}</div>
+    <div><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px">🔗 Link Personal (?to=Nama) <span class="pill" style="background:${!single?'rgba(255,255,255,.2);color:#fff':'#111;color:#fff'};font-size:9px">DEFAULT</span></div>
+    <div style="font-size:11px;margin-top:4px;line-height:1.6;color:${!single?'rgba(255,255,255,.7)':'var(--mut)'}">Setiap tamu punya link unik: <span style="font-family:ui-monospace,monospace">?to=NamaTamu</span>. Kepada YTH otomatis personal. QR random untuk check-in.</div></div></button>
+   <button class="modebtn ${single?'on':''}" onclick="set('linkMode','single')">
+    <div class="radio">${single?'<i></i>':''}</div>
+    <div><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px">🔗 1 Link Untuk Semua + QR Random <span class="pill" style="background:${single?'#D4AF37;color:#000':'#FFF6D6;color:#8a6d0f;border:1px solid #F3E5AB'};font-size:9px">BARU</span></div>
+    <div style="font-size:11px;margin-top:4px;line-height:1.6;color:${single?'rgba(255,255,255,.7)':'var(--mut)'}">Semua tamu buka link yang sama <span style="font-family:ui-monospace,monospace">${baseUrl()}</span> tanpa ?to. QR tetap unik per tamu untuk scan panitia.</div></div></button>
+  </div>
+  <div style="margin-top:12px;border-radius:12px;padding:12px;font-size:11px;line-height:1.7;display:flex;gap:8px;${single?'background:var(--cream);border:1px solid var(--cream2);color:#7a5a0a':'background:#f0f9ff;border:1px solid #dbeafe;color:#0c4a6e'}">
+   <span style="font-size:14px">${single?'💡':'ℹ️'}</span>
+   <div>${single?'<b>Mode 1 Link:</b> Semua tamu buka link yang sama, QR tetap unik per tamu untuk check-in. QR berisi <span style="font-family:ui-monospace,monospace">/checkin?id=RND123&guest=Nama</span> — ini yang di-scan panitia, bukan link undangannya.':'<b>Mode Personal:</b> Link berbeda per tamu via <span style="font-family:ui-monospace,monospace">?to=Nama</span>. Lebih personal di halaman undangan, QR juga tetap random unik untuk validasi panitia.'}</div>
+  </div>
+ </div>
+ <div class="card"><h4>👥 Daftar Tamu & Link ${single?'1 Link':'Personal'}</h4>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+   <button class="sm-btn" onclick="importCsv()">Import CSV/Excel</button>
+   <button class="sm-btn" onclick="exportCsv()">Export CSV</button>
+   <button class="sm-btn dark" onclick="copyTxt(guests().map(g=>g.nama+': '+g.link).join('\\n'),'Semua link disalin ✓')">Salin Semua Link</button>
+  </div>
+  <textarea rows="4" placeholder="1 baris 1 nama tamu" style="width:100%;border:1px solid var(--line2);border-radius:12px;padding:8px 12px;font-size:12px;font-family:ui-monospace,monospace" oninput="upd('guestsRaw',this.value)">${esc(state.guestsRaw)}</textarea>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
+   <span style="font-size:11px;color:var(--mut)">${single?`1 Link untuk semua tamu • ${gs.length} tamu, QR tetap unik`:`Auto Generate Link Personal ?to=NamaTamu • ${gs.length} tamu`}</span>
+   <span class="pill" style="margin-left:auto;font-size:9px;font-weight:600;${single?'background:#111;color:#fff':'background:#f0f9ff;color:#0c4a6e;border:1px solid #dbeafe'}">${single?'1 LINK MODE':'PERSONAL MODE'}</span>
+  </div>
+  <div style="margin-top:8px;padding:10px;border-radius:12px;font-size:11px;font-family:ui-monospace,monospace;word-break:break-all;${single?'background:#111;color:#fff':'background:var(--soft);border:1px solid var(--line)'}">Preview: ${single?baseUrl():baseUrl()+'?to=NamaTamu'} ${single?'<span style="opacity:.6">• sama untuk semua</span>':''}</div>
+ </div>
+ <div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4 style="margin:0">Daftar Link Tamu</h4><span class="chip">${gs.length} tamu</span></div>
+  <div class="sb" style="max-height:320px;overflow-y:auto;padding-right:4px">
+  ${gs.map(x=>`<div class="guestrow ${state.selGuest===x.nama?'sel':''}">
+   <div style="width:32px;height:32px;border-radius:99px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:600;flex:none">${esc(x.nama.slice(0,1).toUpperCase())}</div>
+   <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.nama)}</div>
+   <div style="font-size:10px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.link)}${single?` <span style="color:#8a6d0f">• QR: ${x.code}</span>`:''}</div></div>
+   <button class="sm-btn" style="background:#fff" onclick="copyTxt('${esc(x.link)}')">Copy</button>
+   <a class="sm-btn wa" style="text-decoration:none" target="_blank" href="${waLink(x)}">WA</a>
+   <button class="sm-btn dark" onclick="set('selGuest','${esc(x.nama)}')">QR</button></div>`).join('')}
+  </div>
+ </div>
+ <div class="card" style="background:#111;color:#fff;border-color:#111">
+  <h4 style="color:#fff">🔐 QR Check-in Tamu • Random per Klik ${single?'<span class="pill" style="background:#D4AF37;color:#000;font-size:9px">1 LINK + QR UNIK</span>':''}</h4>
+  <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:12px">${single?'Mode 1 Link aktif: Link undangan SAMA untuk semua tamu, tapi QR tetap random unik per tamu. QR ini yang di-scan panitia di lokasi.':'QR dibuat random per tamu setelah mengisi nama, bisa di-download. Tampilkan saat check-in.'}</div>
+  ${g?`<div style="background:#fff;border-radius:16px;padding:16px;color:#000;display:flex;gap:16px">
+   <div style="width:120px;height:120px;border-radius:12px;background:var(--soft);border:1px solid var(--line);overflow:hidden;flex:none"><img src="${qrData(g)}" style="width:100%;height:100%;object-fit:contain;padding:8px"></div>
+   <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">${esc(g.nama)}</div>
+    <div style="font-size:11px;color:var(--mut);margin-top:4px">Code: ${g.code}</div>
+    <div style="font-size:10px;font-family:ui-monospace,monospace;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;word-break:break-all">${single?esc(g.checkin):esc(g.link)}</div>
+    <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+     <button class="sm-btn dark" onclick="dlQr('${esc(g.nama)}')">⬇ Download QR</button>
+     <span style="font-size:10px;color:var(--mut);line-height:1.3">Download & tunjukkan<br>saat check-in</span></div>
+   </div></div>`
+  :'<div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;font-size:11px;color:rgba(255,255,255,.7)">Pilih tamu dari daftar di atas untuk generate QR check-in random.</div>'}
+  <div style="margin-top:16px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">
+   <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:11px">Tampilkan Nama di QR<input type="checkbox" ${state.showNameQr?'checked':''} onchange="set('showNameQr',this.checked)"></label>
+   <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:4px">Jika aktif, nama tamu kecil tampil di bawah QR untuk memudahkan panitia.</div>
+  </div>
+  <div style="margin-top:16px">
+   <div style="font-size:11px;font-weight:500;margin-bottom:4px">Template Pesan WA (variabel: {nama_tamu}, {link_undangan}, {nama_pengantin}, {acara})</div>
+   <textarea rows="5" style="width:100%;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);padding:8px 12px;font-size:11px;font-family:ui-monospace,monospace;color:#fff" oninput="upd('waTemplate',this.value)">${esc(state.waTemplate)}</textarea>
+  </div>
+ </div></div>`}
+
+function tabAmplop(){const a=state.amplop;return `<div style="display:grid;gap:16px">
+ <div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h4 style="margin:0">💳 Amplop Digital</h4>
+  <label style="display:flex;align-items:center;gap:8px;font-size:11px"><input type="checkbox" ${a.showAmplop?'checked':''} onchange="setA('showAmplop',this.checked)"> Tampilkan</label></div>
+  <div class="grid2">
+   <label class="f">Bank<select onchange="updA('bank',this.value)">${['BCA','BNI','BRI','Mandiri','BSI'].map(b=>`<option ${a.bank===b?'selected':''}>${b}</option>`).join('')}</select></label>
+   <label class="f">No Rekening<input value="${esc(a.noRek)}" oninput="updA('noRek',this.value)"></label>
+   <label class="f span2">Nama Pemilik Rekening<input value="${esc(a.pemilik)}" oninput="updA('pemilik',this.value)"></label>
+   <label class="f">E-Wallet<select onchange="updA('ewallet',this.value)">${['DANA','OVO','GoPay','LinkAja','ShopeePay'].map(w=>`<option ${a.ewallet===w?'selected':''}>${w}</option>`).join('')}</select></label>
+   <label class="f">No E-Wallet<input value="${esc(a.noEwallet)}" oninput="updA('noEwallet',this.value)"></label>
+  </div>
+  <label style="display:flex;align-items:center;gap:8px;font-size:11px;margin-top:12px"><input type="checkbox" ${a.showCopy?'checked':''} onchange="setA('showCopy',this.checked)"> Tombol Copy No Rek Otomatis</label>
+  <div style="margin-top:16px;padding:12px;border-radius:12px;background:#fbfaf8;border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
+   <div style="font-size:11px"><b>${esc(a.bank)}</b> • ${esc(a.noRek)} • a.n ${esc(a.pemilik)}</div>
+   <button class="sm-btn dark" onclick="copyTxt('${esc(a.noRek)}','No rekening disalin ✓')">Copy</button>
+  </div>
+ </div>
+ <div class="card" style="background:var(--cream);border-color:var(--cream2)">
+  <div style="font-size:12px;font-weight:600">QRIS (upload QR)</div>
+  <div style="margin-top:8px;height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fff;font-size:11px;color:var(--mut)">Upload QRIS PNG/JPG</div>
+ </div></div>`}
+
+function tabDomain(){return `<div style="display:grid;gap:16px">
+ <div class="card"><h4>🌐 Domain & Publikasi — FITUR BARU</h4>
+  <label class="f">Custom Subdomain (auto dari nama mempelai)
+   <div style="display:flex;margin-top:4px">
+    <input value="${esc(state.slug)}" oninput="upd('slug',slugify(this.value))" style="flex:1;border:1px solid var(--line2);border-right:0;border-radius:12px 0 0 12px;height:40px;padding:0 12px;font-size:12px;font-family:ui-monospace,monospace">
+    <span style="height:40px;padding:0 12px;border-radius:0 12px 12px 0;background:var(--soft);border:1px solid var(--line2);display:grid;place-items:center;font-size:11px">.asproject.my.id</span>
+   </div>
+   <div style="font-size:10px;color:var(--mut);margin-top:4px;font-weight:400">Slug otomatis: ${esc(state.slug)||'—'}</div>
+  </label>
+  <label class="f" style="margin-top:12px">Custom Domain Sendiri<input value="${esc(state.customDomain)}" placeholder="www.namadomain.com / undangan.namadomain.com" oninput="upd('customDomain',this.value)"></label>
+  <div style="margin-top:12px;padding:12px;border-radius:12px;background:var(--soft);border:1px solid var(--line);font-size:11px;font-family:ui-monospace,monospace">Setting CNAME: <b>cname.asproject.my.id</b><br>Arahkan CNAME ${esc(state.customDomain)||'custom domain'} → cname.asproject.my.id</div>
+  <div style="margin-top:16px;padding:12px;border-radius:12px;background:#111;color:#fff">
+   <div style="font-size:11px;color:rgba(255,255,255,.6)">Preview URL Final</div>
+   <div style="font-size:12px;font-family:ui-monospace,monospace;margin-top:4px;word-break:break-all">${baseUrl()}${state.linkMode==='single'?'':'?to=NamaTamu'}</div>
+   <div style="margin-top:12px;display:flex;gap:8px">
+    <button class="sm-btn" style="background:#fff;color:#000;border:0" onclick="copyTxt('${baseUrl()}?to=NamaTamu','URL disalin ✓')">Salin URL</button>
+    <span class="sm-btn" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.1);color:#fff">Status: ${state.published?'Published ✅':'Draft'}</span>
+   </div>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+   <button class="sm-btn dark" style="height:40px;border-radius:12px" onclick="publish()">💎 Publish Premium Rp75rb</button>
+   <button class="sm-btn" style="height:40px;border-radius:12px;background:#fff" onclick="unpublish()">Unpublish</button>
+  </div>
+ </div>
+ <div class="card"><h4>SEO & Thumbnail WA</h4>
+  <label class="f">SEO Title<input value="${esc(displayName())} — ${titleOf()}"></label>
+  <label class="f" style="margin-top:8px">Deskripsi (preview WA)<textarea rows="2">${esc(state.form.ucapanCustom)}</textarea></label>
+ </div></div>`}
+
+function editor(){
+ const tabs=[['info','Info Acara'],['desain','Desain'],['musik','Musik & Galeri'],['tamu','Tamu & QR'],['amplop','Amplop'],['domain','Domain']];
+ const body={info:tabInfo,desain:tabDesain,musik:tabMusik,tamu:tabTamu,amplop:tabAmplop,domain:tabDomain}[state.tab]();
+ return `<div class="tabbar sb">${tabs.map(([id,l])=>`<button class="tabbtn ${state.tab===id?'on':''}" onclick="set('tab','${id}')">${l}</button>`).join('')}</div>
+ <div style="padding:16px">${body}</div>`}
+
+/* ============ VIEW: KATALOG ============ */
+function katalog(){return `<div style="padding:16px;display:grid;gap:16px">
+ <div class="card" style="background:#111;color:#fff;border-color:#111;display:flex;align-items:center;justify-content:space-between;gap:12px">
+  <div><div style="font-size:13px;font-weight:600">Katalog Template • Edit Harga & Promo</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px">Ubah tema, harga normal/promo, badge BEST SELLER — preview live di HP kanan</div></div>
+  <button class="sm-btn" style="background:#fff;color:#000;border:0;flex:none" onclick="addKat()">+ Tambah Template</button>
+ </div>
+ <div class="card"><h4>🎯 Setting Promosi Global</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+   <label class="f">Diskon %<input type="number" value="${state.promo.diskon}" oninput="state.promo.diskon=Number(this.value);save()"></label>
+   <label class="f">Mulai<input type="date" value="${state.promo.tglMulai}" oninput="state.promo.tglMulai=this.value;save()"></label>
+   <label class="f">Selesai<input type="date" value="${state.promo.tglSelesai}" oninput="state.promo.tglSelesai=this.value;save()"></label>
+  </div>
+  <label class="f" style="margin-top:12px">Badge Text (BEST SELLER, LUXURY, etc)<input value="${esc(state.promo.badgeText)}" oninput="state.promo.badgeText=this.value;save()"></label>
+ </div>
+ <div class="card" style="padding:0;overflow:hidden">
+  <div style="padding:16px;border-bottom:1px solid var(--line)">
+   <div style="font-size:13px;font-weight:600">Daftar Template</div>
+   <div style="font-size:11px;color:var(--mut)">Klik Preview untuk lihat di phone kanan • Edit inline harga & promo</div>
+  </div>
+  ${state.katalog.map(k=>{const t=TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0];return `<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0">
+   <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:13px">${t.deco.split(' ')[0]||''}</div>
+   <div style="flex:1;min-width:0">
+    <input value="${esc(k.nama)}" oninput="updKat('${k.id}','nama',this.value)" style="width:100%;font-size:12px;font-weight:500;border:0;background:transparent;padding:0">
+    <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+     <span style="font-size:10px;border-radius:99px;border:1px solid var(--line);padding:2px 8px;background:var(--soft)">${EV_ICON[t.ev]} ${EV_LABEL[t.ev]}</span>
+     <span style="font-size:10px;color:var(--mut)">${k.terjual} terjual</span>
+    </div></div>
+   <div style="text-align:right">
+    <input type="number" value="${k.hargaNormal}" oninput="updKat('${k.id}','hargaNormal',this.value)" style="width:84px;height:28px;border-radius:99px;border:1px solid var(--line);padding:0 8px;font-size:11px;color:var(--mut);text-decoration:line-through">
+    <div style="margin-top:4px"><input type="number" value="${k.hargaPromo}" oninput="updKat('${k.id}','hargaPromo',this.value)" style="width:84px;height:28px;border-radius:99px;border:1px solid var(--line);padding:0 8px;font-size:11px;font-weight:600"></div>
+   </div>
+   <label style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px"><input type="checkbox" ${k.promoActive?'checked':''} onchange="updKat('${k.id}','promoActive',this.checked)">Promo</label>
+   <input value="${esc(k.badge)}" placeholder="Badge" oninput="updKat('${k.id}','badge',this.value)" style="width:84px;height:28px;border-radius:99px;border:1px solid var(--line);padding:0 8px;font-size:10px">
+   <button class="sm-btn dark" onclick="prevKat('${k.id}')">Preview</button>
+  </div>`}).join('')}
+ </div></div>`}
+
+/* ============ VIEW: ARSIP ============ */
+function arsip(){
+ const groups={pernikahan:[],khitanan:[],ultah:[],aqiqah:[]};
+ state.arsip.forEach(a=>{if(!state.search||a.nama.toLowerCase().includes(state.search.toLowerCase())||a.tanggal.includes(state.search))groups[a.jenis]?.push(a)});
+ return `<div style="padding:16px;display:grid;gap:16px">
+ <div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+   <div><div style="font-size:13px;font-weight:600">Folder / Arsip Undangan</div>
+   <div style="font-size:11px;color:var(--mut)">Dikelompokkan per jenis • tampil hanya Nama + Tanggal • klik untuk edit lagi</div></div>
+   <input value="${esc(state.search)}" placeholder="Cari nama / tanggal" oninput="state.search=this.value;save();render()" style="height:36px;width:160px;border-radius:99px;border:1px solid var(--line2);padding:0 12px;font-size:11px">
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px">
+  ${Object.keys(groups).map(k=>`<div style="border-radius:12px;background:#fbfaf8;border:1px solid var(--line);padding:10px;text-align:center">
+   <div style="font-size:11px;font-weight:500;text-transform:capitalize">${k}</div>
+   <div style="font-size:18px;font-weight:700;margin-top:4px">${groups[k].length}</div>
+   <div style="font-size:10px;color:var(--mut)">undangan</div></div>`).join('')}
+  </div>
+ </div>
+ ${Object.keys(groups).map(k=>`<div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+   <div style="width:28px;height:28px;border-radius:99px;background:var(--soft);display:grid;place-items:center;font-size:12px">${EV_ICON[k]}</div>
+   <div style="font-size:13px;font-weight:600;text-transform:capitalize">${k} • ${groups[k].length} file</div>
+  </div>
+  <div class="grid2">
+  ${groups[k].length===0?`<div class="span2" style="font-size:11px;color:var(--mut2);text-align:center;padding:24px;border:1px dashed var(--line);border-radius:12px">Belum ada undangan ${k}</div>`:''}
+  ${groups[k].map(a=>`<button onclick="loadArsip('${a.id}')" style="text-align:left;border-radius:16px;border:1px solid var(--line);background:#fbfaf8;padding:12px;transition:.15s" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='#fbfaf8'">
+   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+    <div style="font-size:12px;font-weight:600;line-height:1.3">${esc(a.nama)}</div>
+    <span class="pill" style="font-size:9px;${a.status==='Published'?'background:#111;color:#fff':'background:var(--soft);border:1px solid var(--line)'}">${a.status}</span>
+   </div>
+   <div style="font-size:11px;color:var(--mut);margin-top:4px">${a.tanggal}</div>
+   <div style="margin-top:8px;font-size:10px;padding:4px 8px;border-radius:99px;background:#fff;border:1px solid var(--line);display:inline-flex">✎ Edit lagi</div>
+  </button>`).join('')}
+  </div>
+ </div>`).join('')}
+ </div>`}
+
+/* ============ VIEW: PHONE PREVIEW ============ */
+function phoneHtml(){
+ const f=state.form,tp=tplOf(),g=selGuest(),single=state.linkMode==='single';
+ const dark=state.darkMode;
+ let bg='';
+ if(!dark){
+  if(state.bgType==='polos')bg=`background:${tp.g[0]};color:${tp.ink}`;
+  else if(state.bgType==='foto'&&state.cover)bg=`background:linear-gradient(rgba(255,255,255,.82),rgba(255,255,255,.88)),url(${state.cover}) center/cover;color:${tp.ink}`;
+  else bg=`background:${tplGrad(tp)};color:${tp.ink}`;
+ }
+ const patStyle=dark?'':(state.bgType==='pattern'?(patCss(tp)||`background-image:radial-gradient(${tp.accent}26 1.5px,transparent 1.8px);background-size:22px 22px;`):state.bgType==='foto'?'':patCss(tp));
+ const tF=fontFam(state.fontTitle),bF=fontFam(state.fontBody);
+ const nameColor=dark?'#FDE68A':state.accent;
+ const dt=new Date(f.tanggalAcara);
+ return `
+ <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;width:340px">
+  <span class="lbl">Live Preview • ${esc(tp.nama)}</span>
+  <span class="pill" style="background:#fff;border:1px solid var(--line);font-size:10px"><span class="dot pulse" style="width:6px;height:6px;background:#10b981"></span>Live update</span>
+ </div>
+ <div class="phone"><div class="screen">
+  <div class="urlbar">
+   <div style="width:20px;height:20px;border-radius:99px;background:#e5e5e5;display:grid;place-items:center;font-size:10px">🔒</div>
+   <div class="urlpill"><span style="overflow:hidden;text-overflow:ellipsis">${previewUrl()}</span>${single?'<span style="margin-left:auto;font-size:8px;padding:2px 6px;border-radius:99px;background:#111;color:#fff;font-weight:700;flex:none">1 LINK</span>':''}</div>
+   <div style="width:12px;height:12px;border-radius:99px;background:#ddd"></div>
+  </div>
+  <div class="notch"></div>
+  <div class="${dark?'emerald-bg':''}" style="flex:1;${dark?'color:#FDE68A':bg};${state.dblBorder?`border:6px double ${state.accent}`:''}">
+   <div style="padding:20px;text-align:center;font-family:${tF};${patStyle}">
+    ${f.showBismillah?`<div style="margin-bottom:12px"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+     <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}
+    ${tp.deco?`<div style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px">${tp.deco}</div>`:''}
+    ${state.goldOrn?`<div style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent)"></div>`:''}
+    <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF}">${titleOf()}</div>
+    <h1 style="margin-top:12px;font-size:28px;line-height:.95;font-weight:700;color:${nameColor}">
+    ${state.event==='pernikahan'
+     ?`<span style="display:block">${esc(f.namaPria)} ${f.gelarPria?`<span style="font-size:14px">${esc(f.gelarPria)}</span>`:''}</span><span style="font-size:18px;font-weight:400">&</span><span style="display:block">${esc(f.namaWanita)} ${f.gelarWanita?`<span style="font-size:14px">${esc(f.gelarWanita)}</span>`:''}</span>`
+     :`<span style="display:block">${esc(f.namaAnak)}</span>`}</h1>
+    <div style="margin-top:12px;font-size:11px;line-height:1.7;opacity:.8;font-family:${bF}">
+    ${state.event==='pernikahan'?`<div>${esc(f.putraPutri)}</div><div style="margin-top:4px">${esc(f.putriDari)}</div>`
+     :`<div>${esc(f.putraDari)} ${f.umurAnak||f.usia?`• ${esc(f.umurAnak||f.usia+' Tahun')}`:''} ${f.temaUltah||f.temaAqiqah?`• ${esc(state.event==='ultah'?f.temaUltah:f.temaAqiqah)}`:''}</div>`}</div>
+    ${g?`<div style="margin:20px auto 0;max-width:260px;border-radius:16px;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border:1px solid #ddd;padding:12px;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.05);font-family:${bF}">
+     <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;display:flex;align-items:center;justify-content:center;gap:4px">Kepada YTH ${single?'<span style="padding:2px 6px;border-radius:99px;background:#111;color:#fff;font-size:8px">1 LINK MODE</span>':''}</div>
+     <div style="font-size:14px;font-weight:600;margin-top:4px">${single?'Tamu Undangan':esc(g.nama)}</div>
+     ${single?`<div style="font-size:10px;margin-top:4px;color:#737373;line-height:1.4">${esc(g.nama)} <span style="padding:2px 4px;border-radius:99px;background:#FFFBEB;border:1px solid #FDE68A;color:#8a6d0f;font-size:9px">(link sama untuk semua)</span><div style="margin-top:4px;font-family:ui-monospace,monospace">QR: ${g.code} • unik</div></div>`
+     :`<div style="font-size:10px;margin-top:4px;color:#737373">QR Check-in: ${g.code}</div>`}</div>`:''}
+    ${single&&!g?`<div style="margin:20px auto 0;max-width:260px;border-radius:16px;background:rgba(255,255,255,.9);border:1px solid #ddd;padding:12px;color:#000;font-family:${bF}">
+     <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Kepada YTH</div>
+     <div style="font-size:14px;font-weight:600;margin-top:4px">Tamu Undangan</div>
+     <div style="font-size:10px;margin-top:4px;color:#737373">Mode 1 Link • QR tetap unik per tamu</div></div>`:''}
+    ${single?`<div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:10px;padding:6px 12px;border-radius:99px;background:#111;color:#fff"><span class="dot pulse" style="width:6px;height:6px;background:#D4AF37"></span>Mode: 1 Link Untuk Semua • QR Random Panitia</div>`:''}
+    <div style="margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-family:${bF}">
+     <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:18px;font-weight:700">${daysLeft()}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">Hari</div></div>
+     <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:18px;font-weight:700">${esc(f.jamAcara)}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">${esc(f.zona)}</div></div>
+     <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:14px;font-weight:700;line-height:1.2">${isNaN(dt)?'—':dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short'})}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">${isNaN(dt)?'':dt.getFullYear()}</div></div>
+    </div>
+    ${state.cover?`<img src="${state.cover}" style="margin-top:24px;width:100%;height:200px;object-fit:cover;border-radius:20px;border:1px solid #ddd">`
+     :`<div style="margin-top:24px;height:160px;border-radius:20px;border:1px dashed #ccc;background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:11px;color:#a3a3a3;font-family:${bF}">Foto Utama</div>`}
+    <div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${bF}">
+     <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Waktu & Tempat</div>
+     <div style="margin-top:8px;font-size:13px;font-weight:600">${esc(f.venue)}</div>
+     <div style="font-size:11px;color:#525252;margin-top:4px;line-height:1.6">${esc(f.alamat)}</div>
+     ${f.sesiKedua?`<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px">
+      <div style="border-radius:12px;background:#FFFBEB;border:1px solid #FDE68A;padding:8px"><b>Akad</b><div>${esc(f.jamAkad)} ${esc(f.zona)}</div></div>
+      <div style="border-radius:12px;background:#f0f9ff;border:1px solid #dbeafe;padding:8px"><b>Resepsi</b><div>${esc(f.jamResepsi)} ${esc(f.zona)}</div></div></div>`:''}
+     <div style="margin-top:12px;font-size:11px;line-height:1.7;font-style:italic">"${esc(f.ucapanCustom)}"</div>
+    </div>
+    ${g?`<div style="margin-top:16px;border-radius:20px;background:#fff;border:1px solid #ddd;padding:12px;text-align:left;color:#111;font-family:${bF}">
+     <div style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px">QR Check-in ${single?'<span style="font-size:9px;padding:2px 8px;border-radius:99px;background:#111;color:#fff">UNIK PER TAMU</span>':''}</div>
+     <div style="display:flex;gap:12px;margin-top:8px;align-items:center">
+      <img src="${qrData(g)}" style="width:72px;height:72px;border-radius:12px;border:1px solid #ddd;background:#fff;padding:4px">
+      <div style="font-size:11px"><div style="font-family:ui-monospace,monospace">${g.code}</div>
+      <div style="font-size:10px;color:#737373;margin-top:4px">${single?'Link sama, QR beda — scan panitia':'Tunjukkan saat masuk venue'}</div></div>
+     </div></div>`:''}
+    ${state.gallery.length?`<div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${state.gallery.slice(0,6).map(img=>`<img src="${img}" style="height:72px;width:100%;object-fit:cover;border-radius:12px;border:1px solid #ddd">`).join('')}</div>`:''}
+    <div style="margin-top:24px;display:flex;gap:8px;font-family:${bF}">
+     ${f.showMapsBtn?`<a href="${esc(f.mapsLink)}" target="_blank" rel="noopener" style="flex:1;height:44px;border-radius:99px;background:#111;color:#fff;font-size:12px;font-weight:500;display:grid;place-items:center;text-decoration:none">Buka Maps 📍</a>`:''}
+     <button style="flex:1;height:44px;border-radius:99px;background:#fff;border:1px solid #ddd;font-size:12px;font-weight:500;color:#111">RSVP Hadir</button>
+    </div>
+    <div style="margin-top:24px;padding:12px;border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;text-align:left;color:#111;font-family:${bF}">
+     <div style="font-size:11px;font-weight:600">Doa ${state.doa}</div>
+     <div style="font-size:11px;margin-top:4px;line-height:1.8;text-align:right;font-family:'Lora',serif">${(DOA[state.doa]||DOA.pernikahan).ar}</div>
+     <div style="font-size:10px;margin-top:8px;color:#525252">${(DOA[state.doa]||DOA.pernikahan).latin}</div>
+    </div>
+    ${state.amplop.showAmplop?`<div style="margin-top:24px;border-radius:20px;background:#111;color:#fff;padding:16px;text-align:left;font-family:${bF}">
+     <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)">Amplop Digital</div>
+     <div style="margin-top:8px;font-size:12px">${esc(state.amplop.bank)} • ${esc(state.amplop.noRek)}</div>
+     <div style="font-size:11px;color:rgba(255,255,255,.7)">a.n ${esc(state.amplop.pemilik)} • ${esc(state.amplop.ewallet)} ${esc(state.amplop.noEwallet)}</div>
+     ${state.amplop.showCopy?`<button onclick="copyTxt('${esc(state.amplop.noRek)}','No rekening disalin ✓')" style="margin-top:12px;width:100%;height:36px;border-radius:99px;background:#fff;color:#000;font-size:11px;font-weight:500">Copy No Rekening</button>`:''}
+    </div>`:''}
+    <div style="margin:32px 0;font-family:${bF}">
+     <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.5">asproject.my.id • Premium Rp75rb</div>
+     <div class="gold" style="margin:8px auto 0;width:40px;height:40px;border-radius:99px;display:grid;place-items:center;font-size:12px;font-weight:700;color:#5a4a12">as</div>
+    </div>
+   </div>
+  </div>
+  <button onclick="togglePlay()" style="position:absolute;bottom:88px;right:12px;width:44px;height:44px;border-radius:99px;background:#111;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.3);display:grid;place-items:center;font-size:16px;border:1px solid rgba(255,255,255,.2);z-index:4">${state.playing?'❚❚':'♪'}</button>
+  <div style="height:72px;border-top:1px solid var(--line);background:rgba(255,255,255,.9);backdrop-filter:blur(24px);display:flex;align-items:center;gap:8px;padding:0 12px">
+   <a target="_blank" href="https://wa.me/?text=${encodeURIComponent(previewUrl()+' — '+displayName())}" style="flex:1;height:40px;border-radius:99px;background:#25D366;color:#fff;font-size:12px;font-weight:500;display:grid;place-items:center;text-decoration:none">Share WA</a>
+   <button onclick="copyTxt(previewUrl(),'Link disalin ✓')" style="flex:1;height:40px;border-radius:99px;background:#111;color:#fff;font-size:12px;font-weight:500">Copy Link</button>
+  </div>
+ </div></div>
+ <div style="margin-top:16px;width:340px;border-radius:16px;background:#fff;border:1px solid var(--line);padding:12px;display:flex;align-items:center;gap:8px">
+  <div style="width:32px;height:32px;border-radius:99px;background:var(--soft);display:grid;place-items:center;font-size:12px">✦</div>
+  <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500">Slug auto dari nama mempelai</div>
+  <div style="font-size:10px;color:var(--mut);font-family:ui-monospace,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${baseUrl().replace('https://','')} ${state.linkMode==='single'?'• 1 link':'• ?to=Nama'}</div></div>
+  <span class="pill" style="font-size:10px;${state.linkMode==='single'?'background:#111;color:#fff':'background:var(--cream);border:1px solid var(--cream2)'}">${state.linkMode==='single'?'1 LINK':'auto'}</span>
+ </div>`}
+
+/* ============ RENDER ============ */
+function render(){
+ $('root').innerHTML=header()+`<div class="layout">${sidebar()}
+  <main class="mainc sb">${state.page==='editor'?editor():state.page==='katalog'?katalog():arsip()}</main>
+  <aside class="prevc sb"><div id="phoneWrap" style="width:100%;max-width:360px;margin:auto">${phoneHtml()}</div></aside>
+ </div>`;
+ syncAudio()}
+function renderPreview(){const w=$('phoneWrap');if(w)w.innerHTML=phoneHtml()}
+render();
+</script>
+</body>
+</html>
