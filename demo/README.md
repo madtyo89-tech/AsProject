@@ -1,33 +1,72 @@
 # Folder Demo Template
 
-Isi folder ini dengan file template dari Google Drive → folder **"Katalog demo"**.
-Begitu file-nya ada di sini dengan nama persis seperti di bawah, tombol **"Demo Live"**
-otomatis muncul di modal tema pada katalog (`index.html`). Kalau file belum ada,
-tombolnya tidak ditampilkan (tidak akan ada link rusak / 404).
+Folder ini berisi halaman **demo live** yang ditautkan tombol "Demo Live" pada modal
+tema di katalog (`index.html`). Kalau file-nya belum ada, tombolnya tidak ditampilkan
+(tidak akan pernah ada link rusak / 404).
 
-| Nama file yang diharapkan | File asli di Drive | Ukuran | Status |
+| Nama file | Sumber | Ukuran | Status |
 | --- | --- | --- | --- |
-| `ice-blue.html` | `undangan_online_ice_blue.html` | 228.181 B | ⏳ menunggu file |
-| `wedding-premium.html` | `premium_wedding_invitation_template (2).html` | 187.475 B | ⏳ menunggu file |
-| `khitanan-premium.html` | `undangan-online-khitanan-premium.html` | 183.601 B | ⏳ menunggu file |
-| `khitanan-basic.html` | `undangan-online-khitanan-basic.html` | 190.232 B | ⏳ menunggu file |
-| `ultah-anak.pdf` | `Template Undangan Ulang Tahun Anak.pdf` | 121.730 B | ⏳ menunggu file |
+| `ice-blue.html` | **Bikinan ulang** — desain mengikuti template Drive `undangan_online_ice_blue.html` | 58 KB | ✅ aktif |
+| `wedding-premium.html` | Drive `premium_wedding_invitation_template (2).html` | 187.475 B | ⏳ belum ada |
+| `khitanan-premium.html` | Drive `undangan-online-khitanan-premium.html` | 183.601 B | ⏳ belum ada |
+| `khitanan-basic.html` | Drive `undangan-online-khitanan-basic.html` | 190.232 B | ⏳ belum ada |
+| `ultah-anak.pdf` | Drive `Template Undangan Ulang Tahun Anak.pdf` | 121.730 B | ⏳ belum ada |
 
-> Sandbox tempat pengerjaan tidak punya akses internet keluar, jadi file Drive tidak
-> bisa diunduh langsung dari sini. File perlu dikirim sebagai **lampiran file** di chat
-> (bukan paste teks) atau di-upload ke folder `demo/` lewat web GitHub.
+Karena `ice-blue.html` sudah ada, tombol **Demo Live** sekarang menyala di **4 kartu
+kategori Pernikahan** (Adat Jawa Elegan, Minimalist Sage, Luxury Gold, Floral Rustic) —
+`wedding-premium.html` belum ada, jadi pemetaannya jatuh ke cadangan berikutnya.
+
+## Kenapa `ice-blue.html` bikinan ulang, bukan file asli Drive?
+
+File Drive tidak bisa dipindahkan ke repo dari sini: sandbox tidak punya akses internet
+keluar (kecuali GitHub), dan menarik 228 KB lewat percakapan butuh ±350 ribu token karena
+connector Drive hanya bisa membaca dari awal file (tidak ada offset). Jadi halaman demo
+ditulis ulang dari nol, **setia ke desain template aslinya**:
+
+- palet biru es `#F8FCFF #FCFEFF #F0F9FF #E0F2FE #BAE6FD #7DD3FC #38BDF8 #0EA5E9 #0284C7`
+- font **Playfair Display** (judul) + **Outfit** (isi)
+- efek *glass* (`bg-white/60` + blur), garis `#BAE6FD`, motif butiran salju ❄
+- data contoh asli: **Rahmad & Lina**, The Ice Blue Hall, Jakarta
+- 3 varian: **Ice Blue Floral** (Best Seller), **Minimalist Frost** (Elegan), **Ocean Breeze** (Baru)
+- harga `Rp 75rb` (coret `Rp 150rb`), "Sekali bayar, aktif selamanya • Garansi 7 hari"
+
+Keuntungannya: tanpa React/Tailwind → **58 KB, ±4× lebih ringan**, tidak ada script bawaan
+platform, sudah ber-brand **AsProject.My.Id**, "Dibuat dengan cinta di Bandung.", dan
+semua tautan WhatsApp mengarah ke **085196755675**.
+
+Kalau suatu saat file aslinya bisa masuk: timpa `demo/ice-blue.html`, lalu jalankan
+`python3 tools/rapikan-demo-ice-blue.py --check` (md5 file asli:
+`d7375a83f6074be49f5bdb6f11445881`).
+
+## Isi demo `ice-blue.html`
+
+- **Sampul** "Buka Undangan" + musik `music/backsound-asproject.mp3` (tombol putar/stop di bilah atas).
+- **Custom nama tamu**: lewat URL `demo/ice-blue.html?to=Nama%20Tamu`, atau kotak
+  "Tulis namamu, Kak" di sampul (nama ikut mengisi form RSVP).
+- **Hitung mundur** — hari-H dihitung `hari ini + 47 hari` (sama seperti template aslinya),
+  jadi angkanya tidak pernah nol dan tanggalnya selalu masuk akal.
+- Seksi: mempelai · love story · acara + peta Google Maps · galeri · amplop digital
+  (salin nomor ke papan klip) · RSVP & ucapan · varian & harga · penutup.
+- **Ucapan tersimpan di localStorage** (`asproject_demo_iceblue_ucapan_v1`) + 3 contoh,
+  ada rekap "hadir / berhalangan".
+- **3 varian tema bisa diganti langsung di halaman** (klik kartu di seksi "Paket"):
+  halaman berganti kulit saat itu juga, pilihan tersimpan, bisa dipaksa lewat
+  `?varian=ocean-breeze`. Pesan WhatsApp-nya otomatis menyebut varian yang aktif.
+- Galeri memakai **seni gradian CSS**, bukan foto — sengaja, supaya demo tidak bergantung
+  server gambar pihak ketiga yang bisa 404. Foto asli tinggal dipasang di versi produksi.
 
 ## Peta tema → demo
 
 Diatur di `index.html`, blok `/* ---- Konfigurasi ---- */` pada script `aspWaFab`.
 Nilainya boleh string atau **array** — array dicoba berurutan dan dipakai file pertama
-yang benar-benar ada, jadi pemetaannya menyesuaikan sendiri seiring file masuk.
+yang benar-benar ada (dicek pakai `HEAD`, hasilnya di-cache), jadi pemetaannya
+menyesuaikan sendiri seiring file masuk.
 
 - `DEMO_BY_NAME` — override per nama tema.
 - `DEMO_BY_CATEGORY` — cadangan per kategori chip di kartu.
 
 ```
-Pernikahan  → wedding-premium.html, lalu ice-blue.html
+Pernikahan  → wedding-premium.html, lalu ice-blue.html   ← sekarang aktif
 Khitanan    → khitanan-premium.html, lalu khitanan-basic.html
 Ulang Tahun → ultah-anak.pdf
 Aqiqah      → (belum ada template-nya)
@@ -35,8 +74,8 @@ Aqiqah      → (belum ada template-nya)
 
 ## Tema di Studio
 
-`studio.html` sudah punya 3 tema hasil baca template **Ice Blue** (palet, font, dan
-nama variannya diambil dari template aslinya):
+`studio.html` punya 3 tema hasil baca template **Ice Blue** (palet, font, dan nama
+variannya diambil dari template aslinya):
 
 | id | nama | palet | harga |
 | --- | --- | --- | --- |
@@ -46,20 +85,16 @@ nama variannya diambil dari template aslinya):
 
 Template baru di `TPL` otomatis ditambahkan ke `state.katalog` yang sudah tersimpan di
 localStorage (lihat blok migrasi di `studio.html`), jadi tidak perlu reset data Studio.
+Harga 3 varian di halaman demo juga mengikuti angka-angka ini.
 
-## Catatan untuk `ice-blue.html` (dibaca dari isi template)
+## Kalau file asli dari Drive masuk
 
-Semua poin di bawah sudah diotomatiskan di **`tools/rapikan-demo-ice-blue.py`**
-(punya mode `--check`, assert jumlah tiap replacement, dan verifikasi akhir):
+`tools/rapikan-demo-ice-blue.py` merapikan 5 hal pada template aslinya (mode `--check`
+tersedia, setiap replacement memakai assert jumlah kemunculan):
 
-1. **Branding masih `KartuDigital.My.Id`** (header, footer, copyright) → `AsProject.My.Id`,
-   judul tab `React Artifact` → `Undangan Online Ice Blue — AsProject.My.Id`,
-   copyright `© 2025` → `© 2026`.
-2. **Kalimat kota** `Dibuat dengan cinta di Jakarta.` → `...di Bandung.`
-   (baris venue acara `The Ice Blue Hall, Jakarta` sengaja dibiarkan).
-3. **Ada kata "beb"** di placeholder form RSVP: `Tulis namamu beb` → `Tulis namamu, Kak`.
-4. Link footer masih `href="#"` dan "Chat WhatsApp Support Premium" cuma teks →
-   diarahkan ke `wa.me/6285196755675` dan `instagram.com/asproject.my.id`.
-5. Script bawaan platform pembuatnya (`ecto:*` postMessage, helper `target=_blank`,
-   `@font-face` Optimistic yang menunjuk `/fonts/...`) dibuang biar bersih & tidak 404.
-
+1. Rebrand `KartuDigital.My.Id` → `AsProject.My.Id` (+ judul tab, copyright `© 2026`).
+2. `Dibuat dengan cinta di Jakarta.` → `...di Bandung.` (baris venue acara dibiarkan).
+3. Placeholder RSVP `Tulis namamu beb` → `Tulis namamu, Kak`.
+4. Link mati `href="#"` → IG `@asproject.my.id`, `mailto:hello@asproject.my.id`, dan
+   teks "Chat WhatsApp Support Premium" / "WhatsApp Support" → `wa.me/6285196755675`.
+5. Buang `@font-face` "Optimistic" (404 di domain kita) + 3 script artifact `ecto:*`.

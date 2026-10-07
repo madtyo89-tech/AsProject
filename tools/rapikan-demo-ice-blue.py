@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# ---------------------------------------------------------------------------
+# CATATAN PENTING (2026-10-07)
+# demo/ice-blue.html yang ada di repo sekarang adalah VERSI BIKINAN ULANG
+# (satu file mandiri 58 KB, tanpa React/Tailwind), bukan file asli dari Drive.
+# Script ini hanya relevan kalau file asli
+#   undangan_online_ice_blue.html  -  228.181 B
+#   md5 d7375a83f6074be49f5bdb6f11445881
+# benar-benar masuk dan ditimpa ke demo/ice-blue.html. Jalankan dengan --check
+# dulu: kalau ada pola yang tidak cocok, berarti isinya bukan template asli,
+# jadi jangan dipaksa (script memang akan menolak menulis).
+# ---------------------------------------------------------------------------
 """
 Rapikan demo/ice-blue.html — template dari folder Drive "Katalog demo"
 (undangan_online_ice_blue.html) supaya cocok dipakai sebagai demo di asproject.my.id.
