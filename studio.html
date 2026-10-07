@@ -153,16 +153,19 @@ const DOA={
 const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ultah Anak',aqiqah:'Aqiqah'};
 const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶'};
 
-/* ===== 12 TEMPLATE SESUAI KATALOG ===== */
+/* ===== 15 TEMPLATE: 12 sesuai katalog + 3 varian Ice Blue dari folder Drive "Katalog demo" ===== */
 const TPL=[
  {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',badge:'BEST SELLER',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},
  {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',badge:'',deco:'🌿',pat:'',ft:'inter',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet'},
  {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',badge:'LUXURY',deco:'✨ ◆ ✨',pat:'',ft:'playfair',desc:'Glam soft luxury, emboss gold & black tie vibe'},
  {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',badge:'',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
+ {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',harga:75000,g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',badge:'NEW',deco:'❄ ✦ ❄',pat:'',ft:'playfair',desc:'Biru es elegan ala winter wedding, efek glass & floral frost yang sejuk'},
+ {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',harga:75000,g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',badge:'',deco:'❄',pat:'',ft:'inter',desc:'Clean & dingin, tipografi besar, fokus penuh ke foto couple'},
+ {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',harga:79000,g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',badge:'',deco:'🌊 ✦ 🌊',pat:'',ft:'playfair',desc:'Gradasi biru laut & ombak halus, pas buat acara outdoor atau pantai'},
  {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',badge:'FAVORIT',deco:'⭐ 🕌 ⭐',pat:'',ft:'poppins',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},
  {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#2e4228',badge:'',deco:'☪ ✦ ☪',pat:'arab',ft:'lora',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},
  {id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',badge:'CERIA',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins',desc:'Warna-warni happy, balon & confetti buat si kecil'},
- {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',badge:'AESTHETIC',deco:'💖 ✨ 💖',pat:'',ft:'playfair',desc:'Pink soft, aesthetic banget buat sweet seventeen-mu, beb'},
+ {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',badge:'AESTHETIC',deco:'💖 ✨ 💖',pat:'',ft:'playfair',desc:'Pink soft, aesthetic banget buat sweet seventeen-mu, Kak'},
  {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#3a3835',badge:'',deco:'◆',pat:'',ft:'inter',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},
  {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',badge:'',deco:'🍼 ☁️ 🍼',pat:'',ft:'poppins',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},
  {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',badge:'FAVORIT',deco:'🎀 🍼 🎀',pat:'',ft:'playfair',desc:'Pink blush super lembut buat si putri kecil kesayangan'},
@@ -212,6 +215,8 @@ try{state=Object.assign({},DEF,JSON.parse(localStorage.getItem('asproject_studio
 /* migrasi ringan: pastikan template valid, katalog pakai struktur TPL, & musik demo selalu tersedia */
 if(!state.tpl||!TPL.some(t=>t.id===state.tpl))state.tpl=TPL[0].id;
 if(!Array.isArray(state.katalog)||!state.katalog.length||!state.katalog[0].tpl)state.katalog=JSON.parse(JSON.stringify(DEF.katalog));
+/* template baru di TPL otomatis ikut masuk ke katalog yang sudah tersimpan di localStorage */
+TPL.forEach((t,i)=>{if(!state.katalog.some(k=>k.tpl===t.id))state.katalog.push({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:Math.max(0,340-(state.katalog.length+i)*23)})});
 if(!Array.isArray(state.musicDb))state.musicDb=[];
 state.musicDb=state.musicDb.filter(m=>!m.demo||DEMO_MUSIC.some(d=>d.url===m.url));
 if(state.music&&state.music.demo&&!DEMO_MUSIC.some(d=>d.url===state.music.url)){state.music=null;state.playing=false}

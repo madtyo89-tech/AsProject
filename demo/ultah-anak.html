@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id" data-tema="kids-party">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undangan Ulang Tahun — AsProject.My.Id</title>
+<meta name="description" content="Demo interaktif undangan ulang tahun: Kids Party, Sweet 17, dan Adult Elegant — ganti tema langsung di halaman.">
+<meta name="theme-color" content="#B87A1A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Poppins:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mesin.css">
+</head>
+<body class="terkunci">
+<div class="hias" id="hias" aria-hidden="true"></div>
+<div id="aspSampul"></div>
+<div id="aspBar"></div>
+<audio id="lagu" loop preload="auto" src="../music/backsound-asproject.mp3"></audio>
+<main id="aspMain"></main>
+<div id="aspFooter"></div>
+<a id="waTerbang" href="#" target="_blank" rel="noopener" title="Chat WhatsApp AsProject" aria-label="Chat WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.6-1.2.1-.2 0-.4 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.7 11.3 11.3 0 0 0 4.3 3.8c1.6.6 2.2.7 3 .6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.2-.2-.4-.3Z"/></svg>
+</a>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+/* Satu demo untuk tiga momen ultah di katalog: Kids Party (anak),
+   Sweet 17 (remaja), Adult Elegant (dewasa). Tokoh & label sampul
+   ikut berganti lewat override per tema. */
+window.ASP_DEMO = {
+  file: "ultah-anak",
+  jenis: "Ulang Tahun",
+  paket: "premium",
+  sampulLabel: "Pesta Ulang Tahun",
+  judulEyebrow: "Undangan Ulang Tahun",
+  namaBesar: 'Raka <span>ke-7</span>',
+  heroNama: 'Raka <span>ke-7</span>',
+  salam: "Dengan gembira kami mengundang sahabat dan keluarga untuk merayakan bertambahnya usia buah hati kami. Hadirnya kamu = hadiah terbaik!",
+  venueSingkat: "Bandung",
+  kota: "Bandung",
+  profilLabel: "Yang Berulang Tahun",
+  profilJudul: "Bintang Harinya",
+  profilSub: "Satu tahun lagi lebih seru — rayakan bareng, ya!",
+  orang: [{ inisial: "R", nama: "Raka Pratama", ket: "Putra dari\nBpk. Dimas Pratama & Ibu Eka Wulandari" }],
+  acara: [
+    { label: "Acara Utama", judul: "Tiup Lilin & Doa Bersama", waktu: "10.00 – 12.00 WIB", tempat: "Taman Bermain Ceria", alamat: "Jl. Aceh No. 44, Bandung" },
+    { label: "Party Time", judul: "Games, Makan & Foto Bersama", waktu: "12.00 – 14.00 WIB", tempat: "Taman Bermain Ceria", alamat: "Jl. Aceh No. 44, Bandung" }
+  ],
+  mapsUrl: "https://www.google.com/maps?q=Jl.%20Aceh%20No.%2044%2C%20Bandung&output=embed",
+  dresscode: { warna: ["#FFE082", "#F4A9C4", "#B8B2A8"], teks: "Warna cerah favoritmu" },
+  galeriJudul: "Tiga Momen, Tiga Tema",
+  galeriSub: "Satu foto per tema — ketuk untuk melihat namanya.",
+  galeri: [
+    { src: "../assets/demo/ultah/01-kids-party.jpg", alt: "Meja pesta anak dengan balon kuning dan kue", judul: "Kids Party", sub: "Balon · Confetti · Ceria", glyph: "★" },
+    { src: "../assets/demo/ultah/02-sweet-17.jpg", alt: "Remaja berhijab dengan gaun pink dan balon", judul: "Sweet 17", sub: "Pink · Aesthetic · Dreamy", glyph: "❀" },
+    { src: "../assets/demo/ultah/03-adult-elegant.jpg", alt: "Meja makan elegan bernuansa taupe dengan lilin", judul: "Adult Elegant", sub: "Mature · Minimal · Hangat", glyph: "✦" }
+  ],
+  amplopSub: "Kehadiranmu sudah cukup! Tapi kalau mau traktur kue tambahan, boleh lewat sini 😄",
+  akun: [
+    { kode: "BCA", nomor: "1234567890", atas: "a.n. Dimas Pratama" },
+    { kode: "DANA", nomor: "081234567890", atas: "a.n. Eka Wulandari" }
+  ],
+  paketJudul: "Tiga Wajah Ulang Tahun",
+  paketSub: "Ketuk kartu untuk mengganti seluruh tampilan — termasuk tokoh dan label undangannya.",
+  temaDefault: "kids-party",
+  tema: {
+    "kids-party": {
+      nama: "Kids Party", harga: 75000, coret: 150000, badge: "Best Seller", glyph: "★", motif: "bintang",
+      sampulLabel: "Ulang Tahun ke-7",
+      namaBesar: 'Raka <span>ke-7</span>', profilNama: "Raka Pratama",
+      profilKet: "Putra dari\nBpk. Dimas Pratama & Ibu Eka Wulandari",
+      desk: "Warna-warni happy, balon & confetti buat juara kecilnya.",
+      swatch: ["#FFF1C1", "#FFE082", "#FFB74D", "#B87A1A"],
+      fitur: ["Animasi balon & confetti", "Playlist lagu anak", "Galeri foto unlimited"],
+      vars: { bg: "#FFFBEF", bg2: "#FFF1C1", bg3: "#FFFDF6", soft: "#FFE082", line: "#F2D478", mid: "#FFB74D", acc: "#B87A1A", deep: "#8F5E12", onAcc: "#FFFDF6", ink: "#5C4310", ink2: "#7A5C24", mut: "#A98D55", card: "rgba(255,255,255,.72)", cardSolid: "#FFFFFF", serif: '"Playfair Display",Georgia,serif', sans: '"Poppins",system-ui,sans-serif' }
+    },
+    "sweet-17": {
+      nama: "Sweet 17", harga: 85000, coret: 170000, badge: "Aesthetic", glyph: "❀", motif: "cecek",
+      sampulLabel: "Sweet Seventeen",
+      namaBesar: 'Alina <span>ke-17</span>', profilNama: "Alina Wulandari",
+      profilKet: "Putri dari\nBpk. Dimas Pratama & Ibu Eka Wulandari",
+      desk: "Pink soft, aesthetic banget buat sweet seventeen-mu, Kak.",
+      swatch: ["#F9D5E5", "#F4A9C4", "#E57AA0", "#9E4A66"],
+      fitur: ["Gradasi pink dreamy", "Spot foto quote favorit", "Hitung mundur menuju hari-H"],
+      vars: { bg: "#FEF6FA", bg2: "#F9D5E5", bg3: "#FFFBFD", soft: "#F4A9C4", line: "#ECAAC4", mid: "#E57AA0", acc: "#9E4A66", deep: "#7C374F", onAcc: "#FFFBFD", ink: "#5A2739", ink2: "#7A4456", mut: "#A87C8B", card: "rgba(255,255,255,.7)", cardSolid: "#FFFFFF", serif: '"Lora",Georgia,serif', sans: '"Poppins",system-ui,sans-serif' }
+    },
+    "adult-elegant": {
+      nama: "Adult Elegant", harga: 79000, coret: 158000, badge: "Mature", glyph: "✦", motif: "garis",
+      sampulLabel: "Ulang Tahun ke-50",
+      namaBesar: 'Bpk. Hartono <span>ke-50</span>', profilNama: "Hartono Wijaya",
+      profilKet: "Suami dari\nIbu Lilis Suryani",
+      desk: "Mature, minimal, buat ultah ke-30, 40, 50 yang classy.",
+      swatch: ["#E8E6E1", "#D5D0C9", "#B8B2A8", "#5A5753"],
+      fitur: ["Palet taupe tenang", "Tipografi serif berkelas", "Cocok untuk dinner intim"],
+      vars: { bg: "#F6F5F2", bg2: "#E8E6E1", bg3: "#FCFBFA", soft: "#D5D0C9", line: "#C8C2B8", mid: "#B8B2A8", acc: "#5A5753", deep: "#3E3C39", onAcc: "#FCFBFA", ink: "#33312E", ink2: "#4E4B47", mut: "#85817B", card: "rgba(255,255,255,.7)", cardSolid: "#FFFFFF", serif: '"Playfair Display",Georgia,serif', sans: '"Inter",system-ui,sans-serif' }
+    }
+  },
+  ucapanContoh: [
+    { nama: "Sepupu-sepupu Raka", hadir: "hadir", pesan: "Selamat ulang tahun Raka! Siapkan kue cokelatnya yang besar ya 🎂", waktu: Date.now() - 864e5 - 36e5 * 5 },
+    { nama: "Teman-teman kelas 1B", hadir: "hadir", pesan: "Happy birthday Raka! Semoga makin pintar dan jago main bola.", waktu: Date.now() - 864e5 - 36e5 * 16 },
+    { nama: "Nenek & Kakek", hadir: "ragu", pesan: "Doa terbaik untuk cucu kesayangan. Nenek usahakan hadir kalau sehat ya, Nak.", waktu: Date.now() - 864e5 - 36e5 * 28 }
+  ],
+  penutup: "Terima kasih sudah jadi bagian dari cerita bahagia kami. Sampai jumpa di pesta!",
+  penutupKecil: "Yang berbahagia,",
+  ttd: 'Raka <span>&</span> Keluarga',
+  demoLain: [
+    { href: "aqiqah.html", label: "Aqiqah" },
+    { href: "khitanan-premium.html", label: "Khitanan Premium" },
+    { href: "wedding-premium.html", label: "Wedding Premium" },
+    { href: "ice-blue.html", label: "Ice Blue (Pernikahan)" }
+  ]
+};
+</script>
+<script src="_mesin.js"></script>
+</body>
+</html>

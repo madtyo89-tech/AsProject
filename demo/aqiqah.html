@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id" data-tema="baby-boy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undangan Aqiqah — AsProject.My.Id</title>
+<meta name="description" content="Demo interaktif undangan aqiqah: Baby Boy, Baby Girl, dan Islamic Neutral — ganti tema langsung di halaman.">
+<meta name="theme-color" content="#4A7FB5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Poppins:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mesin.css">
+</head>
+<body class="terkunci">
+<div class="hias" id="hias" aria-hidden="true"></div>
+<div id="aspSampul"></div>
+<div id="aspBar"></div>
+<audio id="lagu" loop preload="auto" src="../music/backsound-asproject.mp3"></audio>
+<main id="aspMain"></main>
+<div id="aspFooter"></div>
+<a id="waTerbang" href="#" target="_blank" rel="noopener" title="Chat WhatsApp AsProject" aria-label="Chat WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.6-1.2.1-.2 0-.4 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.7 11.3 11.3 0 0 0 4.3 3.8c1.6.6 2.2.7 3 .6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.2-.2-.4-.3Z"/></svg>
+</a>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+/* Satu demo untuk tiga tema aqiqah di katalog: Baby Boy, Baby Girl,
+   Islamic Neutral. Tokoh & label sampul ikut berganti per tema. */
+window.ASP_DEMO = {
+  file: "aqiqah",
+  jenis: "Aqiqah",
+  paket: "premium",
+  sampulLabel: "Aqiqah & Tasyakuran",
+  judulEyebrow: "Undangan Aqiqah & Tasyakuran",
+  namaBesar: 'Arsylan <span>Ayyub</span>',
+  heroNama: 'Arsylan <span>Ayyub</span>',
+  salam: "Assalamu'alaikum warahmatullahi wabarakatuh. Penuh syukur atas kelahiran putra/putri kami, kami mengundang Bapak/Ibu/Saudara/i dalam acara aqiqah & tasyakuran.",
+  venueSingkat: "Bandung",
+  kota: "Bandung",
+  profilLabel: "Ananda",
+  profilJudul: "Penjaga Hati Kami",
+  profilSub: "Mohon doa restu agar tumbuh menjadi anak yang shalih/shalihah dan berbakti.",
+  orang: [{ inisial: "A", nama: "Arsylan Ayyub Ramadhan", ket: "Putra pertama dari\nBpk. Fajar Ramadhan & Ibu Nadia Safitri" }],
+  ayat: { teks: "Setiap anak yang lahir tergadai dengan aqiqahnya yang disembelih pada hari ketujuh, dicukur rambutnya, dan diberi nama.", sumber: "HR. Ibnu Majah" },
+  acara: [
+    { label: "Akikah", judul: "Pencukuran & Pemberian Nama", waktu: "09.00 – 11.00 WIB", tempat: "Rumah Keluarga Ramadhan", alamat: "Jl. Cendana No. 8, Bandung" },
+    { label: "Tasyakuran", judul: "Doa Bersama & Santunan", waktu: "11.30 – 13.00 WIB", tempat: "Rumah Keluarga Ramadhan", alamat: "Jl. Cendana No. 8, Bandung" }
+  ],
+  mapsUrl: "https://www.google.com/maps?q=Jl.%20Cendana%20No.%208%2C%20Bandung&output=embed",
+  dresscode: { warna: ["#BBDEFB", "#F8BBD0", "#E8DFC8"], teks: "Lembut & nyaman" },
+  galeriJudul: "Tiga Nuansa Aqiqah",
+  galeriSub: "Satu foto per tema — ketuk untuk melihat namanya.",
+  galeri: [
+    { src: "../assets/demo/aqiqah/01-baby-boy.jpg", alt: "Bayi laki-laki tertidur dengan selimut rajut biru", judul: "Baby Boy", sub: "Biru Langit · Lembut", glyph: "☁" },
+    { src: "../assets/demo/aqiqah/02-baby-girl.jpg", alt: "Bayi perempuan tertidur dengan bedong pink", judul: "Baby Girl", sub: "Pink Blush · Manis", glyph: "❀" },
+    { src: "../assets/demo/aqiqah/03-islamic-neutral.jpg", alt: "Kamar bayi bernuansa krem dengan lampu rotan", judul: "Islamic Neutral", sub: "Krem · Kaligrafi · Hangat", glyph: "✦" }
+  ],
+  amplopSub: "Doa restu untuk ananda adalah hadiah terbaik. Tanda kasih boleh melalui kanal berikut.",
+  akun: [
+    { kode: "BCA", nomor: "1234567890", atas: "a.n. Fajar Ramadhan" },
+    { kode: "MDR", nomor: "9876543210", atas: "a.n. Nadia Safitri" }
+  ],
+  paketJudul: "Tiga Nuansa, Satu Syukur",
+  paketSub: "Ketuk kartu untuk mengganti seluruh tampilan — termasuk nama ananda di sampul.",
+  temaDefault: "baby-boy",
+  tema: {
+    "baby-boy": {
+      nama: "Baby Boy", harga: 75000, coret: 150000, badge: "Lembut", glyph: "☁", motif: "cecek",
+      sampulLabel: "Aqiqah Ananda",
+      namaBesar: 'Arsylan <span>Ayyub</span>', profilNama: "Arsylan Ayyub Ramadhan",
+      profilKet: "Putra pertama dari\nBpk. Fajar Ramadhan & Ibu Nadia Safitri",
+      desk: "Lembut biru langit, ilustrasi baby boy yang gemes.",
+      swatch: ["#E3F2FD", "#BBDEFB", "#90CAF9", "#4A7FB5"],
+      fitur: ["Palet biru langit tenang", "Ilustrasi awan & bintang", "Galeri 15 foto + 1 video"],
+      vars: { bg: "#F3F9FE", bg2: "#E3F2FD", bg3: "#FBFDFF", soft: "#BBDEFB", line: "#A9CFF0", mid: "#90CAF9", acc: "#4A7FB5", deep: "#35618F", onAcc: "#FBFDFF", ink: "#23445F", ink2: "#40607A", mut: "#7C97AC", card: "rgba(255,255,255,.72)", cardSolid: "#FFFFFF", serif: '"Playfair Display",Georgia,serif', sans: '"Poppins",system-ui,sans-serif' }
+    },
+    "baby-girl": {
+      nama: "Baby Girl", harga: 75000, coret: 150000, badge: "Manis", glyph: "❀", motif: "cecek",
+      sampulLabel: "Aqiqah Ananda",
+      namaBesar: 'Ayla <span>Humaira</span>', profilNama: "Ayla Humaira Ramadhan",
+      profilKet: "Putri pertama dari\nBpk. Fajar Ramadhan & Ibu Nadia Safitri",
+      desk: "Pink blush super lembut buat si putri kecil kesayangan.",
+      swatch: ["#FCE4EC", "#F8BBD0", "#F48FB1", "#B55A7A"],
+      fitur: ["Palet pink blush lembut", "Ornamen bunga halus", "Galeri 15 foto + 1 video"],
+      vars: { bg: "#FEF7FA", bg2: "#FCE4EC", bg3: "#FFFBFD", soft: "#F8BBD0", line: "#EFB3C8", mid: "#F48FB1", acc: "#B55A7A", deep: "#93405F", onAcc: "#FFFBFD", ink: "#5C2A3E", ink2: "#7A4658", mut: "#A87E8D", card: "rgba(255,255,255,.72)", cardSolid: "#FFFFFF", serif: '"Lora",Georgia,serif', sans: '"Poppins",system-ui,sans-serif' }
+    },
+    "islamic-neutral": {
+      nama: "Islamic Neutral", harga: 75000, coret: 150000, badge: "Netral", glyph: "✦", motif: "garis",
+      sampulLabel: "Aqiqah & Tasyakuran",
+      namaBesar: 'Ananda <span>Tercinta</span>', profilNama: "Ananda Tercinta",
+      profilKet: "Putra/putri dari\nBpk. Fajar Ramadhan & Ibu Nadia Safitri",
+      desk: "Gender neutral, kaligrafi doa & nuansa cream hangat.",
+      swatch: ["#F5F0E6", "#E8DFC8", "#D4C4A0", "#7A6D4E"],
+      fitur: ["Nuansa krem gender-neutral", "Ornamen geometris islami", "Cocok untuk laki-laki & perempuan"],
+      vars: { bg: "#FAF7F0", bg2: "#F5F0E6", bg3: "#FDFBF7", soft: "#E8DFC8", line: "#DCCFAF", mid: "#D4C4A0", acc: "#7A6D4E", deep: "#5C5238", onAcc: "#FDFBF7", ink: "#443C2A", ink2: "#5E5540", mut: "#8D8267", card: "rgba(255,255,255,.7)", cardSolid: "#FFFFFF", serif: '"Playfair Display",Georgia,serif', sans: '"Inter",system-ui,sans-serif' }
+    }
+  },
+  ucapanContoh: [
+    { nama: "Umi Kulsum & keluarga", hadir: "hadir", pesan: "MasyaAllah, selamat atas kelahiran ananda. Semoga jadi anak shalih, sehat, dan membahagiakan keduanya 🤍", waktu: Date.now() - 864e5 - 36e5 * 3 },
+    { nama: "Rekan Kantor Bpk. Fajar", hadir: "hadir", pesan: "Selamat buat keluarga kecilnya! Semoga aqiqahnya berkah dan ananda tumbuh cerdas.", waktu: Date.now() - 864e5 - 36e5 * 14 },
+    { nama: "Mbah Uti", hadir: "ragu", pesan: "Cicitku sayang, doa Mbah selalu menyertai. Mbah usahakan hadir ya, Nak.", waktu: Date.now() - 864e5 - 36e5 * 26 }
+  ],
+  penutup: "Terima kasih atas doa dan kehadiran Bapak/Ibu/Saudara/i. Semoga menjadi amal yang diterima di sisi-Nya.",
+  penutupKecil: "Kami yang berbahagia,",
+  ttd: 'Keluarga <span>Ramadhan</span>',
+  demoLain: [
+    { href: "ultah-anak.html", label: "Ulang Tahun" },
+    { href: "khitanan-premium.html", label: "Khitanan Premium" },
+    { href: "wedding-premium.html", label: "Wedding Premium" },
+    { href: "ice-blue.html", label: "Ice Blue (Pernikahan)" }
+  ]
+};
+</script>
+<script src="_mesin.js"></script>
+</body>
+</html>

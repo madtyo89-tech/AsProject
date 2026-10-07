@@ -1,0 +1,7 @@
+# Artefak build / cache lokal — tidak perlu ikut ke GitHub Pages
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+node_modules/
+*.log
