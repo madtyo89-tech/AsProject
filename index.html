@@ -227,27 +227,22 @@ Error generating stack: `+i.message+`
   /* ---- Konfigurasi ---- */
   var WA_NUMBER = '6285196755675';
 
-  /* Peta demo per nama tema. Kalau nama tidak terdaftar, jatuh ke peta kategori.
-     File harus ada di folder /demo/ — tombol hanya muncul kalau file-nya benar-benar ada. */
+  /* Demo per tema. Nilai boleh string atau array (array = dicoba berurutan,
+     dipakai yang file-nya benar-benar ada). Tema yang tidak terdaftar di
+     DEMO_BY_NAME jatuh ke DEMO_BY_CATEGORY sesuai chip kategorinya. */
   var DEMO_BY_NAME = {
-    'Adat Jawa Elegan': 'demo/wedding-premium.html',
-    'Minimalist Sage': 'demo/wedding-premium.html',
-    'Luxury Gold': 'demo/wedding-premium.html',
-    'Floral Rustic': 'demo/wedding-premium.html',
     'Biru Ceria': 'demo/khitanan-basic.html',
     'Islamic Elegant': 'demo/khitanan-premium.html',
-    'Islamic Neutral': 'demo/khitanan-premium.html',
-    'Kids Party': 'demo/ultah-anak.pdf',
-    'Sweet 17': 'demo/ice-blue.html',
-    'Adult Elegant': 'demo/ice-blue.html',
-    'Baby Boy': 'demo/ice-blue.html',
-    'Baby Girl': 'demo/ice-blue.html'
+    'Islamic Neutral': 'demo/khitanan-premium.html'
   };
   var DEMO_BY_CATEGORY = {
-    'Pernikahan': 'demo/wedding-premium.html',
-    'Khitanan': 'demo/khitanan-premium.html',
-    'Ulang Tahun': 'demo/ultah-anak.pdf',
-    'Aqiqah': 'demo/ice-blue.html'
+    /* ice-blue.html = template pernikahan (Ice Blue Floral / Minimalist Frost /
+       Ocean Breeze), jadi dipakai sebagai cadangan kategori Pernikahan sampai
+       wedding-premium.html masuk. */
+    'Pernikahan': ['demo/wedding-premium.html', 'demo/ice-blue.html'],
+    'Khitanan': ['demo/khitanan-premium.html', 'demo/khitanan-basic.html'],
+    'Ulang Tahun': ['demo/ultah-anak.pdf'],
+    'Aqiqah': []
   };
 
   var WA_ICON = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3C9.4 3 4 8.3 4 14.9c0 2.6.8 5.1 2.3 7.1L4.7 29l7.2-2.1c1.6.9 3.4 1.4 5.1 1.4 6.6 0 12-5.3 12-11.9S22.6 3 16 3zm0 21.6c-1.7 0-3.4-.5-4.8-1.4l-.3-.2-4.3 1.2 1.2-4.1-.2-.3c-1-1.5-1.5-3.2-1.5-5C6.1 9.4 10.5 5 16 5s9.9 4.4 9.9 9.9-4.4 9.7-9.9 9.7zm5.4-7.3c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-1 1.2-.4.2-.7.1c-.3-.1-1.2-.5-2.3-1.5-.9-.8-1.4-1.7-1.6-2s0-.4.1-.6l.5-.6c.1-.2.2-.3.3-.5s0-.4 0-.5-.7-1.7-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4s-1 1-1 2.4 1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.2-.6-.3z"/></svg>';
@@ -270,16 +265,32 @@ Error generating stack: `+i.message+`
   function textOf(n) { return n && n.textContent ? n.textContent.trim() : ''; }
 
   function cardInfo(card) {
-    var name = textOf(card.querySelector('h3'));
-    var cat = textOf(card.querySelector('.catalog-art span'));
-    return { name: name, category: cat, path: DEMO_BY_NAME[name] || DEMO_BY_CATEGORY[cat] || null };
+    return {
+      name: textOf(card.querySelector('h3')),
+      category: textOf(card.querySelector('.catalog-art span'))
+    };
   }
 
+  /* Cek keberadaan file sekali saja per path, hasilnya di-cache. */
   function probe(path, cb) {
     if (path in demoOk) { cb(demoOk[path]); return; }
     fetch(path, { method: 'HEAD' })
       .then(function (r) { demoOk[path] = !!r.ok; cb(demoOk[path]); })
       .catch(function () { demoOk[path] = false; cb(false); });
+  }
+
+  /* Ambil file demo pertama yang tersedia dari daftar kandidat. */
+  function resolveDemo(candidates, cb) {
+    var list = !candidates ? [] : (Array.isArray(candidates) ? candidates : [candidates]);
+    var i = 0;
+    (function next() {
+      if (i >= list.length) { cb(null); return; }
+      probe(list[i++], function (ok) { ok ? cb(list[i - 1]) : next(); });
+    })();
+  }
+
+  function demoCandidates(name, category) {
+    return DEMO_BY_NAME[name] || DEMO_BY_CATEGORY[category] || null;
   }
 
   /* ---- Tombol WA mengambang ---- */
@@ -332,11 +343,9 @@ Error generating stack: `+i.message+`
     var name = textOf(m.querySelector('h3'));
     if (!row || !name || row.querySelector('.asp-demo')) return;
     var cat = (name === lastTheme) ? lastCategory : null;
-    var path = DEMO_BY_NAME[name] || DEMO_BY_CATEGORY[cat] || null;
-    if (!path) return;
 
-    probe(path, function (ok) {
-      if (!ok) return;
+    resolveDemo(demoCandidates(name, cat), function (path) {
+      if (!path) return;
       var now = modalEl();
       if (!now) return;
       var rowNow = now.querySelector('.mt-8.flex.gap-3');
