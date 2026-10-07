@@ -1,6 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<head>
+<script>
+/* Router undangan: subdomain wildcard {slug}.asproject.my.id (dan root
+   github.io project page) diarahkan ke undangan.html yang memuat data
+   Supabase berdasarkan slug di hostname. Query (?to=…) dipertahankan. */
+(function(){try{
+ var h=location.hostname.toLowerCase(),p=location.pathname,q=location.search+location.hash;
+ var main=(h==='asproject.my.id'||h==='www.asproject.my.id');
+ if(main)return;
+ /* subdomain wildcard: hanya root yang diarahkan, file lain tetap jalan */
+ if(h.slice(-16)==='.asproject.my.id'&&h.length>16&&(p==='/'||p==='/index.html')){
+  location.replace('/undangan.html'+q);return}
+ /* project page github.io: root proyek saja */
+ if(h.slice(-10)==='.github.io'){
+  var m=p.match(/^\/?asproject\/?$/i);
+  if(m){location.replace('/AsProject/undangan.html'+q)}
+ }
+}catch(e){}})();
+</script>
+<link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Katalog Undangan Online — asproject.my.id</title>

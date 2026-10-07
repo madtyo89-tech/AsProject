@@ -26,7 +26,8 @@ import sys
 import posixpath
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HALAMAN = ["index.html", "studio.html", "demo/ice-blue.html"]
+HALAMAN = ["index.html", "studio.html", "undangan.html", "404.html",
+           "checkin.html", "demo/ice-blue.html"]
 TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 
 hitung = {"ok": 0, "masalah": 0, "info": 0}
@@ -257,13 +258,66 @@ def cek_peta_demo():
         lapor("ok" if os.path.exists(os.path.join(ROOT, wajib)) else "masalah", f"{wajib} ada (butuh GitHub Pages)")
 
 
+def _tpl_ids(rel):
+    """Urutan id template di array TPL sebuah file (index kolom 'theme')."""
+    s = baca(rel)
+    m = re.search(r"const TPL=\[(.*?)\];", s, re.S)
+    if not m:
+        return None
+    return re.findall(r"id:'([a-z0-9-]+)'", m.group(1))
+
+
+def cek_pipeline_undangan():
+    print("\n[11] Pipeline tautan undangan (studio → link → 404 → undangan.html)")
+    for wajib in ("undangan.html", "404.html", "checkin.html"):
+        lapor("ok" if os.path.exists(os.path.join(ROOT, wajib)) else "masalah",
+              f"{wajib} ada (bagian pipeline tautan undangan)")
+    studio = baca("studio.html")
+    undangan = baca("undangan.html")
+    f404 = baca("404.html")
+    index = baca("index.html")
+    # 1) studio memakai link berbasis path /u/{slug} (selalu resolvable)
+    ok = "function baseUrl()" in studio and "'/u/'" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: baseUrl memakai format /u/{slug} (bukan subdomain polos)")
+    # 2) QR check-in menunjuk checkin.html di root
+    ok = "/checkin.html?id='+code" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: link QR checkin memakai /checkin.html di root")
+    # 3) undangan.html membaca slug dari query ATAU subdomain
+    lapor("ok" if ("Q.get('slug')" in undangan and "asproject.my.id'" in undangan) else "masalah",
+          "undangan.html: slug dari ?slug= dan subdomain wildcard")
+    # 4) undangan.html fetch ke Supabase invitation_drafts
+    lapor("ok" if "invitation_drafts" in undangan else "masalah",
+          "undangan.html: fetch tabel Supabase invitation_drafts")
+    # 5) 404.html merutekan /u/{slug} ke undangan.html
+    lapor("ok" if "([A-Za-z0-9-]+)" in f404 and "undangan.html?slug=" in f404 else "masalah",
+          "404.html: rute /u/{slug} → undangan.html?slug=…")
+    # 6) index.html mengarahkan subdomain wildcard ke undangan.html
+    lapor("ok" if "undangan.html'+q" in index and ".asproject.my.id'" in index else "masalah",
+          "index.html: router subdomain wildcard → undangan.html")
+    # 7) schema Supabase punya kolom snapshot jsonb
+    lapor("ok" if "add column if not exists data jsonb" in baca("supabase-schema.sql") else "masalah",
+          "supabase-schema.sql: kolom data jsonb tersedia")
+    # 8) urutan TPL studio == urutan TPL undangan (index kolom 'theme' harus sama)
+    a, b = _tpl_ids("studio.html"), _tpl_ids("undangan.html")
+    if a is None or b is None:
+        lapor("masalah", "array TPL tidak ditemukan di studio/undangan")
+    elif a == b:
+        lapor("ok", f"urutan TPL identik di studio & undangan ({len(a)} template)")
+    else:
+        lapor("masalah",
+              f"urutan TPL BERBEDA (studio {len(a)} vs undangan {len(b)}) — "
+              f"kolom 'theme' akan salah tema!")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
     print("=" * 74)
     for fn in (cek_link, cek_url_berbahaya, cek_sintaks, cek_id,
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
-               cek_resolusi_demo, cek_anchor):
+               cek_resolusi_demo, cek_anchor, cek_pipeline_undangan):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halaman tidak ditemukan — AsProject</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<style>
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#FAF6F1;color:#2b2b2b;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}
+.box{max-width:440px;width:100%;background:#fff;border:1px solid #f0e6d6;border-radius:24px;padding:40px 30px;text-align:center;box-shadow:0 30px 60px rgba(90,70,30,.10)}
+.badge{width:56px;height:56px;margin:0 auto;border-radius:16px;background:#0a0a0a;display:grid;place-items:center}
+.badge img{width:42px;height:42px}
+h1{font-size:22px;margin:18px 0 8px;font-family:Georgia,"Times New Roman",serif;color:#3a2f1d}
+p{font-size:13px;line-height:1.7;color:#6b6157;margin:0}
+a.btn{display:inline-flex;align-items:center;justify-content:center;margin-top:22px;height:46px;padding:0 24px;border-radius:99px;background:linear-gradient(135deg,#e8c96a,#D4AF37);color:#3a2f0b;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 10px 24px rgba(212,175,55,.35)}
+a.sec{display:inline-block;margin-top:14px;font-size:12px;color:#8a7f72;text-decoration:none}
+.route{font-family:ui-monospace,monospace;font-size:11px;background:#faf3e6;border:1px solid #f0e6d6;border-radius:10px;padding:8px 12px;margin-top:16px;word-break:break-all;color:#8a6d0f}
+</style>
+</head>
+<body>
+<div class="box" id="box">
+ <div class="badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div>
+ <h1 id="judul">Membuka tautan…</h1>
+ <p id="isi">Mohon tunggu, Anda sedang diarahkan.</p>
+ <div class="route" id="rute" hidden></div>
+</div>
+<script>
+/* =====================================================================
+   404.html — router tautan undangan (dipakai GitHub Pages untuk path
+   yang tidak ada, jadi tidak perlu file fisik per slug):
+     /u/{slug}            → undangan.html?slug={slug}
+     /{slug}/checkin.html → tidak perlu (file checkin.html asli ada)
+     path mengandung /checkin → checkin.html (dengan query semula)
+   Berjalan baik di domain utama (asproject.my.id) maupun di
+   {user}.github.io/AsProject/ (base path dihitung otomatis).
+   ===================================================================== */
+(function(){
+ var p=location.pathname, s=location.search, hx=location.hash;
+ var title=document.getElementById('judul'),
+     isi=document.getElementById('isi'),
+     rute=document.getElementById('rute');
+
+ function baseOf(path,idx){ // segmen sebelum titik potong (diakhiri '/')
+   var b=path.slice(0,idx);
+   if(!b) b='/';
+   if(b.charAt(b.length-1)!=='/') b+='/';
+   return b;
+ }
+ function show404(mes){
+   title.textContent='Halaman tidak ditemukan';
+   isi.innerHTML=mes+'<br>Halaman yang Anda cari mungkin sudah dipindah atau tautannya salah.';
+ }
+
+ function withQuery(q,h){ /* gabungkan query/hash tanpa mengulang '?' */
+   return (q?'&'+q.slice(1):'')+(h||'');
+ }
+ try{
+   /* /u/{slug} (hanya segmen slug di akhir path; query ?to=… dipertahankan) */
+   var m=p.match(/\/u\/([A-Za-z0-9-]+)\/?$/);
+   if(m){
+     var base=baseOf(p,m.index);
+     location.replace(base+'undangan.html?slug='+encodeURIComponent(m[1])+withQuery(s,hx));
+     return;
+   }
+   /* /checkin atau /u/{slug}/checkin (tanpa .html, QR lama) —
+      checkin.html ada di ROOT repo, jadi base-nya dihitung dari posisi /u/ */
+   var c=p.match(/\/checkin(?:\/|\?|$)/i);
+   if(c){
+     var uIdx=p.indexOf('/u/');
+     var rootBase=(uIdx>=0)?baseOf(p,uIdx):'/';
+     location.replace(rootBase+'checkin.html'+s+hx);
+     return;
+   }
+   /* bukan tautan undangan → 404 ramah */
+   rute.hidden=false;
+   rute.textContent=location.href;
+   show404('Tautan ini bukan undangan yang terdaftar.');
+   var a=document.createElement('a');
+   a.className='btn';a.href=baseOf(p,0)+'index.html';a.textContent='Kembali ke Beranda';
+   document.getElementById('box').appendChild(a);
+ }catch(e){
+   show404('Terjadi kesalahan saat membuka tautan.');
+ }
+})();
+</script>
+</body>
+</html>

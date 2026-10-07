@@ -8,6 +8,12 @@ create table if not exists public.invitation_drafts (
   music_url text, music_name text, theme integer not null default 0,
   created_at timestamptz not null default now(), updated_at timestamptz not null default now()
 );
+
+-- Snapshot lengkap per publish (form, doa, amplop, galeri, dsb) —
+-- dibaca oleh undangan.html saat tamu membuka tautan.
+-- Aman dijalankan ulang; diperlukan agar undangan live tampil
+-- persis seperti di studio.
+alter table public.invitation_drafts add column if not exists data jsonb;
 alter table public.invitation_drafts enable row level security;
 
 drop policy if exists "public can read drafts" on public.invitation_drafts;
