@@ -244,7 +244,31 @@ Error generating stack: `+i.message+`
   .catalog-card:hover .catalog-art::after{transform:translateX(75%) rotate(0.001deg)}
   .catalog-card h3{transition:color .25s ease,transform .3s ease}
   .catalog-card:hover h3{transform:translateY(-1px)}
+  /* ---- Kupu-kupu interaktif di katalog ----
+     Sayap mengepak lewat CSS 3D; posisi & interaksi (menghindar kursor,
+     lahir dari klik) diatur JS kecil di bawah. pointer-events:none supaya
+     tidak pernah menghalangi klik pada kartu. */
+  .asp-kupu-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6}
+  .asp-kupu{
+    position:absolute;left:0;top:0;width:var(--u,26px);height:var(--u,26px);
+    perspective:140px;will-change:transform;opacity:var(--o,.92);
+    filter:drop-shadow(0 3px 7px rgba(90,60,30,.16))}
+  .asp-kupu-badan{
+    position:absolute;left:50%;top:16%;width:9%;height:66%;transform:translateX(-50%);
+    border-radius:99px;background:rgba(72,52,32,.5)}
+  .asp-sayap{
+    position:absolute;top:5%;width:47%;height:80%;opacity:.88;
+    border-radius:64% 36% 58% 42%/62% 58% 42% 38%;
+    background:radial-gradient(125% 125% at 32% 26%,var(--c1,#E8C9A8),var(--c2,#C99A6B) 72%)}
+  .asp-sayap.asp-kiri{left:2%;transform-origin:100% 50%;animation:aspKepakKiri var(--kd,.5s) ease-in-out infinite alternate}
+  .asp-sayap.asp-kanan{right:2%;transform-origin:0% 50%;animation:aspKepakKanan var(--kd,.5s) ease-in-out infinite alternate}
+  @keyframes aspKepakKiri{from{transform:rotateY(16deg)}to{transform:rotateY(66deg)}}
+  @keyframes aspKepakKanan{from{transform:rotateY(-16deg)}to{transform:rotateY(-66deg)}}
+  .asp-kupu.asp-lahir{animation:aspLahir .5s cubic-bezier(.22,.9,.34,1) both}
+  @keyframes aspLahir{from{scale:.25}to{scale:1}}
+
   @media (prefers-reduced-motion:reduce){
+    .asp-kupu-layer{display:none}
     .catalog-card,.catalog-art > *,.catalog-card h3{transition:none}
     .catalog-card.asp-tunggu{opacity:1;transform:none}
     .catalog-card.asp-in{animation:none}
@@ -459,7 +483,136 @@ Error generating stack: `+i.message+`
     }, 1500);
   }
 
-  function enhance() { pastikanAnchor(); syncFab(); syncVisibility(); enhanceModal(); hiasKatalog(); }
+  /* ================= Kupu-kupu interaktif =================
+     Beberapa kupu-kupu berkeliaran pelan di area katalog:
+     - sayap mengepak (CSS), badan melayang jalan acak yang halus (JS)
+     - menghindar lembut dari kursor dalam radius 150px
+     - klik di area katalog = seekor kupu lahir di titik itu, mengepak
+       naik, lalu menghilang
+     Hemat baterai: loop berhenti memperbarui saat katalog tidak terlihat,
+     dan seluruh fitur mati pada prefers-reduced-motion. */
+  var kupuLayer = null;
+  var kupu = [];
+  var kupuSementara = 0;
+  var penunjuk = { x: -1e4, y: -1e4, ada: false };
+  var WARNA_KUPU = [
+    ['#F3D9C0', '#C99A6B'],   /* krem emas   */
+    ['#DCE8D8', '#8FA98A'],   /* sage        */
+    ['#F6DCD6', '#D89A8C'],   /* terakota    */
+    ['#DCEBFA', '#8FB8DE'],   /* biru lembut */
+    ['#F3E6BC', '#C9A84C']    /* emas        */
+  ];
+
+  function gerakReduced() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function siapkanLayerKupu() {
+    var sec = document.getElementById('katalog');
+    if (!sec || gerakReduced()) return null;
+    if (kupuLayer && kupuLayer.isConnected) return kupuLayer;
+    if (kupuLayer) { kupu = []; kupuSementara = 0; }   /* layer lama lepas: mulai bersih */
+    if (getComputedStyle(sec).position === 'static') sec.style.position = 'relative';
+    kupuLayer = node('div', 'asp-kupu-layer');
+    kupuLayer.setAttribute('aria-hidden', 'true');
+    sec.appendChild(kupuLayer);
+    return kupuLayer;
+  }
+
+  function lahirKupu(x, y, sementara) {
+    if (!kupuLayer) return;
+    var batas = sementara ? 5 : 6;
+    if (sementara && kupuSementara >= batas) return;
+    if (!sementara && kupu.filter(function (k) { return !k.sementara; }).length >= 6) return;
+    var w = WARNA_KUPU[Math.floor(Math.random() * WARNA_KUPU.length)];
+    var el = node('span', 'asp-kupu' + (sementara ? ' asp-lahir' : ''));
+    el.innerHTML = '<span class="asp-sayap asp-kiri"></span><span class="asp-sayap asp-kanan"></span><span class="asp-kupu-badan"></span>';
+    el.style.setProperty('--c1', w[0]);
+    el.style.setProperty('--c2', w[1]);
+    el.style.setProperty('--u', (sementara ? 20 + Math.random() * 10 : 20 + Math.random() * 16).toFixed(0) + 'px');
+    el.style.setProperty('--kd', (0.38 + Math.random() * 0.3).toFixed(2) + 's');
+    if (sementara) kupuSementara++;
+    kupuLayer.appendChild(el);
+    kupu.push({
+      el: el, x: x, y: y,
+      a: Math.random() * Math.PI * 2,
+      sp: 0.35 + Math.random() * 0.4,
+      lahir: performance.now(),
+      sementara: !!sementara
+    });
+  }
+
+  function isiKandangKupu() {
+    if (!siapkanLayerKupu() || kupu.length) {
+      if (!kupuLayer) return;
+    }
+    if (!kupuLayer) return;
+    var w = kupuLayer.clientWidth, h = kupuLayer.clientHeight;
+    if (!w || !h) return;
+    var jumlah = window.innerWidth < 768 ? 4 : 6;
+    for (var i = kupu.filter(function (k) { return !k.sementara; }).length; i < jumlah; i++) {
+      lahirKupu(40 + Math.random() * (w - 80), 40 + Math.random() * (h - 80), false);
+    }
+  }
+
+  function langkahKupu() {
+    requestAnimationFrame(langkahKupu);
+    if (!kupuLayer || !kupu.length) return;
+    if (!katalogVisible) return;                 /* hemat: diam saat tak terlihat */
+    var w = kupuLayer.clientWidth, h = kupuLayer.clientHeight;
+    var kini = performance.now();
+    for (var i = kupu.length - 1; i >= 0; i--) {
+      var k = kupu[i];
+      if (k.sementara) {
+        var umur = kini - k.lahir;
+        if (umur > 2600) {                       /* kupu klik: naik lalu pergi */
+          k.el.remove(); kupu.splice(i, 1); kupuSementara--;
+          continue;
+        }
+        k.y -= 0.9; k.x += Math.sin(umur / 220) * 0.8;
+        k.el.style.opacity = (umur < 300 ? umur / 300 : 1 - Math.max(0, (umur - 1800) / 800)).toFixed(2);
+      } else {
+        k.a += (Math.random() - 0.5) * 0.14;     /* jalan acak yang halus */
+        k.x += Math.cos(k.a) * k.sp;
+        k.y += Math.sin(k.a) * k.sp * 0.72;
+        if (penunjuk.ada) {                      /* menghindar dari kursor */
+          var dx = k.x - penunjuk.x, dy = k.y - penunjuk.y;
+          var d = Math.sqrt(dx * dx + dy * dy) || 1;
+          if (d < 150) { var f = (150 - d) / 150 * 1.7; k.x += dx / d * f; k.y += dy / d * f; }
+        }
+        if (k.x < 8) { k.x = 8; k.a = Math.PI - k.a; }
+        if (k.x > w - 8) { k.x = w - 8; k.a = Math.PI - k.a; }
+        if (k.y < 8) { k.y = 8; k.a = -k.a; }
+        if (k.y > h - 8) { k.y = h - 8; k.a = -k.a; }
+      }
+      var arah = Math.cos(k.a) < 0 ? -1 : 1;
+      var miring = (Math.sin(k.a) * 9).toFixed(1);
+      k.el.style.transform = 'translate3d(' + k.x.toFixed(1) + 'px,' + k.y.toFixed(1) +
+        'px,0) rotate(' + miring + 'deg) scaleX(' + arah + ')';
+    }
+  }
+
+  function pasangKupu() {
+    if (gerakReduced()) return;
+    document.addEventListener('pointermove', function (e) {
+      if (!kupuLayer) return;
+      var r = kupuLayer.getBoundingClientRect();
+      penunjuk.x = e.clientX - r.left;
+      penunjuk.y = e.clientY - r.top;
+      penunjuk.ada = e.clientX > r.left - 40 && e.clientX < r.right + 40 &&
+                     e.clientY > r.top - 40 && e.clientY < r.bottom + 40;
+    }, { passive: true });
+    document.addEventListener('click', function (e) {
+      var sec = document.getElementById('katalog');
+      if (!sec || !sec.contains(e.target) || gerakReduced()) return;
+      if (!siapkanLayerKupu()) return;
+      var r = kupuLayer.getBoundingClientRect();
+      lahirKupu(e.clientX - r.left, e.clientY - r.top, true);
+    }, true);
+    requestAnimationFrame(langkahKupu);
+  }
+
+  function enhance() { pastikanAnchor(); syncFab(); syncVisibility(); enhanceModal(); hiasKatalog(); isiKandangKupu(); }
   function schedule() {
     if (timer) return;
     timer = setTimeout(function () { timer = null; enhance(); }, 120);
@@ -485,6 +638,7 @@ Error generating stack: `+i.message+`
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
+    pasangKupu();
 
     var tries = 0;
     (function find() {
