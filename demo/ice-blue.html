@@ -263,7 +263,12 @@ button,input,textarea,select{font:inherit;color:inherit}
   position:relative;box-shadow:var(--sh-sm);cursor:pointer;transition:.3s;
 }
 .bingkai:hover{transform:translateY(-4px) scale(1.01);box-shadow:var(--sh)}
-.bingkai .isi{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px}
+.bingkai img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .55s ease}
+.bingkai:hover img{transform:scale(1.06)}
+.bingkai .isi{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:36px 14px 12px;
+  text-align:left;background:linear-gradient(180deg,transparent,rgba(8,47,73,.78))}
+code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;background:rgba(224,242,254,.8);
+  border:1px solid var(--line);border-radius:6px;padding:1px 6px}
 .bingkai .isi strong{font-family:var(--serif);font-size:17px;color:#fff;font-weight:500;text-shadow:0 2px 12px rgba(2,60,90,.45)}
 .bingkai .isi small{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.9);margin-top:5px}
 .bingkai::after{
@@ -592,15 +597,16 @@ footer{
     <p class="sub rv">Enam cuplikan pra-pernikayaan kami. Ketuk untuk memperbesar.</p>
 
     <div class="galeri">
-      <div class="bingkai g1 rv" data-judul="Pre-wedding di Pantai"><span class="keping-besar">❄</span><div class="isi"><div><strong>Angin Laut</strong><small>Pre-wedding · Pantai</small></div></div></div>
-      <div class="bingkai g2 rv" data-judul="Foto studio keluarga"><span class="keping-besar">❅</span><div class="isi"><div><strong>Cahaya Studio</strong><small>Foto Keluarga</small></div></div></div>
-      <div class="bingkai g3 rv" data-judul="Lamaran di rumah Lina"><span class="keping-besar">❄</span><div class="isi"><div><strong>Hari Lamaran</strong><small>2024</small></div></div></div>
-      <div class="bingkai g4 rv" data-judul="Cincin pernikahan"><span class="keping-besar">❆</span><div class="isi"><div><strong>Dua Cincin</strong><small>Janji</small></div></div></div>
-      <div class="bingkai g5 rv" data-judul="Dekorasi ballroom biru es"><span class="keping-besar">❅</span><div class="isi"><div><strong>Dekor Es</strong><small>Ballroom</small></div></div></div>
-      <div class="bingkai g6 rv" data-judul="Undangan digital Ice Blue"><span class="keping-besar">❄</span><div class="isi"><div><strong>Undangan Ini</strong><small>Ice Blue Edition</small></div></div></div>
+      <figure class="bingkai g1 rv" data-judul="Pre-wedding di Pantai"><img src="../assets/demo/ice-blue/01-prewedding-pantai.jpg" alt="Rahmad &amp; Lina berjalan bergandengan di pantai" loading="lazy" decoding="async" onerror="this.style.display='none'"><span class="keping-besar">❄</span><figcaption class="isi"><div><strong>Angin Laut</strong><small>Pre-wedding · Pantai</small></div></figcaption></figure>
+      <figure class="bingkai g2 rv" data-judul="Foto studio keluarga"><img src="../assets/demo/ice-blue/02-foto-studio.jpg" alt="Potret studio Rahmad &amp; Lina berlatar biru es" loading="lazy" decoding="async" onerror="this.style.display='none'"><span class="keping-besar">❅</span><figcaption class="isi"><div><strong>Cahaya Studio</strong><small>Potret Berdua</small></div></figcaption></figure>
+      <figure class="bingkai g3 rv" data-judul="Lamaran di rumah Lina"><img src="../assets/demo/ice-blue/03-lamaran.jpg" alt="Kotak cincin saat lamaran di rumah Lina" loading="lazy" decoding="async" onerror="this.style.display='none'"><span class="keping-besar">❄</span><figcaption class="isi"><div><strong>Hari Lamaran</strong><small>2024</small></div></figcaption></figure>
+      <figure class="bingkai g4 rv" data-judul="Cincin pernikahan"><img src="../assets/demo/ice-blue/04-cincin.jpg" alt="Dua cincin pernikahan di atas es" loading="lazy" decoding="async" onerror="this.style.display='none'"><span class="keping-besar">❆</span><figcaption class="isi"><div><strong>Dua Cincin</strong><small>Janji Kami</small></div></figcaption></figure>
+      <figure class="bingkai g5 rv" data-judul="Dekorasi ballroom biru es"><img src="../assets/demo/ice-blue/05-dekor-ballroom.jpg" alt="Dekorasi ballroom tema biru es" loading="lazy" decoding="async" onerror="this.style.display='none'"><span class="keping-besar">❅</span><figcaption class="isi"><div><strong>Dekor Es</strong><small>Ballroom</small></div></figcaption></figure>
+      <figure class="bingkai g6 rv" data-judul="Undangan digital Ice Blue"><img src="../assets/demo/ice-blue/06-undangan.jpg" alt="Perangkat undangan cetak tema Ice Blue" loading="lazy" decoding="async" onerror="this.style.display='none'"><span class="keping-besar">❄</span><figcaption class="isi"><div><strong>Undangan Ini</strong><small>Ice Blue Edition</small></div></figcaption></figure>
     </div>
     <p class="sub rv" style="margin-top:22px;font-size:12.5px">
-      Foto asli bisa dipasang di versi produksi — di demo ini dipakai seni gradian biar tetap ringan &amp; tidak bergantung server lain.
+      Enam foto ini dibuat dengan AI khusus untuk demo dan tersimpan di folder
+      <code>assets/demo/ice-blue/</code>. Di versi produksi tinggal ganti file-nya — kodenya tidak berubah.
     </p>
   </section>
 

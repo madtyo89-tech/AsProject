@@ -52,8 +52,10 @@ Kalau suatu saat file aslinya bisa masuk: timpa `demo/ice-blue.html`, lalu jalan
 - **3 varian tema bisa diganti langsung di halaman** (klik kartu di seksi "Paket"):
   halaman berganti kulit saat itu juga, pilihan tersimpan, bisa dipaksa lewat
   `?varian=ocean-breeze`. Pesan WhatsApp-nya otomatis menyebut varian yang aktif.
-- Galeri memakai **seni gradian CSS**, bukan foto — sengaja, supaya demo tidak bergantung
-  server gambar pihak ketiga yang bisa 404. Foto asli tinggal dipasang di versi produksi.
+- Galeri memakai **6 foto AI** (±1,4 MB) di folder `assets/demo/ice-blue/`, dimuat malas
+  (`loading="lazy"`). Gradian biru es di belakang tile tetap jadi cadangan: kalau gambar
+  gagal dimuat, `onerror` menyembunyikannya dan tile kembali tampil sebagai gradian.
+  Di versi produksi tinggal ganti file-nya — kode HTML/CSS-nya tidak berubah.
 
 ## Peta tema → demo
 
