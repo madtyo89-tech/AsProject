@@ -167,8 +167,10 @@ def cek_resolusi_demo():
         lapor("masalah", "array tema katalog (Pn) tidak ditemukan")
         return
     tema = re.findall(r'\{id:"([^"]+)",name:"([^"]+)",category:"([^"]+)"', pn.group(1))
-    nama = dict(re.findall(r"'([^']+)':\s*'(demo/[^']+)'", s[:s.index("DEMO_BY_CATEGORY")]))
-    kat_blok = s[s.index("DEMO_BY_CATEGORY"): s.index("DEMO_BY_CATEGORY") + 900]
+    i_nama = s.index("var DEMO_BY_NAME")
+    i_kat = s.index("var DEMO_BY_CATEGORY", i_nama)
+    nama = dict(re.findall(r"'([^']+)':\s*'(demo/[^']+)'", s[i_nama:i_kat]))
+    kat_blok = s[i_kat:i_kat + 1200]
     kat = {}
     for k, v in re.findall(r"'([^']+)':\s*(\[[^\]]*\]|'demo/[^']+')", kat_blok):
         kat[k] = re.findall(r"'(demo/[^']+)'", v) if v.startswith("[") else [v]
@@ -176,7 +178,7 @@ def cek_resolusi_demo():
     for tid, tnama, tkat in tema:
         kandidat = nama.get(tnama) or None
         daftar = [kandidat] if kandidat else kat.get(tkat, [])
-        pilih = next((d for d in daftar if os.path.exists(os.path.join(ROOT, d))), None)
+        pilih = next((d for d in daftar if os.path.exists(os.path.join(ROOT, d.split('?')[0]))), None)
         if pilih:
             dapat += 1
         lapor("ok" if pilih else "info",
@@ -248,7 +250,7 @@ def cek_peta_demo():
     print("\n[8] Peta demo vs file yang ada")
     s = baca("index.html")
     for jalur in sorted(set(re.findall(r"'(demo/[^']+)'", s))):
-        ada = os.path.exists(os.path.join(ROOT, jalur))
+        ada = os.path.exists(os.path.join(ROOT, jalur.split('?')[0]))
         lapor("ok" if ada else "info",
               f"{jalur}: {'ada' if ada else 'BELUM ADA (tombol Demo Live otomatis disembunyikan)'}")
     for wajib in ("CNAME", ".nojekyll"):
