@@ -117,6 +117,26 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink);lin
 #musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
 #musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* ---------- ANIMASI ---------- */
+@keyframes uUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes uZoom{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes uWord{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes uDeco{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:scaleX(1)}}
+@keyframes uPop{0%{opacity:0;transform:scale(.5)}60%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+.cov .anim-up{animation:uUp .8s cubic-bezier(.22,.8,.36,1) both}
+.cov .anim-zoom{animation:uZoom .9s cubic-bezier(.22,.8,.36,1) both}
+.cov .anim-word{display:inline-block;animation:uWord .7s cubic-bezier(.22,.8,.36,1) both}
+.cov .anim-deco{transform-origin:center;animation:uDeco .9s cubic-bezier(.22,.8,.36,1) both}
+.cov .anim-pop{animation:uPop .7s cubic-bezier(.22,.8,.36,1) both}
+/* scroll reveal */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.8,.36,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+ .cov .anim-up,.cov .anim-zoom,.cov .anim-word,.cov .anim-deco,.cov .anim-pop{animation:none}
+ .rv{opacity:1;transform:none;transition:none}
+ #cover .open{animation:none}
+}
+
 /* footer */
 .footer{margin-top:34px;text-align:center}
 .footer .orn{font-size:15px;letter-spacing:10px;color:var(--gold)}
@@ -181,6 +201,12 @@ const DOA={
 
 const EV_KICKER={pernikahan:'The Wedding Of',khitanan:'Tasyakuran Khitanan',ultah:'Sweet Birthday Party',aqiqah:'Tasyakuran Aqiqah'};
 const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ulang Tahun',aqiqah:'Aqiqah'};
+/* Quote bawaan per acara — HARUS sama dengan QUOTES di studio.html */
+const QUOTES={
+ pernikahan:{text:'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya.',author:'QS. Ar-Rum: 21'},
+ khitanan:{text:'Sebaik-baik kalian adalah orang yang paling baik kepada keluarganya.',author:'HR. Ahmad'},
+ ultah:{text:'Semoga tahun yang baru ini membawa kebahagiaan yang lebih besar dari sebelumnya.',author:'Ucapan Terbaik'},
+ aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
 
 /* ---------- util ---------- */
 const $=id=>document.getElementById(id);
@@ -229,6 +255,67 @@ function setupMusic(url,name){
  });
  return ()=>{a.play().catch(()=>{})}}
 
+/* ---------- 10 SLIDE KONTEN (id harus sama dengan SLIDES di studio.html) ---------- */
+function sItem(it){const m=String(it||'').split(/\s+—\s+|\s+-\s+/);return{a:(m[0]||'').trim(),b:m.slice(1).join(' — ').trim()}}
+function sLines(v){return String(v||'').split('\n').map(x=>x.trim()).filter(Boolean)}
+function sHex(h){return/^#[0-9a-fA-F]{3,8}$/.test(h)}
+function liveSlides(d,ev,tplF,fullNm,form,venue){
+ if(!d||!d.slides)return'';
+ const S=d.slides,h=[];
+ const card=inner=>`<div class="card rv">${inner}</div>`;
+ const kick=t=>`<div class="kicker">${t}</div>`;
+ if(S.timeline&&S.timeline.on){const it=sLines(S.timeline.items);
+  if(it.length)h.push(card(`${kick('⏱️ Timeline Acara')}<div style="margin-top:16px">`+it.map((x,i)=>{const s=sItem(x);return `
+   <div style="display:flex;gap:14px">
+    <div style="display:flex;flex-direction:column;align-items:center">
+     <div style="width:10px;height:10px;border-radius:99px;background:var(--accent);margin-top:5px;flex:none"></div>
+     ${i<it.length-1?`<div style="flex:1;width:2px;background:#e8ddc8;margin:4px 0"></div>`:''}
+    </div>
+    <div style="${i<it.length-1?'padding-bottom:16px':''}"><div style="font-size:14px;font-weight:700;color:var(--ink)">${esc(s.a||'Sesi')}${s.b?` <span style="font-weight:500;color:#8a7f72;font-size:12px">• ${esc(s.b)}</span>`:''}</div></div>
+   </div>`}).join('')+'</div>'))}
+ if(S.story&&S.story.on&&S.story.text.trim())h.push(`<div class="card rv"><div class="kicker">💞 Cerita Kami</div>
+  <p style="margin-top:14px;font-size:14px;font-style:italic;line-height:1.9;color:#57503f;font-family:Georgia,serif">${esc(S.story.text)}</p></div>`);
+ {const q=S.quote&&S.quote.custom?{text:S.quote.text,author:S.quote.author}:(QUOTES[ev]||QUOTES.pernikahan);
+  if(S.quote&&S.quote.on&&q.text)h.push(`<div class="card rv"><div style="font-size:34px;line-height:.8;color:var(--accent);opacity:.45">❝</div>
+  <div style="margin-top:12px;font-size:14.5px;font-style:italic;line-height:1.85;color:#4a4436;font-family:Georgia,serif">${esc(q.text)}</div>
+  <div style="margin-top:12px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9a8f82">— ${esc(q.author||'')}</div></div>`)}
+ if(S.menu&&S.menu.on){const it=sLines(S.menu.items);
+  if(it.length)h.push(card(`${kick('🍽️ Menu Acara')}<div style="margin-top:12px">`+it.map(x=>{const s=sItem(x);return `
+   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed #eadfc8"><div style="font-size:14px;font-weight:600;color:var(--ink)">${esc(s.a||'Menu')}</div><div style="font-size:12px;color:#8a7f72;text-align:right">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
+ if(S.party&&S.party.on){const it=sLines(S.party.items);
+  if(it.length)h.push(card(`${kick('🎩 Panitia / Bridal Party')}<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">`+it.map(x=>{const s=sItem(x);return `
+   <div style="display:flex;flex-direction:column;padding:12px 14px;border-radius:16px;background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d8;min-width:100px"><div style="font-size:13px;font-weight:700;color:var(--ink)">${esc(s.a||'')}</div><div style="font-size:11px;color:#8a7f72;margin-top:3px">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
+ if(S.dresscode&&S.dresscode.on){const cols=String(S.dresscode.colors||'').split(',').map(c=>c.trim()).filter(sHex);
+  h.push(`<div class="card rv"><div class="kicker">👗 Dress Code</div>
+  <div style="margin-top:10px;font-size:16px;font-weight:700;color:var(--ink)">${esc(S.dresscode.text||'—')}</div>
+  ${cols.length?`<div style="display:flex;justify-content:center;gap:10px;margin-top:16px">${cols.map(c=>`<div style="width:28px;height:28px;border-radius:99px;background:${c};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2)"></div>`).join('')}</div>
+  <div style="margin-top:10px;font-size:10px;font-family:ui-monospace,monospace;color:#b3a894">${esc(cols.join('  '))}</div>`:''}</div>`)}
+ if(S.map&&S.map.on){const q=(form&&form.alamat)||venue||'';
+  h.push(`<div class="rv"><div class="card" style="padding:0;overflow:hidden">
+   <div style="padding:12px 16px;font-size:12px;font-weight:600;color:var(--ink);display:flex;gap:8px;align-items:center;border-bottom:1px solid #f0e6d8">📍 ${esc(venue||'Lokasi Acara')}</div>
+   <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed" style="width:100%;height:200px;border:0;display:block" loading="lazy" title="Peta lokasi"></iframe></div></div>`)}
+ if(S.gift&&S.gift.on&&S.gift.text.trim())h.push(card(`${kick('🎁 Alamat Kado')}<div style="margin-top:12px;font-size:13px;line-height:1.8;color:#57503f">${esc(S.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:12px;font-size:22px">🎀</div>`));
+ if(S.rsvp&&S.rsvp.on)h.push(card(`${kick('✉️ RSVP')}
+  <p class="muted" style="margin-top:6px">Mohon konfirmasi kehadirannya melalui WhatsApp.</p>
+  <div style="margin-top:14px;text-align:left">
+   <input id="rvpN" value="${esc(GUEST)}" placeholder="Nama Anda" style="width:100%;height:46px;border:1px solid #e5d9c4;border-radius:14px;padding:0 14px;font-size:13px;background:#fffdf9">
+   <select id="rvpH" style="margin-top:10px;width:100%;height:46px;border:1px solid #e5d9c4;border-radius:14px;padding:0 12px;font-size:13px;background:#fffdf9">
+    <option>Hadir 🙌</option><option>Hadir, bawa keluarga</option><option>Tidak hadir — maaf 🙏</option></select>
+   <textarea id="rvpM" rows="2" placeholder="Ucapan untuk pasangan..." style="margin-top:10px;width:100%;border:1px solid #e5d9c4;border-radius:14px;padding:10px 14px;font-size:13px;background:#fffdf9;resize:none"></textarea>
+   <button onclick="liveRsvp()" style="margin-top:12px;width:100%;height:46px;border:0;border-radius:99px;background:#25D366;color:#fff;font-size:13px;font-weight:600">Kirim RSVP via WA</button>
+  </div>`));
+ if(S.closing&&S.closing.on&&S.closing.text.trim())h.push(`<div class="rv" style="margin-top:30px;text-align:center;padding:8px 16px">
+  <div style="font-size:14px;letter-spacing:10px;color:var(--gold)">❖ ✦ ❖</div>
+  <p style="margin-top:14px;font-size:14px;font-style:italic;line-height:1.9;color:#57503f;font-family:Georgia,serif">${esc(S.closing.text)}</p>
+  <div style="margin-top:14px;font-size:12px;font-weight:600;color:var(--accent)">${esc(fullNm)}</div></div>`);
+ return h.join('')}
+function liveRsvp(){
+ const n=document.getElementById('rvpN')?document.getElementById('rvpN').value.trim():'';
+ const hd=document.getElementById('rvpH')?document.getElementById('rvpH').value:'';
+ const m=document.getElementById('rvpM')?document.getElementById('rvpM').value.trim():'';
+ const t='RSVP — '+(n||GUEST||'Tamu')+'\nKonfirmasi: '+hd+(m?'\nPesan: '+m:'')+'\nTautan undangan: '+location.href.split('#')[0];
+ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
+
 /* ---------- build halaman ---------- */
 function boot(draft){
  const d=(draft.data&&typeof draft.data==='object')?draft.data:null;
@@ -273,45 +360,55 @@ function boot(draft){
 
  const play=setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
 
+ /* ---------- animasi (diatur dari Studio: cover / teks / scroll reveal) ---------- */
+ const AN=(d&&d.anim)||{cover:true,text:true,reveal:true};
+ const RM=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
+ const covOn=!!AN.cover&&!RM,txOn=!!AN.text&&!RM,rvOn=!!AN.reveal&&!RM;
+ const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
+ const wspan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="anim-word" style="animation-delay:${d0+i*90}ms">${esc(w)}</span>`).join(' ');
+ const RV=cls=>rvOn?cls+' rv':cls;
+
  /* ---------- HTML ---------- */
  let h='';
- h+=`<div id="cover"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="inner">
-   <div class="orn">${esc(tplF.deco)}</div>
-   <div class="kicker">${esc(EV_KICKER[ev]||'Undangan')}</div>`;
+ h+=`<div id="cover" class="${covOn?'cov':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="inner">
+   <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
+   <div class="kicker ${covOn?'anim-up':''}" style="${covOn?'animation-delay:400ms':''}">${esc(EV_KICKER[ev]||'Undangan')}</div>`;
  if(ev==='pernikahan'){
-  h+=`<h1>${esc(titleMain)}</h1><div class="amp">&amp;</div><h1>${esc(titleSub||'')}</h1>`;
+  h+=txOn
+   ?`<h1>${wspan(titleMain,550)}</h1><div class="amp anim-word" style="animation-delay:${550+nW(titleMain)*90+150}ms">&amp;</div><h1>${wspan(titleSub,550+nW(titleMain)*90+300)}</h1>`
+   :`<h1 class="${covOn?'anim-zoom':''}" style="${covOn?'animation-delay:550ms':''}">${esc(titleMain)}</h1><div class="amp ${covOn?'anim-up':''}" style="${covOn?'animation-delay:900ms':''}">&amp;</div><h1 class="${covOn?'anim-zoom':''}" style="${covOn?'animation-delay:1000ms':''}">${esc(titleSub||'')}</h1>`;
  }else{
-  h+=`<h1>${esc(titleMain)}</h1>`;
+  h+=txOn?`<h1>${wspan(titleMain,550)}</h1>`:`<h1 class="${covOn?'anim-zoom':''}" style="${covOn?'animation-delay:550ms':''}">${esc(titleMain)}</h1>`;
  }
- h+=`<div class="date">🗓 ${esc(dateStr||'—')}${timeStr?' • '+esc(timeStr):''}</div>`;
- if(venue)h+=`<div class="host">${esc(venue)}</div>`;
- h+=`<button class="open" id="btnOpen"><span class="env">✉️</span> Buka Undangan</button>
+ h+=`<div class="date ${covOn?'anim-up':''}" style="${covOn?'animation-delay:1300ms':''}">🗓 ${esc(dateStr||'—')}${timeStr?' • '+esc(timeStr):''}</div>`;
+ if(venue)h+=`<div class="host ${covOn?'anim-up':''}" style="${covOn?'animation-delay:1450ms':''}">${esc(venue)}</div>`;
+ h+=`<button class="open ${covOn?'anim-pop':''}" id="btnOpen" style="${covOn?'animation-delay:1600ms':''}"><span class="env">✉️</span> Buka Undangan</button>
  </div><div class="brand">AsProject • Undangan Digital</div></div>`;
 
  h+=`<div id="content"><div class="wrap">`;
 
  /* 1. Kepada YTH */
- h+=`<div class="card guest"><div class="ya">Kepada YTH</div>
+ h+=`<div class="${RV('card guest')}"><div class="ya">Kepada YTH</div>
   <div class="to">${esc(GUEST||'Bapak / Ibu / Saudara/i')}</div>
   <div class="divider">${esc(tplF.deco)}</div>
   <p class="muted">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.</p></div>`;
 
  /* 2. Doa */
- h+=`<div class="card"><div class="kicker">Doa</div>
+ h+=`<div class="${RV('card')}"><div class="kicker">Doa</div>
   <div class="doa-ar">${esc(doa.ar)}</div>
   <div class="doa-la">“${esc(doa.latin)}”</div>
   <div class="doa-arti">${esc(doa.arti)}</div></div>`;
 
  /* 3. Profil (pasangan / anak) */
  if(ev==='pernikahan'){
-  h+=`<div class="card"><div class="kicker">Mempelai</div>
+  h+=`<div class="${RV('card')}"><div class="kicker">Mempelai</div>
    <div class="couple">
     <div class="c"><div class="nm">${esc(names[0].nm)}</div><div class="rl">${names[0].rl}</div></div>
     <div class="heart">❦</div>
     <div class="c"><div class="nm">${esc(names[1].nm)}</div><div class="rl">${names[1].rl}</div></div>
    </div></div>`;
  }else{
-  h+=`<div class="card"><div class="kicker">${esc(EV_LABEL[ev]||'')}</div>
+  h+=`<div class="${RV('card')}"><div class="kicker">${esc(EV_LABEL[ev]||'')}</div>
    <div class="name-big">${esc(names[0].nm)}</div>
    ${names[0].rl?`<div class="role">${names[0].rl}</div>`:''}
    <div class="divider">${esc(tplF.deco)}</div></div>`;
@@ -319,7 +416,7 @@ function boot(draft){
 
  /* 4. Detail acara */
  const sesiKedua=d&&form.sesiKedua;
- h+=`<div class="card"><div class="kicker">Waktu & Tempat</div>
+ h+=`<div class="${RV('card')}"><div class="kicker">Waktu & Tempat</div>
   <div class="acara-grid">
    <div class="acara"><div class="lbl">${ev==='pernikahan'?(sesiKedua?'Akad Nikah':'Akad Nikah'):'Acara'}</div>
     <div class="tgl">${esc(dateStr||'—')}</div>
@@ -346,9 +443,12 @@ function boot(draft){
  }
  h+=`</div>`;
 
+ /* 4b. 10 SLIDE KONTEN (dari snapshot studio) — urutan sama dengan studio */
+ h+=liveSlides(d,ev,tplF,fullNm,form,venue);
+
  /* 5. Galeri */
  if(d&&Array.isArray(d.gallery)&&d.gallery.length){
-  h+=`<div class="card"><div class="kicker">Galeri</div><div class="gal">`+
+  h+=`<div class="${RV('card')}"><div class="kicker">Galeri</div><div class="gal">`+
    d.gallery.slice(0,8).map(u=>`<img src="${esc(u)}" alt="Galeri" loading="lazy" onerror="this.style.display='none'">`).join('')+
    `</div></div>`;
  }
@@ -356,7 +456,7 @@ function boot(draft){
  /* 6. Amplop */
  if(d&&d.amplop&&d.amplop.showAmplop&&(d.amplop.noRek||d.amplop.noEwallet)){
   const a=d.amplop;
-  h+=`<div class="card"><div class="kicker">Amplop Digital</div>
+  h+=`<div class="${RV('card')}"><div class="kicker">Amplop Digital</div>
    <p class="muted">Bagi yang ingin memberi tanda kasih, dapat melalui:</p><div class="amp-card">`;
   if(a.noRek)h+=`<div class="amp-row"><div><div class="nm">${esc(a.bank||'Bank')}</div><div class="no">${esc(a.noRek)}</div><div class="ow">a.n. ${esc(a.pemilik||'—')}</div></div>
    ${a.showCopy!==false?`<button class="copy" data-copy="${esc(a.noRek)}">Salin</button>`:''}</div>`;
@@ -366,7 +466,7 @@ function boot(draft){
  }
 
  /* 7. Ucapan */
- h+=`<div class="card"><div class="kicker">Ucapan</div>
+ h+=`<div class="${RV('card')}"><div class="kicker">Ucapan</div>
   <p class="muted" style="font-size:13px">${esc((form&&form.ucapanCustom)||(ev==='pernikahan'?'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.':'Menghadiri acara ini merupakan kehormatan bagi kami. Doa restu Bapak/Ibu/Saudara/i adalah hadiah terindah bagi si kecil.'))}</p>
   <div class="divider">${esc(tplF.deco)}</div>
   <div class="name-big" style="font-size:26px">${esc(fullNm)}</div></div>`;
@@ -392,6 +492,13 @@ function boot(draft){
   });
  });
  if(tt)startCountdown(tt);
+ /* scroll reveal — bagian muncul halus saat tamu menggulir */
+ if(rvOn&&'IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+   if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
+  }),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+ }
 }
 
 function startCountdown(tt){
@@ -419,6 +526,18 @@ const DEMO_DRAFT={
    alamat:'Jl. Jend. Sudirman No. 1, Jakarta Selatan',mapsLink:'https://maps.google.com/?q=Ritz-Carlton+Jakarta',
    sesiKedua:true,jamAkad:'08:00',jamResepsi:'11:00',
    ucapanCustom:'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.'},
+  slides:{
+   timeline:{on:true,items:'08:00 — Akad Nikah\n11:00 — Resepsi Keluarga\n18:00 — Dinner Bersama'},
+   story:{on:true,text:'Kami bertemu pertama kali di kampus, dan sejak hari itu perjalanan kami penuh tawa, cerita, dan doa yang sama.'},
+   quote:{on:true,custom:false,text:'',author:''},
+   menu:{on:true,items:'Sup Iga — Bawang Bakar\nAyam Panggang — Timun Muda\nEs Durian — Manis Segar'},
+   party:{on:true,items:'Budi — Groomsman\nSari — Bridesmaid\nKeluarga Besar — Panitia'},
+   dresscode:{on:true,text:'Formal / Batik',colors:'#D4AF37,#7A5C3E,#111827'},
+   gift:{on:false,text:''},
+   map:{on:true},
+   rsvp:{on:true},
+   closing:{on:true,text:'Terima kasih atas doa, waktu, dan kasih sayang Bapak/Ibu. Sampai berjumpa di hari bahagia kami.'}},
+  anim:{cover:true,text:true,reveal:true},
   amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true}}};
 
 /* ---------- mulai ---------- */

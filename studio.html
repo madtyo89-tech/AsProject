@@ -75,6 +75,18 @@ input,textarea,select{outline:0}
 .upload-dash:hover{background:var(--cream)}
 .dot{width:8px;height:8px;border-radius:99px}
 @keyframes pulse{50%{opacity:.5}}.pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
+/* ===== Animasi pratinjau undangan — diputar ulang hanya saat struktur
+   berubah (ganti template / event / slide), bukan tiap ketik teks ===== */
+@keyframes cUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes cZoom{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes cWord{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes cDeco{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:scaleX(1)}}
+@keyframes cPop{0%{opacity:0;transform:scale(.5)}60%{transform:scale(1.07)}100%{opacity:1;transform:scale(1)}}
+.ap .a-up{animation:cUp .55s cubic-bezier(.22,.8,.36,1) both}
+.ap .a-zoom{animation:cZoom .7s cubic-bezier(.22,.8,.36,1) both}
+.ap .a-word{display:inline-block;animation:cWord .6s cubic-bezier(.22,.8,.36,1) both}
+.ap .a-deco{transform-origin:center;animation:cDeco .8s cubic-bezier(.22,.8,.36,1) both}
+.ap .a-pop{animation:cPop .6s cubic-bezier(.22,.8,.36,1) both}
 .modebtn{text-align:left;border-radius:12px;padding:12px;display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid transparent;transition:.15s;width:100%}
 .modebtn:hover{background:#fbfaf8}
 .modebtn.on{background:#111;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.15)}
@@ -201,6 +213,19 @@ const DEF={
  guestCodes:{},selGuest:null,showNameQr:true,
  waTemplate:'Assalamualaikum {nama_tamu} 🙏\n\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara {acara} kami:\n\n{link_undangan}\n\nMerupakan kebahagiaan bagi kami atas kehadiran & doanya.\n\nTerima kasih 🤍\n{nama_pengantin}',
  amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true},
+ /* 10 slide konten baru — tiap slide: on + isi */
+ slides:{
+  timeline:{on:false,items:'08:00 — Akad Nikah\n11:00 — Resepsi'},
+  story:{on:false,text:'Kami bertemu pertama kali di kampus, dan sejak hari itu perjalanan kami penuh tawa, cerita, dan doa yang sama.'},
+  quote:{on:false,custom:false,text:'',author:''},
+  menu:{on:false,items:'Sup Iga — Bawang Bakar\nAyam Panggang — Timun Muda\nNasi Kuning — Sambal Bawang\nEs Durian — Manis Segar'},
+  party:{on:false,items:'Budi — Groomsman\nSari — Bridesmaid\nKeluarga Besar — Panitia'},
+  dresscode:{on:false,text:'Formal / Batik',colors:'#D4AF37,#7A5C3E,#111827'},
+  gift:{on:false,text:'Jl. Melati No. 12, Bandung\nKotak kado diletakkan di meja samping pentas'},
+  map:{on:false},
+  rsvp:{on:false},
+  closing:{on:false,text:'Terima kasih atas doa, waktu, dan kasih sayang Bapak/Ibu. Sampai berjumpa di hari bahagia kami.'}},
+ anim:{cover:true,text:true,reveal:true},
  slug:'rangga-alya',customDomain:'',published:false,
  katalog:TPL.map((t,i)=>({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:340-i*23})),
  promo:{diskon:50,tglMulai:'2026-10-01',tglSelesai:'2026-12-31',badgeText:'FLASH SALE 50%'},
@@ -211,7 +236,8 @@ const DEF={
   {id:'f4',jenis:'aqiqah',nama:'Baby Kayla Aqiqah',tanggal:'2026-09-20',status:'Draft',snap:null}],
  search:''};
 let state;
-try{state=Object.assign({},DEF,JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
+try{state=Object.assign({},DEF,JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
+function mergeSlides(s){const out={};Object.keys(DEF.slides).forEach(k=>{out[k]=Object.assign({},DEF.slides[k],(s&&s[k])||{})});return out}
 /* migrasi ringan: pastikan template valid, katalog pakai struktur TPL, & musik demo selalu tersedia */
 if(!state.tpl||!TPL.some(t=>t.id===state.tpl))state.tpl=TPL[0].id;
 if(!Array.isArray(state.katalog)||!state.katalog.length||!state.katalog[0].tpl)state.katalog=JSON.parse(JSON.stringify(DEF.katalog));
@@ -222,6 +248,31 @@ state.musicDb=state.musicDb.filter(m=>!m.demo||DEMO_MUSIC.some(d=>d.url===m.url)
 if(state.music&&state.music.demo&&!DEMO_MUSIC.some(d=>d.url===state.music.url)){state.music=null;state.playing=false}
 DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.push(Object.assign({},d))});
 function save(){try{const c=Object.assign({},state);localStorage.setItem('asproject_studio_v3',JSON.stringify(c))}catch(e){}}
+/* ===== Animasi pratinjau: diputar ulang HANYA saat struktur berubah
+   (template / event / slide on-off), agar tidak berkedip tiap ketik ===== */
+let animSig=null;
+function animTrigger(){const cur=state.tpl+'|'+state.event+'|'+Object.keys(state.slides).filter(k=>state.slides[k].on).sort().join(',');const play=animSig!==cur;animSig=cur;return play}
+/* ===== Slide konten & animasi ===== */
+const SLIDES=[
+ {id:'timeline',ic:'⏱️',nm:'Timeline Acara',ds:'Urutan sesi acara (jam — judul)',type:'list',ph:'08:00 — Akad Nikah\n11:00 — Resepsi'},
+ {id:'story',ic:'💞',nm:'Cerita Kami',ds:'Kisah singkat di balik acara ini',type:'area',ph:'Kami bertemu di ...'},
+ {id:'quote',ic:'❝',nm:'Quote / Ayat',ds:'Kutipan atau ayat — bawaan per acara bila dikosongkan',type:'quote'},
+ {id:'menu',ic:'🍽️',nm:'Menu Acara',ds:'Daftar menu (nama — deskripsi)',type:'list',ph:'Sup Iga — Bawang Bakar\nAyam Panggang — Timun'},
+ {id:'party',ic:'🎩',nm:'Panitia / Bridal Party',ds:'Nama — peran',type:'list',ph:'Budi — Groomsman\nSari — Bridesmaid'},
+ {id:'dresscode',ic:'👗',nm:'Dress Code',ds:'Pemanduan busana + palet warna',type:'dress'},
+ {id:'gift',ic:'🎁',nm:'Alamat Kado',ds:'Informasi kado fisik / kartu ucapan',type:'area',ph:'Jl. Contoh No. 1 ...'},
+ {id:'map',ic:'🗺️',nm:'Peta Lokasi',ds:'Embed peta dari alamat/mapsLink di Info Acara',type:'none'},
+ {id:'rsvp',ic:'✉️',nm:'Form RSVP',ds:'Tamu konfirmasi kehadiran langsung ke WhatsApp',type:'none'},
+ {id:'closing',ic:'🤍',nm:'Pesan Penutup',ds:'Ucapan penutup dari penyelenggara',type:'area',ph:'Terima kasih ...'}];
+const QUOTES={
+ pernikahan:{text:'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya.',author:'QS. Ar-Rum: 21'},
+ khitanan:{text:'Sebaik-baik kalian adalah orang yang paling baik kepada keluarganya.',author:'HR. Ahmad'},
+ ultah:{text:'Semoga tahun yang baru ini membawa kebahagiaan yang lebih besar dari sebelumnya.',author:'Ucapan Terbaik'},
+ aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
+function setSlide(id,on){if(!state.slides[id])return;state.slides[id].on=on;save();render()}
+function upSlide(id,k,v){if(!state.slides[id])return;state.slides[id][k]=v;save();renderPreview()}
+function setAnim(k,v){state.anim[k]=v;animSig=null;save();render()}
+function rsvpWa(){const n=document.getElementById('rvpN')?document.getElementById('rvpN').value:'Tamu',h=document.getElementById('rvpH')?document.getElementById('rvpH').value:'Hadir',m=document.getElementById('rvpM')?document.getElementById('rvpM').value:'';const t='RSVP — '+titleOf()+' '+displayName()+'\nNama: '+n+'\nKonfirmasi: '+h+(m?'\nPesan: '+m:'')+'\nTautan: '+previewUrl();window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
 
 /* ============ HELPERS ============ */
 const $=id=>document.getElementById(id);
@@ -318,6 +369,7 @@ async function publish(){
  const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
   accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,
   amplop:JSON.parse(JSON.stringify(state.amplop)),
+  slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
   cover:state.cover||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
   publishedAt:new Date().toISOString()};
@@ -333,7 +385,7 @@ async function publish(){
  state.published=true;
  const nama=displayName();
  const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
-  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody}};
+  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim))}};
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  save();render();notify('Berhasil Publish! '+baseUrl()+' tersimpan di Folder Arsip')}
 function unpublish(){state.published=false;save();render();notify('Status kembali ke Draft')}
@@ -341,8 +393,10 @@ function loadArsip(id){const a=state.arsip.find(x=>x.id===id);if(!a)return;
  if(a.snap){state.form=Object.assign({},DEF.form,a.snap.form);state.event=a.snap.event;
   if(a.snap.tpl&&TPL.some(t=>t.id===a.snap.tpl))state.tpl=a.snap.tpl;else{const ft=tplsFor(a.snap.event)[0];if(ft)state.tpl=ft.id}
   state.doa=a.snap.doa||a.snap.event;state.accent=a.snap.accent||tplOf().accent;state.slug=a.snap.slug;
-  if(a.snap.fontTitle)state.fontTitle=a.snap.fontTitle;if(a.snap.fontBody)state.fontBody=a.snap.fontBody}
- else{state.event=a.jenis}
+  if(a.snap.fontTitle)state.fontTitle=a.snap.fontTitle;if(a.snap.fontBody)state.fontBody=a.snap.fontBody;
+  if(a.snap.slides)state.slides=mergeSlides(a.snap.slides);
+  if(a.snap.anim)state.anim=Object.assign({},DEF.anim,a.snap.anim);animSig=null}
+ else{state.event=a.jenis;animSig=null}
  state.page='editor';state.tab='info';save();render();window.scrollTo(0,0);notify('Membuka: '+a.nama)}
 function dlQr(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrData(g);a.download=`QR-Checkin-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
 function copyTxt(t,msg){navigator.clipboard?.writeText(t);notify(msg||'Disalin ✓')}
@@ -482,7 +536,44 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
   <div style="font-size:12px;font-weight:600">Preview Font</div>
   <div style="margin-top:12px;font-size:22px;line-height:1.2;font-family:${fontFam(state.fontTitle)}">The Beauty of ${esc(state.form.namaWanita)}</div>
   <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:8px;font-family:${fontFam(state.fontBody)}">Font isi untuk alamat, doa, ucapan dan detail acara — rapi & readable di HP.</div>
+ </div>
+ <div class="card"><h4>✨ Animasi Undangan</h4>
+  <p style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.6">Berlaku di pratinjau (diputar ulang saat template/slide diganti) dan di undangan live yang di-publish.</p>
+  ${[['cover','Animasi Cover','Nama & ornamen masuk dengan fade/zoom di halaman pembuka.'],['text','Animasi Teks','Nama tampil per kata, satu per satu (efek stagger).'],['reveal','Scroll Reveal','Setiap bagian muncul halus saat tamu menggulir ke bawah.']].map(([k,l,d])=>`<label class="togglerow"><span><span style="font-size:12px;font-weight:500">${l}</span><span style="display:block;font-size:10px;color:var(--mut)">${d}</span></span><input type="checkbox" ${state.anim[k]?'checked':''} onchange="setAnim('${k}',this.checked)"></label>`).join('')}
  </div></div>`}
+
+/* ============ VIEW: SLIDE (10 slide konten baru) ============ */
+function slideEditor(s,d){
+ if(s.type==='list')return `<div style="margin-top:12px"><label class="f">Isi — 1 baris = 1 item (format: <b>bagian — detail</b>)<textarea rows="3" oninput="upSlide('${s.id}','items',this.value)">${esc(d.items||'')}</textarea></label>
+  <div style="font-size:10px;color:var(--mut);margin-top:4px">Contoh: ${esc(s.ph||'')}</div></div>`;
+ if(s.type==='area')return `<div style="margin-top:12px"><label class="f">Isi<textarea rows="3" oninput="upSlide('${s.id}','text',this.value)">${esc(d.text||'')}</textarea></label></div>`;
+ if(s.type==='quote')return `<div style="margin-top:12px">
+  <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:10px"><input type="checkbox" ${d.custom?'checked':''} onchange="upSlide('quote','custom',this.checked)"> Tulis quote sendiri</label>
+  ${d.custom?`<label class="f" style="margin-bottom:8px">Teks Quote<textarea rows="2" oninput="upSlide('quote','text',this.value)">${esc(d.text||'')}</textarea></label>
+  <label class="f">Sumber / Penulis<input value="${esc(d.author||'')}" oninput="upSlide('quote','author',this.value)"></label>`
+  :`<div style="padding:10px 12px;border-radius:12px;background:var(--cream);border:1px solid var(--cream2);font-size:11px;line-height:1.6">❝ ${esc(QUOTES[state.event]?QUOTES[state.event].text:'')}<div style="margin-top:6px;font-size:10px;color:#8a6d0f">— ${esc(QUOTES[state.event]?QUOTES[state.event].author:'')}</div></div>`}</div>`;
+ if(s.type==='dress')return `<div style="margin-top:12px">
+  <label class="f" style="margin-bottom:8px">Pemanduan Busana<input value="${esc(d.text||'')}" placeholder="Formal / Batik / Casual" oninput="upSlide('dresscode','text',this.value)"></label>
+  <label class="f">Palet Warna (hex, pisahkan koma)<input value="${esc(d.colors||'')}" placeholder="#D4AF37, #4A6741" oninput="upSlide('dresscode','colors',this.value)"></label></div>`;
+ return ''}
+function tabSlide(){return `<div style="display:grid;gap:16px">
+ <div class="card" style="background:#111;color:#fff;border-color:#111">
+  <div style="font-size:12px;font-weight:600">🎬 10 Slide Konten Baru</div>
+  <p style="font-size:11px;color:rgba(255,255,255,.65);margin-top:6px;line-height:1.6">Aktifkan slide yang ingin tampil di undangan, lalu atur isinya. Pratinjau langsung diperbarui — animasi diputar ulang setiap kali slide/template diganti. Slide aktif ikut ter-publish ke undangan live.</p>
+ </div>
+ ${SLIDES.map(s=>{const d=state.slides[s.id];return `
+ <div class="card" style="border-color:${d.on?'var(--cream2)':'var(--line)'};background:${d.on?'#fffdf6':'#fff'}">
+  <div style="display:flex;align-items:center;gap:10px">
+   <div style="width:34px;height:34px;border-radius:10px;background:var(--soft);display:grid;place-items:center;font-size:16px;flex:none">${s.ic}</div>
+   <div style="flex:1;min-width:0">
+    <div style="font-size:12px;font-weight:600">${s.nm} ${d.on?'<span style="font-size:9px;padding:2px 8px;border-radius:99px;background:#10b981;color:#fff;vertical-align:1px">AKTIF</span>':''}</div>
+    <div style="font-size:10px;color:var(--mut)">${s.ds}</div>
+   </div>
+   <input type="checkbox" ${d.on?'checked':''} onchange="setSlide('${s.id}',this.checked)" style="width:20px;height:20px;accent-color:#111;flex:none" aria-label="${s.nm}">
+  </div>
+  ${d.on?slideEditor(s,d):''}
+ </div>`}).join('')}
+</div>`}
 
 function tabMusik(){const d=DOA[state.doa]||DOA.pernikahan;return `<div style="display:grid;gap:16px">
  <div class="card"><h4>🎵 Musik Autoplay — Upload ke Supabase</h4>
@@ -651,8 +742,8 @@ function tabDomain(){return `<div style="display:grid;gap:16px">
  </div></div>`}
 
 function editor(){
- const tabs=[['info','Info Acara'],['desain','Desain'],['musik','Musik & Galeri'],['tamu','Tamu & QR'],['amplop','Amplop'],['domain','Domain']];
- const body={info:tabInfo,desain:tabDesain,musik:tabMusik,tamu:tabTamu,amplop:tabAmplop,domain:tabDomain}[state.tab]();
+ const tabs=[['info','Info Acara'],['desain','Desain'],['slide','Slide & Animasi'],['musik','Musik & Galeri'],['tamu','Tamu & QR'],['amplop','Amplop'],['domain','Domain']];
+ const body={info:tabInfo,desain:tabDesain,slide:tabSlide,musik:tabMusik,tamu:tabTamu,amplop:tabAmplop,domain:tabDomain}[state.tab]();
  return `<div class="tabbar sb">${tabs.map(([id,l])=>`<button class="tabbtn ${state.tab===id?'on':''}" onclick="set('tab','${id}')">${l}</button>`).join('')}</div>
  <div style="padding:16px">${body}</div>`}
 
@@ -732,9 +823,67 @@ function arsip(){
  </div>`}
 
 /* ============ VIEW: PHONE PREVIEW ============ */
+/* ===== 10 SLIDE KONTEN: markup pratinjau ===== */
+function slideItem(it){const m=String(it||'').split(/\s+—\s+|\s+-\s+/);return{a:(m[0]||'').trim(),b:m.slice(1).join(' — ').trim()}}
+function listLines(v){return String(v||'').split('\n').map(x=>x.trim()).filter(Boolean)}
+function hexOk(h){return/^#[0-9a-fA-F]{3,8}$/.test(h)}
+function slideBlocks(){
+ const f=state.form,SL=state.slides,out=[];
+ const card=(inner,extra)=>`<div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${fontFam(state.fontBody)};${extra||''}">${inner}</div>`;
+ const kicker=t=>`<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">${t}</div>`;
+ if(SL.timeline.on){const it=listLines(SL.timeline.items);
+  if(it.length)out.push(card(`${kicker('⏱️ Timeline Acara')}<div style="margin-top:12px">`+it.map((x,i)=>{const s=slideItem(x);return `
+   <div style="display:flex;gap:12px">
+    <div style="display:flex;flex-direction:column;align-items:center">
+     <div style="width:10px;height:10px;border-radius:99px;background:${state.accent};margin-top:4px;flex:none"></div>
+     ${i<it.length-1?`<div style="flex:1;width:2px;background:#e8e2d6;margin:4px 0"></div>`:''}
+    </div>
+    <div style="${i<it.length-1?'padding-bottom:14px':''}"><div style="font-size:12px;font-weight:700;color:#111">${esc(s.a||'Sesi')} ${s.b?`<span style="font-weight:400;color:#737373">• ${esc(s.b)}</span>`:''}</div></div>
+   </div>`}).join('')+'</div>'))}
+ if(SL.story.on&&SL.story.text.trim())out.push(`<div style="margin-top:24px;text-align:center;padding:20px 18px;border-radius:20px;background:linear-gradient(170deg,rgba(255,255,255,.92),rgba(255,255,255,.72));border:1px solid #ddd">
+  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;font-family:${fontFam(state.fontBody)}">💞 Cerita Kami</div>
+  <p style="margin-top:10px;font-size:12.5px;font-style:italic;line-height:1.8;color:#444;font-family:Georgia,serif">${esc(SL.story.text)}</p></div>`);
+ {const q=SL.quote.custom?{text:SL.quote.text,author:SL.quote.author}:(QUOTES[state.event]||QUOTES.pernikahan);
+  if(SL.quote.on&&q.text)out.push(`<div style="margin-top:24px;text-align:center;padding:22px 18px;border-radius:20px;background:rgba(255,255,255,.9);border:1px solid #ddd">
+  <div style="font-size:30px;line-height:.8;color:${state.accent};opacity:.5">❝</div>
+  <div style="margin-top:8px;font-size:13px;font-style:italic;line-height:1.75;color:#333;font-family:Georgia,serif">${esc(q.text)}</div>
+  <div style="margin-top:10px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.55">— ${esc(q.author||'')}</div></div>`)}
+ if(SL.menu.on){const it=listLines(SL.menu.items);
+  if(it.length)out.push(card(`${kicker('🍽️ Menu Acara')}<div style="margin-top:8px">`+it.map(x=>{const s=slideItem(x);return `
+   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed #ece5d8"><div style="font-size:12px;font-weight:700">${esc(s.a||'Menu')}</div><div style="font-size:11px;color:#737373;text-align:right">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
+ if(SL.party.on){const it=listLines(SL.party.items);
+  if(it.length)out.push(card(`${kicker('🎩 Panitia / Bridal Party')}<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">`+it.map(x=>{const s=slideItem(x);return `
+   <div style="display:flex;flex-direction:column;padding:10px 12px;border-radius:14px;background:#faf8f3;border:1px solid #ece5d8;min-width:90px"><div style="font-size:12px;font-weight:700">${esc(s.a||'')}</div><div style="font-size:10px;color:#737373;margin-top:2px">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
+ if(SL.dresscode.on){const cols=String(SL.dresscode.colors||'').split(',').map(c=>c.trim()).filter(hexOk);
+  out.push(`<div style="margin-top:24px;text-align:center;padding:20px 18px;border-radius:20px;background:rgba(255,255,255,.94);border:1px solid #ddd">
+  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">👗 Dress Code</div>
+  <div style="margin-top:8px;font-size:15px;font-weight:700">${esc(SL.dresscode.text||'—')}</div>
+  ${cols.length?`<div style="display:flex;justify-content:center;gap:8px;margin-top:14px">${cols.map(c=>`<div style="width:26px;height:26px;border-radius:99px;background:${c};border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.22)"></div>`).join('')}</div>
+  <div style="margin-top:8px;font-size:9px;font-family:ui-monospace,monospace;color:#a3a3a3">${esc(cols.join('  '))}</div>`:''}</div>`)}
+ if(SL.map.on){const q=f.alamat||f.venue||'';
+  out.push(`<div style="margin-top:24px;border-radius:20px;overflow:hidden;border:1px solid #ddd;background:#fff">
+  <div style="padding:10px 14px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px;border-bottom:1px solid #eee">📍 ${esc(f.venue||'Lokasi Acara')}</div>
+  <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed" style="width:100%;height:150px;border:0;display:block" loading="lazy" title="Peta lokasi"></iframe></div>`)}
+ if(SL.gift.on&&SL.gift.text.trim())out.push(card(`${kicker('🎁 Alamat Kado')}<div style="margin-top:8px;font-size:12px;line-height:1.7;color:#333">${esc(SL.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:10px;font-size:20px">🎀</div>`));
+ if(SL.rsvp.on)out.push(card(`${kicker('✉️ RSVP')}
+  <div style="font-size:11px;color:#737373;margin-top:4px">Mohon konfirmasi kehadirannya melalui WhatsApp.</div>
+  <input id="rvpN" value="" placeholder="Nama Anda" style="margin-top:10px;width:100%;height:40px;border:1px solid #ddd;border-radius:12px;padding:0 12px;font-size:12px;background:#fff">
+  <select id="rvpH" style="margin-top:8px;width:100%;height:40px;border:1px solid #ddd;border-radius:12px;padding:0 10px;font-size:12px;background:#fff">
+   <option>Hadir 🙌</option><option>Hadir, bawa keluarga</option><option>Tidak hadir — maaf 🙏</option></select>
+  <textarea id="rvpM" rows="2" placeholder="Ucapan untuk pasangan..." style="margin-top:8px;width:100%;border:1px solid #ddd;border-radius:12px;padding:8px 12px;font-size:12px;background:#fff;resize:none"></textarea>
+  <button onclick="rsvpWa()" style="margin-top:10px;width:100%;height:42px;border:0;border-radius:99px;background:#25D366;color:#fff;font-size:12px;font-weight:600">Kirim RSVP via WA</button>`));
+ if(SL.closing.on&&SL.closing.text.trim())out.push(`<div style="margin-top:28px;text-align:center;padding:8px 16px">
+  <div style="font-size:14px;letter-spacing:10px;color:${state.accent};opacity:.7">❖ ✦ ❖</div>
+  <p style="margin-top:12px;font-size:12.5px;font-style:italic;line-height:1.8;color:#444;font-family:Georgia,serif">${esc(SL.closing.text)}</p>
+  <div style="margin-top:12px;font-size:11px;font-weight:600;color:${state.accent}">${esc(displayName())}</div></div>`);
+ return out
+}
+
 function phoneHtml(){
  const f=state.form,tp=tplOf(),g=selGuest(),single=state.linkMode==='single';
  const dark=state.darkMode;
+ const play=animTrigger(),AN=state.anim,CV=play&&AN.cover,TX=play&&AN.text,RV=play&&AN.reveal;
+ const WR=(d,html)=>RV?`<div class="a-up" style="animation-delay:${d}ms">${html}</div>`:html;
  let bg='';
  if(!dark){
   if(state.bgType==='polos')bg=`background:${tp.g[0]};color:${tp.ink}`;
@@ -745,6 +894,13 @@ function phoneHtml(){
  const tF=fontFam(state.fontTitle),bF=fontFam(state.fontBody);
  const nameColor=dark?'#FDE68A':state.accent;
  const dt=new Date(f.tanggalAcara);
+ const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
+ const wordSpan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="a-word" style="animation-delay:${d0+i*80}ms">${esc(w)}</span>`).join(' ');
+ const h1Inner=state.event==='pernikahan'
+  ?(TX
+   ?`${(()=>{const a=(f.namaPria||'')+(f.gelarPria?' '+f.gelarPria:''),b=(f.namaWanita||'')+(f.gelarWanita?' '+f.gelarWanita:'');return `<span style="display:block">${wordSpan(a,350)}</span><span class="a-word" style="font-size:18px;font-weight:400;animation-delay:${350+nW(a)*80}ms">&</span><span style="display:block">${wordSpan(b,350+nW(a)*80+160)}</span>`})()}`
+   :`<span style="display:block">${esc(f.namaPria)} ${f.gelarPria?`<span style="font-size:14px">${esc(f.gelarPria)}</span>`:''}</span><span style="font-size:18px;font-weight:400">&</span><span style="display:block">${esc(f.namaWanita)} ${f.gelarWanita?`<span style="font-size:14px">${esc(f.gelarWanita)}</span>`:''}</span>`)
+  :(TX?`<span style="display:block">${wordSpan(f.namaAnak,350)}</span>`:`<span style="display:block">${esc(f.namaAnak)}</span>`);
  return `
  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;width:340px">
   <span class="lbl">Live Preview • ${esc(tp.nama)}</span>
@@ -757,18 +913,15 @@ function phoneHtml(){
    <div style="width:12px;height:12px;border-radius:99px;background:#ddd"></div>
   </div>
   <div class="notch"></div>
-  <div class="${dark?'emerald-bg':''}" style="flex:1;${dark?'color:#FDE68A':bg};${state.dblBorder?`border:6px double ${state.accent}`:''}">
-   <div style="padding:20px;text-align:center;font-family:${tF};${patStyle}">
-    ${f.showBismillah?`<div style="margin-bottom:12px"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+   <div class="${dark?'emerald-bg':''}" style="flex:1;${dark?'color:#FDE68A':bg};${state.dblBorder?`border:6px double ${state.accent}`:''}">
+   <div class="${(CV||TX||RV)?'ap':''}" style="padding:20px;text-align:center;font-family:${tF};${patStyle}">
+    ${f.showBismillah?`<div class="${CV?'a-up':''}" style="margin-bottom:12px"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
      <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}
-    ${tp.deco?`<div style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px">${tp.deco}</div>`:''}
-    ${state.goldOrn?`<div style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent)"></div>`:''}
-    <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF}">${titleOf()}</div>
-    <h1 style="margin-top:12px;font-size:28px;line-height:.95;font-weight:700;color:${nameColor}">
-    ${state.event==='pernikahan'
-     ?`<span style="display:block">${esc(f.namaPria)} ${f.gelarPria?`<span style="font-size:14px">${esc(f.gelarPria)}</span>`:''}</span><span style="font-size:18px;font-weight:400">&</span><span style="display:block">${esc(f.namaWanita)} ${f.gelarWanita?`<span style="font-size:14px">${esc(f.gelarWanita)}</span>`:''}</span>`
-     :`<span style="display:block">${esc(f.namaAnak)}</span>`}</h1>
-    <div style="margin-top:12px;font-size:11px;line-height:1.7;opacity:.8;font-family:${bF}">
+    ${tp.deco?`<div class="${CV?'a-deco':''}" style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px;${CV?'animation-delay:150ms':''}">${tp.deco}</div>`:''}
+    ${state.goldOrn?`<div class="${CV?'a-deco':''}" style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent);${CV?'animation-delay:250ms':''}"></div>`:''}
+    <div class="${CV?'a-up':''}" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF};${CV?'animation-delay:300ms':''}">${titleOf()}</div>
+    <h1 class="${CV&&!TX?'a-zoom':''}" style="margin-top:12px;font-size:28px;line-height:.95;font-weight:700;color:${nameColor};${CV&&!TX?'animation-delay:350ms':''}">${h1Inner}</h1>
+    <div class="${CV?'a-up':''}" style="margin-top:12px;font-size:11px;line-height:1.7;opacity:.8;font-family:${bF};${CV?'animation-delay:800ms':''}">
     ${state.event==='pernikahan'?`<div>${esc(f.putraPutri)}</div><div style="margin-top:4px">${esc(f.putriDari)}</div>`
      :`<div>${esc(f.putraDari)} ${f.umurAnak||f.usia?`• ${esc(f.umurAnak||f.usia+' Tahun')}`:''} ${f.temaUltah||f.temaAqiqah?`• ${esc(state.event==='ultah'?f.temaUltah:f.temaAqiqah)}`:''}</div>`}</div>
     ${g?`<div style="margin:20px auto 0;max-width:260px;border-radius:16px;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border:1px solid #ddd;padding:12px;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.05);font-family:${bF}">
@@ -781,14 +934,14 @@ function phoneHtml(){
      <div style="font-size:14px;font-weight:600;margin-top:4px">Tamu Undangan</div>
      <div style="font-size:10px;margin-top:4px;color:#737373">Mode 1 Link • QR tetap unik per tamu</div></div>`:''}
     ${single?`<div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:10px;padding:6px 12px;border-radius:99px;background:#111;color:#fff"><span class="dot pulse" style="width:6px;height:6px;background:#D4AF37"></span>Mode: 1 Link Untuk Semua • QR Random Panitia</div>`:''}
-    <div style="margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-family:${bF}">
+    ${WR(450,`<div style="margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-family:${bF}">
      <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:18px;font-weight:700">${daysLeft()}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">Hari</div></div>
      <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:18px;font-weight:700">${esc(f.jamAcara)}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">${esc(f.zona)}</div></div>
      <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:14px;font-weight:700;line-height:1.2">${isNaN(dt)?'—':dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short'})}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">${isNaN(dt)?'':dt.getFullYear()}</div></div>
-    </div>
-    ${state.cover?`<img src="${state.cover}" style="margin-top:24px;width:100%;height:200px;object-fit:cover;border-radius:20px;border:1px solid #ddd">`
-     :`<div style="margin-top:24px;height:160px;border-radius:20px;border:1px dashed #ccc;background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:11px;color:#a3a3a3;font-family:${bF}">Foto Utama</div>`}
-    <div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${bF}">
+    </div>`)}
+    ${WR(600,state.cover?`<img src="${state.cover}" style="margin-top:24px;width:100%;height:200px;object-fit:cover;border-radius:20px;border:1px solid #ddd">`
+     :`<div style="margin-top:24px;height:160px;border-radius:20px;border:1px dashed #ccc;background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:11px;color:#a3a3a3;font-family:${bF}">Foto Utama</div>`)}
+    ${WR(750,`<div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${bF}">
      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Waktu & Tempat</div>
      <div style="margin-top:8px;font-size:13px;font-weight:600">${esc(f.venue)}</div>
      <div style="font-size:11px;color:#525252;margin-top:4px;line-height:1.6">${esc(f.alamat)}</div>
@@ -796,34 +949,35 @@ function phoneHtml(){
       <div style="border-radius:12px;background:#FFFBEB;border:1px solid #FDE68A;padding:8px"><b>Akad</b><div>${esc(f.jamAkad)} ${esc(f.zona)}</div></div>
       <div style="border-radius:12px;background:#f0f9ff;border:1px solid #dbeafe;padding:8px"><b>Resepsi</b><div>${esc(f.jamResepsi)} ${esc(f.zona)}</div></div></div>`:''}
      <div style="margin-top:12px;font-size:11px;line-height:1.7;font-style:italic">"${esc(f.ucapanCustom)}"</div>
-    </div>
-    ${g?`<div style="margin-top:16px;border-radius:20px;background:#fff;border:1px solid #ddd;padding:12px;text-align:left;color:#111;font-family:${bF}">
+    </div>`)}
+    ${slideBlocks().map((b,i)=>WR(900+i*140,b)).join('')}
+    ${g?WR(1500,`<div style="margin-top:16px;border-radius:20px;background:#fff;border:1px solid #ddd;padding:12px;text-align:left;color:#111;font-family:${bF}">
      <div style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px">QR Check-in ${single?'<span style="font-size:9px;padding:2px 8px;border-radius:99px;background:#111;color:#fff">UNIK PER TAMU</span>':''}</div>
      <div style="display:flex;gap:12px;margin-top:8px;align-items:center">
       <img src="${qrData(g)}" style="width:72px;height:72px;border-radius:12px;border:1px solid #ddd;background:#fff;padding:4px">
       <div style="font-size:11px"><div style="font-family:ui-monospace,monospace">${g.code}</div>
       <div style="font-size:10px;color:#737373;margin-top:4px">${single?'Link sama, QR beda — scan panitia':'Tunjukkan saat masuk venue'}</div></div>
-     </div></div>`:''}
-    ${state.gallery.length?`<div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${state.gallery.slice(0,6).map(img=>`<img src="${img}" style="height:72px;width:100%;object-fit:cover;border-radius:12px;border:1px solid #ddd">`).join('')}</div>`:''}
-    <div style="margin-top:24px;display:flex;gap:8px;font-family:${bF}">
+     </div></div>`):''}
+    ${state.gallery.length?WR(1650,`<div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${state.gallery.slice(0,6).map(img=>`<img src="${img}" style="height:72px;width:100%;object-fit:cover;border-radius:12px;border:1px solid #ddd">`).join('')}</div>`):''}
+    ${WR(1800,`<div style="margin-top:24px;display:flex;gap:8px;font-family:${bF}">
      ${f.showMapsBtn?`<a href="${esc(f.mapsLink)}" target="_blank" rel="noopener" style="flex:1;height:44px;border-radius:99px;background:#111;color:#fff;font-size:12px;font-weight:500;display:grid;place-items:center;text-decoration:none">Buka Maps 📍</a>`:''}
      <button style="flex:1;height:44px;border-radius:99px;background:#fff;border:1px solid #ddd;font-size:12px;font-weight:500;color:#111">RSVP Hadir</button>
-    </div>
-    <div style="margin-top:24px;padding:12px;border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;text-align:left;color:#111;font-family:${bF}">
+    </div>`)}
+    ${WR(1950,`<div style="margin-top:24px;padding:12px;border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;text-align:left;color:#111;font-family:${bF}">
      <div style="font-size:11px;font-weight:600">Doa ${state.doa}</div>
      <div style="font-size:11px;margin-top:4px;line-height:1.8;text-align:right;font-family:'Lora',serif">${(DOA[state.doa]||DOA.pernikahan).ar}</div>
      <div style="font-size:10px;margin-top:8px;color:#525252">${(DOA[state.doa]||DOA.pernikahan).latin}</div>
-    </div>
-    ${state.amplop.showAmplop?`<div style="margin-top:24px;border-radius:20px;background:#111;color:#fff;padding:16px;text-align:left;font-family:${bF}">
+    </div>`)}
+    ${state.amplop.showAmplop?WR(2100,`<div style="margin-top:24px;border-radius:20px;background:#111;color:#fff;padding:16px;text-align:left;font-family:${bF}">
      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)">Amplop Digital</div>
      <div style="margin-top:8px;font-size:12px">${esc(state.amplop.bank)} • ${esc(state.amplop.noRek)}</div>
      <div style="font-size:11px;color:rgba(255,255,255,.7)">a.n ${esc(state.amplop.pemilik)} • ${esc(state.amplop.ewallet)} ${esc(state.amplop.noEwallet)}</div>
      ${state.amplop.showCopy?`<button onclick="copyTxt('${esc(state.amplop.noRek)}','No rekening disalin ✓')" style="margin-top:12px;width:100%;height:36px;border-radius:99px;background:#fff;color:#000;font-size:11px;font-weight:500">Copy No Rekening</button>`:''}
-    </div>`:''}
-    <div style="margin:32px 0;font-family:${bF}">
+    </div>`):''}
+    ${WR(2250,`<div style="margin:32px 0;font-family:${bF}">
      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.5">asproject.my.id • Premium Rp75rb</div>
      <div class="gold" style="margin:8px auto 0;width:40px;height:40px;border-radius:99px;display:grid;place-items:center;font-size:12px;font-weight:700;color:#5a4a12">as</div>
-    </div>
+    </div>`)}
    </div>
   </div>
   <button onclick="togglePlay()" style="position:absolute;bottom:88px;right:12px;width:44px;height:44px;border-radius:99px;background:#111;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.3);display:grid;place-items:center;font-size:16px;border:1px solid rgba(255,255,255,.2);z-index:4">${state.playing?'❚❚':'♪'}</button>

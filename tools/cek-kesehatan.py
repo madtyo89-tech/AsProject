@@ -309,6 +309,18 @@ def cek_pipeline_undangan():
         lapor("masalah",
               f"urutan TPL BERBEDA (studio {len(a)} vs undangan {len(b)}) — "
               f"kolom 'theme' akan salah tema!")
+    # 9) 10 slide konten: id-nya harus lengkap di studio (SLIDES) dan undangan (liveSlides)
+    SLIDE_IDS = ["timeline", "story", "quote", "menu", "party",
+                 "dresscode", "gift", "map", "rsvp", "closing"]
+    s_studio = [i for i in SLIDE_IDS if re.search(r"id:'%s'" % i, studio)]
+    s_undang = [i for i in SLIDE_IDS if re.search(r"S\.%s&&S\.%s\.on" % (i, i), undangan)]
+    lapor("ok" if s_studio == SLIDE_IDS else "masalah",
+          f"studio.html: 10 id slide terdaftar di editor SLIDES ({len(s_studio)}/10)")
+    lapor("ok" if s_undang == SLIDE_IDS else "masalah",
+          f"undangan.html: 10 slide dirender oleh liveSlides ({len(s_undang)}/10)")
+    # 10) snapshot publish membawa slides + anim
+    lapor("ok" if "slides:JSON.parse(JSON.stringify(state.slides)),anim" in studio else "masalah",
+          "studio.html: publish() menyimpan slides & anim ke snapshot data")
 
 
 def main():
