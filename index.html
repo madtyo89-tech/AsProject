@@ -219,6 +219,39 @@ Error generating stack: `+i.message+`
     transition:background .2s ease,border-color .2s ease,transform .2s ease}
   .asp-demo:hover{background:var(--muted,#f9f5f0);border-color:#d9cfc2;transform:translateY(-1px)}
   .asp-demo svg{width:14px;height:14px;fill:currentColor;flex:none}
+
+  /* ---- Animasi katalog: masuk berurutan + hover yang hidup ----
+     Ditambah dari sini (bukan dari bundle React) supaya tidak perlu
+     menyentuh bundle minified. Semua otomatis mati pada
+     prefers-reduced-motion. */
+  .catalog-card{transition:transform .38s cubic-bezier(.22,.9,.34,1),box-shadow .38s ease}
+  .catalog-card.asp-tunggu{opacity:0;transform:translateY(18px)}
+  .catalog-card.asp-in{
+    animation:aspMasuk .6s cubic-bezier(.22,.9,.34,1) both;
+    animation-delay:calc(var(--asp-i,0) * 60ms)}
+  @keyframes aspMasuk{
+    from{opacity:0;transform:translateY(18px) scale(.985)}
+    to{opacity:1;transform:none}}
+  .catalog-card:hover{transform:translateY(-6px);box-shadow:0 26px 50px -30px rgba(60,42,24,.4)}
+  .catalog-card:active{transform:translateY(-2px) scale(.995)}
+  .catalog-art{position:relative;overflow:hidden}
+  .catalog-art > *{transition:transform .65s cubic-bezier(.22,.9,.34,1)}
+  .catalog-card:hover .catalog-art > *{transform:scale(1.05)}
+  .catalog-art::after{
+    content:"";position:absolute;inset:-45%;pointer-events:none;
+    background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.42) 50%,transparent 58%);
+    transform:translateX(-75%) rotate(0.001deg);transition:transform .95s ease}
+  .catalog-card:hover .catalog-art::after{transform:translateX(75%) rotate(0.001deg)}
+  .catalog-card h3{transition:color .25s ease,transform .3s ease}
+  .catalog-card:hover h3{transform:translateY(-1px)}
+  @media (prefers-reduced-motion:reduce){
+    .catalog-card,.catalog-art > *,.catalog-card h3{transition:none}
+    .catalog-card.asp-tunggu{opacity:1;transform:none}
+    .catalog-card.asp-in{animation:none}
+    .catalog-card:hover{transform:none;box-shadow:none}
+    .catalog-card:hover .catalog-art > *{transform:none}
+    .catalog-art::after{display:none}
+  }
 </style>
 <script>
 (function () {
@@ -389,7 +422,44 @@ Error generating stack: `+i.message+`
     });
   }
 
-  function enhance() { pastikanAnchor(); syncFab(); syncVisibility(); enhanceModal(); }
+  /* ---- Animasi masuk kartu katalog ----
+     Kartu baru (termasuk saat filter diganti dan React me-remount grid)
+     diamati sekali, lalu dianimasikan berurutan saat pertama terlihat.
+     Ada jaring pengaman: kalau observer gagal, kartu tetap ditampilkan. */
+  function hiasKatalog() {
+    var kartu = document.querySelectorAll('.catalog-card');
+    var baru = [];
+    for (var i = 0; i < kartu.length; i++) {
+      var el = kartu[i];
+      if (el.getAttribute('data-asp-rv')) continue;
+      el.setAttribute('data-asp-rv', '1');
+      el.style.setProperty('--asp-i', String(i % 9));
+      baru.push(el);
+    }
+    if (!baru.length) return;
+    if (!('IntersectionObserver' in window)) {
+      baru.forEach(function (el) { el.classList.add('asp-in'); });
+      return;
+    }
+    baru.forEach(function (el) { el.classList.add('asp-tunggu'); });
+    var io = new IntersectionObserver(function (entri) {
+      entri.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.remove('asp-tunggu');
+        e.target.classList.add('asp-in');
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    baru.forEach(function (el) { io.observe(el); });
+    setTimeout(function () {
+      baru.forEach(function (el) {
+        el.classList.remove('asp-tunggu');
+        if (!el.classList.contains('asp-in')) el.classList.add('asp-in');
+      });
+    }, 1500);
+  }
+
+  function enhance() { pastikanAnchor(); syncFab(); syncVisibility(); enhanceModal(); hiasKatalog(); }
   function schedule() {
     if (timer) return;
     timer = setTimeout(function () { timer = null; enhance(); }, 120);
