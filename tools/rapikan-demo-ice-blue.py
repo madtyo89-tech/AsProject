@@ -4,7 +4,9 @@ Rapikan demo/ice-blue.html — template dari folder Drive "Katalog demo"
 (undangan_online_ice_blue.html) supaya cocok dipakai sebagai demo di asproject.my.id.
 
 Yang dikerjakan (4 poin, sesuai keputusan 2026-10-07):
-  1. Rebrand KartuDigital.My.Id -> AsProject.My.Id (+ judul tab, tahun copyright)
+  1. Rebrand KartuDigital.My.Id -> AsProject.My.Id (+ judul tab, copyright 2026,
+     dan "Dibuat dengan cinta di Jakarta" -> Bandung; baris venue acara di
+     "The Ice Blue Hall, Jakarta" sengaja dibiarkan)
   2. Sapaan "beb" -> "Kak" (placeholder form RSVP)
   3. Link mati dipasang: WA 085196755675, IG @asproject.my.id, mailto hello@
   4. Buang script bawaan platform pembuatnya (ecto:* postMessage, helper target=_blank)
@@ -47,6 +49,7 @@ REPLACEMENTS = [
     ("\u00a9 2025 KartuDigital.My.Id", "\u00a9 2026 AsProject.My.Id", 1),
     ("<title>React Artifact</title>",
      "<title>Undangan Online Ice Blue \u2014 AsProject.My.Id</title>", 1),
+    ("Dibuat dengan cinta di Jakarta.", "Dibuat dengan cinta di Bandung.", 1),
 
     # --- 2. sapaan ---
     ('placeholder:"Tulis namamu beb"', 'placeholder:"Tulis namamu, Kak"', 1),
@@ -75,6 +78,7 @@ CHECKS = [
     ("Optimistic", 0),
     ("ecto:", 0),
     ("Tulis namamu beb", 0),
+    ("Dibuat dengan cinta di Jakarta", 0),
     ("AsProject.My.Id", None),   # cukup ada
     (WA, None),
 ]
@@ -148,6 +152,8 @@ def main() -> int:
 
     sisa_beb = len(re.findall(r"(?<![A-Za-z0-9_])[Bb]eb(?![A-Za-z0-9_])", s))
     print(f"  {'ok ' if sisa_beb == 0 else '!!'} kata 'beb' berdiri sendiri: {sisa_beb}")
+    print(f"  info kata 'Jakarta' tersisa: {s.count('Jakarta')}x "
+          "(baris venue acara memang sengaja dibiarkan)")
     if sisa_beb:
         gagal.append(f"masih ada {sisa_beb} kata 'beb'")
 

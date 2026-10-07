@@ -49,11 +49,17 @@ localStorage (lihat blok migrasi di `studio.html`), jadi tidak perlu reset data 
 
 ## Catatan untuk `ice-blue.html` (dibaca dari isi template)
 
-Yang perlu dibereskan begitu file-nya masuk:
+Semua poin di bawah sudah diotomatiskan di **`tools/rapikan-demo-ice-blue.py`**
+(punya mode `--check`, assert jumlah tiap replacement, dan verifikasi akhir):
 
-1. **Branding masih `KartuDigital.My.Id`** (header, footer, copyright) → ganti ke `AsProject.My.Id`.
-2. **Ada kata "beb"** di placeholder form RSVP: `Tulis namamu beb` → `Tulis namamu, Kak`.
-3. Link footer masih `href="#"` dan "Chat WhatsApp Support Premium" cuma teks →
-   arahkan ke `wa.me/6285196755675` dan `instagram.com/asproject.my.id`.
-4. Script bawaan platform pembuatnya (`ecto:*` postMessage, `@font-face` Optimistic yang
-   menunjuk `/fonts/...`) → bisa dibuang biar bersih & tidak 404.
+1. **Branding masih `KartuDigital.My.Id`** (header, footer, copyright) → `AsProject.My.Id`,
+   judul tab `React Artifact` → `Undangan Online Ice Blue — AsProject.My.Id`,
+   copyright `© 2025` → `© 2026`.
+2. **Kalimat kota** `Dibuat dengan cinta di Jakarta.` → `...di Bandung.`
+   (baris venue acara `The Ice Blue Hall, Jakarta` sengaja dibiarkan).
+3. **Ada kata "beb"** di placeholder form RSVP: `Tulis namamu beb` → `Tulis namamu, Kak`.
+4. Link footer masih `href="#"` dan "Chat WhatsApp Support Premium" cuma teks →
+   diarahkan ke `wa.me/6285196755675` dan `instagram.com/asproject.my.id`.
+5. Script bawaan platform pembuatnya (`ecto:*` postMessage, helper `target=_blank`,
+   `@font-face` Optimistic yang menunjuk `/fonts/...`) dibuang biar bersih & tidak 404.
+
