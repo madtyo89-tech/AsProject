@@ -321,19 +321,41 @@ Error generating stack: `+i.message+`
     fab.title = name ? 'Tanya soal tema ' + name : 'Chat admin AsProject';
   }
 
+  /* SPA ini tidak memberi id pada bagiannya (hanya #root), jadi anchor
+     "#katalog" tadinya mati — termasuk di nav situs sendiri. Kita pasang
+     id-nya dari sini supaya tautan Katalog benar-benar menggulir ke sana. */
+  function pastikanAnchor() {
+    if (document.getElementById('katalog')) return;
+    var grid = document.querySelector('.catalog-grid');
+    var sec = grid && (grid.closest('section') || grid.parentElement);
+    if (!sec || sec.id) return;            // jangan menimpa id bawaan
+    sec.id = 'katalog';
+  }
+
+  /* Visibilitas katalog dihitung dari posisi elemennya, bukan dari
+     IntersectionObserver pada satu node — aman walau React me-remount
+     bagian katalog saat filter diganti. */
   function syncVisibility() {
-    /* Sembunyi saat modal tema terbuka biar tidak menutupi tombol Demo Live / Pesan di dalamnya.
-       lastTheme tetap tersimpan, jadi pesan WA-nya masih menyebut tema yang barusan dilihat. */
+    var el = document.querySelector('.catalog-grid');
+    katalogVisible = false;
+    if (el) {
+      var r = el.getBoundingClientRect();
+      katalogVisible = r.bottom > window.innerHeight * 0.08 && r.top < window.innerHeight * 0.92;
+    }
+    /* Sembunyi saat modal tema terbuka biar tidak menutupi tombol Demo Live /
+       Pesan di dalamnya. lastTheme tetap tersimpan, jadi pesan WA-nya masih
+       menyebut tema yang barusan dilihat. */
     if (fab) fab.classList.toggle('is-on', katalogVisible && !modalEl());
   }
 
-  function watchKatalog(sec) {
-    if (!('IntersectionObserver' in window)) { katalogVisible = true; syncVisibility(); return; }
-    new IntersectionObserver(function (entries) {
-      katalogVisible = entries.some(function (e) { return e.isIntersecting; });
-      syncVisibility();
-    }, { rootMargin: '-8% 0px -18% 0px' }).observe(sec);
+  var menungguScroll = false;
+  function onScroll() {
+    if (menungguScroll) return;
+    menungguScroll = true;
+    requestAnimationFrame(function () { menungguScroll = false; syncVisibility(); });
   }
+
+
 
   /* ---- Demo live di dalam modal tema ---- */
   function enhanceModal() {
@@ -367,7 +389,7 @@ Error generating stack: `+i.message+`
     });
   }
 
-  function enhance() { syncFab(); syncVisibility(); enhanceModal(); }
+  function enhance() { pastikanAnchor(); syncFab(); syncVisibility(); enhanceModal(); }
   function schedule() {
     if (timer) return;
     timer = setTimeout(function () { timer = null; enhance(); }, 120);
@@ -391,11 +413,13 @@ Error generating stack: `+i.message+`
       new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
     }
 
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+
     var tries = 0;
     (function find() {
-      var sec = document.getElementById('katalog');
-      if (sec) { watchKatalog(sec); enhance(); return; }
-      if (++tries > 60) { enhance(); return; }
+      pastikanAnchor();
+      if (document.querySelector('.catalog-grid') || ++tries > 60) { enhance(); return; }
       setTimeout(find, 100);
     })();
   }

@@ -100,3 +100,13 @@ tersedia, setiap replacement memakai assert jumlah kemunculan):
 4. Link mati `href="#"` → IG `@asproject.my.id`, `mailto:hello@asproject.my.id`, dan
    teks "Chat WhatsApp Support Premium" / "WhatsApp Support" → `wa.me/6285196755675`.
 5. Buang `@font-face` "Optimistic" (404 di domain kita) + 3 script artifact `ecto:*`.
+
+## Periksa kesehatan sebelum publish
+
+Jalankan `python3 tools/cek-kesehatan.py` (exit code 1 kalau ada masalah).
+Sepuluh pemeriksaan statis: tautan/aset lokal ada, tidak ada `http://` polos atau
+`localhost`, sintaks semua `<script>` (`node --check`), id duplikat, selector blok
+injeksi, konten terlarang ("beb", KartuDigital, script artifact), injeksi tidak
+terduplikasi, peta demo vs file, simulasi tombol Demo Live per tema katalog, dan
+audit anchor lintas halaman. Yang tetap butuh mata manusia: tampilan, animasi,
+autoplay musik — sandbox pengerjaan tidak punya browser.
