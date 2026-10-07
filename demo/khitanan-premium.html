@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id" data-tema="islamic-elegant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undangan Khitanan Premium — AsProject.My.Id</title>
+<meta name="description" content="Demo interaktif undangan khitanan paket Premium: Islamic Elegant & Biru Ceria, ganti tema langsung di halaman.">
+<meta name="theme-color" content="#4A6741">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Poppins:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mesin.css">
+</head>
+<body class="terkunci">
+<div class="hias" id="hias" aria-hidden="true"></div>
+<div id="aspSampul"></div>
+<div id="aspBar"></div>
+<audio id="lagu" loop preload="auto" src="../music/backsound-asproject.mp3"></audio>
+<main id="aspMain"></main>
+<div id="aspFooter"></div>
+<a id="waTerbang" href="#" target="_blank" rel="noopener" title="Chat WhatsApp AsProject" aria-label="Chat WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.6-1.2.1-.2 0-.4 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.7 11.3 11.3 0 0 0 4.3 3.8c1.6.6 2.2.7 3 .6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.2-.2-.4-.3Z"/></svg>
+</a>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+window.ASP_DEMO = {
+  file: "khitanan-premium",
+  jenis: "Khitanan",
+  paket: "premium",
+  sampulLabel: "Walimatul Khitan",
+  judulEyebrow: "Undangan Khitanan · Paket Premium",
+  namaBesar: 'Muhammad <span>Fattan</span>',
+  heroNama: 'Muhammad <span>Fattan</span>',
+  salam: "Assalamu'alaikum warahmatullahi wabarakatuh. Dengan penuh syukur kepada Allah SWT, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam walimatul khitan putra kami.",
+  venueSingkat: "Bandung",
+  kota: "Bandung",
+  profilLabel: "Yang Dikhitan",
+  profilJudul: "Jagoan Kecil Kami",
+  profilSub: "Mohon doa restu agar prosesnya lancar dan menjadi langkah awal ibadah yang baik.",
+  orang: [{ inisial: "F", nama: "Muhammad Fattan Alfarizi", ket: "Putra pertama dari\nBpk. Andi Alfarizi & Ibu Sinta Dewi" }],
+  ayat: { teks: "Sesungguhnya Allah menyukai orang-orang yang bertaubat dan menyukai orang-orang yang mensucikan diri.", sumber: "QS. Al-Baqarah: 222" },
+  ceritaJudul: "Tumbuh Bersama",
+  ceritaSub: "Beberapa langkah kecil yang membawa kami ke hari ini.",
+  cerita: [
+    { waktu: "2019", judul: "Lahir ke Dunia", teks: "Tangis pertama di RS Hasan Sadikin, berat 3,4 kg — seluruh rumah ikut begadang bahagia." },
+    { waktu: "2023", judul: "Mulai Mengaji", teks: "Berangkat TPA tiap sore dengan peci kebesaran dan semangat yang tidak kebesaran." },
+    { waktu: "Tahun ini", judul: "Hari Khitan", teks: "Langkah sunnah pertama yang ingin kami rayakan bersama keluarga dan sahabat." }
+  ],
+  acara: [
+    { label: "Prosesi Khitan", judul: "Pelaksanaan", waktu: "08.00 – 10.00 WIB", tempat: "Rumah Keluarga Alfarizi", alamat: "Jl. Melati No. 21, Bandung" },
+    { label: "Walimah", judul: "Syukuran & Doa Bersama", waktu: "11.00 – 13.00 WIB", tempat: "Aula Masjid Al-Ikhlas", alamat: "Jl. Melati No. 2, Bandung" }
+  ],
+  mapsUrl: "https://www.google.com/maps?q=Jl.%20Melati%20No.%2021%2C%20Bandung&output=embed",
+  dresscode: { warna: ["#E6F0E6", "#B8DAFF", "#FFFFFF"], teks: "Sopan & nyaman" },
+  galeriJudul: "Dua Wajah Khitanan",
+  galeriSub: "Satu foto per tema — ketuk untuk melihat namanya. Versi produksi memakai foto anak Anda (15 foto + 1 video).",
+  galeri: [
+    { src: "../assets/demo/khitanan/01-islamic-elegant.jpg", alt: "Anak berbusana putih dengan peci di latar arabesque hijau", judul: "Islamic Elegant", sub: "Arabesque · Tenang · Khidmat", glyph: "❁" },
+    { src: "../assets/demo/khitanan/02-biru-ceria.jpg", alt: "Anak berkostum superhero dengan balon biru", judul: "Biru Ceria", sub: "Playful · Balon · Superhero", glyph: "★" }
+  ],
+  amplopSub: "Doa restu adalah hadiah utama. Tanda kasih untuk sang jagoan boleh melalui kanal berikut (3 rekening, fitur Premium).",
+  akun: [
+    { kode: "BCA", nomor: "1234567890", atas: "a.n. Andi Alfarizi" },
+    { kode: "MDR", nomor: "9876543210", atas: "a.n. Sinta Dewi" },
+    { kode: "DANA", nomor: "081234567890", atas: "a.n. Sinta D." }
+  ],
+  hadiah: "Jl. Melati No. 21, Kel. Sukajadi, Bandung 40162 — tujukan ke \"Muhammad Fattan\".",
+  paketJudul: "Dua Tema, Satu Paket Premium",
+  paketSub: "Ketuk kartu untuk mengganti seluruh tampilan halaman ini langsung — palet & harganya persis seperti di katalog.",
+  temaDefault: "islamic-elegant",
+  tema: {
+    "islamic-elegant": {
+      nama: "Islamic Elegant", harga: 79000, coret: 158000, badge: "Elegan", glyph: "❁", motif: "bintang",
+      desk: "Islami elegan dengan ornamen arabesque gold yang menenangkan.",
+      swatch: ["#E6F0E6", "#C9DCC9", "#A3C4A3", "#4A6741"],
+      fitur: ["Ornamen geometris halus", "Galeri 15 foto + 1 video", "Amplop digital 3 rekening"],
+      vars: { bg: "#F4F8F4", bg2: "#E6F0E6", bg3: "#FBFDFB", soft: "#C9DCC9", line: "#BBD0BB", mid: "#A3C4A3", acc: "#4A6741", deep: "#35502F", onAcc: "#FBFDFB", ink: "#2A3B27", ink2: "#4A5A46", mut: "#7A8A76", card: "rgba(255,255,255,.68)", cardSolid: "#FFFFFF", serif: '"Playfair Display",Georgia,serif', sans: '"Poppins",system-ui,sans-serif' }
+    },
+    "biru-ceria": {
+      nama: "Biru Ceria", harga: 75000, coret: 150000, badge: "Ceria", glyph: "★", motif: "bintang",
+      desk: "Ceria & playful buat jagoan yang lagi disunat, tetap sopan.",
+      swatch: ["#E0F2FF", "#B8DAFF", "#7FB8F0", "#3A6EA5"],
+      fitur: ["Balon & confetti animasi", "Galeri 15 foto + 1 video", "QR check-in tamu"],
+      vars: { bg: "#F2F8FF", bg2: "#E0F2FF", bg3: "#FAFDFF", soft: "#B8DAFF", line: "#A9CFF2", mid: "#7FB8F0", acc: "#3A6EA5", deep: "#2A5480", onAcc: "#FBFDFF", ink: "#1E3A5F", ink2: "#3D5A7A", mut: "#7A93AC", card: "rgba(255,255,255,.7)", cardSolid: "#FFFFFF", serif: '"Poppins",system-ui,sans-serif', sans: '"Poppins",system-ui,sans-serif' }
+    }
+  },
+  ucapanContoh: [
+    { nama: "Om Hendra & Tante Rina", hadir: "hadir", pesan: "Selamat buat Fattan! Semoga jadi anak shalih, sehat selalu, dan makin jagoan 🤍", waktu: Date.now() - 864e5 - 36e5 * 4 },
+    { nama: "Keluarga Besar Masjid Al-Ikhlas", hadir: "hadir", pesan: "Barakallah. Semoga prosesnya lancar dan menjadi awal ibadah yang baik untuk ananda.", waktu: Date.now() - 864e5 - 36e5 * 18 },
+    { nama: "Pak Guru TPA Ustaz Salman", hadir: "ragu", pesan: "MasyaAllah, selamat ya! Saya usahakan hadir setelah jadwal mengaji sore.", waktu: Date.now() - 864e5 - 36e5 * 30 }
+  ],
+  penutup: "Merupakan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada ananda.",
+  penutupKecil: "Kami yang berbahagia,",
+  ttd: 'Keluarga <span>Alfarizi</span>',
+  demoLain: [
+    { href: "khitanan-basic.html", label: "Khitanan Basic" },
+    { href: "wedding-premium.html", label: "Wedding Premium" },
+    { href: "ice-blue.html", label: "Ice Blue (Pernikahan)" },
+    { href: "aqiqah.html", label: "Aqiqah" },
+    { href: "ultah-anak.html", label: "Ulang Tahun" }
+  ]
+};
+</script>
+<script src="_mesin.js"></script>
+</body>
+</html>

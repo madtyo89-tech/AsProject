@@ -7,14 +7,15 @@ tema di katalog (`index.html`). Kalau file-nya belum ada, tombolnya tidak ditamp
 | Nama file | Sumber | Ukuran | Status |
 | --- | --- | --- | --- |
 | `ice-blue.html` | **Bikinan ulang** — desain mengikuti template Drive `undangan_online_ice_blue.html` | 58 KB | ✅ aktif |
-| `wedding-premium.html` | Drive `premium_wedding_invitation_template (2).html` | 187.475 B | ⏳ belum ada |
-| `khitanan-premium.html` | Drive `undangan-online-khitanan-premium.html` | 183.601 B | ⏳ belum ada |
-| `khitanan-basic.html` | Drive `undangan-online-khitanan-basic.html` | 190.232 B | ⏳ belum ada |
-| `ultah-anak.pdf` | Drive `Template Undangan Ulang Tahun Anak.pdf` | 121.730 B | ⏳ belum ada |
+| `wedding-premium.html` | **Bikinan ulang** — 4 kulit Pernikahan, palet persis katalog | 58 KB | ✅ aktif |
+| `khitanan-premium.html` | **Bikinan ulang** — kulit Islamic Elegant & Biru Ceria (mesin bersama) | kecil | ✅ aktif |
+| `khitanan-basic.html` | **Bikinan ulang** — pengalaman paket Basic (sengaja sederhana) | kecil | ✅ aktif |
+| `ultah-anak.html` | **Bikinan ulang** — 3 kulit: Kids Party, Sweet 17, Adult Elegant (menggantikan rencana PDF) | kecil | ✅ aktif |
+| `aqiqah.html` | **Bikinan ulang** — 3 kulit: Baby Boy, Baby Girl, Islamic Neutral | kecil | ✅ aktif |
 
-Karena `ice-blue.html` sudah ada, tombol **Demo Live** sekarang menyala di **4 kartu
-kategori Pernikahan** (Adat Jawa Elegan, Minimalist Sage, Luxury Gold, Floral Rustic) —
-`wedding-premium.html` belum ada, jadi pemetaannya jatuh ke cadangan berikutnya.
+Kini **12/12 tema katalog punya tombol Demo Live** dengan kulitnya masing-masing
+(parameter `?tema=`), jadi kartu "Luxury Gold" membuka demo emas gelap, kartu
+"Baby Girl" membuka demo pink blush, dan seterusnya.
 
 ## Kenapa `ice-blue.html` bikinan ulang, bukan file asli Drive?
 
@@ -68,11 +69,19 @@ menyesuaikan sendiri seiring file masuk.
 - `DEMO_BY_CATEGORY` — cadangan per kategori chip di kartu.
 
 ```
-Pernikahan  → wedding-premium.html, lalu ice-blue.html   ← sekarang aktif
-Khitanan    → khitanan-premium.html, lalu khitanan-basic.html
-Ulang Tahun → ultah-anak.pdf
-Aqiqah      → (belum ada template-nya)
+Pernikahan  → wedding-premium.html (?tema=... per tema) + ice-blue.html cadangan
+Khitanan    → khitanan-premium.html (?tema=...), cadangan khitanan-basic.html
+Ulang Tahun → ultah-anak.html (?tema=kids-party | sweet-17 | adult-elegant)
+Aqiqah      → aqiqah.html (?tema=baby-boy | baby-girl | islamic-neutral)
 ```
+
+### Mesin bersama (`_mesin.css` + `_mesin.js`)
+
+Empat halaman kategori (khitanan ×2, ultah, aqiqah) tidak menulis ulang mesin:
+mereka hanya menyediakan `window.ASP_DEMO = {...}` (palet tema, tokoh, acara,
+galeri, ucapan contoh) lalu memuat `_mesin.js`. Menambah kulit baru cukup
+menambah satu entri tema di config — tanpa CSS baru. Halaman wedding & ice-blue
+tetap mandiri (standalone) karena sudah lebih dulu tayang.
 
 ## Tema di Studio
 
