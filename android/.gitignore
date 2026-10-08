@@ -2,6 +2,7 @@
 # Catatan: build/ (folder skrip) TIDAK diabaikan; hanya hasil antaranya (build/offline/).
 /out/
 /build/offline/
+/.tools/
 /app/build/
 /.gradle/
 /local.properties

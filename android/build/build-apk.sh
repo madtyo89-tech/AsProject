@@ -226,6 +226,8 @@ else
   DEBUG_KEYSTORE="${DEBUG_KEYSTORE:-$TOOLS_DIR/tools/debug.keystore}"
   if [[ ! -f "$DEBUG_KEYSTORE" ]]; then
     log "membuat debug keystore di $DEBUG_KEYSTORE"
+    # Folder tujuan bisa belum ada (jalur SDK tanpa fetch_tools).
+    mkdir -p "$(dirname "$DEBUG_KEYSTORE")"
     "$JAVA_HOME_LOCAL/bin/keytool" -genkeypair -v \
       -keystore "$DEBUG_KEYSTORE" -storepass android -keypass android \
       -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
