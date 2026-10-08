@@ -267,6 +267,22 @@ def _tpl_ids(rel):
     return re.findall(r"id:'([a-z0-9-]+)'", m.group(1))
 
 
+def _fx_ids(s, nama_arr):
+    """Urutan id efek di array FX_COVER / FX_SCROLL sebuah file."""
+    m = re.search(r"const %s=\[(.*?)\];" % nama_arr, s, re.S)
+    if not m:
+        return None
+    return re.findall(r"\['([a-z-]+)'", m.group(1))
+
+
+def _font_ids(s):
+    """Id font di array FONTS sebuah file."""
+    m = re.search(r"const FONTS=\[(.*?)\];", s, re.S)
+    if not m:
+        return None
+    return re.findall(r"id:'([a-z-]+)'", m.group(1))
+
+
 def cek_pipeline_undangan():
     print("\n[11] Pipeline tautan undangan (studio → link → 404 → undangan.html)")
     for wajib in ("undangan.html", "404.html", "checkin.html"):
@@ -321,6 +337,28 @@ def cek_pipeline_undangan():
     # 10) snapshot publish membawa slides + anim
     lapor("ok" if "slides:JSON.parse(JSON.stringify(state.slides)),anim" in studio else "masalah",
           "studio.html: publish() menyimpan slides & anim ke snapshot data")
+    # 11) 10 efek animasi cover & 10 efek scroll: daftar id identik di kedua file
+    for nama_arr in ("FX_COVER", "FX_SCROLL"):
+        a, b = _fx_ids(studio, nama_arr), _fx_ids(undangan, nama_arr)
+        if a is None or b is None:
+            lapor("masalah", f"array {nama_arr} tidak ditemukan di studio/undangan")
+        elif a == b and len(a) == 10:
+            lapor("ok", f"{nama_arr} identik di studio & undangan (10 efek)")
+        else:
+            lapor("masalah", f"{nama_arr} studio != undangan! studio={a} undangan={b}")
+    # 12) daftar font (15) identik di kedua file
+    fa, fb = _font_ids(studio), _font_ids(undangan)
+    if fa is None or fb is None:
+        lapor("masalah", "array FONTS tidak ditemukan di studio/undangan")
+    elif fa == fb and len(fa) == 15:
+        lapor("ok", f"FONTS identik di studio & undangan ({len(fa)} font)")
+    else:
+        lapor("masalah", f"FONTS studio != undangan! studio={fa} undangan={fb}")
+    # 13) 20 tema baru punya karakter (char) di kedua file
+    for label, s in (("studio.html", studio), ("undangan.html", undangan)):
+        n = len(re.findall(r"char:'", s))
+        lapor("ok" if n >= 20 else "masalah",
+              f"{label}: 20 tema baru membawa karakter maskot (char: {n})")
 
 
 def main():

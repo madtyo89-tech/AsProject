@@ -10,7 +10,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&display=swap" rel="stylesheet">
 <style>
 :root{
   --g0:#F0F9FF; --g1:#BAE6FD; --g2:#7DD3FC;
@@ -46,6 +46,7 @@ button{font-family:inherit;cursor:pointer}
 #cover .inner{position:relative;max-width:400px;width:100%}
 #cover .orn{font-size:20px;letter-spacing:14px;color:var(--accent);opacity:.85}
 #cover .kicker{margin-top:26px;font-size:11px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--ink);opacity:.85}
+#cover .chara{font-size:52px;line-height:1;margin-top:18px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.15))}
 #cover h1{font-family:var(--ft);font-weight:700;color:var(--ink);font-size:clamp(40px,11vw,58px);line-height:1.04;margin-top:14px}
 #cover .amp{font-family:var(--ft);font-style:italic;font-size:24px;color:var(--accent);margin:6px 0}
 #cover .date{margin-top:22px;display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border:1px solid rgba(255,255,255,.55);border-radius:99px;background:rgba(255,255,255,.35);backdrop-filter:blur(6px);font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--ink)}
@@ -128,9 +129,38 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink);lin
 .cov .anim-word{display:inline-block;animation:uWord .7s cubic-bezier(.22,.8,.36,1) both}
 .cov .anim-deco{transform-origin:center;animation:uDeco .9s cubic-bezier(.22,.8,.36,1) both}
 .cov .anim-pop{animation:uPop .7s cubic-bezier(.22,.8,.36,1) both}
-/* scroll reveal */
-.rv{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.8,.36,1)}
-.rv.in{opacity:1;transform:none}
+/* 10 efek animasi cover (pilihan state.anim.effect) */
+@keyframes uFade{from{opacity:0}to{opacity:1}}
+@keyframes uRise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes uDrop{from{opacity:0;transform:translateY(-28px)}to{opacity:1;transform:none}}
+@keyframes uBlurIn{from{opacity:0;filter:blur(12px)}to{opacity:1;filter:blur(0)}}
+@keyframes uFlip{from{opacity:0;transform:perspective(800px) rotateX(24deg) translateY(20px)}to{opacity:1;transform:none}}
+@keyframes uSlideIn{from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:none}}
+@keyframes uSwing{from{opacity:0;transform:rotate(-7deg) translateY(-16px)}to{opacity:1;transform:none}}
+@keyframes uElastic{0%{opacity:0;transform:scale(.4)}55%{opacity:1;transform:scale(1.12)}75%{transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
+.cov .fx-c-fade{animation:uFade .9s ease both}
+.cov .fx-c-zoom{animation:uZoom .9s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-rise{animation:uRise .8s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-drop{animation:uDrop .8s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-blur{animation:uBlurIn .9s ease both}
+.cov .fx-c-pop{animation:uPop .7s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-flip{animation:uFlip .85s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-slide{animation:uSlideIn .8s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-swing{animation:uSwing .8s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-elastic{animation:uElastic .9s cubic-bezier(.22,.8,.36,1) both}
+/* scroll reveal + 10 efek (pilihan state.anim.scroll) */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.8,.36,1),filter .8s ease}
+.rv.in{opacity:1;transform:none;filter:none}
+.rv.fx-s-fade-up{transform:translateY(28px)}
+.rv.fx-s-fade-down{transform:translateY(-28px)}
+.rv.fx-s-slide-left{transform:translateX(48px)}
+.rv.fx-s-slide-right{transform:translateX(-48px)}
+.rv.fx-s-zoom-in{transform:scale(.85)}
+.rv.fx-s-zoom-out{transform:scale(1.18)}
+.rv.fx-s-rotate{transform:rotate(-4deg) translateY(20px)}
+.rv.fx-s-blur{transform:translateY(14px);filter:blur(8px)}
+.rv.fx-s-pop{transform:scale(.55)}
+.rv.fx-s-flip{transform:perspective(700px) rotateX(16deg) translateY(20px)}
 @media (prefers-reduced-motion:reduce){
  .cov .anim-up,.cov .anim-zoom,.cov .anim-word,.cov .anim-deco,.cov .anim-pop{animation:none}
  .rv{opacity:1;transform:none;transition:none}
@@ -184,14 +214,45 @@ const TPL=[
  {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#3a3835',deco:'◆',pat:'',ft:'inter'},
  {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',deco:'🍼 ☁️ 🍼',pat:'',ft:'poppins'},
  {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',deco:'🎀 🍼 🎀',pat:'',ft:'playfair'},
- {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#4e452e',deco:'☪ ❖ ☪',pat:'arab',ft:'lora'}];
+ {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#4e452e',deco:'☪ ❖ ☪',pat:'arab',ft:'lora'},
+ /* 20 tema baru — urutan & id HARUS identik dengan TPL di studio.html */
+ {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',char:'👑',deco:'✦ ❖ ✦',pat:'',ft:'playfair'},
+ {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',char:'🦌',deco:'🌲 ❖ 🌲',pat:'',ft:'ebgaramond'},
+ {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',char:'🎩',deco:'◆ ✦ ◆',pat:'',ft:'bebas'},
+ {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',char:'🌿',deco:'— ✦ —',pat:'',ft:'oswald'},
+ {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',char:'🎖️',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond'},
+ {id:'dino-adventure',nama:'Petualang Dino',ev:'khitanan',g:['#DFF3E4','#B8E3C0','#8FD3A0'],accent:'#2E7D4F',ink:'#1E4A2E',char:'🦖',deco:'🦖 ⭐ 🦖',pat:'',ft:'bebas'},
+ {id:'football-champ',nama:'Juara Sepak Bola',ev:'khitanan',g:['#E3F6E9','#BCEBCF','#8FD8AE'],accent:'#1F6E43',ink:'#163F28',char:'⚽',deco:'⚽ ✦ ⚽',pat:'',ft:'oswald'},
+ {id:'space-explorer',nama:'Petualang Antariksa',ev:'khitanan',g:['#1A2450','#28356B','#3A4A8C'],accent:'#F0C75E',ink:'#E8ECFF',char:'🚀',deco:'🚀 ✦ 🚀',pat:'',ft:'bebas'},
+ {id:'robot-tech',nama:'Robot Cerdas',ev:'khitanan',g:['#E5F1F5','#C4DEE8','#9CC4D4'],accent:'#33658A',ink:'#243B4D',char:'🤖',deco:'🤖 ✦ 🤖',pat:'',ft:'oswald'},
+ {id:'knight-quest',nama:'Pangeran Knight',ev:'khitanan',g:['#3D2B52','#533B6B','#6C4E88'],accent:'#E0B84C',ink:'#F0E9F7',char:'🛡️',deco:'⚔ ✦ ⚔',pat:'',ft:'ebgaramond'},
+ {id:'superhero-power',nama:'Super Hero',ev:'ultah',g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',char:'🦸',deco:'🦸 ⚡ 🦸',pat:'confetti',ft:'bebas'},
+ {id:'race-car',nama:'Balap Mobil',ev:'ultah',g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',char:'🏎️',deco:'🏁 ✦ 🏁',pat:'',ft:'oswald'},
+ {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',char:'🏴‍☠️',deco:'⚓ ✦ ⚓',pat:'',ft:'bebas'},
+ {id:'dragon-fire',nama:'Naga Api',ev:'ultah',g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',char:'🐉',deco:'🐉 ✦ 🐉',pat:'',ft:'bebas'},
+ {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',char:'🥷',deco:'🥷 ✦ 🥷',pat:'',ft:'oswald'},
+ {id:'baby-prince',nama:'Pangeran Cilik',ev:'aqiqah',g:['#E7F0FB','#C9DCF5','#A5C4EC'],accent:'#3E6BA8',ink:'#234066',char:'🤴',deco:'🤴 ✦ 🤴',pat:'',ft:'poppins'},
+ {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',char:'🦕',deco:'🦕 ✦ 🦕',pat:'',ft:'poppins'},
+ {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',char:'🧑‍🚀',deco:'🧑‍🚀 ✦ 🧑‍🚀',pat:'',ft:'oswald'},
+ {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',char:'🐯',deco:'🐯 ✦ 🐯',pat:'',ft:'bebas'},
+ {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins'}];
 
 const FONTS=[
  {id:'cormorant',fam:'"Cormorant Garamond",serif'},
  {id:'playfair',fam:'"Playfair Display",serif'},
  {id:'poppins',fam:'"Poppins",sans-serif'},
  {id:'inter',fam:'"Inter",sans-serif'},
- {id:'lora',fam:'"Lora",serif'}];
+ {id:'lora',fam:'"Lora",serif'},
+ {id:'montserrat',fam:'"Montserrat",sans-serif'},
+ {id:'bebas',fam:'"Bebas Neue",sans-serif'},
+ {id:'oswald',fam:'"Oswald",sans-serif'},
+ {id:'ebgaramond',fam:'"EB Garamond",serif'},
+ {id:'merriweather',fam:'"Merriweather",serif'},
+ {id:'work-sans',fam:'"Work Sans",sans-serif'},
+ {id:'pacifico',fam:'"Pacifico",cursive'},
+ {id:'dancing',fam:'"Dancing Script",cursive'},
+ {id:'caveat',fam:'"Caveat",cursive'},
+ {id:'sacramento',fam:'"Sacramento",cursive'}];
 
 const DOA={
  pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu, memberi keberkahan atasmu, dan mempertemukan kalian berdua dalam kebaikan.'},
@@ -207,6 +268,15 @@ const QUOTES={
  khitanan:{text:'Sebaik-baik kalian adalah orang yang paling baik kepada keluarganya.',author:'HR. Ahmad'},
  ultah:{text:'Semoga tahun yang baru ini membawa kebahagiaan yang lebih besar dari sebelumnya.',author:'Ucapan Terbaik'},
  aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
+/* 10 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan studio.html */
+const FX_SCROLL=[
+ ['fade-up','Fade Up'],['fade-down','Fade Down'],['slide-left','Slide Kiri'],['slide-right','Slide Kanan'],
+ ['zoom-in','Zoom In'],['zoom-out','Zoom Out'],['rotate','Rotate'],['blur','Blur'],['pop','Pop'],['flip','Flip 3D']];
+const FX_COVER=[
+ ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
+ ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic']];
+function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
+function fxCoverId(AN){const v=AN&&AN.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 
 /* ---------- util ---------- */
 const $=id=>document.getElementById(id);
@@ -360,29 +430,32 @@ function boot(draft){
 
  const play=setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
 
- /* ---------- animasi (diatur dari Studio: cover / teks / scroll reveal) ---------- */
- const AN=(d&&d.anim)||{cover:true,text:true,reveal:true};
+ /* ---------- animasi (diatur dari Studio: cover / teks / scroll reveal + pilihan efek) ---------- */
+ const AN=(d&&d.anim)||{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'};
  const RM=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
  const covOn=!!AN.cover&&!RM,txOn=!!AN.text&&!RM,rvOn=!!AN.reveal&&!RM;
+ const CE=fxCoverId(AN),SC=fxScrollId(AN);
+ const h1d=tplF.char?850:550,dtD=tplF.char?1500:1300,hoD=tplF.char?1650:1450,btD=tplF.char?1800:1600;
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
  const wspan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="anim-word" style="animation-delay:${d0+i*90}ms">${esc(w)}</span>`).join(' ');
- const RV=cls=>rvOn?cls+' rv':cls;
+ const RV=cls=>rvOn?cls+' rv fx-s-'+SC:cls;
 
  /* ---------- HTML ---------- */
  let h='';
  h+=`<div id="cover" class="${covOn?'cov':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
-   <div class="kicker ${covOn?'anim-up':''}" style="${covOn?'animation-delay:400ms':''}">${esc(EV_KICKER[ev]||'Undangan')}</div>`;
+   <div class="kicker ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(EV_KICKER[ev]||'Undangan')}</div>
+   ${tplF.char?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms':''}">${tplF.char}</div>`:''}`;
  if(ev==='pernikahan'){
   h+=txOn
-   ?`<h1>${wspan(titleMain,550)}</h1><div class="amp anim-word" style="animation-delay:${550+nW(titleMain)*90+150}ms">&amp;</div><h1>${wspan(titleSub,550+nW(titleMain)*90+300)}</h1>`
-   :`<h1 class="${covOn?'anim-zoom':''}" style="${covOn?'animation-delay:550ms':''}">${esc(titleMain)}</h1><div class="amp ${covOn?'anim-up':''}" style="${covOn?'animation-delay:900ms':''}">&amp;</div><h1 class="${covOn?'anim-zoom':''}" style="${covOn?'animation-delay:1000ms':''}">${esc(titleSub||'')}</h1>`;
+   ?`<h1>${wspan(titleMain,h1d)}</h1><div class="amp anim-word" style="animation-delay:${h1d+nW(titleMain)*90+150}ms">&amp;</div><h1>${wspan(titleSub,h1d+nW(titleMain)*90+300)}</h1>`
+   :`<h1 class="${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+h1d+'ms':''}">${esc(titleMain)}</h1><div class="amp ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(h1d+350)+'ms':''}">&amp;</div><h1 class="${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(h1d+500)+'ms':''}">${esc(titleSub||'')}</h1>`;
  }else{
-  h+=txOn?`<h1>${wspan(titleMain,550)}</h1>`:`<h1 class="${covOn?'anim-zoom':''}" style="${covOn?'animation-delay:550ms':''}">${esc(titleMain)}</h1>`;
+  h+=txOn?`<h1>${wspan(titleMain,h1d)}</h1>`:`<h1 class="${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+h1d+'ms':''}">${esc(titleMain)}</h1>`;
  }
- h+=`<div class="date ${covOn?'anim-up':''}" style="${covOn?'animation-delay:1300ms':''}">🗓 ${esc(dateStr||'—')}${timeStr?' • '+esc(timeStr):''}</div>`;
- if(venue)h+=`<div class="host ${covOn?'anim-up':''}" style="${covOn?'animation-delay:1450ms':''}">${esc(venue)}</div>`;
- h+=`<button class="open ${covOn?'anim-pop':''}" id="btnOpen" style="${covOn?'animation-delay:1600ms':''}"><span class="env">✉️</span> Buka Undangan</button>
+ h+=`<div class="date ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+dtD+'ms':''}">🗓 ${esc(dateStr||'—')}${timeStr?' • '+esc(timeStr):''}</div>`;
+ if(venue)h+=`<div class="host ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+hoD+'ms':''}">${esc(venue)}</div>`;
+ h+=`<button class="open ${covOn?'anim-pop':''}" id="btnOpen" style="${covOn?'animation-delay:'+btD+'ms':''}"><span class="env">✉️</span> Buka Undangan</button>
  </div><div class="brand">AsProject • Undangan Digital</div></div>`;
 
  h+=`<div id="content"><div class="wrap">`;
@@ -519,7 +592,7 @@ function startCountdown(tt){
 const DEMO_DRAFT={
  slug:'rangga-alya',name1:'Rangga Pratama',name2:'Alya Zahra',venue:'The Ballroom at Ritz Carlton',
  event_date:'2026-12-28',event_time:'08:00',music_url:'music/backsound-asproject.mp3',music_name:'Backsound AsProject — rtyo',theme:0,
- data:{event:'pernikahan',tpl:'jawa-elegan',doa:'pernikahan',accent:'#7A5C3E',fontTitle:'cormorant',fontBody:'inter',
+ data:{event:'pernikahan',tpl:'navy-royal',doa:'pernikahan',accent:'#D4AF37',fontTitle:'playfair',fontBody:'inter',
   form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
    putraPutri:'Bpk. Hartono & Ibu Sulastri',putriDari:'Bpk. Faisal & Ibu Dewi',
    tanggalAcara:'2026-12-28',jamAcara:'08:00',zona:'WIB',venue:'The Ballroom at Ritz Carlton',
@@ -537,7 +610,7 @@ const DEMO_DRAFT={
    map:{on:true},
    rsvp:{on:true},
    closing:{on:true,text:'Terima kasih atas doa, waktu, dan kasih sayang Bapak/Ibu. Sampai berjumpa di hari bahagia kami.'}},
-  anim:{cover:true,text:true,reveal:true},
+  anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'},
   amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true}}};
 
 /* ---------- mulai ---------- */
