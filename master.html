@@ -82,7 +82,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 .b-bar{background:#f0ebe2;padding:8px 12px;display:flex;align-items:center;gap:8px}
 .b-dots{display:flex;gap:5px}
 .b-dots i{width:9px;height:9px;border-radius:99px;background:#d8cdba}
-.b-url{flex:1;background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 11px;font-size:9.5px;font-family:ui-monospace,monospace;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b-url{flex:1;background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 11px;font-size:9.5px;font-family:ui-monospace,monospace;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
+.b-url:hover{color:var(--sage-dark);border-color:var(--sage)}
 .b-screen{background:#fbf7ef;padding:22px 16px 24px;min-height:300px;display:flex;flex-direction:column;align-items:center;text-align:center}
 .b-kick{font-size:8.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:700}
 .b-wed{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-top:8px;line-height:1.15}
@@ -291,21 +292,22 @@ function renderAll(){
      ${[['all','Semua'],['hadir','Hadir'],['tidak','Tidak Hadir'],['belum','Belum RSVP']].map(c=>`<span class="chip ${filter===c[0]?'on':''}" onclick="onFilter('${c[0]}')">${c[1]}</span>`).join('')}
     </div>
     ${shown.length?`<div class="glist">${shown.map(gm=>{
+      const gi=GS.indexOf(gm);
       const r=rsvpOf(gm);
       const badge=r?(r.status==='hadir'?'<span class="badge b-hadir">✓ Hadir</span>':'<span class="badge b-tidak">✕ Tidak Hadir</span>'):'<span class="badge b-belum">Belum</span>';
       const sub=r?('RSVP '+r.status+(r.updated_at?' • '+String(r.updated_at).slice(0,10):'')):'Belum konfirmasi';
-      return `<div class="guest ${gm===g?'sel':''}" onclick="onSelect('${esc(gm).replace(/'/g,"\\'")}')">
+      return `<div class="guest ${gm===g?'sel':''}" onclick="onSelectIdx(${gi})">
        <div class="g-top"><span class="g-av">${esc(initials(gm))}</span><span class="g-name"><b>${esc(gm)}</b><i>${esc(sub)}</i></span>${badge}</div>
-       <div class="g-link"><span>${esc(guestLink(gm))}</span><button class="btn btn-ghost" onclick="event.stopPropagation();copyGuest('${esc(gm).replace(/'/g,"\\'")}')">📋 Salin Link</button></div>
-       <div class="g-acts"><button class="btn btn-wa" onclick="event.stopPropagation();shareWa('${esc(gm).replace(/'/g,"\\'")}')">💬 Share via WhatsApp</button><button class="btn btn-ghost" onclick="event.stopPropagation();copyGuest('${esc(gm).replace(/'/g,"\\'")}')">📋 Copy Link</button></div>
+       <div class="g-link"><span>${esc(guestLink(gm))}</span><button class="btn btn-ghost" onclick="event.stopPropagation();copyGuestIdx(${gi})">📋 Salin Link</button></div>
+       <div class="g-acts"><button class="btn btn-wa" onclick="event.stopPropagation();shareWaIdx(${gi})">💬 Share via WhatsApp</button><button class="btn btn-ghost" onclick="event.stopPropagation();copyGuestIdx(${gi})">📋 Copy Link</button></div>
       </div>`}).join('')}</div>`
      :`<div class="empty">${GS.length?'Tidak ada tamu yang cocok.':'Belum ada tamu.<br>Tambahkan di <b>Studio → tab Tamu & QR</b> lalu publish ulang.'}</div>`}
    </div>
    <!-- preview tamu -->
    ${g?`<div class="card">
     <div class="card-t">👁️ Preview Undangan <span style="font-weight:600;text-transform:none;letter-spacing:0;color:var(--ink-faint)">— ${esc(g)}</span></div>
-    <div class="browser">
-     <div class="b-bar"><span class="b-dots"><i></i><i></i><i></i></span><span class="b-url">${esc(guestLink(g))}</span></div>
+    <div class="browser" style="cursor:pointer">
+     <div class="b-bar"><span class="b-dots"><i></i><i></i><i></i></span><a class="b-url" href="${esc(guestLink(g))}" target="_blank" rel="noopener" title="Buka undangan tamu ini">${esc(guestLink(g))} ↗</a></div>
      <div class="b-screen">
       <div class="b-kick">${esc(evLabel())}</div>
       <div class="b-wed">${esc(headName())}</div>
@@ -349,7 +351,10 @@ function renderAll(){
 /* ---------- interaksi ---------- */
 function onSearch(v){search=v;renderAll();const el=document.querySelector('.gsearch');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
 function onFilter(f){filter=f;renderAll()}
-function onSelect(g){selGuest=g;renderAll()}
+/* aksi per tamu lewat INDEX (bukan nama) → aman untuk nama dengan karakter khusus */
+function onSelectIdx(i){const gm=GS[i];if(gm){selGuest=gm;renderAll()}}
+function copyGuestIdx(i){const gm=GS[i];if(gm)copyGuest(gm)}
+function shareWaIdx(i){const gm=GS[i];if(gm)shareWa(gm)}
 function onBankTgl(){bankOn=!bankOn;const t=$('#bankTgl');if(t)t.classList.toggle('on',bankOn);
  ['bankName','bankAcc','bankHolder'].forEach(id=>{const el=document.getElementById(id);if(el)el.className=bankOn?'':'dis'});
  renderAll()}
