@@ -11,3 +11,9 @@
 *.jks
 
 *.idsig
+
+# PENGECUALIAN: satu APK debug disertakan sengaja sebagai salinan unduhan untuk
+# uji coba di ponsel (lihat releases/README.md). Aturan ini harus berada paling
+# bawah agar menang atas pola *.apk di atas.
+!/releases/asproject-studio-1.0.0-debug.apk
+!/releases/SHA256SUMS.txt
