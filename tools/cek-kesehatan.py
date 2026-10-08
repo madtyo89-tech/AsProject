@@ -446,6 +446,13 @@ def cek_fitur_terbaru():
     ok = "g?g.nama:'Bapak/Ibu/Saudara/i'" in studio and "g?baseUrl()+'?to='+" in studio
     lapor("ok" if ok else "masalah",
           "studio.html: teks WA berisi nama tamu terpilih & link tanpa placeholder ?to=NamaTamu")
+    # 5) Regresi: border preview hanya di zona cover (persis live) & migrasi dblBorder lama
+    ok = "borderOf().id!=='none'?'padding:18px 12px" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: border preview terpasang di zona cover (konsisten dgn live, bukan layar penuh)")
+    ok = "if(state.dblBorder===false)state.border='none'" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: migrasi dblBorder lama — proyek yang menonaktifkan border tetap tanpa border")
 
 
 def main():

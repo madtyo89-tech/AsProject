@@ -372,7 +372,7 @@ if(!Array.isArray(state.katalog)||!state.katalog.length||!state.katalog[0].tpl)s
 /* template baru di TPL otomatis ikut masuk ke katalog yang sudah tersimpan di localStorage */
 TPL.forEach((t,i)=>{if(!state.katalog.some(k=>k.tpl===t.id))state.katalog.push({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:Math.max(0,340-(state.katalog.length+i)*23)})});
 /* migrasi border (dulu: toggle dblBorder) & daftar katalog tersembunyi */
-if(state.border===undefined){state.border=(state.dblBorder!==false)?'double':'none';delete state.dblBorder}
+if(state.dblBorder===false)state.border='none';else if(state.dblBorder===true)state.border='double';delete state.dblBorder
 if(!BORDERS.some(b=>b.id===state.border))state.border='double';
 if(!Array.isArray(state.katalogHide))state.katalogHide=[];
 if(!Array.isArray(state.musicDb))state.musicDb=[];
@@ -538,7 +538,7 @@ async function publish(){
  state.published=true;
  const nama=displayName();
  const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
-  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim))}};
+  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim))}};
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  save();render();notify('Berhasil Publish! '+baseUrl()+' tersimpan di Folder Arsip')}
 function unpublish(){state.published=false;save();render();notify('Status kembali ke Draft')}
@@ -547,6 +547,7 @@ function loadArsip(id){const a=state.arsip.find(x=>x.id===id);if(!a)return;
   if(a.snap.tpl&&TPL.some(t=>t.id===a.snap.tpl))state.tpl=a.snap.tpl;else{const ft=tplsFor(a.snap.event)[0];if(ft)state.tpl=ft.id}
   state.doa=a.snap.doa||a.snap.event;state.accent=a.snap.accent||tplOf().accent;state.slug=a.snap.slug;
   if(a.snap.fontTitle)state.fontTitle=a.snap.fontTitle;if(a.snap.fontBody)state.fontBody=a.snap.fontBody;
+  if(a.snap.border)state.border=a.snap.border;
   if(a.snap.slides)state.slides=mergeSlides(a.snap.slides);
   if(a.snap.anim)state.anim=Object.assign({},DEF.anim,a.snap.anim);animSig=null}
  else{state.event=a.jenis;animSig=null}
@@ -1096,8 +1097,9 @@ function phoneHtml(){
    <div style="width:12px;height:12px;border-radius:99px;background:#ddd"></div>
   </div>
   <div class="notch"></div>
-   <div class="${dark?'emerald-bg':''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg};${borderCss()}">${borderCorners()}
+   <div class="${dark?'emerald-bg':''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg}">
    <div class="${(CV||TX||RV)?'ap':''}" style="padding:20px;text-align:center;font-family:${tF};${patStyle}">
+   <div style="position:relative;${borderOf().id!=='none'?'padding:18px 12px;margin:0 0 14px;':''}${borderCss()}">${borderCorners()}
     ${f.showBismillah?`<div class="${CV?'fx-c-'+CE:''}" style="margin-bottom:12px;${CV?'animation-delay:250ms':''}"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
      <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}
     ${tp.deco?`<div class="${CV?'a-deco':''}" style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px;${CV?'animation-delay:150ms':''}">${tp.deco}</div>`:''}
@@ -1125,7 +1127,8 @@ function phoneHtml(){
     </div>`)}
     ${WR(600,state.cover?`<img src="${state.cover}" style="margin-top:24px;width:100%;height:200px;object-fit:cover;border-radius:20px;border:1px solid #ddd">`
      :`<div style="margin-top:24px;height:160px;border-radius:20px;border:1px dashed #ccc;background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:11px;color:#a3a3a3;font-family:${bF}">Foto Utama</div>`)}
-    ${WR(750,`<div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${bF}">
+   </div>
+   ${WR(750,`<div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${bF}">
      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Waktu & Tempat</div>
      <div style="margin-top:8px;font-size:13px;font-weight:600">${esc(f.venue)}</div>
      <div style="font-size:11px;color:#525252;margin-top:4px;line-height:1.6">${esc(f.alamat)}</div>
