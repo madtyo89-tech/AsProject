@@ -135,6 +135,33 @@ Uji: `node tools/test-foto-cover.cjs` (86 pemeriksaan, termasuk potongan
 Lembar perbandingan: `pilihan-gaya-foto-cover.png` dan `master-preview-foto-cover.png`
 (di luar repositori; dibuat dengan skrip sharp, bukan bagian aplikasi).
 
+## Link Scan QR Panitia (check-in tamu)
+
+Sekarang QR di tab **Tamu & QR** adalah **QR asli** (bukan hiasan) — setiap QR berisi
+link `checkin.html?guest=…&id=…&s=…`. Saat tamu datang, panitia cukup memindai QR itu
+di pintu masuk; kehadiran langsung tercatat.
+
+**Cara pakai (3 langkah):**
+
+1. **Pasang tabel check-in sekali**: buka Supabase → SQL Editor → jalankan
+   `tools/checkin.sql` (tabel `checkin` terpisah dari `rsvp`: RSVP = "akan hadir",
+   check-in = "sudah tiba").
+2. **Bagikan link scan**: dashboard **Undangan Master** → kartu **🔗 Link Scan QR
+   Panitia (Check-in)** → tombol **Salin** / **💬 Share via WhatsApp**.
+   Link berbentuk `scan.html?s=<slug>&k=<kunci>` — privat (kunci sama dengan link
+   master), jangan dibagikan ke tamu.
+3. **Panitia bertugas**: buka link di HP → **📷 Mulai Pindai** → arahkan ke QR tamu.
+   Nama tamu muncul + suara/getar, check-in tersimpan, dan muncul di **Daftar Hadir**
+   (halaman scan) serta rekap **"N tamu sudah check-in"** di Undangan Master.
+
+**Fallback di halaman scan:** *Pindai dari Galeri* (foto QR) dan **cari manual**
+(nama/kode) — untuk QR rusak atau HP tanpa pemindai otomatis.
+
+Teknis: `scan.html` memakai **BarcodeDetector** (kamera belakang, HTTPS) dan upsert ke
+tabel `checkin` (`unique(slug, guest)` — scan ulang memperbarui waktu). QR digenerate
+dengan pustaka `assets/qrcode.js` (*qrcode-generator*, MIT, © Kazuhiko Arase), level
+koreksi M + quiet zone 6 modul supaya nyaman dipindai.
+
 ## Latar artwork tema (ulang tahun & pernikahan)
 
 Tema **ulang tahun** dan **pernikahan** memakai latar artwork realistis dari

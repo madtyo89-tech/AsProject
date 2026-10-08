@@ -27,7 +27,7 @@ import posixpath
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HALAMAN = ["index.html", "studio.html", "undangan.html", "404.html",
-           "checkin.html", "demo/ice-blue.html", "master.html"]
+           "checkin.html", "demo/ice-blue.html", "master.html", "scan.html"]
 TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 
 hitung = {"ok": 0, "masalah": 0, "info": 0}
@@ -642,6 +642,26 @@ def cek_skrip_build():
         lapor("info", "git tidak tersedia — pemeriksaan pelacakan berkas dilewati")
 
 
+# ------------------------------------ 19. fitur scan QR panitia (check-in)
+def cek_scan_panitia():
+    print("\n[19] Scan QR panitia (check-in)")
+    qr = baca("assets/qrcode.js") if os.path.isfile(os.path.join(ROOT, "assets/qrcode.js")) else ""
+    lapor("ok" if "QR Code Generator" in qr and "MIT" in qr else "masalah",
+          "assets/qrcode.js (pustaka QR, MIT) tersedia")
+    stu = baca("studio.html")
+    lapor("ok" if "function checkinUrl(" in stu and "window.qrcode(0,'M')" in stu else "masalah",
+          "studio.html: QR tamu dibuat dari pustaka QR (checkinUrl)")
+    scan = baca("scan.html") if os.path.isfile(os.path.join(ROOT, "scan.html")) else ""
+    lapor("ok" if scan and "BarcodeDetector" in scan and "rest/v1/checkin" in scan else "masalah",
+          "scan.html: pemindai panitia + catat check-in")
+    mas = baca("master.html")
+    lapor("ok" if "Link Scan QR Panitia" in mas and "scan.html?s=" in mas else "masalah",
+          "master.html: kartu Link Scan QR Panitia (bisa dibagikan)")
+    sql = baca("tools/checkin.sql") if os.path.isfile(os.path.join(ROOT, "tools/checkin.sql")) else ""
+    lapor("ok" if "unique (slug, guest)" in sql else "masalah",
+          "tools/checkin.sql: skema tabel check-in")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -650,7 +670,7 @@ def main():
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
-               cek_tema_3d, cek_foto_cover, cek_skrip_build):
+               cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

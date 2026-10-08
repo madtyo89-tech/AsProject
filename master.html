@@ -265,7 +265,7 @@ function afterLoad(){
  loadRsvp().then(renderAll);
 }
 
-async function loadRsvp(){
+async function loadRsvp(){muatScanStat();
  if(DEMO){RSROWS=[{guest:'Pak Andi Wijaya & Keluarga',status:'hadir'},{guest:'Kak Dina & Family',status:'hadir'},{guest:'Bu Rina Marlina',status:'tidak'}];rebuildMap();return}
  try{
   const r=await fetch(SUPABASE_URL+'/rest/v1/rsvp?slug=eq.'+SLUG+'&select=guest,status,updated_at&updated_at=desc',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}});
@@ -335,6 +335,17 @@ function renderAll(){
     <div class="card-t">👥 Link Personal Tamu</div>
     <div class="card-s">Setiap tamu dapat tautan miliknya sendiri. Sapaan <b>Kepada Yth.</b> otomatis sesuai nama di link.</div>
     <div class="linkbox"><span>${esc(baseLink())}/u/${esc(SLUG)}${(d.linkMode||'personal')==='single'?'':'?to=NamaTamu'}</span><button class="btn btn-ghost" onclick="copyAll()">Salin Semua</button></div>
+   </div>
+   <!-- link scan QR panitia -->
+   <div class="card">
+    <div class="card-t">🔗 Link Scan QR Panitia (Check-in)</div>
+    <div class="card-s">Bagikan ke panitia di pintu masuk — buka di HP, pindai QR tamu saat datang, kehadiran langsung tercatat. Tanpa login.</div>
+    <div class="linkbox"><span>${esc(scanUrl())}</span><button class="btn btn-copy" onclick="copyScan()">Salin</button></div>
+    <div class="g-acts" style="margin-top:10px">
+     <button class="btn btn-wa" onclick="shareScanWa()">💬 Share via WhatsApp</button>
+     <button class="btn btn-ghost" onclick="openScan()">↗ Buka Scanner</button>
+    </div>
+    <div class="card-s" id="scanStat" style="margin-top:8px"></div>
    </div>
    <!-- stats -->
    <div class="card stats">
@@ -420,6 +431,22 @@ function onBankTgl(){bankOn=!bankOn;const t=$('#bankTgl');if(t)t.classList.toggl
  ['bankName','bankAcc','bankHolder'].forEach(id=>{const el=document.getElementById(id);if(el)el.className=bankOn?'':'dis'});
  renderAll()}
 function copyMaster(){copyText(masterLink(),'Link master tersalin ✓','ok')}
+/* ---- Link scan QR panitia (check-in tamu) ---- */
+function scanUrl(){return baseLink()+'/scan.html?s='+encodeURIComponent(SLUG)+'&k='+encodeURIComponent(DRAFT.data.masterKey||'')}
+function copyScan(){copyText(scanUrl(),'Link scan panitia tersalin ✓','ok')}
+function shareScanWa(){
+ const teks='Halo, ini link Scan QR Panitia untuk check-in tamu '+headName()+'\n\n'+scanUrl()+'\n\nBuka di HP saat bertugas di pintu masuk, lalu pindai QR tamu. Link ini khusus panitia — jangan bagikan ke tamu.';
+ window.open('https://wa.me/?text='+encodeURIComponent(teks),'_blank');
+}
+function openScan(){window.open(scanUrl(),'_blank','noopener,noreferrer')}
+function muatScanStat(){
+ const el=document.getElementById('scanStat');if(!el)return;
+ if(DEMO){el.textContent='Mode demo.';return}
+ fetch(SUPABASE_URL+'/rest/v1/checkin?slug=eq.'+encodeURIComponent(SLUG)+'&select=id',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}})
+  .then(r=>r.ok?r.json():null)
+  .then(rows=>{el.textContent=rows?('✔ '+rows.length+' tamu sudah check-in'):''})
+  .catch(()=>{});
+}
 function copyAll(){copyText(GS.map(x=>x+': '+guestLink(x)).join('\n'),'Semua link tamu tersalin ✓','ok')}
 function copyGuest(g){copyText(guestLink(g),'Link '+g+' tersalin ✓','ok')}
 function copyText(t,msg,type){

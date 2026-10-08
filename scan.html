@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1a12">
+<title>Scan QR Panitia — AsProject</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<style>
+:root{--bg:#0f1a12;--card:#ffffff;--ink:#22301f;--mut:#7a857c;--line:#e3efe7;--grn:#4A6741;--grn2:#34d399;--amber:#b45309}
+*{box-sizing:border-box}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#f2efe9;display:flex;justify-content:center;padding:16px 16px 40px}
+.wrap{max-width:440px;width:100%}
+.hdr{display:flex;align-items:center;gap:10px;padding:6px 2px 14px}
+.hdr img{width:34px;height:34px;border-radius:10px;background:#fff;padding:4px}
+.hdr b{font-size:15px}
+.hdr i{display:block;font-style:normal;font-size:11px;color:#9db8a4}
+.card{background:var(--card);color:var(--ink);border-radius:22px;padding:20px 18px;box-shadow:0 30px 60px rgba(0,0,0,.35);margin-bottom:14px}
+.card h2{margin:0 0 4px;font-size:17px}
+.card .s{margin:0 0 12px;font-size:12px;color:var(--mut);line-height:1.7}
+.cam{position:relative;width:100%;aspect-ratio:1/1;border-radius:18px;overflow:hidden;background:#0b120c;display:grid;place-items:center}
+.cam video{width:100%;height:100%;object-fit:cover}
+.cam .guide{position:absolute;inset:14%;border:3px solid rgba(52,211,153,.85);border-radius:18px;box-shadow:0 0 0 999px rgba(5,10,6,.32)}
+.cam .hint{position:absolute;bottom:12px;left:12px;right:12px;text-align:center;font-size:11px;color:#d1fae5;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:13px 16px;font-size:13.5px;font-weight:700;cursor:pointer;min-height:46px;width:100%}
+.btn.primary{background:linear-gradient(135deg,#34d399,#059669);color:#fff;box-shadow:0 12px 26px rgba(5,150,105,.35)}
+.btn.dark{background:#22301f;color:#fff}
+.btn.ghost{background:#f2f6f3;color:var(--ink);border:1px solid var(--line)}
+.row{display:flex;gap:8px}
+.row .btn{flex:1}
+input{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 13px;font-size:14px;outline:none}
+input:focus{border-color:var(--grn)}
+.pill{display:inline-flex;align-items:center;gap:6px;background:#ecfdf5;border:1px solid #bbf7d0;color:#047857;border-radius:999px;padding:5px 11px;font-size:11px;font-weight:700}
+.guest{background:#f7faf8;border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center}
+.guest .n{font-size:21px;font-weight:700;font-family:Georgia,serif;word-break:break-word;color:#1c2b1e}
+.guest .c{margin-top:6px;font-family:ui-monospace,monospace;font-size:12px;color:#8a6d0f}
+.guest .w{margin-top:8px;font-size:11px;color:var(--mut)}
+.ok{width:66px;height:66px;margin:10px auto 6px;border-radius:50%;background:linear-gradient(135deg,#34d399,#10b981);display:grid;place-items:center;font-size:32px;color:#fff;box-shadow:0 14px 30px rgba(16,185,129,.4)}
+.ok.gagal{background:linear-gradient(135deg,#f87171,#dc2626);box-shadow:0 14px 30px rgba(220,38,38,.35)}
+h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.list{list-style:none;margin:0;padding:0;font-size:12.5px}
+.list li{display:flex;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px dashed var(--line)}
+.list li:last-child{border-bottom:0}
+.list time{color:var(--mut);white-space:nowrap}
+.note{font-size:11px;color:var(--mut);line-height:1.7}
+.badge{margin:16px 0 0;text-align:center;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#9db8a4}
+.alert{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:12px;padding:11px 13px;font-size:11.5px;line-height:1.7;margin:10px 0}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="hdr">
+  <img src="assets/logo-asproject.svg" alt="AsProject">
+  <div><b>Scan QR Panitia</b><i id="hdrSub">Check-in tamu di pintu masuk</i></div>
+ </div>
+
+ <div class="card" id="kartuScan">
+  <h2>Pindai QR Tamu</h2>
+  <p class="s">Arahkan kamera ke QR di undangan/cetak tamu. Kehadiran langsung tercatat dan muncul di Undangan Master.</p>
+  <div class="cam" id="cam">
+   <video id="video" playsinline muted></video>
+   <div class="guide" id="guide" hidden></div>
+   <div class="hint" id="camHint">Kamera siap — tekan tombol Mulai Pindai</div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="row" id="barisKamera">
+   <button class="btn primary" id="btnMulai">📷 Mulai Pindai</button>
+  </div>
+  <div class="row" id="barisSetelah" hidden>
+   <button class="btn dark" id="btnLanjut">▶ Scan Berikutnya</button>
+   <button class="btn ghost" id="btnBerhenti">■ Berhenti</button>
+  </div>
+  <div style="height:12px"></div>
+  <div class="row">
+   <button class="btn ghost" id="btnGaleri">🖼 Pindai dari Galeri</button>
+   <button class="btn ghost" id="btnBagi">🔗 Bagikan Link Ini</button>
+  </div>
+  <input type="file" id="fileQr" accept="image/*" hidden>
+  <div class="alert" id="alertKamera" hidden></div>
+
+  <h3>Cari manual (QR rusak / tanpa kamera)</h3>
+  <input id="inputManual" placeholder="Ketik nama atau kode tamu…" autocomplete="off">
+  <div style="height:8px"></div>
+  <button class="btn dark" id="btnManual">✔ Check-in Manual</button>
+ </div>
+
+ <div class="card" id="kartuHasil" hidden>
+  <div class="ok" id="ikonHasil">✓</div>
+  <div class="guest">
+   <div class="n" id="hasilNama">—</div>
+   <div class="c" id="hasilKode"></div>
+   <div class="w" id="hasilWaktu"></div>
+  </div>
+  <div class="alert" id="hasilCatatan" hidden></div>
+  <div style="height:12px"></div>
+  <div class="row">
+   <button class="btn primary" id="btnScanLagi">📷 Scan Tamu Berikutnya</button>
+   <button class="btn ghost" id="btnKembali">← Kembali</button>
+  </div>
+ </div>
+
+ <div class="card">
+  <h2 style="font-size:14px">Daftar Hadir Hari Ini</h2>
+  <p class="s" id="rekapS">Memuat…</p>
+  <ul class="list" id="rekapList"><li><span>Belum ada</span></li></ul>
+  <p class="note" style="margin-top:12px">Halaman ini privat — dibuka lewat link berisi kunci dari Undangan Master. Jangan bagikan ke tamu.</p>
+ </div>
+
+ <div class="badge">AsProject • Panitia Check-in</div>
+</div>
+
+<script>
+(function(){
+ 'use strict';
+ var SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
+ var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
+ var q=new URLSearchParams(location.search);
+ var SLUG=(q.get('s')||'').toLowerCase();
+ var KUNCI=q.get('k')||'';
+ var DEMO=q.get('demo')==='1';
+ var DRAFT=null,GS=[],CODES={},detector=null,stream=null,loopId=null,terakhir='';
+
+ function $(id){return document.getElementById(id)}
+ function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+ function judul(){var d=DRAFT&&DRAFT.data||{};var f=d.form||{};
+  return (f.namaWanita?(f.namaPria+' & '+f.namaWanita):(f.namaAnak||'')).trim()||SLUG.replace(/-/g,' ')}
+
+ function get(path){return fetch(SUPABASE_URL+path,{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}})}
+ function upsertCheckin(nama,code){
+  return get('/rest/v1/checkin?on_conflict=slug,guest').then(function(){})
+   .catch(function(){})
+   .then(function(){
+    return fetch(SUPABASE_URL+'/rest/v1/checkin?on_conflict=slug,guest',{
+     method:'POST',
+     headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},
+     body:JSON.stringify([{slug:SLUG,guest:nama,code:code||'',checked_in_at:new Date().toISOString()}])
+    })});
+ }
+ function getCheckin(){return get('/rest/v1/checkin?slug=eq.'+encodeURIComponent(SLUG)+'&select=guest,code,checked_in_at&order=checked_in_at.desc&limit=12')
+  .then(function(r){return r.ok?r.json():null}).catch(function(){return null})}
+
+ function beep(){
+  try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;var ac=new AC();
+   var o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=880;g.gain.value=.14;
+   o.connect(g);g.connect(ac.destination);o.start();setTimeout(function(){o.stop();ac.close()},160);
+  }catch(e){}
+  try{navigator.vibrate&&navigator.vibrate([70,40,70])}catch(e){}
+ }
+
+ /* ---------- tamu ---------- */
+ function parseGuests(){
+  var raw=(DRAFT&&DRAFT.data&&DRAFT.data.guestsRaw)||'';
+  GS=raw.split('\n').map(function(s){return s.trim()}).filter(Boolean);
+  CODES={};
+  var gc=(DRAFT&&DRAFT.data&&DRAFT.data.guestCodes)||{};
+  GS.forEach(function(n){if(gc[n])CODES[gc[n].toUpperCase()]=n});
+ }
+ function cocokTeks(teks){
+  var t=(teks||'').trim();if(!t)return null;
+  /* 1. URL checkin.html?guest=..&id=.. (dari QR tamu) */
+  try{
+   var u=new URL(t,location.origin);
+   var p=u.searchParams||new URLSearchParams(u.search||'');
+   var g=(p.get('guest')||'').trim(),id=(p.get('id')||'').toUpperCase();
+   if(g)return {nama:g,code:id||''};
+   if(id&&CODES[id])return {nama:CODES[id],code:id};
+  }catch(e){}
+  /* 2. parameter polos */
+  if(t.indexOf('guest=')>=0||t.indexOf('id=')>=0){
+   try{var p2=new URLSearchParams(t.replace(/^[^?]*\?/,''));
+    var g2=(p2.get('guest')||'').trim(),id2=(p2.get('id')||'').toUpperCase();
+    if(g2)return {nama:g2,code:id2||''};
+    if(id2&&CODES[id2])return {nama:CODES[id2],code:id2};
+   }catch(e){}
+  }
+  /* 3. kode tamu polos */
+  if(CODES[t.toUpperCase()])return {nama:CODES[t.toUpperCase()],code:t.toUpperCase()};
+  /* 4. nama persis / sebagian */
+  var up=t.toLowerCase();
+  var ex=GS.filter(function(n){return n.toLowerCase()===up})[0];
+  if(ex)return {nama:ex,code:(DRAFT&&DRAFT.data&&DRAFT.data.guestCodes&&DRAFT.data.guestCodes[ex])||''};
+  var seb=GS.filter(function(n){return n.toLowerCase().indexOf(up)>=0});
+  if(seb.length===1)return {nama:seb[0],code:(DRAFT&&DRAFT.data&&DRAFT.data.guestCodes&&DRAFT.data.guestCodes[seb[0]])||''};
+  return null;
+ }
+
+ /* ---------- hasil scan ---------- */
+ function tampilHasil(dari){
+  var ketemu=cocokTeks(dari);
+  $('kartuScan').hidden=true;$('kartuHasil').hidden=false;
+  var ok=$('ikonHasil');
+  if(!ketemu){
+   ok.textContent='✕';ok.className='ok gagal';
+   $('hasilNama').textContent='QR tidak dikenal';
+   $('hasilKode').textContent='Kode: '+(dari||'—').slice(0,40);
+   $('hasilWaktu').textContent='Periksa cetakan QR atau cari manual di halaman utama.';
+   $('hasilCatatan').hidden=true;
+   return;
+  }
+  ok.textContent='✓';ok.className='ok';
+  $('hasilNama').textContent=ketemu.nama;
+  $('hasilKode').textContent='Kode: '+(ketemu.code||'—');
+  $('hasilWaktu').textContent='Check-in: '+new Date().toLocaleString('id-ID');
+  var cat=$('hasilCatatan');
+  if(DEMO){cat.hidden=false;cat.textContent='Mode demo — data tidak disimpan.';muatRekap();return}
+  cat.hidden=false;cat.textContent='Menyimpan…';
+  upsertCheckin(ketemu.nama,ketemu.code).then(function(r){
+   if(r&&r.ok){cat.hidden=true;beep()}
+   else{cat.textContent='Tabel check-in belum aktif. Jalankan tools/checkin.sql di Supabase, lalu scan ulang.'}
+   muatRekap();
+  }).catch(function(){cat.textContent='Tersimpan lokal — koneksi sedang bermasalah.';muatRekap()});
+ }
+
+ function muatRekap(){
+  if(DEMO){$('rekapS').textContent='Mode demo.';return}
+  getCheckin().then(function(rows){
+   if(rows===null){$('rekapS').textContent='Tabel check-in belum dipasang (tools/checkin.sql).';$('rekapList').innerHTML='';return}
+   $('rekapS').textContent=rows.length+' tamu sudah check-in.';
+   $('rekapList').innerHTML=rows.length?rows.map(function(r){
+    return '<li><span>'+esc(r.guest)+'</span><time>'+esc(new Date(r.checked_in_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}))+'</time></li>'
+   }).join(''):'<li><span>Belum ada yang check-in</span></li>';
+  }).catch(function(){$('rekapS').textContent='Gagal memuat rekap.'});
+ }
+
+ /* ---------- kamera ---------- */
+ function berhenti(){
+  if(loopId){clearInterval(loopId);loopId=null}
+  if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}
+  $('guide').hidden=true;
+  $('barisKamera').hidden=false;$('barisSetelah').hidden=true;
+  $('camHint').textContent='Kamera siap — tekan tombol Mulai Pindai';
+ }
+ function jalanDeteksi(){
+  var v=$('video');
+  loopId=setInterval(function(){
+   if(!detector||v.readyState<2)return;
+   detector.detect(v).then(function(hs){
+    if(hs&&hs.length&&hs[0].rawValue&&hs[0].rawValue!==terakhir){
+     terakhir=hs[0].rawValue;berhenti();tampilHasil(terakhir);
+    }
+   }).catch(function(){});
+  },350);
+ }
+ async function mulai(){
+  $('alertKamera').hidden=true;
+  if(!window.BarcodeDetector){
+   $('alertKamera').hidden=false;
+   $('alertKamera').textContent='Perangkat ini tidak mendukung pemindai QR otomatis. Gunakan “Pindai dari Galeri” atau cari manual di bawah.';
+   return;
+  }
+  try{
+   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+   var v=$('video');v.srcObject=stream;await v.play();
+   detector=new window.BarcodeDetector({formats:['qr_code']});
+   $('guide').hidden=false;$('camHint').textContent='Arahkan ke QR tamu…';
+   $('barisKamera').hidden=true;$('barisSetelah').hidden=false;
+   terakhir='';jalanDeteksi();
+  }catch(e){
+   $('alertKamera').hidden=false;
+   $('alertKamera').textContent='Kamera tidak dapat dibuka ('+(e&&e.name||'error')+'). Gunakan “Pindai dari Galeri” atau cari manual.';
+  }
+ }
+ async function dariGaleri(f){
+  if(!f)return;
+  if(!window.BarcodeDetector){$('alertKamera').hidden=false;$('alertKamera').textContent='Pemindai gambar tidak didukung; gunakan pencarian manual.';return}
+  try{
+   var bmp=await createImageBitmap(f);
+   var det=new window.BarcodeDetector({formats:['qr_code']});
+   var hs=await det.detect(bmp);
+   if(hs&&hs.length){tampilHasil(hs[0].rawValue)}
+   else{$('alertKamera').hidden=false;$('alertKamera').textContent='QR tidak terbaca dari gambar itu. Coba foto lebih dekat/jelas.'}
+  }catch(e){$('alertKamera').hidden=false;$('alertKamera').textContent='Gagal membaca gambar itu.'}
+ }
+
+ /* ---------- bagikan ---------- */
+ function bagikan(){
+  var url=location.href;
+  var teks='Link Scan QR Panitia untuk check-in tamu:\n'+url+'\n\nBuka di HP, pindai QR tamu saat masuk.';
+  if(navigator.share){navigator.share({title:'Scan QR Panitia',text:teks,url:url}).catch(function(){})}
+  else{window.open('https://wa.me/?text='+encodeURIComponent(teks),'_blank')}
+ }
+
+ /* ---------- boot ---------- */
+ async function boot(){
+  if(DEMO){
+   DRAFT={data:{guestsRaw:'Pak Andi Wijaya & Keluarga\nBu Rina Marlina\nKak Dina & Family\nTim Kantor Bandung',guestCodes:{'Pak Andi Wijaya & Keluarga':'ANDI1','Bu Rina Marlina':'RINA2','Kak Dina & Family':'DINA3','Tim Kantor Bandung':'TIM04'}}};
+   parseGuests();$('hdrSub').textContent='DEMO — '+judul();muatRekap();return;
+  }
+  if(!SLUG){$('kartuScan').innerHTML='<h2>Link tidak lengkap</h2><p class="s">Buka halaman ini lewat link scan panitia dari Undangan Master (tab Kirim Master).</p>';return}
+  try{
+   var r=await get('/rest/v1/invitation_drafts?slug=eq.'+encodeURIComponent(SLUG));
+   var rows=r.ok?await r.json():[];
+   if(!rows.length){$('kartuScan').innerHTML='<h2>Undangan tidak ditemukan</h2><p class="s">Slug “'+esc(SLUG)+'” belum ada. Publish dulu dari Studio.</p>';return}
+   DRAFT=rows[0];
+   var d=DRAFT.data||{};
+   if(KUNCI!==(d.masterKey||'')&&!DEMO){
+    $('kartuScan').innerHTML='<h2>Link scan tidak valid</h2><p class="s">Kunci tidak cocok. Minta link scan yang benar dari pemilik acara (Undangan Master → Link Scan QR Panitia).</p>';return;
+   }
+   parseGuests();
+   $('hdrSub').textContent=judul()+' — Panitia Check-in';
+   document.title='Scan QR Panitia — '+judul();
+   muatRekap();
+  }catch(e){
+   $('kartuScan').innerHTML='<h2>Gagal terhubung</h2><p class="s">Periksa koneksi internet, lalu muat ulang halaman ini.</p>';
+  }
+ }
+
+ $('btnMulai').addEventListener('click',mulai);
+ $('btnBerhenti').addEventListener('click',berhenti);
+ $('btnLanjut').addEventListener('click',function(){berhenti();mulai()});
+ $('btnScanLagi').addEventListener('click',function(){$('kartuHasil').hidden=true;$('kartuScan').hidden=false;mulai()});
+ $('btnKembali').addEventListener('click',function(){$('kartuHasil').hidden=true;$('kartuScan').hidden=false;muatRekap()});
+ $('btnGaleri').addEventListener('click',function(){$('fileQr').click()});
+ $('fileQr').addEventListener('change',function(e){dariGaleri(e.target.files&&e.target.files[0]);e.target.value=''});
+ $('btnBagi').addEventListener('click',bagikan);
+ $('btnManual').addEventListener('click',function(){
+  var t=$('inputManual').value;if(!t.trim())return;
+  tampilHasil(t);
+ });
+ $('inputManual').addEventListener('keydown',function(e){if(e.key==='Enter')$('btnManual').click()});
+ window.addEventListener('pagehide',berhenti);
+ boot();
+})();
+</script>
+</body>
+</html>

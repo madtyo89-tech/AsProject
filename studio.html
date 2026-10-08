@@ -189,6 +189,7 @@ input,textarea,select{outline:0}
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
 <link rel="stylesheet" href="assets/button-help.css">
+<script src="assets/qrcode.js"></script>
 <script src="assets/button-help.js" defer></script>
 </head>
 <body>
@@ -495,14 +496,22 @@ function guests(){return state.guestsRaw.split('\n').map(s=>s.trim()).filter(Boo
   checkin:hostBase()+'/checkin.html?id='+code+'&guest='+encodeURIComponent(nama)+'&s='+encodeURIComponent(state.slug||'demo')}})}
 function selGuest(){return guests().find(g=>g.nama===state.selGuest)||null}
 function autoSlug(){let n=state.event==='pernikahan'?`${state.form.namaPria} ${state.form.namaWanita}`:state.form.namaAnak;const s=slugify(n);if(s)state.slug=s}
-function qrData(g){const cv=document.createElement('canvas');cv.width=300;cv.height=300;const x=cv.getContext('2d');
- x.fillStyle='#fff';x.fillRect(0,0,300,300);let T=0;for(const ch of g.nama+g.code)T+=ch.charCodeAt(0);
- const rnd=n=>{T=(T*9301+49297)%233280;return T/233280*n};x.fillStyle='#111';const N=21,C=300/N;
- for(let r=0;r<N;r++)for(let c=0;c<N;c++){if(c<2||r<2||c>N-3||r>N-3)continue;
-  if((c<7&&r<7)||(c>N-8&&r<7)||(c<7&&r>N-8)){if(c%6===0||r%6===0||(c>1&&c<5&&r>1&&r<5)){if(!(c===3&&r===3))x.fillRect(c*C,r*C,C-1,C-1)}continue}
-  if(rnd(1)>.55)x.fillRect(c*C,r*C,C-1,C-1)}
- x.fillStyle='#D4AF37';x.fillRect(0,276,300,24);x.fillStyle='#fff';x.font='bold 10px Inter';
- x.fillText(state.showNameQr?`${g.code} • ${g.nama.slice(0,14)}`:g.code,10,291);return cv.toDataURL()}
+/* URL yang ditanam di QR tamu — dibuka hasil scan panitia (scan.html) atau pemindai
+   kamera HP biasa (membuka checkin.html berisi nama tamu). */
+function checkinUrl(g){const q=new URLSearchParams({guest:g.nama,id:g.code,s:state.slug||'demo'});
+ return hostBase()+'/checkin.html?'+q.toString()}
+/* QR asli (pustaka qrcode-generator, MIT — lihat assets/qrcode.js). Modul QR digambar
+   penuh dengan quiet zone 6 modul supaya benar-benar bisa dipindai; label emas
+   nama/kode ditaruh di pita bawah di luar area QR. */
+function qrData(g){const cv=document.createElement('canvas');cv.width=300;cv.height=316;const x=cv.getContext('2d');
+ x.fillStyle='#fff';x.fillRect(0,0,300,316);
+ try{
+  const q=window.qrcode(0,'M');q.addData(checkinUrl(g));q.make();
+  const n=q.getModuleCount(),margin=6,C=(300-margin*2)/n;x.fillStyle='#111';
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))x.fillRect(Math.round(margin+c*C),Math.round(margin+r*C),Math.ceil(C),Math.ceil(C));
+ }catch(e){x.fillStyle='#b91c1c';x.font='bold 12px Inter';x.fillText('QR gagal dibuat',12,150)}
+ x.fillStyle='#D4AF37';x.fillRect(0,296,300,20);x.fillStyle='#fff';x.font='bold 10px Inter';
+ x.fillText(state.showNameQr?`${g.code} • ${g.nama.slice(0,14)}`:g.code,10,310);return cv.toDataURL()}
 
 /* state setters */
 function set(k,v){state[k]=v;save();render()}
