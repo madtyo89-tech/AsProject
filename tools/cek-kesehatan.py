@@ -614,6 +614,34 @@ def cek_foto_cover():
           "uji foto cover: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
 
 
+# ------------------------------- 18. skrip build tidak boleh di folder terlarang
+def cek_skrip_build():
+    """Folder bernama build/out/dist/target bisa hilang dari snapshot workspace, sehingga
+    penghapusannya ikut ter-stage oleh `git add -A` dan berkasnya terhapus dari repo.
+    Karena itu berkas sumber tidak boleh ditaruh di sana."""
+    print("\n[18] Skrip build APK (android/buildkit/)")
+    rel = os.path.join("android", "buildkit", "build-apk.sh")
+    ada = os.path.isfile(os.path.join(ROOT, rel))
+    lapor("ok" if ada else "masalah", f"{rel} ada di disk")
+    if ada:
+        bisa = bool(os.stat(os.path.join(ROOT, rel)).st_mode & 0o111)
+        lapor("ok" if bisa else "info", f"{rel} dapat dieksekusi langsung (./)")
+    if shutil.which("git") and os.path.isdir(os.path.join(ROOT, ".git")):
+        r = subprocess.run(["git", "ls-files", "--error-unmatch", rel],
+                           capture_output=True, text=True, cwd=ROOT)
+        lapor("ok" if r.returncode == 0 else "masalah",
+              f"{rel} terlacak git (aman saat push)")
+        r2 = subprocess.run(["git", "ls-files"], capture_output=True, text=True, cwd=ROOT)
+        terlarang = [f for f in r2.stdout.splitlines()
+                     if any(seg in ("build", "dist", "target", "coverage", "out")
+                            for seg in f.split("/")[:-1])]
+        lapor("ok" if not terlarang else "masalah",
+              "tidak ada berkas terlacak di folder bernama build/out/dist/target"
+              + (f" — ditemukan: {', '.join(terlarang[:3])}" if terlarang else ""))
+    else:
+        lapor("info", "git tidak tersedia — pemeriksaan pelacakan berkas dilewati")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -622,7 +650,7 @@ def main():
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
-               cek_tema_3d, cek_foto_cover):
+               cek_tema_3d, cek_foto_cover, cek_skrip_build):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

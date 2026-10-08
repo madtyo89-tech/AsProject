@@ -23,7 +23,7 @@ APP_DIR="$ROOT/app"
 WEB_DIR="$ROOT/web"
 TOOLS_DIR="${ANDROID_TOOLS_DIR:-$ROOT/.tools}"
 
-BUILD_DIR="${BUILD_DIR:-$ROOT/build/offline}"
+BUILD_DIR="${BUILD_DIR:-$ROOT/out/build}"
 OUT_DIR="${OUT_DIR:-$ROOT/out}"
 
 APP_ID="my.id.asproject.studio"

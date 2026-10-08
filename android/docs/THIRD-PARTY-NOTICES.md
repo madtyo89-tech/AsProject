@@ -14,7 +14,7 @@ Android adalah merek dagang Google LLC. Aplikasi ini tidak berafiliasi dengan Go
 
 ## 2. Perkakas build (tidak disimpan di repositori)
 
-`android/build/build-apk.sh` memakai perkakas resmi berikut. Semuanya **diunduh saat
+`android/buildkit/build-apk.sh` memakai perkakas resmi berikut. Semuanya **diunduh saat
 build** dan tidak pernah di-commit; unduhan dipatok versi + SHA-256 di
 `android/tools/fetch_tools.py`.
 

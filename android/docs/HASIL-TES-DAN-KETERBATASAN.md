@@ -14,7 +14,7 @@ Tanggal: 2026-10-08 · Versi: 1.0.0 (`versionCode` 1)
 | Aturan navigasi & keamanan URL | `tests/jvm/UrlPolicyTest.java` (JVM) | **43/43 lulus** |
 | Jembatan web ↔ Android | `tests/js/native-bridge.test.cjs` (Node + jsdom) | **21/21 lulus** |
 | Isi & tanda tangan APK | `tools/verify_apk.py` + apksigner | **44/44 lulus** |
-| Build APK | `build/build-apk.sh` (aapt2 → ecj → d8 → apksigner) | **berhasil** |
+| Build APK | `buildkit/build-apk.sh` (aapt2 → ecj → d8 → apksigner) | **berhasil** |
 | Workflow GitHub Actions | run [#37742550663](https://github.com/madtyo89-tech/AsProject/actions/runs/37742550663) | **dua job lulus** (skrip 47 dtk, Gradle 49 dtk) |
 | Cakupan perangkat nyata | — | **belum diuji** (lihat §4) |
 
@@ -80,7 +80,7 @@ Dijalankan di jsdom dengan `window.AsProject` tiruan yang meniru `NativeBridge`:
 
 ### 2.4 Build
 
-- `build/build-apk.sh` berjalan dari nol (aapt2 compile/link → ecj → d8 → kemas →
+- `buildkit/build-apk.sh` berjalan dari nol (aapt2 compile/link → ecj → d8 → kemas →
   apksigner) dan menghasilkan APK yang lolos `apksigner verify` — diuji dua kali dengan
   rangkaian perkakas berbeda (keduanya menghasilkan SHA-256 identik).
 - **Workflow GitHub Actions sudah dijalankan sungguhan** (PR #9, run

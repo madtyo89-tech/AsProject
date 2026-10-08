@@ -23,8 +23,8 @@ tangan kunci debug Android, jadi hanya untuk uji coba (lihat
 
 ```bash
 cd android
-./build/build-apk.sh                 # pakai Android SDK + JDK yang sudah dipasang
-FETCH_TOOLS=1 ./build/build-apk.sh   # tanpa SDK: unduh alat (hash dipatok) lalu build
+./buildkit/build-apk.sh                 # pakai Android SDK + JDK yang sudah dipasang
+FETCH_TOOLS=1 ./buildkit/build-apk.sh   # tanpa SDK: unduh alat (hash dipatok) lalu build
 ```
 
 Android Studio: buka folder `android/` sebagai proyek Gradle.
@@ -66,7 +66,7 @@ android/
 │   ├── assets/native-bridge.js     skrip yang disuntikkan ke halaman (salinan build)
 │   └── res/                        tata letak, ikon, warna, aturan cadangan
 ├── web/native-bridge.js     sumber skrip jembatan (disalin ke assets/ saat build)
-├── build/build-apk.sh       build tanpa Gradle (aapt2 → javac/ecj → d8 → apksigner)
+├── buildkit/build-apk.sh       build tanpa Gradle (aapt2 → javac/ecj → d8 → apksigner)
 ├── tools/                   fetch_tools.py, prepare_manifest.py, apk_pack.py,
 │                            verify_apk.py, make_icons.mjs
 ├── tests/                   uji JVM (UrlPolicy) & uji jembatan JS (jsdom)

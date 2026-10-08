@@ -13,7 +13,7 @@ Ada tiga cara membangun APK, dari yang paling tidak butuh alat sampai yang palin
 
 ## 1. Membangun tanpa Gradle (jalur yang dipakai untuk APK debug di folder `out/`)
 
-Skrip `build/build-apk.sh` menjalankan rangkaian alat resmi Android satu per satu:
+Skrip `buildkit/build-apk.sh` menjalankan rangkaian alat resmi Android satu per satu:
 
 ```
 aapt2 compile → aapt2 link → javac/ecj → d8 → (kemas) → apksigner
@@ -37,10 +37,10 @@ aapt2 compile → aapt2 link → javac/ecj → d8 → (kemas) → apksigner
 cd android
 
 # APK debug — pakai SDK bila terpasang:
-./build/build-apk.sh
+./buildkit/build-apk.sh
 
 # APK debug — tanpa SDK sama sekali (unduh alat dari PyPI + npm):
-FETCH_TOOLS=1 ./build/build-apk.sh
+FETCH_TOOLS=1 ./buildkit/build-apk.sh
 
 # Tanpa javac (mis. hanya JRE): skrip otomatis memakai ecj.jar
 # Hasil: android/out/asproject-studio-<versi>-debug.apk
@@ -49,9 +49,9 @@ FETCH_TOOLS=1 ./build/build-apk.sh
 ### Mengarahkan alat secara manual (opsional)
 
 ```bash
-ANDROID_TOOLS_DIR=/path/ke-tools JAVA_HOME=/path/ke/jdk17 ./build/build-apk.sh
+ANDROID_TOOLS_DIR=/path/ke-tools JAVA_HOME=/path/ke/jdk17 ./buildkit/build-apk.sh
 # atau satu per satu:
-AAPT2=… ANDROID_JAR=… D8_JAR=… APKSIGNER_JAR=… ECJ_JAR=… ./build/build-apk.sh
+AAPT2=… ANDROID_JAR=… D8_JAR=… APKSIGNER_JAR=… ECJ_JAR=… ./buildkit/build-apk.sh
 ```
 
 ### Hasil
@@ -153,7 +153,7 @@ cd android
 KEYSTORE=/aman/asproject-release.jks \
 KEYSTORE_PASSWORD='…' KEY_ALIAS=asproject KEY_PASSWORD='…' \
 BUILD_TYPE=release VERSION_NAME=1.0.0 VERSION_CODE=1 \
-./build/build-apk.sh
+./buildkit/build-apk.sh
 # → android/out/asproject-studio-1.0.0-release.apk
 ```
 
@@ -236,9 +236,9 @@ NODE_PATH=./node_modules node android/tests/js/native-bridge.test.cjs
 
 | Gejala | Penyebab & penanganan |
 |--------|----------------------|
-| `aapt2 tidak ditemukan` | Pasang Android SDK atau jalankan `FETCH_TOOLS=1 ./build/build-apk.sh` |
+| `aapt2 tidak ditemukan` | Pasang Android SDK atau jalankan `FETCH_TOOLS=1 ./buildkit/build-apk.sh` |
 | `Tidak ada javac maupun ecj.jar` | Pasang JDK 17+, atau `FETCH_TOOLS=1` (ecj dipakai bila hanya ada JRE) |
-| `resources.arsc tidak selaras` | Jangan mengemas ulang APK dengan alat zip biasa setelah `aapt2 link`; pakai `build/build-apk.sh` |
+| `resources.arsc tidak selaras` | Jangan mengemas ulang APK dengan alat zip biasa setelah `aapt2 link`; pakai `buildkit/build-apk.sh` |
 | `apksigner verify` gagal | Pastikan `apksigner.jar` sesuai SDK dan `--min-sdk-version 21` dipakai |
 | Ikon tidak berubah | Jalankan `node android/tools/make_icons.mjs` (butuh `sharp` sekali pakai) |
 | Halaman lama masih tampil | Cache mengikuti header server (`LOAD_DEFAULT`); tekan tombol muat ulang |

@@ -4,7 +4,7 @@ name: Android APK (AsProject Studio)
 #
 # Dua jalur build dijalankan agar saling memeriksa:
 #
-#   1. `apk-offline`  — skrip android/build/build-apk.sh (aapt2 → javac → d8 → apksigner
+#   1. `apk-offline`  — skrip android/buildkit/build-apk.sh (aapt2 → javac → d8 → apksigner
 #                       langsung, tanpa Gradle). Ini jalur utama/terverifikasi: skrip ini
 #                       yang dipakai untuk menghasilkan APK debug yang sudah diuji.
 #                       Sekaligus menjalankan uji JVM, uji jembatan JS, dan pemeriksaan APK.
@@ -93,9 +93,9 @@ jobs:
           LOG=/tmp/build-apk.log
           SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
           if [ -n "$SDK_ROOT" ] && [ -f "$SDK_ROOT/platforms/android-${ANDROID_COMPILE_SDK}/android.jar" ]; then
-            CMD=(bash -x android/build/build-apk.sh)
+            CMD=(bash -x android/buildkit/build-apk.sh)
           else
-            CMD=(env FETCH_TOOLS=1 bash -x android/build/build-apk.sh)
+            CMD=(env FETCH_TOOLS=1 bash -x android/buildkit/build-apk.sh)
           fi
           echo "Perintah: ${CMD[*]}"
           if ! "${CMD[@]}" > "$LOG" 2>&1; then
@@ -158,7 +158,7 @@ jobs:
             exit 0
           fi
           printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$KEYSTORE"
-          cd android && BUILD_TYPE=release bash build/build-apk.sh
+          cd android && BUILD_TYPE=release bash buildkit/build-apk.sh
           cp out/*-release.apk ../artifacts/
           ( cd ../artifacts && sha256sum ./*.apk > SHA256SUMS.txt )
 

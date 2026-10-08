@@ -85,6 +85,13 @@ function tema(rel) {
   if (tanpaArt.length) {
     console.log(`  ..  menunggu artwork berikutnya: ${tanpaArt.join(', ')}`);
   }
+  /* Pernikahan: tema "minimalist-*"/"slate-sage" sengaja dibiarkan bersih (arti namanya). */
+  const SENGAJA_BERSIH = ['minimalist-sage', 'minimalist-frost', 'slate-sage'];
+  const wedArt = und.filter((t) => t.ev === 'pernikahan' && t.art);
+  const wedTanpa = und.filter((t) => t.ev === 'pernikahan' && !t.art).map((t) => t.id);
+  const wedBelum = wedTanpa.filter((id) => !SENGAJA_BERSIH.includes(id));
+  cek(wedBelum.length === 0, `semua tema pernikahan punya artwork (belum: ${wedBelum.join(', ') || '—'})`);
+  console.log(`  pernikahan: ${wedArt.length} ber-artwork, ${wedTanpa.length} sengaja bersih (${wedTanpa.join(', ')})`);
 
   /* ------------------------------- 1b. keterbacaan teks di atas artwork */
   /* sharp hanya dipakai saat pengembangan; di CI tanpa sharp bagian ini dilewati. */
@@ -192,12 +199,30 @@ function tema(rel) {
       dom.window.close();
     }
     {
-      const { dom, w } = await render(das('ice-blue'));
+      /* minimalist-frost = tema yang memang sengaja tanpa artwork (bersih/minimalis) */
+      const { dom, w } = await render(das('minimalist-frost'));
       const st = w.document.documentElement.style;
       cek(!w.document.body.classList.contains('art3d'), 'tema tanpa artwork: kelas art3d tidak dipasang');
-      cek(String(st.getPropertyValue('--ink')).trim().toLowerCase() === '#0c4a6e',
-          'tema biasa: teks cover tetap warna tema (#0c4a6e)');
+      cek(String(st.getPropertyValue('--ink')).trim().toLowerCase() === '#075985',
+          'tema biasa: teks cover tetap warna tema (#075985)');
       cek(!w.document.querySelector('#cover .cvf'), 'tema biasa tanpa foto: tidak ada bingkai');
+      dom.window.close();
+    }
+    {
+      /* undangan pernikahan ber-artwork: cover memakai gambar tema + foto di bingkai */
+      const { dom, w } = await render(das('burgundy-regal', {
+        event: 'pernikahan', cover: 'assets/demo/foto.webp', coverStyle: 'oval',
+        form: {
+          namaPria: 'Rina', namaWanita: 'Bagas', gelarPria: '', gelarWanita: '',
+          tanggalAcara: '2026-12-28', jamAcara: '08:00', zona: 'WIB',
+          venue: 'Gedung Bersama', alamat: '', mapsLink: '', showBismillah: false,
+        },
+      }));
+      const st = w.document.documentElement.style;
+      cek(w.document.body.classList.contains('art3d'), 'pernikahan: tema ber-artwork memakai latar gambar (art3d)');
+      cek(/burgundy-regal\.webp/.test(st.getPropertyValue('--cover-art')), 'pernikahan: artwork tema burgundy dipasang');
+      cek(String(st.getPropertyValue('--ink')).trim().toLowerCase() === '#f7f2e9', 'pernikahan: teks cover terang agar terbaca');
+      cek(!!w.document.querySelector('#cover .cvf-oval img'), 'pernikahan: foto pengantin tampil di bingkai oval');
       dom.window.close();
     }
   }
@@ -228,8 +253,11 @@ function tema(rel) {
     const html = w.phoneHtml();
     cek(html.includes('assets/tema-3d/race-car.webp'), 'html pratinjau memuat berkas artwork');
     cek(html.includes('• 3D'), 'html pratinjau menampilkan penanda 3D');
-    w.pickTpl('ice-blue');
-    cek(!w.phoneHtml().includes('assets/tema-3d/'), 'tema non-3D tidak memuat artwork');
+    w.pickTpl('minimalist-frost');
+    cek(!w.phoneHtml().includes('assets/tema-3d/'), 'tema non-artwork tidak memuat artwork');
+    w.pickTpl('burgundy-regal');
+    cek(w.phoneHtml().includes('assets/tema-3d/burgundy-regal.webp'),
+        'tema pernikahan ber-artwork memuat gambarnya di pratinjau');
     dom.window.close();
   } else {
     console.log('  (pratinjau studio dilewati: jsdom belum terpasang)');

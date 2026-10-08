@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Unduh & siapkan perkakas build Android untuk jalur "tanpa Gradle".
 
-Dipakai oleh ``build/build-apk.sh`` ketika ``FETCH_TOOLS=1`` dijalankan, atau berdiri
+Dipakai oleh ``buildkit/build-apk.sh`` ketika ``FETCH_TOOLS=1`` dijalankan, atau berdiri
 sendiri. Semua sumber dipatok versi + SHA-256; bila hash tidak cocok, skrip berhenti dan
 tidak memakai berkas tersebut.
 

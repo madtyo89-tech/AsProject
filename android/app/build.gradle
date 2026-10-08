@@ -2,10 +2,10 @@
 //
 // Dua jalur build memakai sumber yang sama ini:
 //   • Gradle (berkas ini)            — Android Studio / CI GitHub Actions.
-//   • build/build-apk.sh (tanpa Gradle) — aapt2 + ecj + d8 + apksigner langsung;
+//   • buildkit/build-apk.sh (tanpa Gradle) — aapt2 + ecj + d8 + apksigner langsung;
 //     dipakai untuk membangun APK di lingkungan tanpa Gradle/SDK manager.
 // Karena itu AndroidManifest.xml tidak memuat atribut `package` (AGP 8 menolaknya)
-// dan build/build-apk.sh menyuntikkan atributnya saat menyalin manifest.
+// dan buildkit/build-apk.sh menyuntikkan atributnya saat menyalin manifest.
 
 plugins {
     id 'com.android.application'

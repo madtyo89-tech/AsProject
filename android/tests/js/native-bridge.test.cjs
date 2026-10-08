@@ -346,7 +346,7 @@ function toasts(window) {
       assert.ok(fs.existsSync(assetPath), 'berkas aset tidak ada: ' + assetPath);
       const asset = fs.readFileSync(assetPath, 'utf8');
       assert.strictEqual(asset, bridgeSource,
-        'kedua salinan berbeda — jalankan android/build/build-apk.sh untuk menyegarkan aset');
+        'kedua salinan berbeda — jalankan android/buildkit/build-apk.sh untuk menyegarkan aset');
     });
   }
 

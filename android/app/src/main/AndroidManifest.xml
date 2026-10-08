@@ -14,7 +14,7 @@
   Catatan: atribut `package` dan elemen <uses-sdk> sengaja TIDAK ditulis di sini.
   - Build Gradle memakai `namespace`, `applicationId`, `minSdk`, dan `targetSdk` dari
     app/build.gradle (AGP 8 menolak atribut `package` di manifest).
-  - Build tanpa Gradle (build/build-apk.sh) menyuntikkan keduanya: atribut `package`
+  - Build tanpa Gradle (buildkit/build-apk.sh) menyuntikkan keduanya: atribut `package`
     ditulis ke salinan manifest, sedangkan minSdk/targetSdk lewat argumen aapt2 link.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">

@@ -135,10 +135,41 @@ Uji: `node tools/test-foto-cover.cjs` (86 pemeriksaan, termasuk potongan
 Lembar perbandingan: `pilihan-gaya-foto-cover.png` dan `master-preview-foto-cover.png`
 (di luar repositori; dibuat dengan skrip sharp, bukan bagian aplikasi).
 
+## Latar artwork tema (ulang tahun & pernikahan)
+
+Tema **ulang tahun** dan **pernikahan** memakai latar artwork realistis dari
+`assets/tema-3d/<id-tema>.webp` (rasio 2:3, ≤ 250 KB per berkas):
+
+**Ulang tahun (10 tema):** Balap Mobil, Naga Api, Ninja Cilik, Super Hero, Bajak Laut
+Cilik, Putri Peri, Unicorn Magic, Buket Mawar, Kids Party, Sweet 17.
+*(Adult Elegant menyusul.)*
+
+**Pernikahan (9 tema) — sesuai nama masing-masing:**
+
+| Tema | Nuansa artwork |
+|------|----------------|
+| `burgundy-regal` | maroon beludru + filigree bunga emas di 4 sudut |
+| `luxury-gold` | marmer hitam + ornamen art-deco emas |
+| `navy-royal` | navy beludru + ornamen barok emas |
+| `charcoal-gold` | batu arang + geometris emas art-deco |
+| `forest-classic` | dedaunan hijau hutan + cahaya keemasan |
+| `jawa-elegan` | coklat hangat + motif ukir/batik emas |
+| `floral-rustic` | kayu tua + pampas & mawar kering terracotta |
+| `ocean-breeze` | biru laut + gelombang lembut & karang |
+| `ice-blue` | es biru muda + kristal & bunga beku |
+
+Tema **`minimalist-sage`, `minimalist-frost`, `slate-sage`** sengaja **tetap bersih**
+tanpa artwork — itu arti namanya. Tema ini tetap 100% berfungsi seperti sebelumnya.
+
+Cara kerja: sama dengan tema 3D ulang tahun — artwork jadi latar cover, teks cover
+otomatis memakai warna terang (≥ 7:1 terukur di atas artwork, termasuk yang paling
+terang), **teks kartu isi tetap terbaca** (nada gelap tema), foto pengantin tetap bisa
+dipasang lewat 9 gaya bingkai, dan undangan tanpa artwork tampil persis seperti semula.
+
 ## Tema 3D ulang tahun (artwork realistis)
 
 Tema **ulang tahun** memakai latar artwork 3D realistis (bukan ilustrasi flat):
-`assets/tema-3d/<id-tema>.webp` — satu berkas per tema, ≤ 250 KB, total ± 860 KB.
+`assets/tema-3d/<id-tema>.webp` — satu berkas per tema, ≤ 250 KB.
 
 | Tema | Berkas | Tema | Berkas |
 |------|--------|------|--------|
