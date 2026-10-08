@@ -60,20 +60,32 @@ jobs:
       - name: Pastikan Android SDK (android.jar, aapt2, d8, apksigner)
         run: |
           set -euo pipefail
-          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_HOME=${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
           SDKMGR="$(command -v sdkmanager || true)"
-          if [ -z "$SDKMGR" ] && [ -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
-            SDKMGR="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ -z "$SDKMGR" ] && [ -n "$SDK_ROOT" ] && [ -x "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" ]; then
+            SDKMGR="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
           fi
           if [ -n "$SDKMGR" ]; then
             yes | "$SDKMGR" --licenses > /dev/null 2>&1 || true
             "$SDKMGR" "platforms;android-${ANDROID_COMPILE_SDK}" \
                        "build-tools;${ANDROID_BUILD_TOOLS}" > /dev/null || true
           fi
-          test -f "$ANDROID_HOME/platforms/android-${ANDROID_COMPILE_SDK}/android.jar"
+          if [ -n "$SDK_ROOT" ] && [ -f "$SDK_ROOT/platforms/android-${ANDROID_COMPILE_SDK}/android.jar" ]; then
+            echo "SDK siap: $SDK_ROOT"
+          else
+            echo "::warning::Android SDK tidak lengkap — build akan mengunduh perkakas yang dipatok (FETCH_TOOLS=1)."
+          fi
 
       - name: Bangun APK debug (tanpa Gradle)
-        run: bash android/build/build-apk.sh
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          if [ -n "$SDK_ROOT" ] && [ -f "$SDK_ROOT/platforms/android-${ANDROID_COMPILE_SDK}/android.jar" ]; then
+            bash android/build/build-apk.sh
+          else
+            FETCH_TOOLS=1 bash android/build/build-apk.sh
+          fi
 
       - name: Uji aturan navigasi (JVM)
         run: |
@@ -95,10 +107,15 @@ jobs:
       - name: Periksa isi, izin, dan tanda tangan APK
         run: |
           set -euo pipefail
-          python3 -m pip install --quiet androguard
-          APKSIGNER_JAR="$(ls "$ANDROID_HOME"/build-tools/*/lib/apksigner.jar | sort -V | tail -1)"
-          export APKSIGNER_JAR
-          python3 android/tools/verify_apk.py android/out/asproject-studio-1.0.0-debug.apk
+          # Venv agar tidak bergantung pada kebijakan pip sistem (PEP 668).
+          python3 -m venv /tmp/venv-verify
+          /tmp/venv-verify/bin/pip install --quiet --upgrade pip
+          /tmp/venv-verify/bin/pip install --quiet androguard
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          APKSIGNER_JAR="$(ls "$SDK_ROOT"/build-tools/*/lib/apksigner.jar 2>/dev/null | sort -V | tail -1 || true)"
+          if [ -n "$APKSIGNER_JAR" ]; then export APKSIGNER_JAR; fi
+          /tmp/venv-verify/bin/python android/tools/verify_apk.py \
+            android/out/asproject-studio-1.0.0-debug.apk
 
       - name: Siapkan artefak
         run: |
@@ -169,6 +186,8 @@ jobs:
       - name: Bangun APK debug dengan Gradle
         working-directory: android
         run: gradle --no-daemon :app:assembleDebug
+        # Bila langkah ini gagal: buka folder android/ di Android Studio, atau pakai
+        # jalur skrip (job "apk-offline") yang sudah terverifikasi.
 
       - name: Unggah artefak Gradle
         uses: actions/upload-artifact@v4
