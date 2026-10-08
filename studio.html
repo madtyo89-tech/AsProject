@@ -603,8 +603,32 @@ function cvJalan(e){if(!_cvDrag)return;const d=_cvDrag,p=cvPos();
  cvGambar()}
 function cvLepas(){if(!_cvDrag)return;_cvDrag.el.style.cursor='grab';_cvDrag=null;
  window.removeEventListener('pointermove',cvJalan);save()}
-function uploadCover(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.cover=r.result;save();render()};r.readAsDataURL(f)}
-function uploadGallery(input){const fs=Array.from(input.files||[]);let left=fs.length;fs.forEach(f=>{const r=new FileReader();r.onload=()=>{state.gallery.push(r.result);if(--left===0){save();render()}};r.readAsDataURL(f)})}
+/* Kecilkan foto sampai maks 1200 px (JPEG 0.82 / PNG). Data URL asli langsung
+   dipakai dulu agar tidak pernah menunggu; versi kecil menyusul menggantikan.
+   Bila berkas bukan gambar / gagal didekode, alamat asli dibiarkan apa adanya. */
+function kecilkanFoto(dataUrl,tipe){return new Promise(res=>{
+ let selesai=false;const akhiri=v=>{if(!selesai){selesai=true;res(v)}};
+ try{
+  const im=new Image();
+  im.onload=()=>{try{
+    const M=1200;let w=im.naturalWidth||im.width,h=im.naturalHeight||im.height;
+    if(!w||!h)return akhiri(dataUrl);
+    if(w<=M&&h<=M&&dataUrl.length<300000)return akhiri(dataUrl);
+    const sk=Math.min(M/w,M/h,1);w=Math.max(1,Math.round(w*sk));h=Math.max(1,Math.round(h*sk));
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    c.getContext('2d').drawImage(im,0,0,w,h);
+    const keluar=(tipe==='image/png')?'image/png':'image/jpeg';
+    const hasil=c.toDataURL(keluar,0.82);
+    akhiri(hasil&&hasil.length&&hasil.length<dataUrl.length?hasil:dataUrl);
+  }catch(e){akhiri(dataUrl)}};
+  im.onerror=()=>akhiri(dataUrl);
+  im.src=dataUrl;
+ }catch(e){akhiri(dataUrl)}
+})}
+function uploadCover(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const asal=r.result;state.cover=asal;save();render();
+ kecilkanFoto(asal,f.type).then(k=>{if(k!==asal&&state.cover===asal){state.cover=k;save();render()}})};r.readAsDataURL(f)}
+function uploadGallery(input){const fs=Array.from(input.files||[]);let left=fs.length;fs.forEach(f=>{const r=new FileReader();r.onload=()=>{const asal=r.result;const i=state.gallery.length;state.gallery.push(asal);if(--left===0){save();render()}
+ kecilkanFoto(asal,f.type).then(k=>{if(k!==asal&&state.gallery[i]===asal){state.gallery[i]=k;save();render()}})};r.readAsDataURL(f)})}
 async function publish(){
  if(_publishing)return;
  const f=state.form,missing=[];

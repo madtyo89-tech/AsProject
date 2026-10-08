@@ -276,6 +276,11 @@ async function render(d) {
     console.log('  (pratinjau studio dilewati: jsdom belum terpasang)');
   }
 
+  cek(/function kecilkanFoto\(/.test(baca('studio.html')), 'studio.html: kecilkanFoto() (kompres ≤1200 px) tersedia');
+  cek(/kecilkanFoto\(asal,f\.type\)/.test(baca('studio.html')), 'studio.html: upload cover & galeri dikompres');
+  cek(/state\.cover=asal;save\(\)\.render|state\.cover=asal;save\(\);render\(\)/.test(baca('studio.html')),
+      'studio.html: foto langsung tersimpan dulu, kompres menyusul (tidak memblokir)');
+
   /* ------------------------------------- 6. master.html: foto cover di preview */
   console.log('\n6) Dashboard master: foto cover di kartu "Preview Undangan"');
   const mas = baca('master.html');
@@ -285,14 +290,18 @@ async function render(d) {
     cek(mas.includes('.bc-' + g), `master.html: bentuk "${g}" ada di CSS preview`);
   }
   cek(/\.b-screen\.b-full/.test(mas), 'master.html: mode "Penuh" punya gaya gelap sendiri');
-  cek(/cvM\.blok\|\|cvM\.full/.test(mas), 'master.html: catatan gaya foto ditampilkan di kartu');
-  cek(/Anggap|Foto cover: <b>/.test(mas), 'master.html: nama gaya foto ditulis di kartu');
+  cek(/Foto cover: <b>/.test(mas) && /Belum ada foto cover/.test(mas),
+      'master.html: catatan gaya foto ditampilkan di kartu');
+  cek(/cvM\.gaya==='none'/.test(mas),
+      'master.html: gaya "Tanpa" ditulis sengaja disembunyikan (bukan "belum ada")');
   cek(/esc\(foto\)/.test(mas), 'master.html: alamat foto di-escape sebelum ditulis');
   cek(/replace\(\/\[\\r\\n"'\\\\\]\/g,''\).trim\(\)/.test(mas),
       'master.html: alamat foto dibersihkan dari kutip/newline (aman di CSS)');
   cek(/Math\.min\(100,Math\.max\(0,n\)\)/.test(mas) && /Math\.min\(2\.2,Math\.max\(1,n\)\)/.test(mas),
       'master.html: posisi & zoom dibatasi di rentang yang sama dengan Studio (0-100, 1-2,2)');
   cek(/b-cvnote/.test(mas), 'master.html: ada keterangan "belum ada foto cover" bila kosong');
+  cek(/\.b-screen\.b-full::after/.test(mas) && /\.bc-bg img/.test(mas),
+      'master.html: veil gelap + lapisan img untuk foto penuh ada di CSS');
 
   /* Uji perilaku cvCoverMini memakai potongan kode yang sama (diambil dari berkas). */
   {
@@ -317,8 +326,13 @@ async function render(d) {
       cek(/scale\(2\.2\)/.test(oval.blok), 'zoom dibatasi ke maksimum 2,2x');
 
       const penuh = uji({ cover: 'f.jpg', coverStyle: 'full' });
-      cek(penuh.full && !penuh.blok && /url\(f\.jpg\)/.test(penuh.latar),
-          'gaya "Penuh": foto jadi latar kartu master');
+      cek(penuh.full && /<img[^>]*src="f\.jpg"/.test(penuh.blok) && /bc-bg/.test(penuh.blok),
+          'gaya "Penuh": foto jadi latar kartu master (lapisan bc-bg)');
+      cek(/object-position:50% 50%/.test(penuh.blok),
+          'gaya "Penuh": posisi geser dipakai (bukan center/cover)');
+      const penuhGeser = uji({ cover: 'f.jpg', coverStyle: 'full', coverPos: { x: 80, y: 20, z: 1.6 } });
+      cek(/object-position:80% 20%/.test(penuhGeser.blok) && /scale\(1\.6\)/.test(penuhGeser.blok),
+          'gaya "Penuh": geser + zoom diterapkan seperti di undangan');
 
       const tanpa = uji({ cover: 'f.jpg', coverStyle: 'none' });
       cek(!tanpa.blok && !tanpa.full, 'gaya "Tanpa": kartu master tanpa bingkai');
