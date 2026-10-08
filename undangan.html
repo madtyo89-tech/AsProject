@@ -150,22 +150,8 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink);lin
 .cov .fx-c-slide{animation:uSlideIn .8s cubic-bezier(.22,.8,.36,1) both}
 .cov .fx-c-swing{animation:uSwing .8s cubic-bezier(.22,.8,.36,1) both}
 .cov .fx-c-elastic{animation:uElastic .9s cubic-bezier(.22,.8,.36,1) both}
-/* scroll reveal + 10 efek (pilihan state.anim.scroll) */
-.rv{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.8,.36,1),filter .8s ease}
-.rv.in{opacity:1;transform:none;filter:none}
-.rv.fx-s-fade-up{transform:translateY(28px)}
-.rv.fx-s-fade-down{transform:translateY(-28px)}
-.rv.fx-s-slide-left{transform:translateX(48px)}
-.rv.fx-s-slide-right{transform:translateX(-48px)}
-.rv.fx-s-zoom-in{transform:scale(.85)}
-.rv.fx-s-zoom-out{transform:scale(1.18)}
-.rv.fx-s-rotate{transform:rotate(-4deg) translateY(20px)}
-.rv.fx-s-blur{transform:translateY(14px);filter:blur(8px)}
-.rv.fx-s-pop{transform:scale(.55)}
-.rv.fx-s-flip{transform:perspective(700px) rotateX(16deg) translateY(20px)}
 @media (prefers-reduced-motion:reduce){
  .cov .anim-up,.cov .anim-zoom,.cov .anim-word,.cov .anim-deco,.cov .anim-pop{animation:none}
- .rv{opacity:1;transform:none;transition:none}
  #cover .open{animation:none}
 }
 
@@ -181,6 +167,10 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink);lin
 .couple .c .rl{margin-top:8px;font-size:10.5px;line-height:1.6;color:#8a7f72}
 @media (max-width:380px){.couple .c .nm{font-size:18px}}
 </style>
+<link rel="stylesheet" href="assets/scroll-effects.css">
+<script src="assets/scroll-effects.js"></script>
+<link rel="stylesheet" href="assets/button-help.css">
+<script src="assets/button-help.js" defer></script>
 </head>
 <body>
 <audio id="musik" loop preload="none"></audio>
@@ -292,10 +282,24 @@ const QUOTES={
  khitanan:{text:'Sebaik-baik kalian adalah orang yang paling baik kepada keluarganya.',author:'HR. Ahmad'},
  ultah:{text:'Semoga tahun yang baru ini membawa kebahagiaan yang lebih besar dari sebelumnya.',author:'Ucapan Terbaik'},
  aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
-/* 10 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan studio.html */
+/* 24 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan studio.html */
 const FX_SCROLL=[
  ['fade-up','Fade Up'],['fade-down','Fade Down'],['slide-left','Slide Kiri'],['slide-right','Slide Kanan'],
- ['zoom-in','Zoom In'],['zoom-out','Zoom Out'],['rotate','Rotate'],['blur','Blur'],['pop','Pop'],['flip','Flip 3D']];
+ ['zoom-in','Zoom In'],['zoom-out','Zoom Out'],['rotate','Rotate'],['blur','Blur'],['pop','Pop'],['flip','Flip 3D'],
+ ['card', 'Kartu', 'kartu miring masuk lalu tegak'],
+ ['book', 'Membuka Buku', 'halaman terbuka dari sisi kiri'],
+ ['cube', 'Kotak 3D', 'sisi kotak berputar ke depan'],
+ ['card-stack', 'Tumpukan Kartu', 'kartu terangkat dari tumpukan'],
+ ['curtain', 'Tirai', 'terbuka dari tengah ke samping'],
+ ['iris', 'Iris Lingkaran', 'lingkaran membuka seluruh bagian'],
+ ['diagonal', 'Wipe Diagonal', 'terbuka menyilang dari sudut'],
+ ['fold', 'Lipat', 'lipatan terbuka dari atas'],
+ ['swing', 'Ayun', 'berayun dari sudut atas'],
+ ['spring', 'Pegas', 'melenting lalu kembali tenang'],
+ ['spiral', 'Putar Spiral', 'berputar membesar ke posisi akhir'],
+ ['float', 'Melayang', 'mengambang naik dengan lembut'],
+ ['wave', 'Gelombang', 'meliuk dari samping lalu lurus'],
+ ['cinematic', 'Fokus Sinematik', 'fokus tajam dari cahaya kabur']];
 const FX_COVER=[
  ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
  ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic']];
@@ -489,7 +493,7 @@ function boot(draft){
  const h1d=tplF.char?850:550,dtD=tplF.char?1500:1300,hoD=tplF.char?1650:1450,btD=tplF.char?1800:1600;
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
  const wspan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="anim-word" style="animation-delay:${d0+i*90}ms">${esc(w)}</span>`).join(' ');
- const RV=cls=>rvOn?cls+' rv fx-s-'+SC:cls;
+ const RV=cls=>rvOn?cls+' scroll-reveal fx-s-'+SC:cls;
  const BD=BORDERS.find(b=>b.id===(d&&d.border))||null;let bdStyle='';
  if(BD){const A=tplF.accent;if(BD.s)bdStyle=BD.s(A);if(BD.extra)bdStyle+=(bdStyle?';':'')+BD.extra(A)}
  const bdCorners=(()=>{if(!BD||!BD.corner)return'';const w=BD.corner,A=tplF.accent;
@@ -602,8 +606,17 @@ function boot(draft){
 
  /* footer */
  h+=`<div class="footer"><div class="orn">${esc(tplF.deco)}</div>
-  <p>Terima kasih atas doa dan kasihnya 🤍<br>
-  <a href="https://asproject.my.id/" target="_blank" rel="noopener">Undangan digital premium — AsProject</a></p></div>`;
+  <p>Terima kasih atas doa dan kasihnya 🤍</p>
+  <footer class="as-contact" aria-label="Contact Us AsProject" style="margin-top:24px;padding:24px 16px;border:1px solid #e8e4dc;border-radius:20px;background:#faf9f6;color:#262626;text-align:center;font-family:Inter,system-ui,sans-serif;overflow-wrap:anywhere">
+   <img class="as-contact-logo" src="assets/logo-asproject.svg" alt="Logo AsProject" width="72" height="72" style="display:block;width:72px;height:72px;max-width:100%;margin:0 auto 16px;padding:6px;border-radius:18px;background:#111;object-fit:contain">
+   <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#737373">Contact Us</div>
+   <a href="https://asproject.my.id/" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:8px;font-size:23px;font-weight:700;letter-spacing:-.04em;color:#262626;text-decoration:none">AsProject<span style="color:#9a7b32">.</span></a>
+   <p style="margin:8px 0 0;font-size:11px;line-height:1.7;color:#737373">Jasa pembuatan undangan digital.<br>Ingin membuat undangan? Hubungi kami.</p>
+   <a class="as-contact-wa" href="https://wa.me/6285196755675?text=Halo%20AsProject%2C%20saya%20ingin%20bertanya%20tentang%20pembuatan%20undangan%20digital." target="_blank" rel="noopener noreferrer" aria-label="Hubungi AsProject melalui WhatsApp 0851-9675-5675" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;width:100%;max-width:260px;margin:18px auto 0;padding:10px 12px;border-radius:14px;background:#176b43;color:#fff;text-decoration:none;font-size:12px;font-weight:600;line-height:1.5">
+    <span>Chat via WhatsApp</span><span style="font-size:14px;letter-spacing:.03em">0851-9675-5675</span>
+   </a>
+   <div style="margin-top:12px;font-size:10px;color:#737373">Kontak layanan AsProject · bukan kontak RSVP</div>
+  </footer></div>`;
 
  h+=`</div></div>`;
 
@@ -622,12 +635,7 @@ function boot(draft){
  });
  if(tt)startCountdown(tt);
  /* scroll reveal — bagian muncul halus saat tamu menggulir */
- if(rvOn&&'IntersectionObserver' in window){
-  const io=new IntersectionObserver(es=>es.forEach(e=>{
-   if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
-  }),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
-  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
- }
+ if(rvOn)setupScrollReveal(document.getElementById('app')||document.body);
 }
 
 function startCountdown(tt){

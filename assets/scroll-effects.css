@@ -1,0 +1,59 @@
+/* Shared scroll animation geometry: Studio and published invitations stay identical.
+   Visible by default: missing JS/observer must never hide invitation content. */
+.scroll-reveal.sr-ready:not(.sr-in){opacity:0}
+.scroll-reveal.sr-ready.sr-in{animation:var(--scroll-fx,sr-fade-up) .85s cubic-bezier(.22,.8,.36,1) both}
+.scroll-reveal.fx-s-fade-up{--scroll-fx:sr-fade-up}
+@keyframes sr-fade-up{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-fade-down{--scroll-fx:sr-fade-down}
+@keyframes sr-fade-down{from{opacity:0;transform:translateY(-28px);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-slide-left{--scroll-fx:sr-slide-left}
+@keyframes sr-slide-left{from{opacity:0;transform:translateX(48px);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-slide-right{--scroll-fx:sr-slide-right}
+@keyframes sr-slide-right{from{opacity:0;transform:translateX(-48px);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-zoom-in{--scroll-fx:sr-zoom-in}
+@keyframes sr-zoom-in{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-zoom-out{--scroll-fx:sr-zoom-out}
+@keyframes sr-zoom-out{from{opacity:0;transform:scale(1.18);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-rotate{--scroll-fx:sr-rotate}
+@keyframes sr-rotate{from{opacity:0;transform:rotate(-4deg) translateY(20px);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-blur{--scroll-fx:sr-blur}
+@keyframes sr-blur{from{opacity:0;transform:translateY(14px);filter:blur(12px);}to{opacity:1;transform:none;filter:none;}}
+.scroll-reveal.fx-s-pop{--scroll-fx:sr-pop}
+@keyframes sr-pop{from{opacity:0;transform:scale(.55);}65%{opacity:1;transform:translateY(-10px) scale(1.04)}82%{transform:translateY(3px) scale(.99)}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-flip{--scroll-fx:sr-flip}
+@keyframes sr-flip{from{opacity:0;transform:perspective(700px) rotateX(65deg) translateY(20px);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-card{--scroll-fx:sr-card}
+@keyframes sr-card{from{opacity:0;transform:translateY(64px) rotateZ(-9deg) rotateY(20deg);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-book{--scroll-fx:sr-book}
+@keyframes sr-book{from{opacity:0;transform:perspective(900px) rotateY(-85deg);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-cube{--scroll-fx:sr-cube}
+@keyframes sr-cube{from{opacity:0;transform:perspective(900px) translateZ(-100px) rotateY(85deg);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-card-stack{--scroll-fx:sr-card-stack}
+@keyframes sr-card-stack{from{opacity:0;transform:translateY(80px) scale(.8) rotateZ(8deg);box-shadow:8px 8px 0 #0002,16px 16px 0 #0001;}to{opacity:1;transform:none;box-shadow:0 0 0 transparent,0 0 0 transparent;}}
+.scroll-reveal.fx-s-curtain{--scroll-fx:sr-curtain}
+@keyframes sr-curtain{from{opacity:0;transform:none;clip-path:inset(0 50% 0 50%);}to{opacity:1;transform:none;clip-path:inset(0 0 0 0);}}
+.scroll-reveal.fx-s-iris{--scroll-fx:sr-iris}
+@keyframes sr-iris{from{opacity:0;transform:none;clip-path:circle(0% at 50% 50%);}to{opacity:1;transform:none;clip-path:circle(150% at 50% 50%);}}
+.scroll-reveal.fx-s-diagonal{--scroll-fx:sr-diagonal}
+@keyframes sr-diagonal{from{opacity:0;transform:none;clip-path:polygon(0 0,0 0,0 0);}to{opacity:1;transform:none;clip-path:polygon(0 0,200% 0,0 200%);}}
+.scroll-reveal.fx-s-fold{--scroll-fx:sr-fold}
+@keyframes sr-fold{from{opacity:0;transform:perspective(900px) rotateX(-85deg) scaleY(.65);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-swing{--scroll-fx:sr-swing}
+@keyframes sr-swing{from{opacity:0;transform:rotateZ(-18deg) translateX(-20px);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-spring{--scroll-fx:sr-spring}
+@keyframes sr-spring{from{opacity:0;transform:translateY(70px) scale(.7);}65%{opacity:1;transform:translateY(-10px) scale(1.04)}82%{transform:translateY(3px) scale(.99)}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-spiral{--scroll-fx:sr-spiral}
+@keyframes sr-spiral{from{opacity:0;transform:rotateZ(-160deg) scale(.25);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-float{--scroll-fx:sr-float}
+@keyframes sr-float{from{opacity:0;transform:translateY(80px);}70%{opacity:1;transform:translateY(-6px)}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-wave{--scroll-fx:sr-wave}
+@keyframes sr-wave{from{opacity:0;transform:translateX(-55px) skewY(9deg);}60%{opacity:1;transform:translateX(8px) skewY(-3deg)}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-cinematic{--scroll-fx:sr-cinematic}
+@keyframes sr-cinematic{from{opacity:0;transform:scale(1.12);filter:blur(12px) brightness(1.5);}to{opacity:1;transform:none;filter:none;}}
+.scroll-reveal.fx-s-book{transform-origin:left center}
+.scroll-reveal.fx-s-cube{transform-origin:right center}
+.scroll-reveal.fx-s-fold{transform-origin:center top}
+.scroll-reveal.fx-s-swing{transform-origin:top left}
+@media(prefers-reduced-motion:reduce){
+ .scroll-reveal.sr-ready,.scroll-reveal.sr-ready.sr-in{opacity:1;animation:none;transform:none;filter:none;clip-path:none}
+}
