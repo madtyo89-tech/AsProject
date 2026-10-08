@@ -108,6 +108,20 @@
     };
   }
 
+  /* Aksen di atas latar GELAP (foto cover penuh / artwork 3D): rona tema dicampur
+     ke arah putih sampai kontrasnya cukup. Dipakai oleh gaya cover "foto penuh". */
+  function untukLatarGelap(warna, latarGelap, minimal) {
+    var w = normal(warna);
+    if (!w || !kanal(latarGelap)) return warna;
+    minimal = minimal || MIN_BESAR;
+    if (kontras(w, latarGelap) >= minimal) return w;
+    for (var t = 0.1; t < 1; t += 0.1) {
+      var c = campur(w, PUTIH, t);
+      if (kontras(c, latarGelap) >= minimal) return c;
+    }
+    return PUTIH;
+  }
+
   /* Aksen di atas gradasi cover (ornamen ❖ / nama kecil pada #cover). */
   function untukCover(accent, g0, g1) {
     var a = perbaiki(accent, g0 || KARTU, MIN_BESAR);
@@ -119,6 +133,6 @@
     MIN_TEKS: MIN_TEKS, MIN_AKSEN: MIN_AKSEN, MIN_BESAR: MIN_BESAR,
     normal: normal, lampu: lampu, kontras: kontras, campur: campur,
     perbaiki: perbaiki, nadaGelapTema: nadaGelapTema,
-    untukKonten: untukKonten, untukCover: untukCover
+    untukKonten: untukKonten, untukCover: untukCover, untukLatarGelap: untukLatarGelap
   };
 })();

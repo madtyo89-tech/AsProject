@@ -67,10 +67,39 @@ button{font-family:inherit;cursor:pointer}
 body.art3d #cover{background:linear-gradient(180deg,rgba(12,10,8,.55),rgba(12,10,8,.24) 30%,rgba(12,10,8,.34) 62%,rgba(12,10,8,.72)),var(--cover-art,none) center/cover no-repeat}
 body.art3d #cover .pat,body.art3d #cover .veil{display:none}
 body.art3d #cover .date{background:rgba(18,14,10,.45);border-color:rgba(255,255,255,.35)}
-/* bingkai foto utama di cover (konsep "Pasang Foto Disini" pada artwork 3D) */
-#cover .fotofr{margin:18px auto 0;width:min(54vw,196px);padding:7px;border-radius:20px;background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.42));border:1px solid rgba(255,255,255,.55);box-shadow:0 20px 44px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.6)}
-#cover .fotofr img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:14px;display:block}
-body.art3d #cover .fotofr{margin-top:22px}
+/* ---------- FOTO COVER (9 gaya, posisi & zoom diatur pemilik di Studio) ----------
+   Berlaku semua jenis acara (pernikahan, khitanan, aqiqah, ulang tahun).
+   Gaya dari data.coverStyle, posisi/zoom dari data.coverPos (object-position). */
+#cover{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#cover .bdfr{margin-top:auto;margin-bottom:auto}
+#cover .cvf{box-sizing:border-box;position:relative;overflow:hidden;margin:18px auto 0;width:min(46vw,170px);aspect-ratio:3/4;box-shadow:0 20px 44px rgba(0,0,0,.42)}
+#cover .cvf img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#cover .cvf-kotak{border-radius:18px;padding:7px;background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.45));border:1px solid rgba(255,255,255,.6)}
+#cover .cvf-kotak img{border-radius:12px}
+#cover .cvf-oval{border-radius:50%;padding:6px;background:linear-gradient(160deg,#FBF0D2,#C9A548)}
+#cover .cvf-oval img{border-radius:50%}
+#cover .cvf-lingkaran{aspect-ratio:1/1;width:min(40vw,148px);border-radius:50%;padding:6px;background:linear-gradient(160deg,#FBF0D2,#B9903A)}
+#cover .cvf-lingkaran img{border-radius:50%}
+#cover .cvf-arch{border-radius:999px 999px 20px 20px;padding:7px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.5))}
+#cover .cvf-arch img{border-radius:999px 999px 14px 14px}
+#cover .cvf-polaroid{background:#fffdf9;padding:8px 8px 30px;border-radius:6px;transform:rotate(-2deg);box-shadow:0 22px 44px rgba(0,0,0,.45)}
+#cover .cvf-polaroid img{border-radius:3px}
+#cover .cvf-emas{padding:9px;border-radius:14px;background:#fffdf9;box-shadow:0 0 0 2px #C9A548,0 0 0 5px rgba(255,255,255,.4),0 20px 44px rgba(0,0,0,.45)}
+#cover .cvf-emas img{border-radius:9px}
+#cover .cvf-kapsul{aspect-ratio:9/16;width:min(32vw,116px);border-radius:999px;padding:6px;background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.45))}
+#cover .cvf-kapsul img{border-radius:999px}
+@media (max-height:700px){#cover .cvf{width:min(38vw,132px)}#cover .cvf-lingkaran{width:min(32vw,112px)}#cover .cvf-kapsul{width:min(26vw,92px)}}
+
+/* Gaya "Foto Penuh": foto jadi latar seluruh cover + lapisan gelap, teks masuk
+   panel kaca gelap supaya tetap terbaca (dijaga >=4.5:1 walau fotonya putih). */
+body.foto-full #cover{background:#0b0908;justify-content:flex-end;padding:0}
+body.foto-full #cover .pat,body.foto-full #cover .veil{display:none}
+body.foto-full #cover .cvlatar{position:absolute;inset:0;overflow:hidden}
+body.foto-full #cover .cvlatar img{width:100%;height:100%;object-fit:cover;display:block}
+body.foto-full #cover::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(8,6,5,.5) 0%,rgba(8,6,5,.14) 26%,rgba(8,6,5,.42) 50%,rgba(8,6,5,.9) 76%,rgba(8,6,5,.95) 100%)}
+body.foto-full #cover .bdfr{position:relative;z-index:2;margin:0 auto 14px;padding:18px 14px;border-radius:22px;background:rgba(10,8,6,.84);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+body.foto-full #cover .date{background:rgba(18,14,10,.5);border-color:rgba(255,255,255,.3)}
+body.foto-full #cover .brand{opacity:.8}
 
 body.opened #cover{opacity:0;visibility:hidden}
 
@@ -495,18 +524,38 @@ function boot(draft){
  /* Artwork 3D tema (bila ada): latar cover + teks cover versi terang.
     Tanpa artwork, semuanya kembali ke warna tema seperti semula. */
  const ART=tplF.bg3d||'';
- if(ART){document.body.classList.add('art3d');rs.setProperty('--cover-art',"url('"+ART+"')")}
+ /* Foto cover: gaya dipilih pemilik di Studio; posisi & zoom dari penyesuai geser.
+    Tanpa foto, tidak ada bingkai (perilaku lama tetap sama). */
+ const fotoUtama=String((d&&d.cover)||'').trim();
+ const CV_GAYA=['kotak','oval','lingkaran','arch','polaroid','emas','kapsul'];
+ const cvDiminta=String((d&&d.coverStyle)||'');
+ const cvStyle=!fotoUtama?'none'
+  :(CV_GAYA.indexOf(cvDiminta)>=0?cvDiminta
+   :(cvDiminta==='full'?'full':(cvDiminta==='none'?'none':'kotak')));
+ const cpo=(d&&d.coverPos)||{};
+ const angkaPos=(v,b)=>{const n=parseFloat(v);return isFinite(n)?Math.min(100,Math.max(0,n)):b};
+ const cvZ=(()=>{const n=parseFloat(cpo.z);return isFinite(n)?Math.min(2.2,Math.max(1,n)):1})();
+ const cvP={x:angkaPos(cpo.x,50),y:angkaPos(cpo.y,50),z:cvZ};
+ if(ART&&cvStyle!=='full'){document.body.classList.add('art3d');rs.setProperty('--cover-art',"url('"+ART+"')")}
  const KB=TC&&TC.perbaiki?TC.perbaiki(tplF.accent,'#241d16',3):tplF.accent;
  const KT=TC&&TC.untukKonten?TC.untukKonten(tplF.ink,tplF.accent,tplF.g):null;
  rs.setProperty('--ink-body',KT?KT.ink:tplF.ink);
  rs.setProperty('--accent-body',KT?KT.accent:tplF.accent);
  rs.setProperty('--ink-body-fg',KT?KT.teksDiInk:'#fff');
  rs.setProperty('--ink-fg',KT?KT.teksDiInkTema:'#fff');
- rs.setProperty('--accent-cover',ART?KB:(TC&&TC.untukCover?TC.untukCover(tplF.accent,tplF.g[0],tplF.g[1]):tplF.accent));
- if(ART){
-  /* Di atas gambar 3D yang gelap: teks cover memakai krem terang, isi tombol gelap. */
-  rs.setProperty('--ink','#F7F2E9');
+ if(cvStyle==='full'){
+  /* Foto penuh jadi latar gelap: teks putih, aksen tema dicerahkan (>=3:1). */
+  document.body.classList.add('foto-full');
+  rs.setProperty('--ink','#ffffff');
   rs.setProperty('--ink-fg','#141210');
+  rs.setProperty('--accent-cover',TC&&TC.untukLatarGelap?TC.untukLatarGelap(tplF.accent,'#0F0B08',TC.MIN_AKSEN||3):tplF.accent);
+ }else{
+  rs.setProperty('--accent-cover',ART?KB:(TC&&TC.untukCover?TC.untukCover(tplF.accent,tplF.g[0],tplF.g[1]):tplF.accent));
+  if(ART){
+   /* Di atas gambar 3D yang gelap: teks cover memakai krem terang, isi tombol gelap. */
+   rs.setProperty('--ink','#F7F2E9');
+   rs.setProperty('--ink-fg','#141210');
+  }
  }
  rs.setProperty('--ft',fontFam((d&&d.fontTitle)||tplF.ft));
  rs.setProperty('--fb',fontFam((d&&d.fontBody)||'inter'));
@@ -521,7 +570,6 @@ function boot(draft){
  const alamat=form.alamat||'';
  const mapsLink=form.mapsLink&&!/example/i.test(form.mapsLink)?form.mapsLink:'';
 
- const fotoUtama=String((d&&d.cover)||'').trim();
  const play=setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
 
  /* ---------- animasi (diatur dari Studio: cover / teks / scroll reveal + pilihan efek) ---------- */
@@ -543,7 +591,9 @@ function boot(draft){
  let h='';
  h+=`<div id="cover" class="${covOn?'cov':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="bdfr" style="${bdStyle}">${bdCorners}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
-   ${fotoUtama?`<div class="fotofr ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager"></div>`:''}
+   ${cvStyle==='none'?'':(cvStyle==='full'
+     ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`
+     :`<div class="cvf cvf-${cvStyle} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`)}
    <div class="kicker ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(EV_KICKER[ev]||'Undangan')}</div>
    ${tplF.char?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms':''}">${tplF.char}</div>`:''}`;
  if(ev==='pernikahan'){

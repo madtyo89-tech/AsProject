@@ -180,15 +180,15 @@ function tema(rel) {
           'teks cover jadi terang (#F7F2E9) agar terbaca di atas artwork');
       cek(String(st.getPropertyValue('--ink-body')).trim().toLowerCase() === '#26292e',
           'teks konten tetap nada gelap tema (#26292e)');
-      const bingkai = w.document.querySelector('#cover .fotofr img');
-      cek(!!bingkai, 'foto utama muncul dalam bingkai di cover');
+      const bingkai = w.document.querySelector('#cover .cvf img');
+      cek(!!bingkai, 'foto utama muncul dalam bingkai di cover (gaya kotak = bawaan)');
       cek(!!bingkai && /foto\.webp/.test(bingkai.getAttribute('src')),
           'bingkai memakai foto dari data undangan');
       dom.window.close();
     }
     {
       const { dom, w } = await render(das('race-car'));
-      cek(!w.document.querySelector('#cover .fotofr'), 'tanpa foto utama: tidak ada bingkai kosong');
+      cek(!w.document.querySelector('#cover .cvf'), 'tanpa foto utama: tidak ada bingkai kosong');
       dom.window.close();
     }
     {
@@ -197,7 +197,7 @@ function tema(rel) {
       cek(!w.document.body.classList.contains('art3d'), 'tema tanpa artwork: kelas art3d tidak dipasang');
       cek(String(st.getPropertyValue('--ink')).trim().toLowerCase() === '#0c4a6e',
           'tema biasa: teks cover tetap warna tema (#0c4a6e)');
-      cek(!w.document.querySelector('#cover .fotofr'), 'tema biasa tanpa foto: tidak ada bingkai');
+      cek(!w.document.querySelector('#cover .cvf'), 'tema biasa tanpa foto: tidak ada bingkai');
       dom.window.close();
     }
   }
@@ -205,11 +205,11 @@ function tema(rel) {
   /* -------------------------------------------- 3. studio (pratinjau & publish) */
   console.log('\n3) Studio (pratinjau & publish)');
   const stu2 = baca('studio.html');
-  cek(stu2.includes("const art3d=(!dark&&tp.bg3d&&state.bgType==='gradient')?tp.bg3d:'';"),
+  cek(/const art3d=\(!dark&&tp\.bg3d&&state\.bgType==='gradient'/.test(stu2),
       'pratinjau HP memakai artwork tema 3D');
   cek(/art3d\?'#F7F2E9'/.test(stu2), 'nama pada pratinjau tetap terbaca di atas artwork');
   cek(stu2.includes("${art3d?' • 3D':''}"), 'label pratinjau menandai tema 3D');
-  cek(/snap:\{[^}]*cover:state\.cover\|\|''\}\}/.test(stu2),
+  cek(/snap:\{[\s\S]*?cover:state\.cover\|\|''/.test(stu2),
       'publish() menyimpan foto utama (cover) ke snapshot');
   cek(stu2.includes("if(a.snap.cover!==undefined)state.cover=a.snap.cover;"),
       'membuka arsip memulihkan foto utama');

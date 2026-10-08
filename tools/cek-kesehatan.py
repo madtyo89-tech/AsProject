@@ -551,8 +551,10 @@ def cek_tema_3d():
           "undangan.html: aturan latar artwork + lapisan gelap ada")
     lapor("ok" if "classList.add('art3d')" in und else "masalah",
           "undangan.html: kelas art3d dipasang saat tema ber-artwork")
-    lapor("ok" if "class=\"fotofr" in und else "masalah",
-          "undangan.html: bingkai foto utama di cover tersedia")
+    lapor("ok" if 'class="cvf cvf-' in und else "masalah",
+          "undangan.html: bingkai foto cover (9 gaya) tersedia")
+    lapor("ok" if "body.foto-full #cover" in und else "masalah",
+          "undangan.html: gaya foto penuh + panel gelap tersedia")
     stu = baca("studio.html")
     lapor("ok" if "const art3d=" in stu else "masalah",
           "studio.html: pratinjau HP mengikuti latar 3D")
@@ -567,6 +569,42 @@ def cek_tema_3d():
           "uji tema 3D: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
 
 
+# --------------------------------------------- 17. foto cover (9 gaya + geser)
+def cek_foto_cover():
+    print("\n[17] Foto cover undangan (9 gaya + geser/zoom)")
+    und = baca("undangan.html")
+    stu = baca("studio.html")
+    gaya = ["kotak", "oval", "lingkaran", "arch", "polaroid", "emas", "kapsul"]
+    hilang = [g for g in gaya if f".cvf-{g}" not in und]
+    lapor("ok" if not hilang else "masalah",
+          f"undangan.html: CSS 7 bingkai lengkap (kurang: {', '.join(hilang) or '-'})")
+    lapor("ok" if und.count('class="cvf cvf-') >= 1 else "masalah",
+          "undangan.html: markup bingkai memakai gaya dari data.coverStyle")
+    lapor("ok" if "object-position:${cvP.x}%" in und else "masalah",
+          "undangan.html: posisi foto dari data.coverPos dipakai")
+    lapor("ok" if "untukLatarGelap" in und and "untukLatarGelap" in baca("assets/theme-contrast.js") else "masalah",
+          "aksen di atas foto gelap dicerahkan (untukLatarGelap)")
+    lapor("ok" if "#cover{overflow-y:auto" in und else "masalah",
+          "undangan.html: cover bisa digulir (tombol Buka Undangan tidak terpotong)")
+    lapor("ok" if "const CV_URUT=" in stu and stu.count("'kapsul'") >= 1 else "masalah",
+          "studio.html: daftar 9 gaya tersedia")
+    for fn in ("function cvMulai", "function cvJalan", "function cvLepas", "function cvZoom", "function cvReset"):
+        lapor("ok" if fn in stu else "masalah", f"studio.html: {fn.split()[1]} tersedia (geser/zoom)")
+    lapor("ok" if stu.count("coverStyle:cvGayaAktif()") >= 3 else "masalah",
+          f"studio.html: gaya & posisi foto tersimpan (3 titik simpan: {stu.count('coverStyle:cvGayaAktif()')})")
+    lapor("ok" if "if(a.snap.coverStyle)state.coverStyle" in stu else "masalah",
+          "studio.html: membuka arsip memulihkan gaya foto")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji foto cover dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-foto-cover.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines()
+             if b.strip().startswith("Ringkasan") or b.strip().startswith("kontras")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji foto cover: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -575,7 +613,7 @@ def main():
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
-               cek_tema_3d):
+               cek_tema_3d, cek_foto_cover):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

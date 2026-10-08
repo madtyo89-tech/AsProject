@@ -87,6 +87,48 @@ Uji: `node tools/test-kontras-tema.cjs` (tanpa jsdom: cek palet & rumus; dengan 
 merender `undangan.html` sungguhan dengan tema Balap Mobil dan memeriksa variabel yang
 dipasang). Pemeriksa repo `python3 tools/cek-kesehatan.py` ikut menjalankannya.
 
+## Foto cover undangan (9 gaya, bisa digeser)
+
+Foto utama yang diunggah di Studio (**Foto & Galeri → Foto Utama / Cover**) bisa
+dipasang di cover undangan dengan **9 gaya**, dan posisinya bisa digeser/di-zoom
+supaya bagian penting fotonya pas di bingkai. Berlaku semua jenis acara:
+pernikahan, khitanan, aqiqah, dan ulang tahun.
+
+| # | Gaya | Bentuk |
+|---|------|--------|
+| 1 | `kotak` | persegi membulat (bawaan) |
+| 2 | `oval` | oval klasik berbingkai emas |
+| 3 | `lingkaran` | bulat penuh berbingkai emas |
+| 4 | `arch` | lengkung atas (arch) |
+| 5 | `polaroid` | kartu polaroid putih |
+| 6 | `emas` | bingkai ganda emas |
+| 7 | `kapsul` | kapsul tinggi membulat |
+| 8 | `full` | foto penuh jadi latar cover + panel kaca gelap |
+| 9 | `none` | tanpa foto di cover (foto tetap tampil di bagian galeri) |
+
+Cara mengatur (di Studio, tab undangan):
+
+1. unggah **Foto Utama / Cover**;
+2. pilih salah satu dari **9 gaya** (pratinjau memakai foto Anda sendiri);
+3. **geser fotonya** di kotak “geser foto” (jari/mouse) — perpindahan dihitung dari
+   ukuran gambar asli supaya gerakannya pas 1:1 — lalu atur **zoom** (1×–2,2×);
+4. tekan **Publikasikan** agar gaya + posisi foto ikut tersimpan ke undangan live
+   (undangan yang sudah terbit perlu diterbitkan ulang).
+
+Catatan teknis:
+
+- posisi/zoom disimpan sebagai `coverPos:{x,y,z}` (persen) dan dipakai lewat
+  `object-position` + `transform:scale()`; gaya disimpan sebagai `coverStyle`;
+- gaya **`full`** memakai lapisan gelap + panel kaca `rgba(10,8,6,.84)` di belakang
+  teks, sehingga teks putih tetap ≥ 4.5:1 **walau fotonya serba putih** (diuji);
+- cover bisa **digulir** dan bingkai mengecil di layar pendek, jadi tombol
+  *Buka Undangan* tidak pernah terpotong karena tambahan foto;
+- undangan tanpa foto tampil **persis seperti sebelumnya** (tidak ada bingkai kosong).
+
+Uji: `node tools/test-foto-cover.cjs` (61 pemeriksaan) dan bagian `[17]` di
+`tools/cek-kesehatan.py`. Lembar perbandingan 9 gaya: `pilihan-gaya-foto-cover.png`
+(di luar repositori; dibuat dengan `tools/`-style skrip sharp, bukan bagian aplikasi).
+
 ## Tema 3D ulang tahun (artwork realistis)
 
 Tema **ulang tahun** memakai latar artwork 3D realistis (bukan ilustrasi flat):
