@@ -27,7 +27,7 @@ import posixpath
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HALAMAN = ["index.html", "studio.html", "undangan.html", "404.html",
-           "checkin.html", "demo/ice-blue.html"]
+           "checkin.html", "demo/ice-blue.html", "master.html"]
 TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 
 hitung = {"ok": 0, "masalah": 0, "info": 0}
@@ -464,6 +464,51 @@ def cek_fitur_terbaru():
           "undangan.html: mode EMBEDDED_DATA terbaca sebelum mode demo/slug (file mandiri bisa boot)")
 
 
+def cek_alur_master():
+    print("\n14. Alur Studio > Undangan Master > Undangan Tamu")
+    # 1) halaman master ada + akses privat (kunci) + baca RSVP + edit bank
+    ok = os.path.exists(os.path.join(ROOT, "master.html"))
+    lapor("ok" if ok else "masalah", "master.html: halaman dashboard master ada di repo")
+    if not ok:
+        return
+    m = baca("master.html")
+    ok = "MK!==(d.masterKey||'')" in m and "master.html?slug=" in m
+    lapor("ok" if ok else "masalah",
+          "master.html: akses privat — link ditolak bila kunci ?k tidak cocok")
+    ok = "/rest/v1/rsvp?slug=eq." in m and "invitation_drafts?slug=eq." in m
+    lapor("ok" if ok else "masalah",
+          "master.html: membaca RSVP tamu + menyimpan edit info bank (PATCH draft)")
+    ok = "?to='+encodeURIComponent(g)" in m and "shareWa" in m and "guestLink" in m
+    lapor("ok" if ok else "masalah",
+          "master.html: link personal per tamu (?to=Nama) + share WhatsApp + salin link")
+    # 2) studio: kunci master dibuat, ikut snapshot publish, kartu link di Domain
+    s = baca("studio.html")
+    ok = "if(!state.masterKey){state.masterKey=mkRand();save()}" in s
+    lapor("ok" if ok else "masalah",
+          "studio.html: kunci master dibuat sekali & dipersist (link master stabil)")
+    ok = "masterKey:state.masterKey||''" in s and "guestsRaw:state.guestsRaw||''" in s
+    lapor("ok" if ok else "masalah",
+          "studio.html: daftar tamu + kunci master ikut snapshot publish (dibaca master)")
+    ok = "function masterUrl()" in s and "Undangan Master (khusus pemilik)" in s
+    lapor("ok" if ok else "masalah",
+          "studio.html: kartu Link Master di tab Domain (Salin + Buka Dashboard)")
+    # 3) undangan tamu: tombol RSVP cepat menulis ke tabel rsvp
+    u = baca("undangan.html")
+    ok = "async function rsvpSave(st)" in u and "resolution=merge-duplicates" in u
+    lapor("ok" if ok else "masalah",
+          "undangan.html: tombol RSVP cepat (Hadir/Tidak) menyimpan ke tabel rsvp")
+    ok = "data-rsvpb" in u and "ivToast" in u
+    lapor("ok" if ok else "masalah",
+          "undangan.html: UI RSVP cepat + toast hasil (fallback WA bila gagal)")
+    # 4) SQL pembuat tabel tersedia untuk pemilik
+    ok = os.path.exists(os.path.join(ROOT, "tools", "rsvp.sql"))
+    lapor("ok" if ok else "masalah", "tools/rsvp.sql: SQL tabel RSVP tersedia")
+    if ok:
+        ok = "create table if not exists public.rsvp" in baca("tools/rsvp.sql")
+        lapor("ok" if ok else "masalah",
+              "tools/rsvp.sql: tabel rsvp unique (slug,guest) + policy anon")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -471,7 +516,7 @@ def main():
     for fn in (cek_link, cek_url_berbahaya, cek_sintaks, cek_id,
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
-               cek_fitur_terbaru):
+               cek_fitur_terbaru, cek_alur_master):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

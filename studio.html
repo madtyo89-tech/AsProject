@@ -337,7 +337,7 @@ const DEF={
  musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',gallery:[],videoLink:'https://youtube.com/watch?v=example',
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'Bapak Budi Santoso\nIbu Siti Aminah\nKak Alif & Keluarga\nTim Kantor Pusat',
- guestCodes:{},selGuest:null,showNameQr:true,
+ guestCodes:{},masterKey:'',selGuest:null,showNameQr:true,
  waTemplate:'Assalamualaikum {nama_tamu} 🙏\n\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara {acara} kami:\n\n{link_undangan}\n\nMerupakan kebahagiaan bagi kami atas kehadiran & doanya.\n\nTerima kasih 🤍\n{nama_pengantin}',
  amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true},
  /* 10 slide konten baru — tiap slide: on + isi */
@@ -373,6 +373,9 @@ if(!Array.isArray(state.katalog)||!state.katalog.length||!state.katalog[0].tpl)s
 TPL.forEach((t,i)=>{if(!state.katalog.some(k=>k.tpl===t.id))state.katalog.push({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:Math.max(0,340-(state.katalog.length+i)*23)})});
 /* migrasi border (dulu: toggle dblBorder) & daftar katalog tersembunyi */
 if(state.dblBorder===false)state.border='none';else if(state.dblBorder===true)state.border='double';delete state.dblBorder
+/* kunci master (akses dashboard privat) — dibuat sekali, dipakai di link master */
+function mkRand(){const c='abcdefghjkmnpqrstuvwxyz23456789';let s='';for(let i=0;i<10;i++)s+=c[Math.floor(Math.random()*c.length)];return s}
+if(!state.masterKey){state.masterKey=mkRand();save()}
 if(!BORDERS.some(b=>b.id===state.border))state.border='double';
 if(!Array.isArray(state.katalogHide))state.katalogHide=[];
 if(!Array.isArray(state.musicDb))state.musicDb=[];
@@ -439,6 +442,7 @@ function hostBase(){return 'https://'+(state.customDomain?state.customDomain.rep
 /* Link berbasis path /u/{slug} — selalu bisa dibuka di GitHub Pages
    tanpa wildcard DNS (dirute oleh 404.html ke undangan.html). */
 function baseUrl(){return hostBase()+'/u/'+(state.slug||'demo')}
+function masterUrl(){return hostBase()+'/master.html?slug='+(state.slug||'{slug}')+'&k='+state.masterKey}
 function previewUrl(){const g=selGuest();return state.linkMode==='single'?baseUrl():baseUrl()+'?to='+encodeURIComponent(g?g.nama:'NamaTamu')}
 function daysLeft(){try{const d=new Date(state.form.tanggalAcara).getTime()-Date.now();return Math.max(0,Math.floor(d/86400000))}catch(e){return 0}}
 function guests(){return state.guestsRaw.split('\n').map(s=>s.trim()).filter(Boolean).map(nama=>{
@@ -525,6 +529,9 @@ async function publish(){
   slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
   cover:state.cover||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
+  /* alur Studio > Undangan Master > Undangan Tamu: dashboard master butuh daftar tamu + kunci privat */
+  guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
+  masterKey:state.masterKey||'',linkMode:state.linkMode||'personal',
   publishedAt:new Date().toISOString()};
  if(JSON.stringify(data).length>1500000){data.gallery=[];
   if(JSON.stringify(data).length>1200000){data.cover='';
@@ -945,6 +952,18 @@ function tabDomain(){return `<div style="display:grid;gap:16px">
    <button class="sm-btn" style="height:40px;border-radius:12px;background:#fff" onclick="unpublish()">Unpublish</button>
   </div>
   <button class="sm-btn dark" style="height:40px;border-radius:12px;width:100%;margin-top:8px" onclick="dlUndangan()">⬇️ Simpan File HTML (bisa offline)</button>
+ </div>
+ <div class="card"><h4>🔑 Undangan Master (khusus pemilik) • BARU</h4>
+  <div style="font-size:11px;line-height:1.8;color:var(--mut)">Dashboard privat untuk monitor <b>RSVP tamu realtime</b>, share/link WA per tamu, pratinjau undangan per tamu, dan <b>edit info bank</b> — tanpa login. Link ini berisi kunci privat <span style="font-family:ui-monospace,monospace">?k=…</span> sehingga hanya kamu yang bisa membukanya. Alur: <b>Studio → Undangan Master → Undangan Tamu</b>.</div>
+  <div style="margin-top:12px;padding:12px;border-radius:12px;background:#111;color:#fff">
+   <div style="font-size:11px;color:rgba(255,255,255,.6)">Link Master (aktif setelah Publish)</div>
+   <div style="font-size:12px;font-family:ui-monospace,monospace;margin-top:4px;word-break:break-all">${hostBase()}/master.html?slug=${esc(state.slug||'{slug}')}&amp;k=${esc(state.masterKey)}</div>
+   <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="sm-btn" style="background:#fff;color:#000;border:0" onclick="copyTxt('${masterUrl().replace(/'/g,"\\'")}','Link master disalin ✓')">Salin Link Master</button>
+    <button class="sm-btn" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.1);color:#fff" onclick="window.open('${masterUrl().replace(/'/g,"\\'")}','_blank')">Buka Dashboard ↗</button>
+   </div>
+  </div>
+  <div style="margin-top:10px;font-size:10.5px;color:var(--mut);line-height:1.7">ℹ️ Data tamu & kunci dibuat saat <b>Publish</b>. Jika publish ulang, link master tetap sama.</div>
  </div>
  <div class="card"><h4>SEO & Thumbnail WA</h4>
   <label class="f">SEO Title<input value="${esc(displayName())} — ${titleOf()}"></label>
