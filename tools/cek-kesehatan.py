@@ -534,6 +534,39 @@ def cek_kontras_tema():
     lapor("ok" if r.returncode == 0 else "masalah", f"uji kontras tema: {pesan}")
 
 
+# ------------------------------------------------- 16. tema 3D (artwork realistis)
+def cek_tema_3d():
+    print("\n[16] Tema 3D ulang tahun (assets/tema-3d/)")
+    folder = os.path.join(ROOT, "assets", "tema-3d")
+    berkas = sorted(f for f in os.listdir(folder) if f.endswith(".webp")) if os.path.isdir(folder) else []
+    lapor("ok" if berkas else "masalah",
+          f"artwork 3D tersedia ({len(berkas)} berkas webp)")
+    for rel in ("undangan.html", "studio.html"):
+        isi = baca(rel)
+        jumlah = isi.count("bg3d:'assets/tema-3d/")
+        lapor("ok" if jumlah == len(berkas) else "masalah",
+              f"{rel}: {jumlah} tema memakai artwork 3D (berkas: {len(berkas)})")
+    und = baca("undangan.html")
+    lapor("ok" if "body.art3d #cover" in und else "masalah",
+          "undangan.html: aturan latar artwork + lapisan gelap ada")
+    lapor("ok" if "classList.add('art3d')" in und else "masalah",
+          "undangan.html: kelas art3d dipasang saat tema ber-artwork")
+    lapor("ok" if "class=\"fotofr" in und else "masalah",
+          "undangan.html: bingkai foto utama di cover tersedia")
+    stu = baca("studio.html")
+    lapor("ok" if "const art3d=" in stu else "masalah",
+          "studio.html: pratinjau HP mengikuti latar 3D")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji tema 3D dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-tema-3d.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines()
+             if b.strip().startswith("Ringkasan") or b.strip().startswith("terburuk")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji tema 3D: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -541,7 +574,8 @@ def main():
     for fn in (cek_link, cek_url_berbahaya, cek_sintaks, cek_id,
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
-               cek_fitur_terbaru, cek_alur_master, cek_kontras_tema):
+               cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
+               cek_tema_3d):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

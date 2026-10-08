@@ -61,6 +61,17 @@ button{font-family:inherit;cursor:pointer}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 #cover .open .env{font-size:18px}
 #cover .brand{position:absolute;bottom:22px;left:0;right:0;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);opacity:.55}
+/* ---------- TEMA 3D (artwork realistis) ----------
+   Tema ulang tahun ber-artwork memakai gambar 3D sebagai latar cover. Teks cover
+   tetap terbaca karena diberi lapisan gelap tipis; warna teks diatur di boot(). */
+body.art3d #cover{background:linear-gradient(180deg,rgba(12,10,8,.55),rgba(12,10,8,.24) 30%,rgba(12,10,8,.34) 62%,rgba(12,10,8,.72)),var(--cover-art,none) center/cover no-repeat}
+body.art3d #cover .pat,body.art3d #cover .veil{display:none}
+body.art3d #cover .date{background:rgba(18,14,10,.45);border-color:rgba(255,255,255,.35)}
+/* bingkai foto utama di cover (konsep "Pasang Foto Disini" pada artwork 3D) */
+#cover .fotofr{margin:18px auto 0;width:min(54vw,196px);padding:7px;border-radius:20px;background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.42));border:1px solid rgba(255,255,255,.55);box-shadow:0 20px 44px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.6)}
+#cover .fotofr img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:14px;display:block}
+body.art3d #cover .fotofr{margin-top:22px}
+
 body.opened #cover{opacity:0;visibility:hidden}
 
 /* ---------- CONTENT ---------- */
@@ -206,8 +217,8 @@ const TPL=[
  {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',deco:'🌊 ✦ 🌊',pat:'',ft:'playfair'},
  {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',deco:'⭐ 🕌 ⭐',pat:'',ft:'poppins'},
  {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#2e4228',deco:'☪ ✦ ☪',pat:'arab',ft:'lora'},
- {id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins'},
- {id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',deco:'💖 ✨ 💖',pat:'',ft:'playfair'},
+ {id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',bg3d:'assets/tema-3d/kids-party.webp',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins'},
+ {id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',bg3d:'assets/tema-3d/sweet-17.webp',deco:'💖 ✨ 💖',pat:'',ft:'playfair'},
  {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#3a3835',deco:'◆',pat:'',ft:'inter'},
  {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',deco:'🍼 ☁️ 🍼',pat:'',ft:'poppins'},
  {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',deco:'🎀 🍼 🎀',pat:'',ft:'playfair'},
@@ -223,16 +234,16 @@ const TPL=[
  {id:'space-explorer',nama:'Petualang Antariksa',ev:'khitanan',g:['#1A2450','#28356B','#3A4A8C'],accent:'#F0C75E',ink:'#E8ECFF',char:'🚀',deco:'🚀 ✦ 🚀',pat:'',ft:'bebas'},
  {id:'robot-tech',nama:'Robot Cerdas',ev:'khitanan',g:['#E5F1F5','#C4DEE8','#9CC4D4'],accent:'#33658A',ink:'#243B4D',char:'🤖',deco:'🤖 ✦ 🤖',pat:'',ft:'oswald'},
  {id:'knight-quest',nama:'Pangeran Knight',ev:'khitanan',g:['#3D2B52','#533B6B','#6C4E88'],accent:'#E0B84C',ink:'#F0E9F7',char:'🛡️',deco:'⚔ ✦ ⚔',pat:'',ft:'ebgaramond'},
- {id:'superhero-power',nama:'Super Hero',ev:'ultah',g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',char:'🦸',deco:'🦸 ⚡ 🦸',pat:'confetti',ft:'bebas'},
- {id:'race-car',nama:'Balap Mobil',ev:'ultah',g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',char:'🏎️',deco:'🏁 ✦ 🏁',pat:'',ft:'oswald'},
- {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',char:'🏴‍☠️',deco:'⚓ ✦ ⚓',pat:'',ft:'bebas'},
- {id:'dragon-fire',nama:'Naga Api',ev:'ultah',g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',char:'🐉',deco:'🐉 ✦ 🐉',pat:'',ft:'bebas'},
- {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',char:'🥷',deco:'🥷 ✦ 🥷',pat:'',ft:'oswald'},
+ {id:'superhero-power',nama:'Super Hero',ev:'ultah',g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',char:'🦸',bg3d:'assets/tema-3d/superhero-power.webp',deco:'🦸 ⚡ 🦸',pat:'confetti',ft:'bebas'},
+ {id:'race-car',nama:'Balap Mobil',ev:'ultah',g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',char:'🏎️',bg3d:'assets/tema-3d/race-car.webp',deco:'🏁 ✦ 🏁',pat:'',ft:'oswald'},
+ {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',char:'🏴‍☠️',bg3d:'assets/tema-3d/pirate-sea.webp',deco:'⚓ ✦ ⚓',pat:'',ft:'bebas'},
+ {id:'dragon-fire',nama:'Naga Api',ev:'ultah',g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',char:'🐉',bg3d:'assets/tema-3d/dragon-fire.webp',deco:'🐉 ✦ 🐉',pat:'',ft:'bebas'},
+ {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',char:'🥷',bg3d:'assets/tema-3d/ninja-mastery.webp',deco:'🥷 ✦ 🥷',pat:'',ft:'oswald'},
  {id:'baby-prince',nama:'Pangeran Cilik',ev:'aqiqah',g:['#E7F0FB','#C9DCF5','#A5C4EC'],accent:'#3E6BA8',ink:'#234066',char:'🤴',deco:'🤴 ✦ 🤴',pat:'',ft:'poppins'},
  {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',char:'🦕',deco:'🦕 ✦ 🦕',pat:'',ft:'poppins'},
  {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',char:'🧑‍🚀',deco:'🧑‍🚀 ✦ 🧑‍🚀',pat:'',ft:'oswald'},
  {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',char:'🐯',deco:'🐯 ✦ 🐯',pat:'',ft:'bebas'},
- {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',char:'👸',deco:'👸 ✨ 👸',pat:'',ft:'dancing'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',char:'🦄',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',char:'🌸',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing'}];
+ {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',char:'👸',bg3d:'assets/tema-3d/fairy-princess.webp',deco:'👸 ✨ 👸',pat:'',ft:'dancing'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',char:'🦄',bg3d:'assets/tema-3d/unicorn-magic.webp',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',char:'🌸',bg3d:'assets/tema-3d/rose-bouquet.webp',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing'}];
 
 const FONTS=[
  {id:'cormorant',fam:'"Cormorant Garamond",serif'},
@@ -481,12 +492,22 @@ function boot(draft){
     sampai kontrasnya cukup (rona tema tetap). Bila aset tidak termuat (mis. file
     offline tanpa folder assets/), nilainya kembali ke warna tema seperti semula. */
  const TC=window.AsThemeContrast;
+ /* Artwork 3D tema (bila ada): latar cover + teks cover versi terang.
+    Tanpa artwork, semuanya kembali ke warna tema seperti semula. */
+ const ART=tplF.bg3d||'';
+ if(ART){document.body.classList.add('art3d');rs.setProperty('--cover-art',"url('"+ART+"')")}
+ const KB=TC&&TC.perbaiki?TC.perbaiki(tplF.accent,'#241d16',3):tplF.accent;
  const KT=TC&&TC.untukKonten?TC.untukKonten(tplF.ink,tplF.accent,tplF.g):null;
  rs.setProperty('--ink-body',KT?KT.ink:tplF.ink);
  rs.setProperty('--accent-body',KT?KT.accent:tplF.accent);
  rs.setProperty('--ink-body-fg',KT?KT.teksDiInk:'#fff');
  rs.setProperty('--ink-fg',KT?KT.teksDiInkTema:'#fff');
- rs.setProperty('--accent-cover',TC&&TC.untukCover?TC.untukCover(tplF.accent,tplF.g[0],tplF.g[1]):tplF.accent);
+ rs.setProperty('--accent-cover',ART?KB:(TC&&TC.untukCover?TC.untukCover(tplF.accent,tplF.g[0],tplF.g[1]):tplF.accent));
+ if(ART){
+  /* Di atas gambar 3D yang gelap: teks cover memakai krem terang, isi tombol gelap. */
+  rs.setProperty('--ink','#F7F2E9');
+  rs.setProperty('--ink-fg','#141210');
+ }
  rs.setProperty('--ft',fontFam((d&&d.fontTitle)||tplF.ft));
  rs.setProperty('--fb',fontFam((d&&d.fontBody)||'inter'));
 
@@ -500,6 +521,7 @@ function boot(draft){
  const alamat=form.alamat||'';
  const mapsLink=form.mapsLink&&!/example/i.test(form.mapsLink)?form.mapsLink:'';
 
+ const fotoUtama=String((d&&d.cover)||'').trim();
  const play=setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
 
  /* ---------- animasi (diatur dari Studio: cover / teks / scroll reveal + pilihan efek) ---------- */
@@ -521,6 +543,7 @@ function boot(draft){
  let h='';
  h+=`<div id="cover" class="${covOn?'cov':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="bdfr" style="${bdStyle}">${bdCorners}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
+   ${fotoUtama?`<div class="fotofr ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager"></div>`:''}
    <div class="kicker ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(EV_KICKER[ev]||'Undangan')}</div>
    ${tplF.char?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms':''}">${tplF.char}</div>`:''}`;
  if(ev==='pernikahan'){

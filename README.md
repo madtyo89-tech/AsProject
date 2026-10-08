@@ -87,6 +87,40 @@ Uji: `node tools/test-kontras-tema.cjs` (tanpa jsdom: cek palet & rumus; dengan 
 merender `undangan.html` sungguhan dengan tema Balap Mobil dan memeriksa variabel yang
 dipasang). Pemeriksa repo `python3 tools/cek-kesehatan.py` ikut menjalankannya.
 
+## Tema 3D ulang tahun (artwork realistis)
+
+Tema **ulang tahun** memakai latar artwork 3D realistis (bukan ilustrasi flat):
+`assets/tema-3d/<id-tema>.webp` — satu berkas per tema, ≤ 250 KB, total ± 860 KB.
+
+| Tema | Berkas | Tema | Berkas |
+|------|--------|------|--------|
+| Balap Mobil (`race-car`) | `race-car.webp` | Putri Peri (`fairy-princess`) | `fairy-princess.webp` |
+| Naga Api (`dragon-fire`) | `dragon-fire.webp` | Unicorn Magic (`unicorn-magic`) | `unicorn-magic.webp` |
+| Ninja Cilik (`ninja-mastery`) | `ninja-mastery.webp` | Buket Mawar (`rose-bouquet`) | `rose-bouquet.webp` |
+| Super Hero (`superhero-power`) | `superhero-power.webp` | Kids Party (`kids-party`) | `kids-party.webp` |
+| Bajak Laut Cilik (`pirate-sea`) | `pirate-sea.webp` | Sweet 17 (`sweet-17`) | `sweet-17.webp` |
+
+Cara kerjanya:
+
+- tema dengan kode `bg3d:'assets/tema-3d/…'` di `TPL` memakai gambar itu sebagai
+  **latar cover** undangan; tema lain tetap memakai gradasi seperti semula;
+- lapisan gelap tipis (`body.art3d #cover`) menjaga teks tetap terbaca — diuji
+  ≥ 14:1 untuk warna teks cover yang dipakai;
+- **foto utama undangan** (diatur di Studio) tampil dalam **bingkai kaca** di tengah
+  cover, seperti konsep “pasang foto di sini” pada artwork-nya;
+- pratinjau di Studio ikut memakai latar 3D (label *3D* di atas pratinjau), dan tombol
+  *Simpan File HTML* **menyematkan artwork** ke berkas (base64, bila < 300 KB) supaya
+  file yang disimpan tetap tampil benar walau folder `assets/` tidak ikut dibawa.
+
+Mengganti/menambah artwork: taruh berkas `<id-tema>.webp` (rasio 2:3, sisi panjang
+± 1300 px, latar atas & bawah dibuat agak gelap agar teks terbaca), lalu tambahkan
+`bg3d:'assets/tema-3d/<id-tema>.webp'` pada tema di **kedua** berkas (`studio.html`
+dan `undangan.html` — daftar `TPL` harus tetap identik). Uji:
+`node tools/test-tema-3d.cjs`.
+
+> Artwork dibuat khusus untuk AsProject (gambar hasil AI, disimpan di repositori ini);
+> tidak memakai aset berhak cipta pihak lain.
+
 ## Aplikasi Android (pembungkus Studio)
 
 Studio juga tersedia sebagai aplikasi Android yang memuat

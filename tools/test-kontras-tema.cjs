@@ -187,7 +187,7 @@ console.log('\n4) Halaman benar-benar memakai penyesuaian ini');
    <script src>), memakai tema "Balap Mobil" yang dilaporkan pengguna, lalu membaca
    variabel CSS yang benar-benar dipasang boot(). Dilewati bila jsdom tidak ada. */
 (async function renderHalamanAsli() {
-  console.log('\n5) Halaman tamu sungguhan (jsdom) — tema Balap Mobil');
+  console.log('\n5) Halaman tamu sungguhan (jsdom) — tema Balap Mobil (ber-artwork 3D)');
   let JSDOM = null;
   try { ({ JSDOM } = require('jsdom')); } catch (e) { /* jsdom opsional */ }
   if (!JSDOM) {
@@ -223,12 +223,16 @@ console.log('\n4) Halaman benar-benar memakai penyesuaian ini');
 
     const st = w.document.documentElement.style;
     const ambil = (v) => (st.getPropertyValue(v) || '').trim();
-    console.log('  --ink         : ' + ambil('--ink') + '   (cover — sengaja tetap seperti tema)');
+    console.log('  --ink         : ' + ambil('--ink') + '   (teks cover di atas artwork 3D — sengaja terang)');
     console.log('  --ink-body    : ' + ambil('--ink-body') + '   (teks kartu konten)');
     console.log('  --accent-body : ' + ambil('--accent-body'));
     console.log('  --ink-fg      : ' + ambil('--ink-fg') + '   (teks di atas tombol cover)');
 
-    cek(TC.normal(ambil('--ink')) === '#f0f0f0', 'cover tetap memakai ink tema (#F0F0F0)');
+    /* Balap Mobil kini ber-artwork 3D: teks cover harus TERANG di atas gambar gelap,
+       bukan memakai ink tema (#F0F0F0) yang hanya cocok untuk gradasi tema. */
+    cek(TC.normal(ambil('--ink')) === '#f7f2e9',
+        'teks cover memakai krem terang (#F7F2E9) karena tema ber-artwork 3D');
+    cek(TC.kontras(ambil('--ink'), '#1b1712') >= 7, 'teks cover terbaca di atas artwork gelap (≥7:1)');
     cek(ambil('--ink-body') === '#26292e', 'teks konten memakai nada gelap tema Balap Mobil (#26292e)');
     cek(TC.kontras(ambil('--ink-body'), TC.KARTU) >= 4.5, 'teks konten hasil render terbaca (≥4.5:1)');
     cek(TC.kontras(ambil('--ink-fg'), ambil('--ink')) >= 3, 'teks tombol cover terbaca di atas ink tema');
@@ -239,6 +243,39 @@ console.log('\n4) Halaman benar-benar memakai penyesuaian ini');
     const und = fs.readFileSync(path.join(ROOT, 'undangan.html'), 'utf8');
     cek(!/0\.03928/.test(und), 'rumus kontras tidak diduplikasi di undangan.html (satu sumber: aset)');
     dom.window.close();
+
+    /* Tema tanpa artwork: cover harus tetap memakai warna tema seperti semula. */
+    const tanpaArt = [...und.matchAll(/\{id:'([^']+)',nama:'[^']*',ev:'ultah'/g)]
+      .map(m => m[1])
+      .filter(id => !new RegExp("id:'" + id + "'[^{}]*bg3d:").test(und));
+    const ujiTanpaArt = temaUndangan.find(t => tanpaArt.includes(t.id)) || temaUndangan.find(t => t.id === 'navy-royal');
+    if (ujiTanpaArt) {
+      const dom3 = new JSDOM(fs.readFileSync(path.join(ROOT, 'undangan.html'), 'utf8'), {
+        url: 'https://asproject.my.id/undangan.html?slug=demo',
+        runScripts: 'outside-only', pretendToBeVisual: true,
+      });
+      const w3 = dom3.window;
+      w3.HTMLMediaElement.prototype.pause = () => {};
+      w3.HTMLMediaElement.prototype.play = () => Promise.resolve();
+      w3.scrollTo = () => {};
+      w3.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
+      w3.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} };
+      w3.fetch = () => Promise.reject(new Error('offline'));
+      for (const aset of ['assets/scroll-effects.js', 'assets/theme-contrast.js']) w3.eval(fs.readFileSync(path.join(ROOT, aset), 'utf8'));
+      w3.eval('window.EMBEDDED_DATA=' + JSON.stringify({
+        slug: 'demo', name1: 'Rina & Bagas', name2: 'Bagas', theme: 0,
+        data: { event: 'pernikahan', tpl: ujiTanpaArt.id, doa: 'pernikahan',
+                form: { namaPria: 'Rina', namaWanita: 'Bagas', tanggalAcara: '2026-12-28', jamAcara: '08:00' },
+                slides: {}, anim: { cover: false, text: false, reveal: false, effect: 'zoom', scroll: 'fade-up' } },
+      }) + ';');
+      for (const tag of w3.document.querySelectorAll('script:not([src])')) w3.eval(tag.textContent);
+      await new Promise(r => setTimeout(r, 800));
+      const inkTema = TC.normal(ujiTanpaArt.ink);
+      cek(!w3.document.body.classList.contains('art3d'), `tema ${ujiTanpaArt.id} (tanpa artwork) tidak memakai kelas art3d`);
+      cek(TC.normal(w3.document.documentElement.style.getPropertyValue('--ink')) === inkTema,
+          `tema ${ujiTanpaArt.id}: cover tetap memakai ink tema (${inkTema})`);
+      dom3.window.close();
+    }
   }
 
   /* ------------------------------- 6. file HTML mandiri dari tombol di Studio */
