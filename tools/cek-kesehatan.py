@@ -359,6 +359,11 @@ def cek_pipeline_undangan():
         n = len(re.findall(r"char:'", s))
         lapor("ok" if n >= 20 else "masalah",
               f"{label}: 20 tema baru membawa karakter maskot (char: {n})")
+    # 14) floating preview undangan di studio
+    ok = ('id="floatPrev"' in studio and "function syncFloat" in studio
+          and "function setFloat" in studio and "syncAudio();syncFloat()}" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: floating preview (widget melayang + toggle + sync di render)")
 
 
 def main():
