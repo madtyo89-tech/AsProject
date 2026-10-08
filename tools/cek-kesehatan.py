@@ -366,13 +366,55 @@ def cek_pipeline_undangan():
           "studio.html: floating preview (widget melayang + toggle + sync di render)")
 
 
+def cek_katalog_publik():
+    print("\n[12] Katalog publik (index.html) vs studio")
+    studio_ids = _tpl_ids("studio.html")
+    if studio_ids is None:
+        lapor("masalah", "studio.html: array TPL tidak ditemukan")
+        return
+    index = baca("index.html")
+    i = index.find("var Pn=")
+    jp = index.find("],Xm=")
+    ok = i > 0 and jp > i
+    lapor("ok" if ok else "masalah", "index.html: array data katalog (Pn) ditemukan")
+    if not ok:
+        return
+    pn = index[i:jp]
+    pub_ids = re.findall(r'id:"([a-z0-9-]+)"', pn)
+    hilang = [t for t in studio_ids if t not in pub_ids]
+    lapor("ok" if not hilang else "masalah",
+          "index.html: katalog memuat %d template; %d id studio %s" % (
+              len(pub_ids), len(studio_ids),
+              "semua ada" if not hilang else "TIDAK ADA: " + ", ".join(hilang)))
+    # setiap kelas gradient katalog punya rule CSS Tailwind
+    kurang = []
+    for g in re.findall(r'gradient:"([^"]+)"', pn):
+        m = re.match(r'from-\[#([0-9A-Fa-f]{6})\] via-\[#([0-9A-Fa-f]{6})\] to-\[#([0-9A-Fa-f]{6})\]', g)
+        if not m:
+            kurang.append(g)
+            continue
+        for kind, col in (("from", m.group(1)), ("via", m.group(2)), ("to", m.group(3))):
+            if ".%s-\\[\\#%s\\]{" % (kind, col) not in index:
+                kurang.append(kind + "#" + col)
+    lapor("ok" if not kurang else "masalah",
+          "index.html: rule CSS gradient katalog " + ("lengkap" if not kurang
+               else "KURANG: " + ", ".join(kurang[:6])))
+    # router: root github.io tidak boleh diarahkan ke undangan.html
+    ok = "location.replace('/AsProject/undangan.html'+q)" not in index
+    lapor("ok" if ok else "masalah",
+          "index.html: root github.io tetap menampilkan katalog (tombol Katalog \u2197 tidak mati)")
+    ok = "%d template premium" % len(studio_ids) in index
+    lapor("ok" if ok else "masalah",
+          "index.html: teks jumlah template sinkron (%d)" % len(studio_ids))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
     print("=" * 74)
     for fn in (cek_link, cek_url_berbahaya, cek_sintaks, cek_id,
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
-               cek_resolusi_demo, cek_anchor, cek_pipeline_undangan):
+               cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
