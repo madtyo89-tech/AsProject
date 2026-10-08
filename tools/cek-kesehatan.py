@@ -337,13 +337,13 @@ def cek_pipeline_undangan():
     # 10) snapshot publish membawa slides + anim
     lapor("ok" if "slides:JSON.parse(JSON.stringify(state.slides)),anim" in studio else "masalah",
           "studio.html: publish() menyimpan slides & anim ke snapshot data")
-    # 11) 10 efek animasi cover & 10 efek scroll: daftar id identik di kedua file
+    # 11) 10 efek animasi cover & 24 efek scroll: daftar id identik di kedua file
     for nama_arr in ("FX_COVER", "FX_SCROLL"):
         a, b = _fx_ids(studio, nama_arr), _fx_ids(undangan, nama_arr)
         if a is None or b is None:
             lapor("masalah", f"array {nama_arr} tidak ditemukan di studio/undangan")
-        elif a == b and len(a) == 10:
-            lapor("ok", f"{nama_arr} identik di studio & undangan (10 efek)")
+        elif a == b and len(a) == (24 if nama_arr == "FX_SCROLL" else 10):
+            lapor("ok", f"{nama_arr} identik di studio & undangan ({len(a)} efek)")
         else:
             lapor("masalah", f"{nama_arr} studio != undangan! studio={a} undangan={b}")
     # 12) daftar font (15) identik di kedua file

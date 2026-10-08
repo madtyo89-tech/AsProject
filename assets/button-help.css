@@ -1,0 +1,2 @@
+.as-button-help{position:fixed;z-index:100001;width:max-content;max-width:min(300px,calc(100vw - 16px));max-height:calc(100dvh - 16px);padding:12px 14px;border:1px solid #555;border-radius:12px;background:#202020;color:#fff;box-shadow:0 8px 28px #0004;font:12px/1.65 Inter,system-ui,sans-serif;overflow-wrap:anywhere;pointer-events:none;text-align:left}
+button,a[href],[role="button"],input[type="button"],input[type="submit"]{-webkit-touch-callout:none}
