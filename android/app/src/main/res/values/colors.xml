@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Warna mengikuti logo & Studio AsProject (gold #D4AF37 di atas hitam). -->
+    <color name="brand_gold">#FFD4AF37</color>
+    <color name="brand_gold_deep">#FF9C7A24</color>
+    <color name="brand_ink">#FF0A0A0A</color>
+    <color name="brand_background">#FFFAF9F7</color>
+    <color name="brand_surface">#FFFFFFFF</color>
+    <color name="brand_line">#FFE8E4DC</color>
+    <color name="brand_muted">#FF8A8577</color>
+    <color name="brand_text">#FF16161A</color>
+    <color name="brand_danger">#FFC0392B</color>
+    <color name="ic_launcher_background">#FF0A0A0A</color>
+</resources>

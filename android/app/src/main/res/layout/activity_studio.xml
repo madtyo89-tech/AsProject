@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Layar utama AsProject Studio.
+
+  Lapisan (dari bawah ke atas):
+   1. WebView  — memuat https://asproject.my.id/studio.html (selalu versi terbaru).
+   2. Overlay pemuatan + progress bar tipis di atas.
+   3. Halaman gagal koneksi dengan tombol Coba Lagi.
+   4. Tombol muat ulang melayang & bilah hasil ekspor.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/brand_background">
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/brand_background"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:overScrollMode="never"
+        android:scrollbarStyle="insideOverlay" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_gravity="top"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="@color/brand_gold"
+        android:visibility="gone" />
+
+    <!-- Overlay pemuatan pertama (indikator loading eksplisit). -->
+    <LinearLayout
+        android:id="@+id/loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/brand_background"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:letterSpacing="0.04"
+            android:text="@string/app_name"
+            android:textColor="@color/brand_text"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/loading_spinner"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:indeterminateTint="@color/brand_gold" />
+
+        <TextView
+            android:id="@+id/loading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/loading_connecting"
+            android:textColor="@color/brand_muted"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- Halaman gagal koneksi. -->
+    <ScrollView
+        android:id="@+id/error_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/brand_background"
+        android:fillViewport="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingTop="48dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="48dp">
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:alpha="0.9"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_warning" />
+
+            <TextView
+                android:id="@+id/error_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="@string/error_title"
+                android:textColor="@color/brand_text"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/error_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:lineSpacingExtra="3dp"
+                android:text="@string/error_generic"
+                android:textColor="@color/brand_muted"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/error_retry"
+                style="@style/BrandButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="26dp"
+                android:text="@string/error_retry" />
+
+            <Button
+                android:id="@+id/error_open_browser"
+                style="@style/BrandButtonGhost"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/error_open_browser" />
+
+            <TextView
+                android:id="@+id/error_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_card"
+                android:fontFamily="monospace"
+                android:lineSpacingExtra="2dp"
+                android:padding="12dp"
+                android:textColor="@color/brand_muted"
+                android:textIsSelectable="true"
+                android:textSize="11sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!--
+      Tombol muat ulang melayang. Diletakkan di kiri-bawah (bukan kanan-bawah) karena
+      studio.html menaruh tombol melayangnya sendiri (#floatPrev) di kanan-bawah,
+      tepat 16px dari tepi — posisi kanan akan saling menimpa.
+    -->
+    <ImageButton
+        android:id="@+id/reload_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="14dp"
+        android:layout_marginBottom="16dp"
+        android:alpha="0.92"
+        android:background="@drawable/bg_fab"
+        android:contentDescription="@string/reload"
+        android:elevation="6dp"
+        android:padding="13dp"
+        android:src="@drawable/ic_refresh" />
+
+    <!-- Bilah hasil ekspor (undangan.html / CSV / QR). -->
+    <LinearLayout
+        android:id="@+id/export_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_export_bar"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingTop="10dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/export_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:maxLines="2"
+            android:textColor="#FFEDE7DA"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/export_open"
+            style="@style/BrandButtonGhost"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="8dp"
+            android:minWidth="64dp"
+            android:text="@string/export_open"
+            android:textColor="@color/brand_gold" />
+
+        <Button
+            android:id="@+id/export_share"
+            style="@style/BrandButtonGhost"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="6dp"
+            android:minWidth="72dp"
+            android:text="@string/export_share"
+            android:textColor="@color/brand_gold" />
+
+        <ImageButton
+            android:id="@+id/export_close"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="4dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/export_close"
+            android:padding="10dp"
+            android:src="@drawable/ic_close_tint" />
+    </LinearLayout>
+</FrameLayout>

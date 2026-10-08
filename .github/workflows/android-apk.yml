@@ -1,0 +1,179 @@
+name: Android APK (AsProject Studio)
+
+# Membangun APK pembungkus WebView untuk https://asproject.my.id/studio.html.
+#
+# Dua jalur build dijalankan agar saling memeriksa:
+#
+#   1. `apk-offline`  — skrip android/build/build-apk.sh (aapt2 → javac → d8 → apksigner
+#                       langsung, tanpa Gradle). Ini jalur utama/terverifikasi: skrip ini
+#                       yang dipakai untuk menghasilkan APK debug yang sudah diuji.
+#                       Sekaligus menjalankan uji JVM, uji jembatan JS, dan pemeriksaan APK.
+#   2. `apk-gradle`   — build Gradle/AGP standar (buka di Android Studio). Ditandai
+#                       `continue-on-error` supaya kegagalan jalur ini tidak menutupi
+#                       artefak dari jalur pertama.
+#
+# Rahasia untuk APK rilis (Settings → Secrets and variables → Actions):
+#   KEYSTORE_BASE64      — keystore .jks yang di-base64
+#   KEYSTORE_PASSWORD    — kata sandi keystore
+#   RELEASE_KEY_ALIAS    — alias kunci
+#   RELEASE_KEY_PASSWORD — kata sandi kunci
+# Keystore TIDAK pernah disimpan di repositori; hanya diterima dari rahasia CI.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-apk.yml'
+    tags: ['v*']
+  pull_request:
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GRADLE_VERSION: '8.9'
+  ANDROID_COMPILE_SDK: '34'
+  ANDROID_BUILD_TOOLS: '34.0.0'
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Jalur utama: skrip tanpa Gradle + seluruh verifikasi.
+  # ---------------------------------------------------------------------------
+  apk-offline:
+    name: Build + verifikasi APK (skrip tanpa Gradle)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Siapkan JDK 17 (javac + keytool + java)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Pastikan Android SDK (android.jar, aapt2, d8, apksigner)
+        run: |
+          set -euo pipefail
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKMGR="$(command -v sdkmanager || true)"
+          if [ -z "$SDKMGR" ] && [ -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
+            SDKMGR="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          fi
+          if [ -n "$SDKMGR" ]; then
+            yes | "$SDKMGR" --licenses > /dev/null 2>&1 || true
+            "$SDKMGR" "platforms;android-${ANDROID_COMPILE_SDK}" \
+                       "build-tools;${ANDROID_BUILD_TOOLS}" > /dev/null || true
+          fi
+          test -f "$ANDROID_HOME/platforms/android-${ANDROID_COMPILE_SDK}/android.jar"
+
+      - name: Bangun APK debug (tanpa Gradle)
+        run: bash android/build/build-apk.sh
+
+      - name: Uji aturan navigasi (JVM)
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/urlpolicy
+          javac -d /tmp/urlpolicy \
+            android/app/src/main/java/my/id/asproject/studio/UrlPolicy.java \
+            android/tests/jvm/UrlPolicyTest.java
+          java -cp /tmp/urlpolicy UrlPolicyTest
+
+      - name: Uji jembatan JS (Node + jsdom)
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/jstest && cd /tmp/jstest
+          npm install --no-save --package-lock=false jsdom
+          cd "$GITHUB_WORKSPACE"
+          NODE_PATH=/tmp/jstest/node_modules node android/tests/js/native-bridge.test.cjs
+
+      - name: Periksa isi, izin, dan tanda tangan APK
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet androguard
+          APKSIGNER_JAR="$(ls "$ANDROID_HOME"/build-tools/*/lib/apksigner.jar | sort -V | tail -1)"
+          export APKSIGNER_JAR
+          python3 android/tools/verify_apk.py android/out/asproject-studio-1.0.0-debug.apk
+
+      - name: Siapkan artefak
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          cp android/out/asproject-studio-1.0.0-debug.apk artifacts/
+          ( cd artifacts && sha256sum ./*.apk > SHA256SUMS.txt && cat SHA256SUMS.txt )
+
+      - name: Bangun APK rilis dengan keystore Anda (bila rahasia diisi)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          KEYSTORE: /tmp/asproject-release.jks
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "${KEYSTORE_BASE64:-}" ]; then
+            echo "::notice::Rahasia keystore belum diisi — APK rilis dilewati."
+            exit 0
+          fi
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$KEYSTORE"
+          cd android && BUILD_TYPE=release bash build/build-apk.sh
+          cp out/*-release.apk ../artifacts/
+          ( cd ../artifacts && sha256sum ./*.apk > SHA256SUMS.txt )
+
+      - name: Unggah artefak
+        uses: actions/upload-artifact@v4
+        with:
+          name: asproject-studio-apk
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Lampirkan ke GitHub Release (khusus tag v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "AsProject Studio ${GITHUB_REF_NAME}" \
+            --generate-notes \
+            artifacts/*.apk artifacts/SHA256SUMS.txt
+
+  # ---------------------------------------------------------------------------
+  # 2. Jalur Android Studio: Gradle + AGP. Tidak menghalangi jalur 1 di atas.
+  # ---------------------------------------------------------------------------
+  apk-gradle:
+    name: Build APK (Gradle/Android Studio)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Siapkan JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Siapkan Gradle ${{ env.GRADLE_VERSION }}
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+
+      - name: Bangun APK debug dengan Gradle
+        working-directory: android
+        run: gradle --no-daemon :app:assembleDebug
+
+      - name: Unggah artefak Gradle
+        uses: actions/upload-artifact@v4
+        with:
+          name: asproject-studio-apk-gradle
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: warn
+          retention-days: 30

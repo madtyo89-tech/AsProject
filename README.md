@@ -63,3 +63,17 @@ Pengguna keyboard dapat memfokuskan tombol lalu menekan **F1**, dan **Esc** untu
 menutup. Tombol khusus dapat diberi `data-help="Keterangan"`; event delegation
 mendukung tombol yang dirender ulang. Tes: `node tools/test-button-help.cjs`
 (dengan server dan dependensi browser seperti tes mobile di atas).
+
+## Aplikasi Android (pembungkus Studio)
+
+Studio juga tersedia sebagai aplikasi Android yang memuat
+**https://asproject.my.id/studio.html** langsung dari server (bukan salinan offline),
+sehingga pembaruan Studio langsung terlihat tanpa memasang ulang APK. Kode sumbernya ada
+di folder **[`android/`](android/)** — terpisah dari berkas situs, dan tidak mengubah
+fitur situs yang sudah berjalan.
+
+- APK uji: `android/out/asproject-studio-1.0.0-debug.apk` (tanda tangan debug Android).
+- Petunjuk build + APK rilis dengan keystore sendiri: [`android/docs/BUILD-APK.md`](android/docs/BUILD-APK.md).
+- Hasil tes & keterbatasan: [`android/docs/HASIL-TES-DAN-KETERBATASAN.md`](android/docs/HASIL-TES-DAN-KETERBATASAN.md).
+- Workflow APK otomatis: `.github/workflows/android-apk.yml` (artefak tiap push yang
+  menyentuh `android/**`, dan Release saat tag `v*` dipush).

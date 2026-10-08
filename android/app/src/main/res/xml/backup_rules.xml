@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Auto Backup (Android 11 ke bawah): ikutkan penyimpanan WebView agar sandi Studio
+  yang diingat ("Ingat perangkat ini"), draft di localStorage, dan sesi Supabase
+  tidak hilang saat pengguna ganti perangkat atau memasang ulang.
+-->
+<full-backup-content>
+    <include domain="file" path="app_webview/" />
+    <include domain="sharedpref" path="." />
+    <exclude domain="cache" path="." />
+    <exclude domain="file" path="camera/" />
+</full-backup-content>

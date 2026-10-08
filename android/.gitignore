@@ -1,0 +1,12 @@
+# Hasil build APK & berkas antara (jangan di-commit — biner besar).
+# Catatan: build/ (folder skrip) TIDAK diabaikan; hanya hasil antaranya (build/offline/).
+/out/
+/build/offline/
+/app/build/
+/.gradle/
+/local.properties
+*.apk
+*.keystore
+*.jks
+
+*.idsig
