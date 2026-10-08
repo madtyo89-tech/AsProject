@@ -64,6 +64,29 @@ menutup. Tombol khusus dapat diberi `data-help="Keterangan"`; event delegation
 mendukung tombol yang dirender ulang. Tes: `node tools/test-button-help.cjs`
 (dengan server dan dependensi browser seperti tes mobile di atas).
 
+## Kontras teks tema undangan
+
+Beberapa palet tema sengaja memakai warna teks ("ink") terang karena covernya gelap —
+contoh **Balap Mobil** `#F0F0F0`, **Naga Api** `#FBE9E4`, **Ninja Cilik** `#ECEFF3`.
+Cover-nya tetap memakai warna tema apa adanya, tetapi **kartu konten di halaman tamu
+selalu berlatar terang**, jadi dulu teksnya nyaris tidak terlihat (nama, tanggal,
+countdown, alamat, doa). Sekarang `assets/theme-contrast.js` menghitung ulang warna
+teks konten saat halaman dibuka:
+
+- **teks konten** (nama, tanggal, countdown, alamat, doa) minimal **4.5:1** terhadap
+  latar kartu; bila ink tema terlalu terang, dipakai **nada paling gelap dari gradasi
+  tema itu sendiri** (mis. Balap Mobil → `#26292E`, Naga Api → `#3A1418`) supaya tetap
+  sewarna, bukan abu-abu generik;
+- **label/ornamen aksen** minimal **3:1** — hanya tema yang aksennya benar-benar pudar
+  yang disesuaikan;
+- **cover tidak diubah** (teks & aksen cover diuji tetap ≥ 3:1 terhadap gradasinya);
+- **file HTML mandiri** dari tombol *Simpan File HTML* di Studio ikut menyematkan aturan
+  ini, jadi teks tetap terbaca walau dibuka offline tanpa folder `assets/`.
+
+Uji: `node tools/test-kontras-tema.cjs` (tanpa jsdom: cek palet & rumus; dengan jsdom:
+merender `undangan.html` sungguhan dengan tema Balap Mobil dan memeriksa variabel yang
+dipasang). Pemeriksa repo `python3 tools/cek-kesehatan.py` ikut menjalankannya.
+
 ## Aplikasi Android (pembungkus Studio)
 
 Studio juga tersedia sebagai aplikasi Android yang memuat

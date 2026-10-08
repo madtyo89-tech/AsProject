@@ -509,6 +509,31 @@ def cek_alur_master():
               "tools/rsvp.sql: tabel rsvp unique (slug,guest) + policy anon")
 
 
+# --------------------------------------------- 15. kontras teks tema undangan
+def cek_kontras_tema():
+    print("\n[15] Kontras teks tema (assets/theme-contrast.js)")
+    aset = os.path.join(ROOT, "assets", "theme-contrast.js")
+    lapor("ok" if os.path.exists(aset) else "masalah",
+          "assets/theme-contrast.js tersedia (penyesuaian kontras tema)")
+    und = baca("undangan.html")
+    lapor("ok" if 'assets/theme-contrast.js' in und else "masalah",
+          "undangan.html memuat aset penyesuaian kontras")
+    lapor("ok" if '--ink-body' in und else "masalah",
+          "aturan konten memakai --ink-body (bukan ink tema mentah)")
+    stu = baca("studio.html")
+    lapor("ok" if "fetch('assets/theme-contrast.js')" in stu else "masalah",
+          "studio.html: file HTML mandiri ikut menyematkan aset kontras")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji kontras tema dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-kontras-tema.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    ringkas = [b.strip() for b in r.stdout.splitlines()
+               if b.strip().startswith("kontras terburuk") or b.strip().startswith("cover (tidak")]
+    pesan = "; ".join(ringkas) if ringkas else (r.stdout.strip() or r.stderr.strip())[:220]
+    lapor("ok" if r.returncode == 0 else "masalah", f"uji kontras tema: {pesan}")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -516,7 +541,7 @@ def main():
     for fn in (cek_link, cek_url_berbahaya, cek_sintaks, cek_id,
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
-               cek_fitur_terbaru, cek_alur_master):
+               cek_fitur_terbaru, cek_alur_master, cek_kontras_tema):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

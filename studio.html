@@ -619,7 +619,12 @@ async function dlUndangan(){
   const draft={slug:state.slug||'',name1:state.event==='pernikahan'?state.form.namaPria:state.form.namaAnak,
    name2:state.event==='pernikahan'?state.form.namaWanita:'',
    theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl)),data};
-  const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>';
+  /* Penyesuaian kontras tema (assets/theme-contrast.js) ikut disematkan supaya
+     teks tetap terbaca saat file dibuka offline — aset di folder assets/ tidak
+     terbawa saat file dipindah. Gagal mengambil aset tidak membatalkan simpan. */
+  let tcSrc='';
+  try{const tr=await fetch('assets/theme-contrast.js');if(tr.ok)tcSrc=await tr.text()}catch(e){}
+  const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>'+(tcSrc?'\n<script>'+tcSrc.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'');
   const i=html.indexOf('</head>');
   const final=i>=0?html.slice(0,i)+inj+'\n'+html.slice(i):html.replace('</html>',inj+'\n</html>');
   const a=document.createElement('a');
