@@ -83,8 +83,10 @@ function cariModul(nama) {
   cek(/function checkinUrl\(g\)/.test(stu), 'checkinUrl() tersedia');
   cek(/hostBase\(\)\+'\/checkin\.html\?'\+q\.toString\(\)/.test(stu), 'checkinUrl menunjuk checkin.html dengan parameter');
   cek(/guest:g\.nama,id:g\.code,s:state\.slug/.test(stu), 'parameter guest + id + s ikut ditanam');
-  cek(/window\.qrcode\(0,'M'\)/.test(stu) && /q\.addData\(checkinUrl\(g\)\)/.test(stu),
-      'qrData membangun QR asli dari checkinUrl (bukan pola acak)');
+  cek(/window\.qrcode\(0,'M'\)/.test(stu) && /q\.addData\(teks\)/.test(stu),
+      'pembuat QR memakai pustaka QR asli (bukan pola acak)');
+  cek(/function qrData\(g\)\{return qrTeks\(checkinUrl\(g\)/.test(stu),
+      'qrData (QR check-in) membangun dari checkinUrl');
   cek(!/T\*9301\+49297/.test(stu), 'pola QR palsu lama sudah dihapus');
   cek(/qr\.isDark|q\.isDark/.test(stu), 'modul QR digambar dari matriks (isDark)');
   cek(/quiet zone/.test(stu), 'dokumen menjelaskan quiet zone');
@@ -128,6 +130,40 @@ function cariModul(nama) {
   cek(/checked_in_at timestamptz/.test(sql), 'kolom waktu check-in ada');
   cek(/checkin_anon_insert/.test(sql) && /checkin_anon_read/.test(sql), 'kebijakan RLS anon ada');
   cek(/rsvp/.test(sql), 'menjelaskan bedanya dengan tabel rsvp');
+
+  console.log('6) Unduh daftar hadir + QR undangan (opsional)');
+  {
+    const stu2 = baca('studio.html');
+    cek(/function qrTeks\(teks,label\)/.test(stu2), 'pembuat QR dipakai ulang untuk kedua jenis QR');
+    cek(/function qrDataUndangan\(g\)/.test(stu2) && /q\.addData\(teks\)/.test(stu2),
+        'QR Undangan tersedia (isi = link undangan tamu)');
+    cek(/return qrTeks\(g\.link,/.test(stu2), 'QR Undangan memakai link personal tamu (?to=…)');
+    cek(/function dlQrUndangan\(nama\)/.test(stu2) && /QR-Undangan-/.test(stu2),
+        'tombol Download QR Undangan ada (berkas QR-Undangan-*.png)');
+    cek(/QR Check-in/.test(stu2) && /Untuk <b>panitia<\/b>/.test(stu2),
+        'kartu studio menjelaskan QR Check-in untuk panitia');
+    cek(/QR Undangan <span style="color:#8a6d0f">\(opsional\)<\/span>/.test(stu2),
+        'QR Undangan ditandai opsional');
+    cek(/function dlQr\(nama\)/.test(stu2) && /QR-Checkin-/.test(stu2),
+        'Download QR Check-in lama tetap ada');
+  }
+  {
+    const mas2 = baca('master.html');
+    cek(/function unduhDaftarHadir\(\)/.test(mas2), 'master: unduhDaftarHadir() tersedia');
+    cek(/'No','Nama Tamu','Kode','Link Undangan','RSVP','Waktu Check-in','Status Hadir'/.test(mas2),
+        'kolom CSV daftar hadir lengkap (No, nama, kode, link, RSVP, waktu, status)');
+    cek(/uFEFF/.test(mas2) && /text\/csv/.test(mas2), 'CSV ber-BOM \uFEFF (ramah Excel)');
+    cek(/Unduh Daftar Hadir \(CSV\)/.test(mas2), 'tombol Unduh Daftar Hadir ada di master');
+    cek(/CHECKIN_ROWS/.test(mas2) && /select=guest,code,checked_in_at/.test(mas2),
+        'master memuat baris check-in utuh untuk rekap & CSV');
+  }
+  {
+    const scan2 = baca('scan.html');
+    cek(/function unduhHadir\(\)/.test(scan2), 'scan: unduh daftar hadir tersedia');
+    cek(/'No','Nama Tamu','Kode','Waktu Check-in','Status Hadir'/.test(scan2),
+        'kolom CSV di halaman scan lengkap');
+    cek(/btnUnduhHadir/.test(scan2), 'tombol Unduh Daftar Hadir ada di halaman scan');
+  }
 
   console.log(`\nRingkasan: ${lulus} lulus, ${gagal} gagal`);
   process.exit(gagal ? 1 : 0);

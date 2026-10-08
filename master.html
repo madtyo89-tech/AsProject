@@ -346,6 +346,7 @@ function renderAll(){
      <button class="btn btn-ghost" onclick="openScan()">↗ Buka Scanner</button>
     </div>
     <div class="card-s" id="scanStat" style="margin-top:8px"></div>
+    <button class="btn btn-ghost" style="margin-top:8px" onclick="unduhDaftarHadir()">⬇ Unduh Daftar Hadir (CSV)</button>
    </div>
    <!-- stats -->
    <div class="card stats">
@@ -439,13 +440,31 @@ function shareScanWa(){
  window.open('https://wa.me/?text='+encodeURIComponent(teks),'_blank');
 }
 function openScan(){window.open(scanUrl(),'_blank','noopener,noreferrer')}
+let CHECKIN_ROWS=[];
 function muatScanStat(){
  const el=document.getElementById('scanStat');if(!el)return;
  if(DEMO){el.textContent='Mode demo.';return}
- fetch(SUPABASE_URL+'/rest/v1/checkin?slug=eq.'+encodeURIComponent(SLUG)+'&select=id',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}})
+ fetch(SUPABASE_URL+'/rest/v1/checkin?slug=eq.'+encodeURIComponent(SLUG)+'&select=guest,code,checked_in_at',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}})
   .then(r=>r.ok?r.json():null)
-  .then(rows=>{el.textContent=rows?('✔ '+rows.length+' tamu sudah check-in'):''})
+  .then(rows=>{CHECKIN_ROWS=rows||[];el.textContent=rows?('✔ '+rows.length+' tamu sudah check-in'):''})
   .catch(()=>{});
+}
+/* Unduh daftar hadir (CSV, ramah Excel): semua tamu + status RSVP + waktu check-in */
+function unduhDaftarHadir(){
+ const kodex=DRAFT.data.guestCodes||{};
+ const baris=[['No','Nama Tamu','Kode','Link Undangan','RSVP','Waktu Check-in','Status Hadir']];
+ GS.forEach((gm,i)=>{
+  const r=rsvpOf(gm);
+  const c=CHECKIN_ROWS.filter(x=>norm(x.guest)===norm(gm))[0];
+  baris.push([String(i+1),gm,c&&c.code||kodex[gm]||'',guestLink(gm),
+   r?(r.status==='hadir'?'Hadir':'Tidak Hadir'):'Belum konfirmasi',
+   c?new Date(c.checked_in_at).toLocaleString('id-ID'):'',
+   c?'Sudah check-in':'Belum check-in']);
+ });
+ const csv='\uFEFF'+baris.map(b=>b.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+ a.download='Daftar-Hadir-'+SLUG+'-'+new Date().toISOString().slice(0,10)+'.csv';
+ document.body.appendChild(a);a.click();a.remove();
 }
 function copyAll(){copyText(GS.map(x=>x+': '+guestLink(x)).join('\n'),'Semua link tamu tersalin ✓','ok')}
 function copyGuest(g){copyText(guestLink(g),'Link '+g+' tersalin ✓','ok')}

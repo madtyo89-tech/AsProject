@@ -660,6 +660,10 @@ def cek_scan_panitia():
     sql = baca("tools/checkin.sql") if os.path.isfile(os.path.join(ROOT, "tools/checkin.sql")) else ""
     lapor("ok" if "unique (slug, guest)" in sql else "masalah",
           "tools/checkin.sql: skema tabel check-in")
+    lapor("ok" if "function unduhDaftarHadir(" in mas and "Unduh Daftar Hadir" in mas else "masalah",
+          "master.html: tombol Unduh Daftar Hadir (CSV)")
+    lapor("ok" if "function qrDataUndangan(" in stu and "function dlQrUndangan(" in stu else "masalah",
+          "studio.html: QR Undangan opsional + tombol download")
 
 
 def main():

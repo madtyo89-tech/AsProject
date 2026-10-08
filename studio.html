@@ -503,15 +503,19 @@ function checkinUrl(g){const q=new URLSearchParams({guest:g.nama,id:g.code,s:sta
 /* QR asli (pustaka qrcode-generator, MIT — lihat assets/qrcode.js). Modul QR digambar
    penuh dengan quiet zone 6 modul supaya benar-benar bisa dipindai; label emas
    nama/kode ditaruh di pita bawah di luar area QR. */
-function qrData(g){const cv=document.createElement('canvas');cv.width=300;cv.height=316;const x=cv.getContext('2d');
+function qrTeks(teks,label){const cv=document.createElement('canvas');cv.width=300;cv.height=316;const x=cv.getContext('2d');
  x.fillStyle='#fff';x.fillRect(0,0,300,316);
  try{
-  const q=window.qrcode(0,'M');q.addData(checkinUrl(g));q.make();
+  const q=window.qrcode(0,'M');q.addData(teks);q.make();
   const n=q.getModuleCount(),margin=6,C=(300-margin*2)/n;x.fillStyle='#111';
   for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))x.fillRect(Math.round(margin+c*C),Math.round(margin+r*C),Math.ceil(C),Math.ceil(C));
  }catch(e){x.fillStyle='#b91c1c';x.font='bold 12px Inter';x.fillText('QR gagal dibuat',12,150)}
  x.fillStyle='#D4AF37';x.fillRect(0,296,300,20);x.fillStyle='#fff';x.font='bold 10px Inter';
- x.fillText(state.showNameQr?`${g.code} • ${g.nama.slice(0,14)}`:g.code,10,310);return cv.toDataURL()}
+ x.fillText(String(label||''),10,310);return cv.toDataURL()}
+/* QR CHECK-IN: dipindai PANITIA di pintu masuk (halaman scan.html) */
+function qrData(g){return qrTeks(checkinUrl(g),state.showNameQr?`${g.code} • ${g.nama.slice(0,14)}`:g.code)}
+/* QR UNDANGAN (opsional): dipindai TAMU untuk membuka undangan miliknya */
+function qrDataUndangan(g){return qrTeks(g.link,state.showNameQr?`${g.nama.slice(0,18)}`:'Buka Undangan')}
 
 /* state setters */
 function set(k,v){state[k]=v;save();render()}
@@ -742,6 +746,7 @@ function loadArsip(id){const a=state.arsip.find(x=>x.id===id);if(!a)return;
  else{state.event=a.jenis;animSig=null}
  state.page='editor';state.tab='info';save();render();window.scrollTo(0,0);notify('Membuka: '+a.nama)}
 function dlQr(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrData(g);a.download=`QR-Checkin-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
+function dlQrUndangan(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrDataUndangan(g);a.download=`QR-Undangan-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
 async function copyTxt(t,msg){try{if(!navigator.clipboard)throw new Error('clipboard');await navigator.clipboard.writeText(t);notify(msg||'Disalin ✓')}catch(e){notify('Belum bisa menyalin otomatis. Pilih teks link lalu salin manual.')}}
 function waLink(g){const txt=state.waTemplate.replace('{nama_tamu}',g.nama).replace('{link_undangan}',g.link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf());return 'https://wa.me/?text='+encodeURIComponent(txt)}
 function updKat(id,k,v){const it=state.katalog.find(x=>x.id===id);if(!it)return;it[k]=(k==='hargaNormal'||k==='hargaPromo')?Number(v):k==='promoActive'?v:v;save()}
@@ -1034,17 +1039,27 @@ function tabTamu(){const gs=guests(),g=selGuest(),single=state.linkMode==='singl
   </div>
  </div>
  <div class="card" style="background:#111;color:#fff;border-color:#111">
-  <h4 style="color:#fff">🔐 QR Check-in Tamu • Random per Klik ${single?'<span class="pill" style="background:#D4AF37;color:#000;font-size:9px">1 LINK + QR UNIK</span>':''}</h4>
-  <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:12px">${single?'Mode 1 Link aktif: Link undangan SAMA untuk semua tamu, tapi QR tetap random unik per tamu. QR ini yang di-scan panitia di lokasi.':'QR dibuat random per tamu setelah mengisi nama, bisa di-download. Tampilkan saat check-in.'}</div>
-  ${g?`<div style="background:#fff;border-radius:16px;padding:16px;color:#000;display:flex;gap:16px">
-   <div style="width:120px;height:120px;border-radius:12px;background:var(--soft);border:1px solid var(--line);overflow:hidden;flex:none"><img src="${qrData(g)}" style="width:100%;height:100%;object-fit:contain;padding:8px"></div>
-   <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">${esc(g.nama)}</div>
-    <div style="font-size:11px;color:var(--mut);margin-top:4px">Code: ${g.code}</div>
-    <div style="font-size:10px;font-family:ui-monospace,monospace;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;word-break:break-all">${single?esc(g.checkin):esc(g.link)}</div>
-    <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-     <button class="sm-btn dark" onclick="dlQr('${esc(g.nama)}')">⬇ Download QR</button>
-     <span style="font-size:10px;color:var(--mut);line-height:1.3">Download & tunjukkan<br>saat check-in</span></div>
-   </div></div>`
+  <h4 style="color:#fff">🔐 QR Check-in & QR Undangan ${single?'<span class="pill" style="background:#D4AF37;color:#000;font-size:9px">1 LINK + QR UNIK</span>':''}</h4>
+  <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:12px">${single?'Mode 1 Link aktif: Link undangan SAMA untuk semua tamu, tapi QR check-in tetap unik per tamu.':'Ada 2 QR per tamu — keduanya bisa di-download:'} <b>QR Check-in</b> untuk panitia di pintu masuk (wajib), dan <b>QR Undangan</b> untuk tamu (opsional — misal dicetak di kartu undangan; scan langsung membuka undangannya).</div>
+  ${g?`<div style="background:#fff;border-radius:16px;padding:16px;color:#000">
+   <div style="font-size:13px;font-weight:600">${esc(g.nama)}</div>
+   <div style="font-size:11px;color:var(--mut);margin-top:4px">Code: ${g.code}</div>
+   <div style="font-size:10px;font-family:ui-monospace,monospace;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;word-break:break-all">${single?esc(g.checkin):esc(g.link)}</div>
+   <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:148px;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center">
+     <div style="width:108px;height:108px;margin:0 auto;border-radius:10px;background:var(--soft);border:1px solid var(--line);overflow:hidden"><img src="${qrData(g)}" style="width:100%;height:100%;object-fit:contain;padding:6px"></div>
+     <div style="font-size:10.5px;font-weight:700;margin-top:8px">QR Check-in</div>
+     <div style="font-size:9px;color:var(--mut);line-height:1.4">Untuk <b>panitia</b> scan di pintu masuk</div>
+     <button class="sm-btn dark" style="margin-top:8px;width:100%" onclick="dlQr('${esc(g.nama)}')">⬇ Download QR</button>
+    </div>
+    <div style="flex:1;min-width:148px;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center">
+     <div style="width:108px;height:108px;margin:0 auto;border-radius:10px;background:var(--soft);border:1px solid var(--line);overflow:hidden"><img src="${qrDataUndangan(g)}" style="width:100%;height:100%;object-fit:contain;padding:6px"></div>
+     <div style="font-size:10.5px;font-weight:700;margin-top:8px">QR Undangan <span style="color:#8a6d0f">(opsional)</span></div>
+     <div style="font-size:9px;color:var(--mut);line-height:1.4">Untuk <b>tamu</b> — scan buka undangan</div>
+     <button class="sm-btn" style="margin-top:8px;width:100%" onclick="dlQrUndangan('${esc(g.nama)}')">⬇ Download QR</button>
+    </div>
+   </div>
+  </div>`
   :'<div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;font-size:11px;color:rgba(255,255,255,.7)">Pilih tamu dari daftar di atas untuk generate QR check-in random.</div>'}
   <div style="margin-top:16px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">
    <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:11px">Tampilkan Nama di QR<input type="checkbox" ${state.showNameQr?'checked':''} onchange="set('showNameQr',this.checked)"></label>

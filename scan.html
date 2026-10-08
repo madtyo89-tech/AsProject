@@ -104,6 +104,8 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
   <h2 style="font-size:14px">Daftar Hadir Hari Ini</h2>
   <p class="s" id="rekapS">Memuat…</p>
   <ul class="list" id="rekapList"><li><span>Belum ada</span></li></ul>
+  <div style="height:10px"></div>
+  <button class="btn ghost" id="btnUnduhHadir">⬇ Unduh Daftar Hadir (CSV)</button>
   <p class="note" style="margin-top:12px">Halaman ini privat — dibuka lewat link berisi kunci dari Undangan Master. Jangan bagikan ke tamu.</p>
  </div>
 
@@ -156,6 +158,8 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
   var gc=(DRAFT&&DRAFT.data&&DRAFT.data.guestCodes)||{};
   GS.forEach(function(n){if(gc[n])CODES[gc[n].toUpperCase()]=n});
  }
+ var CODES_ORDER={};
+ function isiKode(){var gc=(DRAFT&&DRAFT.data&&DRAFT.data.guestCodes)||{};CODES_ORDER={};GS.forEach(function(n){CODES_ORDER[n]=gc[n]||''})}
  function cocokTeks(teks){
   var t=(teks||'').trim();if(!t)return null;
   /* 1. URL checkin.html?guest=..&id=.. (dari QR tamu) */
@@ -212,10 +216,24 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
   }).catch(function(){cat.textContent='Tersimpan lokal — koneksi sedang bermasalah.';muatRekap()});
  }
 
+ var ROWS=[];
+ function unduhHadir(){
+  var map={};(ROWS||[]).forEach(function(r){map[String(r.guest).toLowerCase()]=r});
+  var baris=[['No','Nama Tamu','Kode','Waktu Check-in','Status Hadir']];var no=0;
+  (GS.length?GS:Object.keys(map).map(function(k){return map[k].guest})).forEach(function(n){
+   no++;var r=map[String(n).toLowerCase()]||null;
+   baris.push([String(no),n,r&&r.code||CODES_ORDER[n]||'',r?new Date(r.checked_in_at).toLocaleString('id-ID'):'',r?'Sudah check-in':'Belum check-in']);
+  });
+  var csv='\uFEFF'+baris.map(function(b){return b.map(function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'}).join(',')}).join('\r\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='Daftar-Hadir-'+SLUG+'-'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a);a.click();a.remove();
+ }
  function muatRekap(){
   if(DEMO){$('rekapS').textContent='Mode demo.';return}
   getCheckin().then(function(rows){
    if(rows===null){$('rekapS').textContent='Tabel check-in belum dipasang (tools/checkin.sql).';$('rekapList').innerHTML='';return}
+   ROWS=rows;
    $('rekapS').textContent=rows.length+' tamu sudah check-in.';
    $('rekapList').innerHTML=rows.length?rows.map(function(r){
     return '<li><span>'+esc(r.guest)+'</span><time>'+esc(new Date(r.checked_in_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}))+'</time></li>'
@@ -285,7 +303,7 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
  async function boot(){
   if(DEMO){
    DRAFT={data:{guestsRaw:'Pak Andi Wijaya & Keluarga\nBu Rina Marlina\nKak Dina & Family\nTim Kantor Bandung',guestCodes:{'Pak Andi Wijaya & Keluarga':'ANDI1','Bu Rina Marlina':'RINA2','Kak Dina & Family':'DINA3','Tim Kantor Bandung':'TIM04'}}};
-   parseGuests();$('hdrSub').textContent='DEMO — '+judul();muatRekap();return;
+   parseGuests();isiKode();$('hdrSub').textContent='DEMO — '+judul();muatRekap();return;
   }
   if(!SLUG){$('kartuScan').innerHTML='<h2>Link tidak lengkap</h2><p class="s">Buka halaman ini lewat link scan panitia dari Undangan Master (tab Kirim Master).</p>';return}
   try{
@@ -297,7 +315,7 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
    if(KUNCI!==(d.masterKey||'')&&!DEMO){
     $('kartuScan').innerHTML='<h2>Link scan tidak valid</h2><p class="s">Kunci tidak cocok. Minta link scan yang benar dari pemilik acara (Undangan Master → Link Scan QR Panitia).</p>';return;
    }
-   parseGuests();
+   parseGuests();isiKode();
    $('hdrSub').textContent=judul()+' — Panitia Check-in';
    document.title='Scan QR Panitia — '+judul();
    muatRekap();
@@ -314,6 +332,7 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
  $('btnGaleri').addEventListener('click',function(){$('fileQr').click()});
  $('fileQr').addEventListener('change',function(e){dariGaleri(e.target.files&&e.target.files[0]);e.target.value=''});
  $('btnBagi').addEventListener('click',bagikan);
+ $('btnUnduhHadir').addEventListener('click',unduhHadir);
  $('btnManual').addEventListener('click',function(){
   var t=$('inputManual').value;if(!t.trim())return;
   tampilHasil(t);

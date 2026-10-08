@@ -157,6 +157,15 @@ di pintu masuk; kehadiran langsung tercatat.
 **Fallback di halaman scan:** *Pindai dari Galeri* (foto QR) dan **cari manual**
 (nama/kode) — untuk QR rusak atau HP tanpa pemindai otomatis.
 
+**QR Undangan (opsional):** di tab **Tamu & QR** kini ada dua QR per tamu —
+**QR Check-in** (untuk panitia) dan **QR Undangan** (untuk tamu). QR Undangan berisi
+link undangan personal; bagus dicetak di kartu undangan/souvenir — tamu scan lalu
+undangan langsung terbuka. Keduanya punya tombol **Download QR** sendiri.
+
+**Unduh Daftar Hadir:** tombol **⬇ Unduh Daftar Hadir (CSV)** tersedia di Undangan
+Master (semua tamu + RSVP + waktu check-in) dan di halaman scan (daftar check-in).
+CSV ber-BOM, langsung rapi di Excel.
+
 Teknis: `scan.html` memakai **BarcodeDetector** (kamera belakang, HTTPS) dan upsert ke
 tabel `checkin` (`unique(slug, guest)` — scan ulang memperbarui waktu). QR digenerate
 dengan pustaka `assets/qrcode.js` (*qrcode-generator*, MIT, © Kazuhiko Arase), level
