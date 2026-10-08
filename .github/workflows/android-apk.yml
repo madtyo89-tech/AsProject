@@ -79,13 +79,24 @@ jobs:
 
       - name: Bangun APK debug (tanpa Gradle)
         run: |
-          set -euo pipefail
+          # Keluaran build selalu dicatat; bila gagal, 10 baris terakhir muncul sebagai
+          # anotasi pada pemeriksaan (lebih mudah dibaca daripada log panjang).
+          set -uo pipefail
+          LOG=/tmp/build-apk.log
           SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
           if [ -n "$SDK_ROOT" ] && [ -f "$SDK_ROOT/platforms/android-${ANDROID_COMPILE_SDK}/android.jar" ]; then
-            bash android/build/build-apk.sh
+            CMD=(bash -x android/build/build-apk.sh)
           else
-            FETCH_TOOLS=1 bash android/build/build-apk.sh
+            CMD=(env FETCH_TOOLS=1 bash -x android/build/build-apk.sh)
           fi
+          echo "Perintah: ${CMD[*]}"
+          if ! "${CMD[@]}" > "$LOG" 2>&1; then
+            tail -n 10 "$LOG" | while IFS= read -r baris; do
+              echo "::error::${baris//%/%25}"
+            done
+            exit 1
+          fi
+          tail -n 15 "$LOG"
 
       - name: Uji aturan navigasi (JVM)
         run: |
