@@ -77,6 +77,14 @@ jobs:
             echo "::warning::Android SDK tidak lengkap — build akan mengunduh perkakas yang dipatok (FETCH_TOOLS=1)."
           fi
 
+      - name: Pakai ulang debug keystore antar-run (tanda tangan tetap sama)
+        uses: actions/cache@v4
+        with:
+          # Kunci debug Android bukan rahasia, tetapi menyimpannya di cache membuat
+          # APK antar-run memakai kunci yang SAMA → pembaruan tidak perlu copot pemasangan.
+          path: android/.tools/tools/debug.keystore
+          key: asproject-debug-keystore-v1
+
       - name: Bangun APK debug (tanpa Gradle)
         run: |
           # Keluaran build selalu dicatat; bila gagal, 10 baris terakhir muncul sebagai

@@ -116,6 +116,11 @@ Unduh hasil: tab **Actions → run terakhir → Artifacts → `asproject-studio-
 (berisi APK + `SHA256SUMS.txt`). Bila `install from unknown sources` aktif di ponsel,
 APK bisa dipasang langsung dari ponsel setelah diunduh.
 
+Workflow ini sudah dijalankan dan **kedua job-nya lulus** (PR #9, run `37742550663`).
+Debug keystore disimpan di cache `actions/cache` (kunci `asproject-debug-keystore-v1`)
+supaya APK antar-run memakai kunci yang sama dan bisa saling memperbarui tanpa copot
+pemasangan.
+
 Workflow menjalankan dua job:
 
 1. `apk-offline` — jalur skrip tanpa Gradle **plus** uji JVM, uji jembatan JS, dan

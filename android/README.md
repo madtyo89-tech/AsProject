@@ -30,7 +30,9 @@ FETCH_TOOLS=1 ./build/build-apk.sh   # tanpa SDK: unduh alat (hash dipatok) lalu
 Android Studio: buka folder `android/` sebagai proyek Gradle.
 
 Petunjuk lengkap, termasuk APK rilis + tanda tangan dan GitHub Actions:
-[docs/BUILD-APK.md](docs/BUILD-APK.md).
+[docs/BUILD-APK.md](docs/BUILD-APK.md). Workflow CI-nya sudah dijalankan dan
+**kedua job-nya lulus** (run `37742550663`) — artefak APK bisa diunduh dari
+tab Actions, atau dari GitHub Release saat tag `v*` dipush.
 
 ## Yang dikerjakan aplikasi (di luar WebView biasa)
 

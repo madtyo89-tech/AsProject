@@ -15,6 +15,7 @@ Tanggal: 2026-10-08 · Versi: 1.0.0 (`versionCode` 1)
 | Jembatan web ↔ Android | `tests/js/native-bridge.test.cjs` (Node + jsdom) | **21/21 lulus** |
 | Isi & tanda tangan APK | `tools/verify_apk.py` + apksigner | **44/44 lulus** |
 | Build APK | `build/build-apk.sh` (aapt2 → ecj → d8 → apksigner) | **berhasil** |
+| Workflow GitHub Actions | run [#37742550663](https://github.com/madtyo89-tech/AsProject/actions/runs/37742550663) | **dua job lulus** (skrip 47 dtk, Gradle 49 dtk) |
 | Cakupan perangkat nyata | — | **belum diuji** (lihat §4) |
 
 APK uji: `android/out/asproject-studio-1.0.0-debug.apk` (256 KB,
@@ -82,6 +83,12 @@ Dijalankan di jsdom dengan `window.AsProject` tiruan yang meniru `NativeBridge`:
 - `build/build-apk.sh` berjalan dari nol (aapt2 compile/link → ecj → d8 → kemas →
   apksigner) dan menghasilkan APK yang lolos `apksigner verify` — diuji dua kali dengan
   rangkaian perkakas berbeda (keduanya menghasilkan SHA-256 identik).
+- **Workflow GitHub Actions sudah dijalankan sungguhan** (PR #9, run
+  `37742550663`): job `apk-offline` lulus (build + uji JVM + uji JS + verifikasi APK)
+  dan job `apk-gradle` lulus (build Gradle/AGP) — keduanya menghasilkan artefak APK.
+  Temuan pertama dari CI: `build-apk.sh` gagal membuat debug keystore karena folder
+  tujuannya belum ada (muncul hanya di lingkungan tanpa `fetch_tools`); sudah
+  diperbaiki dengan `mkdir -p` dan dibuktikan hijau pada run berikutnya.
 - `tools/fetch_tools.py` diuji ulang dari cache: seluruh arsip diverifikasi SHA-256-nya,
   anggota yang diekstrak diperiksa lagi, `aapt2 2.20` dan JDK 21 (`openjdk 21.0.8`) hasil
   ekstraksi terbukti dapat dipakai.
@@ -112,7 +119,7 @@ Dijalankan di jsdom dengan `window.AsProject` tiruan yang meniru `NativeBridge`:
 | 9 | Cache tidak menyematkan versi lama; tidak memuat ulang otomatis | `LOAD_DEFAULT` + reload manual berkonfirmasi | ✓ statis |
 | 10 | HTTPS saja, sertifikat tidak diabaikan, domain dibatasi, izin minimal | `UrlPolicy`, `onReceivedSslError` → `cancel()`, tepat 3 izin | ✓ uji JVM + verifikasi APK |
 | 11 | Tampilan ponsel responsif (keyboard, status bar, navigasi) | `adjustResize` + insets IME + warna bilah + `configChanges` | ✓ statis; **belum di perangkat** |
-| 12 | Petunjuk build + workflow GitHub Actions | `docs/BUILD-APK.md` + `.github/workflows/android-apk.yml` | ✓ YAML tervalidasi; workflow belum pernah dijalankan di GitHub |
+| 12 | Petunjuk build + workflow GitHub Actions | `docs/BUILD-APK.md` + `.github/workflows/android-apk.yml` | ✓ **dijalankan & lulus di GitHub Actions** (dua job, artefak APK) |
 
 ---
 
@@ -129,13 +136,14 @@ Dijalankan di jsdom dengan `window.AsProject` tiruan yang meniru `NativeBridge`:
    (`CN=Android Debug`). Untuk distribusi, buat APK rilis dengan keystore Anda
    (`docs/BUILD-APK.md` §4). Aplikasi yang dipasang dengan kunci berbeda tidak dapat
    menimpa aplikasi yang sama — harus dicopot pemasangannya lebih dulu.
-3. **Jalur Gradle belum dieksekusi di sini.** `android/build.gradle`, `app/build.gradle`,
-   dan workflow `apk-gradle` disiapkan sesuai AGP 8.5.2 + Gradle 8.9, tetapi tidak dapat
-   dijalankan di lingkungan ini (tanpa akses ke `services.gradle.org`/Maven Google).
-   Jalur yang sudah terbukti adalah skrip tanpa Gradle.
-4. **Workflow GitHub Actions belum pernah dijalankan.** YAML-nya sudah divalidasi
-   (struktur `on`, dua job, langkah-langkah), namun eksekusi pertamanya baru akan
-   terjadi saat di-push.
+3. **Tanda tangan APK debug antar-run CI.** Setiap build kini memakai ulang debug
+   keystore dari cache `actions/cache` (kunci `asproject-debug-keystore-v1`) supaya
+   pembaruan tidak minta copot pemasangan. Bila cache itu kedaluwarsa/dibersihkan,
+   APK berikutnya memakai kunci baru → Android menolak memperbarui aplikasi lama;
+   copot pemasangan dulu. Untuk uji serius, pakai APK dari workspace ini atau bangun
+   sendiri dengan keystore tetap (bagian 4 `docs/BUILD-APK.md`).
+4. **Belum ada paket AAB / Play Store.** Hanya APK (debug & rilis) yang disiapkan;
+   format `.aab` untuk Google Play di luar cakupan permintaan.
 5. **Tombol muat ulang diletakkan di kiri-bawah**, bukan kanan-bawah, karena
    `studio.html` punya tombol melayangnya sendiri (`#floatPrev`) di kanan-bawah
    (`right:16px; bottom:16px`). Bila Studio menambah kontrol di kiri-bawah,
