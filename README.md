@@ -125,9 +125,15 @@ Catatan teknis:
   *Buka Undangan* tidak pernah terpotong karena tambahan foto;
 - undangan tanpa foto tampil **persis seperti sebelumnya** (tidak ada bingkai kosong).
 
-Uji: `node tools/test-foto-cover.cjs` (61 pemeriksaan) dan bagian `[17]` di
-`tools/cek-kesehatan.py`. Lembar perbandingan 9 gaya: `pilihan-gaya-foto-cover.png`
-(di luar repositori; dibuat dengan `tools/`-style skrip sharp, bukan bagian aplikasi).
+Kartu **“Preview Undangan”** di dashboard master (`master.html`) juga menampilkan foto
+cover itu beserta nama gayanya — termasuk latar gelap untuk gaya `full`, dan keterangan
+*“Belum ada foto cover”* bila belum diatur. Data diambil dari snapshot undangan yang
+sudah dipublish, jadi tekan **Selesaikan Undangan** dulu agar ikut terbarui.
+
+Uji: `node tools/test-foto-cover.cjs` (86 pemeriksaan, termasuk potongan
+`cvCoverMini()` dari `master.html`) dan bagian `[17]` di `tools/cek-kesehatan.py`.
+Lembar perbandingan: `pilihan-gaya-foto-cover.png` dan `master-preview-foto-cover.png`
+(di luar repositori; dibuat dengan skrip sharp, bukan bagian aplikasi).
 
 ## Tema 3D ulang tahun (artwork realistis)
 

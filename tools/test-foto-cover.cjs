@@ -276,6 +276,60 @@ async function render(d) {
     console.log('  (pratinjau studio dilewati: jsdom belum terpasang)');
   }
 
+  /* ------------------------------------- 6. master.html: foto cover di preview */
+  console.log('\n6) Dashboard master: foto cover di kartu "Preview Undangan"');
+  const mas = baca('master.html');
+  cek(/function cvCoverMini\(/.test(mas), 'master.html: cvCoverMini() tersedia');
+  cek(/const cvM=cvCoverMini\(d\)/.test(mas), 'master.html: kartu preview memakai data undangan (d)');
+  for (const g of ['kotak', 'oval', 'lingkaran', 'arch', 'polaroid', 'emas', 'kapsul']) {
+    cek(mas.includes('.bc-' + g), `master.html: bentuk "${g}" ada di CSS preview`);
+  }
+  cek(/\.b-screen\.b-full/.test(mas), 'master.html: mode "Penuh" punya gaya gelap sendiri');
+  cek(/cvM\.blok\|\|cvM\.full/.test(mas), 'master.html: catatan gaya foto ditampilkan di kartu');
+  cek(/Anggap|Foto cover: <b>/.test(mas), 'master.html: nama gaya foto ditulis di kartu');
+  cek(/esc\(foto\)/.test(mas), 'master.html: alamat foto di-escape sebelum ditulis');
+  cek(/replace\(\/\[\\r\\n"'\\\\\]\/g,''\).trim\(\)/.test(mas),
+      'master.html: alamat foto dibersihkan dari kutip/newline (aman di CSS)');
+  cek(/Math\.min\(100,Math\.max\(0,n\)\)/.test(mas) && /Math\.min\(2\.2,Math\.max\(1,n\)\)/.test(mas),
+      'master.html: posisi & zoom dibatasi di rentang yang sama dengan Studio (0-100, 1-2,2)');
+  cek(/b-cvnote/.test(mas), 'master.html: ada keterangan "belum ada foto cover" bila kosong');
+
+  /* Uji perilaku cvCoverMini memakai potongan kode yang sama (diambil dari berkas). */
+  {
+    const mulai = mas.indexOf('const CV_MINI_GAYA=');
+    const akhir = mas.indexOf('function renderAll()');
+    cek(mulai > 0 && akhir > mulai, 'master.html: potongan cvCoverMini bisa diuji terpisah');
+    if (mulai > 0 && akhir > mulai) {
+      const kode = mas.slice(mulai, akhir);
+      const jendela = { esc: (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) };
+      const uji = new Function('esc', kode + '; return cvCoverMini;')(jendela.esc);
+
+      const kosong = uji({});
+      cek(!kosong.blok && !kosong.full, 'tanpa foto: kartu master tidak menampilkan bingkai');
+
+      const tanpaGaya = uji({ cover: 'f.jpg' });
+      cek(tanpaGaya.gaya === 'kotak' && /bc-kotak/.test(tanpaGaya.blok),
+          'undangan lama (tanpa coverStyle): master memakai gaya kotak');
+
+      const oval = uji({ cover: 'f.jpg', coverStyle: 'oval', coverPos: { x: 120, y: -5, z: 3 } });
+      cek(/bc-oval/.test(oval.blok), 'gaya oval dipakai di kartu master');
+      cek(/object-position:100% 0%/.test(oval.blok), 'posisi dibatasi ke 0-100%');
+      cek(/scale\(2\.2\)/.test(oval.blok), 'zoom dibatasi ke maksimum 2,2x');
+
+      const penuh = uji({ cover: 'f.jpg', coverStyle: 'full' });
+      cek(penuh.full && !penuh.blok && /url\(f\.jpg\)/.test(penuh.latar),
+          'gaya "Penuh": foto jadi latar kartu master');
+
+      const tanpa = uji({ cover: 'f.jpg', coverStyle: 'none' });
+      cek(!tanpa.blok && !tanpa.full, 'gaya "Tanpa": kartu master tanpa bingkai');
+
+      const kotor = uji({ cover: 'f".jpg\n', coverStyle: 'kotak' });
+      const src = (/src="([^"]*)"/.exec(kotor.blok) || [, ''])[1];
+      cek(!!src && !/['"\r\n\\]/.test(src),
+          `kutip/newline pada alamat foto dibersihkan dari src (${JSON.stringify(src)})`);
+    }
+  }
+
   console.log(`\nRingkasan: ${lulus} lulus, ${gagal} gagal`);
   process.exit(gagal ? 1 : 0);
 })();

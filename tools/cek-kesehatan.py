@@ -594,6 +594,15 @@ def cek_foto_cover():
           f"studio.html: gaya & posisi foto tersimpan (3 titik simpan: {stu.count('coverStyle:cvGayaAktif()')})")
     lapor("ok" if "if(a.snap.coverStyle)state.coverStyle" in stu else "masalah",
           "studio.html: membuka arsip memulihkan gaya foto")
+    mas = baca("master.html")
+    lapor("ok" if "function cvCoverMini(" in mas else "masalah",
+          "master.html: kartu Preview Undangan memakai foto cover")
+    bentuk = [g for g in ("kotak", "oval", "lingkaran", "arch", "polaroid", "emas", "kapsul")
+              if f".bc-{g}" not in mas]
+    lapor("ok" if not bentuk else "masalah",
+          f"master.html: bentuk foto di preview lengkap (kurang: {', '.join(bentuk) or '-'})")
+    lapor("ok" if ".b-screen.b-full" in mas else "masalah",
+          "master.html: mode foto penuh di preview memakai latar gelap")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji foto cover dilewati")
         return
