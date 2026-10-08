@@ -26,7 +26,8 @@ import sys
 import posixpath
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HALAMAN = ["index.html", "studio.html", "demo/ice-blue.html"]
+HALAMAN = ["index.html", "studio.html", "undangan.html", "404.html",
+           "checkin.html", "demo/ice-blue.html", "master.html"]
 TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 
 hitung = {"ok": 0, "masalah": 0, "info": 0}
@@ -257,13 +258,265 @@ def cek_peta_demo():
         lapor("ok" if os.path.exists(os.path.join(ROOT, wajib)) else "masalah", f"{wajib} ada (butuh GitHub Pages)")
 
 
+def _tpl_ids(rel):
+    """Urutan id template di array TPL sebuah file (index kolom 'theme')."""
+    s = baca(rel)
+    m = re.search(r"const TPL=\[(.*?)\];", s, re.S)
+    if not m:
+        return None
+    return re.findall(r"id:'([a-z0-9-]+)'", m.group(1))
+
+
+def _fx_ids(s, nama_arr):
+    """Urutan id efek di array FX_COVER / FX_SCROLL sebuah file."""
+    m = re.search(r"const %s=\[(.*?)\];" % nama_arr, s, re.S)
+    if not m:
+        return None
+    return re.findall(r"\['([a-z-]+)'", m.group(1))
+
+
+def _font_ids(s):
+    """Id font di array FONTS sebuah file."""
+    m = re.search(r"const FONTS=\[(.*?)\];", s, re.S)
+    if not m:
+        return None
+    return re.findall(r"id:'([a-z-]+)'", m.group(1))
+
+
+def cek_pipeline_undangan():
+    print("\n[11] Pipeline tautan undangan (studio → link → 404 → undangan.html)")
+    for wajib in ("undangan.html", "404.html", "checkin.html"):
+        lapor("ok" if os.path.exists(os.path.join(ROOT, wajib)) else "masalah",
+              f"{wajib} ada (bagian pipeline tautan undangan)")
+    studio = baca("studio.html")
+    undangan = baca("undangan.html")
+    f404 = baca("404.html")
+    index = baca("index.html")
+    # 1) studio memakai link berbasis path /u/{slug} (selalu resolvable)
+    ok = "function baseUrl()" in studio and "'/u/'" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: baseUrl memakai format /u/{slug} (bukan subdomain polos)")
+    # 2) QR check-in menunjuk checkin.html di root
+    ok = "/checkin.html?id='+code" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: link QR checkin memakai /checkin.html di root")
+    # 3) undangan.html membaca slug dari query ATAU subdomain
+    lapor("ok" if ("Q.get('slug')" in undangan and "asproject.my.id'" in undangan) else "masalah",
+          "undangan.html: slug dari ?slug= dan subdomain wildcard")
+    # 4) undangan.html fetch ke Supabase invitation_drafts
+    lapor("ok" if "invitation_drafts" in undangan else "masalah",
+          "undangan.html: fetch tabel Supabase invitation_drafts")
+    # 5) 404.html merutekan /u/{slug} ke undangan.html
+    lapor("ok" if "([A-Za-z0-9-]+)" in f404 and "undangan.html?slug=" in f404 else "masalah",
+          "404.html: rute /u/{slug} → undangan.html?slug=…")
+    # 6) index.html mengarahkan subdomain wildcard ke undangan.html
+    lapor("ok" if "undangan.html'+q" in index and ".asproject.my.id'" in index else "masalah",
+          "index.html: router subdomain wildcard → undangan.html")
+    # 7) schema Supabase punya kolom snapshot jsonb
+    lapor("ok" if "add column if not exists data jsonb" in baca("supabase-schema.sql") else "masalah",
+          "supabase-schema.sql: kolom data jsonb tersedia")
+    # 8) urutan TPL studio == urutan TPL undangan (index kolom 'theme' harus sama)
+    a, b = _tpl_ids("studio.html"), _tpl_ids("undangan.html")
+    if a is None or b is None:
+        lapor("masalah", "array TPL tidak ditemukan di studio/undangan")
+    elif a == b:
+        lapor("ok", f"urutan TPL identik di studio & undangan ({len(a)} template)")
+    else:
+        lapor("masalah",
+              f"urutan TPL BERBEDA (studio {len(a)} vs undangan {len(b)}) — "
+              f"kolom 'theme' akan salah tema!")
+    # 9) 10 slide konten: id-nya harus lengkap di studio (SLIDES) dan undangan (liveSlides)
+    SLIDE_IDS = ["timeline", "story", "quote", "menu", "party",
+                 "dresscode", "gift", "map", "rsvp", "closing"]
+    s_studio = [i for i in SLIDE_IDS if re.search(r"id:'%s'" % i, studio)]
+    s_undang = [i for i in SLIDE_IDS if re.search(r"S\.%s&&S\.%s\.on" % (i, i), undangan)]
+    lapor("ok" if s_studio == SLIDE_IDS else "masalah",
+          f"studio.html: 10 id slide terdaftar di editor SLIDES ({len(s_studio)}/10)")
+    lapor("ok" if s_undang == SLIDE_IDS else "masalah",
+          f"undangan.html: 10 slide dirender oleh liveSlides ({len(s_undang)}/10)")
+    # 10) snapshot publish membawa slides + anim
+    lapor("ok" if "slides:JSON.parse(JSON.stringify(state.slides)),anim" in studio else "masalah",
+          "studio.html: publish() menyimpan slides & anim ke snapshot data")
+    # 11) 10 efek animasi cover & 10 efek scroll: daftar id identik di kedua file
+    for nama_arr in ("FX_COVER", "FX_SCROLL"):
+        a, b = _fx_ids(studio, nama_arr), _fx_ids(undangan, nama_arr)
+        if a is None or b is None:
+            lapor("masalah", f"array {nama_arr} tidak ditemukan di studio/undangan")
+        elif a == b and len(a) == 10:
+            lapor("ok", f"{nama_arr} identik di studio & undangan (10 efek)")
+        else:
+            lapor("masalah", f"{nama_arr} studio != undangan! studio={a} undangan={b}")
+    # 12) daftar font (15) identik di kedua file
+    fa, fb = _font_ids(studio), _font_ids(undangan)
+    if fa is None or fb is None:
+        lapor("masalah", "array FONTS tidak ditemukan di studio/undangan")
+    elif fa == fb and len(fa) == 15:
+        lapor("ok", f"FONTS identik di studio & undangan ({len(fa)} font)")
+    else:
+        lapor("masalah", f"FONTS studio != undangan! studio={fa} undangan={fb}")
+    # 13) 20 tema baru punya karakter (char) di kedua file
+    for label, s in (("studio.html", studio), ("undangan.html", undangan)):
+        n = len(re.findall(r"char:'", s))
+        lapor("ok" if n >= 20 else "masalah",
+              f"{label}: 20 tema baru membawa karakter maskot (char: {n})")
+    # 14) floating preview undangan di studio
+    ok = ('id="floatPrev"' in studio and "function syncFloat" in studio
+          and "function setFloat" in studio and "syncAudio();syncFloat()}" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: floating preview (widget melayang + toggle + sync di render)")
+
+
+def cek_katalog_publik():
+    print("\n[12] Katalog publik (index.html) vs studio")
+    studio_ids = _tpl_ids("studio.html")
+    if studio_ids is None:
+        lapor("masalah", "studio.html: array TPL tidak ditemukan")
+        return
+    index = baca("index.html")
+    i = index.find("var Pn=")
+    jp = index.find("],Xm=")
+    ok = i > 0 and jp > i
+    lapor("ok" if ok else "masalah", "index.html: array data katalog (Pn) ditemukan")
+    if not ok:
+        return
+    pn = index[i:jp]
+    pub_ids = re.findall(r'id:"([a-z0-9-]+)"', pn)
+    hilang = [t for t in studio_ids if t not in pub_ids]
+    lapor("ok" if not hilang else "masalah",
+          "index.html: katalog memuat %d template; %d id studio %s" % (
+              len(pub_ids), len(studio_ids),
+              "semua ada" if not hilang else "TIDAK ADA: " + ", ".join(hilang)))
+    # setiap kelas gradient katalog punya rule CSS Tailwind
+    kurang = []
+    for g in re.findall(r'gradient:"([^"]+)"', pn):
+        m = re.match(r'from-\[#([0-9A-Fa-f]{6})\] via-\[#([0-9A-Fa-f]{6})\] to-\[#([0-9A-Fa-f]{6})\]', g)
+        if not m:
+            kurang.append(g)
+            continue
+        for kind, col in (("from", m.group(1)), ("via", m.group(2)), ("to", m.group(3))):
+            if ".%s-\\[\\#%s\\]{" % (kind, col) not in index:
+                kurang.append(kind + "#" + col)
+    lapor("ok" if not kurang else "masalah",
+          "index.html: rule CSS gradient katalog " + ("lengkap" if not kurang
+               else "KURANG: " + ", ".join(kurang[:6])))
+    # router: root github.io tidak boleh diarahkan ke undangan.html
+    ok = "location.replace('/AsProject/undangan.html'+q)" not in index
+    lapor("ok" if ok else "masalah",
+          "index.html: root github.io tetap menampilkan katalog (tombol Katalog \u2197 tidak mati)")
+    ok = "%d template premium" % len(studio_ids) in index
+    lapor("ok" if ok else "masalah",
+          "index.html: teks jumlah template sinkron (%d)" % len(studio_ids))
+
+
+def cek_fitur_terbaru():
+    print("\n[13] Fitur terbaru (hide katalog, 5 tema feminin, 20 border, teks WA)")
+    studio = baca("studio.html")
+    undangan = baca("undangan.html")
+    # 1) 5 tema feminin baru (ultah & aqiqah) di kedua file, urutan TPL tetap identik
+    baru = ["fairy-princess", "unicorn-magic", "rose-bouquet", "baby-rose", "baby-fairy"]
+    for rel, s in (("studio.html", studio), ("undangan.html", undangan)):
+        ada = [i for i in baru if ("id:'%s'" % i) in s]
+        lapor("ok" if len(ada) == 5 else "masalah",
+              f"{rel}: 5 tema feminin baru ada ({len(ada)}/5)")
+    ids_st = _tpl_ids("studio.html") or []
+    ids_ud = _tpl_ids("undangan.html") or []
+    lapor("ok" if ids_st == ids_ud and len(ids_st) == 40 else "masalah",
+          f"urutan TPL identik di studio & undangan ({len(ids_st)} template)")
+    # 2) 20 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
+    def _border_ids(s):
+        m = re.search(r"const BORDERS=\[(.*?)\];", s, re.S)
+        return re.findall(r"\{id:'([a-z0-9]+)'", m.group(1)) if m else None
+    bs, bu = _border_ids(studio), _border_ids(undangan)
+    lapor("ok" if bs and bu and len(bs) == 20 and len(set(bs)) == 20 and bs == bu else "masalah",
+          "BORDERS 20 id unik, identik di studio & undangan")
+    ok = "border:state.border" in studio
+    lapor("ok" if ok else "masalah", "studio.html: publish() menyimpan border ke snapshot data")
+    ok = "const BD=BORDERS.find(b=>b.id===(d&&d.border))" in undangan and "#cover .bdfr" in undangan
+    lapor("ok" if ok else "masalah", "undangan.html: live cover memakai data.border (frame .bdfr)")
+    ok = "border:'double'" in studio and "setBorder(id){state.border=id" in studio
+    lapor("ok" if ok else "masalah", "studio.html: picker border (state.border + setBorder) tersedia")
+    # 3) hide template di katalog + urut per kategori
+    ok = "function tglKatHide(id)" in studio and "katalogHide" in studio
+    lapor("ok" if ok else "masalah", "studio.html: tombol hide/tampilkan template (katalogHide + tglKatHide)")
+    ok = "state.katalogHide.includes(t.id)" in studio
+    lapor("ok" if ok else "masalah", "studio.html: pilihan tema (tplsFor) menghormati template tersembunyi")
+    ok = "${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>" in studio
+    lapor("ok" if ok else "masalah", "studio.html: daftar katalog diurutkan per kategori")
+    # 4) teks WA personal: nama tamu terpilih + link bersih
+    ok = "g?g.nama:'Bapak/Ibu/Saudara/i'" in studio and "g?baseUrl()+'?to='+" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: teks WA berisi nama tamu terpilih & link tanpa placeholder ?to=NamaTamu")
+    # 5) Regresi: border preview hanya di zona cover (persis live) & migrasi dblBorder lama
+    ok = "borderOf().id!=='none'?'padding:18px 12px" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: border preview terpasang di zona cover (konsisten dgn live, bukan layar penuh)")
+    ok = "if(state.dblBorder===false)state.border='none'" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: migrasi dblBorder lama — proyek yang menonaktifkan border tetap tanpa border")
+    # 6) Simpan File HTML (undangan mandiri offline)
+    ok = "async function dlUndangan()" in studio and "onclick=\"dlUndangan()\"" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: tombol Simpan File HTML (dlUndangan) tersedia di Domain & Link")
+    i_emb = undangan.find("typeof EMBEDDED_DATA!=='undefined'")
+    i_demo = undangan.find("else if(DEMO){")
+    ok = i_emb > 0 and i_demo > i_emb
+    lapor("ok" if ok else "masalah",
+          "undangan.html: mode EMBEDDED_DATA terbaca sebelum mode demo/slug (file mandiri bisa boot)")
+
+
+def cek_alur_master():
+    print("\n14. Alur Studio > Undangan Master > Undangan Tamu")
+    # 1) halaman master ada + akses privat (kunci) + baca RSVP + edit bank
+    ok = os.path.exists(os.path.join(ROOT, "master.html"))
+    lapor("ok" if ok else "masalah", "master.html: halaman dashboard master ada di repo")
+    if not ok:
+        return
+    m = baca("master.html")
+    ok = "MK!==(d.masterKey||'')" in m and "master.html?slug=" in m
+    lapor("ok" if ok else "masalah",
+          "master.html: akses privat — link ditolak bila kunci ?k tidak cocok")
+    ok = "/rest/v1/rsvp?slug=eq." in m and "invitation_drafts?slug=eq." in m
+    lapor("ok" if ok else "masalah",
+          "master.html: membaca RSVP tamu + menyimpan edit info bank (PATCH draft)")
+    ok = "?to='+encodeURIComponent(g)" in m and "shareWa" in m and "guestLink" in m
+    lapor("ok" if ok else "masalah",
+          "master.html: link personal per tamu (?to=Nama) + share WhatsApp + salin link")
+    # 2) studio: kunci master dibuat, ikut snapshot publish, kartu link di Domain
+    s = baca("studio.html")
+    ok = "if(!state.masterKey){state.masterKey=mkRand();save()}" in s
+    lapor("ok" if ok else "masalah",
+          "studio.html: kunci master dibuat sekali & dipersist (link master stabil)")
+    ok = "masterKey:state.masterKey||''" in s and "guestsRaw:state.guestsRaw||''" in s
+    lapor("ok" if ok else "masalah",
+          "studio.html: daftar tamu + kunci master ikut snapshot publish (dibaca master)")
+    ok = "function masterUrl()" in s and "Undangan Master (khusus pemilik)" in s
+    lapor("ok" if ok else "masalah",
+          "studio.html: kartu Link Master di tab Domain (Salin + Buka Dashboard)")
+    # 3) undangan tamu: tombol RSVP cepat menulis ke tabel rsvp
+    u = baca("undangan.html")
+    ok = "async function rsvpSave(st)" in u and "resolution=merge-duplicates" in u
+    lapor("ok" if ok else "masalah",
+          "undangan.html: tombol RSVP cepat (Hadir/Tidak) menyimpan ke tabel rsvp")
+    ok = "data-rsvpb" in u and "ivToast" in u
+    lapor("ok" if ok else "masalah",
+          "undangan.html: UI RSVP cepat + toast hasil (fallback WA bila gagal)")
+    # 4) SQL pembuat tabel tersedia untuk pemilik
+    ok = os.path.exists(os.path.join(ROOT, "tools", "rsvp.sql"))
+    lapor("ok" if ok else "masalah", "tools/rsvp.sql: SQL tabel RSVP tersedia")
+    if ok:
+        ok = "create table if not exists public.rsvp" in baca("tools/rsvp.sql")
+        lapor("ok" if ok else "masalah",
+              "tools/rsvp.sql: tabel rsvp unique (slug,guest) + policy anon")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
     print("=" * 74)
     for fn in (cek_link, cek_url_berbahaya, cek_sintaks, cek_id,
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
-               cek_resolusi_demo, cek_anchor):
+               cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
+               cek_fitur_terbaru, cek_alur_master):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

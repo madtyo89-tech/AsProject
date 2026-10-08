@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#111">
 <title>asproject.my.id — Studio Undangan Premium 4in1</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&family=Lora:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
 <style>
 :root{--bg:#fafaf8;--card:#fff;--line:#eee;--line2:#e9e9e9;--ink:#1a1a1a;--mut:#737373;--mut2:#a3a3a3;--gold:#D4AF37;--cream:#FFFBEB;--cream2:#FDE68A;--soft:#f5f5f4}
@@ -75,6 +75,80 @@ input,textarea,select{outline:0}
 .upload-dash:hover{background:var(--cream)}
 .dot{width:8px;height:8px;border-radius:99px}
 @keyframes pulse{50%{opacity:.5}}.pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
+/* ===== Animasi pratinjau undangan — diputar ulang hanya saat struktur
+   berubah (ganti template / event / slide), bukan tiap ketik teks ===== */
+@keyframes cUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes cZoom{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes cWord{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes cDeco{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:scaleX(1)}}
+@keyframes cPop{0%{opacity:0;transform:scale(.5)}60%{transform:scale(1.07)}100%{opacity:1;transform:scale(1)}}
+.ap .a-up{animation:cUp .55s cubic-bezier(.22,.8,.36,1) both}
+.ap .a-zoom{animation:cZoom .7s cubic-bezier(.22,.8,.36,1) both}
+.ap .a-word{display:inline-block;animation:cWord .6s cubic-bezier(.22,.8,.36,1) both}
+.ap .a-deco{transform-origin:center;animation:cDeco .8s cubic-bezier(.22,.8,.36,1) both}
+.ap .a-pop{animation:cPop .6s cubic-bezier(.22,.8,.36,1) both}
+/* ===== 10 efek animasi cover (pilihan state.anim.effect) ===== */
+@keyframes cFade{from{opacity:0}to{opacity:1}}
+@keyframes cRise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes cDrop{from{opacity:0;transform:translateY(-26px)}to{opacity:1;transform:none}}
+@keyframes cBlurIn{from{opacity:0;filter:blur(10px)}to{opacity:1;filter:blur(0)}}
+@keyframes cFlip{from{opacity:0;transform:perspective(700px) rotateX(24deg) translateY(18px)}to{opacity:1;transform:none}}
+@keyframes cSlideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes cSwing{from{opacity:0;transform:rotate(-7deg) translateY(-14px)}to{opacity:1;transform:none}}
+@keyframes cElastic{0%{opacity:0;transform:scale(.4)}55%{opacity:1;transform:scale(1.12)}75%{transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
+.ap .fx-c-fade{animation:cFade .8s ease both}
+.ap .fx-c-zoom{animation:cZoom .7s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-rise{animation:cRise .7s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-drop{animation:cDrop .7s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-blur{animation:cBlurIn .8s ease both}
+.ap .fx-c-pop{animation:cPop .6s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-flip{animation:cFlip .75s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-slide{animation:cSlideIn .7s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-swing{animation:cSwing .7s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-elastic{animation:cElastic .8s cubic-bezier(.22,.8,.36,1) both}
+/* ===== 10 efek scroll reveal (pilihan state.anim.scroll) — pratinjau satu-waktu ===== */
+@keyframes sUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes sDown{from{opacity:0;transform:translateY(-28px)}to{opacity:1;transform:none}}
+@keyframes sL{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:none}}
+@keyframes sR{from{opacity:0;transform:translateX(-48px)}to{opacity:1;transform:none}}
+@keyframes sZI{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+@keyframes sZO{from{opacity:0;transform:scale(1.18)}to{opacity:1;transform:none}}
+@keyframes sRot{from{opacity:0;transform:rotate(-4deg) translateY(20px)}to{opacity:1;transform:none}}
+@keyframes sBl{from{opacity:0;filter:blur(8px);transform:translateY(14px)}to{opacity:1;filter:blur(0);transform:none}}
+@keyframes sPop{from{opacity:0;transform:scale(.55)}to{opacity:1;transform:none}}
+@keyframes sFlip{from{opacity:0;transform:perspective(600px) rotateX(16deg) translateY(20px)}to{opacity:1;transform:none}}
+.ap .fx-s-fade-up{animation:sUp .6s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-s-fade-down{animation:sDown .6s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-s-slide-left{animation:sL .6s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-s-slide-right{animation:sR .6s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-s-zoom-in{animation:sZI .6s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-s-zoom-out{animation:sZO .6s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-s-rotate{animation:sRot .6s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-s-blur{animation:sBl .6s ease both}
+.ap .fx-s-pop{animation:sPop .55s cubic-bezier(.34,1.4,.5,1) both}
+.ap .fx-s-flip{animation:sFlip .65s cubic-bezier(.22,.8,.36,1) both}
+.fxbtn{text-align:left;border-radius:12px;padding:10px 12px;display:grid;gap:2px;background:#fff;border:1px solid var(--line);cursor:pointer;transition:.15s;font-family:inherit}
+.fxbtn b{font-size:11px;font-weight:600;color:#111}
+.fxbtn span{font-size:10px;color:var(--mut);line-height:1.4}
+.fxbtn:hover{background:#fbfaf8}
+.fxbtn.on{border-color:#111;background:#111;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.fxbtn.on b{color:#fff}
+.fxbtn.on span{color:rgba(255,255,255,.6)}
+/* ===== Floating preview undangan (mini HP melayang, selalu tampil) ===== */
+#floatPrev{position:fixed;right:16px;bottom:16px;z-index:60}
+#floatPrev .fp-pill{height:44px;padding:0 16px;border-radius:99px;background:#111;color:#fff;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.15);box-shadow:0 12px 32px rgba(0,0,0,.3);cursor:pointer;display:flex;align-items:center;gap:8px}
+#floatPrev .fp-pill:hover{background:#000}
+#floatPrev .fp-box{width:180px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden;animation:fpIn .35s cubic-bezier(.22,.8,.36,1)}
+@keyframes fpIn{from{opacity:0;transform:translateY(14px) scale(.94)}to{opacity:1;transform:none}}
+#floatPrev .fp-head{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;background:#111;color:#fff;font-size:10px;font-weight:600;cursor:grab;user-select:none;touch-action:none}
+#floatPrev .fp-head:active{cursor:grabbing}
+#floatPrev .fp-actions{display:flex;gap:4px}
+#floatPrev .fp-actions button{width:22px;height:22px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font-size:10px;cursor:pointer;display:grid;place-items:center;line-height:1}
+#floatPrev .fp-actions button:hover{background:rgba(255,255,255,.15)}
+#floatPrev .fp-screen{width:100%;height:318px;overflow:hidden;background:#fff;cursor:pointer}
+#floatPrev .fp-scale{width:340px;transform:scale(.46);transform-origin:top left;pointer-events:none}
+#floatPrev .fp-hint{padding:6px 10px;background:var(--soft);border-top:1px solid var(--line);font-size:9px;color:var(--mut);text-align:center}
+@media (max-width:760px){#floatPrev{display:none}}
 .modebtn{text-align:left;border-radius:12px;padding:12px;display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid transparent;transition:.15s;width:100%}
 .modebtn:hover{background:#fbfaf8}
 .modebtn.on{background:#111;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.15)}
@@ -88,6 +162,8 @@ input,textarea,select{outline:0}
 </head>
 <body>
 <div id="root"></div>
+<!-- Floating preview undangan (isinya diisi JS: mini HP melayang) -->
+<div id="floatPrev"></div>
 <!-- ===== GERBANG SANDI STUDIO ===== -->
 <div id="lockscreen" style="position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:linear-gradient(160deg,#faf9f7,#f0ede7);font-family:'Inter',system-ui,sans-serif">
  <form id="lockform" style="width:min(340px,90vw);background:#fff;border:1px solid #e8e4dc;border-radius:24px;padding:32px 28px;box-shadow:0 20px 60px rgba(0,0,0,.08);text-align:center">
@@ -144,7 +220,18 @@ const FONTS=[
  {id:'playfair',name:'Playfair Display',fam:'"Playfair Display",serif'},
  {id:'poppins',name:'Poppins Bold',fam:'"Poppins",sans-serif'},
  {id:'inter',name:'Inter',fam:'"Inter",sans-serif'},
- {id:'lora',name:'Lora',fam:'"Lora",serif'}];
+ {id:'lora',name:'Lora',fam:'"Lora",serif'},
+ /* 10 font baru */
+ {id:'montserrat',name:'Montserrat',fam:'"Montserrat",sans-serif'},
+ {id:'bebas',name:'Bebas Neue (display)',fam:'"Bebas Neue",sans-serif'},
+ {id:'oswald',name:'Oswald (condensed)',fam:'"Oswald",sans-serif'},
+ {id:'ebgaramond',name:'EB Garamond (klasik)',fam:'"EB Garamond",serif'},
+ {id:'merriweather',name:'Merriweather (serif)',fam:'"Merriweather",serif'},
+ {id:'work-sans',name:'Work Sans',fam:'"Work Sans",sans-serif'},
+ {id:'pacifico',name:'Pacifico (script)',fam:'"Pacifico",cursive'},
+ {id:'dancing',name:'Dancing Script',fam:'"Dancing Script",cursive'},
+ {id:'caveat',name:'Caveat (tulis tangan)',fam:'"Caveat",cursive'},
+ {id:'sacramento',name:'Sacramento (elegan)',fam:'"Sacramento",cursive'}];
 const DOA={
  pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu...'},
  khitanan:{ar:'اللَّهُمَّ اجْعَلْهُ مِنَ الصَّالِحِيْنَ',latin:'Allahummaj\u2018alhu minash shalihin',arti:'Ya Allah jadikanlah ia anak yang shalih...'},
@@ -169,15 +256,67 @@ const TPL=[
  {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#3a3835',badge:'',deco:'◆',pat:'',ft:'inter',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},
  {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',badge:'',deco:'🍼 ☁️ 🍼',pat:'',ft:'poppins',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},
  {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',badge:'FAVORIT',deco:'🎀 🍼 🎀',pat:'',ft:'playfair',desc:'Pink blush super lembut buat si putri kecil kesayangan'},
- {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#4e452e',badge:'',deco:'☪ ❖ ☪',pat:'arab',ft:'lora',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'}];
+ {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#4e452e',badge:'',deco:'☪ ❖ ☪',pat:'arab',ft:'lora',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'},
+ /* ==== 20 TEMA BARU (5 per acara, nuansa maskulin + karakter maskot di cover) ==== */
+ {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',harga:89000,g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',badge:'BARU',char:'👑',deco:'✦ ❖ ✦',pat:'',ft:'playfair',desc:'Navy gelap maskulin & gold regal, vibe sultan yang tenang'},
+ {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',harga:79000,g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',badge:'',char:'🦌',deco:'🌲 ❖ 🌲',pat:'',ft:'ebgaramond',desc:'Hijau hutan klasik, gagah & hangat buat groom yang berkarakter'},
+ {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',harga:89000,g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',badge:'BARU',char:'🎩',deco:'◆ ✦ ◆',pat:'',ft:'bebas',desc:'Hitam charcoal & gold tegas, black tie yang bersih dan mahal'},
+ {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',harga:75000,g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',badge:'',char:'🌿',deco:'— ✦ —',pat:'',ft:'oswald',desc:'Slate abu maskulin dengan sage lembut, modern & tenang'},
+ {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',harga:85000,g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',badge:'',char:'🎖️',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond',desc:'Burgundy tua & emas, elegan klasik dengan sentuhan tegas'},
+ {id:'dino-adventure',nama:'Petualang Dino',ev:'khitanan',harga:75000,g:['#DFF3E4','#B8E3C0','#8FD3A0'],accent:'#2E7D4F',ink:'#1E4A2E',badge:'BARU',char:'🦖',deco:'🦖 ⭐ 🦖',pat:'',ft:'bebas',desc:'Dinosaurus hijau buat jagoan kecilmu yang suka petualangan'},
+ {id:'football-champ',nama:'Juara Sepak Bola',ev:'khitanan',harga:75000,g:['#E3F6E9','#BCEBCF','#8FD8AE'],accent:'#1F6E43',ink:'#163F28',badge:'',char:'⚽',deco:'⚽ ✦ ⚽',pat:'',ft:'oswald',desc:'Teman-teman, jagoan kita siap jadi juara! Nuansa lapangan hijau'},
+ {id:'space-explorer',nama:'Petualang Antariksa',ev:'khitanan',harga:79000,g:['#1A2450','#28356B','#3A4A8C'],accent:'#F0C75E',ink:'#E8ECFF',badge:'',char:'🚀',deco:'🚀 ✦ 🚀',pat:'',ft:'bebas',desc:'Biru malam & starlight, si kecil siap menjelajah galaksi'},
+ {id:'robot-tech',nama:'Robot Cerdas',ev:'khitanan',harga:75000,g:['#E5F1F5','#C4DEE8','#9CC4D4'],accent:'#33658A',ink:'#243B4D',badge:'',char:'🤖',deco:'🤖 ✦ 🤖',pat:'',ft:'oswald',desc:'Robot & teknologi, seru dan futuristis buat anak engineer cilik'},
+ {id:'knight-quest',nama:'Pangeran Knight',ev:'khitanan',harga:79000,g:['#3D2B52','#533B6B','#6C4E88'],accent:'#E0B84C',ink:'#F0E9F7',badge:'',char:'🛡️',deco:'⚔ ✦ ⚔',pat:'',ft:'ebgaramond',desc:'Ungu knight & emas, pahlawan kecil yang gagah berani'},
+ {id:'superhero-power',nama:'Super Hero',ev:'ultah',harga:75000,g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',badge:'BARU',char:'🦸',deco:'🦸 ⚡ 🦸',pat:'confetti',ft:'bebas',desc:'Merah biru superhero, si kecil punya kekuatan luar biasa'},
+ {id:'race-car',nama:'Balap Mobil',ev:'ultah',harga:75000,g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',badge:'',char:'🏎️',deco:'🏁 ✦ 🏁',pat:'',ft:'oswald',desc:'Hitam balap & merah garis start, gaspol ke garis finish!'},
+ {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',harga:79000,g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',badge:'',char:'🏴‍☠️',deco:'⚓ ✦ ⚓',pat:'',ft:'bebas',desc:'Navy lautan & jangkar emas, harta karun si kecil menanti'},
+ {id:'dragon-fire',nama:'Naga Api',ev:'ultah',harga:79000,g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',badge:'',char:'🐉',deco:'🐉 ✦ 🐉',pat:'',ft:'bebas',desc:'Merah naga & api oranye, garang tapi tetap imut'},
+ {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',harga:75000,g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',badge:'',char:'🥷',deco:'🥷 ✦ 🥷',pat:'',ft:'oswald',desc:'Hitam ninja & aksen jingga, senyap tapi penuh kejutan'},
+ {id:'baby-prince',nama:'Pangeran Cilik',ev:'aqiqah',harga:75000,g:['#E7F0FB','#C9DCF5','#A5C4EC'],accent:'#3E6BA8',ink:'#234066',badge:'BARU',char:'🤴',deco:'🤴 ✦ 🤴',pat:'',ft:'poppins',desc:'Biru royal lembut, sultan mungil siap menaiki singgasana'},
+ {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',harga:75000,g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',badge:'',char:'🦕',deco:'🦕 ✦ 🦕',pat:'',ft:'poppins',desc:'Hijau dino lembut, si kecil adalah dinosaurus paling gemes'},
+ {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',harga:79000,g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',badge:'',char:'🧑‍🚀',deco:'🧑‍🚀 ✦ 🧑‍🚀',pat:'',ft:'oswald',desc:'Biru malam & bintang emas, petualangan si kecil dimulai'},
+ {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',harga:75000,g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',badge:'',char:'🐯',deco:'🐯 ✦ 🐯',pat:'',ft:'bebas',desc:'Kuning keharuman tiger, si jagoan mungil yang menggemaskan'},
+ {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',harga:75000,g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',badge:'',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins',desc:'Merah kereta & aspal kota, chugga-chugga si kecil melaju'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',badge:'BARU',char:'👸',deco:'👸 ✨ 👸',pat:'',ft:'dancing',desc:'Rosa pastel & kelopak bunga, ultah si kecil sang putri peri'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',badge:'BARU',char:'🦄',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico',desc:'Lavender magis & bintang-bintang, mimpi si kecil jadi nyata'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',badge:'BARU',char:'🌸',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento',desc:'Bunga mekar & pita merah muda, ultah feminin yang manis sempurna'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',badge:'BARU',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair',desc:'Mawar lembut nan anggun, aqiqah si mungil perempuan terkasih'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',badge:'BARU',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing',desc:'Krem hangat & sayap peri, aqiqah si putri kecil yang bercahaya'}];
 function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
-function tplsFor(ev){return TPL.filter(t=>t.ev===ev)}
+function tplsFor(ev){return TPL.filter(t=>t.ev===ev&&!state.katalogHide.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
 function patCss(t){
  if(t.pat==='batik')return `background-image:radial-gradient(${t.accent}26 1.5px,transparent 1.8px),radial-gradient(${t.accent}1c 1px,transparent 1.3px);background-size:26px 26px,13px 13px;background-position:0 0,13px 13px;`;
  if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}12 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0d 0 2px,transparent 2px 16px);`;
  if(t.pat==='confetti')return `background-image:radial-gradient(#E5737366 2px,transparent 2.6px),radial-gradient(#64B5F666 2px,transparent 2.6px),radial-gradient(#8BC34A66 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
  return ''}
+
+/* ============ 20 BORDERS (semua kategori undangan) ============ */
+const BORDERS=[
+ {id:'none',n:'Tanpa Border'},
+ {id:'thin',n:'Garis Halus',s:A=>`border:1px solid ${A}`},
+ {id:'solid',n:'Garis Teguh',s:A=>`border:4px solid ${A}`},
+ {id:'double',n:'Ganda Klasik',s:A=>`border:6px double ${A}`},
+ {id:'dashed',n:'Putih Putus',s:A=>`border:3px dashed ${A}`},
+ {id:'dotted',n:'Titik-titik',s:A=>`border:3px dotted ${A}`},
+ {id:'ridge',n:'Ridged',s:A=>`border:7px ridge ${A}`},
+ {id:'groove',n:'Gravir',s:A=>`border:7px groove ${A}`},
+ {id:'inset',n:'Cekung',s:A=>`border:7px inset ${A}`},
+ {id:'outset',n:'Cembung',s:A=>`border:7px outset ${A}`},
+ {id:'topbot',n:'Atas & Bawah',s:A=>`border-top:3px solid ${A};border-bottom:3px solid ${A}`},
+ {id:'topline',n:'Serat Atas',s:A=>`border-top:6px solid ${A}`},
+ {id:'frame',n:'Bingkai Dalam',s:A=>`box-shadow:inset 0 0 0 2px ${A}`},
+ {id:'frame2',n:'Bingkai Rangkap',s:A=>`box-shadow:inset 0 0 0 2px ${A},inset 0 0 0 6px ${A}33`},
+ {id:'gap',n:'Bingkai Jarak',s:A=>`outline:2px solid ${A};outline-offset:-12px`},
+ {id:'gapdash',n:'Bingkai Putus',s:A=>`outline:3px dashed ${A};outline-offset:-12px`},
+ {id:'halo',n:'Halo Lembut',s:A=>`box-shadow:inset 0 0 0 1px ${A}55,inset 0 0 26px ${A}22`},
+ {id:'corners',n:'Sudut Elegan',corner:3},
+ {id:'cornersthin',n:'Sudut Halus',corner:1,extra:A=>`border:1px solid ${A}33`},
+ {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`}];
+function borderOf(){return BORDERS.find(b=>b.id===state.border)||BORDERS[0]}
+function borderColor(){return state.darkMode?'#FDE68A':state.accent}
+function borderCss(){const b=borderOf(),A=borderColor();let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
+function borderCorners(){const b=borderOf();if(!b||!b.corner)return'';const A=borderColor(),w=b.corner;
+ const c=pos=>`<i style="position:absolute;width:22px;height:22px;border:0 solid ${A};${pos};pointer-events:none;z-index:2"></i>`;
+ return c(`top:10px;left:10px;border-top-width:${w}px;border-left-width:${w}px`)+c(`top:10px;right:10px;border-top-width:${w}px;border-right-width:${w}px`)+c(`bottom:10px;left:10px;border-bottom-width:${w}px;border-left-width:${w}px`)+c(`bottom:10px;right:10px;border-bottom-width:${w}px;border-right-width:${w}px`)}
+function setBorder(id){state.border=id;save();render()}
+function miniBorder(b){const A='#8b7358';if(b.corner)return `border:1px dashed ${A}`;let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
 
 /* ===== MUSIK DEMO (dari Google Drive user, tersimpan di repo /music) ===== */
 const DEMO_MUSIC=[
@@ -186,7 +325,7 @@ const DEMO_MUSIC=[
 /* ============ STATE ============ */
 const DEF={
  page:'editor',tab:'info',event:'pernikahan',theme:'iceBlue',tpl:'jawa-elegan',accent:'#7A5C3E',
- fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,dblBorder:true,darkMode:false,
+ fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,darkMode:false,border:'double',katalogHide:[],
  form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
   putraPutri:'Putra dari Bpk. Hartono & Ibu Sulastri',putriDari:'Putri dari Bpk. Faisal & Ibu Dewi',
   namaAnak:'Muhammad Zaidan Al-Fatih',putraDari:'Putra dari Bpk. Andi & Ibu Sari',umurAnak:'8 Tahun',
@@ -198,9 +337,23 @@ const DEF={
  musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',gallery:[],videoLink:'https://youtube.com/watch?v=example',
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'Bapak Budi Santoso\nIbu Siti Aminah\nKak Alif & Keluarga\nTim Kantor Pusat',
- guestCodes:{},selGuest:null,showNameQr:true,
+ guestCodes:{},masterKey:'',selGuest:null,showNameQr:true,
  waTemplate:'Assalamualaikum {nama_tamu} 🙏\n\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara {acara} kami:\n\n{link_undangan}\n\nMerupakan kebahagiaan bagi kami atas kehadiran & doanya.\n\nTerima kasih 🤍\n{nama_pengantin}',
  amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true},
+ /* 10 slide konten baru — tiap slide: on + isi */
+ slides:{
+  timeline:{on:false,items:'08:00 — Akad Nikah\n11:00 — Resepsi'},
+  story:{on:false,text:'Kami bertemu pertama kali di kampus, dan sejak hari itu perjalanan kami penuh tawa, cerita, dan doa yang sama.'},
+  quote:{on:false,custom:false,text:'',author:''},
+  menu:{on:false,items:'Sup Iga — Bawang Bakar\nAyam Panggang — Timun Muda\nNasi Kuning — Sambal Bawang\nEs Durian — Manis Segar'},
+  party:{on:false,items:'Budi — Groomsman\nSari — Bridesmaid\nKeluarga Besar — Panitia'},
+  dresscode:{on:false,text:'Formal / Batik',colors:'#D4AF37,#7A5C3E,#111827'},
+  gift:{on:false,text:'Jl. Melati No. 12, Bandung\nKotak kado diletakkan di meja samping pentas'},
+  map:{on:false},
+  rsvp:{on:false},
+  closing:{on:false,text:'Terima kasih atas doa, waktu, dan kasih sayang Bapak/Ibu. Sampai berjumpa di hari bahagia kami.'}},
+ anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'},
+ floatPrevOn:true,floatPos:null,
  slug:'rangga-alya',customDomain:'',published:false,
  katalog:TPL.map((t,i)=>({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:340-i*23})),
  promo:{diskon:50,tglMulai:'2026-10-01',tglSelesai:'2026-12-31',badgeText:'FLASH SALE 50%'},
@@ -211,17 +364,71 @@ const DEF={
   {id:'f4',jenis:'aqiqah',nama:'Baby Kayla Aqiqah',tanggal:'2026-09-20',status:'Draft',snap:null}],
  search:''};
 let state;
-try{state=Object.assign({},DEF,JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
+try{state=Object.assign({},DEF,JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
+function mergeSlides(s){const out={};Object.keys(DEF.slides).forEach(k=>{out[k]=Object.assign({},DEF.slides[k],(s&&s[k])||{})});return out}
 /* migrasi ringan: pastikan template valid, katalog pakai struktur TPL, & musik demo selalu tersedia */
 if(!state.tpl||!TPL.some(t=>t.id===state.tpl))state.tpl=TPL[0].id;
 if(!Array.isArray(state.katalog)||!state.katalog.length||!state.katalog[0].tpl)state.katalog=JSON.parse(JSON.stringify(DEF.katalog));
 /* template baru di TPL otomatis ikut masuk ke katalog yang sudah tersimpan di localStorage */
 TPL.forEach((t,i)=>{if(!state.katalog.some(k=>k.tpl===t.id))state.katalog.push({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:Math.max(0,340-(state.katalog.length+i)*23)})});
+/* migrasi border (dulu: toggle dblBorder) & daftar katalog tersembunyi */
+if(state.dblBorder===false)state.border='none';else if(state.dblBorder===true)state.border='double';delete state.dblBorder
+/* kunci master (akses dashboard privat) — dibuat sekali, dipakai di link master */
+function mkRand(){const c='abcdefghjkmnpqrstuvwxyz23456789';let s='';for(let i=0;i<10;i++)s+=c[Math.floor(Math.random()*c.length)];return s}
+if(!state.masterKey){state.masterKey=mkRand();save()}
+if(!BORDERS.some(b=>b.id===state.border))state.border='double';
+if(!Array.isArray(state.katalogHide))state.katalogHide=[];
 if(!Array.isArray(state.musicDb))state.musicDb=[];
 state.musicDb=state.musicDb.filter(m=>!m.demo||DEMO_MUSIC.some(d=>d.url===m.url));
 if(state.music&&state.music.demo&&!DEMO_MUSIC.some(d=>d.url===state.music.url)){state.music=null;state.playing=false}
 DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.push(Object.assign({},d))});
 function save(){try{const c=Object.assign({},state);localStorage.setItem('asproject_studio_v3',JSON.stringify(c))}catch(e){}}
+/* ===== Animasi pratinjau: diputar ulang HANYA saat struktur berubah
+   (template / event / slide on-off), agar tidak berkedip tiap ketik ===== */
+/* 10 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan undangan.html */
+const FX_SCROLL=[
+ ['fade-up','Fade Up','naik pelan sambil muncul'],['fade-down','Fade Down','turun pelan sambil muncul'],
+ ['slide-left','Slide Kiri','geser dari kanan'],['slide-right','Slide Kanan','geser dari kiri'],
+ ['zoom-in','Zoom In','membesar ke depan'],['zoom-out','Zoom Out','mengecil dari jauh'],
+ ['rotate','Rotate','miring masuk lalu lurus'],['blur','Blur','kabur lalu fokus'],
+ ['pop','Pop','memantul naik'],['flip','Flip 3D','terbalik dari bawah']];
+const FX_COVER=[
+ ['fade','Fade','muncul lembut'],['zoom','Zoom','membesar halus (default)'],
+ ['rise','Rise','terbang naik'],['drop','Drop','turun dari atas'],
+ ['blur','Blur','kabur lalu fokus'],['pop','Pop','memantul ke ukuran'],
+ ['flip','Flip 3D','terangkat dari bawah'],['slide','Slide','meluncur dari samping'],
+ ['swing','Swing','bergoyang dari atas'],['elastic','Elastic','pancingan kenur']];
+function fxScrollId(){const v=state.anim.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
+function fxCoverId(){const v=state.anim.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
+let animSig=null;
+function animTrigger(){const cur=state.tpl+'|'+state.event+'|'+Object.keys(state.slides).filter(k=>state.slides[k].on).sort().join(',')+'|'+fxCoverId()+'|'+fxScrollId();const play=animSig!==cur;animSig=cur;return play}
+/* ===== Slide konten & animasi ===== */
+const SLIDES=[
+ {id:'timeline',ic:'⏱️',nm:'Timeline Acara',ds:'Urutan sesi acara (jam — judul)',type:'list',ph:'08:00 — Akad Nikah\n11:00 — Resepsi'},
+ {id:'story',ic:'💞',nm:'Cerita Kami',ds:'Kisah singkat di balik acara ini',type:'area',ph:'Kami bertemu di ...'},
+ {id:'quote',ic:'❝',nm:'Quote / Ayat',ds:'Kutipan atau ayat — bawaan per acara bila dikosongkan',type:'quote'},
+ {id:'menu',ic:'🍽️',nm:'Menu Acara',ds:'Daftar menu (nama — deskripsi)',type:'list',ph:'Sup Iga — Bawang Bakar\nAyam Panggang — Timun'},
+ {id:'party',ic:'🎩',nm:'Panitia / Bridal Party',ds:'Nama — peran',type:'list',ph:'Budi — Groomsman\nSari — Bridesmaid'},
+ {id:'dresscode',ic:'👗',nm:'Dress Code',ds:'Pemanduan busana + palet warna',type:'dress'},
+ {id:'gift',ic:'🎁',nm:'Alamat Kado',ds:'Informasi kado fisik / kartu ucapan',type:'area',ph:'Jl. Contoh No. 1 ...'},
+ {id:'map',ic:'🗺️',nm:'Peta Lokasi',ds:'Embed peta dari alamat/mapsLink di Info Acara',type:'none'},
+ {id:'rsvp',ic:'✉️',nm:'Form RSVP',ds:'Tamu konfirmasi kehadiran langsung ke WhatsApp',type:'none'},
+ {id:'closing',ic:'🤍',nm:'Pesan Penutup',ds:'Ucapan penutup dari penyelenggara',type:'area',ph:'Terima kasih ...'}];
+const QUOTES={
+ pernikahan:{text:'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya.',author:'QS. Ar-Rum: 21'},
+ khitanan:{text:'Sebaik-baik kalian adalah orang yang paling baik kepada keluarganya.',author:'HR. Ahmad'},
+ ultah:{text:'Semoga tahun yang baru ini membawa kebahagiaan yang lebih besar dari sebelumnya.',author:'Ucapan Terbaik'},
+ aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
+function setSlide(id,on){if(!state.slides[id])return;state.slides[id].on=on;save();render()}
+function upSlide(id,k,v){if(!state.slides[id])return;state.slides[id][k]=v;save();renderPreview()}
+function setAnim(k,v){state.anim[k]=v;animSig=null;save();render()}
+function rsvpWa(){const n=document.getElementById('rvpN')?document.getElementById('rvpN').value:'Tamu',h=document.getElementById('rvpH')?document.getElementById('rvpH').value:'Hadir',m=document.getElementById('rvpM')?document.getElementById('rvpM').value:'';const t='RSVP — '+titleOf()+' '+displayName()+'\nNama: '+n+'\nKonfirmasi: '+h+(m?'\nPesan: '+m:'')+'\nTautan: '+previewUrl();window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
+/* Tulisan undangan yang dikirim lewat WA — pakai template (bisa diatur di tab Tamu) */
+function waShareText(){const g=selGuest();
+ const link=state.linkMode==='single'?baseUrl():g?baseUrl()+'?to='+encodeURIComponent(g.nama):baseUrl();
+ return state.waTemplate.replace('{nama_tamu}',g?g.nama:'Bapak/Ibu/Saudara/i').replace('{link_undangan}',link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf())}
+function waShareLink(){return 'https://wa.me/?text='+encodeURIComponent(waShareText())}
+function waSend(){window.open(waShareLink(),'_blank')}
 
 /* ============ HELPERS ============ */
 const $=id=>document.getElementById(id);
@@ -231,14 +438,18 @@ function notify(msg){document.querySelectorAll('.notice').forEach(n=>n.remove())
 function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
 function titleOf(){return state.event==='pernikahan'?'The Wedding Of':state.event==='khitanan'?'Tasyakuran Khitanan':state.event==='ultah'?'Sweet Birthday Party':'Tasyakuran Aqiqah'}
 function displayName(){return state.event==='pernikahan'?`${state.form.namaPria} & ${state.form.namaWanita}`:state.form.namaAnak}
-function baseUrl(){return 'https://'+(state.customDomain?state.customDomain.replace(/^https?:\/\//,''):`${state.slug||'demo'}.asproject.my.id`)}
+function hostBase(){return 'https://'+(state.customDomain?state.customDomain.replace(/^https?:\/\//,''):'asproject.my.id')}
+/* Link berbasis path /u/{slug} — selalu bisa dibuka di GitHub Pages
+   tanpa wildcard DNS (dirute oleh 404.html ke undangan.html). */
+function baseUrl(){return hostBase()+'/u/'+(state.slug||'demo')}
+function masterUrl(){return hostBase()+'/master.html?slug='+(state.slug||'{slug}')+'&k='+state.masterKey}
 function previewUrl(){const g=selGuest();return state.linkMode==='single'?baseUrl():baseUrl()+'?to='+encodeURIComponent(g?g.nama:'NamaTamu')}
 function daysLeft(){try{const d=new Date(state.form.tanggalAcara).getTime()-Date.now();return Math.max(0,Math.floor(d/86400000))}catch(e){return 0}}
 function guests(){return state.guestsRaw.split('\n').map(s=>s.trim()).filter(Boolean).map(nama=>{
  if(!state.guestCodes[nama]){state.guestCodes[nama]=Math.random().toString(36).substring(2,10).toUpperCase()}
  const code=state.guestCodes[nama];
  return {nama,code,link:state.linkMode==='single'?baseUrl():baseUrl()+'?to='+encodeURIComponent(nama),
-  checkin:baseUrl()+'/checkin?id='+code+'&guest='+encodeURIComponent(nama)}})}
+  checkin:hostBase()+'/checkin.html?id='+code+'&guest='+encodeURIComponent(nama)+'&s='+encodeURIComponent(state.slug||'demo')}})}
 function selGuest(){return guests().find(g=>g.nama===state.selGuest)||null}
 function autoSlug(){let n=state.event==='pernikahan'?`${state.form.namaPria} ${state.form.namaWanita}`:state.form.namaAnak;const s=slugify(n);if(s)state.slug=s}
 function qrData(g){const cv=document.createElement('canvas');cv.width=300;cv.height=300;const x=cv.getContext('2d');
@@ -309,28 +520,80 @@ async function publish(){
   name2:state.event==='pernikahan'?state.form.namaWanita:'',venue:state.form.venue,
   event_date:state.form.tanggalAcara,event_time:state.form.jamAcara,
   music_url:state.music&&!state.music.local?new URL(state.music.url,location.href).href:'',music_name:state.music?state.music.name:'',
-  theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl))};
- if(db){const {error}=await db.from('invitation_drafts').upsert(payload,{onConflict:'slug'});
+  theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl)),updated_at:new Date().toISOString()};
+ /* Snapshot lengkap → kolom jsonb "data" agar undangan live persis seperti studio
+    (nama orang tua, sesi akad/resepsi, amplop, galeri, dsb) */
+ const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
+  accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,
+  amplop:JSON.parse(JSON.stringify(state.amplop)),
+  slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
+  music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
+  cover:state.cover||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
+  /* alur Studio > Undangan Master > Undangan Tamu: dashboard master butuh daftar tamu + kunci privat */
+  guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
+  masterKey:state.masterKey||'',linkMode:state.linkMode||'personal',
+  publishedAt:new Date().toISOString()};
+ if(JSON.stringify(data).length>1500000){data.gallery=[];
+  if(JSON.stringify(data).length>1200000){data.cover='';
+   if(JSON.stringify(data).length>900000)data=null}}
+ if(data)payload.data=data;
+ if(db){let {error}=await db.from('invitation_drafts').upsert(payload,{onConflict:'slug'});
+  if(error&&/does not exist|column/i.test(String(error.message))){
+   /* kolom "data" belum ada di database lama → publish tanpa snapshot */
+   delete payload.data;const r2=await db.from('invitation_drafts').upsert(payload,{onConflict:'slug'});error=r2.error}
   if(error){notify('Gagal publish: '+error.message);return}}
  state.published=true;
  const nama=displayName();
  const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
-  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody}};
+  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim))}};
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  save();render();notify('Berhasil Publish! '+baseUrl()+' tersimpan di Folder Arsip')}
 function unpublish(){state.published=false;save();render();notify('Status kembali ke Draft')}
+/* Simpan undangan jadi 1 file HTML mandiri (data ditanam di dalam file) →
+   bisa disimpan di storage mana pun & dibuka offline di browser apa pun */
+async function dlUndangan(){
+ try{
+  const r=await fetch('undangan.html');if(!r.ok)throw new Error('HTTP '+r.status);
+  const html=await r.text();
+  const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
+   accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,
+   amplop:JSON.parse(JSON.stringify(state.amplop)),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
+   videoLink:state.videoLink||'',
+   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
+   cover:state.cover||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],publishedAt:new Date().toISOString()};
+  if(JSON.stringify(data).length>1500000){data.gallery=[];
+   if(JSON.stringify(data).length>1200000){data.cover='';
+    if(JSON.stringify(data).length>900000){notifyErr('Data terlalu besar utk 1 file — kurangi/kompres foto dulu');return}}}
+  const draft={slug:state.slug||'',name1:state.event==='pernikahan'?state.form.namaPria:state.form.namaAnak,
+   name2:state.event==='pernikahan'?state.form.namaWanita:'',
+   theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl)),data};
+  const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>';
+  const i=html.indexOf('</head>');
+  const final=i>=0?html.slice(0,i)+inj+'\n'+html.slice(i):html.replace('</html>',inj+'\n</html>');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([final],{type:'text/html;charset=utf-8'}));
+  a.download='undangan-'+(slugify(displayName())||state.slug||'undangan')+'.html';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
+  notify('File HTML tersimpan! Bisa dibuka offline di browser mana pun (data & foto ikut; font web butuh internet)')
+ }catch(e){notifyErr('Gagal simpan file: '+(e&&e.message||e))}
+}
 function loadArsip(id){const a=state.arsip.find(x=>x.id===id);if(!a)return;
  if(a.snap){state.form=Object.assign({},DEF.form,a.snap.form);state.event=a.snap.event;
   if(a.snap.tpl&&TPL.some(t=>t.id===a.snap.tpl))state.tpl=a.snap.tpl;else{const ft=tplsFor(a.snap.event)[0];if(ft)state.tpl=ft.id}
   state.doa=a.snap.doa||a.snap.event;state.accent=a.snap.accent||tplOf().accent;state.slug=a.snap.slug;
-  if(a.snap.fontTitle)state.fontTitle=a.snap.fontTitle;if(a.snap.fontBody)state.fontBody=a.snap.fontBody}
- else{state.event=a.jenis}
+  if(a.snap.fontTitle)state.fontTitle=a.snap.fontTitle;if(a.snap.fontBody)state.fontBody=a.snap.fontBody;
+  if(a.snap.border)state.border=a.snap.border;
+  if(a.snap.slides)state.slides=mergeSlides(a.snap.slides);
+  if(a.snap.anim)state.anim=Object.assign({},DEF.anim,a.snap.anim);animSig=null}
+ else{state.event=a.jenis;animSig=null}
  state.page='editor';state.tab='info';save();render();window.scrollTo(0,0);notify('Membuka: '+a.nama)}
 function dlQr(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrData(g);a.download=`QR-Checkin-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
 function copyTxt(t,msg){navigator.clipboard?.writeText(t);notify(msg||'Disalin ✓')}
 function waLink(g){const txt=state.waTemplate.replace('{nama_tamu}',g.nama).replace('{link_undangan}',g.link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf());return 'https://wa.me/?text='+encodeURIComponent(txt)}
 function updKat(id,k,v){const it=state.katalog.find(x=>x.id===id);if(!it)return;it[k]=(k==='hargaNormal'||k==='hargaPromo')?Number(v):k==='promoActive'?v:v;save()}
 function addKat(){state.katalog=[{id:'k'+Date.now(),nama:'Template Baru',tpl:state.tpl,ev:state.event,hargaNormal:120000,hargaPromo:75000,promoActive:true,badge:'NEW',terjual:0},...state.katalog];save();render()}
+function tglKatHide(id){if(!TPL.some(t=>t.id===id))return;const i=state.katalogHide.indexOf(id);i>=0?state.katalogHide.splice(i,1):state.katalogHide.push(id);save();render()}
 function importCsv(){const i=document.createElement('input');i.type='file';i.accept='.csv,.txt';i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.guestsRaw=String(r.result||'');save();render()};r.readAsText(f)};i.click()}
 function exportCsv(){const blob=new Blob([guests().map(g=>`${g.nama},${g.link}`).join('\n')],{type:'text/csv'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=`tamu-${state.slug}.csv`;a.click()}
 
@@ -353,6 +616,7 @@ function header(){return `
    <span class="dot pulse" style="background:${state.published?'#10b981':'#fbbf24'}"></span>${state.published?'Published':'Draft • Auto-save'}
   </div>
   <a href="./" class="pill" style="background:#fff;border:1px solid var(--line);font-size:12px;padding:8px 14px;text-decoration:none;font-weight:500">Katalog ↗</a>
+  <a class="btn-pub" href="${waShareLink()}" target="_blank" rel="noopener" style="background:#25D366"><span style="width:20px;height:20px;border-radius:99px;background:#fff;color:#25D366;display:grid;place-items:center;font-size:12px">📤</span>Kirim via WA</a>
   <button class="btn-pub" onclick="publish()"><span style="width:20px;height:20px;border-radius:99px;background:#fff;color:#000;display:grid;place-items:center;font-size:12px">↗</span>Publish Premium Rp75rb</button>
  </div>
 </header>`}
@@ -375,7 +639,7 @@ function sidebar(){
    <span class="lbl">Template ${EV_LABEL[state.event]}</span><span class="chip">${tplsFor(state.event).length} desain</span>
   </div>
   ${tplsFor(state.event).map(t=>`<button class="thbtn ${state.tpl===t.id?'on':''}" onclick="pickTpl('${t.id}')">
-   <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:13px">${t.deco.split(' ')[0]||''}</div>
+   <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?17:13}px">${t.char||t.deco.split(' ')[0]||''}</div>
    <div style="flex:1"><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">${t.nama}${t.badge?`<span style="font-size:8px;padding:2px 6px;border-radius:99px;background:var(--gold);color:#000;font-weight:700">${t.badge}</span>`:''}</div>
    <div class="sub">${t.desc}</div></div>
    <div style="width:20px;height:20px;border-radius:99px;display:grid;place-items:center;border:1px solid ${state.tpl===t.id?'#fff':'#ddd'};background:#fff;color:#000;font-size:11px">${state.tpl===t.id?'✓':''}</div></button>`).join('')}
@@ -449,14 +713,20 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
      <span class="chip" style="font-family:ui-monospace,monospace">${state.accent}</span>
     </div></div>
    <div class="grid2">
-    <label class="f">Font Judul<select onchange="set('fontTitle',this.value)">${FONTS.slice(0,3).map(ft=>`<option value="${ft.id}" ${state.fontTitle===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
-    <label class="f">Font Isi<select onchange="set('fontBody',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" ${state.fontBody===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+    <label class="f">Font Judul (15 pilihan)<select onchange="set('fontTitle',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" ${state.fontTitle===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+    <label class="f">Font Isi (15 pilihan)<select onchange="set('fontBody',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" ${state.fontBody===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
    </div>
    <div><div class="f" style="margin-bottom:8px">Background Type</div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
     ${[['polos','Polos'],['gradient','Gradient'],['foto','Foto'],['pattern','Batik']].map(([id,l])=>`<button class="tabbtn ${state.bgType===id?'on':''}" style="height:40px;border-radius:12px" onclick="set('bgType','${id}')">${l}</button>`).join('')}</div></div>
    <div style="border-top:1px solid var(--line);padding-top:12px">
-    ${[['goldOrn','Ornamen Gold Foil'],['dblBorder','Border Double Gold'],['darkMode','Mode Gelap (Emerald)']].map(([k,l])=>`<label class="togglerow">${l}<input type="checkbox" ${state[k]?'checked':''} onchange="set('${k}',this.checked)"></label>`).join('')}
+    <div><div class="f" style="margin-bottom:8px">Border Undangan (20 jenis) — berlaku semua kategori</div>
+     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+     ${BORDERS.map(b=>`<button class="tabbtn ${state.border===b.id?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setBorder('${b.id}')"><span style="width:26px;height:16px;border-radius:4px;background:#fff;${miniBorder(b)}"></span><span style="font-size:9px;line-height:1.05;text-align:center">${b.n}</span></button>`).join('')}
+     </div>
+     <div style="font-size:10px;color:var(--mut);margin-top:6px">Warna border mengikuti aksen tema (mode gelap: emas) • ikut tersimpan ke undangan live saat publish.</div>
+    </div>
+    ${[['goldOrn','Ornamen Gold Foil'],['darkMode','Mode Gelap (Emerald)']].map(([k,l])=>`<label class="togglerow">${l}<input type="checkbox" ${state[k]?'checked':''} onchange="set('${k}',this.checked)"></label>`).join('')}
    </div>
   </div>
  </div>
@@ -464,7 +734,56 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
   <div style="font-size:12px;font-weight:600">Preview Font</div>
   <div style="margin-top:12px;font-size:22px;line-height:1.2;font-family:${fontFam(state.fontTitle)}">The Beauty of ${esc(state.form.namaWanita)}</div>
   <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:8px;font-family:${fontFam(state.fontBody)}">Font isi untuk alamat, doa, ucapan dan detail acara — rapi & readable di HP.</div>
+ </div>
+ <div class="card"><h4>✨ Animasi Undangan</h4>
+  <p style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.6">Berlaku di pratinjau (diputar ulang saat template/slide diganti) dan di undangan live yang di-publish.</p>
+  ${[['cover','Animasi Cover','Nama & ornamen masuk dengan efek terpilih di halaman pembuka.'],['text','Animasi Teks','Nama tampil per kata, satu per satu (efek stagger).'],['reveal','Scroll Reveal','Setiap bagian muncul halus saat tamu menggulir ke bawah.']].map(([k,l,d])=>`<label class="togglerow"><span><span style="font-size:12px;font-weight:500">${l}</span><span style="display:block;font-size:10px;color:var(--mut)">${d}</span></span><input type="checkbox" ${state.anim[k]?'checked':''} onchange="setAnim('${k}',this.checked)"></label>`).join('')}
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+   <div style="font-size:11px;font-weight:600;margin-bottom:2px">🎬 Efek Animasi Cover — pilih 1 dari 10</div>
+   <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Cara halaman pembuka masuk saat undangan dibuka.</div>
+   <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+   ${FX_COVER.map(([id,n,d])=>`<button class="fxbtn ${fxCoverId()===id?'on':''}" onclick="setAnim('effect','${id}')"><b>${n}</b><span>${d}</span></button>`).join('')}
+   </div></div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+   <div style="font-size:11px;font-weight:600;margin-bottom:2px">📜 Efek Scroll Reveal — pilih 1 dari 10</div>
+   <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Cara tiap bagian muncul saat tamu menggulir ke bawah.</div>
+   <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+   ${FX_SCROLL.map(([id,n,d])=>`<button class="fxbtn ${fxScrollId()===id?'on':''}" onclick="setAnim('scroll','${id}')"><b>${n}</b><span>${d}</span></button>`).join('')}
+   </div></div>
  </div></div>`}
+
+/* ============ VIEW: SLIDE (10 slide konten baru) ============ */
+function slideEditor(s,d){
+ if(s.type==='list')return `<div style="margin-top:12px"><label class="f">Isi — 1 baris = 1 item (format: <b>bagian — detail</b>)<textarea rows="3" oninput="upSlide('${s.id}','items',this.value)">${esc(d.items||'')}</textarea></label>
+  <div style="font-size:10px;color:var(--mut);margin-top:4px">Contoh: ${esc(s.ph||'')}</div></div>`;
+ if(s.type==='area')return `<div style="margin-top:12px"><label class="f">Isi<textarea rows="3" oninput="upSlide('${s.id}','text',this.value)">${esc(d.text||'')}</textarea></label></div>`;
+ if(s.type==='quote')return `<div style="margin-top:12px">
+  <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:10px"><input type="checkbox" ${d.custom?'checked':''} onchange="upSlide('quote','custom',this.checked)"> Tulis quote sendiri</label>
+  ${d.custom?`<label class="f" style="margin-bottom:8px">Teks Quote<textarea rows="2" oninput="upSlide('quote','text',this.value)">${esc(d.text||'')}</textarea></label>
+  <label class="f">Sumber / Penulis<input value="${esc(d.author||'')}" oninput="upSlide('quote','author',this.value)"></label>`
+  :`<div style="padding:10px 12px;border-radius:12px;background:var(--cream);border:1px solid var(--cream2);font-size:11px;line-height:1.6">❝ ${esc(QUOTES[state.event]?QUOTES[state.event].text:'')}<div style="margin-top:6px;font-size:10px;color:#8a6d0f">— ${esc(QUOTES[state.event]?QUOTES[state.event].author:'')}</div></div>`}</div>`;
+ if(s.type==='dress')return `<div style="margin-top:12px">
+  <label class="f" style="margin-bottom:8px">Pemanduan Busana<input value="${esc(d.text||'')}" placeholder="Formal / Batik / Casual" oninput="upSlide('dresscode','text',this.value)"></label>
+  <label class="f">Palet Warna (hex, pisahkan koma)<input value="${esc(d.colors||'')}" placeholder="#D4AF37, #4A6741" oninput="upSlide('dresscode','colors',this.value)"></label></div>`;
+ return ''}
+function tabSlide(){return `<div style="display:grid;gap:16px">
+ <div class="card" style="background:#111;color:#fff;border-color:#111">
+  <div style="font-size:12px;font-weight:600">🎬 10 Slide Konten Baru</div>
+  <p style="font-size:11px;color:rgba(255,255,255,.65);margin-top:6px;line-height:1.6">Aktifkan slide yang ingin tampil di undangan, lalu atur isinya. Pratinjau langsung diperbarui — animasi diputar ulang setiap kali slide/template diganti. Slide aktif ikut ter-publish ke undangan live.</p>
+ </div>
+ ${SLIDES.map(s=>{const d=state.slides[s.id];return `
+ <div class="card" style="border-color:${d.on?'var(--cream2)':'var(--line)'};background:${d.on?'#fffdf6':'#fff'}">
+  <div style="display:flex;align-items:center;gap:10px">
+   <div style="width:34px;height:34px;border-radius:10px;background:var(--soft);display:grid;place-items:center;font-size:16px;flex:none">${s.ic}</div>
+   <div style="flex:1;min-width:0">
+    <div style="font-size:12px;font-weight:600">${s.nm} ${d.on?'<span style="font-size:9px;padding:2px 8px;border-radius:99px;background:#10b981;color:#fff;vertical-align:1px">AKTIF</span>':''}</div>
+    <div style="font-size:10px;color:var(--mut)">${s.ds}</div>
+   </div>
+   <input type="checkbox" ${d.on?'checked':''} onchange="setSlide('${s.id}',this.checked)" style="width:20px;height:20px;accent-color:#111;flex:none" aria-label="${s.nm}">
+  </div>
+  ${d.on?slideEditor(s,d):''}
+ </div>`}).join('')}
+</div>`}
 
 function tabMusik(){const d=DOA[state.doa]||DOA.pernikahan;return `<div style="display:grid;gap:16px">
  <div class="card"><h4>🎵 Musik Autoplay — Upload ke Supabase</h4>
@@ -572,8 +891,14 @@ function tabTamu(){const gs=guests(),g=selGuest(),single=state.linkMode==='singl
    <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:4px">Jika aktif, nama tamu kecil tampil di bawah QR untuk memudahkan panitia.</div>
   </div>
   <div style="margin-top:16px">
-   <div style="font-size:11px;font-weight:500;margin-bottom:4px">Template Pesan WA (variabel: {nama_tamu}, {link_undangan}, {nama_pengantin}, {acara})</div>
-   <textarea rows="5" style="width:100%;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);padding:8px 12px;font-size:11px;font-family:ui-monospace,monospace;color:#fff" oninput="upd('waTemplate',this.value)">${esc(state.waTemplate)}</textarea>
+   <div style="font-size:11px;font-weight:500;margin-bottom:4px">💬 Tulisan Undangan untuk WA (variabel: {nama_tamu}, {link_undangan}, {nama_pengantin}, {acara})</div>
+   <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:6px">Teks ini otomatis terpasang di tombol <b>Kirim via WA</b> (header & pratinjau HP). Variabel terisi otomatis sesuai tamu yang dipilih.</div>
+   <textarea rows="6" style="width:100%;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);padding:8px 12px;font-size:11px;font-family:ui-monospace,monospace;color:#fff" oninput="upd('waTemplate',this.value)">${esc(state.waTemplate)}</textarea>
+   <div style="margin-top:10px;border-radius:12px;background:rgba(37,211,102,.08);border:1px solid rgba(37,211,102,.35);padding:10px 12px">
+    <div style="font-size:10px;color:rgba(255,255,255,.55);margin-bottom:6px">📱 Pratinjau pesan WA:</div>
+    <div style="font-size:11px;line-height:1.7;color:#fff;white-space:pre-wrap">${esc(waShareText())}</div>
+   </div>
+   <button onclick="waSend()" style="margin-top:10px;width:100%;height:42px;border-radius:99px;background:#25D366;color:#fff;font-size:12px;font-weight:600;border:0;cursor:pointer">📤 Kirim Link via WhatsApp</button>
   </div>
  </div></div>`}
 
@@ -609,7 +934,11 @@ function tabDomain(){return `<div style="display:grid;gap:16px">
    <div style="font-size:10px;color:var(--mut);margin-top:4px;font-weight:400">Slug otomatis: ${esc(state.slug)||'—'}</div>
   </label>
   <label class="f" style="margin-top:12px">Custom Domain Sendiri<input value="${esc(state.customDomain)}" placeholder="www.namadomain.com / undangan.namadomain.com" oninput="upd('customDomain',this.value)"></label>
-  <div style="margin-top:12px;padding:12px;border-radius:12px;background:var(--soft);border:1px solid var(--line);font-size:11px;font-family:ui-monospace,monospace">Setting CNAME: <b>cname.asproject.my.id</b><br>Arahkan CNAME ${esc(state.customDomain)||'custom domain'} → cname.asproject.my.id</div>
+  <div style="margin-top:12px;padding:12px;border-radius:12px;background:var(--soft);border:1px solid var(--line);font-size:11px;line-height:1.8">
+   <b>Link tamu:</b> <span style="font-family:ui-monospace,monospace">${hostBase()}/u/${esc(state.slug||'{slug}')}</span> — langsung bisa dibuka, tanpa setting DNS tambahan.<br>
+   <b>Opsional (lebih estetik):</b> <span style="font-family:ui-monospace,monospace">${esc(state.slug||'{slug}')}.asproject.my.id</span> — aktif bila DNS domain memakai wildcard <span style="font-family:ui-monospace,monospace">*.asproject.my.id</span>.<br>
+   ${state.customDomain?'<b>Custom Domain:</b> arahkan CNAME domain Anda ke <b>asproject.my.id</b> — link tamu: <span style="font-family:ui-monospace,monospace">'+esc(state.customDomain)+'/u/'+esc(state.slug||'{slug}')+'</span>':''}
+  </div>
   <div style="margin-top:16px;padding:12px;border-radius:12px;background:#111;color:#fff">
    <div style="font-size:11px;color:rgba(255,255,255,.6)">Preview URL Final</div>
    <div style="font-size:12px;font-family:ui-monospace,monospace;margin-top:4px;word-break:break-all">${baseUrl()}${state.linkMode==='single'?'':'?to=NamaTamu'}</div>
@@ -622,6 +951,19 @@ function tabDomain(){return `<div style="display:grid;gap:16px">
    <button class="sm-btn dark" style="height:40px;border-radius:12px" onclick="publish()">💎 Publish Premium Rp75rb</button>
    <button class="sm-btn" style="height:40px;border-radius:12px;background:#fff" onclick="unpublish()">Unpublish</button>
   </div>
+  <button class="sm-btn dark" style="height:40px;border-radius:12px;width:100%;margin-top:8px" onclick="dlUndangan()">⬇️ Simpan File HTML (bisa offline)</button>
+ </div>
+ <div class="card"><h4>🔑 Undangan Master (khusus pemilik) • BARU</h4>
+  <div style="font-size:11px;line-height:1.8;color:var(--mut)">Dashboard privat untuk monitor <b>RSVP tamu realtime</b>, share/link WA per tamu, pratinjau undangan per tamu, dan <b>edit info bank</b> — tanpa login. Link ini berisi kunci privat <span style="font-family:ui-monospace,monospace">?k=…</span> sehingga hanya kamu yang bisa membukanya. Alur: <b>Studio → Undangan Master → Undangan Tamu</b>.</div>
+  <div style="margin-top:12px;padding:12px;border-radius:12px;background:#111;color:#fff">
+   <div style="font-size:11px;color:rgba(255,255,255,.6)">Link Master (aktif setelah Publish)</div>
+   <div style="font-size:12px;font-family:ui-monospace,monospace;margin-top:4px;word-break:break-all">${hostBase()}/master.html?slug=${esc(state.slug||'{slug}')}&amp;k=${esc(state.masterKey)}</div>
+   <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="sm-btn" style="background:#fff;color:#000;border:0" onclick="copyTxt('${masterUrl().replace(/'/g,"\\'")}','Link master disalin ✓')">Salin Link Master</button>
+    <button class="sm-btn" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.1);color:#fff" onclick="window.open('${masterUrl().replace(/'/g,"\\'")}','_blank')">Buka Dashboard ↗</button>
+   </div>
+  </div>
+  <div style="margin-top:10px;font-size:10.5px;color:var(--mut);line-height:1.7">ℹ️ Data tamu & kunci dibuat saat <b>Publish</b>. Jika publish ulang, link master tetap sama.</div>
  </div>
  <div class="card"><h4>SEO & Thumbnail WA</h4>
   <label class="f">SEO Title<input value="${esc(displayName())} — ${titleOf()}"></label>
@@ -629,8 +971,8 @@ function tabDomain(){return `<div style="display:grid;gap:16px">
  </div></div>`}
 
 function editor(){
- const tabs=[['info','Info Acara'],['desain','Desain'],['musik','Musik & Galeri'],['tamu','Tamu & QR'],['amplop','Amplop'],['domain','Domain']];
- const body={info:tabInfo,desain:tabDesain,musik:tabMusik,tamu:tabTamu,amplop:tabAmplop,domain:tabDomain}[state.tab]();
+ const tabs=[['info','Info Acara'],['desain','Desain'],['slide','Slide & Animasi'],['musik','Musik & Galeri'],['tamu','Tamu & QR'],['amplop','Amplop'],['domain','Domain']];
+ const body={info:tabInfo,desain:tabDesain,slide:tabSlide,musik:tabMusik,tamu:tabTamu,amplop:tabAmplop,domain:tabDomain}[state.tab]();
  return `<div class="tabbar sb">${tabs.map(([id,l])=>`<button class="tabbtn ${state.tab===id?'on':''}" onclick="set('tab','${id}')">${l}</button>`).join('')}</div>
  <div style="padding:16px">${body}</div>`}
 
@@ -654,12 +996,14 @@ function katalog(){return `<div style="padding:16px;display:grid;gap:16px">
    <div style="font-size:13px;font-weight:600">Daftar Template</div>
    <div style="font-size:11px;color:var(--mut)">Klik Preview untuk lihat di phone kanan • Edit inline harga & promo</div>
   </div>
-  ${state.katalog.map(k=>{const t=TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0];return `<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0">
-   <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:13px">${t.deco.split(' ')[0]||''}</div>
+  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const rows=state.katalog.filter(k=>((TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0]).ev===ev));if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template</div>
+ ${rows.map(k=>{const t=TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0];const hid=state.katalogHide.includes(t.id);return `<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;${hid?'opacity:.55':''}">
+   <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?17:13}px">${t.char||t.deco.split(' ')[0]||''}</div>
    <div style="flex:1;min-width:0">
     <input value="${esc(k.nama)}" oninput="updKat('${k.id}','nama',this.value)" style="width:100%;font-size:12px;font-weight:500;border:0;background:transparent;padding:0">
     <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
      <span style="font-size:10px;border-radius:99px;border:1px solid var(--line);padding:2px 8px;background:var(--soft)">${EV_ICON[t.ev]} ${EV_LABEL[t.ev]}</span>
+     ${hid?'<span style="font-size:9px;color:#b45309;background:#FEF3C7;border-radius:99px;padding:2px 8px;font-weight:600">disembunyikan</span>':''}
      <span style="font-size:10px;color:var(--mut)">${k.terjual} terjual</span>
     </div></div>
    <div style="text-align:right">
@@ -668,8 +1012,9 @@ function katalog(){return `<div style="padding:16px;display:grid;gap:16px">
    </div>
    <label style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px"><input type="checkbox" ${k.promoActive?'checked':''} onchange="updKat('${k.id}','promoActive',this.checked)">Promo</label>
    <input value="${esc(k.badge)}" placeholder="Badge" oninput="updKat('${k.id}','badge',this.value)" style="width:84px;height:28px;border-radius:99px;border:1px solid var(--line);padding:0 8px;font-size:10px">
+   <button class="sm-btn" title="Sembunyikan/tampilkan di pilihan tema (buat demo)" onclick="tglKatHide('${t.id}')">${hid?'🙈':'👁️'}</button>
    <button class="sm-btn dark" onclick="prevKat('${k.id}')">Preview</button>
-  </div>`}).join('')}
+  </div>`}).join('')}`}).join('')}
  </div></div>`}
 
 /* ============ VIEW: ARSIP ============ */
@@ -710,9 +1055,68 @@ function arsip(){
  </div>`}
 
 /* ============ VIEW: PHONE PREVIEW ============ */
+/* ===== 10 SLIDE KONTEN: markup pratinjau ===== */
+function slideItem(it){const m=String(it||'').split(/\s+—\s+|\s+-\s+/);return{a:(m[0]||'').trim(),b:m.slice(1).join(' — ').trim()}}
+function listLines(v){return String(v||'').split('\n').map(x=>x.trim()).filter(Boolean)}
+function hexOk(h){return/^#[0-9a-fA-F]{3,8}$/.test(h)}
+function slideBlocks(){
+ const f=state.form,SL=state.slides,out=[];
+ const card=(inner,extra)=>`<div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${fontFam(state.fontBody)};${extra||''}">${inner}</div>`;
+ const kicker=t=>`<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">${t}</div>`;
+ if(SL.timeline.on){const it=listLines(SL.timeline.items);
+  if(it.length)out.push(card(`${kicker('⏱️ Timeline Acara')}<div style="margin-top:12px">`+it.map((x,i)=>{const s=slideItem(x);return `
+   <div style="display:flex;gap:12px">
+    <div style="display:flex;flex-direction:column;align-items:center">
+     <div style="width:10px;height:10px;border-radius:99px;background:${state.accent};margin-top:4px;flex:none"></div>
+     ${i<it.length-1?`<div style="flex:1;width:2px;background:#e8e2d6;margin:4px 0"></div>`:''}
+    </div>
+    <div style="${i<it.length-1?'padding-bottom:14px':''}"><div style="font-size:12px;font-weight:700;color:#111">${esc(s.a||'Sesi')} ${s.b?`<span style="font-weight:400;color:#737373">• ${esc(s.b)}</span>`:''}</div></div>
+   </div>`}).join('')+'</div>'))}
+ if(SL.story.on&&SL.story.text.trim())out.push(`<div style="margin-top:24px;text-align:center;padding:20px 18px;border-radius:20px;background:linear-gradient(170deg,rgba(255,255,255,.92),rgba(255,255,255,.72));border:1px solid #ddd">
+  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;font-family:${fontFam(state.fontBody)}">💞 Cerita Kami</div>
+  <p style="margin-top:10px;font-size:12.5px;font-style:italic;line-height:1.8;color:#444;font-family:Georgia,serif">${esc(SL.story.text)}</p></div>`);
+ {const q=SL.quote.custom?{text:SL.quote.text,author:SL.quote.author}:(QUOTES[state.event]||QUOTES.pernikahan);
+  if(SL.quote.on&&q.text)out.push(`<div style="margin-top:24px;text-align:center;padding:22px 18px;border-radius:20px;background:rgba(255,255,255,.9);border:1px solid #ddd">
+  <div style="font-size:30px;line-height:.8;color:${state.accent};opacity:.5">❝</div>
+  <div style="margin-top:8px;font-size:13px;font-style:italic;line-height:1.75;color:#333;font-family:Georgia,serif">${esc(q.text)}</div>
+  <div style="margin-top:10px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.55">— ${esc(q.author||'')}</div></div>`)}
+ if(SL.menu.on){const it=listLines(SL.menu.items);
+  if(it.length)out.push(card(`${kicker('🍽️ Menu Acara')}<div style="margin-top:8px">`+it.map(x=>{const s=slideItem(x);return `
+   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed #ece5d8"><div style="font-size:12px;font-weight:700">${esc(s.a||'Menu')}</div><div style="font-size:11px;color:#737373;text-align:right">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
+ if(SL.party.on){const it=listLines(SL.party.items);
+  if(it.length)out.push(card(`${kicker('🎩 Panitia / Bridal Party')}<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">`+it.map(x=>{const s=slideItem(x);return `
+   <div style="display:flex;flex-direction:column;padding:10px 12px;border-radius:14px;background:#faf8f3;border:1px solid #ece5d8;min-width:90px"><div style="font-size:12px;font-weight:700">${esc(s.a||'')}</div><div style="font-size:10px;color:#737373;margin-top:2px">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
+ if(SL.dresscode.on){const cols=String(SL.dresscode.colors||'').split(',').map(c=>c.trim()).filter(hexOk);
+  out.push(`<div style="margin-top:24px;text-align:center;padding:20px 18px;border-radius:20px;background:rgba(255,255,255,.94);border:1px solid #ddd">
+  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">👗 Dress Code</div>
+  <div style="margin-top:8px;font-size:15px;font-weight:700">${esc(SL.dresscode.text||'—')}</div>
+  ${cols.length?`<div style="display:flex;justify-content:center;gap:8px;margin-top:14px">${cols.map(c=>`<div style="width:26px;height:26px;border-radius:99px;background:${c};border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.22)"></div>`).join('')}</div>
+  <div style="margin-top:8px;font-size:9px;font-family:ui-monospace,monospace;color:#a3a3a3">${esc(cols.join('  '))}</div>`:''}</div>`)}
+ if(SL.map.on){const q=f.alamat||f.venue||'';
+  out.push(`<div style="margin-top:24px;border-radius:20px;overflow:hidden;border:1px solid #ddd;background:#fff">
+  <div style="padding:10px 14px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px;border-bottom:1px solid #eee">📍 ${esc(f.venue||'Lokasi Acara')}</div>
+  <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed" style="width:100%;height:150px;border:0;display:block" loading="lazy" title="Peta lokasi"></iframe></div>`)}
+ if(SL.gift.on&&SL.gift.text.trim())out.push(card(`${kicker('🎁 Alamat Kado')}<div style="margin-top:8px;font-size:12px;line-height:1.7;color:#333">${esc(SL.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:10px;font-size:20px">🎀</div>`));
+ if(SL.rsvp.on)out.push(card(`${kicker('✉️ RSVP')}
+  <div style="font-size:11px;color:#737373;margin-top:4px">Mohon konfirmasi kehadirannya melalui WhatsApp.</div>
+  <input id="rvpN" value="" placeholder="Nama Anda" style="margin-top:10px;width:100%;height:40px;border:1px solid #ddd;border-radius:12px;padding:0 12px;font-size:12px;background:#fff">
+  <select id="rvpH" style="margin-top:8px;width:100%;height:40px;border:1px solid #ddd;border-radius:12px;padding:0 10px;font-size:12px;background:#fff">
+   <option>Hadir 🙌</option><option>Hadir, bawa keluarga</option><option>Tidak hadir — maaf 🙏</option></select>
+  <textarea id="rvpM" rows="2" placeholder="Ucapan untuk pasangan..." style="margin-top:8px;width:100%;border:1px solid #ddd;border-radius:12px;padding:8px 12px;font-size:12px;background:#fff;resize:none"></textarea>
+  <button onclick="rsvpWa()" style="margin-top:10px;width:100%;height:42px;border:0;border-radius:99px;background:#25D366;color:#fff;font-size:12px;font-weight:600">Kirim RSVP via WA</button>`));
+ if(SL.closing.on&&SL.closing.text.trim())out.push(`<div style="margin-top:28px;text-align:center;padding:8px 16px">
+  <div style="font-size:14px;letter-spacing:10px;color:${state.accent};opacity:.7">❖ ✦ ❖</div>
+  <p style="margin-top:12px;font-size:12.5px;font-style:italic;line-height:1.8;color:#444;font-family:Georgia,serif">${esc(SL.closing.text)}</p>
+  <div style="margin-top:12px;font-size:11px;font-weight:600;color:${state.accent}">${esc(displayName())}</div></div>`);
+ return out
+}
+
 function phoneHtml(){
  const f=state.form,tp=tplOf(),g=selGuest(),single=state.linkMode==='single';
  const dark=state.darkMode;
+ const play=animTrigger(),AN=state.anim,CV=play&&AN.cover,TX=play&&AN.text,RV=play&&AN.reveal;
+ const CE=fxCoverId(),SC=fxScrollId(),h1d=tp.char?520:350;
+ const WR=(d,html)=>RV?`<div class="fx-s-${SC}" style="animation-delay:${d}ms">${html}</div>`:html;
  let bg='';
  if(!dark){
   if(state.bgType==='polos')bg=`background:${tp.g[0]};color:${tp.ink}`;
@@ -723,6 +1127,13 @@ function phoneHtml(){
  const tF=fontFam(state.fontTitle),bF=fontFam(state.fontBody);
  const nameColor=dark?'#FDE68A':state.accent;
  const dt=new Date(f.tanggalAcara);
+ const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
+ const wordSpan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="a-word" style="animation-delay:${d0+i*80}ms">${esc(w)}</span>`).join(' ');
+ const h1Inner=state.event==='pernikahan'
+  ?(TX
+   ?`${(()=>{const a=(f.namaPria||'')+(f.gelarPria?' '+f.gelarPria:''),b=(f.namaWanita||'')+(f.gelarWanita?' '+f.gelarWanita:'');return `<span style="display:block">${wordSpan(a,h1d)}</span><span class="a-word" style="font-size:18px;font-weight:400;animation-delay:${h1d+nW(a)*80}ms">&</span><span style="display:block">${wordSpan(b,h1d+nW(a)*80+160)}</span>`})()}`
+   :`<span style="display:block">${esc(f.namaPria)} ${f.gelarPria?`<span style="font-size:14px">${esc(f.gelarPria)}</span>`:''}</span><span style="font-size:18px;font-weight:400">&</span><span style="display:block">${esc(f.namaWanita)} ${f.gelarWanita?`<span style="font-size:14px">${esc(f.gelarWanita)}</span>`:''}</span>`)
+  :(TX?`<span style="display:block">${wordSpan(f.namaAnak,h1d)}</span>`:`<span style="display:block">${esc(f.namaAnak)}</span>`);
  return `
  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;width:340px">
   <span class="lbl">Live Preview • ${esc(tp.nama)}</span>
@@ -735,18 +1146,17 @@ function phoneHtml(){
    <div style="width:12px;height:12px;border-radius:99px;background:#ddd"></div>
   </div>
   <div class="notch"></div>
-  <div class="${dark?'emerald-bg':''}" style="flex:1;${dark?'color:#FDE68A':bg};${state.dblBorder?`border:6px double ${state.accent}`:''}">
-   <div style="padding:20px;text-align:center;font-family:${tF};${patStyle}">
-    ${f.showBismillah?`<div style="margin-bottom:12px"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+   <div class="${dark?'emerald-bg':''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg}">
+   <div class="${(CV||TX||RV)?'ap':''}" style="padding:20px;text-align:center;font-family:${tF};${patStyle}">
+   <div style="position:relative;${borderOf().id!=='none'?'padding:18px 12px;margin:0 0 14px;':''}${borderCss()}">${borderCorners()}
+    ${f.showBismillah?`<div class="${CV?'fx-c-'+CE:''}" style="margin-bottom:12px;${CV?'animation-delay:250ms':''}"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
      <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}
-    ${tp.deco?`<div style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px">${tp.deco}</div>`:''}
-    ${state.goldOrn?`<div style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent)"></div>`:''}
-    <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF}">${titleOf()}</div>
-    <h1 style="margin-top:12px;font-size:28px;line-height:.95;font-weight:700;color:${nameColor}">
-    ${state.event==='pernikahan'
-     ?`<span style="display:block">${esc(f.namaPria)} ${f.gelarPria?`<span style="font-size:14px">${esc(f.gelarPria)}</span>`:''}</span><span style="font-size:18px;font-weight:400">&</span><span style="display:block">${esc(f.namaWanita)} ${f.gelarWanita?`<span style="font-size:14px">${esc(f.gelarWanita)}</span>`:''}</span>`
-     :`<span style="display:block">${esc(f.namaAnak)}</span>`}</h1>
-    <div style="margin-top:12px;font-size:11px;line-height:1.7;opacity:.8;font-family:${bF}">
+    ${tp.deco?`<div class="${CV?'a-deco':''}" style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px;${CV?'animation-delay:150ms':''}">${tp.deco}</div>`:''}
+    ${state.goldOrn?`<div class="${CV?'a-deco':''}" style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent);${CV?'animation-delay:250ms':''}"></div>`:''}
+    <div class="${CV?'fx-c-'+CE:''}" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF};${CV?'animation-delay:300ms':''}">${titleOf()}</div>
+    ${tp.char?`<div class="${CV?'fx-c-'+CE:''}" title="Karakter tema" style="font-size:42px;line-height:1.1;margin-top:14px;${CV?'animation-delay:420ms':''}">${tp.char}</div>`:''}
+    <h1 class="${CV&&!TX?'fx-c-'+CE:''}" style="margin-top:${tp.char?6:12}px;font-size:28px;line-height:.95;font-weight:700;color:${nameColor};${CV&&!TX?'animation-delay:'+h1d+'ms':''}">${h1Inner}</h1>
+    <div class="${CV?'fx-c-'+CE:''}" style="margin-top:12px;font-size:11px;line-height:1.7;opacity:.8;font-family:${bF};${CV?'animation-delay:'+(tp.char?980:800)+'ms':''}">
     ${state.event==='pernikahan'?`<div>${esc(f.putraPutri)}</div><div style="margin-top:4px">${esc(f.putriDari)}</div>`
      :`<div>${esc(f.putraDari)} ${f.umurAnak||f.usia?`• ${esc(f.umurAnak||f.usia+' Tahun')}`:''} ${f.temaUltah||f.temaAqiqah?`• ${esc(state.event==='ultah'?f.temaUltah:f.temaAqiqah)}`:''}</div>`}</div>
     ${g?`<div style="margin:20px auto 0;max-width:260px;border-radius:16px;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border:1px solid #ddd;padding:12px;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.05);font-family:${bF}">
@@ -759,14 +1169,15 @@ function phoneHtml(){
      <div style="font-size:14px;font-weight:600;margin-top:4px">Tamu Undangan</div>
      <div style="font-size:10px;margin-top:4px;color:#737373">Mode 1 Link • QR tetap unik per tamu</div></div>`:''}
     ${single?`<div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:10px;padding:6px 12px;border-radius:99px;background:#111;color:#fff"><span class="dot pulse" style="width:6px;height:6px;background:#D4AF37"></span>Mode: 1 Link Untuk Semua • QR Random Panitia</div>`:''}
-    <div style="margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-family:${bF}">
+    ${WR(450,`<div style="margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-family:${bF}">
      <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:18px;font-weight:700">${daysLeft()}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">Hari</div></div>
      <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:18px;font-weight:700">${esc(f.jamAcara)}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">${esc(f.zona)}</div></div>
      <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:14px;font-weight:700;line-height:1.2">${isNaN(dt)?'—':dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short'})}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">${isNaN(dt)?'':dt.getFullYear()}</div></div>
-    </div>
-    ${state.cover?`<img src="${state.cover}" style="margin-top:24px;width:100%;height:200px;object-fit:cover;border-radius:20px;border:1px solid #ddd">`
-     :`<div style="margin-top:24px;height:160px;border-radius:20px;border:1px dashed #ccc;background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:11px;color:#a3a3a3;font-family:${bF}">Foto Utama</div>`}
-    <div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${bF}">
+    </div>`)}
+    ${WR(600,state.cover?`<img src="${state.cover}" style="margin-top:24px;width:100%;height:200px;object-fit:cover;border-radius:20px;border:1px solid #ddd">`
+     :`<div style="margin-top:24px;height:160px;border-radius:20px;border:1px dashed #ccc;background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:11px;color:#a3a3a3;font-family:${bF}">Foto Utama</div>`)}
+   </div>
+   ${WR(750,`<div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${bF}">
      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Waktu & Tempat</div>
      <div style="margin-top:8px;font-size:13px;font-weight:600">${esc(f.venue)}</div>
      <div style="font-size:11px;color:#525252;margin-top:4px;line-height:1.6">${esc(f.alamat)}</div>
@@ -774,39 +1185,40 @@ function phoneHtml(){
       <div style="border-radius:12px;background:#FFFBEB;border:1px solid #FDE68A;padding:8px"><b>Akad</b><div>${esc(f.jamAkad)} ${esc(f.zona)}</div></div>
       <div style="border-radius:12px;background:#f0f9ff;border:1px solid #dbeafe;padding:8px"><b>Resepsi</b><div>${esc(f.jamResepsi)} ${esc(f.zona)}</div></div></div>`:''}
      <div style="margin-top:12px;font-size:11px;line-height:1.7;font-style:italic">"${esc(f.ucapanCustom)}"</div>
-    </div>
-    ${g?`<div style="margin-top:16px;border-radius:20px;background:#fff;border:1px solid #ddd;padding:12px;text-align:left;color:#111;font-family:${bF}">
+    </div>`)}
+    ${slideBlocks().map((b,i)=>WR(900+i*140,b)).join('')}
+    ${g?WR(1500,`<div style="margin-top:16px;border-radius:20px;background:#fff;border:1px solid #ddd;padding:12px;text-align:left;color:#111;font-family:${bF}">
      <div style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px">QR Check-in ${single?'<span style="font-size:9px;padding:2px 8px;border-radius:99px;background:#111;color:#fff">UNIK PER TAMU</span>':''}</div>
      <div style="display:flex;gap:12px;margin-top:8px;align-items:center">
       <img src="${qrData(g)}" style="width:72px;height:72px;border-radius:12px;border:1px solid #ddd;background:#fff;padding:4px">
       <div style="font-size:11px"><div style="font-family:ui-monospace,monospace">${g.code}</div>
       <div style="font-size:10px;color:#737373;margin-top:4px">${single?'Link sama, QR beda — scan panitia':'Tunjukkan saat masuk venue'}</div></div>
-     </div></div>`:''}
-    ${state.gallery.length?`<div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${state.gallery.slice(0,6).map(img=>`<img src="${img}" style="height:72px;width:100%;object-fit:cover;border-radius:12px;border:1px solid #ddd">`).join('')}</div>`:''}
-    <div style="margin-top:24px;display:flex;gap:8px;font-family:${bF}">
+     </div></div>`):''}
+    ${state.gallery.length?WR(1650,`<div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${state.gallery.slice(0,6).map(img=>`<img src="${img}" style="height:72px;width:100%;object-fit:cover;border-radius:12px;border:1px solid #ddd">`).join('')}</div>`):''}
+    ${WR(1800,`<div style="margin-top:24px;display:flex;gap:8px;font-family:${bF}">
      ${f.showMapsBtn?`<a href="${esc(f.mapsLink)}" target="_blank" rel="noopener" style="flex:1;height:44px;border-radius:99px;background:#111;color:#fff;font-size:12px;font-weight:500;display:grid;place-items:center;text-decoration:none">Buka Maps 📍</a>`:''}
      <button style="flex:1;height:44px;border-radius:99px;background:#fff;border:1px solid #ddd;font-size:12px;font-weight:500;color:#111">RSVP Hadir</button>
-    </div>
-    <div style="margin-top:24px;padding:12px;border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;text-align:left;color:#111;font-family:${bF}">
+    </div>`)}
+    ${WR(1950,`<div style="margin-top:24px;padding:12px;border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;text-align:left;color:#111;font-family:${bF}">
      <div style="font-size:11px;font-weight:600">Doa ${state.doa}</div>
      <div style="font-size:11px;margin-top:4px;line-height:1.8;text-align:right;font-family:'Lora',serif">${(DOA[state.doa]||DOA.pernikahan).ar}</div>
      <div style="font-size:10px;margin-top:8px;color:#525252">${(DOA[state.doa]||DOA.pernikahan).latin}</div>
-    </div>
-    ${state.amplop.showAmplop?`<div style="margin-top:24px;border-radius:20px;background:#111;color:#fff;padding:16px;text-align:left;font-family:${bF}">
+    </div>`)}
+    ${state.amplop.showAmplop?WR(2100,`<div style="margin-top:24px;border-radius:20px;background:#111;color:#fff;padding:16px;text-align:left;font-family:${bF}">
      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)">Amplop Digital</div>
      <div style="margin-top:8px;font-size:12px">${esc(state.amplop.bank)} • ${esc(state.amplop.noRek)}</div>
      <div style="font-size:11px;color:rgba(255,255,255,.7)">a.n ${esc(state.amplop.pemilik)} • ${esc(state.amplop.ewallet)} ${esc(state.amplop.noEwallet)}</div>
      ${state.amplop.showCopy?`<button onclick="copyTxt('${esc(state.amplop.noRek)}','No rekening disalin ✓')" style="margin-top:12px;width:100%;height:36px;border-radius:99px;background:#fff;color:#000;font-size:11px;font-weight:500">Copy No Rekening</button>`:''}
-    </div>`:''}
-    <div style="margin:32px 0;font-family:${bF}">
+    </div>`):''}
+    ${WR(2250,`<div style="margin:32px 0;font-family:${bF}">
      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.5">asproject.my.id • Premium Rp75rb</div>
      <div class="gold" style="margin:8px auto 0;width:40px;height:40px;border-radius:99px;display:grid;place-items:center;font-size:12px;font-weight:700;color:#5a4a12">as</div>
-    </div>
+    </div>`)}
    </div>
   </div>
   <button onclick="togglePlay()" style="position:absolute;bottom:88px;right:12px;width:44px;height:44px;border-radius:99px;background:#111;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.3);display:grid;place-items:center;font-size:16px;border:1px solid rgba(255,255,255,.2);z-index:4">${state.playing?'❚❚':'♪'}</button>
   <div style="height:72px;border-top:1px solid var(--line);background:rgba(255,255,255,.9);backdrop-filter:blur(24px);display:flex;align-items:center;gap:8px;padding:0 12px">
-   <a target="_blank" href="https://wa.me/?text=${encodeURIComponent(previewUrl()+' — '+displayName())}" style="flex:1;height:40px;border-radius:99px;background:#25D366;color:#fff;font-size:12px;font-weight:500;display:grid;place-items:center;text-decoration:none">Share WA</a>
+   <a target="_blank" href="${waShareLink()}" style="flex:1;height:40px;border-radius:99px;background:#25D366;color:#fff;font-size:12px;font-weight:500;display:grid;place-items:center;text-decoration:none">Kirim via WA</a>
    <button onclick="copyTxt(previewUrl(),'Link disalin ✓')" style="flex:1;height:40px;border-radius:99px;background:#111;color:#fff;font-size:12px;font-weight:500">Copy Link</button>
   </div>
  </div></div>
@@ -823,8 +1235,30 @@ function render(){
   <main class="mainc sb">${state.page==='editor'?editor():state.page==='katalog'?katalog():arsip()}</main>
   <aside class="prevc sb"><div id="phoneWrap" style="width:100%;max-width:360px;margin:auto">${phoneHtml()}</div></aside>
  </div>`;
- syncAudio()}
-function renderPreview(){const w=$('phoneWrap');if(w)w.innerHTML=phoneHtml()}
+ syncAudio();syncFloat()}
+function renderPreview(){const w=$('phoneWrap');if(w)w.innerHTML=phoneHtml();syncFloat()}
+/* ===== Floating preview — mini HP melayang berisi undangan yang sedang dibuat ===== */
+function syncFloat(){const w=$('floatPrev');if(!w)return;
+ if(!state.floatPrevOn){w.innerHTML=`<button class="fp-pill" onclick="setFloat(true)" title="Tampilkan floating preview">📱 Preview</button>`;return}
+ const src=$('phoneWrap');const ph=src&&src.querySelector?src.querySelector('.phone'):null;
+ const pos=state.floatPos?`style="left:${state.floatPos.x}px;top:${state.floatPos.y}px;right:auto;bottom:auto;"`:'';
+ w.innerHTML=`<div class="fp-box" ${pos}>
+  <div class="fp-head" onpointerdown="fpDragStart(event)"><span>📱 Live Preview</span>
+   <span class="fp-actions">
+    <button title="Buka di panel preview" onclick="floatGo()">⤢</button>
+    <button title="Sembunyikan (tombol kecil tetap ada)" onclick="setFloat(false)">–</button>
+   </span></div>
+  <div class="fp-screen" onclick="floatGo()" title="Klik: lihat di panel preview">${ph?`<div class="fp-scale">${ph.outerHTML.replace('class="ap"','class=""')}</div>`:'<div style="padding:20px;font-size:11px;color:#a3a3a3;text-align:center">Loading…</div>'}</div>
+  <div class="fp-hint">geser judul • klik layar = buka di panel</div>
+ </div>`}
+function setFloat(v){state.floatPrevOn=v;save();syncFloat()}
+function floatGo(){const p=document.querySelector('.prevc');if(!p)return;p.scrollIntoView({behavior:'smooth',block:'nearest'});p.style.boxShadow='0 0 0 3px var(--gold)';setTimeout(()=>{p.style.boxShadow=''},1200)}
+let _fpDrag=null;
+function fpDragStart(e){const box=document.querySelector('#floatPrev .fp-box');if(!box||e.target.tagName==='BUTTON')return;
+ _fpDrag={dx:e.clientX-box.offsetLeft,dy:e.clientY-box.offsetTop,box};
+ const mv=ev=>{if(!_fpDrag)return;_fpDrag.box.style.left=(ev.clientX-_fpDrag.dx)+'px';_fpDrag.box.style.top=(ev.clientY-_fpDrag.dy)+'px';_fpDrag.box.style.right='auto';_fpDrag.box.style.bottom='auto'};
+ const up=()=>{if(_fpDrag){state.floatPos={x:parseInt(_fpDrag.box.style.left)||0,y:parseInt(_fpDrag.box.style.top)||0};save()}window.removeEventListener('pointermove',mv);window.removeEventListener('pointerup',up);_fpDrag=null};
+ window.addEventListener('pointermove',mv);window.addEventListener('pointerup',up);e.preventDefault()}
 render();
 </script>
 </body>

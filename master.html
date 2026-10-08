@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Master Dashboard • AsProject</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fdf8f0;--bg-soft:#f5efe6;--surface:#fff;--sage:#8fa998;--sage-dark:#6b8673;--sage-light:#e8efea;--ink:#2d332e;--ink-light:#6b7a6e;--ink-faint:#9aa8a0;--line:#e9e2d6;--line-soft:#f0e9dc;--gold:#b9975b;--green:#25D366;--red:#d9634e}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;align-items:center}
+#app{width:100%;min-height:100dvh;display:flex;flex-direction:column}
+.frame-wrap{width:100%;display:flex;flex-direction:column;align-items:center}
+.frame{width:100%;max-width:430px;min-height:100dvh;background:var(--bg);position:relative;display:flex;flex-direction:column}
+@media (min-width:700px){
+ body{background:linear-gradient(180deg,#efe9de 0%,#e7ded0 100%);padding:36px 0}
+ .frame{max-width:400px;min-height:0;height:min(860px,calc(100dvh - 72px));border:12px solid #111;border-radius:54px;overflow:hidden;box-shadow:0 40px 90px -30px rgba(45,51,46,.5)}
+ .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:26px;background:#111;border-radius:20px;z-index:60}
+}
+/* header */
+.hdr{position:sticky;top:0;z-index:40;background:rgba(253,248,240,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--line-soft);padding:20px 18px 16px}
+.hdr-top{display:flex;align-items:center;justify-content:space-between}
+.back{font-size:11px;font-weight:700;color:var(--ink-light);letter-spacing:.04em;display:flex;gap:6px;align-items:center}
+.live{display:flex;align-items:center;gap:7px;background:var(--sage-light);border:1px solid #d6e2da;padding:5px 11px;border-radius:99px;font-size:10px;font-weight:700;color:var(--sage-dark)}
+.live i{width:7px;height:7px;border-radius:99px;background:var(--sage-dark);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(107,134,115,.35)}50%{opacity:.75;box-shadow:0 0 0 5px rgba(107,134,115,0)}}
+.hdr-names{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;margin-top:10px;letter-spacing:.01em;line-height:1.15}
+.hdr-sub{font-size:11px;color:var(--ink-light);margin-top:3px;font-weight:500}
+.hdr-sub b{color:var(--sage-dark)}
+/* content */
+.content{flex:1;padding:16px 14px 30px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.card{background:var(--surface);border-radius:22px;padding:18px;border:1px solid var(--line);box-shadow:0 2px 14px rgba(45,51,46,.04)}
+.card-t{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);display:flex;gap:8px;align-items:center}
+.card-s{font-size:11px;color:var(--ink-light);margin-top:4px;line-height:1.6}
+.linkbox{margin-top:12px;background:var(--bg-soft);border:1px dashed #d8cdba;border-radius:14px;padding:12px;font-family:ui-monospace,monospace;font-size:10.5px;word-break:break-all;color:var(--ink-light);display:flex;gap:10px;align-items:center}
+.linkbox span{flex:1;min-width:0}
+/* buttons */
+.btn{border:0;cursor:pointer;font-family:inherit;font-weight:700;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .15s,box-shadow .15s}
+.btn:active{transform:scale(.97)}
+.btn-copy{background:var(--sage);color:#fff;font-size:11px;padding:9px 14px;flex-shrink:0;box-shadow:0 4px 12px rgba(143,169,152,.35)}
+.btn-wa{background:var(--green);color:#fff;font-size:10.5px;padding:8px 12px;flex-shrink:0;box-shadow:0 4px 10px rgba(37,211,102,.3)}
+.btn-ghost{background:#fff;color:var(--ink-light);border:1px solid var(--line);font-size:10.5px;padding:8px 12px;flex-shrink:0}
+.btn-save{background:var(--ink);color:#fff;font-size:12px;padding:13px;width:100%;border-radius:14px;margin-top:12px}
+/* stats */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px}
+.stat{border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;gap:2px;border:1px solid transparent}
+.stat b{font-size:26px;font-weight:800;line-height:1}
+.stat span{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+.stat i{font-style:normal;font-size:9px;font-weight:600;opacity:.8;margin-top:2px}
+.st-total{background:var(--bg-soft);color:var(--ink)}
+.st-rsvp{background:var(--sage-light);color:var(--sage-dark)}
+.st-hadir{background:#e6f4ea;color:#2e7d4f}
+.st-tidak{background:#fbeae7;color:var(--red)}
+/* guest list */
+.gsearch{margin-top:12px;height:40px;border:1px solid var(--line);border-radius:12px;padding:0 13px;font-size:12px;font-family:inherit;background:var(--bg-soft);width:100%}
+.gsearch:focus{outline:2px solid var(--sage);border-color:transparent}
+.chips{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.chip{padding:7px 12px;border-radius:99px;font-size:10.5px;font-weight:700;border:1px solid var(--line);background:#fff;color:var(--ink-light);cursor:pointer;transition:all .2s}
+.chip.on{background:var(--sage);color:#fff;border-color:var(--sage)}
+.glist{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.guest{border-radius:14px;border:1px solid var(--line);background:#fff;padding:12px;cursor:pointer;transition:all .2s}
+.guest.sel{border-color:var(--sage);background:var(--sage-light)}
+.g-top{display:flex;gap:10px;align-items:center}
+.g-av{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--sage),var(--sage-dark));color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0}
+.g-name{flex:1;min-width:0}
+.g-name b{font-size:12.5px;font-weight:700;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-name i{font-style:normal;font-size:10px;color:var(--ink-faint)}
+.badge{font-size:9px;font-weight:800;padding:4px 9px;border-radius:99px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em}
+.b-hadir{background:#e6f4ea;color:#2e7d4f}
+.b-tidak{background:#fbeae7;color:var(--red)}
+.b-belum{background:var(--bg-soft);color:var(--ink-faint)}
+.g-link{margin-top:10px;background:var(--bg-soft);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;font-family:ui-monospace,monospace;font-size:9.5px;color:var(--ink-light);display:flex;gap:8px;align-items:center;word-break:break-all}
+.g-link span{flex:1;min-width:0}
+.g-acts{display:flex;gap:6px;margin-top:8px}
+.empty{text-align:center;padding:26px 10px;color:var(--ink-faint);font-size:11.5px;line-height:1.7}
+/* mini browser */
+.browser{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff;margin-top:12px}
+.b-bar{background:#f0ebe2;padding:8px 12px;display:flex;align-items:center;gap:8px}
+.b-dots{display:flex;gap:5px}
+.b-dots i{width:9px;height:9px;border-radius:99px;background:#d8cdba}
+.b-url{flex:1;background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 11px;font-size:9.5px;font-family:ui-monospace,monospace;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
+.b-url:hover{color:var(--sage-dark);border-color:var(--sage)}
+.b-screen{background:#fbf7ef;padding:22px 16px 24px;min-height:300px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.b-kick{font-size:8.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.b-wed{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-top:8px;line-height:1.15}
+.b-thin{width:44px;height:1px;background:var(--gold);margin:10px auto;opacity:.6}
+.b-yth{font-size:9.5px;color:var(--ink-light);margin-top:6px}
+.b-yth b{display:block;font-size:15px;font-family:'Cormorant Garamond',serif;margin-top:3px;color:var(--ink)}
+.b-date{font-size:10px;color:var(--ink-light);margin-top:10px;font-weight:600}
+.b-venue{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-top:14px}
+.b-vc{border:1px solid var(--line);border-radius:12px;padding:10px 6px;background:#fff}
+.b-vc b{font-size:10.5px;display:block}
+.b-vc i{font-style:normal;font-size:9px;color:var(--ink-faint);margin-top:2px;display:block}
+.b-amp{width:100%;margin-top:12px;border:1px solid #f0e0c8;background:#fffdf8;border-radius:12px;padding:11px 12px;display:flex;gap:10px;align-items:center;text-align:left}
+.b-amp-ic{width:34px;height:34px;border-radius:10px;background:#fdf3e0;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.b-amp b{font-size:11px;display:block}
+.b-amp i{font-style:normal;font-family:ui-monospace,monospace;font-size:10px;color:var(--ink-light);margin-top:2px;display:block}
+.b-amp span{font-size:8.5px;color:var(--gold);font-weight:700;display:block;margin-top:3px;letter-spacing:.04em}
+.b-rsvp{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-top:14px}
+.b-rv{border-radius:99px;padding:10px;font-size:10.5px;font-weight:700;border:1px solid}
+.b-rv.y{background:var(--sage);border-color:var(--sage);color:#fff}
+.b-rv.n{background:#fff;border-color:var(--line);color:var(--ink-light)}
+.b-note{font-size:8.5px;color:var(--ink-faint);margin-top:12px;letter-spacing:.06em}
+/* bank */
+.tgl-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+.tgl-row b{font-size:12px}
+.tgl-row i{font-style:normal;font-size:10px;color:var(--ink-faint);display:block;margin-top:2px}
+.tgl{width:44px;height:24px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;transition:background .3s;flex-shrink:0}
+.tgl i{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:99px;background:#fff;transition:transform .3s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tgl.on{background:var(--sage)}
+.tgl.on i{transform:translateX(20px)}
+.f{margin-top:12px;display:block;font-size:10px;font-weight:700;color:var(--ink-light);text-transform:uppercase;letter-spacing:.08em}
+.f input{margin-top:6px;width:100%;height:42px;border:1px solid var(--line);border-radius:12px;padding:0 13px;font-size:13px;font-family:inherit;background:var(--bg-soft)}
+.f input:focus{outline:2px solid var(--sage);border-color:transparent}
+.f input.dis{opacity:.5;pointer-events:none}
+/* steps */
+.steps{margin-top:14px}
+.step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+.step:last-child{border-bottom:0}
+.s-ic{width:32px;height:32px;border-radius:11px;display:grid;place-items:center;font-size:14px;flex-shrink:0}
+.s-1{background:#eef4ff}.s-2{background:#fff8e6}.s-3{background:#eafaf1}
+.step b{font-size:12px;display:block}
+.step i{font-style:normal;font-size:10.5px;color:var(--ink-light);display:block;margin-top:2px;line-height:1.55}
+.foot{text-align:center;padding:6px 18px 22px;font-size:10px;color:var(--ink-faint);display:flex;flex-direction:column;gap:3px;align-items:center}
+.foot b{font-size:11px;color:var(--ink-light)}
+/* toast */
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,80px);background:var(--ink);color:#fff;font-size:11.5px;font-weight:600;padding:11px 20px;border-radius:99px;z-index:200;opacity:0;transition:all .3s;max-width:88vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25);pointer-events:none}
+#toast.show{transform:translate(-50%,0);opacity:1}
+#toast.err{background:var(--red)}
+#toast.ok{background:var(--sage-dark)}
+/* scrim */
+.scrim{min-height:100dvh;display:grid;place-items:center;padding:30px}
+.scrim .box{text-align:center;max-width:300px}
+.scrim h2{font-family:'Cormorant Garamond',serif;font-size:22px;margin:14px 0 6px}
+.scrim p{font-size:12px;color:var(--ink-light);line-height:1.7}
+.spin{width:34px;height:34px;border-radius:99px;border:3px solid var(--line);border-top-color:var(--sage-dark);animation:sp 1s linear infinite;margin:0 auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+.logo-badge{width:56px;height:56px;border-radius:18px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;margin:0 auto;box-shadow:0 6px 18px rgba(45,51,46,.08);padding:10px}
+.logo-badge img{width:100%;height:100%;object-fit:contain}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="app"><div class="scrim"><div class="box"><div class="logo-badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div><div class="spin" style="margin:20px auto 0"></div><h2>Membuka dashboard…</h2><p>Sedang memuat data undangan, Kak.</p></div></div></div>
+<div id="toast"></div>
+<script>
+'use strict';
+/* =====================================================================
+   AsProject — Undangan Master (dashboard privat pemilik)
+   Alur:  Studio  >  Undangan Master  >  Undangan Tamu
+   Akses: master.html?slug=<slug>&k=<masterKey>  (atau ?demo=1)
+   RLS  : baca invitation_drafts via anon + tabel rsvp (tools/rsvp.sql)
+   ===================================================================== */
+const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
+
+const Q=new URLSearchParams(location.search);
+const SLUG=(Q.get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
+const MK=(Q.get('k')||'').trim();
+const DEMO=Q.get('demo')==='1';
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- toast ---------- */
+let toastT=null;
+function toast(msg,type,ms){const t=$('#toast');t.textContent=msg;t.className='show '+(type||'');clearTimeout(toastT);toastT=setTimeout(()=>{t.className=''},ms||2600)}
+
+/* ---------- state ---------- */
+let DRAFT=null,GS=[],RMAP={},RSROWS=[];
+let filter='all',search='',selGuest=null,bankOn=true,bankName='',bankAcc='',bankHolder='',saving=false;
+
+/* ---------- demo ---------- */
+const DEMO_DRAFT={slug:'demo-master',name1:'Dina',name2:'Bagas',theme:'sage',data:{
+ event:'pernikahan',tpl:'sage-classic',linkMode:'personal',
+ form:{name:'Dina & Bagas',date:'Sabtu, 20 Desember 2025',time:'08:00 — 11:00 WIB'},
+ accent:'#8FA998',fontTitle:'Cormorant Garamond',fontBody:'Inter',border:'thin',
+ amplop:{on:true,name:'Maya Collection',bank:'BCA',acc:'1234567890',holder:'Siti Aisyah'},
+ slides:{cover:{on:true},akad:{on:true},resepsi:{on:true},doa:{on:true},countdown:{on:true},video:{on:true},story:{on:true},mapp:{on:true},gift:{on:true},rsvp:{on:true},closing:{on:true}},
+ guestsRaw:'Pak Andi Wijaya & Keluarga\nBu Rina Marlina\nKak Dina & Family\nTim Kantor Bandung',
+ guestCodes:{},masterKey:'demo-1234'}};
+
+/* ---------- util ---------- */
+function baseLink(){
+ if(DEMO)return location.origin+'(demo)';
+ const h=location.hostname||'asproject.my.id';
+ return location.protocol+'//'+h;
+}
+function guestLink(g){
+ const d=DRAFT.data||{};
+ if((d.linkMode||'personal')==='single')return baseLink()+'/u/'+SLUG;
+ return baseLink()+'/u/'+SLUG+'?to='+encodeURIComponent(g);
+}
+function masterLink(){return baseLink()+'/master.html?slug='+SLUG+'&k='+(DRAFT.data.masterKey||'')}
+function norm(s){return String(s||'').trim().toLowerCase().replace(/\s+/g,' ')}
+function parseGuests(){const raw=(DRAFT.data&&DRAFT.data.guestsRaw)||'';GS=raw.split('\n').map(s=>s.trim()).filter(Boolean);if(!selGuest&&GS.length)selGuest=GS[0]}
+function rsvpOf(g){return RMAP[norm(g)]||null}
+function stats(){let a=0,b=0;RSROWS.forEach(r=>{if(r.status==='hadir')a++;else b++});return{total:GS.length,rs:RSROWS.length,a,b,pct:GS.length?Math.round(RSROWS.length/GS.length*100):0}}
+function headName(){const d=DRAFT.data||{};const f=d.form||{};
+ if(d.event==='pernikahan')return (DRAFT.name1||'')+' & '+(DRAFT.name2||'');
+ return f.name||DRAFT.name1||'Undangan';}
+function evLabel(){const e=(DRAFT.data||{}).event||'';return ({pernikahan:'Pernikahan',khitanan:'Akad Khitanan','ulang-tahun':'Ulang Tahun',aqiqah:'Aqiqah'})[e]||'Undangan'}
+function initials(g){const p=String(g).replace(/^(pak|bu|ibu|bapak|kak|dr|drs|ir)\.?\s+/i,'').trim().split(/\s+/);return ((p[0]||'?')[0]+((p[1]||'')[0]||'')).toUpperCase()}
+
+/* ---------- akses & load ---------- */
+function bad(title,sub){$('#app').innerHTML=`<div class="scrim"><div class="box"><div class="logo-badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div><h2>${esc(title)}</h2><p>${esc(sub)}</p></div></div>`}
+function netFail(){$('#app').innerHTML=`<div class="scrim"><div class="box"><div class="logo-badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div><h2>Connection problem</h2><p>Sedang memeriksa koneksi perangkat Anda.<br>Coba muat ulang, Kak 🙏</p><button class="btn btn-save" style="width:auto;padding:11px 26px;margin-top:16px" onclick="load()">Periksa Koneksi</button></div></div>`}
+
+async function load(){
+ $('#app').innerHTML='<div class="scrim"><div class="box"><div class="logo-badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div><div class="spin" style="margin:20px auto 0"></div><h2>Membuka dashboard…</h2><p>Sedang memuat data undangan, Kak.</p></div></div>';
+ if(DEMO){DRAFT=DEMO_DRAFT;afterLoad();return}
+ if(!SLUG){bad('Undangan tidak ditemukan','Buka lewat link master dari tab Domain di Studio, Kak.');return}
+ try{
+  const r=await fetch(SUPABASE_URL+'/rest/v1/invitation_drafts?slug=eq.'+SLUG,{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}});
+  if(r.status===404){bad('Undangan tidak ditemukan','Slug "'+SLUG+'" belum ada. Publish dulu dari Studio.');return}
+  if(!r.ok)throw new Error('http');
+  const rows=await r.json();
+  if(!rows.length){bad('Undangan tidak ditemukan','Slug "'+SLUG+'" belum ada. Publish dulu dari Studio.');return}
+  DRAFT=rows[0];
+  afterLoad();
+ }catch(e){netFail()}
+}
+function afterLoad(){
+ const d=DRAFT.data||{};
+ if(!DEMO&&MK!==(d.masterKey||'')){bad('Link master tidak valid','Masukkan ulang link master dari Studio (tab Domain), Kak.');return}
+ parseGuests();
+ bankOn=!!(d.amplop&&d.amplop.on);bankName=(d.amplop&&d.amplop.name)||'';bankAcc=(d.amplop&&d.amplop.acc)||'';bankHolder=(d.amplop&&d.amplop.holder)||'';
+ loadRsvp().then(renderAll);
+}
+
+async function loadRsvp(){
+ if(DEMO){RSROWS=[{guest:'Pak Andi Wijaya & Keluarga',status:'hadir'},{guest:'Kak Dina & Family',status:'hadir'},{guest:'Bu Rina Marlina',status:'tidak'}];rebuildMap();return}
+ try{
+  const r=await fetch(SUPABASE_URL+'/rest/v1/rsvp?slug=eq.'+SLUG+'&select=guest,status,updated_at&updated_at=desc',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}});
+  if(!r.ok){RSROWS=[];rebuildMap();return}
+  const rows=await r.json();
+  RSROWS=rows;rebuildMap();
+ }catch(e){RSROWS=[];rebuildMap()}
+}
+function rebuildMap(){RMAP={};RSROWS.forEach(x=>{const k=norm(x.guest);if(k&&!RMAP[k])RMAP[k]=x})}
+
+/* ---------- render ---------- */
+function renderAll(){
+ const d=DRAFT.data||{};const st=stats();
+ const shown=GS.filter(g=>{
+  if(search&&!g.toLowerCase().includes(search.toLowerCase()))return false;
+  const r=rsvpOf(g);
+  if(filter==='hadir')return r&&r.status==='hadir';
+  if(filter==='tidak')return r&&r.status==='tidak';
+  if(filter==='belum')return !r;
+  return true;
+ });
+ const g=selGuest;const rg=g?rsvpOf(g):null;const amp=d.amplop||{};
+ $('#app').innerHTML=`<div class="frame-wrap"><div class="frame"><div class="notch"></div>
+  <header class="hdr">
+   <div class="hdr-top">
+    <span class="back">‹ ${esc(evLabel())} • Master</span>
+    <span class="live"><i></i>Live RSVP • ${st.rs}/${st.total}</span>
+   </div>
+   <div class="hdr-names">${esc(headName())}</div>
+   <div class="hdr-sub"><b>Master Dashboard</b> • Private • Undangan Master</div>
+  </header>
+  <div class="content">
+   <!-- master link -->
+   <div class="card">
+    <div class="card-t">🔑 Master Invitation Link</div>
+    <div class="card-s">Link khusus kamu. Buka di HP/laptop — daftar tamu, RSVP realtime, dan edit data tanpa login.</div>
+    <div class="linkbox"><span>${esc(masterLink())}</span><button class="btn btn-copy" onclick="copyMaster()">Salin</button></div>
+   </div>
+   <!-- link tamu -->
+   <div class="card">
+    <div class="card-t">👥 Link Personal Tamu</div>
+    <div class="card-s">Setiap tamu dapat tautan miliknya sendiri. Sapaan <b>Kepada Yth.</b> otomatis sesuai nama di link.</div>
+    <div class="linkbox"><span>${esc(baseLink())}/u/${esc(SLUG)}${(d.linkMode||'personal')==='single'?'':'?to=NamaTamu'}</span><button class="btn btn-ghost" onclick="copyAll()">Salin Semua</button></div>
+   </div>
+   <!-- stats -->
+   <div class="card stats">
+    <div class="stat st-total"><b>${st.total}</b><span>Total Tamu</span></div>
+    <div class="stat st-rsvp"><b>${st.rs}</b><span>RSVP Terkirim</span><i>${st.pct}% respon</i></div>
+    <div class="stat st-hadir"><b>${st.a}</b><span>Hadir</span></div>
+    <div class="stat st-tidak"><b>${st.b}</b><span>Tidak Hadir</span></div>
+   </div>
+   <!-- guest list -->
+   <div class="card">
+    <div class="card-t">Daftar Tamu & Konfirmasi</div>
+    <input class="gsearch" placeholder="Cari nama tamu…" value="${esc(search)}" oninput="onSearch(this.value)">
+    <div class="chips">
+     ${[['all','Semua'],['hadir','Hadir'],['tidak','Tidak Hadir'],['belum','Belum RSVP']].map(c=>`<span class="chip ${filter===c[0]?'on':''}" onclick="onFilter('${c[0]}')">${c[1]}</span>`).join('')}
+    </div>
+    ${shown.length?`<div class="glist">${shown.map(gm=>{
+      const gi=GS.indexOf(gm);
+      const r=rsvpOf(gm);
+      const badge=r?(r.status==='hadir'?'<span class="badge b-hadir">✓ Hadir</span>':'<span class="badge b-tidak">✕ Tidak Hadir</span>'):'<span class="badge b-belum">Belum</span>';
+      const sub=r?('RSVP '+r.status+(r.updated_at?' • '+String(r.updated_at).slice(0,10):'')):'Belum konfirmasi';
+      return `<div class="guest ${gm===g?'sel':''}" onclick="onSelectIdx(${gi})">
+       <div class="g-top"><span class="g-av">${esc(initials(gm))}</span><span class="g-name"><b>${esc(gm)}</b><i>${esc(sub)}</i></span>${badge}</div>
+       <div class="g-link"><span>${esc(guestLink(gm))}</span><button class="btn btn-ghost" onclick="event.stopPropagation();copyGuestIdx(${gi})">📋 Salin Link</button></div>
+       <div class="g-acts"><button class="btn btn-wa" onclick="event.stopPropagation();shareWaIdx(${gi})">💬 Share via WhatsApp</button><button class="btn btn-ghost" onclick="event.stopPropagation();copyGuestIdx(${gi})">📋 Copy Link</button></div>
+      </div>`}).join('')}</div>`
+     :`<div class="empty">${GS.length?'Tidak ada tamu yang cocok.':'Belum ada tamu.<br>Tambahkan di <b>Studio → tab Tamu & QR</b> lalu publish ulang.'}</div>`}
+   </div>
+   <!-- preview tamu -->
+   ${g?`<div class="card">
+    <div class="card-t">👁️ Preview Undangan <span style="font-weight:600;text-transform:none;letter-spacing:0;color:var(--ink-faint)">— ${esc(g)}</span></div>
+    <div class="browser" style="cursor:pointer">
+     <div class="b-bar"><span class="b-dots"><i></i><i></i><i></i></span><a class="b-url" href="${esc(guestLink(g))}" target="_blank" rel="noopener" title="Buka undangan tamu ini">${esc(guestLink(g))} ↗</a></div>
+     <div class="b-screen">
+      <div class="b-kick">${esc(evLabel())}</div>
+      <div class="b-wed">${esc(headName())}</div>
+      <div class="b-thin"></div>
+      <div class="b-yth">Kepada Yth.<b>${esc(g.replace(/^(pak|bu|ibu|bapak|kak)\.?\s+/i,'').trim())}</b></div>
+      ${(d.form&&d.form.date)?`<div class="b-date">📅 ${esc(d.form.date)}${d.form.time?' • '+esc(d.form.time):''}</div>`:''}
+      ${(d.slides&&d.slides.akad&&d.slides.akad.on)||d.event!=='pernikahan'?`<div class="b-venue">
+        ${(d.slides&&d.slides.akad&&d.slides.akad.on)?`<div class="b-vc"><b>🕌 Akad</b><i>${esc((d.form&&d.form.venueAkad)||'Detail lokasi')}</i></div>`:''}
+        ${(d.slides&&d.slides.resepsi&&d.slides.resepsi.on)?`<div class="b-vc"><b>🎊 Resepsi</b><i>${esc((d.form&&d.form.venueResepsi)||'Detail lokasi')}</i></div>`:(d.event!=='pernikahan')?`<div class="b-vc"><b>🎈 Acara</b><i>${esc((d.form&&d.form.venue)||'Detail lokasi')}</i></div>`:''}
+       </div>`:''}
+      ${bankOn?`<div class="b-amp"><span class="b-amp-ic">💌</span><div><b>Amplop Digital</b><i>${esc(bankName||'Bank')} • ${esc(bankAcc||'—')}</i><span>Atas nama ${esc(bankHolder||'—')}</span></div></div>`:''}
+      <div class="b-rsvp"><span class="b-rv y">Hadir 🙌</span><span class="b-rv n">Tidak Hadir 🙏</span></div>
+      <div class="b-note">INDEPENDENT PREVIEW • TAMU MELIHAT LAMAN PENUH</div>
+     </div>
+    </div>
+   </div>`:''}
+   <!-- edit bank -->
+   <div class="card">
+    <div class="card-t">💳 Edit Info Bank</div>
+    <div class="tgl-row"><div><b>Fitur Amplop Digital Aktif</b><i>Amplop digital tampil di semua undangan tamu</i></div><span class="tgl ${bankOn?'on':''}" onclick="onBankTgl()" id="bankTgl"><i></i></span></div>
+    <label class="f" style="margin-top:14px">Nama Bank / Toko<input id="bankName" value="${esc(bankName)}" placeholder="BCA / Maya Collection" ${bankOn?'':'class="dis"'}>
+    <label class="f">No. Rekening / Kode<input id="bankAcc" value="${esc(bankAcc)}" placeholder="1234567890" ${bankOn?'':'class="dis"'}>
+    <label class="f">Atas Nama<input id="bankHolder" value="${esc(bankHolder)}" placeholder="Siti Aisyah" ${bankOn?'':'class="dis"'}>
+    <div class="card-s" style="margin-top:10px;font-style:italic">✦ Perubahan tampil di semua link tamu secara <b>realtime</b> setelah disimpan.</div>
+    <button class="btn btn-save" id="bankSave" onclick="saveBank()">${saving?'Menyimpan…':'💾 Simpan Perubahan Bank'}</button>
+   </div>
+   <!-- alur -->
+   <div class="card">
+    <div class="card-t">Alur Penggunaan</div>
+    <div class="steps">
+     <div class="step"><span class="s-ic s-1">🎨</span><div><b>Studio</b><i>Buat & desain undangan, atur tamu, lalu publish.</i></div></div>
+     <div class="step"><span class="s-ic s-2">🔑</span><div><b>Undangan Master</b><i>Buka dashboard privat ini untuk monitor RSVP & edit data.</i></div></div>
+     <div class="step"><span class="s-ic s-3">💌</span><div><b>Undangan Tamu</b><i>Setiap tamu menerima link personal miliknya sendiri.</i></div></div>
+    </div>
+   </div>
+  </div>
+  <footer class="foot"><span>Undangan Master • Private • ${esc(SLUG||'demo')}</span><b>AsProject</b></footer>
+ </div></div>`;
+}
+
+/* ---------- interaksi ---------- */
+function onSearch(v){search=v;renderAll();const el=document.querySelector('.gsearch');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
+function onFilter(f){filter=f;renderAll()}
+/* aksi per tamu lewat INDEX (bukan nama) → aman untuk nama dengan karakter khusus */
+function onSelectIdx(i){const gm=GS[i];if(gm){selGuest=gm;renderAll()}}
+function copyGuestIdx(i){const gm=GS[i];if(gm)copyGuest(gm)}
+function shareWaIdx(i){const gm=GS[i];if(gm)shareWa(gm)}
+function onBankTgl(){bankOn=!bankOn;const t=$('#bankTgl');if(t)t.classList.toggle('on',bankOn);
+ ['bankName','bankAcc','bankHolder'].forEach(id=>{const el=document.getElementById(id);if(el)el.className=bankOn?'':'dis'});
+ renderAll()}
+function copyMaster(){copyText(masterLink(),'Link master tersalin ✓','ok')}
+function copyAll(){copyText(GS.map(x=>x+': '+guestLink(x)).join('\n'),'Semua link tamu tersalin ✓','ok')}
+function copyGuest(g){copyText(guestLink(g),'Link '+g+' tersalin ✓','ok')}
+function copyText(t,msg,type){
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast(msg,type),()=>fallbackCopy(t,msg,type))}
+ else fallbackCopy(t,msg,type);
+}
+function fallbackCopy(t,msg,type){const i=document.createElement('textarea');i.value=t;document.body.appendChild(i);i.select();try{document.execCommand('copy')}catch(e){}i.remove();toast(msg,type)}
+function shareWa(g){
+ const d=DRAFT.data||{};const f=d.form||{};
+ const nm=(f.name)||headName();
+ const msg='Halo '+g+' 👋\n\nKamu kami undang untuk menghadiri acara '+evLabel().toLowerCase()+' '+nm+'.\n\nBuka undangannya di sini:\n'+guestLink(g)+'\n\nTerima kasih banyak 🙏';
+ window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+async function saveBank(){
+ saving=true;const b=$('#bankSave');if(b)b.textContent='Menyimpan…';
+ bankName=document.getElementById('bankName')?document.getElementById('bankName').value.trim():bankName;
+ bankAcc=document.getElementById('bankAcc')?document.getElementById('bankAcc').value.trim():bankAcc;
+ bankHolder=document.getElementById('bankHolder')?document.getElementById('bankHolder').value.trim():bankHolder;
+ const d=JSON.parse(JSON.stringify(DRAFT.data||{}));
+ d.amplop={on:bankOn,name:bankName,bank:bankName,acc:bankAcc,holder:bankHolder};
+ if(DEMO){saving=false;renderAll();toast('Demo — perubahan hanya di pratinjau','');return}
+ try{
+  const r=await fetch(SUPABASE_URL+'/rest/v1/invitation_drafts?slug=eq.'+SLUG,{
+   method:'PATCH',
+   headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+   body:JSON.stringify({data:d})});
+  if(!r.ok)throw new Error('http');
+  DRAFT.data=d;
+  toast('✓ Info bank tersimpan — tampil di semua link tamu','ok');
+ }catch(e){
+  DRAFT.data=d;
+  toast('Tersimpan di pratinjau ini. Database menolak (RLS) — tampilkan di Studio lalu publish ulang','err',5200);
+ }
+ saving=false;renderAll();
+}
+
+/* ---------- mulai ---------- */
+load();
+</script>
+</body>
+</html>

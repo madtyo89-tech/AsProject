@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Undangan — AsProject</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Undangan Digital Premium">
+<meta property="og:description" content="Undangan digital dari AsProject">
+<link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g0:#F0F9FF; --g1:#BAE6FD; --g2:#7DD3FC;
+  --accent:#0EA5E9; --ink:#0c4a6e; --gold:#D4AF37;
+  --cream:#FAF6F1; --card:#fff;
+  --ft:"Cormorant Garamond",serif; --fb:"Inter",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--cream);color:#2b2b2b;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+button{font-family:inherit;cursor:pointer}
+
+/* ---------- LAYER SAMAR (loading / error) ---------- */
+.scrim{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--cream)}
+.scrim .box{max-width:420px;width:100%;background:var(--card);border:1px solid #eee2d0;border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 30px 60px rgba(90,70,30,.12)}
+.scrim h2{font-family:var(--ft);font-size:26px;font-weight:600;color:var(--ink);margin:14px 0 8px}
+.scrim p{font-size:13px;line-height:1.7;color:#6b6157}
+.spin{width:44px;height:44px;margin:0 auto;border-radius:50%;border:3px solid #f0e6d6;border-top-color:var(--gold);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.btn-gold{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;height:46px;padding:0 26px;border:0;border-radius:99px;background:linear-gradient(135deg,#e8c96a,var(--gold));color:#3a2f0b;font-size:14px;font-weight:600;box-shadow:0 10px 24px rgba(212,175,55,.35)}
+.btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:46px;padding:0 22px;border:1px solid #e5d9c4;border-radius:99px;background:transparent;color:#6b6157;font-size:13px;font-weight:500;text-decoration:none}
+.logo-badge{width:52px;height:52px;margin:0 auto;border-radius:16px;background:#0a0a0a;display:grid;place-items:center}
+.logo-badge img{width:38px;height:38px}
+
+/* ---------- COVER ---------- */
+#cover{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 26px;
+  background:linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));
+  transition:opacity .7s ease,visibility .7s;}
+#cover .pat{position:absolute;inset:0;pointer-events:none;opacity:.5}
+#cover .veil{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(255,255,255,.25)}
+#cover .inner{position:relative;max-width:400px;width:100%}
+#cover .bdfr{position:relative;width:100%;max-width:440px;padding:30px 18px}
+#cover .bdc{position:absolute;width:22px;height:22px;pointer-events:none;z-index:2;display:block}
+#cover .orn{font-size:20px;letter-spacing:14px;color:var(--accent);opacity:.85}
+#cover .kicker{margin-top:26px;font-size:11px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--ink);opacity:.85}
+#cover .chara{font-size:52px;line-height:1;margin-top:18px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.15))}
+#cover h1{font-family:var(--ft);font-weight:700;color:var(--ink);font-size:clamp(40px,11vw,58px);line-height:1.04;margin-top:14px}
+#cover .amp{font-family:var(--ft);font-style:italic;font-size:24px;color:var(--accent);margin:6px 0}
+#cover .date{margin-top:22px;display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border:1px solid rgba(255,255,255,.55);border-radius:99px;background:rgba(255,255,255,.35);backdrop-filter:blur(6px);font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--ink)}
+#cover .host{margin-top:14px;font-size:12px;color:var(--ink);opacity:.75;letter-spacing:.06em}
+#cover .open{position:relative;margin-top:44px;display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 34px;border:0;border-radius:99px;background:var(--ink);color:#fff;font-size:14px;font-weight:600;letter-spacing:.04em;box-shadow:0 18px 40px rgba(0,0,0,.22);animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+#cover .open .env{font-size:18px}
+#cover .brand{position:absolute;bottom:22px;left:0;right:0;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);opacity:.55}
+body.opened #cover{opacity:0;visibility:hidden}
+
+/* ---------- CONTENT ---------- */
+#content{opacity:0;transition:opacity .8s ease .15s}
+body.opened #content{opacity:1}
+.wrap{max-width:470px;margin:0 auto;padding:34px 20px 90px;background:
+  radial-gradient(rgba(212,175,55,.06) 1.5px,transparent 1.8px);background-size:26px 26px;}
+.card{background:var(--card);border:1px solid #f0e6d6;border-radius:22px;padding:28px 22px;text-align:center;box-shadow:0 16px 40px rgba(90,70,30,.07);margin-bottom:18px}
+.kicker{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);opacity:.9}
+.divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:16px 0;color:var(--gold)}
+.divider::before,.divider::after{content:"";height:1px;width:56px;background:linear-gradient(90deg,transparent,#e2cf9f)}
+.divider::after{background:linear-gradient(90deg,#e2cf9f,transparent)}
+h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink);line-height:1.15}
+.muted{font-size:12.5px;line-height:1.75;color:#7a7065}
+.name-big{font-family:var(--ft);font-size:34px;font-weight:700;color:var(--ink);line-height:1.12;margin-top:10px}
+.role{margin-top:10px;font-size:12px;line-height:1.7;color:#7a7065}
+.role b{color:var(--ink);font-weight:600}
+
+/* doa */
+.doa-ar{font-size:26px;line-height:2.1;color:var(--ink);direction:rtl;margin-top:16px}
+.doa-la{margin-top:10px;font-size:13px;font-style:italic;color:#8a7f72}
+.doa-arti{margin-top:10px;font-size:12px;color:#9a8f82}
+
+/* acara */
+.acara-grid{display:grid;gap:14px;margin-top:18px;text-align:left}
+.acara{border:1px solid #f0e6d6;border-radius:18px;padding:18px 16px;background:linear-gradient(170deg,#fffdf9,#fbf6ee)}
+.acara .lbl{font-size:10px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--accent)}
+.acara .tgl{font-family:var(--ft);font-size:24px;font-weight:700;color:var(--ink);margin-top:8px}
+.acara .jam{margin-top:4px;font-size:13px;font-weight:600;color:#6b6157}
+.acara .vt{margin-top:10px;font-size:12.5px;line-height:1.6;color:#7a7065}
+.acara .vt b{color:var(--ink)}
+.mapbtn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;height:38px;padding:0 16px;border-radius:99px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;text-decoration:none}
+
+/* countdown */
+.cdw{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
+.cdw .u{background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d6;border-radius:14px;padding:12px 4px}
+.cdw .n{font-family:var(--ft);font-size:26px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.cdw .l{margin-top:2px;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9a8f82}
+
+/* galeri */
+.gal{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.gal img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:14px;border:1px solid #f0e6d6}
+.gal img:first-child{grid-column:1/-1;aspect-ratio:4/3}
+
+/* amplop */
+.amp-card{margin-top:18px;text-align:left}
+.amp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid #f0e6d6;border-radius:14px;margin-top:10px;background:#fffdf9}
+.amp-row .nm{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.amp-row .no{margin-top:2px;font-family:ui-monospace,monospace;font-size:14px;font-weight:600;color:var(--ink);word-break:break-all}
+.amp-row .ow{font-size:11px;color:#8a7f72;margin-top:1px}
+.copy{flex:none;height:34px;padding:0 14px;border:1px solid #e2cf9f;border-radius:99px;background:#fff8e6;color:#8a6d0f;font-size:11px;font-weight:700}
+
+/* tamu */
+.guest{margin-top:6px}
+.guest .to{font-family:var(--ft);font-size:26px;font-weight:700;color:var(--ink);line-height:1.2;margin-top:8px}
+.guest .ya{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#9a8f82;font-weight:700}
+
+/* musik */
+#musikBtn{position:fixed;left:14px;bottom:16px;z-index:120;display:none;align-items:center;gap:8px;height:42px;padding:0 16px;border:0;border-radius:99px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(90,70,30,.18);color:var(--ink);font-size:11px;font-weight:600;max-width:220px}
+#musikBtn .disc{width:18px;height:18px;flex:none;border-radius:50%;background:conic-gradient(var(--gold),#f6e2a5,var(--gold));animation:sp 3s linear infinite;display:grid;place-items:center}
+#musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
+#musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- ANIMASI ---------- */
+@keyframes uUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes uZoom{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes uWord{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes uDeco{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:scaleX(1)}}
+@keyframes uPop{0%{opacity:0;transform:scale(.5)}60%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+.cov .anim-up{animation:uUp .8s cubic-bezier(.22,.8,.36,1) both}
+.cov .anim-zoom{animation:uZoom .9s cubic-bezier(.22,.8,.36,1) both}
+.cov .anim-word{display:inline-block;animation:uWord .7s cubic-bezier(.22,.8,.36,1) both}
+.cov .anim-deco{transform-origin:center;animation:uDeco .9s cubic-bezier(.22,.8,.36,1) both}
+.cov .anim-pop{animation:uPop .7s cubic-bezier(.22,.8,.36,1) both}
+/* 10 efek animasi cover (pilihan state.anim.effect) */
+@keyframes uFade{from{opacity:0}to{opacity:1}}
+@keyframes uRise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes uDrop{from{opacity:0;transform:translateY(-28px)}to{opacity:1;transform:none}}
+@keyframes uBlurIn{from{opacity:0;filter:blur(12px)}to{opacity:1;filter:blur(0)}}
+@keyframes uFlip{from{opacity:0;transform:perspective(800px) rotateX(24deg) translateY(20px)}to{opacity:1;transform:none}}
+@keyframes uSlideIn{from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:none}}
+@keyframes uSwing{from{opacity:0;transform:rotate(-7deg) translateY(-16px)}to{opacity:1;transform:none}}
+@keyframes uElastic{0%{opacity:0;transform:scale(.4)}55%{opacity:1;transform:scale(1.12)}75%{transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
+.cov .fx-c-fade{animation:uFade .9s ease both}
+.cov .fx-c-zoom{animation:uZoom .9s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-rise{animation:uRise .8s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-drop{animation:uDrop .8s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-blur{animation:uBlurIn .9s ease both}
+.cov .fx-c-pop{animation:uPop .7s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-flip{animation:uFlip .85s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-slide{animation:uSlideIn .8s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-swing{animation:uSwing .8s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-elastic{animation:uElastic .9s cubic-bezier(.22,.8,.36,1) both}
+/* scroll reveal + 10 efek (pilihan state.anim.scroll) */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.8,.36,1),filter .8s ease}
+.rv.in{opacity:1;transform:none;filter:none}
+.rv.fx-s-fade-up{transform:translateY(28px)}
+.rv.fx-s-fade-down{transform:translateY(-28px)}
+.rv.fx-s-slide-left{transform:translateX(48px)}
+.rv.fx-s-slide-right{transform:translateX(-48px)}
+.rv.fx-s-zoom-in{transform:scale(.85)}
+.rv.fx-s-zoom-out{transform:scale(1.18)}
+.rv.fx-s-rotate{transform:rotate(-4deg) translateY(20px)}
+.rv.fx-s-blur{transform:translateY(14px);filter:blur(8px)}
+.rv.fx-s-pop{transform:scale(.55)}
+.rv.fx-s-flip{transform:perspective(700px) rotateX(16deg) translateY(20px)}
+@media (prefers-reduced-motion:reduce){
+ .cov .anim-up,.cov .anim-zoom,.cov .anim-word,.cov .anim-deco,.cov .anim-pop{animation:none}
+ .rv{opacity:1;transform:none;transition:none}
+ #cover .open{animation:none}
+}
+
+/* footer */
+.footer{margin-top:34px;text-align:center}
+.footer .orn{font-size:15px;letter-spacing:10px;color:var(--gold)}
+.footer p{margin-top:10px;font-size:11px;line-height:1.7;color:#9a8f82}
+.footer a{color:var(--accent);font-weight:600;text-decoration:none}
+.couple{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-top:18px}
+.couple .heart{font-size:20px;color:var(--gold)}
+.couple .c{background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d6;border-radius:18px;padding:18px 10px}
+.couple .c .nm{font-family:var(--ft);font-size:22px;font-weight:700;color:var(--ink);line-height:1.15}
+.couple .c .rl{margin-top:8px;font-size:10.5px;line-height:1.6;color:#8a7f72}
+@media (max-width:380px){.couple .c .nm{font-size:18px}}
+</style>
+</head>
+<body>
+<audio id="musik" loop preload="none"></audio>
+<button id="musikBtn" aria-label="Putar/jeda musik"><span class="disc"></span><span class="t" id="musikNama">Musik</span></button>
+<div id="app"></div>
+
+<script>
+/* =====================================================================
+   undangan.html — renderer undangan live AsProject
+   Dibuka lewat:
+     • https://asproject.my.id/u/{slug}            (dirute oleh 404.html)
+     • https://asproject.my.id/undangan.html?slug={slug}
+     • https://{slug}.asproject.my.id/             (subdomain wildcard)
+   Data dari Supabase: tabel invitation_drafts (kolom dasar + snapshot jsonb "data").
+   CATATAN: urutan TPL di bawah WAJIB sama dengan array TPL di studio.html
+   (kolom "theme" adalah index ke array ini).
+   ===================================================================== */
+const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
+
+const TPL=[
+ {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant'},
+ {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',deco:'🌿',pat:'',ft:'inter'},
+ {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',deco:'✨ ◆ ✨',pat:'',ft:'playfair'},
+ {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant'},
+ {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',deco:'❄ ✦ ❄',pat:'',ft:'playfair'},
+ {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',deco:'❄',pat:'',ft:'inter'},
+ {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',deco:'🌊 ✦ 🌊',pat:'',ft:'playfair'},
+ {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',deco:'⭐ 🕌 ⭐',pat:'',ft:'poppins'},
+ {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#2e4228',deco:'☪ ✦ ☪',pat:'arab',ft:'lora'},
+ {id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins'},
+ {id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',deco:'💖 ✨ 💖',pat:'',ft:'playfair'},
+ {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#3a3835',deco:'◆',pat:'',ft:'inter'},
+ {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',deco:'🍼 ☁️ 🍼',pat:'',ft:'poppins'},
+ {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',deco:'🎀 🍼 🎀',pat:'',ft:'playfair'},
+ {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#4e452e',deco:'☪ ❖ ☪',pat:'arab',ft:'lora'},
+ /* 20 tema baru — urutan & id HARUS identik dengan TPL di studio.html */
+ {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',char:'👑',deco:'✦ ❖ ✦',pat:'',ft:'playfair'},
+ {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',char:'🦌',deco:'🌲 ❖ 🌲',pat:'',ft:'ebgaramond'},
+ {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',char:'🎩',deco:'◆ ✦ ◆',pat:'',ft:'bebas'},
+ {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',char:'🌿',deco:'— ✦ —',pat:'',ft:'oswald'},
+ {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',char:'🎖️',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond'},
+ {id:'dino-adventure',nama:'Petualang Dino',ev:'khitanan',g:['#DFF3E4','#B8E3C0','#8FD3A0'],accent:'#2E7D4F',ink:'#1E4A2E',char:'🦖',deco:'🦖 ⭐ 🦖',pat:'',ft:'bebas'},
+ {id:'football-champ',nama:'Juara Sepak Bola',ev:'khitanan',g:['#E3F6E9','#BCEBCF','#8FD8AE'],accent:'#1F6E43',ink:'#163F28',char:'⚽',deco:'⚽ ✦ ⚽',pat:'',ft:'oswald'},
+ {id:'space-explorer',nama:'Petualang Antariksa',ev:'khitanan',g:['#1A2450','#28356B','#3A4A8C'],accent:'#F0C75E',ink:'#E8ECFF',char:'🚀',deco:'🚀 ✦ 🚀',pat:'',ft:'bebas'},
+ {id:'robot-tech',nama:'Robot Cerdas',ev:'khitanan',g:['#E5F1F5','#C4DEE8','#9CC4D4'],accent:'#33658A',ink:'#243B4D',char:'🤖',deco:'🤖 ✦ 🤖',pat:'',ft:'oswald'},
+ {id:'knight-quest',nama:'Pangeran Knight',ev:'khitanan',g:['#3D2B52','#533B6B','#6C4E88'],accent:'#E0B84C',ink:'#F0E9F7',char:'🛡️',deco:'⚔ ✦ ⚔',pat:'',ft:'ebgaramond'},
+ {id:'superhero-power',nama:'Super Hero',ev:'ultah',g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',char:'🦸',deco:'🦸 ⚡ 🦸',pat:'confetti',ft:'bebas'},
+ {id:'race-car',nama:'Balap Mobil',ev:'ultah',g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',char:'🏎️',deco:'🏁 ✦ 🏁',pat:'',ft:'oswald'},
+ {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',char:'🏴‍☠️',deco:'⚓ ✦ ⚓',pat:'',ft:'bebas'},
+ {id:'dragon-fire',nama:'Naga Api',ev:'ultah',g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',char:'🐉',deco:'🐉 ✦ 🐉',pat:'',ft:'bebas'},
+ {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',char:'🥷',deco:'🥷 ✦ 🥷',pat:'',ft:'oswald'},
+ {id:'baby-prince',nama:'Pangeran Cilik',ev:'aqiqah',g:['#E7F0FB','#C9DCF5','#A5C4EC'],accent:'#3E6BA8',ink:'#234066',char:'🤴',deco:'🤴 ✦ 🤴',pat:'',ft:'poppins'},
+ {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',char:'🦕',deco:'🦕 ✦ 🦕',pat:'',ft:'poppins'},
+ {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',char:'🧑‍🚀',deco:'🧑‍🚀 ✦ 🧑‍🚀',pat:'',ft:'oswald'},
+ {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',char:'🐯',deco:'🐯 ✦ 🐯',pat:'',ft:'bebas'},
+ {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',char:'👸',deco:'👸 ✨ 👸',pat:'',ft:'dancing'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',char:'🦄',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',char:'🌸',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing'}];
+
+const FONTS=[
+ {id:'cormorant',fam:'"Cormorant Garamond",serif'},
+ {id:'playfair',fam:'"Playfair Display",serif'},
+ {id:'poppins',fam:'"Poppins",sans-serif'},
+ {id:'inter',fam:'"Inter",sans-serif'},
+ {id:'lora',fam:'"Lora",serif'},
+ {id:'montserrat',fam:'"Montserrat",sans-serif'},
+ {id:'bebas',fam:'"Bebas Neue",sans-serif'},
+ {id:'oswald',fam:'"Oswald",sans-serif'},
+ {id:'ebgaramond',fam:'"EB Garamond",serif'},
+ {id:'merriweather',fam:'"Merriweather",serif'},
+ {id:'work-sans',fam:'"Work Sans",sans-serif'},
+ {id:'pacifico',fam:'"Pacifico",cursive'},
+ {id:'dancing',fam:'"Dancing Script",cursive'},
+ {id:'caveat',fam:'"Caveat",cursive'},
+ {id:'sacramento',fam:'"Sacramento",cursive'}];
+
+const BORDERS=[
+ {id:'none',n:'Tanpa Border'},
+ {id:'thin',n:'Garis Halus',s:A=>`border:1px solid ${A}`},
+ {id:'solid',n:'Garis Teguh',s:A=>`border:4px solid ${A}`},
+ {id:'double',n:'Ganda Klasik',s:A=>`border:6px double ${A}`},
+ {id:'dashed',n:'Putih Putus',s:A=>`border:3px dashed ${A}`},
+ {id:'dotted',n:'Titik-titik',s:A=>`border:3px dotted ${A}`},
+ {id:'ridge',n:'Ridged',s:A=>`border:7px ridge ${A}`},
+ {id:'groove',n:'Gravir',s:A=>`border:7px groove ${A}`},
+ {id:'inset',n:'Cekung',s:A=>`border:7px inset ${A}`},
+ {id:'outset',n:'Cembung',s:A=>`border:7px outset ${A}`},
+ {id:'topbot',n:'Atas & Bawah',s:A=>`border-top:3px solid ${A};border-bottom:3px solid ${A}`},
+ {id:'topline',n:'Serat Atas',s:A=>`border-top:6px solid ${A}`},
+ {id:'frame',n:'Bingkai Dalam',s:A=>`box-shadow:inset 0 0 0 2px ${A}`},
+ {id:'frame2',n:'Bingkai Rangkap',s:A=>`box-shadow:inset 0 0 0 2px ${A},inset 0 0 0 6px ${A}33`},
+ {id:'gap',n:'Bingkai Jarak',s:A=>`outline:2px solid ${A};outline-offset:-12px`},
+ {id:'gapdash',n:'Bingkai Putus',s:A=>`outline:3px dashed ${A};outline-offset:-12px`},
+ {id:'halo',n:'Halo Lembut',s:A=>`box-shadow:inset 0 0 0 1px ${A}55,inset 0 0 26px ${A}22`},
+ {id:'corners',n:'Sudut Elegan',corner:3},
+ {id:'cornersthin',n:'Sudut Halus',corner:1,extra:A=>`border:1px solid ${A}33`},
+ {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`}];
+
+const DOA={
+ pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu, memberi keberkahan atasmu, dan mempertemukan kalian berdua dalam kebaikan.'},
+ khitanan:{ar:'اللَّهُمَّ اجْعَلْهُ مِنَ الصَّالِحِيْنَ',latin:'Allahummaj\u2019alhu minash shalihin',arti:'Ya Allah, jadikanlah ia termasuk anak-anak yang shalih.'},
+ ultah:{ar:'اللَّهُمَّ طَوِّلْ عُمْرَهُ وَصَحِّحْ جَسَدَهُ',latin:'Allahumma thawwil \u2018umrahu wa shahhih jasadahu',arti:'Ya Allah, panjangkanlah umurnya dan sehatkanlah tubuhnya.'},
+ aqiqah:{ar:'أُعِيْذُكَ بِكَلِمَاتِ اللهِ التَّامَّةِ',latin:'U\u2019idzuka bikalimatillahit tammah',arti:'Aku memohonkan perlindungan bagimu dengan kalimat-kalimat Allah yang sempurna.'}};
+
+const EV_KICKER={pernikahan:'The Wedding Of',khitanan:'Tasyakuran Khitanan',ultah:'Sweet Birthday Party',aqiqah:'Tasyakuran Aqiqah'};
+const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ulang Tahun',aqiqah:'Aqiqah'};
+/* Quote bawaan per acara — HARUS sama dengan QUOTES di studio.html */
+const QUOTES={
+ pernikahan:{text:'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya.',author:'QS. Ar-Rum: 21'},
+ khitanan:{text:'Sebaik-baik kalian adalah orang yang paling baik kepada keluarganya.',author:'HR. Ahmad'},
+ ultah:{text:'Semoga tahun yang baru ini membawa kebahagiaan yang lebih besar dari sebelumnya.',author:'Ucapan Terbaik'},
+ aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
+/* 10 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan studio.html */
+const FX_SCROLL=[
+ ['fade-up','Fade Up'],['fade-down','Fade Down'],['slide-left','Slide Kiri'],['slide-right','Slide Kanan'],
+ ['zoom-in','Zoom In'],['zoom-out','Zoom Out'],['rotate','Rotate'],['blur','Blur'],['pop','Pop'],['flip','Flip 3D']];
+const FX_COVER=[
+ ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
+ ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic']];
+function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
+function fxCoverId(AN){const v=AN&&AN.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
+
+/* ---------- util ---------- */
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
+function patCss(t){
+ if(t.pat==='batik')return `background-image:radial-gradient(${t.accent}26 1.5px,transparent 1.8px),radial-gradient(${t.accent}1c 1px,transparent 1.3px);background-size:26px 26px,13px 13px;background-position:0 0,13px 13px;`;
+ if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}14 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0f 0 2px,transparent 2px 16px);`;
+ if(t.pat==='confetti')return `background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
+ return ''}
+const BULAN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+function parseDate(s){if(!s)return null;const m=String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);if(!m)return null;return new Date(+m[1],+m[2]-1,+m[3])}
+function fmtDate(s){const d=parseDate(s);if(!d)return String(s||'');return `${HARI[d.getDay()]}, ${d.getDate()} ${BULAN[d.getMonth()]} ${d.getFullYear()}`}
+function fmtDateShort(s){const d=parseDate(s);if(!d)return String(s||'');return `${String(d.getDate()).padStart(2,'0')} . ${String(d.getMonth()+1).padStart(2,'0')} . ${d.getFullYear()}`}
+function targetTime(draft,form){const ds=(form&&form.tanggalAcara)||draft.event_date;if(!ds)return null;const t=((form&&form.jamAcara)||draft.event_time||'').slice(0,5);const d=parseDate(ds);if(!d)return null;if(t){const p=t.split(':');d.setHours(+p[0]||0,+p[1]||0,0,0)}return d}
+
+/* ---------- parameter ---------- */
+const Q=new URLSearchParams(location.search);
+const GUEST=(Q.get('to')||'').trim();
+const DEMO=Q.get('demo')==='1';
+let SLUG=(Q.get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
+if(!SLUG){const h=location.hostname.toLowerCase();
+ if(h.slice(-16)==='.asproject.my.id'&&h.length>16)SLUG=h.split('.')[0]}
+
+/* ---------- tampilan scrim ---------- */
+function scrim(html){$('app').innerHTML=`<div class="scrim"><div class="box">${html}</div></div>`}
+function loading(){scrim(`<div class="logo-badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div><div class="spin" style="margin-top:20px"></div><h2>Membuka undangan…</h2><p>Sedang memuat detail acara, Kak. Mohon tunggu sebentar.</p>`)}
+function notFound(){scrim(`<div class="logo-badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div><h2>Undangan tidak ditemukan</h2>
+ <p>Tautan ini belum aktif, atau namanya (slug) belum sesuai.<br>Jika Anda pembuat undangan, silakan klik <b>Publish</b> lagi di Studio AsProject lalu buka ulang tautannya.</p>
+ <a class="btn-gold" href="https://asproject.my.id/">Buka Katalog AsProject</a>`)}
+function netError(){scrim(`<div class="logo-badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div><h2>Connection problem</h2>
+ <p>Undangan tidak dapat dimuat karena koneksi internet bermasalah.</p>
+ <button class="btn-gold" onclick="location.reload()">Coba Lagi</button>`)}
+
+/* ---------- musik ---------- */
+function setupMusic(url,name){
+ const a=$('musik');if(!url)return;
+ try{a.src=new URL(url,location.href).href}catch(e){a.src=url}
+ $('musikNama').textContent=name||'Musik Acara';
+ $('musikBtn').style.display='inline-flex';
+ let on=false;
+ $('musikBtn').addEventListener('click',()=>{
+  if(!on){a.play().then(()=>{on=true}).catch(()=>{})}
+  else{a.pause();on=false}
+ });
+ return ()=>{a.play().catch(()=>{})}}
+
+/* ---------- 10 SLIDE KONTEN (id harus sama dengan SLIDES di studio.html) ---------- */
+function sItem(it){const m=String(it||'').split(/\s+—\s+|\s+-\s+/);return{a:(m[0]||'').trim(),b:m.slice(1).join(' — ').trim()}}
+function sLines(v){return String(v||'').split('\n').map(x=>x.trim()).filter(Boolean)}
+function sHex(h){return/^#[0-9a-fA-F]{3,8}$/.test(h)}
+function liveSlides(d,ev,tplF,fullNm,form,venue){
+ if(!d||!d.slides)return'';
+ const S=d.slides,h=[];
+ const card=inner=>`<div class="card rv">${inner}</div>`;
+ const kick=t=>`<div class="kicker">${t}</div>`;
+ if(S.timeline&&S.timeline.on){const it=sLines(S.timeline.items);
+  if(it.length)h.push(card(`${kick('⏱️ Timeline Acara')}<div style="margin-top:16px">`+it.map((x,i)=>{const s=sItem(x);return `
+   <div style="display:flex;gap:14px">
+    <div style="display:flex;flex-direction:column;align-items:center">
+     <div style="width:10px;height:10px;border-radius:99px;background:var(--accent);margin-top:5px;flex:none"></div>
+     ${i<it.length-1?`<div style="flex:1;width:2px;background:#e8ddc8;margin:4px 0"></div>`:''}
+    </div>
+    <div style="${i<it.length-1?'padding-bottom:16px':''}"><div style="font-size:14px;font-weight:700;color:var(--ink)">${esc(s.a||'Sesi')}${s.b?` <span style="font-weight:500;color:#8a7f72;font-size:12px">• ${esc(s.b)}</span>`:''}</div></div>
+   </div>`}).join('')+'</div>'))}
+ if(S.story&&S.story.on&&S.story.text.trim())h.push(`<div class="card rv"><div class="kicker">💞 Cerita Kami</div>
+  <p style="margin-top:14px;font-size:14px;font-style:italic;line-height:1.9;color:#57503f;font-family:Georgia,serif">${esc(S.story.text)}</p></div>`);
+ {const q=S.quote&&S.quote.custom?{text:S.quote.text,author:S.quote.author}:(QUOTES[ev]||QUOTES.pernikahan);
+  if(S.quote&&S.quote.on&&q.text)h.push(`<div class="card rv"><div style="font-size:34px;line-height:.8;color:var(--accent);opacity:.45">❝</div>
+  <div style="margin-top:12px;font-size:14.5px;font-style:italic;line-height:1.85;color:#4a4436;font-family:Georgia,serif">${esc(q.text)}</div>
+  <div style="margin-top:12px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9a8f82">— ${esc(q.author||'')}</div></div>`)}
+ if(S.menu&&S.menu.on){const it=sLines(S.menu.items);
+  if(it.length)h.push(card(`${kick('🍽️ Menu Acara')}<div style="margin-top:12px">`+it.map(x=>{const s=sItem(x);return `
+   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed #eadfc8"><div style="font-size:14px;font-weight:600;color:var(--ink)">${esc(s.a||'Menu')}</div><div style="font-size:12px;color:#8a7f72;text-align:right">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
+ if(S.party&&S.party.on){const it=sLines(S.party.items);
+  if(it.length)h.push(card(`${kick('🎩 Panitia / Bridal Party')}<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">`+it.map(x=>{const s=sItem(x);return `
+   <div style="display:flex;flex-direction:column;padding:12px 14px;border-radius:16px;background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d8;min-width:100px"><div style="font-size:13px;font-weight:700;color:var(--ink)">${esc(s.a||'')}</div><div style="font-size:11px;color:#8a7f72;margin-top:3px">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
+ if(S.dresscode&&S.dresscode.on){const cols=String(S.dresscode.colors||'').split(',').map(c=>c.trim()).filter(sHex);
+  h.push(`<div class="card rv"><div class="kicker">👗 Dress Code</div>
+  <div style="margin-top:10px;font-size:16px;font-weight:700;color:var(--ink)">${esc(S.dresscode.text||'—')}</div>
+  ${cols.length?`<div style="display:flex;justify-content:center;gap:10px;margin-top:16px">${cols.map(c=>`<div style="width:28px;height:28px;border-radius:99px;background:${c};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2)"></div>`).join('')}</div>
+  <div style="margin-top:10px;font-size:10px;font-family:ui-monospace,monospace;color:#b3a894">${esc(cols.join('  '))}</div>`:''}</div>`)}
+ if(S.map&&S.map.on){const q=(form&&form.alamat)||venue||'';
+  h.push(`<div class="rv"><div class="card" style="padding:0;overflow:hidden">
+   <div style="padding:12px 16px;font-size:12px;font-weight:600;color:var(--ink);display:flex;gap:8px;align-items:center;border-bottom:1px solid #f0e6d8">📍 ${esc(venue||'Lokasi Acara')}</div>
+   <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed" style="width:100%;height:200px;border:0;display:block" loading="lazy" title="Peta lokasi"></iframe></div></div>`)}
+ if(S.gift&&S.gift.on&&S.gift.text.trim())h.push(card(`${kick('🎁 Alamat Kado')}<div style="margin-top:12px;font-size:13px;line-height:1.8;color:#57503f">${esc(S.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:12px;font-size:22px">🎀</div>`));
+ if(S.rsvp&&S.rsvp.on)h.push(card(`${kick('✉️ RSVP')}
+  <p class="muted" style="margin-top:6px">Mohon konfirmasi kehadirannya — tombol cepat di bawah, atau WhatsApp.</p>
+  <div style="margin-top:14px;text-align:left">
+   <input id="rvpN" value="${esc(GUEST)}" placeholder="Nama Anda" style="width:100%;height:46px;border:1px solid #e5d9c4;border-radius:14px;padding:0 14px;font-size:13px;background:#fffdf9">
+   <select id="rvpH" style="margin-top:10px;width:100%;height:46px;border:1px solid #e5d9c4;border-radius:14px;padding:0 12px;font-size:13px;background:#fffdf9">
+    <option>Hadir 🙌</option><option>Hadir, bawa keluarga</option><option>Tidak hadir — maaf 🙏</option></select>
+   <textarea id="rvpM" rows="2" placeholder="Ucapan untuk pasangan..." style="margin-top:10px;width:100%;border:1px solid #e5d9c4;border-radius:14px;padding:10px 14px;font-size:13px;background:#fffdf9;resize:none"></textarea>
+   <button onclick="liveRsvp()" style="margin-top:12px;width:100%;height:46px;border:0;border-radius:99px;background:#25D366;color:#fff;font-size:13px;font-weight:600">Kirim RSVP via WA</button>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+    <button onclick="rsvpSave('hadir')" data-rsvpb style="height:44px;border:0;border-radius:99px;background:#8fa998;color:#fff;font-size:12px;font-weight:700">Hadir 🙌</button>
+    <button onclick="rsvpSave('tidak')" data-rsvpb style="height:44px;border:1px solid #e5d9c4;border-radius:99px;background:#fffdf9;color:#57503f;font-size:12px;font-weight:700">Tidak Hadir 🙏</button>
+   </div>
+   <p style="margin-top:8px;font-size:10px;color:#b3a894;text-align:center">Tombol cepat tersimpan otomatis untuk panitia • WhatsApp tetap tersedia</p>
+  </div>`));
+ if(S.closing&&S.closing.on&&S.closing.text.trim())h.push(`<div class="rv" style="margin-top:30px;text-align:center;padding:8px 16px">
+  <div style="font-size:14px;letter-spacing:10px;color:var(--gold)">❖ ✦ ❖</div>
+  <p style="margin-top:14px;font-size:14px;font-style:italic;line-height:1.9;color:#57503f;font-family:Georgia,serif">${esc(S.closing.text)}</p>
+  <div style="margin-top:14px;font-size:12px;font-weight:600;color:var(--accent)">${esc(fullNm)}</div></div>`);
+ return h.join('')}
+function liveRsvp(){
+ const n=document.getElementById('rvpN')?document.getElementById('rvpN').value.trim():'';
+ const hd=document.getElementById('rvpH')?document.getElementById('rvpH').value:'';
+ const m=document.getElementById('rvpM')?document.getElementById('rvpM').value.trim():'';
+ const t='RSVP — '+(n||GUEST||'Tamu')+'\nKonfirmasi: '+hd+(m?'\nPesan: '+m:'')+'\nTautan undangan: '+location.href.split('#')[0];
+ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
+/* RSVP cepat → tabel rsvp (Supabase) agar visible realtime di Undangan Master.
+   Tabel dibuat lewat tools/rsvp.sql; bila tabel/akses belum ada, tamu tetap
+   bisa kirim lewat tombol WA di atas. */
+async function rsvpSave(st){
+ const n=((document.getElementById('rvpN')?document.getElementById('rvpN').value:GUEST)||'Tamu').trim()||'Tamu';
+ document.querySelectorAll('[data-rsvpb]').forEach(b=>{b.disabled=true;b.style.opacity=.55});
+ try{
+  const r=await fetch(SUPABASE_URL+'/rest/v1/rsvp',{method:'POST',
+   headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+   body:JSON.stringify({slug:SLUG||'demo',guest:n,status:st,updated_at:new Date().toISOString()})});
+  if(!r.ok)throw new Error('http');
+  ivToast(st==='hadir'?('Terima kasih, '+n+'! Konfirmasi hadir tercatat ✅'):('Terima kasih, '+n+'. Konfirmasi tidak hadir tercatat 🙏'));
+ }catch(e){
+  ivToast('Mohon maaf, konfirmasi belum bisa disimpan — pakai tombol WA 🙏',5000);
+ }
+ document.querySelectorAll('[data-rsvpb]').forEach(b=>{b.disabled=false;b.style.opacity=1});
+}
+function ivToast(msg,ms){let t=document.getElementById('ivToast');
+ if(!t){t=document.createElement('div');t.id='ivToast';
+  t.style.cssText='position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#2d332e;color:#fff;font:600 12px Inter,system-ui,sans-serif;padding:11px 18px;border-radius:99px;z-index:999;opacity:0;transition:opacity .3s;max-width:88vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25)';
+  document.body.appendChild(t)}
+ t.textContent=msg;t.style.opacity=1;clearTimeout(t._h);t._h=setTimeout(()=>{t.style.opacity=0},ms||2600)}
+
+/* ---------- build halaman ---------- */
+function boot(draft){
+ const d=(draft.data&&typeof draft.data==='object')?draft.data:null;
+ const tpl=(d&&d.tpl)?(TPL.find(t=>t.id===d.tpl)||null):null;
+ const tplF=tpl||TPL[Math.max(0,Math.min(TPL.length-1,(Number.isFinite(+draft.theme)?+draft.theme:0))) ]||TPL[0];
+ const ev=(d&&d.event)||tplF.ev;
+ const form=(d&&d.form)||{};
+ const doa=(d&&DOA[d.doa])?DOA[d.doa]:(DOA[ev]||DOA.pernikahan);
+
+ /* nama utama */
+ let titleMain='',titleSub='',names=[{nm:'',rl:''}];
+ if(ev==='pernikahan'){
+  const p1=(form.namaPria||draft.name1||''),p2=(form.namaWanita||draft.name2||'');
+  titleMain=p1||'Nama Pengantin';titleSub=p2||'';
+  names=[
+   {nm:(form.gelarPria?form.gelarPria+' ':'')+titleMain+(form.namaPria&&form.gelarPria?'':''),rl:'Putra/Kelima dari<br>'+esc(form.putraPutri||'—')},
+   {nm:(form.gelarWanita?form.gelarWanita+' ':'')+titleSub,rl:'Putri/Kelima dari<br>'+esc(form.putriDari||'—')}];
+ }else{
+  titleMain=(form.namaAnak||draft.name1||'Nama Acara');titleSub='';
+  const rl={khitanan:esc(form.putraDari||'—')+'<br>'+(form.umurAnak?esc(form.umurAnak):''),
+   ultah:(form.temaUltah?esc(form.temaUltah)+'<br>':'')+(form.usia?esc(form.usia)+' Tahun':''),
+   aqiqah:esc(form.putraDari||form.temaAqiqah||'—')}[ev];
+  names=[{nm:titleMain,rl:rl||''}];
+ }
+
+ /* tema */
+ const rs=document.documentElement.style;
+ rs.setProperty('--g0',tplF.g[0]);rs.setProperty('--g1',tplF.g[1]);rs.setProperty('--g2',tplF.g[2]);
+ rs.setProperty('--accent',tplF.accent);rs.setProperty('--ink',tplF.ink);
+ rs.setProperty('--ft',fontFam((d&&d.fontTitle)||tplF.ft));
+ rs.setProperty('--fb',fontFam((d&&d.fontBody)||'inter'));
+
+ const fullNm=titleMain+(titleSub?' & '+titleSub:'');
+ document.title=fullNm+' — Undangan';
+ const ogT=document.querySelector('meta[property="og:title"]');if(ogT)ogT.content=EV_KICKER[ev]+': '+fullNm;
+
+ const dateStr=fmtDate(form.tanggalAcara||draft.event_date);
+ const timeStr=((form&&form.jamAcara)||draft.event_time||'').slice(0,5);
+ const venue=(form.venue||draft.venue||'');
+ const alamat=form.alamat||'';
+ const mapsLink=form.mapsLink&&!/example/i.test(form.mapsLink)?form.mapsLink:'';
+
+ const play=setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
+
+ /* ---------- animasi (diatur dari Studio: cover / teks / scroll reveal + pilihan efek) ---------- */
+ const AN=(d&&d.anim)||{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'};
+ const RM=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
+ const covOn=!!AN.cover&&!RM,txOn=!!AN.text&&!RM,rvOn=!!AN.reveal&&!RM;
+ const CE=fxCoverId(AN),SC=fxScrollId(AN);
+ const h1d=tplF.char?850:550,dtD=tplF.char?1500:1300,hoD=tplF.char?1650:1450,btD=tplF.char?1800:1600;
+ const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
+ const wspan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="anim-word" style="animation-delay:${d0+i*90}ms">${esc(w)}</span>`).join(' ');
+ const RV=cls=>rvOn?cls+' rv fx-s-'+SC:cls;
+ const BD=BORDERS.find(b=>b.id===(d&&d.border))||null;let bdStyle='';
+ if(BD){const A=tplF.accent;if(BD.s)bdStyle=BD.s(A);if(BD.extra)bdStyle+=(bdStyle?';':'')+BD.extra(A)}
+ const bdCorners=(()=>{if(!BD||!BD.corner)return'';const w=BD.corner,A=tplF.accent;
+  const c=p=>`<i class="bdc" style="border:0 solid ${A};${p}"></i>`;
+  return c('top:10px;left:10px;border-top-width:'+w+'px;border-left-width:'+w+'px')+c('top:10px;right:10px;border-top-width:'+w+'px;border-right-width:'+w+'px')+c('bottom:10px;left:10px;border-bottom-width:'+w+'px;border-left-width:'+w+'px')+c('bottom:10px;right:10px;border-bottom-width:'+w+'px;border-right-width:'+w+'px')})();
+
+ /* ---------- HTML ---------- */
+ let h='';
+ h+=`<div id="cover" class="${covOn?'cov':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="bdfr" style="${bdStyle}">${bdCorners}<div class="inner">
+   <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
+   <div class="kicker ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(EV_KICKER[ev]||'Undangan')}</div>
+   ${tplF.char?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms':''}">${tplF.char}</div>`:''}`;
+ if(ev==='pernikahan'){
+  h+=txOn
+   ?`<h1>${wspan(titleMain,h1d)}</h1><div class="amp anim-word" style="animation-delay:${h1d+nW(titleMain)*90+150}ms">&amp;</div><h1>${wspan(titleSub,h1d+nW(titleMain)*90+300)}</h1>`
+   :`<h1 class="${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+h1d+'ms':''}">${esc(titleMain)}</h1><div class="amp ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(h1d+350)+'ms':''}">&amp;</div><h1 class="${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(h1d+500)+'ms':''}">${esc(titleSub||'')}</h1>`;
+ }else{
+  h+=txOn?`<h1>${wspan(titleMain,h1d)}</h1>`:`<h1 class="${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+h1d+'ms':''}">${esc(titleMain)}</h1>`;
+ }
+ h+=`<div class="date ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+dtD+'ms':''}">🗓 ${esc(dateStr||'—')}${timeStr?' • '+esc(timeStr):''}</div>`;
+ if(venue)h+=`<div class="host ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+hoD+'ms':''}">${esc(venue)}</div>`;
+ h+=`<button class="open ${covOn?'anim-pop':''}" id="btnOpen" style="${covOn?'animation-delay:'+btD+'ms':''}"><span class="env">✉️</span> Buka Undangan</button>
+ </div></div><div class="brand">AsProject • Undangan Digital</div></div>`;
+
+ h+=`<div id="content"><div class="wrap">`;
+
+ /* 1. Kepada YTH */
+ h+=`<div class="${RV('card guest')}"><div class="ya">Kepada YTH</div>
+  <div class="to">${esc(GUEST||'Bapak / Ibu / Saudara/i')}</div>
+  <div class="divider">${esc(tplF.deco)}</div>
+  <p class="muted">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.</p></div>`;
+
+ /* 2. Doa */
+ h+=`<div class="${RV('card')}"><div class="kicker">Doa</div>
+  <div class="doa-ar">${esc(doa.ar)}</div>
+  <div class="doa-la">“${esc(doa.latin)}”</div>
+  <div class="doa-arti">${esc(doa.arti)}</div></div>`;
+
+ /* 3. Profil (pasangan / anak) */
+ if(ev==='pernikahan'){
+  h+=`<div class="${RV('card')}"><div class="kicker">Mempelai</div>
+   <div class="couple">
+    <div class="c"><div class="nm">${esc(names[0].nm)}</div><div class="rl">${names[0].rl}</div></div>
+    <div class="heart">❦</div>
+    <div class="c"><div class="nm">${esc(names[1].nm)}</div><div class="rl">${names[1].rl}</div></div>
+   </div></div>`;
+ }else{
+  h+=`<div class="${RV('card')}"><div class="kicker">${esc(EV_LABEL[ev]||'')}</div>
+   <div class="name-big">${esc(names[0].nm)}</div>
+   ${names[0].rl?`<div class="role">${names[0].rl}</div>`:''}
+   <div class="divider">${esc(tplF.deco)}</div></div>`;
+ }
+
+ /* 4. Detail acara */
+ const sesiKedua=d&&form.sesiKedua;
+ h+=`<div class="${RV('card')}"><div class="kicker">Waktu & Tempat</div>
+  <div class="acara-grid">
+   <div class="acara"><div class="lbl">${ev==='pernikahan'?(sesiKedua?'Akad Nikah':'Akad Nikah'):'Acara'}</div>
+    <div class="tgl">${esc(dateStr||'—')}</div>
+    <div class="jam">Pukul ${esc(timeStr||'—')}${form.zona?esc(' '+form.zona):''}</div>
+    ${venue?`<div class="vt"><b>${esc(venue)}</b>${alamat?'<br>'+esc(alamat):''}</div>`:''}
+    ${mapsLink?`<a class="mapbtn" href="${esc(mapsLink)}" target="_blank" rel="noopener">📍 Buka di Peta</a>`:''}
+   </div>`;
+ if(ev==='pernikahan'&&sesiKedua&&form.jamResepsi){
+  h+=`<div class="acara"><div class="lbl">Resepsi</div>
+   <div class="tgl">${esc(dateStr||'—')}</div>
+   <div class="jam">Pukul ${esc(form.jamResepsi)}${form.zona?esc(' '+form.zona):''}</div>
+   ${venue?`<div class="vt"><b>${esc(venue)}</b>${alamat?'<br>'+esc(alamat):''}</div>`:''}</div>`;
+ }
+ h+=`</div>`;
+
+ /* countdown */
+ const tt=targetTime(draft,form);
+ if(tt){
+  h+=`<div class="cdw" id="cd">
+   <div class="u"><div class="n" id="cdH">00</div><div class="l">Hari</div></div>
+   <div class="u"><div class="n" id="cdM">00</div><div class="l">Jam</div></div>
+   <div class="u"><div class="n" id="cdS">00</div><div class="l">Menit</div></div>
+   <div class="u"><div class="n" id="cdD">00</div><div class="l">Detik</div></div></div>`;
+ }
+ h+=`</div>`;
+
+ /* 4b. 10 SLIDE KONTEN (dari snapshot studio) — urutan sama dengan studio */
+ h+=liveSlides(d,ev,tplF,fullNm,form,venue);
+
+ /* 5. Galeri */
+ if(d&&Array.isArray(d.gallery)&&d.gallery.length){
+  h+=`<div class="${RV('card')}"><div class="kicker">Galeri</div><div class="gal">`+
+   d.gallery.slice(0,8).map(u=>`<img src="${esc(u)}" alt="Galeri" loading="lazy" onerror="this.style.display='none'">`).join('')+
+   `</div></div>`;
+ }
+
+ /* 6. Amplop */
+ if(d&&d.amplop&&d.amplop.showAmplop&&(d.amplop.noRek||d.amplop.noEwallet)){
+  const a=d.amplop;
+  h+=`<div class="${RV('card')}"><div class="kicker">Amplop Digital</div>
+   <p class="muted">Bagi yang ingin memberi tanda kasih, dapat melalui:</p><div class="amp-card">`;
+  if(a.noRek)h+=`<div class="amp-row"><div><div class="nm">${esc(a.bank||'Bank')}</div><div class="no">${esc(a.noRek)}</div><div class="ow">a.n. ${esc(a.pemilik||'—')}</div></div>
+   ${a.showCopy!==false?`<button class="copy" data-copy="${esc(a.noRek)}">Salin</button>`:''}</div>`;
+  if(a.noEwallet)h+=`<div class="amp-row"><div><div class="nm">${esc(a.ewallet||'E-Wallet')}</div><div class="no">${esc(a.noEwallet)}</div></div>
+   ${a.showCopy!==false?`<button class="copy" data-copy="${esc(a.noEwallet)}">Salin</button>`:''}</div>`;
+  h+=`</div></div>`;
+ }
+
+ /* 7. Ucapan */
+ h+=`<div class="${RV('card')}"><div class="kicker">Ucapan</div>
+  <p class="muted" style="font-size:13px">${esc((form&&form.ucapanCustom)||(ev==='pernikahan'?'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.':'Menghadiri acara ini merupakan kehormatan bagi kami. Doa restu Bapak/Ibu/Saudara/i adalah hadiah terindah bagi si kecil.'))}</p>
+  <div class="divider">${esc(tplF.deco)}</div>
+  <div class="name-big" style="font-size:26px">${esc(fullNm)}</div></div>`;
+
+ /* footer */
+ h+=`<div class="footer"><div class="orn">${esc(tplF.deco)}</div>
+  <p>Terima kasih atas doa dan kasihnya 🤍<br>
+  <a href="https://asproject.my.id/" target="_blank" rel="noopener">Undangan digital premium — AsProject</a></p></div>`;
+
+ h+=`</div></div>`;
+
+ $('app').innerHTML=h;
+
+ /* interaksi */
+ $('btnOpen').addEventListener('click',()=>{
+  document.body.classList.add('opened');
+  if(play)play();
+ });
+ $('app').querySelectorAll('button[data-copy]').forEach(b=>{
+  b.addEventListener('click',()=>{
+   try{navigator.clipboard.writeText(b.dataset.copy)}catch(e){}
+   b.textContent='Tersalin ✓';setTimeout(()=>{b.textContent='Salin'},1600);
+  });
+ });
+ if(tt)startCountdown(tt);
+ /* scroll reveal — bagian muncul halus saat tamu menggulir */
+ if(rvOn&&'IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+   if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
+  }),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+ }
+}
+
+function startCountdown(tt){
+ const el=id=>$(id);
+ const tick=()=>{
+  let ms=tt-Date.now();if(ms<0)ms=0;
+  const s=Math.floor(ms/1000);
+  const pad=n=>String(n).padStart(2,'0');
+  if(el('cdH'))el('cdH').textContent=pad(Math.floor(s/86400));
+  if(el('cdM'))el('cdM').textContent=pad(Math.floor(s%86400/3600));
+  if(el('cdS'))el('cdS').textContent=pad(Math.floor(s%3600/60));
+  if(el('cdD'))el('cdD').textContent=pad(s%60);
+ };
+ tick();setInterval(tick,1000);
+}
+
+/* ---------- demo (tanpa database) ---------- */
+const DEMO_DRAFT={
+ slug:'rangga-alya',name1:'Rangga Pratama',name2:'Alya Zahra',venue:'The Ballroom at Ritz Carlton',
+ event_date:'2026-12-28',event_time:'08:00',music_url:'music/backsound-asproject.mp3',music_name:'Backsound AsProject — rtyo',theme:0,
+ data:{event:'pernikahan',tpl:'navy-royal',doa:'pernikahan',accent:'#D4AF37',fontTitle:'playfair',fontBody:'inter',border:'double',
+  form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
+   putraPutri:'Bpk. Hartono & Ibu Sulastri',putriDari:'Bpk. Faisal & Ibu Dewi',
+   tanggalAcara:'2026-12-28',jamAcara:'08:00',zona:'WIB',venue:'The Ballroom at Ritz Carlton',
+   alamat:'Jl. Jend. Sudirman No. 1, Jakarta Selatan',mapsLink:'https://maps.google.com/?q=Ritz-Carlton+Jakarta',
+   sesiKedua:true,jamAkad:'08:00',jamResepsi:'11:00',
+   ucapanCustom:'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.'},
+  slides:{
+   timeline:{on:true,items:'08:00 — Akad Nikah\n11:00 — Resepsi Keluarga\n18:00 — Dinner Bersama'},
+   story:{on:true,text:'Kami bertemu pertama kali di kampus, dan sejak hari itu perjalanan kami penuh tawa, cerita, dan doa yang sama.'},
+   quote:{on:true,custom:false,text:'',author:''},
+   menu:{on:true,items:'Sup Iga — Bawang Bakar\nAyam Panggang — Timun Muda\nEs Durian — Manis Segar'},
+   party:{on:true,items:'Budi — Groomsman\nSari — Bridesmaid\nKeluarga Besar — Panitia'},
+   dresscode:{on:true,text:'Formal / Batik',colors:'#D4AF37,#7A5C3E,#111827'},
+   gift:{on:false,text:''},
+   map:{on:true},
+   rsvp:{on:true},
+   closing:{on:true,text:'Terima kasih atas doa, waktu, dan kasih sayang Bapak/Ibu. Sampai berjumpa di hari bahagia kami.'}},
+  anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'},
+  amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true}}};
+
+/* ---------- mulai ---------- */
+if(typeof EMBEDDED_DATA!=='undefined'&&EMBEDDED_DATA){loading();setTimeout(()=>boot(EMBEDDED_DATA),350)}
+else if(DEMO){loading();setTimeout(()=>boot(DEMO_DRAFT),350)}
+else if(!SLUG){notFound()}
+else{
+ loading();
+ fetch(SUPABASE_URL+'/rest/v1/invitation_drafts?slug=eq.'+encodeURIComponent(SLUG)+'&select=*',{
+  headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}
+ }).then(async r=>{
+   if(r.status===404)throw{nf:1};
+   if(!r.ok)throw{err:r.status};
+   const rows=await r.json();
+   if(!Array.isArray(rows)||!rows.length)throw{nf:1};
+   boot(rows[0]);
+ }).catch(e=>{if(e&&e.nf)notFound();else netError()});
+}
+</script>
+</body>
+</html>
