@@ -453,6 +453,15 @@ def cek_fitur_terbaru():
     ok = "if(state.dblBorder===false)state.border='none'" in studio
     lapor("ok" if ok else "masalah",
           "studio.html: migrasi dblBorder lama — proyek yang menonaktifkan border tetap tanpa border")
+    # 6) Simpan File HTML (undangan mandiri offline)
+    ok = "async function dlUndangan()" in studio and "onclick=\"dlUndangan()\"" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: tombol Simpan File HTML (dlUndangan) tersedia di Domain & Link")
+    i_emb = undangan.find("typeof EMBEDDED_DATA!=='undefined'")
+    i_demo = undangan.find("else if(DEMO){")
+    ok = i_emb > 0 and i_demo > i_emb
+    lapor("ok" if ok else "masalah",
+          "undangan.html: mode EMBEDDED_DATA terbaca sebelum mode demo/slug (file mandiri bisa boot)")
 
 
 def main():

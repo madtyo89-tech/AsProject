@@ -643,7 +643,8 @@ const DEMO_DRAFT={
   amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true}}};
 
 /* ---------- mulai ---------- */
-if(DEMO){loading();setTimeout(()=>boot(DEMO_DRAFT),350)}
+if(typeof EMBEDDED_DATA!=='undefined'&&EMBEDDED_DATA){loading();setTimeout(()=>boot(EMBEDDED_DATA),350)}
+else if(DEMO){loading();setTimeout(()=>boot(DEMO_DRAFT),350)}
 else if(!SLUG){notFound()}
 else{
  loading();

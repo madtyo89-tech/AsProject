@@ -542,6 +542,35 @@ async function publish(){
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  save();render();notify('Berhasil Publish! '+baseUrl()+' tersimpan di Folder Arsip')}
 function unpublish(){state.published=false;save();render();notify('Status kembali ke Draft')}
+/* Simpan undangan jadi 1 file HTML mandiri (data ditanam di dalam file) →
+   bisa disimpan di storage mana pun & dibuka offline di browser apa pun */
+async function dlUndangan(){
+ try{
+  const r=await fetch('undangan.html');if(!r.ok)throw new Error('HTTP '+r.status);
+  const html=await r.text();
+  const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
+   accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,
+   amplop:JSON.parse(JSON.stringify(state.amplop)),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
+   videoLink:state.videoLink||'',
+   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
+   cover:state.cover||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],publishedAt:new Date().toISOString()};
+  if(JSON.stringify(data).length>1500000){data.gallery=[];
+   if(JSON.stringify(data).length>1200000){data.cover='';
+    if(JSON.stringify(data).length>900000){notifyErr('Data terlalu besar utk 1 file — kurangi/kompres foto dulu');return}}}
+  const draft={slug:state.slug||'',name1:state.event==='pernikahan'?state.form.namaPria:state.form.namaAnak,
+   name2:state.event==='pernikahan'?state.form.namaWanita:'',
+   theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl)),data};
+  const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>';
+  const i=html.indexOf('</head>');
+  const final=i>=0?html.slice(0,i)+inj+'\n'+html.slice(i):html.replace('</html>',inj+'\n</html>');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([final],{type:'text/html;charset=utf-8'}));
+  a.download='undangan-'+(slugify(displayName())||state.slug||'undangan')+'.html';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
+  notify('File HTML tersimpan! Bisa dibuka offline di browser mana pun (data & foto ikut; font web butuh internet)')
+ }catch(e){notifyErr('Gagal simpan file: '+(e&&e.message||e))}
+}
 function loadArsip(id){const a=state.arsip.find(x=>x.id===id);if(!a)return;
  if(a.snap){state.form=Object.assign({},DEF.form,a.snap.form);state.event=a.snap.event;
   if(a.snap.tpl&&TPL.some(t=>t.id===a.snap.tpl))state.tpl=a.snap.tpl;else{const ft=tplsFor(a.snap.event)[0];if(ft)state.tpl=ft.id}
@@ -915,6 +944,7 @@ function tabDomain(){return `<div style="display:grid;gap:16px">
    <button class="sm-btn dark" style="height:40px;border-radius:12px" onclick="publish()">💎 Publish Premium Rp75rb</button>
    <button class="sm-btn" style="height:40px;border-radius:12px;background:#fff" onclick="unpublish()">Unpublish</button>
   </div>
+  <button class="sm-btn dark" style="height:40px;border-radius:12px;width:100%;margin-top:8px" onclick="dlUndangan()">⬇️ Simpan File HTML (bisa offline)</button>
  </div>
  <div class="card"><h4>SEO & Thumbnail WA</h4>
   <label class="f">SEO Title<input value="${esc(displayName())} — ${titleOf()}"></label>
