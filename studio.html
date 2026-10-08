@@ -277,15 +277,46 @@ const TPL=[
  {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',harga:75000,g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',badge:'',char:'🦕',deco:'🦕 ✦ 🦕',pat:'',ft:'poppins',desc:'Hijau dino lembut, si kecil adalah dinosaurus paling gemes'},
  {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',harga:79000,g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',badge:'',char:'🧑‍🚀',deco:'🧑‍🚀 ✦ 🧑‍🚀',pat:'',ft:'oswald',desc:'Biru malam & bintang emas, petualangan si kecil dimulai'},
  {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',harga:75000,g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',badge:'',char:'🐯',deco:'🐯 ✦ 🐯',pat:'',ft:'bebas',desc:'Kuning keharuman tiger, si jagoan mungil yang menggemaskan'},
- {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',harga:75000,g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',badge:'',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins',desc:'Merah kereta & aspal kota, chugga-chugga si kecil melaju'}];
+ {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',harga:75000,g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',badge:'',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins',desc:'Merah kereta & aspal kota, chugga-chugga si kecil melaju'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',badge:'BARU',char:'👸',deco:'👸 ✨ 👸',pat:'',ft:'dancing',desc:'Rosa pastel & kelopak bunga, ultah si kecil sang putri peri'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',badge:'BARU',char:'🦄',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico',desc:'Lavender magis & bintang-bintang, mimpi si kecil jadi nyata'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',badge:'BARU',char:'🌸',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento',desc:'Bunga mekar & pita merah muda, ultah feminin yang manis sempurna'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',badge:'BARU',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair',desc:'Mawar lembut nan anggun, aqiqah si mungil perempuan terkasih'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',badge:'BARU',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing',desc:'Krem hangat & sayap peri, aqiqah si putri kecil yang bercahaya'}];
 function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
-function tplsFor(ev){return TPL.filter(t=>t.ev===ev)}
+function tplsFor(ev){return TPL.filter(t=>t.ev===ev&&!state.katalogHide.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
 function patCss(t){
  if(t.pat==='batik')return `background-image:radial-gradient(${t.accent}26 1.5px,transparent 1.8px),radial-gradient(${t.accent}1c 1px,transparent 1.3px);background-size:26px 26px,13px 13px;background-position:0 0,13px 13px;`;
  if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}12 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0d 0 2px,transparent 2px 16px);`;
  if(t.pat==='confetti')return `background-image:radial-gradient(#E5737366 2px,transparent 2.6px),radial-gradient(#64B5F666 2px,transparent 2.6px),radial-gradient(#8BC34A66 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
  return ''}
+
+/* ============ 20 BORDERS (semua kategori undangan) ============ */
+const BORDERS=[
+ {id:'none',n:'Tanpa Border'},
+ {id:'thin',n:'Garis Halus',s:A=>`border:1px solid ${A}`},
+ {id:'solid',n:'Garis Teguh',s:A=>`border:4px solid ${A}`},
+ {id:'double',n:'Ganda Klasik',s:A=>`border:6px double ${A}`},
+ {id:'dashed',n:'Putih Putus',s:A=>`border:3px dashed ${A}`},
+ {id:'dotted',n:'Titik-titik',s:A=>`border:3px dotted ${A}`},
+ {id:'ridge',n:'Ridged',s:A=>`border:7px ridge ${A}`},
+ {id:'groove',n:'Gravir',s:A=>`border:7px groove ${A}`},
+ {id:'inset',n:'Cekung',s:A=>`border:7px inset ${A}`},
+ {id:'outset',n:'Cembung',s:A=>`border:7px outset ${A}`},
+ {id:'topbot',n:'Atas & Bawah',s:A=>`border-top:3px solid ${A};border-bottom:3px solid ${A}`},
+ {id:'topline',n:'Serat Atas',s:A=>`border-top:6px solid ${A}`},
+ {id:'frame',n:'Bingkai Dalam',s:A=>`box-shadow:inset 0 0 0 2px ${A}`},
+ {id:'frame2',n:'Bingkai Rangkap',s:A=>`box-shadow:inset 0 0 0 2px ${A},inset 0 0 0 6px ${A}33`},
+ {id:'gap',n:'Bingkai Jarak',s:A=>`outline:2px solid ${A};outline-offset:-12px`},
+ {id:'gapdash',n:'Bingkai Putus',s:A=>`outline:3px dashed ${A};outline-offset:-12px`},
+ {id:'halo',n:'Halo Lembut',s:A=>`box-shadow:inset 0 0 0 1px ${A}55,inset 0 0 26px ${A}22`},
+ {id:'corners',n:'Sudut Elegan',corner:3},
+ {id:'cornersthin',n:'Sudut Halus',corner:1,extra:A=>`border:1px solid ${A}33`},
+ {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`}];
+function borderOf(){return BORDERS.find(b=>b.id===state.border)||BORDERS[0]}
+function borderColor(){return state.darkMode?'#FDE68A':state.accent}
+function borderCss(){const b=borderOf(),A=borderColor();let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
+function borderCorners(){const b=borderOf();if(!b||!b.corner)return'';const A=borderColor(),w=b.corner;
+ const c=pos=>`<i style="position:absolute;width:22px;height:22px;border:0 solid ${A};${pos};pointer-events:none;z-index:2"></i>`;
+ return c(`top:10px;left:10px;border-top-width:${w}px;border-left-width:${w}px`)+c(`top:10px;right:10px;border-top-width:${w}px;border-right-width:${w}px`)+c(`bottom:10px;left:10px;border-bottom-width:${w}px;border-left-width:${w}px`)+c(`bottom:10px;right:10px;border-bottom-width:${w}px;border-right-width:${w}px`)}
+function setBorder(id){state.border=id;save();render()}
+function miniBorder(b){const A='#8b7358';if(b.corner)return `border:1px dashed ${A}`;let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
 
 /* ===== MUSIK DEMO (dari Google Drive user, tersimpan di repo /music) ===== */
 const DEMO_MUSIC=[
@@ -294,7 +325,7 @@ const DEMO_MUSIC=[
 /* ============ STATE ============ */
 const DEF={
  page:'editor',tab:'info',event:'pernikahan',theme:'iceBlue',tpl:'jawa-elegan',accent:'#7A5C3E',
- fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,dblBorder:true,darkMode:false,
+ fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,darkMode:false,border:'double',katalogHide:[],
  form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
   putraPutri:'Putra dari Bpk. Hartono & Ibu Sulastri',putriDari:'Putri dari Bpk. Faisal & Ibu Dewi',
   namaAnak:'Muhammad Zaidan Al-Fatih',putraDari:'Putra dari Bpk. Andi & Ibu Sari',umurAnak:'8 Tahun',
@@ -340,6 +371,10 @@ if(!state.tpl||!TPL.some(t=>t.id===state.tpl))state.tpl=TPL[0].id;
 if(!Array.isArray(state.katalog)||!state.katalog.length||!state.katalog[0].tpl)state.katalog=JSON.parse(JSON.stringify(DEF.katalog));
 /* template baru di TPL otomatis ikut masuk ke katalog yang sudah tersimpan di localStorage */
 TPL.forEach((t,i)=>{if(!state.katalog.some(k=>k.tpl===t.id))state.katalog.push({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:Math.max(0,340-(state.katalog.length+i)*23)})});
+/* migrasi border (dulu: toggle dblBorder) & daftar katalog tersembunyi */
+if(state.border===undefined){state.border=(state.dblBorder!==false)?'double':'none';delete state.dblBorder}
+if(!BORDERS.some(b=>b.id===state.border))state.border='double';
+if(!Array.isArray(state.katalogHide))state.katalogHide=[];
 if(!Array.isArray(state.musicDb))state.musicDb=[];
 state.musicDb=state.musicDb.filter(m=>!m.demo||DEMO_MUSIC.some(d=>d.url===m.url));
 if(state.music&&state.music.demo&&!DEMO_MUSIC.some(d=>d.url===state.music.url)){state.music=null;state.playing=false}
@@ -386,7 +421,9 @@ function upSlide(id,k,v){if(!state.slides[id])return;state.slides[id][k]=v;save(
 function setAnim(k,v){state.anim[k]=v;animSig=null;save();render()}
 function rsvpWa(){const n=document.getElementById('rvpN')?document.getElementById('rvpN').value:'Tamu',h=document.getElementById('rvpH')?document.getElementById('rvpH').value:'Hadir',m=document.getElementById('rvpM')?document.getElementById('rvpM').value:'';const t='RSVP — '+titleOf()+' '+displayName()+'\nNama: '+n+'\nKonfirmasi: '+h+(m?'\nPesan: '+m:'')+'\nTautan: '+previewUrl();window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
 /* Tulisan undangan yang dikirim lewat WA — pakai template (bisa diatur di tab Tamu) */
-function waShareText(){return state.waTemplate.replace('{nama_tamu}','Bapak/Ibu/Saudara/i').replace('{link_undangan}',previewUrl()).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf())}
+function waShareText(){const g=selGuest();
+ const link=state.linkMode==='single'?baseUrl():g?baseUrl()+'?to='+encodeURIComponent(g.nama):baseUrl();
+ return state.waTemplate.replace('{nama_tamu}',g?g.nama:'Bapak/Ibu/Saudara/i').replace('{link_undangan}',link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf())}
 function waShareLink(){return 'https://wa.me/?text='+encodeURIComponent(waShareText())}
 function waSend(){window.open(waShareLink(),'_blank')}
 
@@ -483,7 +520,7 @@ async function publish(){
  /* Snapshot lengkap → kolom jsonb "data" agar undangan live persis seperti studio
     (nama orang tua, sesi akad/resepsi, amplop, galeri, dsb) */
  const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
-  accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,
+  accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,
   amplop:JSON.parse(JSON.stringify(state.amplop)),
   slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
@@ -519,6 +556,7 @@ function copyTxt(t,msg){navigator.clipboard?.writeText(t);notify(msg||'Disalin �
 function waLink(g){const txt=state.waTemplate.replace('{nama_tamu}',g.nama).replace('{link_undangan}',g.link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf());return 'https://wa.me/?text='+encodeURIComponent(txt)}
 function updKat(id,k,v){const it=state.katalog.find(x=>x.id===id);if(!it)return;it[k]=(k==='hargaNormal'||k==='hargaPromo')?Number(v):k==='promoActive'?v:v;save()}
 function addKat(){state.katalog=[{id:'k'+Date.now(),nama:'Template Baru',tpl:state.tpl,ev:state.event,hargaNormal:120000,hargaPromo:75000,promoActive:true,badge:'NEW',terjual:0},...state.katalog];save();render()}
+function tglKatHide(id){if(!TPL.some(t=>t.id===id))return;const i=state.katalogHide.indexOf(id);i>=0?state.katalogHide.splice(i,1):state.katalogHide.push(id);save();render()}
 function importCsv(){const i=document.createElement('input');i.type='file';i.accept='.csv,.txt';i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.guestsRaw=String(r.result||'');save();render()};r.readAsText(f)};i.click()}
 function exportCsv(){const blob=new Blob([guests().map(g=>`${g.nama},${g.link}`).join('\n')],{type:'text/csv'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=`tamu-${state.slug}.csv`;a.click()}
 
@@ -645,7 +683,13 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
     ${[['polos','Polos'],['gradient','Gradient'],['foto','Foto'],['pattern','Batik']].map(([id,l])=>`<button class="tabbtn ${state.bgType===id?'on':''}" style="height:40px;border-radius:12px" onclick="set('bgType','${id}')">${l}</button>`).join('')}</div></div>
    <div style="border-top:1px solid var(--line);padding-top:12px">
-    ${[['goldOrn','Ornamen Gold Foil'],['dblBorder','Border Double Gold'],['darkMode','Mode Gelap (Emerald)']].map(([k,l])=>`<label class="togglerow">${l}<input type="checkbox" ${state[k]?'checked':''} onchange="set('${k}',this.checked)"></label>`).join('')}
+    <div><div class="f" style="margin-bottom:8px">Border Undangan (20 jenis) — berlaku semua kategori</div>
+     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+     ${BORDERS.map(b=>`<button class="tabbtn ${state.border===b.id?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setBorder('${b.id}')"><span style="width:26px;height:16px;border-radius:4px;background:#fff;${miniBorder(b)}"></span><span style="font-size:9px;line-height:1.05;text-align:center">${b.n}</span></button>`).join('')}
+     </div>
+     <div style="font-size:10px;color:var(--mut);margin-top:6px">Warna border mengikuti aksen tema (mode gelap: emas) • ikut tersimpan ke undangan live saat publish.</div>
+    </div>
+    ${[['goldOrn','Ornamen Gold Foil'],['darkMode','Mode Gelap (Emerald)']].map(([k,l])=>`<label class="togglerow">${l}<input type="checkbox" ${state[k]?'checked':''} onchange="set('${k}',this.checked)"></label>`).join('')}
    </div>
   </div>
  </div>
@@ -902,12 +946,14 @@ function katalog(){return `<div style="padding:16px;display:grid;gap:16px">
    <div style="font-size:13px;font-weight:600">Daftar Template</div>
    <div style="font-size:11px;color:var(--mut)">Klik Preview untuk lihat di phone kanan • Edit inline harga & promo</div>
   </div>
-  ${state.katalog.map(k=>{const t=TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0];return `<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0">
+  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const rows=state.katalog.filter(k=>((TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0]).ev===ev));if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template</div>
+ ${rows.map(k=>{const t=TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0];const hid=state.katalogHide.includes(t.id);return `<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;${hid?'opacity:.55':''}">
    <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?17:13}px">${t.char||t.deco.split(' ')[0]||''}</div>
    <div style="flex:1;min-width:0">
     <input value="${esc(k.nama)}" oninput="updKat('${k.id}','nama',this.value)" style="width:100%;font-size:12px;font-weight:500;border:0;background:transparent;padding:0">
     <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
      <span style="font-size:10px;border-radius:99px;border:1px solid var(--line);padding:2px 8px;background:var(--soft)">${EV_ICON[t.ev]} ${EV_LABEL[t.ev]}</span>
+     ${hid?'<span style="font-size:9px;color:#b45309;background:#FEF3C7;border-radius:99px;padding:2px 8px;font-weight:600">disembunyikan</span>':''}
      <span style="font-size:10px;color:var(--mut)">${k.terjual} terjual</span>
     </div></div>
    <div style="text-align:right">
@@ -916,8 +962,9 @@ function katalog(){return `<div style="padding:16px;display:grid;gap:16px">
    </div>
    <label style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px"><input type="checkbox" ${k.promoActive?'checked':''} onchange="updKat('${k.id}','promoActive',this.checked)">Promo</label>
    <input value="${esc(k.badge)}" placeholder="Badge" oninput="updKat('${k.id}','badge',this.value)" style="width:84px;height:28px;border-radius:99px;border:1px solid var(--line);padding:0 8px;font-size:10px">
+   <button class="sm-btn" title="Sembunyikan/tampilkan di pilihan tema (buat demo)" onclick="tglKatHide('${t.id}')">${hid?'🙈':'👁️'}</button>
    <button class="sm-btn dark" onclick="prevKat('${k.id}')">Preview</button>
-  </div>`}).join('')}
+  </div>`}).join('')}`}).join('')}
  </div></div>`}
 
 /* ============ VIEW: ARSIP ============ */
@@ -1049,7 +1096,7 @@ function phoneHtml(){
    <div style="width:12px;height:12px;border-radius:99px;background:#ddd"></div>
   </div>
   <div class="notch"></div>
-   <div class="${dark?'emerald-bg':''}" style="flex:1;${dark?'color:#FDE68A':bg};${state.dblBorder?`border:6px double ${state.accent}`:''}">
+   <div class="${dark?'emerald-bg':''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg};${borderCss()}">${borderCorners()}
    <div class="${(CV||TX||RV)?'ap':''}" style="padding:20px;text-align:center;font-family:${tF};${patStyle}">
     ${f.showBismillah?`<div class="${CV?'fx-c-'+CE:''}" style="margin-bottom:12px;${CV?'animation-delay:250ms':''}"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
      <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}

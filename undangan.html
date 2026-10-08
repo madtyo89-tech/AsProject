@@ -44,6 +44,8 @@ button{font-family:inherit;cursor:pointer}
 #cover .pat{position:absolute;inset:0;pointer-events:none;opacity:.5}
 #cover .veil{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(255,255,255,.25)}
 #cover .inner{position:relative;max-width:400px;width:100%}
+#cover .bdfr{position:relative;width:100%;max-width:440px;padding:30px 18px}
+#cover .bdc{position:absolute;width:22px;height:22px;pointer-events:none;z-index:2;display:block}
 #cover .orn{font-size:20px;letter-spacing:14px;color:var(--accent);opacity:.85}
 #cover .kicker{margin-top:26px;font-size:11px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--ink);opacity:.85}
 #cover .chara{font-size:52px;line-height:1;margin-top:18px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.15))}
@@ -235,7 +237,7 @@ const TPL=[
  {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',char:'🦕',deco:'🦕 ✦ 🦕',pat:'',ft:'poppins'},
  {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',char:'🧑‍🚀',deco:'🧑‍🚀 ✦ 🧑‍🚀',pat:'',ft:'oswald'},
  {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',char:'🐯',deco:'🐯 ✦ 🐯',pat:'',ft:'bebas'},
- {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins'}];
+ {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',char:'👸',deco:'👸 ✨ 👸',pat:'',ft:'dancing'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',char:'🦄',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',char:'🌸',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing'}];
 
 const FONTS=[
  {id:'cormorant',fam:'"Cormorant Garamond",serif'},
@@ -253,6 +255,28 @@ const FONTS=[
  {id:'dancing',fam:'"Dancing Script",cursive'},
  {id:'caveat',fam:'"Caveat",cursive'},
  {id:'sacramento',fam:'"Sacramento",cursive'}];
+
+const BORDERS=[
+ {id:'none',n:'Tanpa Border'},
+ {id:'thin',n:'Garis Halus',s:A=>`border:1px solid ${A}`},
+ {id:'solid',n:'Garis Teguh',s:A=>`border:4px solid ${A}`},
+ {id:'double',n:'Ganda Klasik',s:A=>`border:6px double ${A}`},
+ {id:'dashed',n:'Putih Putus',s:A=>`border:3px dashed ${A}`},
+ {id:'dotted',n:'Titik-titik',s:A=>`border:3px dotted ${A}`},
+ {id:'ridge',n:'Ridged',s:A=>`border:7px ridge ${A}`},
+ {id:'groove',n:'Gravir',s:A=>`border:7px groove ${A}`},
+ {id:'inset',n:'Cekung',s:A=>`border:7px inset ${A}`},
+ {id:'outset',n:'Cembung',s:A=>`border:7px outset ${A}`},
+ {id:'topbot',n:'Atas & Bawah',s:A=>`border-top:3px solid ${A};border-bottom:3px solid ${A}`},
+ {id:'topline',n:'Serat Atas',s:A=>`border-top:6px solid ${A}`},
+ {id:'frame',n:'Bingkai Dalam',s:A=>`box-shadow:inset 0 0 0 2px ${A}`},
+ {id:'frame2',n:'Bingkai Rangkap',s:A=>`box-shadow:inset 0 0 0 2px ${A},inset 0 0 0 6px ${A}33`},
+ {id:'gap',n:'Bingkai Jarak',s:A=>`outline:2px solid ${A};outline-offset:-12px`},
+ {id:'gapdash',n:'Bingkai Putus',s:A=>`outline:3px dashed ${A};outline-offset:-12px`},
+ {id:'halo',n:'Halo Lembut',s:A=>`box-shadow:inset 0 0 0 1px ${A}55,inset 0 0 26px ${A}22`},
+ {id:'corners',n:'Sudut Elegan',corner:3},
+ {id:'cornersthin',n:'Sudut Halus',corner:1,extra:A=>`border:1px solid ${A}33`},
+ {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`}];
 
 const DOA={
  pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu, memberi keberkahan atasmu, dan mempertemukan kalian berdua dalam kebaikan.'},
@@ -439,10 +463,15 @@ function boot(draft){
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
  const wspan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="anim-word" style="animation-delay:${d0+i*90}ms">${esc(w)}</span>`).join(' ');
  const RV=cls=>rvOn?cls+' rv fx-s-'+SC:cls;
+ const BD=BORDERS.find(b=>b.id===(d&&d.border))||null;let bdStyle='';
+ if(BD){const A=tplF.accent;if(BD.s)bdStyle=BD.s(A);if(BD.extra)bdStyle+=(bdStyle?';':'')+BD.extra(A)}
+ const bdCorners=(()=>{if(!BD||!BD.corner)return'';const w=BD.corner,A=tplF.accent;
+  const c=p=>`<i class="bdc" style="border:0 solid ${A};${p}"></i>`;
+  return c('top:10px;left:10px;border-top-width:'+w+'px;border-left-width:'+w+'px')+c('top:10px;right:10px;border-top-width:'+w+'px;border-right-width:'+w+'px')+c('bottom:10px;left:10px;border-bottom-width:'+w+'px;border-left-width:'+w+'px')+c('bottom:10px;right:10px;border-bottom-width:'+w+'px;border-right-width:'+w+'px')})();
 
  /* ---------- HTML ---------- */
  let h='';
- h+=`<div id="cover" class="${covOn?'cov':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="inner">
+ h+=`<div id="cover" class="${covOn?'cov':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="bdfr" style="${bdStyle}">${bdCorners}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
    <div class="kicker ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(EV_KICKER[ev]||'Undangan')}</div>
    ${tplF.char?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms':''}">${tplF.char}</div>`:''}`;
@@ -456,7 +485,7 @@ function boot(draft){
  h+=`<div class="date ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+dtD+'ms':''}">🗓 ${esc(dateStr||'—')}${timeStr?' • '+esc(timeStr):''}</div>`;
  if(venue)h+=`<div class="host ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+hoD+'ms':''}">${esc(venue)}</div>`;
  h+=`<button class="open ${covOn?'anim-pop':''}" id="btnOpen" style="${covOn?'animation-delay:'+btD+'ms':''}"><span class="env">✉️</span> Buka Undangan</button>
- </div><div class="brand">AsProject • Undangan Digital</div></div>`;
+ </div></div><div class="brand">AsProject • Undangan Digital</div></div>`;
 
  h+=`<div id="content"><div class="wrap">`;
 
@@ -592,7 +621,7 @@ function startCountdown(tt){
 const DEMO_DRAFT={
  slug:'rangga-alya',name1:'Rangga Pratama',name2:'Alya Zahra',venue:'The Ballroom at Ritz Carlton',
  event_date:'2026-12-28',event_time:'08:00',music_url:'music/backsound-asproject.mp3',music_name:'Backsound AsProject — rtyo',theme:0,
- data:{event:'pernikahan',tpl:'navy-royal',doa:'pernikahan',accent:'#D4AF37',fontTitle:'playfair',fontBody:'inter',
+ data:{event:'pernikahan',tpl:'navy-royal',doa:'pernikahan',accent:'#D4AF37',fontTitle:'playfair',fontBody:'inter',border:'double',
   form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
    putraPutri:'Bpk. Hartono & Ibu Sulastri',putriDari:'Bpk. Faisal & Ibu Dewi',
    tanggalAcara:'2026-12-28',jamAcara:'08:00',zona:'WIB',venue:'The Ballroom at Ritz Carlton',

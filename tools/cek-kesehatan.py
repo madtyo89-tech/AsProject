@@ -408,13 +408,54 @@ def cek_katalog_publik():
           "index.html: teks jumlah template sinkron (%d)" % len(studio_ids))
 
 
+def cek_fitur_terbaru():
+    print("\n[13] Fitur terbaru (hide katalog, 5 tema feminin, 20 border, teks WA)")
+    studio = baca("studio.html")
+    undangan = baca("undangan.html")
+    # 1) 5 tema feminin baru (ultah & aqiqah) di kedua file, urutan TPL tetap identik
+    baru = ["fairy-princess", "unicorn-magic", "rose-bouquet", "baby-rose", "baby-fairy"]
+    for rel, s in (("studio.html", studio), ("undangan.html", undangan)):
+        ada = [i for i in baru if ("id:'%s'" % i) in s]
+        lapor("ok" if len(ada) == 5 else "masalah",
+              f"{rel}: 5 tema feminin baru ada ({len(ada)}/5)")
+    ids_st = _tpl_ids("studio.html") or []
+    ids_ud = _tpl_ids("undangan.html") or []
+    lapor("ok" if ids_st == ids_ud and len(ids_st) == 40 else "masalah",
+          f"urutan TPL identik di studio & undangan ({len(ids_st)} template)")
+    # 2) 20 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
+    def _border_ids(s):
+        m = re.search(r"const BORDERS=\[(.*?)\];", s, re.S)
+        return re.findall(r"\{id:'([a-z0-9]+)'", m.group(1)) if m else None
+    bs, bu = _border_ids(studio), _border_ids(undangan)
+    lapor("ok" if bs and bu and len(bs) == 20 and len(set(bs)) == 20 and bs == bu else "masalah",
+          "BORDERS 20 id unik, identik di studio & undangan")
+    ok = "border:state.border" in studio
+    lapor("ok" if ok else "masalah", "studio.html: publish() menyimpan border ke snapshot data")
+    ok = "const BD=BORDERS.find(b=>b.id===(d&&d.border))" in undangan and "#cover .bdfr" in undangan
+    lapor("ok" if ok else "masalah", "undangan.html: live cover memakai data.border (frame .bdfr)")
+    ok = "border:'double'" in studio and "setBorder(id){state.border=id" in studio
+    lapor("ok" if ok else "masalah", "studio.html: picker border (state.border + setBorder) tersedia")
+    # 3) hide template di katalog + urut per kategori
+    ok = "function tglKatHide(id)" in studio and "katalogHide" in studio
+    lapor("ok" if ok else "masalah", "studio.html: tombol hide/tampilkan template (katalogHide + tglKatHide)")
+    ok = "state.katalogHide.includes(t.id)" in studio
+    lapor("ok" if ok else "masalah", "studio.html: pilihan tema (tplsFor) menghormati template tersembunyi")
+    ok = "${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>" in studio
+    lapor("ok" if ok else "masalah", "studio.html: daftar katalog diurutkan per kategori")
+    # 4) teks WA personal: nama tamu terpilih + link bersih
+    ok = "g?g.nama:'Bapak/Ibu/Saudara/i'" in studio and "g?baseUrl()+'?to='+" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: teks WA berisi nama tamu terpilih & link tanpa placeholder ?to=NamaTamu")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
     print("=" * 74)
     for fn in (cek_link, cek_url_berbahaya, cek_sintaks, cek_id,
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
-               cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik):
+               cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
+               cek_fitur_terbaru):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
