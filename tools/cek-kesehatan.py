@@ -664,6 +664,12 @@ def cek_scan_panitia():
           "master.html: tombol Unduh Daftar Hadir (CSV)")
     lapor("ok" if "function qrDataUndangan(" in stu and "function dlQrUndangan(" in stu else "masalah",
           "studio.html: QR Undangan opsional + tombol download")
+    lapor("ok" if os.path.isfile(os.path.join(ROOT, "assets/jsqr.js")) else "masalah",
+          "assets/jsqr.js: decoder QR cadangan (perangkat tanpa BarcodeDetector)")
+    java = (baca("android/app/src/main/java/my/id/asproject/studio/StudioActivity.java")
+            if os.path.isfile(os.path.join(ROOT, "android/app/src/main/java/my/id/asproject/studio/StudioActivity.java")) else "")
+    lapor("ok" if "RESOURCE_VIDEO_CAPTURE" in java and "pendingWebPermission" in java else "masalah",
+          "aplikasi Android: kamera web untuk scan QR diizinkan")
 
 
 def main():

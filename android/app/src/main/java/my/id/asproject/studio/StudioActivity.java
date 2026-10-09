@@ -86,6 +86,8 @@ public class StudioActivity extends Activity implements NativeBridge.Host {
 
     private static final int REQ_FILE_CHOOSER = 4001;
     private static final int REQ_CAMERA_PERMISSION = 4002;
+    /** Permintaan izin kamera dari halaman web (getUserMedia) yang menunggu izin runtime. */
+    private PermissionRequest pendingWebPermission;
 
     private static final long EXPORT_BAR_TIMEOUT_MS = 12_000L;
 
@@ -655,10 +657,31 @@ public class StudioActivity extends Activity implements NativeBridge.Host {
 
         @Override
         public void onPermissionRequest(PermissionRequest request) {
-            // The Studio does not need web camera/microphone access. Photos are still possible
-            // through the Android camera via the file picker above.
-            request.deny();
-            Log.i(TAG, "Permintaan izin web ditolak: " + java.util.Arrays.toString(request.getResources()));
+            // Kamera web dipakai halaman scan.html (Scan QR Panitia). Mikrofon tetap
+            // ditolak — tidak ada fitur yang membutuhkannya.
+            String[] diminta = request.getResources();
+            boolean butuhKamera = false;
+            for (String r : diminta) {
+                if (PermissionRequest.RESOURCE_VIDEO_CAPTURE.equals(r)) {
+                    butuhKamera = true;
+                    break;
+                }
+            }
+            if (!butuhKamera) {
+                request.deny();
+                Log.i(TAG, "Permintaan izin web ditolak: " + java.util.Arrays.toString(diminta));
+                return;
+            }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+                    || checkSelfPermission(android.Manifest.permission.CAMERA)
+                       == PackageManager.PERMISSION_GRANTED) {
+                request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+                return;
+            }
+            // Minta izin kamera Android dulu; grant/deny diteruskan di
+            // onRequestPermissionsResult.
+            pendingWebPermission = request;
+            requestPermissions(new String[]{android.Manifest.permission.CAMERA}, REQ_CAMERA_PERMISSION);
         }
 
         @Override
@@ -856,6 +879,18 @@ public class StudioActivity extends Activity implements NativeBridge.Host {
         }
         boolean granted = grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+        if (pendingWebPermission != null) {
+            // Hasil izin untuk getUserMedia (halaman scan QR).
+            PermissionRequest web = pendingWebPermission;
+            pendingWebPermission = null;
+            if (granted) {
+                web.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+            } else {
+                web.deny();
+                toast(getString(R.string.permission_denied));
+            }
+            return;
+        }
         if (granted) {
             launchCameraIntent();
         } else {

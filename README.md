@@ -166,6 +166,13 @@ undangan langsung terbuka. Keduanya punya tombol **Download QR** sendiri.
 Master (semua tamu + RSVP + waktu check-in) dan di halaman scan (daftar check-in).
 CSV ber-BOM, langsung rapi di Excel.
 
+**Anti gagal-scan:** pemindai otomatis memakai **BarcodeDetector** (Chrome/Android),
+dan bila tidak tersedia (iOS Safari/Firefox) otomatis memakai **jsQR** (decoder
+cadangan di `assets/jsqr.js`) pada frame kamera — jadi tetap bisa scan. QR digambar
+dengan **quiet zone 4 modul** sesuai standar, modul integer tanpa celah piksel, dan
+label emas di luar area QR (tidak mengganggu pemindaian). Aplikasi Android
+mengizinkan kamera web untuk halaman scan (izin runtime, mikrofon tetap ditolak).
+
 Teknis: `scan.html` memakai **BarcodeDetector** (kamera belakang, HTTPS) dan upsert ke
 tabel `checkin` (`unique(slug, guest)` — scan ulang memperbarui waktu). QR digenerate
 dengan pustaka `assets/qrcode.js` (*qrcode-generator*, MIT, © Kazuhiko Arase), level

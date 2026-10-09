@@ -165,6 +165,79 @@ function cariModul(nama) {
     cek(/btnUnduhHadir/.test(scan2), 'tombol Unduh Daftar Hadir ada di halaman scan');
   }
 
+  console.log('7) Anti-gagal: QR muncul di browser, quiet zone, fallback decoder, kamera app');
+  {
+    /* a. pustaka QR benar-benar terekspos sebagai global browser (bukan hanya CJS/AMD) */
+    const vm = require('vm');
+    const sandbox = {}; sandbox.window = sandbox;
+    vm.createContext(sandbox);
+    vm.runInContext(baca('assets/qrcode.js'), sandbox);
+    cek(typeof sandbox.qrcode === 'function',
+        'assets/qrcode.js mengekspos window.qrcode di browser (QR pasti muncul)');
+  }
+  {
+    /* b. spesifikasi gambar qrTeks: quiet zone 4 modul + label di luar area QR */
+    const stu3 = baca('studio.html');
+    cek(/Math\.floor\(300\/\(n\+8\)\)/.test(stu3),
+        'quiet zone 4 modul per sisi (300/(n+8)) sesuai standar QR');
+    cek(/fillRect\(ox\+c\*C,oy\+r\*C,C,C\)/.test(stu3),
+        'modul digambar integer penuh (tanpa celah piksel)');
+    cek(/cv\.width=300;cv\.height=328/.test(stu3) && /fillRect\(0,304,300,20\)/.test(stu3),
+        'label emas berada di luar area QR (tidak memotong quiet zone)');
+  }
+  {
+    /* c. render matriks dengan parameter qrTeks yang sebenarnya lalu decode jsQR */
+    const qrcode2 = cariModul('qrcode-generator');
+    const jsQR2 = cariModul('jsqr');
+    if (qrcode2 && jsQR2) {
+      const URLU = 'https://asproject.my.id/checkin.html?guest=Keluarga%20Besar%20Hj.%20Aminah&id=ZZ99XX88&s=acara';
+      const q = qrcode2(0, 'M');
+      q.addData(URLU); q.make();
+      const n = q.getModuleCount();
+      const C = Math.max(1, Math.floor(300 / (n + 8)));
+      const ox = Math.floor((300 - n * C) / 2);
+      /* kanvas 300x300 area QR (piksel persis seperti qrTeks) */
+      const W = 300, H = 300;
+      const data = new Uint8ClampedArray(W * H * 4).fill(255);
+      for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+        if (!q.isDark(r, c)) continue;
+        for (let y = 0; y < C; y++) for (let x = 0; x < C; x++) {
+          const px = ox + c * C + x, py = ox + r * C + y, i = (py * W + px) * 4;
+          data[i] = data[i + 1] = data[i + 2] = 0;
+        }
+      }
+      const hasil = jsQR2(data, W, H);
+      cek(hasil && hasil.data === URLU,
+          `spesifikasi gambar qrTeks ter-decode sempurna (quiet zone ${Math.round(ox / C * 10) / 10} modul)`);
+    } else {
+      cek(false, 'jsqr/qrcode-generator tersedia untuk uji render (npm install --no-save jsqr qrcode-generator)');
+    }
+  }
+  {
+    /* d. fallback decoder untuk perangkat tanpa BarcodeDetector (iOS/Firefox) */
+    cek(fs.existsSync(path.join(ROOT, 'assets/jsqr.js')), 'assets/jsqr.js (decoder cadangan) ada');
+    cek(/jsQR \— QR code decoder/.test(baca('assets/jsqr.js')) && /Apache/.test(baca('assets/jsqr.js')),
+        'atribusi lisensi Apache-2.0 jsQR tercantum');
+    const scan3 = baca('scan.html');
+    cek(/assets\/jsqr\.js/.test(scan3), 'scan.html memuat decoder cadangan jsQR');
+    cek(/function decodeJsQR/.test(scan3) && /window\.jsQR\(img\.data/.test(scan3),
+        'decodeQR memakai jsQR bila BarcodeDetector tidak ada');
+    cek(/decodeQR\(v\)/.test(scan3), 'loop kamera memakai decodeQR (kamera tetap jalan di iOS/Firefox)');
+    cek(/if\(!teks\)teks=decodeJsQR/.test(scan3), 'Pindai dari Galeri punya fallback jsQR');
+    cek(/typeof window\.jsQR!=='function'/.test(scan3), 'deteksi ketersediaan pemindai memperhitungkan jsQR');
+  }
+  {
+    /* e. aplikasi Android mengizinkan kamera web untuk scan */
+    const java = baca('android/app/src/main/java/my/id/asproject/studio/StudioActivity.java');
+    cek(/RESOURCE_VIDEO_CAPTURE/.test(java) && /request\.grant/.test(java),
+        'StudioActivity mengizinkan kamera web (VIDEO_CAPTURE)');
+    cek(/pendingWebPermission/.test(java) && /REQ_CAMERA_PERMISSION/.test(java),
+        'izin runtime Android diminta sebelum grant getUserMedia');
+    cek(!/RESOURCE_AUDIO_CAPTURE/.test(java) || /deny\(\)/.test(java),
+        'mikrofon web tetap ditolak (tak ada fitur yang butuh)');
+    cek(/butuhKamera/.test(java), 'hanya permintaan kamera yang dilayani, sisanya ditolak');
+  }
+
   console.log(`\nRingkasan: ${lulus} lulus, ${gagal} gagal`);
   process.exit(gagal ? 1 : 0);
 })();

@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0f1a12">
 <title>Scan QR Panitia — AsProject</title>
 <link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<script src="assets/jsqr.js"></script>
 <style>
 :root{--bg:#0f1a12;--card:#ffffff;--ink:#22301f;--mut:#7a857c;--line:#e3efe7;--grn:#4A6741;--grn2:#34d399;--amber:#b45309}
 *{box-sizing:border-box}
@@ -78,6 +79,7 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
   </div>
   <input type="file" id="fileQr" accept="image/*" hidden>
   <div class="alert" id="alertKamera" hidden></div>
+  <p class="note" style="margin:8px 0 0">Mendukung kamera modern (Chrome/Android/iOS 15+) dan otomatis memakai pemindai cadangan di perangkat lain. Kalau kamera tetap bermasalah, pakai <b>Pindai dari Galeri</b> atau cari manual.</p>
 
   <h3>Cari manual (QR rusak / tanpa kamera)</h3>
   <input id="inputManual" placeholder="Ketik nama atau kode tamu…" autocomplete="off">
@@ -249,28 +251,61 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
   $('barisKamera').hidden=false;$('barisSetelah').hidden=true;
   $('camHint').textContent='Kamera siap — tekan tombol Mulai Pindai';
  }
+ var kanvas=null,ktx=null;
+ function kanvasFrame(){
+  if(!kanvas){kanvas=document.createElement('canvas');ktx=kanvas.getContext('2d',{willReadFrequently:true})}
+  return kanvas;
+ }
+ /* Decode QR dari sebuah sumber gambar/video: BarcodeDetector bila ada,
+    kalau tidak ada (iOS Safari/Firefox) pakai jsQR pada piksel kanvas. */
+ function decodeQR(sumber,lebar,tinggi){
+  if(window.BarcodeDetector&&sumber.tagName!=='CANVAS'&&sumber.tagName!=='IMG'){
+   return detector.detect(sumber).then(function(hs){
+    return hs&&hs.length?hs[0].rawValue:null;
+   }).catch(function(){return decodeJsQR(sumber,lebar,tinggi)});
+  }
+  return Promise.resolve(decodeJsQR(sumber,lebar,tinggi));
+ }
+ function decodeJsQR(sumber,lebar,tinggi){
+  if(typeof window.jsQR!=='function')return null;
+  try{
+   var cv=kanvasFrame();
+   var w=lebar||sumber.videoWidth||sumber.naturalWidth||sumber.width;
+   var h=tinggi||sumber.videoHeight||sumber.naturalHeight||sumber.height;
+   if(!w||!h)return null;
+   cv.width=w;cv.height=h;ktx.drawImage(sumber,0,0,w,h);
+   var img=ktx.getImageData(0,0,w,h);
+   var hasil=window.jsQR(img.data,img.width,img.height,{inversionAttempts:'dontInvert'});
+   return hasil?hasil.data:null;
+  }catch(e){return null}
+ }
  function jalanDeteksi(){
   var v=$('video');
   loopId=setInterval(function(){
-   if(!detector||v.readyState<2)return;
-   detector.detect(v).then(function(hs){
-    if(hs&&hs.length&&hs[0].rawValue&&hs[0].rawValue!==terakhir){
-     terakhir=hs[0].rawValue;berhenti();tampilHasil(terakhir);
-    }
+   if(v.readyState<2)return;
+   if(!detector&&typeof window.jsQR!=='function')return;
+   decodeQR(v).then(function(teks){
+    if(teks&&teks!==terakhir){terakhir=teks;berhenti();tampilHasil(terakhir)}
    }).catch(function(){});
   },350);
  }
  async function mulai(){
   $('alertKamera').hidden=true;
-  if(!window.BarcodeDetector){
+  if(!window.BarcodeDetector&&typeof window.jsQR!=='function'){
    $('alertKamera').hidden=false;
-   $('alertKamera').textContent='Perangkat ini tidak mendukung pemindai QR otomatis. Gunakan “Pindai dari Galeri” atau cari manual di bawah.';
+   $('alertKamera').textContent='Pemindai QR tidak tersedia di perangkat ini. Gunakan “Pindai dari Galeri” atau cari manual di bawah.';
    return;
   }
   try{
    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
    var v=$('video');v.srcObject=stream;await v.play();
-   detector=new window.BarcodeDetector({formats:['qr_code']});
+   if(window.BarcodeDetector){try{detector=new window.BarcodeDetector({formats:['qr_code']})}catch(e){detector=null}}
+   if(!detector&&typeof window.jsQR!=='function'){
+    berhenti();
+    $('alertKamera').hidden=false;
+    $('alertKamera').textContent='Pemindai QR tidak tersedia. Gunakan “Pindai dari Galeri” atau cari manual.';
+    return;
+   }
    $('guide').hidden=false;$('camHint').textContent='Arahkan ke QR tamu…';
    $('barisKamera').hidden=true;$('barisSetelah').hidden=false;
    terakhir='';jalanDeteksi();
@@ -281,12 +316,21 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
  }
  async function dariGaleri(f){
   if(!f)return;
-  if(!window.BarcodeDetector){$('alertKamera').hidden=false;$('alertKamera').textContent='Pemindai gambar tidak didukung; gunakan pencarian manual.';return}
+  if(!window.BarcodeDetector&&typeof window.jsQR!=='function'){$('alertKamera').hidden=false;$('alertKamera').textContent='Pemindai gambar tidak didukung; gunakan pencarian manual.';return}
   try{
-   var bmp=await createImageBitmap(f);
-   var det=new window.BarcodeDetector({formats:['qr_code']});
-   var hs=await det.detect(bmp);
-   if(hs&&hs.length){tampilHasil(hs[0].rawValue)}
+   var sumber=null,w=0,h=0;
+   if(window.createImageBitmap){
+    var bmp=await createImageBitmap(f);sumber=bmp;w=bmp.width;h=bmp.height;
+   }else{
+    sumber=await new Promise(function(res,rej){var im=new Image();im.onload=function(){res(im)};im.onerror=rej;im.src=URL.createObjectURL(f)});
+    w=sumber.naturalWidth;h=sumber.naturalHeight;
+   }
+   var teks=null;
+   if(window.BarcodeDetector){
+    try{var det=new window.BarcodeDetector({formats:['qr_code']});var hs=await det.detect(sumber);if(hs&&hs.length)teks=hs[0].rawValue}catch(e){}
+   }
+   if(!teks)teks=decodeJsQR(sumber,w,h);
+   if(teks){tampilHasil(teks)}
    else{$('alertKamera').hidden=false;$('alertKamera').textContent='QR tidak terbaca dari gambar itu. Coba foto lebih dekat/jelas.'}
   }catch(e){$('alertKamera').hidden=false;$('alertKamera').textContent='Gagal membaca gambar itu.'}
  }
