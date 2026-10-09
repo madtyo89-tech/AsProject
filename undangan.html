@@ -139,6 +139,17 @@ body.theme-jawa-elegan #cover .wedding-invite-card{background-color:#f5ebd6;back
 body.theme-minimalist-sage #cover .wedding-invite-card{background:rgba(255,255,250,.63);border-color:rgba(95,122,92,.28);box-shadow:0 12px 34px rgba(56,80,60,.08);-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px)}
 body.theme-minimalist-frost #cover .wedding-invite-card{background:rgba(255,255,255,.94);border-color:rgba(56,189,248,.28)}
 body.theme-ice-blue #cover .wedding-invite-card{background:rgba(248,253,255,.93);border-color:rgba(14,165,233,.3)}
+/* Luxury Gold: black-marble glass, double foil frame, ivory typography, and a metallic CTA. */
+body.theme-luxury-gold #cover .wedding-invite-card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(17,14,10,.96),rgba(38,29,13,.94))!important;border-color:color-mix(in srgb,var(--accent) 78%,transparent)!important;box-shadow:0 24px 64px rgba(0,0,0,.48),inset 0 0 0 1px color-mix(in srgb,var(--accent) 18%,transparent);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);color:#F7ECD4}
+body.theme-luxury-gold #cover .wedding-invite-card::before{content:'';position:absolute;z-index:0;inset:8px;border:1px solid color-mix(in srgb,var(--accent) 34%,transparent);border-radius:17px;pointer-events:none}
+body.theme-luxury-gold #cover .wedding-invite-card .inner{position:relative;z-index:1}
+body.theme-luxury-gold #cover h1{color:#F7ECD4;text-shadow:0 3px 24px rgba(0,0,0,.34)}
+body.theme-luxury-gold #cover .wedding-subtitle{color:#DCCBA6}
+body.theme-luxury-gold #cover .date{background:rgba(212,175,55,.12);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#F7E8C4}
+body.theme-luxury-gold #cover .wedding-meta,body.theme-luxury-gold #cover .host{color:#F5EBD5}
+body.theme-luxury-gold #cover .wedding-note{border-color:color-mix(in srgb,var(--accent) 34%,transparent);color:#DCCFB3}
+body.theme-luxury-gold #cover .open{background:linear-gradient(135deg,#B78A32,#F4DEA0 52%,#C9A24C);border:1px solid rgba(255,239,191,.8);color:#20180D;box-shadow:0 10px 24px rgba(0,0,0,.34);text-shadow:none}
+body.theme-luxury-gold #cover .wedding-hint{color:#E7CB83}
 
 /* Seluruh halaman tamu ikut memakai palet template, bukan kartu krem/gold generik. */
 body.wedding-cover .wrap{background-color:#fffdf8;background-color:color-mix(in srgb,var(--g0) 7%,#fff);background-image:radial-gradient(color-mix(in srgb,var(--accent) 15%,transparent) 1px,transparent 1.5px);background-size:24px 24px}
@@ -291,7 +302,7 @@ const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 const TPL=[
  {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',bg3d:'assets/tema-3d/jawa-elegan.webp',bgPaper:'assets/wedding/jawa-batik-watercolor.webp',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant'},
  {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',bgPaper:'assets/wedding/minimalist-sage-watercolor.webp',deco:'🌿',pat:'botanical',ft:'inter'},
- {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',bg3d:'assets/tema-3d/luxury-gold.webp',deco:'✨ ◆ ✨',pat:'',ft:'playfair'},
+ {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#D4AF37',ink:'#5a4a12',bg3d:'assets/tema-3d/luxury-gold.webp',deco:'✦ ◆ ✦',pat:'',ft:'playfair'},
  {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',bg3d:'assets/tema-3d/floral-rustic.webp',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant'},
  {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',bg3d:'assets/tema-3d/ice-blue.webp',deco:'❄ ✦ ❄',pat:'',ft:'playfair'},
  {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',deco:'❄',pat:'frost',ft:'inter'},
@@ -840,8 +851,8 @@ function startCountdown(tt){
 /* ---------- demo (tanpa database) ---------- */
 const DEMO_DRAFT={
  slug:'rangga-alya',name1:'Rangga Pratama',name2:'Alya Zahra',venue:'The Ballroom at Ritz Carlton',
- event_date:'2026-12-28',event_time:'08:00',music_url:'music/backsound-asproject.mp3',music_name:'Backsound AsProject — rtyo',theme:0,
- data:{event:'pernikahan',tpl:'navy-royal',doa:'pernikahan',accent:'#D4AF37',fontTitle:'playfair',fontBody:'inter',border:'double',
+ event_date:'2026-12-28',event_time:'08:00',music_url:'music/backsound-asproject.mp3',music_name:'Backsound AsProject — rtyo',theme:2,
+ data:{event:'pernikahan',tpl:'luxury-gold',doa:'pernikahan',accent:'#D4AF37',fontTitle:'playfair',fontBody:'inter',border:'double',
   form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
    putraPutri:'Bpk. Hartono & Ibu Sulastri',putriDari:'Bpk. Faisal & Ibu Dewi',
    tanggalAcara:'2026-12-28',jamAcara:'08:00',zona:'WIB',venue:'The Ballroom at Ritz Carlton',

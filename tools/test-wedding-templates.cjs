@@ -89,6 +89,7 @@ async function testLiveExamples(){
   assert(w.document.documentElement.style.getPropertyValue('--fb').includes('Work Sans'),`${id}: live body font is applied`);
   if(t.bgPaper)assert(w.document.body.classList.contains('wedding-paper-art'),`${id}: paper art is enabled`);
   if(t.bg3d)assert(w.document.body.classList.contains('art3d'),`${id}: matching artwork background remains enabled`);
+  if(id==='luxury-gold')assert(liveHtml.includes('body.theme-luxury-gold #cover .wedding-invite-card{'),`${id}: live invitation uses its premium black-and-gold card skin`);
   dom.window.close();
  }
 }
@@ -117,6 +118,10 @@ async function testStudioPreview(){
   assert(cover.querySelector('.wedding-invite-card'),`${t.id}: Studio preview displays card`);
   assert(cover.querySelector('.wedding-kicker').textContent.includes('Invited'));
   if(t.id==='jawa-elegan')assert(cover.querySelector('.wedding-invite-card').getAttribute('style').includes('jawa-batik-watercolor.webp'));
+  if(t.id==='luxury-gold'){
+   assert(cover.querySelector('.wedding-invite-card').getAttribute('style').includes('linear-gradient(145deg,rgba(17,14,10,.96)'), 'Studio shows the premium dark-gold card');
+   assert(cover.querySelector('h1').getAttribute('style').includes('#F7ECD4'),'premium names use warm ivory type');
+  }
   if(t.id==='minimalist-sage')assert(cover.getAttribute('style').includes('minimalist-sage-watercolor.webp'));
   if(t.id==='ice-blue')assert(cover.getAttribute('style').includes('ice-blue.webp'));
  }

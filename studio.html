@@ -192,6 +192,13 @@ input,textarea,select{outline:0}
 .phone .screen .wedding-cover.theme-ice-blue .wedding-invite-card{background:rgba(247,252,255,.94);border-color:rgba(14,165,233,.24)}
 .phone .screen .wedding-cover.theme-minimalist-frost .wedding-invite-card{background:rgba(255,255,255,.96);border-color:rgba(56,189,248,.25)}
 .phone .screen .wedding-cover.theme-minimalist-sage .wedding-invite-card{background:rgba(255,255,250,.62);border-color:rgba(95,122,92,.28);box-shadow:0 8px 24px rgba(56,80,60,.08)}
+.phone .screen .wedding-cover.theme-luxury-gold .wedding-invite-card{background:linear-gradient(145deg,rgba(17,14,10,.96),rgba(38,29,13,.94))!important;border-color:rgba(212,175,55,.76);box-shadow:0 16px 34px rgba(0,0,0,.42),inset 0 0 0 1px rgba(212,175,55,.16);color:#F7ECD4;overflow:hidden}
+.phone .screen .wedding-cover.theme-luxury-gold .wedding-invite-card::before{content:'';position:absolute;z-index:0;inset:6px;border:1px solid rgba(212,175,55,.3);border-radius:12px;pointer-events:none}
+.phone .screen .wedding-cover.theme-luxury-gold .wedding-subtitle{color:#DCCBA6}
+.phone .screen .wedding-cover.theme-luxury-gold .wedding-date{background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.36);color:#F7E8C4}
+.phone .screen .wedding-cover.theme-luxury-gold .wedding-meta{color:#F5EBD5}
+.phone .screen .wedding-cover.theme-luxury-gold .wedding-note{color:#DCCFB3}
+.phone .screen .wedding-cover.theme-luxury-gold .wedding-open{background:linear-gradient(135deg,#B78A32,#F4DEA0 52%,#C9A24C);border:1px solid rgba(255,239,191,.8);color:#20180D;box-shadow:0 6px 16px rgba(0,0,0,.32);font-weight:700}
 .flow-page{max-width:620px;margin:0 auto;padding:clamp(24px,8vh,80px) 16px 40px;min-height:100dvh;display:grid;align-content:center;gap:20px}
 .flow-page h1{font-size:28px;line-height:1.25;margin-bottom:12px}
 .flow-page p{color:var(--mut);line-height:1.8}
@@ -294,7 +301,7 @@ const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶'};
 const TPL=[
  {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',badge:'BEST SELLER',bg3d:'assets/tema-3d/jawa-elegan.webp',bgPaper:'assets/wedding/jawa-batik-watercolor.webp',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant',desc:'Nuansa pranakan Jawa, kertas batik kawung/parang, dan aksen emas'},
  {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',badge:'',bgPaper:'assets/wedding/minimalist-sage-watercolor.webp',deco:'🌿',pat:'botanical',ft:'inter',desc:'Minimalis sage dengan bingkai eucalyptus watercolor dan kertas ivory'},
- {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',badge:'LUXURY',bg3d:'assets/tema-3d/luxury-gold.webp',deco:'✨ ◆ ✨',pat:'',ft:'playfair',desc:'Glam soft luxury, emboss gold & black tie vibe'},
+ {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#D4AF37',ink:'#5a4a12',badge:'LUXURY',bg3d:'assets/tema-3d/luxury-gold.webp',deco:'✦ ◆ ✦',pat:'',ft:'playfair',desc:'Black tie mewah dengan marmer gelap, ukiran emas, dan tipografi klasik'},
  {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',badge:'',bg3d:'assets/tema-3d/floral-rustic.webp',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
  {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',harga:75000,g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',badge:'NEW',bg3d:'assets/tema-3d/ice-blue.webp',deco:'❄ ✦ ❄',pat:'',ft:'playfair',desc:'Biru es elegan ala winter wedding, efek glass & floral frost yang sejuk'},
  {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',harga:75000,g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',badge:'',deco:'❄',pat:'frost',ft:'inter',desc:'Putih salju, detail kristal tipis, dan tipografi minimal'},
@@ -1450,7 +1457,7 @@ function phoneHtml(){
  }
  const patStyle=(dark||art3d||paperArt||cvGaya==='full')?'':(state.bgType==='pattern'?(patCss(tp)||`background-image:radial-gradient(${tp.accent}26 1.5px,transparent 1.8px);background-size:22px 22px;`):state.bgType==='foto'?'':patCss(tp));
  const tF=fontAttr(state.fontTitle),bF=fontAttr(state.fontBody);
- const nameColor=dark?'#FDE68A':(cvGaya==='full'?'#FFFFFF':(wedding?'#344238':(art3d?'#F7F2E9':state.accent)));
+ const nameColor=dark?'#FDE68A':(cvGaya==='full'?'#FFFFFF':(wedding?(tp.id==='luxury-gold'?'#F7ECD4':'#344238'):(art3d?'#F7F2E9':state.accent)));
  /* Bingkai foto cover di pratinjau — cermin gaya yang dipakai undangan tamu. */
  const cvB=CV_BENTUK[cvGaya]||CV_BENTUK.kotak,cvp=cvPos();
  const blokFotoPrev=(cvGaya==='none'||cvGaya==='full')?''
@@ -1460,6 +1467,9 @@ function phoneHtml(){
  const dateParts=String(f.tanggalAcara||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
  const weddingDateLabel=dateParts?`${Number(dateParts[3])} ${MONTH_NAMES[Number(dateParts[2])-1]} ${dateParts[1]}`:'Tanggal acara';
  const weddingPaperCard=paperArt&&tp.id==='jawa-elegan'?`background-image:url(${paperArt});background-size:100% 100%;background-position:center;background-repeat:no-repeat;`:'';
+ const weddingCardCss=wedding?(tp.id==='luxury-gold'
+  ?'padding:16px 12px;margin:0 0 14px;border-radius:18px;background:linear-gradient(145deg,rgba(17,14,10,.96),rgba(38,29,13,.94));box-shadow:0 16px 34px rgba(0,0,0,.42),inset 0 0 0 1px rgba(212,175,55,.16);color:#F7ECD4;'
+  :'padding:16px 12px;margin:0 0 14px;border-radius:18px;background:rgba(255,253,247,.92);box-shadow:0 10px 28px rgba(25,35,27,.15);'):'';
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
  const wordSpan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="a-word" style="animation-delay:${d0+i*80}ms">${esc(w)}</span>`).join(' ');
  const h1Inner=state.event==='pernikahan'
@@ -1481,7 +1491,7 @@ function phoneHtml(){
   <div class="notch"></div>
    <div class="${dark?'emerald-bg ':''}${wedding?'wedding-cover theme-'+tp.id:''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg}">
    <div class="${(CV||TX||RV?'ap ':'')}${wedding?'wedding-preview-inner':''}" style="padding:${wedding?'12px 12px 18px':'20px'};text-align:center;font-family:${tF};${patStyle}">
-   <div class="${wedding?'wedding-invite-card':''}" style="position:relative;${wedding?'padding:16px 12px;margin:0 0 14px;border-radius:18px;background:rgba(255,253,247,.92);box-shadow:0 10px 28px rgba(25,35,27,.15);':''}${weddingPaperCard}${!wedding&&borderOf().id!=='none'?'padding:18px 12px;margin:0 0 14px;':''}${borderCss()}">${borderCorners()}
+   <div class="${wedding?'wedding-invite-card':''}" style="position:relative;${weddingCardCss}${weddingPaperCard}${!wedding&&borderOf().id!=='none'?'padding:18px 12px;margin:0 0 14px;':''}${borderCss()}">${borderCorners()}
     ${f.showBismillah?`<div class="${CV?'fx-c-'+CE:''}" style="margin-bottom:12px;${CV?'animation-delay:250ms':''}"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
      <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}
     ${tp.deco?`<div class="${CV?'a-deco':''}" style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px;${CV?'animation-delay:150ms':''}">${tp.deco}</div>`:''}
