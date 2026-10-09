@@ -27,7 +27,7 @@ import posixpath
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HALAMAN = ["index.html", "studio.html", "undangan.html", "404.html",
-           "checkin.html", "demo/ice-blue.html", "master.html"]
+           "checkin.html", "demo/ice-blue.html", "master.html", "scan.html"]
 TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 
 hitung = {"ok": 0, "masalah": 0, "info": 0}
@@ -509,6 +509,169 @@ def cek_alur_master():
               "tools/rsvp.sql: tabel rsvp unique (slug,guest) + policy anon")
 
 
+# --------------------------------------------- 15. kontras teks tema undangan
+def cek_kontras_tema():
+    print("\n[15] Kontras teks tema (assets/theme-contrast.js)")
+    aset = os.path.join(ROOT, "assets", "theme-contrast.js")
+    lapor("ok" if os.path.exists(aset) else "masalah",
+          "assets/theme-contrast.js tersedia (penyesuaian kontras tema)")
+    und = baca("undangan.html")
+    lapor("ok" if 'assets/theme-contrast.js' in und else "masalah",
+          "undangan.html memuat aset penyesuaian kontras")
+    lapor("ok" if '--ink-body' in und else "masalah",
+          "aturan konten memakai --ink-body (bukan ink tema mentah)")
+    stu = baca("studio.html")
+    lapor("ok" if "fetch('assets/theme-contrast.js')" in stu else "masalah",
+          "studio.html: file HTML mandiri ikut menyematkan aset kontras")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji kontras tema dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-kontras-tema.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    ringkas = [b.strip() for b in r.stdout.splitlines()
+               if b.strip().startswith("kontras terburuk") or b.strip().startswith("cover (tidak")]
+    pesan = "; ".join(ringkas) if ringkas else (r.stdout.strip() or r.stderr.strip())[:220]
+    lapor("ok" if r.returncode == 0 else "masalah", f"uji kontras tema: {pesan}")
+
+
+# ------------------------------------------------- 16. tema 3D (artwork realistis)
+def cek_tema_3d():
+    print("\n[16] Tema 3D ulang tahun (assets/tema-3d/)")
+    folder = os.path.join(ROOT, "assets", "tema-3d")
+    berkas = sorted(f for f in os.listdir(folder) if f.endswith(".webp")) if os.path.isdir(folder) else []
+    lapor("ok" if berkas else "masalah",
+          f"artwork 3D tersedia ({len(berkas)} berkas webp)")
+    for rel in ("undangan.html", "studio.html"):
+        isi = baca(rel)
+        jumlah = isi.count("bg3d:'assets/tema-3d/")
+        lapor("ok" if jumlah == len(berkas) else "masalah",
+              f"{rel}: {jumlah} tema memakai artwork 3D (berkas: {len(berkas)})")
+    und = baca("undangan.html")
+    lapor("ok" if "body.art3d #cover" in und else "masalah",
+          "undangan.html: aturan latar artwork + lapisan gelap ada")
+    lapor("ok" if "classList.add('art3d')" in und else "masalah",
+          "undangan.html: kelas art3d dipasang saat tema ber-artwork")
+    lapor("ok" if 'class="cvf cvf-' in und else "masalah",
+          "undangan.html: bingkai foto cover (9 gaya) tersedia")
+    lapor("ok" if "body.foto-full #cover" in und else "masalah",
+          "undangan.html: gaya foto penuh + panel gelap tersedia")
+    stu = baca("studio.html")
+    lapor("ok" if "const art3d=" in stu else "masalah",
+          "studio.html: pratinjau HP mengikuti latar 3D")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji tema 3D dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-tema-3d.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines()
+             if b.strip().startswith("Ringkasan") or b.strip().startswith("terburuk")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji tema 3D: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+
+
+# --------------------------------------------- 17. foto cover (9 gaya + geser)
+def cek_foto_cover():
+    print("\n[17] Foto cover undangan (9 gaya + geser/zoom)")
+    und = baca("undangan.html")
+    stu = baca("studio.html")
+    gaya = ["kotak", "oval", "lingkaran", "arch", "polaroid", "emas", "kapsul"]
+    hilang = [g for g in gaya if f".cvf-{g}" not in und]
+    lapor("ok" if not hilang else "masalah",
+          f"undangan.html: CSS 7 bingkai lengkap (kurang: {', '.join(hilang) or '-'})")
+    lapor("ok" if und.count('class="cvf cvf-') >= 1 else "masalah",
+          "undangan.html: markup bingkai memakai gaya dari data.coverStyle")
+    lapor("ok" if "object-position:${cvP.x}%" in und else "masalah",
+          "undangan.html: posisi foto dari data.coverPos dipakai")
+    lapor("ok" if "untukLatarGelap" in und and "untukLatarGelap" in baca("assets/theme-contrast.js") else "masalah",
+          "aksen di atas foto gelap dicerahkan (untukLatarGelap)")
+    lapor("ok" if "#cover{overflow-y:auto" in und else "masalah",
+          "undangan.html: cover bisa digulir (tombol Buka Undangan tidak terpotong)")
+    lapor("ok" if "const CV_URUT=" in stu and stu.count("'kapsul'") >= 1 else "masalah",
+          "studio.html: daftar 9 gaya tersedia")
+    for fn in ("function cvMulai", "function cvJalan", "function cvLepas", "function cvZoom", "function cvReset"):
+        lapor("ok" if fn in stu else "masalah", f"studio.html: {fn.split()[1]} tersedia (geser/zoom)")
+    lapor("ok" if stu.count("coverStyle:cvGayaAktif()") >= 3 else "masalah",
+          f"studio.html: gaya & posisi foto tersimpan (3 titik simpan: {stu.count('coverStyle:cvGayaAktif()')})")
+    lapor("ok" if "if(a.snap.coverStyle)state.coverStyle" in stu else "masalah",
+          "studio.html: membuka arsip memulihkan gaya foto")
+    mas = baca("master.html")
+    lapor("ok" if "function cvCoverMini(" in mas else "masalah",
+          "master.html: kartu Preview Undangan memakai foto cover")
+    bentuk = [g for g in ("kotak", "oval", "lingkaran", "arch", "polaroid", "emas", "kapsul")
+              if f".bc-{g}" not in mas]
+    lapor("ok" if not bentuk else "masalah",
+          f"master.html: bentuk foto di preview lengkap (kurang: {', '.join(bentuk) or '-'})")
+    lapor("ok" if ".b-screen.b-full" in mas else "masalah",
+          "master.html: mode foto penuh di preview memakai latar gelap")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji foto cover dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-foto-cover.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines()
+             if b.strip().startswith("Ringkasan") or b.strip().startswith("kontras")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji foto cover: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+
+
+# ------------------------------- 18. skrip build tidak boleh di folder terlarang
+def cek_skrip_build():
+    """Folder bernama build/out/dist/target bisa hilang dari snapshot workspace, sehingga
+    penghapusannya ikut ter-stage oleh `git add -A` dan berkasnya terhapus dari repo.
+    Karena itu berkas sumber tidak boleh ditaruh di sana."""
+    print("\n[18] Skrip build APK (android/buildkit/)")
+    rel = os.path.join("android", "buildkit", "build-apk.sh")
+    ada = os.path.isfile(os.path.join(ROOT, rel))
+    lapor("ok" if ada else "masalah", f"{rel} ada di disk")
+    if ada:
+        bisa = bool(os.stat(os.path.join(ROOT, rel)).st_mode & 0o111)
+        lapor("ok" if bisa else "info", f"{rel} dapat dieksekusi langsung (./)")
+    if shutil.which("git") and os.path.isdir(os.path.join(ROOT, ".git")):
+        r = subprocess.run(["git", "ls-files", "--error-unmatch", rel],
+                           capture_output=True, text=True, cwd=ROOT)
+        lapor("ok" if r.returncode == 0 else "masalah",
+              f"{rel} terlacak git (aman saat push)")
+        r2 = subprocess.run(["git", "ls-files"], capture_output=True, text=True, cwd=ROOT)
+        terlarang = [f for f in r2.stdout.splitlines()
+                     if any(seg in ("build", "dist", "target", "coverage", "out")
+                            for seg in f.split("/")[:-1])]
+        lapor("ok" if not terlarang else "masalah",
+              "tidak ada berkas terlacak di folder bernama build/out/dist/target"
+              + (f" — ditemukan: {', '.join(terlarang[:3])}" if terlarang else ""))
+    else:
+        lapor("info", "git tidak tersedia — pemeriksaan pelacakan berkas dilewati")
+
+
+# ------------------------------------ 19. fitur scan QR panitia (check-in)
+def cek_scan_panitia():
+    print("\n[19] Scan QR panitia (check-in)")
+    qr = baca("assets/qrcode.js") if os.path.isfile(os.path.join(ROOT, "assets/qrcode.js")) else ""
+    lapor("ok" if "QR Code Generator" in qr and "MIT" in qr else "masalah",
+          "assets/qrcode.js (pustaka QR, MIT) tersedia")
+    stu = baca("studio.html")
+    lapor("ok" if "function checkinUrl(" in stu and "window.qrcode(0,'M')" in stu else "masalah",
+          "studio.html: QR tamu dibuat dari pustaka QR (checkinUrl)")
+    scan = baca("scan.html") if os.path.isfile(os.path.join(ROOT, "scan.html")) else ""
+    lapor("ok" if scan and "BarcodeDetector" in scan and "rest/v1/checkin" in scan else "masalah",
+          "scan.html: pemindai panitia + catat check-in")
+    mas = baca("master.html")
+    lapor("ok" if "Link Scan QR Panitia" in mas and "scan.html?s=" in mas else "masalah",
+          "master.html: kartu Link Scan QR Panitia (bisa dibagikan)")
+    sql = baca("tools/checkin.sql") if os.path.isfile(os.path.join(ROOT, "tools/checkin.sql")) else ""
+    lapor("ok" if "unique (slug, guest)" in sql else "masalah",
+          "tools/checkin.sql: skema tabel check-in")
+    lapor("ok" if "function unduhDaftarHadir(" in mas and "Unduh Daftar Hadir" in mas else "masalah",
+          "master.html: tombol Unduh Daftar Hadir (CSV)")
+    lapor("ok" if "function qrDataUndangan(" in stu and "function dlQrUndangan(" in stu else "masalah",
+          "studio.html: QR Undangan opsional + tombol download")
+    lapor("ok" if os.path.isfile(os.path.join(ROOT, "assets/jsqr.js")) else "masalah",
+          "assets/jsqr.js: decoder QR cadangan (perangkat tanpa BarcodeDetector)")
+    java = (baca("android/app/src/main/java/my/id/asproject/studio/StudioActivity.java")
+            if os.path.isfile(os.path.join(ROOT, "android/app/src/main/java/my/id/asproject/studio/StudioActivity.java")) else "")
+    lapor("ok" if "RESOURCE_VIDEO_CAPTURE" in java and "pendingWebPermission" in java else "masalah",
+          "aplikasi Android: kamera web untuk scan QR diizinkan")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -516,7 +679,8 @@ def main():
     for fn in (cek_link, cek_url_berbahaya, cek_sintaks, cek_id,
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
-               cek_fitur_terbaru, cek_alur_master):
+               cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
+               cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

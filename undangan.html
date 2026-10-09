@@ -16,6 +16,10 @@
   --g0:#F0F9FF; --g1:#BAE6FD; --g2:#7DD3FC;
   --accent:#0EA5E9; --ink:#0c4a6e; --gold:#D4AF37;
   --cream:#FAF6F1; --card:#fff;
+  /* Turunan kontras tema — dihitung ulang oleh boot() lewat assets/theme-contrast.js.
+     Nilai di bawah hanya cadangan supaya tampilan awal tetap terbaca. */
+  --ink-body:#2b2b2b; --ink-body-fg:#fff; --ink-fg:#fff;
+  --accent-body:#0c4a6e; --accent-cover:#0EA5E9;
   --ft:"Cormorant Garamond",serif; --fb:"Inter",sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -28,7 +32,7 @@ button{font-family:inherit;cursor:pointer}
 /* ---------- LAYER SAMAR (loading / error) ---------- */
 .scrim{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--cream)}
 .scrim .box{max-width:420px;width:100%;background:var(--card);border:1px solid #eee2d0;border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 30px 60px rgba(90,70,30,.12)}
-.scrim h2{font-family:var(--ft);font-size:26px;font-weight:600;color:var(--ink);margin:14px 0 8px}
+.scrim h2{font-family:var(--ft);font-size:26px;font-weight:600;color:var(--ink-body);margin:14px 0 8px}
 .scrim p{font-size:13px;line-height:1.7;color:#6b6157}
 .spin{width:44px;height:44px;margin:0 auto;border-radius:50%;border:3px solid #f0e6d6;border-top-color:var(--gold);animation:sp 1s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -46,17 +50,57 @@ button{font-family:inherit;cursor:pointer}
 #cover .inner{position:relative;max-width:400px;width:100%}
 #cover .bdfr{position:relative;width:100%;max-width:440px;padding:30px 18px}
 #cover .bdc{position:absolute;width:22px;height:22px;pointer-events:none;z-index:2;display:block}
-#cover .orn{font-size:20px;letter-spacing:14px;color:var(--accent);opacity:.85}
+#cover .orn{font-size:20px;letter-spacing:14px;color:var(--accent-cover);opacity:.85}
 #cover .kicker{margin-top:26px;font-size:11px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--ink);opacity:.85}
 #cover .chara{font-size:52px;line-height:1;margin-top:18px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.15))}
 #cover h1{font-family:var(--ft);font-weight:700;color:var(--ink);font-size:clamp(40px,11vw,58px);line-height:1.04;margin-top:14px}
-#cover .amp{font-family:var(--ft);font-style:italic;font-size:24px;color:var(--accent);margin:6px 0}
+#cover .amp{font-family:var(--ft);font-style:italic;font-size:24px;color:var(--accent-cover);margin:6px 0}
 #cover .date{margin-top:22px;display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border:1px solid rgba(255,255,255,.55);border-radius:99px;background:rgba(255,255,255,.35);backdrop-filter:blur(6px);font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--ink)}
 #cover .host{margin-top:14px;font-size:12px;color:var(--ink);opacity:.75;letter-spacing:.06em}
-#cover .open{position:relative;margin-top:44px;display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 34px;border:0;border-radius:99px;background:var(--ink);color:#fff;font-size:14px;font-weight:600;letter-spacing:.04em;box-shadow:0 18px 40px rgba(0,0,0,.22);animation:pulse 2.2s ease-in-out infinite}
+#cover .open{position:relative;margin-top:44px;display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 34px;border:0;border-radius:99px;background:var(--ink);color:var(--ink-fg);font-size:14px;font-weight:600;letter-spacing:.04em;box-shadow:0 18px 40px rgba(0,0,0,.22);animation:pulse 2.2s ease-in-out infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 #cover .open .env{font-size:18px}
 #cover .brand{position:absolute;bottom:22px;left:0;right:0;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);opacity:.55}
+/* ---------- TEMA 3D (artwork realistis) ----------
+   Tema ulang tahun ber-artwork memakai gambar 3D sebagai latar cover. Teks cover
+   tetap terbaca karena diberi lapisan gelap tipis; warna teks diatur di boot(). */
+body.art3d #cover{background:linear-gradient(180deg,rgba(12,10,8,.55),rgba(12,10,8,.24) 30%,rgba(12,10,8,.34) 62%,rgba(12,10,8,.72)),var(--cover-art,none) center/cover no-repeat}
+body.art3d #cover .pat,body.art3d #cover .veil{display:none}
+body.art3d #cover .date{background:rgba(18,14,10,.45);border-color:rgba(255,255,255,.35)}
+/* ---------- FOTO COVER (9 gaya, posisi & zoom diatur pemilik di Studio) ----------
+   Berlaku semua jenis acara (pernikahan, khitanan, aqiqah, ulang tahun).
+   Gaya dari data.coverStyle, posisi/zoom dari data.coverPos (object-position). */
+#cover{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#cover .bdfr{margin-top:auto;margin-bottom:auto}
+#cover .cvf{box-sizing:border-box;position:relative;overflow:hidden;margin:18px auto 0;width:min(46vw,170px);aspect-ratio:3/4;box-shadow:0 20px 44px rgba(0,0,0,.42)}
+#cover .cvf img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#cover .cvf-kotak{border-radius:18px;padding:7px;background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.45));border:1px solid rgba(255,255,255,.6)}
+#cover .cvf-kotak img{border-radius:12px}
+#cover .cvf-oval{border-radius:50%;padding:6px;background:linear-gradient(160deg,#FBF0D2,#C9A548)}
+#cover .cvf-oval img{border-radius:50%}
+#cover .cvf-lingkaran{aspect-ratio:1/1;width:min(40vw,148px);border-radius:50%;padding:6px;background:linear-gradient(160deg,#FBF0D2,#B9903A)}
+#cover .cvf-lingkaran img{border-radius:50%}
+#cover .cvf-arch{border-radius:999px 999px 20px 20px;padding:7px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.5))}
+#cover .cvf-arch img{border-radius:999px 999px 14px 14px}
+#cover .cvf-polaroid{background:#fffdf9;padding:8px 8px 30px;border-radius:6px;transform:rotate(-2deg);box-shadow:0 22px 44px rgba(0,0,0,.45)}
+#cover .cvf-polaroid img{border-radius:3px}
+#cover .cvf-emas{padding:9px;border-radius:14px;background:#fffdf9;box-shadow:0 0 0 2px #C9A548,0 0 0 5px rgba(255,255,255,.4),0 20px 44px rgba(0,0,0,.45)}
+#cover .cvf-emas img{border-radius:9px}
+#cover .cvf-kapsul{aspect-ratio:9/16;width:min(32vw,116px);border-radius:999px;padding:6px;background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.45))}
+#cover .cvf-kapsul img{border-radius:999px}
+@media (max-height:700px){#cover .cvf{width:min(38vw,132px)}#cover .cvf-lingkaran{width:min(32vw,112px)}#cover .cvf-kapsul{width:min(26vw,92px)}}
+
+/* Gaya "Foto Penuh": foto jadi latar seluruh cover + lapisan gelap, teks masuk
+   panel kaca gelap supaya tetap terbaca (dijaga >=4.5:1 walau fotonya putih). */
+body.foto-full #cover{background:#0b0908;justify-content:flex-end;padding:0}
+body.foto-full #cover .pat,body.foto-full #cover .veil{display:none}
+body.foto-full #cover .cvlatar{position:absolute;inset:0;overflow:hidden}
+body.foto-full #cover .cvlatar img{width:100%;height:100%;object-fit:cover;display:block}
+body.foto-full #cover::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(8,6,5,.5) 0%,rgba(8,6,5,.14) 26%,rgba(8,6,5,.42) 50%,rgba(8,6,5,.9) 76%,rgba(8,6,5,.95) 100%)}
+body.foto-full #cover .bdfr{position:relative;z-index:2;margin:0 auto 14px;padding:18px 14px;border-radius:22px;background:rgba(10,8,6,.84);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+body.foto-full #cover .date{background:rgba(18,14,10,.5);border-color:rgba(255,255,255,.3)}
+body.foto-full #cover .brand{opacity:.8}
+
 body.opened #cover{opacity:0;visibility:hidden}
 
 /* ---------- CONTENT ---------- */
@@ -65,35 +109,35 @@ body.opened #content{opacity:1}
 .wrap{max-width:470px;margin:0 auto;padding:34px 20px 90px;background:
   radial-gradient(rgba(212,175,55,.06) 1.5px,transparent 1.8px);background-size:26px 26px;}
 .card{background:var(--card);border:1px solid #f0e6d6;border-radius:22px;padding:28px 22px;text-align:center;box-shadow:0 16px 40px rgba(90,70,30,.07);margin-bottom:18px}
-.kicker{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);opacity:.9}
+.kicker{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--accent-body);opacity:.9}
 .divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:16px 0;color:var(--gold)}
 .divider::before,.divider::after{content:"";height:1px;width:56px;background:linear-gradient(90deg,transparent,#e2cf9f)}
 .divider::after{background:linear-gradient(90deg,#e2cf9f,transparent)}
-h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink);line-height:1.15}
+h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body);line-height:1.15}
 .muted{font-size:12.5px;line-height:1.75;color:#7a7065}
-.name-big{font-family:var(--ft);font-size:34px;font-weight:700;color:var(--ink);line-height:1.12;margin-top:10px}
+.name-big{font-family:var(--ft);font-size:34px;font-weight:700;color:var(--ink-body);line-height:1.12;margin-top:10px}
 .role{margin-top:10px;font-size:12px;line-height:1.7;color:#7a7065}
-.role b{color:var(--ink);font-weight:600}
+.role b{color:var(--ink-body);font-weight:600}
 
 /* doa */
-.doa-ar{font-size:26px;line-height:2.1;color:var(--ink);direction:rtl;margin-top:16px}
+.doa-ar{font-size:26px;line-height:2.1;color:var(--ink-body);direction:rtl;margin-top:16px}
 .doa-la{margin-top:10px;font-size:13px;font-style:italic;color:#8a7f72}
 .doa-arti{margin-top:10px;font-size:12px;color:#9a8f82}
 
 /* acara */
 .acara-grid{display:grid;gap:14px;margin-top:18px;text-align:left}
 .acara{border:1px solid #f0e6d6;border-radius:18px;padding:18px 16px;background:linear-gradient(170deg,#fffdf9,#fbf6ee)}
-.acara .lbl{font-size:10px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--accent)}
-.acara .tgl{font-family:var(--ft);font-size:24px;font-weight:700;color:var(--ink);margin-top:8px}
+.acara .lbl{font-size:10px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--accent-body)}
+.acara .tgl{font-family:var(--ft);font-size:24px;font-weight:700;color:var(--ink-body);margin-top:8px}
 .acara .jam{margin-top:4px;font-size:13px;font-weight:600;color:#6b6157}
 .acara .vt{margin-top:10px;font-size:12.5px;line-height:1.6;color:#7a7065}
-.acara .vt b{color:var(--ink)}
-.mapbtn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;height:38px;padding:0 16px;border-radius:99px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;text-decoration:none}
+.acara .vt b{color:var(--ink-body)}
+.mapbtn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;height:38px;padding:0 16px;border-radius:99px;background:var(--ink-body);color:var(--ink-body-fg);font-size:12px;font-weight:600;text-decoration:none}
 
 /* countdown */
 .cdw{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
 .cdw .u{background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d6;border-radius:14px;padding:12px 4px}
-.cdw .n{font-family:var(--ft);font-size:26px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.cdw .n{font-family:var(--ft);font-size:26px;font-weight:700;color:var(--ink-body);font-variant-numeric:tabular-nums}
 .cdw .l{margin-top:2px;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9a8f82}
 
 /* galeri */
@@ -104,18 +148,18 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink);lin
 /* amplop */
 .amp-card{margin-top:18px;text-align:left}
 .amp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid #f0e6d6;border-radius:14px;margin-top:10px;background:#fffdf9}
-.amp-row .nm{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
-.amp-row .no{margin-top:2px;font-family:ui-monospace,monospace;font-size:14px;font-weight:600;color:var(--ink);word-break:break-all}
+.amp-row .nm{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-body)}
+.amp-row .no{margin-top:2px;font-family:ui-monospace,monospace;font-size:14px;font-weight:600;color:var(--ink-body);word-break:break-all}
 .amp-row .ow{font-size:11px;color:#8a7f72;margin-top:1px}
 .copy{flex:none;height:34px;padding:0 14px;border:1px solid #e2cf9f;border-radius:99px;background:#fff8e6;color:#8a6d0f;font-size:11px;font-weight:700}
 
 /* tamu */
 .guest{margin-top:6px}
-.guest .to{font-family:var(--ft);font-size:26px;font-weight:700;color:var(--ink);line-height:1.2;margin-top:8px}
+.guest .to{font-family:var(--ft);font-size:26px;font-weight:700;color:var(--ink-body);line-height:1.2;margin-top:8px}
 .guest .ya{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#9a8f82;font-weight:700}
 
 /* musik */
-#musikBtn{position:fixed;left:14px;bottom:16px;z-index:120;display:none;align-items:center;gap:8px;height:42px;padding:0 16px;border:0;border-radius:99px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(90,70,30,.18);color:var(--ink);font-size:11px;font-weight:600;max-width:220px}
+#musikBtn{position:fixed;left:14px;bottom:16px;z-index:120;display:none;align-items:center;gap:8px;height:42px;padding:0 16px;border:0;border-radius:99px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(90,70,30,.18);color:var(--ink-body);font-size:11px;font-weight:600;max-width:220px}
 #musikBtn .disc{width:18px;height:18px;flex:none;border-radius:50%;background:conic-gradient(var(--gold),#f6e2a5,var(--gold));animation:sp 3s linear infinite;display:grid;place-items:center}
 #musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
 #musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -159,16 +203,17 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink);lin
 .footer{margin-top:34px;text-align:center}
 .footer .orn{font-size:15px;letter-spacing:10px;color:var(--gold)}
 .footer p{margin-top:10px;font-size:11px;line-height:1.7;color:#9a8f82}
-.footer a{color:var(--accent);font-weight:600;text-decoration:none}
+.footer a{color:var(--accent-body);font-weight:600;text-decoration:none}
 .couple{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-top:18px}
 .couple .heart{font-size:20px;color:var(--gold)}
 .couple .c{background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d6;border-radius:18px;padding:18px 10px}
-.couple .c .nm{font-family:var(--ft);font-size:22px;font-weight:700;color:var(--ink);line-height:1.15}
+.couple .c .nm{font-family:var(--ft);font-size:22px;font-weight:700;color:var(--ink-body);line-height:1.15}
 .couple .c .rl{margin-top:8px;font-size:10.5px;line-height:1.6;color:#8a7f72}
 @media (max-width:380px){.couple .c .nm{font-size:18px}}
 </style>
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
+<script src="assets/theme-contrast.js"></script>
 <link rel="stylesheet" href="assets/button-help.css">
 <script src="assets/button-help.js" defer></script>
 </head>
@@ -192,42 +237,42 @@ const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
 
 const TPL=[
- {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant'},
+ {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',bg3d:'assets/tema-3d/jawa-elegan.webp',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant'},
  {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',deco:'🌿',pat:'',ft:'inter'},
- {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',deco:'✨ ◆ ✨',pat:'',ft:'playfair'},
- {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant'},
- {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',deco:'❄ ✦ ❄',pat:'',ft:'playfair'},
+ {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',bg3d:'assets/tema-3d/luxury-gold.webp',deco:'✨ ◆ ✨',pat:'',ft:'playfair'},
+ {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',bg3d:'assets/tema-3d/floral-rustic.webp',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant'},
+ {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',bg3d:'assets/tema-3d/ice-blue.webp',deco:'❄ ✦ ❄',pat:'',ft:'playfair'},
  {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',deco:'❄',pat:'',ft:'inter'},
- {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',deco:'🌊 ✦ 🌊',pat:'',ft:'playfair'},
+ {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',bg3d:'assets/tema-3d/ocean-breeze.webp',deco:'🌊 ✦ 🌊',pat:'',ft:'playfair'},
  {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',deco:'⭐ 🕌 ⭐',pat:'',ft:'poppins'},
  {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#2e4228',deco:'☪ ✦ ☪',pat:'arab',ft:'lora'},
- {id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins'},
- {id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',deco:'💖 ✨ 💖',pat:'',ft:'playfair'},
+ {id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',bg3d:'assets/tema-3d/kids-party.webp',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins'},
+ {id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',bg3d:'assets/tema-3d/sweet-17.webp',deco:'💖 ✨ 💖',pat:'',ft:'playfair'},
  {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#3a3835',deco:'◆',pat:'',ft:'inter'},
  {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',deco:'🍼 ☁️ 🍼',pat:'',ft:'poppins'},
  {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',deco:'🎀 🍼 🎀',pat:'',ft:'playfair'},
  {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#4e452e',deco:'☪ ❖ ☪',pat:'arab',ft:'lora'},
  /* 20 tema baru — urutan & id HARUS identik dengan TPL di studio.html */
- {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',char:'👑',deco:'✦ ❖ ✦',pat:'',ft:'playfair'},
- {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',char:'🦌',deco:'🌲 ❖ 🌲',pat:'',ft:'ebgaramond'},
- {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',char:'🎩',deco:'◆ ✦ ◆',pat:'',ft:'bebas'},
+ {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',char:'👑',bg3d:'assets/tema-3d/navy-royal.webp',deco:'✦ ❖ ✦',pat:'',ft:'playfair'},
+ {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',char:'🦌',bg3d:'assets/tema-3d/forest-classic.webp',deco:'🌲 ❖ 🌲',pat:'',ft:'ebgaramond'},
+ {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',char:'🎩',bg3d:'assets/tema-3d/charcoal-gold.webp',deco:'◆ ✦ ◆',pat:'',ft:'bebas'},
  {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',char:'🌿',deco:'— ✦ —',pat:'',ft:'oswald'},
- {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',char:'🎖️',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond'},
+ {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',char:'🎖️',bg3d:'assets/tema-3d/burgundy-regal.webp',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond'},
  {id:'dino-adventure',nama:'Petualang Dino',ev:'khitanan',g:['#DFF3E4','#B8E3C0','#8FD3A0'],accent:'#2E7D4F',ink:'#1E4A2E',char:'🦖',deco:'🦖 ⭐ 🦖',pat:'',ft:'bebas'},
  {id:'football-champ',nama:'Juara Sepak Bola',ev:'khitanan',g:['#E3F6E9','#BCEBCF','#8FD8AE'],accent:'#1F6E43',ink:'#163F28',char:'⚽',deco:'⚽ ✦ ⚽',pat:'',ft:'oswald'},
  {id:'space-explorer',nama:'Petualang Antariksa',ev:'khitanan',g:['#1A2450','#28356B','#3A4A8C'],accent:'#F0C75E',ink:'#E8ECFF',char:'🚀',deco:'🚀 ✦ 🚀',pat:'',ft:'bebas'},
  {id:'robot-tech',nama:'Robot Cerdas',ev:'khitanan',g:['#E5F1F5','#C4DEE8','#9CC4D4'],accent:'#33658A',ink:'#243B4D',char:'🤖',deco:'🤖 ✦ 🤖',pat:'',ft:'oswald'},
  {id:'knight-quest',nama:'Pangeran Knight',ev:'khitanan',g:['#3D2B52','#533B6B','#6C4E88'],accent:'#E0B84C',ink:'#F0E9F7',char:'🛡️',deco:'⚔ ✦ ⚔',pat:'',ft:'ebgaramond'},
- {id:'superhero-power',nama:'Super Hero',ev:'ultah',g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',char:'🦸',deco:'🦸 ⚡ 🦸',pat:'confetti',ft:'bebas'},
- {id:'race-car',nama:'Balap Mobil',ev:'ultah',g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',char:'🏎️',deco:'🏁 ✦ 🏁',pat:'',ft:'oswald'},
- {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',char:'🏴‍☠️',deco:'⚓ ✦ ⚓',pat:'',ft:'bebas'},
- {id:'dragon-fire',nama:'Naga Api',ev:'ultah',g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',char:'🐉',deco:'🐉 ✦ 🐉',pat:'',ft:'bebas'},
- {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',char:'🥷',deco:'🥷 ✦ 🥷',pat:'',ft:'oswald'},
+ {id:'superhero-power',nama:'Super Hero',ev:'ultah',g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',char:'🦸',bg3d:'assets/tema-3d/superhero-power.webp',deco:'🦸 ⚡ 🦸',pat:'confetti',ft:'bebas'},
+ {id:'race-car',nama:'Balap Mobil',ev:'ultah',g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',char:'🏎️',bg3d:'assets/tema-3d/race-car.webp',deco:'🏁 ✦ 🏁',pat:'',ft:'oswald'},
+ {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',char:'🏴‍☠️',bg3d:'assets/tema-3d/pirate-sea.webp',deco:'⚓ ✦ ⚓',pat:'',ft:'bebas'},
+ {id:'dragon-fire',nama:'Naga Api',ev:'ultah',g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',char:'🐉',bg3d:'assets/tema-3d/dragon-fire.webp',deco:'🐉 ✦ 🐉',pat:'',ft:'bebas'},
+ {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',char:'🥷',bg3d:'assets/tema-3d/ninja-mastery.webp',deco:'🥷 ✦ 🥷',pat:'',ft:'oswald'},
  {id:'baby-prince',nama:'Pangeran Cilik',ev:'aqiqah',g:['#E7F0FB','#C9DCF5','#A5C4EC'],accent:'#3E6BA8',ink:'#234066',char:'🤴',deco:'🤴 ✦ 🤴',pat:'',ft:'poppins'},
  {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',char:'🦕',deco:'🦕 ✦ 🦕',pat:'',ft:'poppins'},
  {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',char:'🧑‍🚀',deco:'🧑‍🚀 ✦ 🧑‍🚀',pat:'',ft:'oswald'},
  {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',char:'🐯',deco:'🐯 ✦ 🐯',pat:'',ft:'bebas'},
- {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',char:'👸',deco:'👸 ✨ 👸',pat:'',ft:'dancing'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',char:'🦄',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',char:'🌸',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing'}];
+ {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',char:'👸',bg3d:'assets/tema-3d/fairy-princess.webp',deco:'👸 ✨ 👸',pat:'',ft:'dancing'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',char:'🦄',bg3d:'assets/tema-3d/unicorn-magic.webp',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',char:'🌸',bg3d:'assets/tema-3d/rose-bouquet.webp',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing'}];
 
 const FONTS=[
  {id:'cormorant',fam:'"Cormorant Garamond",serif'},
@@ -369,28 +414,28 @@ function liveSlides(d,ev,tplF,fullNm,form,venue){
      <div style="width:10px;height:10px;border-radius:99px;background:var(--accent);margin-top:5px;flex:none"></div>
      ${i<it.length-1?`<div style="flex:1;width:2px;background:#e8ddc8;margin:4px 0"></div>`:''}
     </div>
-    <div style="${i<it.length-1?'padding-bottom:16px':''}"><div style="font-size:14px;font-weight:700;color:var(--ink)">${esc(s.a||'Sesi')}${s.b?` <span style="font-weight:500;color:#8a7f72;font-size:12px">• ${esc(s.b)}</span>`:''}</div></div>
+    <div style="${i<it.length-1?'padding-bottom:16px':''}"><div style="font-size:14px;font-weight:700;color:var(--ink-body)">${esc(s.a||'Sesi')}${s.b?` <span style="font-weight:500;color:#8a7f72;font-size:12px">• ${esc(s.b)}</span>`:''}</div></div>
    </div>`}).join('')+'</div>'))}
  if(S.story&&S.story.on&&S.story.text.trim())h.push(`<div class="card rv"><div class="kicker">💞 Cerita Kami</div>
   <p style="margin-top:14px;font-size:14px;font-style:italic;line-height:1.9;color:#57503f;font-family:Georgia,serif">${esc(S.story.text)}</p></div>`);
  {const q=S.quote&&S.quote.custom?{text:S.quote.text,author:S.quote.author}:(QUOTES[ev]||QUOTES.pernikahan);
-  if(S.quote&&S.quote.on&&q.text)h.push(`<div class="card rv"><div style="font-size:34px;line-height:.8;color:var(--accent);opacity:.45">❝</div>
+  if(S.quote&&S.quote.on&&q.text)h.push(`<div class="card rv"><div style="font-size:34px;line-height:.8;color:var(--accent-body);opacity:.45">❝</div>
   <div style="margin-top:12px;font-size:14.5px;font-style:italic;line-height:1.85;color:#4a4436;font-family:Georgia,serif">${esc(q.text)}</div>
   <div style="margin-top:12px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9a8f82">— ${esc(q.author||'')}</div></div>`)}
  if(S.menu&&S.menu.on){const it=sLines(S.menu.items);
   if(it.length)h.push(card(`${kick('🍽️ Menu Acara')}<div style="margin-top:12px">`+it.map(x=>{const s=sItem(x);return `
-   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed #eadfc8"><div style="font-size:14px;font-weight:600;color:var(--ink)">${esc(s.a||'Menu')}</div><div style="font-size:12px;color:#8a7f72;text-align:right">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
+   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed #eadfc8"><div style="font-size:14px;font-weight:600;color:var(--ink-body)">${esc(s.a||'Menu')}</div><div style="font-size:12px;color:#8a7f72;text-align:right">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
  if(S.party&&S.party.on){const it=sLines(S.party.items);
   if(it.length)h.push(card(`${kick('🎩 Panitia / Bridal Party')}<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">`+it.map(x=>{const s=sItem(x);return `
-   <div style="display:flex;flex-direction:column;padding:12px 14px;border-radius:16px;background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d8;min-width:100px"><div style="font-size:13px;font-weight:700;color:var(--ink)">${esc(s.a||'')}</div><div style="font-size:11px;color:#8a7f72;margin-top:3px">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
+   <div style="display:flex;flex-direction:column;padding:12px 14px;border-radius:16px;background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d8;min-width:100px"><div style="font-size:13px;font-weight:700;color:var(--ink-body)">${esc(s.a||'')}</div><div style="font-size:11px;color:#8a7f72;margin-top:3px">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
  if(S.dresscode&&S.dresscode.on){const cols=String(S.dresscode.colors||'').split(',').map(c=>c.trim()).filter(sHex);
   h.push(`<div class="card rv"><div class="kicker">👗 Dress Code</div>
-  <div style="margin-top:10px;font-size:16px;font-weight:700;color:var(--ink)">${esc(S.dresscode.text||'—')}</div>
+  <div style="margin-top:10px;font-size:16px;font-weight:700;color:var(--ink-body)">${esc(S.dresscode.text||'—')}</div>
   ${cols.length?`<div style="display:flex;justify-content:center;gap:10px;margin-top:16px">${cols.map(c=>`<div style="width:28px;height:28px;border-radius:99px;background:${c};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2)"></div>`).join('')}</div>
   <div style="margin-top:10px;font-size:10px;font-family:ui-monospace,monospace;color:#b3a894">${esc(cols.join('  '))}</div>`:''}</div>`)}
  if(S.map&&S.map.on){const q=(form&&form.alamat)||venue||'';
   h.push(`<div class="rv"><div class="card" style="padding:0;overflow:hidden">
-   <div style="padding:12px 16px;font-size:12px;font-weight:600;color:var(--ink);display:flex;gap:8px;align-items:center;border-bottom:1px solid #f0e6d8">📍 ${esc(venue||'Lokasi Acara')}</div>
+   <div style="padding:12px 16px;font-size:12px;font-weight:600;color:var(--ink-body);display:flex;gap:8px;align-items:center;border-bottom:1px solid #f0e6d8">📍 ${esc(venue||'Lokasi Acara')}</div>
    <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed" style="width:100%;height:200px;border:0;display:block" loading="lazy" title="Peta lokasi"></iframe></div></div>`)}
  if(S.gift&&S.gift.on&&S.gift.text.trim())h.push(card(`${kick('🎁 Alamat Kado')}<div style="margin-top:12px;font-size:13px;line-height:1.8;color:#57503f">${esc(S.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:12px;font-size:22px">🎀</div>`));
  if(S.rsvp&&S.rsvp.on)h.push(card(`${kick('✉️ RSVP')}
@@ -410,7 +455,7 @@ function liveSlides(d,ev,tplF,fullNm,form,venue){
  if(S.closing&&S.closing.on&&S.closing.text.trim())h.push(`<div class="rv" style="margin-top:30px;text-align:center;padding:8px 16px">
   <div style="font-size:14px;letter-spacing:10px;color:var(--gold)">❖ ✦ ❖</div>
   <p style="margin-top:14px;font-size:14px;font-style:italic;line-height:1.9;color:#57503f;font-family:Georgia,serif">${esc(S.closing.text)}</p>
-  <div style="margin-top:14px;font-size:12px;font-weight:600;color:var(--accent)">${esc(fullNm)}</div></div>`);
+  <div style="margin-top:14px;font-size:12px;font-weight:600;color:var(--accent-body)">${esc(fullNm)}</div></div>`);
  return h.join('')}
 function liveRsvp(){
  const n=document.getElementById('rvpN')?document.getElementById('rvpN').value.trim():'';
@@ -470,6 +515,48 @@ function boot(draft){
  const rs=document.documentElement.style;
  rs.setProperty('--g0',tplF.g[0]);rs.setProperty('--g1',tplF.g[1]);rs.setProperty('--g2',tplF.g[2]);
  rs.setProperty('--accent',tplF.accent);rs.setProperty('--ink',tplF.ink);
+ /* Kontras: cover memakai ink tema apa adanya (gradasinya mengikuti tema), tapi
+    kartu konten selalu berlatar terang — untuk 12 tema berpalet gelap, ink tema
+    nyaris tak terlihat di sana. assets/theme-contrast.js menurunkan kecerahan
+    sampai kontrasnya cukup (rona tema tetap). Bila aset tidak termuat (mis. file
+    offline tanpa folder assets/), nilainya kembali ke warna tema seperti semula. */
+ const TC=window.AsThemeContrast;
+ /* Artwork 3D tema (bila ada): latar cover + teks cover versi terang.
+    Tanpa artwork, semuanya kembali ke warna tema seperti semula. */
+ const ART=tplF.bg3d||'';
+ /* Foto cover: gaya dipilih pemilik di Studio; posisi & zoom dari penyesuai geser.
+    Tanpa foto, tidak ada bingkai (perilaku lama tetap sama). */
+ const fotoUtama=String((d&&d.cover)||'').trim();
+ const CV_GAYA=['kotak','oval','lingkaran','arch','polaroid','emas','kapsul'];
+ const cvDiminta=String((d&&d.coverStyle)||'');
+ const cvStyle=!fotoUtama?'none'
+  :(CV_GAYA.indexOf(cvDiminta)>=0?cvDiminta
+   :(cvDiminta==='full'?'full':(cvDiminta==='none'?'none':'kotak')));
+ const cpo=(d&&d.coverPos)||{};
+ const angkaPos=(v,b)=>{const n=parseFloat(v);return isFinite(n)?Math.min(100,Math.max(0,n)):b};
+ const cvZ=(()=>{const n=parseFloat(cpo.z);return isFinite(n)?Math.min(2.2,Math.max(1,n)):1})();
+ const cvP={x:angkaPos(cpo.x,50),y:angkaPos(cpo.y,50),z:cvZ};
+ if(ART&&cvStyle!=='full'){document.body.classList.add('art3d');rs.setProperty('--cover-art',"url('"+ART+"')")}
+ const KB=TC&&TC.perbaiki?TC.perbaiki(tplF.accent,'#241d16',3):tplF.accent;
+ const KT=TC&&TC.untukKonten?TC.untukKonten(tplF.ink,tplF.accent,tplF.g):null;
+ rs.setProperty('--ink-body',KT?KT.ink:tplF.ink);
+ rs.setProperty('--accent-body',KT?KT.accent:tplF.accent);
+ rs.setProperty('--ink-body-fg',KT?KT.teksDiInk:'#fff');
+ rs.setProperty('--ink-fg',KT?KT.teksDiInkTema:'#fff');
+ if(cvStyle==='full'){
+  /* Foto penuh jadi latar gelap: teks putih, aksen tema dicerahkan (>=3:1). */
+  document.body.classList.add('foto-full');
+  rs.setProperty('--ink','#ffffff');
+  rs.setProperty('--ink-fg','#141210');
+  rs.setProperty('--accent-cover',TC&&TC.untukLatarGelap?TC.untukLatarGelap(tplF.accent,'#0F0B08',TC.MIN_AKSEN||3):tplF.accent);
+ }else{
+  rs.setProperty('--accent-cover',ART?KB:(TC&&TC.untukCover?TC.untukCover(tplF.accent,tplF.g[0],tplF.g[1]):tplF.accent));
+  if(ART){
+   /* Di atas gambar 3D yang gelap: teks cover memakai krem terang, isi tombol gelap. */
+   rs.setProperty('--ink','#F7F2E9');
+   rs.setProperty('--ink-fg','#141210');
+  }
+ }
  rs.setProperty('--ft',fontFam((d&&d.fontTitle)||tplF.ft));
  rs.setProperty('--fb',fontFam((d&&d.fontBody)||'inter'));
 
@@ -504,6 +591,9 @@ function boot(draft){
  let h='';
  h+=`<div id="cover" class="${covOn?'cov':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="bdfr" style="${bdStyle}">${bdCorners}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
+   ${cvStyle==='none'?'':(cvStyle==='full'
+     ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`
+     :`<div class="cvf cvf-${cvStyle} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`)}
    <div class="kicker ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(EV_KICKER[ev]||'Undangan')}</div>
    ${tplF.char?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms':''}">${tplF.char}</div>`:''}`;
  if(ev==='pernikahan'){

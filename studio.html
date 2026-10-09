@@ -189,6 +189,7 @@ input,textarea,select{outline:0}
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
 <link rel="stylesheet" href="assets/button-help.css">
+<script src="assets/qrcode.js"></script>
 <script src="assets/button-help.js" defer></script>
 </head>
 <body>
@@ -273,42 +274,42 @@ const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶'};
 
 /* ===== 15 TEMPLATE: 12 sesuai katalog + 3 varian Ice Blue dari folder Drive "Katalog demo" ===== */
 const TPL=[
- {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',badge:'BEST SELLER',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},
+ {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',badge:'BEST SELLER',bg3d:'assets/tema-3d/jawa-elegan.webp',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},
  {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',badge:'',deco:'🌿',pat:'',ft:'inter',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet'},
- {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',badge:'LUXURY',deco:'✨ ◆ ✨',pat:'',ft:'playfair',desc:'Glam soft luxury, emboss gold & black tie vibe'},
- {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',badge:'',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
- {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',harga:75000,g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',badge:'NEW',deco:'❄ ✦ ❄',pat:'',ft:'playfair',desc:'Biru es elegan ala winter wedding, efek glass & floral frost yang sejuk'},
+ {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',badge:'LUXURY',bg3d:'assets/tema-3d/luxury-gold.webp',deco:'✨ ◆ ✨',pat:'',ft:'playfair',desc:'Glam soft luxury, emboss gold & black tie vibe'},
+ {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',badge:'',bg3d:'assets/tema-3d/floral-rustic.webp',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
+ {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',harga:75000,g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',badge:'NEW',bg3d:'assets/tema-3d/ice-blue.webp',deco:'❄ ✦ ❄',pat:'',ft:'playfair',desc:'Biru es elegan ala winter wedding, efek glass & floral frost yang sejuk'},
  {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',harga:75000,g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',badge:'',deco:'❄',pat:'',ft:'inter',desc:'Clean & dingin, tipografi besar, fokus penuh ke foto couple'},
- {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',harga:79000,g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',badge:'',deco:'🌊 ✦ 🌊',pat:'',ft:'playfair',desc:'Gradasi biru laut & ombak halus, pas buat acara outdoor atau pantai'},
+ {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',harga:79000,g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',badge:'',bg3d:'assets/tema-3d/ocean-breeze.webp',deco:'🌊 ✦ 🌊',pat:'',ft:'playfair',desc:'Gradasi biru laut & ombak halus, pas buat acara outdoor atau pantai'},
  {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',badge:'FAVORIT',deco:'⭐ 🕌 ⭐',pat:'',ft:'poppins',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},
  {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#2e4228',badge:'',deco:'☪ ✦ ☪',pat:'arab',ft:'lora',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},
- {id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',badge:'CERIA',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins',desc:'Warna-warni happy, balon & confetti buat si kecil'},
- {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',badge:'AESTHETIC',deco:'💖 ✨ 💖',pat:'',ft:'playfair',desc:'Pink soft, aesthetic banget buat sweet seventeen-mu, Kak'},
+ {id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',badge:'CERIA',bg3d:'assets/tema-3d/kids-party.webp',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins',desc:'Warna-warni happy, balon & confetti buat si kecil'},
+ {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',badge:'AESTHETIC',bg3d:'assets/tema-3d/sweet-17.webp',deco:'💖 ✨ 💖',pat:'',ft:'playfair',desc:'Pink soft, aesthetic banget buat sweet seventeen-mu, Kak'},
  {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#3a3835',badge:'',deco:'◆',pat:'',ft:'inter',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},
  {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',badge:'',deco:'🍼 ☁️ 🍼',pat:'',ft:'poppins',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},
  {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',badge:'FAVORIT',deco:'🎀 🍼 🎀',pat:'',ft:'playfair',desc:'Pink blush super lembut buat si putri kecil kesayangan'},
  {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#4e452e',badge:'',deco:'☪ ❖ ☪',pat:'arab',ft:'lora',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'},
  /* ==== 20 TEMA BARU (5 per acara, nuansa maskulin + karakter maskot di cover) ==== */
- {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',harga:89000,g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',badge:'BARU',char:'👑',deco:'✦ ❖ ✦',pat:'',ft:'playfair',desc:'Navy gelap maskulin & gold regal, vibe sultan yang tenang'},
- {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',harga:79000,g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',badge:'',char:'🦌',deco:'🌲 ❖ 🌲',pat:'',ft:'ebgaramond',desc:'Hijau hutan klasik, gagah & hangat buat groom yang berkarakter'},
- {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',harga:89000,g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',badge:'BARU',char:'🎩',deco:'◆ ✦ ◆',pat:'',ft:'bebas',desc:'Hitam charcoal & gold tegas, black tie yang bersih dan mahal'},
+ {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',harga:89000,g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',badge:'BARU',char:'👑',bg3d:'assets/tema-3d/navy-royal.webp',deco:'✦ ❖ ✦',pat:'',ft:'playfair',desc:'Navy gelap maskulin & gold regal, vibe sultan yang tenang'},
+ {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',harga:79000,g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',badge:'',char:'🦌',bg3d:'assets/tema-3d/forest-classic.webp',deco:'🌲 ❖ 🌲',pat:'',ft:'ebgaramond',desc:'Hijau hutan klasik, gagah & hangat buat groom yang berkarakter'},
+ {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',harga:89000,g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',badge:'BARU',char:'🎩',bg3d:'assets/tema-3d/charcoal-gold.webp',deco:'◆ ✦ ◆',pat:'',ft:'bebas',desc:'Hitam charcoal & gold tegas, black tie yang bersih dan mahal'},
  {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',harga:75000,g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',badge:'',char:'🌿',deco:'— ✦ —',pat:'',ft:'oswald',desc:'Slate abu maskulin dengan sage lembut, modern & tenang'},
- {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',harga:85000,g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',badge:'',char:'🎖️',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond',desc:'Burgundy tua & emas, elegan klasik dengan sentuhan tegas'},
+ {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',harga:85000,g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',badge:'',char:'🎖️',bg3d:'assets/tema-3d/burgundy-regal.webp',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond',desc:'Burgundy tua & emas, elegan klasik dengan sentuhan tegas'},
  {id:'dino-adventure',nama:'Petualang Dino',ev:'khitanan',harga:75000,g:['#DFF3E4','#B8E3C0','#8FD3A0'],accent:'#2E7D4F',ink:'#1E4A2E',badge:'BARU',char:'🦖',deco:'🦖 ⭐ 🦖',pat:'',ft:'bebas',desc:'Dinosaurus hijau buat jagoan kecilmu yang suka petualangan'},
  {id:'football-champ',nama:'Juara Sepak Bola',ev:'khitanan',harga:75000,g:['#E3F6E9','#BCEBCF','#8FD8AE'],accent:'#1F6E43',ink:'#163F28',badge:'',char:'⚽',deco:'⚽ ✦ ⚽',pat:'',ft:'oswald',desc:'Teman-teman, jagoan kita siap jadi juara! Nuansa lapangan hijau'},
  {id:'space-explorer',nama:'Petualang Antariksa',ev:'khitanan',harga:79000,g:['#1A2450','#28356B','#3A4A8C'],accent:'#F0C75E',ink:'#E8ECFF',badge:'',char:'🚀',deco:'🚀 ✦ 🚀',pat:'',ft:'bebas',desc:'Biru malam & starlight, si kecil siap menjelajah galaksi'},
  {id:'robot-tech',nama:'Robot Cerdas',ev:'khitanan',harga:75000,g:['#E5F1F5','#C4DEE8','#9CC4D4'],accent:'#33658A',ink:'#243B4D',badge:'',char:'🤖',deco:'🤖 ✦ 🤖',pat:'',ft:'oswald',desc:'Robot & teknologi, seru dan futuristis buat anak engineer cilik'},
  {id:'knight-quest',nama:'Pangeran Knight',ev:'khitanan',harga:79000,g:['#3D2B52','#533B6B','#6C4E88'],accent:'#E0B84C',ink:'#F0E9F7',badge:'',char:'🛡️',deco:'⚔ ✦ ⚔',pat:'',ft:'ebgaramond',desc:'Ungu knight & emas, pahlawan kecil yang gagah berani'},
- {id:'superhero-power',nama:'Super Hero',ev:'ultah',harga:75000,g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',badge:'BARU',char:'🦸',deco:'🦸 ⚡ 🦸',pat:'confetti',ft:'bebas',desc:'Merah biru superhero, si kecil punya kekuatan luar biasa'},
- {id:'race-car',nama:'Balap Mobil',ev:'ultah',harga:75000,g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',badge:'',char:'🏎️',deco:'🏁 ✦ 🏁',pat:'',ft:'oswald',desc:'Hitam balap & merah garis start, gaspol ke garis finish!'},
- {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',harga:79000,g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',badge:'',char:'🏴‍☠️',deco:'⚓ ✦ ⚓',pat:'',ft:'bebas',desc:'Navy lautan & jangkar emas, harta karun si kecil menanti'},
- {id:'dragon-fire',nama:'Naga Api',ev:'ultah',harga:79000,g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',badge:'',char:'🐉',deco:'🐉 ✦ 🐉',pat:'',ft:'bebas',desc:'Merah naga & api oranye, garang tapi tetap imut'},
- {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',harga:75000,g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',badge:'',char:'🥷',deco:'🥷 ✦ 🥷',pat:'',ft:'oswald',desc:'Hitam ninja & aksen jingga, senyap tapi penuh kejutan'},
+ {id:'superhero-power',nama:'Super Hero',ev:'ultah',harga:75000,g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',badge:'BARU',char:'🦸',bg3d:'assets/tema-3d/superhero-power.webp',deco:'🦸 ⚡ 🦸',pat:'confetti',ft:'bebas',desc:'Merah biru superhero, si kecil punya kekuatan luar biasa'},
+ {id:'race-car',nama:'Balap Mobil',ev:'ultah',harga:75000,g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',badge:'',char:'🏎️',bg3d:'assets/tema-3d/race-car.webp',deco:'🏁 ✦ 🏁',pat:'',ft:'oswald',desc:'Hitam balap & merah garis start, gaspol ke garis finish!'},
+ {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',harga:79000,g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',badge:'',char:'🏴‍☠️',bg3d:'assets/tema-3d/pirate-sea.webp',deco:'⚓ ✦ ⚓',pat:'',ft:'bebas',desc:'Navy lautan & jangkar emas, harta karun si kecil menanti'},
+ {id:'dragon-fire',nama:'Naga Api',ev:'ultah',harga:79000,g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',badge:'',char:'🐉',bg3d:'assets/tema-3d/dragon-fire.webp',deco:'🐉 ✦ 🐉',pat:'',ft:'bebas',desc:'Merah naga & api oranye, garang tapi tetap imut'},
+ {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',harga:75000,g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',badge:'',char:'🥷',bg3d:'assets/tema-3d/ninja-mastery.webp',deco:'🥷 ✦ 🥷',pat:'',ft:'oswald',desc:'Hitam ninja & aksen jingga, senyap tapi penuh kejutan'},
  {id:'baby-prince',nama:'Pangeran Cilik',ev:'aqiqah',harga:75000,g:['#E7F0FB','#C9DCF5','#A5C4EC'],accent:'#3E6BA8',ink:'#234066',badge:'BARU',char:'🤴',deco:'🤴 ✦ 🤴',pat:'',ft:'poppins',desc:'Biru royal lembut, sultan mungil siap menaiki singgasana'},
  {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',harga:75000,g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',badge:'',char:'🦕',deco:'🦕 ✦ 🦕',pat:'',ft:'poppins',desc:'Hijau dino lembut, si kecil adalah dinosaurus paling gemes'},
  {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',harga:79000,g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',badge:'',char:'🧑‍🚀',deco:'🧑‍🚀 ✦ 🧑‍🚀',pat:'',ft:'oswald',desc:'Biru malam & bintang emas, petualangan si kecil dimulai'},
  {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',harga:75000,g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',badge:'',char:'🐯',deco:'🐯 ✦ 🐯',pat:'',ft:'bebas',desc:'Kuning keharuman tiger, si jagoan mungil yang menggemaskan'},
- {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',harga:75000,g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',badge:'',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins',desc:'Merah kereta & aspal kota, chugga-chugga si kecil melaju'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',badge:'BARU',char:'👸',deco:'👸 ✨ 👸',pat:'',ft:'dancing',desc:'Rosa pastel & kelopak bunga, ultah si kecil sang putri peri'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',badge:'BARU',char:'🦄',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico',desc:'Lavender magis & bintang-bintang, mimpi si kecil jadi nyata'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',badge:'BARU',char:'🌸',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento',desc:'Bunga mekar & pita merah muda, ultah feminin yang manis sempurna'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',badge:'BARU',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair',desc:'Mawar lembut nan anggun, aqiqah si mungil perempuan terkasih'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',badge:'BARU',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing',desc:'Krem hangat & sayap peri, aqiqah si putri kecil yang bercahaya'}];
+ {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',harga:75000,g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',badge:'',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins',desc:'Merah kereta & aspal kota, chugga-chugga si kecil melaju'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',badge:'BARU',char:'👸',bg3d:'assets/tema-3d/fairy-princess.webp',deco:'👸 ✨ 👸',pat:'',ft:'dancing',desc:'Rosa pastel & kelopak bunga, ultah si kecil sang putri peri'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',badge:'BARU',char:'🦄',bg3d:'assets/tema-3d/unicorn-magic.webp',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico',desc:'Lavender magis & bintang-bintang, mimpi si kecil jadi nyata'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',badge:'BARU',char:'🌸',bg3d:'assets/tema-3d/rose-bouquet.webp',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento',desc:'Bunga mekar & pita merah muda, ultah feminin yang manis sempurna'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',badge:'BARU',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair',desc:'Mawar lembut nan anggun, aqiqah si mungil perempuan terkasih'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',badge:'BARU',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing',desc:'Krem hangat & sayap peri, aqiqah si putri kecil yang bercahaya'}];
 function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
 function tplsFor(ev){return TPL.filter(t=>t.ev===ev&&!state.katalogHide.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
@@ -365,7 +366,7 @@ const DEF={
   alamat:'',mapsLink:'',
   showMapsBtn:true,sesiKedua:false,jamAkad:'',jamResepsi:'',showBismillah:true,
   ucapanCustom:''},
- musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',gallery:[],videoLink:'',
+ musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverPos:{x:50,y:50,z:1},gallery:[],videoLink:'',
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'',
  guestCodes:{},masterKey:'',selGuest:null,showNameQr:true,
@@ -391,7 +392,7 @@ const DEF={
  arsip:[],
  search:''};
 let state;
-try{state=Object.assign({},JSON.parse(JSON.stringify(DEF)),JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
+try{state=Object.assign({},JSON.parse(JSON.stringify(DEF)),JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});state.coverPos=Object.assign({x:50,y:50,z:1},state.coverPos||{});if(!state.coverStyle)state.coverStyle='kotak';state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
 if(state.started===false&&(state.form.namaPria||state.form.namaWanita||state.form.namaAnak||state.published))state.started=true;
 if(state.published&&!state.publishedLink)state.publishedLink=baseUrl();
 function mergeSlides(s){const out={};Object.keys(DEF.slides).forEach(k=>{out[k]=Object.assign({},DEF.slides[k],(s&&s[k])||{})});return out}
@@ -495,14 +496,31 @@ function guests(){return state.guestsRaw.split('\n').map(s=>s.trim()).filter(Boo
   checkin:hostBase()+'/checkin.html?id='+code+'&guest='+encodeURIComponent(nama)+'&s='+encodeURIComponent(state.slug||'demo')}})}
 function selGuest(){return guests().find(g=>g.nama===state.selGuest)||null}
 function autoSlug(){let n=state.event==='pernikahan'?`${state.form.namaPria} ${state.form.namaWanita}`:state.form.namaAnak;const s=slugify(n);if(s)state.slug=s}
-function qrData(g){const cv=document.createElement('canvas');cv.width=300;cv.height=300;const x=cv.getContext('2d');
- x.fillStyle='#fff';x.fillRect(0,0,300,300);let T=0;for(const ch of g.nama+g.code)T+=ch.charCodeAt(0);
- const rnd=n=>{T=(T*9301+49297)%233280;return T/233280*n};x.fillStyle='#111';const N=21,C=300/N;
- for(let r=0;r<N;r++)for(let c=0;c<N;c++){if(c<2||r<2||c>N-3||r>N-3)continue;
-  if((c<7&&r<7)||(c>N-8&&r<7)||(c<7&&r>N-8)){if(c%6===0||r%6===0||(c>1&&c<5&&r>1&&r<5)){if(!(c===3&&r===3))x.fillRect(c*C,r*C,C-1,C-1)}continue}
-  if(rnd(1)>.55)x.fillRect(c*C,r*C,C-1,C-1)}
- x.fillStyle='#D4AF37';x.fillRect(0,276,300,24);x.fillStyle='#fff';x.font='bold 10px Inter';
- x.fillText(state.showNameQr?`${g.code} • ${g.nama.slice(0,14)}`:g.code,10,291);return cv.toDataURL()}
+/* URL yang ditanam di QR tamu — dibuka hasil scan panitia (scan.html) atau pemindai
+   kamera HP biasa (membuka checkin.html berisi nama tamu). */
+function checkinUrl(g){const q=new URLSearchParams({guest:g.nama,id:g.code,s:state.slug||'demo'});
+ return hostBase()+'/checkin.html?'+q.toString()}
+/* QR asli (pustaka qrcode-generator, MIT — lihat assets/qrcode.js). Modul QR digambar
+   penuh dengan quiet zone 6 modul supaya benar-benar bisa dipindai; label emas
+   nama/kode ditaruh di pita bawah di luar area QR. */
+function qrTeks(teks,label){const cv=document.createElement('canvas');cv.width=300;cv.height=328;const x=cv.getContext('2d');
+ x.fillStyle='#fff';x.fillRect(0,0,300,328);
+ try{
+  const q=window.qrcode(0,'M');q.addData(teks);q.make();
+  const n=q.getModuleCount();
+  /* Quiet zone 4 modul penuh di keempat sisi (standar QR) — inilah yang membuat
+     scan lancar di HP lama/cahaya redup. Modul digambar bulat penuh (integer)
+     supaya tidak ada celah piksel antar-modul. Label emas berada DI LUAR area QR. */
+  const C=Math.max(1,Math.floor(300/(n+8))),ox=Math.floor((300-n*C)/2),oy=ox;
+  x.fillStyle='#111';
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))x.fillRect(ox+c*C,oy+r*C,C,C);
+ }catch(e){x.fillStyle='#b91c1c';x.font='bold 12px Inter';x.fillText('QR gagal dibuat',12,150)}
+ x.fillStyle='#D4AF37';x.fillRect(0,304,300,20);x.fillStyle='#fff';x.font='bold 10px Inter';
+ x.fillText(String(label||''),10,318);return cv.toDataURL()}
+/* QR CHECK-IN: dipindai PANITIA di pintu masuk (halaman scan.html) */
+function qrData(g){return qrTeks(checkinUrl(g),state.showNameQr?`${g.code} • ${g.nama.slice(0,14)}`:g.code)}
+/* QR UNDANGAN (opsional): dipindai TAMU untuk membuka undangan miliknya */
+function qrDataUndangan(g){return qrTeks(g.link,state.showNameQr?`${g.nama.slice(0,18)}`:'Buka Undangan')}
 
 /* state setters */
 function set(k,v){state[k]=v;save();render()}
@@ -556,8 +574,79 @@ async function uploadMusic(input){
 function pickMusic(id){const m=state.musicDb.find(x=>x.id===id);if(!m)return;state.music=m;state.playing=true;save();syncAudio();render();notify('Memutar: '+m.name)}
 function togglePlay(){if(!state.music){notify('Belum ada musik — upload dulu di tab Musik');return}state.playing=!state.playing;syncAudio();render()}
 function syncAudio(){const p=$('player');if(!p)return;if(state.music){const abs=new URL(state.music.url,location.href).href;if(p.src!==abs)p.src=abs}if(state.playing&&state.music){p.play().catch(()=>{})}else{p.pause()}}
-function uploadCover(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.cover=r.result;save();render()};r.readAsDataURL(f)}
-function uploadGallery(input){const fs=Array.from(input.files||[]);let left=fs.length;fs.forEach(f=>{const r=new FileReader();r.onload=()=>{state.gallery.push(r.result);if(--left===0){save();render()}};r.readAsDataURL(f)})}
+/* ---------- Foto cover: 9 gaya + penyesuai geser/zoom (dipakai juga di undangan) ----------
+   Bentuk bingkai di sini adalah cermin dari CSS #cover .cvf-* di undangan.html;
+   bila bentuk di sana diubah, ubah juga di sini supaya pratinjau tetap sama. */
+const CV_BENTUK={
+ kotak:{nama:'Kotak',r:'18px',p:'7px',bg:'linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.45))',as:'3/4',w:52,ir:'12px',sh:'0 14px 30px rgba(0,0,0,.35)'},
+ oval:{nama:'Oval',r:'50%',p:'6px',bg:'linear-gradient(160deg,#FBF0D2,#C9A548)',as:'3/4',w:52,ir:'50%',sh:'0 14px 30px rgba(0,0,0,.4)'},
+ lingkaran:{nama:'Bulat',r:'50%',p:'6px',bg:'linear-gradient(160deg,#FBF0D2,#B9903A)',as:'1/1',w:46,ir:'50%',sh:'0 14px 30px rgba(0,0,0,.4)'},
+ arch:{nama:'Lengkung',r:'999px 999px 20px 20px',p:'7px',bg:'linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.5))',as:'3/4',w:52,ir:'999px 999px 14px 14px',sh:'0 14px 30px rgba(0,0,0,.35)'},
+ polaroid:{nama:'Polaroid',r:'6px',p:'8px 8px 26px',bg:'#fffdf9',as:'3/4',w:50,ir:'3px',sh:'0 16px 32px rgba(0,0,0,.4)',rot:'-2deg'},
+ emas:{nama:'Emas',r:'14px',p:'9px',bg:'#fffdf9',as:'3/4',w:52,ir:'9px',sh:'0 0 0 2px #C9A548,0 0 0 5px rgba(255,255,255,.4),0 14px 30px rgba(0,0,0,.4)'},
+ kapsul:{nama:'Kapsul',r:'999px',p:'6px',bg:'linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.45))',as:'9/16',w:36,ir:'999px',sh:'0 14px 30px rgba(0,0,0,.35)'},
+ full:{nama:'Penuh',r:'0',p:'0',bg:'transparent',as:'3/4',w:52,ir:'0',sh:'none'},
+ none:{nama:'Tanpa',r:'0',p:'0',bg:'transparent',as:'3/4',w:52,ir:'0',sh:'none'}
+};
+const CV_URUT=['kotak','oval','lingkaran','arch','polaroid','emas','kapsul','full','none'];
+function cvPos(){if(!state.coverPos||typeof state.coverPos!=='object')state.coverPos={x:50,y:50,z:1};
+ state.coverPos.x=Math.min(100,Math.max(0,Number(state.coverPos.x)||0));
+ state.coverPos.y=Math.min(100,Math.max(0,Number(state.coverPos.y)||0));
+ state.coverPos.z=Math.min(2.2,Math.max(1,Number(state.coverPos.z)||1));return state.coverPos}
+function cvGayaAktif(){const d=String(state.coverStyle||'');if(!state.cover)return 'none';
+ if(d==='full'||d==='none')return d;return CV_BENTUK[d]?d:'kotak'}
+function cvNama(){return (CV_BENTUK[cvGayaAktif()]||{}).nama||'-'}
+function setCvStyle(id){if(!CV_BENTUK[id])return;state.coverStyle=id;save();render();notify('Gaya foto cover: '+cvNama())}
+function cvGambar(){const p=cvPos();
+ document.querySelectorAll('.cvprev').forEach(im=>{im.style.objectPosition=p.x+'% '+p.y+'%';im.style.transform='scale('+p.z+')'});
+ const lab=document.getElementById('cvZoom');if(lab)lab.textContent=p.z.toFixed(2)+'×';
+ const rng=document.getElementById('cvRange');if(rng&&Number(rng.value)!==p.z)rng.value=p.z}
+function cvZoom(v){cvPos().z=Math.min(2.2,Math.max(1,parseFloat(v)||1));cvGambar();save()}
+function cvTengah(){const p=cvPos();p.x=50;p.y=50;cvGambar();save()}
+function cvReset(){state.coverPos={x:50,y:50,z:1};save();render();notify('Posisi foto direset')}
+/* Geser foto: perpindahan dihitung dari ukuran gambar asli supaya gerakannya
+   pas 1:1 dengan yang terlihat (bukan kira-kira). */
+let _cvDrag=null;
+function cvMulai(e){const el=e.currentTarget,im=el.querySelector('img');if(!im)return;
+ e.preventDefault();const p=cvPos();
+ _cvDrag={el:el,im:im,x0:e.clientX,y0:e.clientY,x:p.x,y:p.y,r:el.getBoundingClientRect(),
+  iw:im.naturalWidth||im.width||1,ih:im.naturalHeight||im.height||1};
+ el.style.cursor='grabbing';if(el.setPointerCapture)el.setPointerCapture(e.pointerId);
+ window.addEventListener('pointermove',cvJalan);window.addEventListener('pointerup',cvLepas)}
+function cvJalan(e){if(!_cvDrag)return;const d=_cvDrag,p=cvPos();
+ const skala=Math.max(d.r.width/d.iw,d.r.height/d.ih)*p.z;
+ const lx=Math.max(0,d.iw*skala-d.r.width),ly=Math.max(0,d.ih*skala-d.r.height);
+ p.x=Math.max(0,Math.min(100,d.x-(lx?(e.clientX-d.x0)*100/lx:0)));
+ p.y=Math.max(0,Math.min(100,d.y-(ly?(e.clientY-d.y0)*100/ly:0)));
+ cvGambar()}
+function cvLepas(){if(!_cvDrag)return;_cvDrag.el.style.cursor='grab';_cvDrag=null;
+ window.removeEventListener('pointermove',cvJalan);save()}
+/* Kecilkan foto sampai maks 1200 px (JPEG 0.82 / PNG). Data URL asli langsung
+   dipakai dulu agar tidak pernah menunggu; versi kecil menyusul menggantikan.
+   Bila berkas bukan gambar / gagal didekode, alamat asli dibiarkan apa adanya. */
+function kecilkanFoto(dataUrl,tipe){return new Promise(res=>{
+ let selesai=false;const akhiri=v=>{if(!selesai){selesai=true;res(v)}};
+ try{
+  const im=new Image();
+  im.onload=()=>{try{
+    const M=1200;let w=im.naturalWidth||im.width,h=im.naturalHeight||im.height;
+    if(!w||!h)return akhiri(dataUrl);
+    if(w<=M&&h<=M&&dataUrl.length<300000)return akhiri(dataUrl);
+    const sk=Math.min(M/w,M/h,1);w=Math.max(1,Math.round(w*sk));h=Math.max(1,Math.round(h*sk));
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    c.getContext('2d').drawImage(im,0,0,w,h);
+    const keluar=(tipe==='image/png')?'image/png':'image/jpeg';
+    const hasil=c.toDataURL(keluar,0.82);
+    akhiri(hasil&&hasil.length&&hasil.length<dataUrl.length?hasil:dataUrl);
+  }catch(e){akhiri(dataUrl)}};
+  im.onerror=()=>akhiri(dataUrl);
+  im.src=dataUrl;
+ }catch(e){akhiri(dataUrl)}
+})}
+function uploadCover(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const asal=r.result;state.cover=asal;save();render();
+ kecilkanFoto(asal,f.type).then(k=>{if(k!==asal&&state.cover===asal){state.cover=k;save();render()}})};r.readAsDataURL(f)}
+function uploadGallery(input){const fs=Array.from(input.files||[]);let left=fs.length;fs.forEach(f=>{const r=new FileReader();r.onload=()=>{const asal=r.result;const i=state.gallery.length;state.gallery.push(asal);if(--left===0){save();render()}
+ kecilkanFoto(asal,f.type).then(k=>{if(k!==asal&&state.gallery[i]===asal){state.gallery[i]=k;save();render()}})};r.readAsDataURL(f)})}
 async function publish(){
  if(_publishing)return;
  const f=state.form,missing=[];
@@ -582,7 +671,8 @@ async function publish(){
   amplop:JSON.parse(JSON.stringify(state.amplop)),
   slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-  cover:state.cover||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
+  cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos()),
+  gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
   /* alur Studio > Undangan Master > Undangan Tamu: dashboard master butuh daftar tamu + kunci privat */
   guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
   masterKey:state.masterKey||'',linkMode:state.linkMode||'personal',
@@ -594,7 +684,7 @@ async function publish(){
  state.published=true;state.publishedLink=baseUrl();
  const nama=displayName();
  const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
-  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim))}};
+  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos())}};
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  state.stage='ready';save();render();window.scrollTo(0,0);document.querySelectorAll('.notice').forEach(n=>n.remove());
  }catch(e){notify('Undangan belum selesai. Periksa koneksi lalu coba lagi.')}
@@ -606,20 +696,37 @@ function unpublish(){state.published=false;save();render();notify('Status kembal
 async function dlUndangan(){
  try{
   const r=await fetch('undangan.html');if(!r.ok)throw new Error('HTTP '+r.status);
-  const html=await r.text();
+  let html=await r.text();
   const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
    accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,
    amplop:JSON.parse(JSON.stringify(state.amplop)),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],publishedAt:new Date().toISOString()};
+   cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos()),
+   gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],publishedAt:new Date().toISOString()};
   if(JSON.stringify(data).length>1500000){data.gallery=[];
    if(JSON.stringify(data).length>1200000){data.cover='';
     if(JSON.stringify(data).length>900000){notifyErr('Data terlalu besar utk 1 file — kurangi/kompres foto dulu');return}}}
   const draft={slug:state.slug||'',name1:state.event==='pernikahan'?state.form.namaPria:state.form.namaAnak,
    name2:state.event==='pernikahan'?state.form.namaWanita:'',
    theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl)),data};
-  const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>';
+  /* Penyesuaian kontras tema (assets/theme-contrast.js) ikut disematkan supaya
+     teks tetap terbaca saat file dibuka offline — aset di folder assets/ tidak
+     terbawa saat file dipindah. Gagal mengambil aset tidak membatalkan simpan. */
+  let tcSrc='';
+  try{const tr=await fetch('assets/theme-contrast.js');if(tr.ok)tcSrc=await tr.text()}catch(e){}
+  /* Artwork 3D tema ikut disematkan (base64, hanya bila berkasnya wajar) supaya file
+     undangan yang disimpan tetap tampil benar walau folder assets/ tidak ikut dibawa. */
+  const tpUndang=TPL.find(t=>t.id===state.tpl)||null;
+  let artSrc='';
+  if(tpUndang&&tpUndang.bg3d){
+   try{const ar=await fetch(tpUndang.bg3d);if(ar.ok){const bl=await ar.blob();
+    if(bl.size&&bl.size<300000)artSrc=await new Promise(res=>{const fr=new FileReader();
+     fr.onload=()=>res(String(fr.result||''));fr.onerror=()=>res('');fr.readAsDataURL(bl)})}}catch(e){}
+  }
+  const artCss=artSrc?`<style>html{--cover-art:url(${artSrc}) !important}</style>`:'';
+  const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>'+(tcSrc?'\n<script>'+tcSrc.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'');
+  if(artCss)html=html.replace('</head>',artCss+'\n</head>');
   const i=html.indexOf('</head>');
   const final=i>=0?html.slice(0,i)+inj+'\n'+html.slice(i):html.replace('</html>',inj+'\n</html>');
   const a=document.createElement('a');
@@ -636,11 +743,15 @@ function loadArsip(id){const a=state.arsip.find(x=>x.id===id);if(!a)return;
   state.doa=a.snap.doa||a.snap.event;state.accent=a.snap.accent||tplOf().accent;state.slug=a.snap.slug;
   if(a.snap.fontTitle)state.fontTitle=a.snap.fontTitle;if(a.snap.fontBody)state.fontBody=a.snap.fontBody;
   if(a.snap.border)state.border=a.snap.border;
+  if(a.snap.cover!==undefined)state.cover=a.snap.cover;
+  if(a.snap.coverStyle)state.coverStyle=a.snap.coverStyle;
+  if(a.snap.coverPos)state.coverPos=Object.assign({x:50,y:50,z:1},a.snap.coverPos);
   if(a.snap.slides)state.slides=mergeSlides(a.snap.slides);
   if(a.snap.anim)state.anim=Object.assign({},DEF.anim,a.snap.anim);animSig=null}
  else{state.event=a.jenis;animSig=null}
  state.page='editor';state.tab='info';save();render();window.scrollTo(0,0);notify('Membuka: '+a.nama)}
 function dlQr(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrData(g);a.download=`QR-Checkin-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
+function dlQrUndangan(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrDataUndangan(g);a.download=`QR-Undangan-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
 async function copyTxt(t,msg){try{if(!navigator.clipboard)throw new Error('clipboard');await navigator.clipboard.writeText(t);notify(msg||'Disalin ✓')}catch(e){notify('Belum bisa menyalin otomatis. Pilih teks link lalu salin manual.')}}
 function waLink(g){const txt=state.waTemplate.replace('{nama_tamu}',g.nama).replace('{link_undangan}',g.link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf());return 'https://wa.me/?text='+encodeURIComponent(txt)}
 function updKat(id,k,v){const it=state.katalog.find(x=>x.id===id);if(!it)return;it[k]=(k==='hargaNormal'||k==='hargaPromo')?Number(v):k==='promoActive'?v:v;save()}
@@ -846,6 +957,34 @@ function tabMusik(){const d=DOA[state.doa]||DOA.pernikahan;return `<div style="d
     <span style="font-size:11px;color:var(--mut)">+ ${state.gallery.length} foto</span>
     <input type="file" accept="image/*" multiple onchange="uploadGallery(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div></label>
   </div>
+  ${state.cover?`<div style="margin-top:14px;border-top:1px dashed var(--line);padding-top:12px">
+   <div class="f" style="margin-bottom:6px">Gaya foto di cover — 9 pilihan ${cvGayaAktif()==='none'?'<span style="color:var(--mut)">(sekarang: tanpa foto di cover)</span>':''}</div>
+   <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px">
+    ${CV_URUT.map(id=>{const b=CV_BENTUK[id],on=cvGayaAktif()===id,p=cvPos();
+     return `<button onclick="setCvStyle('${id}')" title="${b.nama}" style="border:0;background:transparent;padding:0;cursor:pointer">
+     <span style="display:block;width:100%;aspect-ratio:3/4;border-radius:6px;overflow:hidden;border:2px solid ${on?'#111':'var(--line)'};background:#f4f1ea;position:relative">
+      <img class="cvprev" src="${state.cover}" style="width:100%;height:100%;object-fit:cover;object-position:${p.x}% ${p.y}%;transform:scale(${p.z});border-radius:${b.r};opacity:${id==='none'?.3:1}">
+      ${id==='full'?`<span style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,6,5,.35),rgba(8,6,5,.85))"></span>`:''}
+      ${id==='none'?`<span style="position:absolute;inset:0;display:grid;place-items:center;font-size:16px">🚫</span>`:''}
+     </span>
+     <span style="display:block;font-size:9px;margin-top:3px;font-weight:${on?'700':'400'};color:${on?'#111':'var(--mut)'}">${b.nama}</span></button>`}).join('')}
+   </div>
+   <div style="margin-top:12px;display:flex;gap:12px;align-items:flex-start">
+    <div id="cvAtur" onpointerdown="cvMulai(event)" style="width:132px;aspect-ratio:3/4;border-radius:12px;overflow:hidden;position:relative;background:#111;touch-action:none;cursor:grab;flex:none;border:1px solid var(--line)">
+     <img class="cvprev" src="${state.cover}" style="width:100%;height:100%;object-fit:cover;object-position:${cvPos().x}% ${cvPos().y}%;transform:scale(${cvPos().z})">
+     <span style="position:absolute;left:6px;bottom:6px;font-size:9px;color:#fff;background:rgba(0,0,0,.55);padding:2px 7px;border-radius:99px">geser foto</span>
+    </div>
+    <div style="flex:1;min-width:0">
+     <div class="f">Zoom: <span id="cvZoom">${cvPos().z.toFixed(2)}×</span></div>
+     <input id="cvRange" type="range" min="1" max="2.2" step="0.05" value="${cvPos().z}" oninput="cvZoom(this.value)" style="width:100%">
+     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+      <button class="sm-btn dark" onclick="cvTengah()">Tengahkan</button>
+      <button class="sm-btn" onclick="cvReset()">Reset</button>
+     </div>
+     <div style="font-size:10px;color:var(--mut);margin-top:8px;line-height:1.5">Geser fotonya di kotak sebelah (jari/mouse) dan atur zoom sampai bagian penting pas di bingkai. Hasilnya sama dengan yang dilihat tamu.</div>
+    </div>
+   </div>
+  </div>`:''}
   ${state.gallery.length?`<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px">${state.gallery.map(g=>`<img src="${g}" style="height:64px;width:100%;object-fit:cover;border-radius:12px;border:1px solid var(--line)">`).join('')}</div>`:''}
   <label class="f" style="margin-top:16px">Link Video (YouTube/TikTok/IG)<input value="${esc(state.videoLink)}" placeholder="https://..." oninput="upd('videoLink',this.value)"></label>
  </div>
@@ -905,17 +1044,27 @@ function tabTamu(){const gs=guests(),g=selGuest(),single=state.linkMode==='singl
   </div>
  </div>
  <div class="card" style="background:#111;color:#fff;border-color:#111">
-  <h4 style="color:#fff">🔐 QR Check-in Tamu • Random per Klik ${single?'<span class="pill" style="background:#D4AF37;color:#000;font-size:9px">1 LINK + QR UNIK</span>':''}</h4>
-  <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:12px">${single?'Mode 1 Link aktif: Link undangan SAMA untuk semua tamu, tapi QR tetap random unik per tamu. QR ini yang di-scan panitia di lokasi.':'QR dibuat random per tamu setelah mengisi nama, bisa di-download. Tampilkan saat check-in.'}</div>
-  ${g?`<div style="background:#fff;border-radius:16px;padding:16px;color:#000;display:flex;gap:16px">
-   <div style="width:120px;height:120px;border-radius:12px;background:var(--soft);border:1px solid var(--line);overflow:hidden;flex:none"><img src="${qrData(g)}" style="width:100%;height:100%;object-fit:contain;padding:8px"></div>
-   <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">${esc(g.nama)}</div>
-    <div style="font-size:11px;color:var(--mut);margin-top:4px">Code: ${g.code}</div>
-    <div style="font-size:10px;font-family:ui-monospace,monospace;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;word-break:break-all">${single?esc(g.checkin):esc(g.link)}</div>
-    <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-     <button class="sm-btn dark" onclick="dlQr('${esc(g.nama)}')">⬇ Download QR</button>
-     <span style="font-size:10px;color:var(--mut);line-height:1.3">Download & tunjukkan<br>saat check-in</span></div>
-   </div></div>`
+  <h4 style="color:#fff">🔐 QR Check-in & QR Undangan ${single?'<span class="pill" style="background:#D4AF37;color:#000;font-size:9px">1 LINK + QR UNIK</span>':''}</h4>
+  <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:12px">${single?'Mode 1 Link aktif: Link undangan SAMA untuk semua tamu, tapi QR check-in tetap unik per tamu.':'Ada 2 QR per tamu — keduanya bisa di-download:'} <b>QR Check-in</b> untuk panitia di pintu masuk (wajib), dan <b>QR Undangan</b> untuk tamu (opsional — misal dicetak di kartu undangan; scan langsung membuka undangannya).</div>
+  ${g?`<div style="background:#fff;border-radius:16px;padding:16px;color:#000">
+   <div style="font-size:13px;font-weight:600">${esc(g.nama)}</div>
+   <div style="font-size:11px;color:var(--mut);margin-top:4px">Code: ${g.code}</div>
+   <div style="font-size:10px;font-family:ui-monospace,monospace;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;word-break:break-all">${single?esc(g.checkin):esc(g.link)}</div>
+   <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:148px;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center">
+     <div style="width:108px;height:108px;margin:0 auto;border-radius:10px;background:var(--soft);border:1px solid var(--line);overflow:hidden"><img src="${qrData(g)}" style="width:100%;height:100%;object-fit:contain;padding:6px"></div>
+     <div style="font-size:10.5px;font-weight:700;margin-top:8px">QR Check-in</div>
+     <div style="font-size:9px;color:var(--mut);line-height:1.4">Untuk <b>panitia</b> scan di pintu masuk</div>
+     <button class="sm-btn dark" style="margin-top:8px;width:100%" onclick="dlQr('${esc(g.nama)}')">⬇ Download QR</button>
+    </div>
+    <div style="flex:1;min-width:148px;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center">
+     <div style="width:108px;height:108px;margin:0 auto;border-radius:10px;background:var(--soft);border:1px solid var(--line);overflow:hidden"><img src="${qrDataUndangan(g)}" style="width:100%;height:100%;object-fit:contain;padding:6px"></div>
+     <div style="font-size:10.5px;font-weight:700;margin-top:8px">QR Undangan <span style="color:#8a6d0f">(opsional)</span></div>
+     <div style="font-size:9px;color:var(--mut);line-height:1.4">Untuk <b>tamu</b> — scan buka undangan</div>
+     <button class="sm-btn" style="margin-top:8px;width:100%" onclick="dlQrUndangan('${esc(g.nama)}')">⬇ Download QR</button>
+    </div>
+   </div>
+  </div>`
   :'<div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;font-size:11px;color:rgba(255,255,255,.7)">Pilih tamu dari daftar di atas untuk generate QR check-in random.</div>'}
   <div style="margin-top:16px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">
    <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:11px">Tampilkan Nama di QR<input type="checkbox" ${state.showNameQr?'checked':''} onchange="set('showNameQr',this.checked)"></label>
@@ -1183,15 +1332,25 @@ function phoneHtml(){
  const play=animTrigger(),AN=state.anim,CV=play&&AN.cover,TX=play&&AN.text,RV=AN.reveal;
  const CE=fxCoverId(),SC=fxScrollId(),h1d=tp.char?520:350;
  const WR=(d,html)=>RV?`<div class="scroll-reveal fx-s-${SC}">${html}</div>`:html;
+ /* Artwork 3D tema (bila ada & latar masih "gradient" bawaan): dipakai sebagai
+    latar layar supaya yang dilihat pemilik sama dengan yang dilihat tamu. */
+ const cvGaya=cvGayaAktif();
+ const art3d=(!dark&&tp.bg3d&&state.bgType==='gradient'&&cvGaya!=='full')?tp.bg3d:'';
  let bg='';
  if(!dark){
-  if(state.bgType==='polos')bg=`background:${tp.g[0]};color:${tp.ink}`;
+  if(cvGaya==='full')bg=`background:linear-gradient(180deg,rgba(8,6,5,.5),rgba(8,6,5,.14) 26%,rgba(8,6,5,.42) 50%,rgba(8,6,5,.9) 76%,rgba(8,6,5,.95)),url(${state.cover}) center/cover;color:#fff`;
+  else if(art3d)bg=`background:linear-gradient(180deg,rgba(12,10,8,.5),rgba(12,10,8,.22) 30%,rgba(12,10,8,.34) 62%,rgba(12,10,8,.7)),url(${art3d}) center/cover;color:#F7F2E9`;
+  else if(state.bgType==='polos')bg=`background:${tp.g[0]};color:${tp.ink}`;
   else if(state.bgType==='foto'&&state.cover)bg=`background:linear-gradient(rgba(255,255,255,.82),rgba(255,255,255,.88)),url(${state.cover}) center/cover;color:${tp.ink}`;
   else bg=`background:${tplGrad(tp)};color:${tp.ink}`;
  }
- const patStyle=dark?'':(state.bgType==='pattern'?(patCss(tp)||`background-image:radial-gradient(${tp.accent}26 1.5px,transparent 1.8px);background-size:22px 22px;`):state.bgType==='foto'?'':patCss(tp));
+ const patStyle=(dark||art3d||cvGaya==='full')?'':(state.bgType==='pattern'?(patCss(tp)||`background-image:radial-gradient(${tp.accent}26 1.5px,transparent 1.8px);background-size:22px 22px;`):state.bgType==='foto'?'':patCss(tp));
  const tF=fontFam(state.fontTitle),bF=fontFam(state.fontBody);
- const nameColor=dark?'#FDE68A':state.accent;
+ const nameColor=dark?'#FDE68A':(cvGaya==='full'?'#FFFFFF':(art3d?'#F7F2E9':state.accent));
+ /* Bingkai foto cover di pratinjau — cermin gaya yang dipakai undangan tamu. */
+ const cvB=CV_BENTUK[cvGaya]||CV_BENTUK.kotak,cvp=cvPos();
+ const blokFotoPrev=(cvGaya==='none'||cvGaya==='full')?''
+  :`<div style="margin:12px auto 0;width:${cvB.w}%;aspect-ratio:${cvB.as};border-radius:${cvB.r};padding:${cvB.p};background:${cvB.bg};box-shadow:${cvB.sh};box-sizing:border-box;overflow:hidden;position:relative;${cvB.rot?'transform:rotate('+cvB.rot+');':''}"><img src="${state.cover}" alt="Foto cover" style="width:100%;height:100%;object-fit:cover;object-position:${cvp.x}% ${cvp.y}%;transform:scale(${cvp.z});border-radius:${cvB.ir};display:block"></div>`;
  const dt=new Date(f.tanggalAcara);
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
  const wordSpan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="a-word" style="animation-delay:${d0+i*80}ms">${esc(w)}</span>`).join(' ');
@@ -1202,7 +1361,7 @@ function phoneHtml(){
   :(TX?`<span style="display:block">${wordSpan(f.namaAnak,h1d)}</span>`:`<span style="display:block">${esc(f.namaAnak)}</span>`);
  return `
  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;width:340px">
-  <span class="lbl">Live Preview • ${esc(tp.nama)}</span>
+  <span class="lbl">Live Preview • ${esc(tp.nama)}${art3d?' • 3D':''}${cvGaya!=='none'?' • '+cvNama():''}</span>
   <span class="pill" style="background:#fff;border:1px solid var(--line);font-size:10px"><span class="dot pulse" style="width:6px;height:6px;background:#10b981"></span>Live update</span>
  </div>
  <div class="phone"><div class="screen">
@@ -1219,6 +1378,7 @@ function phoneHtml(){
      <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}
     ${tp.deco?`<div class="${CV?'a-deco':''}" style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px;${CV?'animation-delay:150ms':''}">${tp.deco}</div>`:''}
     ${state.goldOrn?`<div class="${CV?'a-deco':''}" style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent);${CV?'animation-delay:250ms':''}"></div>`:''}
+    ${blokFotoPrev}
     <div class="${CV?'fx-c-'+CE:''}" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF};${CV?'animation-delay:300ms':''}">${titleOf()}</div>
     ${tp.char?`<div class="${CV?'fx-c-'+CE:''}" title="Karakter tema" style="font-size:42px;line-height:1.1;margin-top:14px;${CV?'animation-delay:420ms':''}">${tp.char}</div>`:''}
     <h1 class="${CV&&!TX?'fx-c-'+CE:''}" style="margin-top:${tp.char?6:12}px;font-size:28px;line-height:.95;font-weight:700;color:${nameColor};${CV&&!TX?'animation-delay:'+h1d+'ms':''}">${h1Inner}</h1>

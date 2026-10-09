@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Kebijakan jaringan AsProject Studio:
+   • HTTP polos (cleartext) dimatikan total — semua trafik harus HTTPS.
+   • Hanya Certificate Authority bawaan sistem yang dipercaya; CA yang dipasang
+     pengguna tidak dianggap cukup, jadi serangan MITM memakai sertifikat buatan
+     tidak bisa lolos (aplikasi juga tidak pernah memanggil handler.proceed()
+     pada WebViewClient.onReceivedSslError).
+   • Tidak ada pinning sertifikat, supaya rotasi sertifikat GitHub Pages /
+     penyedia hosting tidak membuat aplikasi mati.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

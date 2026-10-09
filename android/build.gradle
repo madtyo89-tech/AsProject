@@ -1,0 +1,8 @@
+// Plugin AGP dipakai bersama oleh :app. Versi ini memerlukan Gradle 8.9+ dan JDK 17+.
+plugins {
+    id 'com.android.application' version '8.5.2' apply false
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
+}

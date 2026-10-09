@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+: aturan yang sama untuk cloud backup dan transfer perangkat. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="file" path="app_webview/" />
+        <include domain="sharedpref" path="." />
+        <exclude domain="cache" path="." />
+        <exclude domain="file" path="camera/" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="file" path="app_webview/" />
+        <include domain="sharedpref" path="." />
+        <exclude domain="cache" path="." />
+        <exclude domain="file" path="camera/" />
+    </device-transfer>
+</data-extraction-rules>

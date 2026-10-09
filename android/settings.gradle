@@ -1,0 +1,22 @@
+// AsProject Studio — proyek Android (jalur build normal / Android Studio).
+// Proyek ini tidak memakai AndroidX maupun pustaka pihak ketiga: seluruh kode Java
+// memakai API framework Android saja, jadi cukup Android SDK + JDK 17.
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "AsProjectStudio"
+include ':app'

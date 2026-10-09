@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AsProject Studio</string>
+
+    <!-- Loading -->
+    <string name="loading_connecting">Menghubungkan ke Studio…</string>
+    <string name="loading_page">Memuat halaman…</string>
+
+    <!-- Error page -->
+    <string name="error_title">Tidak bisa terhubung</string>
+    <string name="error_offline">Perangkat sedang offline. Periksa koneksi internet lalu coba lagi.</string>
+    <string name="error_generic">Studio tidak bisa dibuka. Periksa koneksi internet lalu coba lagi.</string>
+    <string name="error_timeout">Server Studio tidak merespons (waktu habis). Coba lagi sebentar.</string>
+    <string name="error_host">Alamat Studio tidak ditemukan. Periksa koneksi lalu coba lagi.</string>
+    <string name="error_ssl">Sertifikat keamanan situs tidak tepercaya, jadi aplikasi menghentikan pemuatan. Hubungi pemilik situs bila masalah berlanjut.</string>
+    <string name="error_http">Server Studio mengembalikan kesalahan (kode %1$d). Coba lagi beberapa saat.</string>
+    <string name="error_retry">Coba Lagi</string>
+    <string name="error_open_browser">Buka di browser</string>
+    <string name="error_reconnected">Koneksi kembali — tekan Coba Lagi.</string>
+    <string name="error_detail_title">Detail teknis</string>
+
+    <!-- Reload -->
+    <string name="reload">Muat ulang</string>
+    <string name="reload_confirm_title">Muat ulang Studio?</string>
+    <string name="reload_confirm_message">Perubahan yang belum disimpan bisa hilang. Lanjutkan hanya bila tidak sedang mengedit.</string>
+    <string name="reload_confirm_yes">Muat ulang</string>
+    <string name="cancel">Batal</string>
+
+    <!-- Exit -->
+    <string name="exit_title">Keluar dari AsProject Studio?</string>
+    <string name="exit_message">Draf yang sudah disimpan tidak akan terhapus.</string>
+    <string name="exit_yes">Keluar</string>
+    <string name="exit_no">Tetap di sini</string>
+
+    <!-- File chooser -->
+    <string name="chooser_title">Pilih sumber berkas</string>
+    <string name="chooser_camera">Kamera</string>
+    <string name="chooser_gallery">Galeri / Foto</string>
+    <string name="chooser_document">Berkas (dokumen, musik, CSV)</string>
+    <string name="chooser_no_app">Tidak ada aplikasi yang bisa dipakai untuk memilih berkas ini.</string>
+    <string name="chooser_camera_failed">Kamera tidak tersedia di perangkat ini.</string>
+
+    <!-- Export -->
+    <string name="export_saved">Tersimpan: %1$s</string>
+    <string name="export_failed">Gagal menyimpan berkas: %1$s</string>
+    <string name="export_open">Buka</string>
+    <string name="export_share">Bagikan</string>
+    <string name="export_close">Tutup</string>
+    <string name="export_no_app">Belum ada aplikasi yang bisa membuka berkas ini.</string>
+
+    <!-- Misc -->
+    <string name="permission_denied" translatable="false">Fitur ini tidak diaktifkan di aplikasi.</string>
+    <string name="renderer_gone">Halaman perlu dimuat ulang setelah gangguan sistem.</string>
+    <string name="copy_done">Disalin ke papan klip</string>
+    <string name="copy_failed">Gagal menyalin ke papan klip</string>
+</resources>
