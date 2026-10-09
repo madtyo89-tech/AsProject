@@ -431,7 +431,7 @@ def cek_fitur_terbaru():
               f"{rel}: 5 tema feminin baru ada ({len(ada)}/5)")
     ids_st = _tpl_ids("studio.html") or []
     ids_ud = _tpl_ids("undangan.html") or []
-    lapor("ok" if ids_st == ids_ud and len(ids_st) == 40 else "masalah",
+    lapor("ok" if ids_st == ids_ud and len(ids_st) == 42 else "masalah",
           f"urutan TPL identik di studio & undangan ({len(ids_st)} template)")
     # 2) 20 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
     def _border_ids(s):

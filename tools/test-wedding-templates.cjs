@@ -11,7 +11,8 @@ const read=rel=>fs.readFileSync(path.join(ROOT,rel),'utf8');
 const studioHtml=read('studio.html'),liveHtml=read('undangan.html');
 const WEDDING_IDS=[
  'jawa-elegan','minimalist-sage','luxury-gold','floral-rustic','ice-blue','minimalist-frost',
- 'ocean-breeze','navy-royal','forest-classic','charcoal-gold','slate-sage','burgundy-regal'
+ 'ocean-breeze','navy-royal','forest-classic','charcoal-gold','slate-sage','burgundy-regal',
+ 'champagne-royale','violet-imperial'
 ];
 function templates(source){
  const block=(source.match(/const TPL=\[(.*?)\];/s)||[])[1];

@@ -150,6 +150,24 @@ body.theme-luxury-gold #cover .wedding-meta,body.theme-luxury-gold #cover .host{
 body.theme-luxury-gold #cover .wedding-note{border-color:color-mix(in srgb,var(--accent) 34%,transparent);color:#DCCFB3}
 body.theme-luxury-gold #cover .open{background:linear-gradient(135deg,#B78A32,#F4DEA0 52%,#C9A24C);border:1px solid rgba(255,239,191,.8);color:#20180D;box-shadow:0 10px 24px rgba(0,0,0,.34);text-shadow:none}
 body.theme-luxury-gold #cover .wedding-hint{color:#E7CB83}
+/* PREMIUM — Champagne Royale: kartu satin ivory, bingkai ganda foil emas, tombol emas */
+body.theme-champagne-royale #cover .wedding-invite-card{position:relative;overflow:hidden;background:linear-gradient(150deg,rgba(255,252,244,.96),rgba(246,236,214,.94))!important;border-color:color-mix(in srgb,var(--accent) 55%,transparent)!important;box-shadow:0 24px 64px rgba(90,70,43,.35),inset 0 0 0 1px color-mix(in srgb,var(--accent) 30%,transparent)}
+body.theme-champagne-royale #cover .wedding-invite-card::before{content:'';position:absolute;z-index:0;inset:7px;border:1px solid color-mix(in srgb,var(--accent) 42%,transparent);border-radius:18px;pointer-events:none}
+body.theme-champagne-royale #cover .wedding-invite-card .inner{position:relative;z-index:1}
+body.theme-champagne-royale #cover .date{background:rgba(255,251,240,.85);border-color:color-mix(in srgb,var(--accent) 48%,transparent);color:#6b5230}
+body.theme-champagne-royale #cover .orn,body.theme-champagne-royale #cover .kicker{color:#8a6524}
+body.theme-champagne-royale #cover .open{background:linear-gradient(135deg,#c9a24c,#f0d894 52%,#c9a24c);border:1px solid rgba(255,244,214,.85);color:#4a3826;box-shadow:0 10px 24px rgba(90,70,43,.35);text-shadow:none}
+/* PREMIUM — Violet Imperial: kartu beludru ungu transparan + emas majestik */
+body.theme-violet-imperial #cover .wedding-invite-card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(28,12,32,.92),rgba(58,26,66,.9))!important;border-color:color-mix(in srgb,var(--accent) 55%,transparent)!important;box-shadow:0 24px 64px rgba(0,0,0,.5),inset 0 0 0 1px color-mix(in srgb,var(--accent) 26%,transparent);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);color:#F2E8F7}
+body.theme-violet-imperial #cover .wedding-invite-card::before{content:'';position:absolute;z-index:0;inset:8px;border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);border-radius:17px;pointer-events:none}
+body.theme-violet-imperial #cover .wedding-invite-card .inner{position:relative;z-index:1}
+body.theme-violet-imperial #cover h1{color:#F7EFFB;text-shadow:0 3px 24px rgba(0,0,0,.4)}
+body.theme-violet-imperial #cover .wedding-subtitle{color:#DCC6E4}
+body.theme-violet-imperial #cover .date{background:rgba(226,180,88,.14);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#F0DCA8}
+body.theme-violet-imperial #cover .wedding-meta,body.theme-violet-imperial #cover .host{color:#EFE3F4}
+body.theme-violet-imperial #cover .wedding-note{border-color:color-mix(in srgb,var(--accent) 34%,transparent);color:#D9C7E0}
+body.theme-violet-imperial #cover .open{background:linear-gradient(135deg,#9a742d,#E2B458 52%,#b98a3e);border:1px solid rgba(255,239,191,.8);color:#241028;box-shadow:0 10px 24px rgba(0,0,0,.4);text-shadow:none}
+body.theme-violet-imperial #cover .wedding-hint{color:#E3C98F}
 
 /* Seluruh halaman tamu ikut memakai palet template, bukan kartu krem/gold generik. */
 body.wedding-cover .wrap{background-color:#fffdf8;background-color:color-mix(in srgb,var(--g0) 7%,#fff);background-image:radial-gradient(color-mix(in srgb,var(--accent) 15%,transparent) 1px,transparent 1.5px);background-size:24px 24px}
@@ -335,7 +353,9 @@ const TPL=[
  {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',char:'🦕',deco:'🦕 ✦ 🦕',pat:'',ft:'poppins'},
  {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',char:'🧑‍🚀',deco:'🧑‍🚀 ✦ 🧑‍🚀',pat:'',ft:'oswald'},
  {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',char:'🐯',deco:'🐯 ✦ 🐯',pat:'',ft:'bebas'},
- {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',char:'👸',bg3d:'assets/tema-3d/fairy-princess.webp',deco:'👸 ✨ 👸',pat:'',ft:'dancing'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',char:'🦄',bg3d:'assets/tema-3d/unicorn-magic.webp',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',char:'🌸',bg3d:'assets/tema-3d/rose-bouquet.webp',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing'}];
+ {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',char:'👸',bg3d:'assets/tema-3d/fairy-princess.webp',deco:'👸 ✨ 👸',pat:'',ft:'dancing'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',char:'🦄',bg3d:'assets/tema-3d/unicorn-magic.webp',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',char:'🌸',bg3d:'assets/tema-3d/rose-bouquet.webp',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing'},
+ {id:'champagne-royale',nama:'Champagne Royale',ev:'pernikahan',g:['#FBF6EC','#F1E3C9','#DFC49A'],accent:'#9A742D',ink:'#54402B',char:'🥂',bg3d:'assets/tema-3d/champagne-royale.webp',deco:'✦ ❖ ✦',pat:'',ft:'cormorant'},
+ {id:'violet-imperial',nama:'Violet Imperial',ev:'pernikahan',g:['#241028','#37193E','#4E2656'],accent:'#E2B458',ink:'#F2E8F7',char:'🦚',bg3d:'assets/tema-3d/violet-imperial.webp',deco:'❖ ✦ ',pat:'',ft:'playfair'}];
 
 const FONTS=[
  {id:'cormorant',fam:'"Cormorant Garamond",serif'},
