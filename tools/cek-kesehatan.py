@@ -350,7 +350,7 @@ def cek_pipeline_undangan():
         a, b = _fx_ids(studio, nama_arr), _fx_ids(undangan, nama_arr)
         if a is None or b is None:
             lapor("masalah", f"array {nama_arr} tidak ditemukan di studio/undangan")
-        elif a == b and len(a) == (34 if nama_arr == "FX_SCROLL" else 10):
+        elif a == b and len(a) == (34 if nama_arr == "FX_SCROLL" else 12):
             lapor("ok", f"{nama_arr} identik di studio & undangan ({len(a)} efek)")
         else:
             lapor("masalah", f"{nama_arr} studio != undangan! studio={a} undangan={b}")
@@ -361,7 +361,7 @@ def cek_pipeline_undangan():
     fa, fb = _font_ids(studio), _font_ids(undangan)
     if fa is None or fb is None:
         lapor("masalah", "array FONTS tidak ditemukan di studio/undangan")
-    elif fa == fb and len(fa) == 15:
+    elif fa == fb and len(fa) == 17:
         lapor("ok", f"FONTS identik di studio & undangan ({len(fa)} font)")
     else:
         lapor("masalah", f"FONTS studio != undangan! studio={fa} undangan={fb}")
@@ -439,18 +439,27 @@ def cek_fitur_terbaru():
            and ("ev:'all'" in studio and "ev:'all'" in undangan)]
     lapor("ok" if len(ada) == 5 else "masalah",
           f"studio & undangan: 5 tema eksklusif universal ev:'all' ({len(ada)}/5)")
-    # 2) 20 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
+    # 2) 23 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
     def _border_ids(s):
         m = re.search(r"const BORDERS=\[(.*?)\];", s, re.S)
         return re.findall(r"\{id:'([a-z0-9]+)'", m.group(1)) if m else None
     bs, bu = _border_ids(studio), _border_ids(undangan)
-    lapor("ok" if bs and bu and len(bs) == 20 and len(set(bs)) == 20 and bs == bu else "masalah",
-          "BORDERS 20 id unik, identik di studio & undangan")
+    lapor("ok" if bs and bu and len(bs) == 23 and len(set(bs)) == 23 and bs == bu else "masalah",
+          "BORDERS 23 id unik, identik di studio & undangan")
+    # 2b) gating konten EKSKLUSIF: kunci tier di studio + konten baru sinkron di undangan
+    ok = ("bolehEks" in studio and "paksaTier" in studio and "kunciEks" in studio
+          and all(i in studio and i in undangan for i in
+                  ("id:'laurel'", "id:'artdeco'", "id:'pearl'", "id:'cinzel'", "id:'marcellus'"))
+          and "fx-c-shimmer" in studio and "fx-c-shimmer" in undangan
+          and "tier:'eksklusif'" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio: gating konten EKSKLUSIF per tier; border/font/fx baru sinkron di undangan")
     ok = "border:state.border" in studio
     lapor("ok" if ok else "masalah", "studio.html: publish() menyimpan border ke snapshot data")
     ok = "const BD=BORDERS.find(b=>b.id===(d&&d.border))" in undangan and "#cover .bdfr" in undangan
     lapor("ok" if ok else "masalah", "undangan.html: live cover memakai data.border (frame .bdfr)")
-    ok = "border:'double'" in studio and "setBorder(id){state.border=id" in studio
+    ok = ("border:'double'" in studio and "function setBorder(id){" in studio
+          and "isEksB(id)&&!bolehEks()" in studio)
     lapor("ok" if ok else "masalah", "studio.html: picker border (state.border + setBorder) tersedia")
     # 3) hide template di katalog + urut per kategori
     ok = "function tglKatHide(id)" in studio and "katalogHide" in studio

@@ -10,7 +10,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
 <style>
 :root{
   --g0:#F0F9FF; --g1:#BAE6FD; --g2:#7DD3FC;
@@ -284,6 +284,8 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 @keyframes uSlideIn{from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:none}}
 @keyframes uSwing{from{opacity:0;transform:rotate(-7deg) translateY(-16px)}to{opacity:1;transform:none}}
 @keyframes uElastic{0%{opacity:0;transform:scale(.4)}55%{opacity:1;transform:scale(1.12)}75%{transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
+@keyframes uShimmer{0%{opacity:0;filter:brightness(1.9) saturate(1.3)}60%{opacity:1;filter:brightness(1.15)}100%{opacity:1;filter:none}}
+@keyframes uCurtain{0%{opacity:0;transform:scaleX(.55)}100%{opacity:1;transform:none}}
 .cov .fx-c-fade{animation:uFade .9s ease both}
 .cov .fx-c-zoom{animation:uZoom .9s cubic-bezier(.22,.8,.36,1) both}
 .cov .fx-c-rise{animation:uRise .8s cubic-bezier(.22,.8,.36,1) both}
@@ -294,6 +296,8 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 .cov .fx-c-slide{animation:uSlideIn .8s cubic-bezier(.22,.8,.36,1) both}
 .cov .fx-c-swing{animation:uSwing .8s cubic-bezier(.22,.8,.36,1) both}
 .cov .fx-c-elastic{animation:uElastic .9s cubic-bezier(.22,.8,.36,1) both}
+.cov .fx-c-shimmer{animation:uShimmer 1s ease both}
+.cov .fx-c-curtain{animation:uCurtain .9s cubic-bezier(.22,.8,.36,1) both;transform-origin:50% 0}
 @media (prefers-reduced-motion:reduce){
  .cov .anim-up,.cov .anim-zoom,.cov .anim-word,.cov .anim-deco,.cov .anim-pop{animation:none}
  #cover .open{animation:none}
@@ -397,7 +401,9 @@ const FONTS=[
  {id:'pacifico',fam:'"Pacifico",cursive'},
  {id:'dancing',fam:'"Dancing Script",cursive'},
  {id:'caveat',fam:'"Caveat",cursive'},
- {id:'sacramento',fam:'"Sacramento",cursive'}];
+ {id:'sacramento',fam:'"Sacramento",cursive'},
+ {id:'cinzel',fam:'"Cinzel",serif',ex:1},
+ {id:'marcellus',fam:'"Marcellus",serif',ex:1}];
 
 const BORDERS=[
  {id:'none',n:'Tanpa Border'},
@@ -419,7 +425,10 @@ const BORDERS=[
  {id:'halo',n:'Halo Lembut',s:A=>`box-shadow:inset 0 0 0 1px ${A}55,inset 0 0 26px ${A}22`},
  {id:'corners',n:'Sudut Elegan',corner:3},
  {id:'cornersthin',n:'Sudut Halus',corner:1,extra:A=>`border:1px solid ${A}33`},
- {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`}];
+ {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`},
+ {id:'laurel',n:'Laurel Emas',ex:1,s:A=>`border:2px solid ${A};box-shadow:0 0 0 5px color-mix(in srgb,${A} 20%,transparent),inset 0 0 0 1px ${A}`},
+ {id:'artdeco',n:'Art Deco',ex:1,s:A=>`border:3px double ${A};box-shadow:inset 0 0 0 5px #fffdf9,inset 0 0 0 6px ${A}`},
+ {id:'pearl',n:'Untaian Mutiara',ex:1,s:A=>`border:2px dotted ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 4px ${A}`}];
 
 const DOA={
  pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu, memberi keberkahan atasmu, dan mempertemukan kalian berdua dalam kebaikan.'},
@@ -473,7 +482,7 @@ function fxScrollForSection(base,index,mix=true){
 function fxScrollAxis(id){return ['slide-left','slide-right','flip-y','roll-in','wipe-right','book','cube','wave'].includes(id)?'x':'y'}
 const FX_COVER=[
  ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
- ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic']];
+ ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal']];
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxCoverId(AN){const v=AN&&AN.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 

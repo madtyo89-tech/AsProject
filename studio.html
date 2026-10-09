@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111">
 <title>asproject.my.id — Studio Undangan Premium 4in1</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
 <style>
 :root{--bg:#fafaf8;--card:#fff;--line:#eee;--line2:#e9e9e9;--ink:#1a1a1a;--mut:#737373;--mut2:#a3a3a3;--gold:#D4AF37;--cream:#FFFBEB;--cream2:#FDE68A;--soft:#f5f5f4}
@@ -97,6 +97,8 @@ input,textarea,select{outline:0}
 @keyframes cSlideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
 @keyframes cSwing{from{opacity:0;transform:rotate(-7deg) translateY(-14px)}to{opacity:1;transform:none}}
 @keyframes cElastic{0%{opacity:0;transform:scale(.4)}55%{opacity:1;transform:scale(1.12)}75%{transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
+@keyframes cShimmer{0%{opacity:0;filter:brightness(1.9) saturate(1.3)}60%{opacity:1;filter:brightness(1.15)}100%{opacity:1;filter:none}}
+@keyframes cCurtain{0%{opacity:0;transform:scaleX(.55)}100%{opacity:1;transform:none}}
 .ap .fx-c-fade{animation:cFade .8s ease both}
 .ap .fx-c-zoom{animation:cZoom .7s cubic-bezier(.22,.8,.36,1) both}
 .ap .fx-c-rise{animation:cRise .7s cubic-bezier(.22,.8,.36,1) both}
@@ -107,6 +109,8 @@ input,textarea,select{outline:0}
 .ap .fx-c-slide{animation:cSlideIn .7s cubic-bezier(.22,.8,.36,1) both}
 .ap .fx-c-swing{animation:cSwing .7s cubic-bezier(.22,.8,.36,1) both}
 .ap .fx-c-elastic{animation:cElastic .8s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-shimmer{animation:cShimmer 1s ease both}
+.ap .fx-c-curtain{animation:cCurtain .9s cubic-bezier(.22,.8,.36,1) both;transform-origin:50% 0}
 .fxbtn{text-align:left;border-radius:12px;padding:10px 12px;display:grid;gap:2px;background:#fff;border:1px solid var(--line);cursor:pointer;transition:.15s;font-family:inherit}
 .fxbtn b{font-size:11px;font-weight:600;color:#111}
 .fxbtn span{font-size:10px;color:var(--mut);line-height:1.4}
@@ -289,7 +293,9 @@ const FONTS=[
  {id:'pacifico',name:'Pacifico (script)',fam:'"Pacifico",cursive'},
  {id:'dancing',name:'Dancing Script',fam:'"Dancing Script",cursive'},
  {id:'caveat',name:'Caveat (tulis tangan)',fam:'"Caveat",cursive'},
- {id:'sacramento',name:'Sacramento (elegan)',fam:'"Sacramento",cursive'}];
+ {id:'sacramento',name:'Sacramento (elegan)',fam:'"Sacramento",cursive'},
+ {id:'cinzel',name:'Cinzel Imperial 🔒',fam:'"Cinzel",serif',ex:1},
+ {id:'marcellus',name:'Marcellus Royal 🔒',fam:'"Marcellus",serif',ex:1}];
 const DOA={
  pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu...'},
  khitanan:{ar:'اللَّهُمَّ اجْعَلْهُ مِنَ الصَّالِحِيْنَ',latin:'Allahummaj\u2018alhu minash shalihin',arti:'Ya Allah jadikanlah ia anak yang shalih...'},
@@ -341,11 +347,11 @@ const TPL=[
  {id:'champagne-royale',nama:'Champagne Royale',ev:'pernikahan',harga:89000,g:['#FBF6EC','#F1E3C9','#DFC49A'],accent:'#9A742D',ink:'#54402B',badge:'PREMIUM',char:'🥂',bg3d:'assets/tema-3d/champagne-royale.webp',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',desc:'Satin sampanye & foil emas — kemewahan ballroom yang lembut dan timeless'},
  {id:'violet-imperial',nama:'Violet Imperial',ev:'pernikahan',harga:89000,g:['#241028','#37193E','#4E2656'],accent:'#E2B458',ink:'#F2E8F7',badge:'PREMIUM',char:'🦚',bg3d:'assets/tema-3d/violet-imperial.webp',deco:'❖ ✦ ❖',pat:'',ft:'playfair',desc:'Beludru ungu royal & emas majestik — resepsi malam yang anggun berwibawa'},
  /* ==== 5 TEMA EKSKLUSIF UNIVERSAL (ev:'all', tier 119k) ==== */
- {id:'aurora-celestial',nama:'Aurora Celestial',ev:'all',harga:119000,g:['#062A2B','#0B3D3C','#12544E'],accent:'#E7C873',ink:'#E6F4EF',badge:'EKSKLUSIF',char:'🌌',bg3d:'assets/tema-3d/aurora-celestial.webp',deco:'🌌 ✦ 🌌',pat:'',ft:'playfair',desc:'Gradasi aurora teal & emas celestial — mewah untuk acara apa pun'},
- {id:'ivory-pearl',nama:'Ivory Pearl',ev:'all',harga:119000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'EKSKLUSIF',char:'🕊️',bg3d:'assets/tema-3d/ivory-pearl.webp',deco:'🕊️ ✦ 🕊️',pat:'',ft:'cormorant',desc:'Ivory mutiara tenang dengan kilau perunggu — elegan lintas generasi'},
- {id:'emerald-royale',nama:'Emerald Royale',ev:'all',harga:119000,g:['#07271F','#0D3B2E','#155240'],accent:'#D9B45B',ink:'#E9F3EC',badge:'EKSKLUSIF',char:'💠',bg3d:'assets/tema-3d/emerald-royale.webp',deco:'❖ ✦ ',pat:'',ft:'ebgaramond',desc:'Zamrud royal & kuningan hangat — kesan berwibawa yang bersahaja'},
- {id:'rose-gold-blush',nama:'Rose Gold Blush',ev:'all',harga:119000,g:['#FDF6F3','#F7E3DC','#EAC9BE'],accent:'#A05C4B',ink:'#5A3A31',badge:'EKSKLUSIF',char:'💐',bg3d:'assets/tema-3d/rose-gold-blush.webp',deco:'💐 ✦ 💐',pat:'',ft:'sacramento',desc:'Blush lembut & rose gold metalik — manis untuk semua momen'},
- {id:'onyx-platinum',nama:'Onyx Platinum',ev:'all',harga:119000,g:['#101114','#1C1E22','#2B2E33'],accent:'#C9CED6',ink:'#F0F2F4',badge:'EKSKLUSIF',char:'🖤',bg3d:'assets/tema-3d/onyx-platinum.webp',deco:'◆ ✦ ◆',pat:'',ft:'playfair',desc:'Onyx gelap & platinum — modern, tegas, dan mahal'}];
+ {id:'aurora-celestial',nama:'Aurora Celestial',ev:'all',harga:119000,g:['#062A2B','#0B3D3C','#12544E'],accent:'#E7C873',ink:'#E6F4EF',badge:'EKSKLUSIF',tier:'eksklusif',char:'🌌',bg3d:'assets/tema-3d/aurora-celestial.webp',deco:'🌌 ✦ 🌌',pat:'',ft:'playfair',desc:'Gradasi aurora teal & emas celestial — mewah untuk acara apa pun'},
+ {id:'ivory-pearl',nama:'Ivory Pearl',ev:'all',harga:119000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'EKSKLUSIF',tier:'eksklusif',char:'🕊️',bg3d:'assets/tema-3d/ivory-pearl.webp',deco:'🕊️ ✦ 🕊️',pat:'',ft:'cormorant',desc:'Ivory mutiara tenang dengan kilau perunggu — elegan lintas generasi'},
+ {id:'emerald-royale',nama:'Emerald Royale',ev:'all',harga:119000,g:['#07271F','#0D3B2E','#155240'],accent:'#D9B45B',ink:'#E9F3EC',badge:'EKSKLUSIF',tier:'eksklusif',char:'💠',bg3d:'assets/tema-3d/emerald-royale.webp',deco:'❖ ✦ ',pat:'',ft:'ebgaramond',desc:'Zamrud royal & kuningan hangat — kesan berwibawa yang bersahaja'},
+ {id:'rose-gold-blush',nama:'Rose Gold Blush',ev:'all',harga:119000,g:['#FDF6F3','#F7E3DC','#EAC9BE'],accent:'#A05C4B',ink:'#5A3A31',badge:'EKSKLUSIF',tier:'eksklusif',char:'💐',bg3d:'assets/tema-3d/rose-gold-blush.webp',deco:'💐 ✦ 💐',pat:'',ft:'sacramento',desc:'Blush lembut & rose gold metalik — manis untuk semua momen'},
+ {id:'onyx-platinum',nama:'Onyx Platinum',ev:'all',harga:119000,g:['#101114','#1C1E22','#2B2E33'],accent:'#C9CED6',ink:'#F0F2F4',badge:'EKSKLUSIF',tier:'eksklusif',char:'🖤',bg3d:'assets/tema-3d/onyx-platinum.webp',deco:'◆ ✦ ◆',pat:'',ft:'playfair',desc:'Onyx gelap & platinum — modern, tegas, dan mahal'}];
 function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
 function tplsFor(ev){return TPL.filter(t=>(t.ev===ev||t.ev==='all')&&!state.katalogHide.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
@@ -388,14 +394,35 @@ const BORDERS=[
  {id:'halo',n:'Halo Lembut',s:A=>`box-shadow:inset 0 0 0 1px ${A}55,inset 0 0 26px ${A}22`},
  {id:'corners',n:'Sudut Elegan',corner:3},
  {id:'cornersthin',n:'Sudut Halus',corner:1,extra:A=>`border:1px solid ${A}33`},
- {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`}];
+ {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`},
+ {id:'laurel',n:'Laurel Emas',ex:1,s:A=>`border:2px solid ${A};box-shadow:0 0 0 5px color-mix(in srgb,${A} 20%,transparent),inset 0 0 0 1px ${A}`},
+ {id:'artdeco',n:'Art Deco',ex:1,s:A=>`border:3px double ${A};box-shadow:inset 0 0 0 5px #fffdf9,inset 0 0 0 6px ${A}`},
+ {id:'pearl',n:'Untaian Mutiara',ex:1,s:A=>`border:2px dotted ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 4px ${A}`}];
 function borderOf(){return BORDERS.find(b=>b.id===state.border)||BORDERS[0]}
 function borderColor(){return state.darkMode?'#FDE68A':state.accent}
 function borderCss(){const b=borderOf(),A=borderColor();let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
 function borderCorners(){const b=borderOf();if(!b||!b.corner)return'';const A=borderColor(),w=b.corner;
  const c=pos=>`<i style="position:absolute;width:22px;height:22px;border:0 solid ${A};${pos};pointer-events:none;z-index:2"></i>`;
  return c(`top:10px;left:10px;border-top-width:${w}px;border-left-width:${w}px`)+c(`top:10px;right:10px;border-top-width:${w}px;border-right-width:${w}px`)+c(`bottom:10px;left:10px;border-bottom-width:${w}px;border-left-width:${w}px`)+c(`bottom:10px;right:10px;border-bottom-width:${w}px;border-right-width:${w}px`)}
-function setBorder(id){state.border=id;save();render()}
+/* ---- Tier & gating konten EKSKLUSIF: border/font/efek ber-ex hanya aktif
+   bila template yang sedang dipakai bertier Eksklusif (Rp119.000). ---- */
+function tierAktif(){const t=tplOf();return (t.tier==='eksklusif'||t.harga>=119000)?'eksklusif':t.harga>=89000?'premium':'basic'}
+function bolehEks(){return tierAktif()==='eksklusif'}
+function isEksB(id){const b=BORDERS.find(x=>x.id===id);return !!(b&&b.ex)}
+function isEksF(id){const f=FONTS.find(x=>x.id===id);return !!(f&&f.ex)}
+function isEksFx(k,v){const arr=k==='effect'?FX_COVER:FX_SCROLL;const f=arr.find(x=>x[0]===v);return !!(f&&f[3])}
+function kunciEks(){notify('🔒 Konten EKSKLUSIF hanya bisa dipakai saat tema tier Eksklusif (Rp119.000) aktif — ganti tema dulu di picker template.');render();return false}
+/* Lepas konten eksklusif bila tema aktif bukan tier Eksklusif (ganti template / buka draft). */
+function paksaTier(){if(bolehEks())return false;let ch=false;
+ if(isEksB(state.border)){state.border='double';ch=true}
+ if(isEksF(state.fontTitle)){state.fontTitle=tplOf().ft||'playfair';ch=true}
+ if(isEksF(state.fontBody)){state.fontBody='inter';ch=true}
+ if(isEksFx('effect',state.anim.effect)){state.anim.effect='zoom';ch=true}
+ if(isEksFx('scroll',state.anim.scroll)){state.anim.scroll='fade-up';ch=true}
+ if(ch)notify('Konten EKSKLUSIF dilepas otomatis karena tema aktif bukan tier Eksklusif.');
+ return ch}
+function setBorder(id){if(isEksB(id)&&!bolehEks()){kunciEks();return}state.border=id;save();render()}
+function setFontK(k,v){if(isEksF(v)&&!bolehEks()){kunciEks();return}set(k,v)}
 function miniBorder(b){const A='#8b7358';if(b.corner)return `border:1px dashed ${A}`;let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
 
 /* ===== MUSIK DEMO (dari Google Drive user, tersimpan di repo /music) ===== */
@@ -507,7 +534,8 @@ const FX_COVER=[
  ['rise','Rise','terbang naik'],['drop','Drop','turun dari atas'],
  ['blur','Blur','kabur lalu fokus'],['pop','Pop','memantul ke ukuran'],
  ['flip','Flip 3D','terangkat dari bawah'],['slide','Slide','meluncur dari samping'],
- ['swing','Swing','bergoyang dari atas'],['elastic','Elastic','pancingan kenur']];
+ ['swing','Swing','bergoyang dari atas'],['elastic','Elastic','pancingan kenur'],
+ ['shimmer','Shimmer Gold','kilau emas menyapu',1],['curtain','Tirai Royal','membuka mewah bagai tirai',1]];
 function fxScrollId(){const v=state.anim.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxCoverId(){const v=state.anim.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 let animSig=null;
@@ -531,7 +559,7 @@ const QUOTES={
  aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
 function setSlide(id,on){if(!state.slides[id])return;state.slides[id].on=on;save();render()}
 function upSlide(id,k,v){if(!state.slides[id])return;state.slides[id][k]=v;save();renderPreview()}
-function setAnim(k,v){state.anim[k]=v;animSig=null;save();render()}
+function setAnim(k,v){if((k==='effect'||k==='scroll')&&isEksFx(k,v)&&!bolehEks()){kunciEks();return}state.anim[k]=v;animSig=null;save();render()}
 function rsvpWa(){const n=document.getElementById('rvpN')?document.getElementById('rvpN').value:'Tamu',h=document.getElementById('rvpH')?document.getElementById('rvpH').value:'Hadir',m=document.getElementById('rvpM')?document.getElementById('rvpM').value:'';const t='RSVP — '+titleOf()+' '+displayName()+'\nNama: '+n+'\nKonfirmasi: '+h+(m?'\nPesan: '+m:'')+'\nTautan: '+previewUrl();window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
 /* Tulisan undangan yang dikirim lewat WA — pakai template (bisa diatur di tab Tamu) */
 function waShareText(){const g=selGuest();
@@ -592,9 +620,9 @@ function qrDataUndangan(g){return qrTeks(g.link,state.showNameQr?`${g.nama.slice
 
 /* state setters */
 function set(k,v){state[k]=v;save();render()}
-function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Template: '+t.nama)}
-function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle}save();render()}
-function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Preview: '+t.nama)}
+function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;paksaTier();save();render();notify('Template: '+t.nama)}
+function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle}paksaTier();save();render()}
+function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;paksaTier();save();render();notify('Preview: '+t.nama)}
 function upd(k,v){state[k]=v;save();renderPreview()}
 function updF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();renderPreview()}
 function setF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();render()}
@@ -989,8 +1017,8 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
      <span class="chip" style="font-family:ui-monospace,monospace">${state.accent}</span>
     </div></div>
    <div class="grid2">
-    <label class="f">Font Judul (15 pilihan)<select onchange="set('fontTitle',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontTitle===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
-    <label class="f">Font Isi (15 pilihan)<select onchange="set('fontBody',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontBody===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+    <label class="f">Font Judul (17 pilihan)<select onchange="setFontK('fontTitle',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontTitle===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+    <label class="f">Font Isi (17 pilihan)<select onchange="setFontK('fontBody',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontBody===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
    </div>
    <div class="card" style="padding:14px;background:#111;color:#fff;border-color:#111">
     <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.65)">Preview Font — berubah saat dipilih</div>
@@ -1003,7 +1031,7 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    <div style="border-top:1px solid var(--line);padding-top:12px">
     <div><div class="f" style="margin-bottom:8px">Border Undangan (20 jenis) — berlaku semua kategori</div>
      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
-     ${BORDERS.map(b=>`<button class="tabbtn ${state.border===b.id?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setBorder('${b.id}')"><span style="width:26px;height:16px;border-radius:4px;background:#fff;${miniBorder(b)}"></span><span style="font-size:9px;line-height:1.05;text-align:center">${b.n}</span></button>`).join('')}
+     ${BORDERS.map(b=>`<button class="tabbtn ${state.border===b.id?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setBorder('${b.id}')" title="${b.ex?'EKSKLUSIF — hanya tema tier Eksklusif':b.n}"><span style="width:26px;height:16px;border-radius:4px;background:#fff;${b.ex?'box-shadow:inset 0 0 0 1px #D4AF37;':''}${miniBorder(b)}"></span><span style="font-size:9px;line-height:1.05;text-align:center">${b.ex?'🔒 ':''}${b.n}</span></button>`).join('')}
      </div>
      <div style="font-size:10px;color:var(--mut);margin-top:6px">Warna border mengikuti aksen tema (mode gelap: emas) • ikut tersimpan ke undangan live saat publish.</div>
     </div>
@@ -1018,13 +1046,13 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    <div style="font-size:11px;font-weight:600;margin-bottom:2px">🎬 Efek Animasi Cover — pilih 1 dari 10</div>
    <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Cara halaman pembuka masuk saat undangan dibuka.</div>
    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-   ${FX_COVER.map(([id,n,d])=>`<button class="fxbtn ${fxCoverId()===id?'on':''}" onclick="setAnim('effect','${id}')"><b>${n}</b><span>${d}</span></button>`).join('')}
+   ${FX_COVER.map(f=>`<button class="fxbtn ${fxCoverId()===f[0]?'on':''}" onclick="setAnim('effect','${f[0]}')"><b>${f[1]}${f[3]?' 🔒':''}</b><span>${f[2]}</span></button>`).join('')}
    </div></div>
   <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
    <div style="font-size:11px;font-weight:600;margin-bottom:2px">📜 Efek Scroll Reveal — pilih efek dasar dari ${FX_SCROLL.length}</div>
    <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Bagian masuk dari arah beragam dan reveal diputar ulang saat menggulir naik/turun.</div>
    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-   ${FX_SCROLL.map(([id,n,d])=>`<button class="fxbtn ${fxScrollId()===id?'on':''}" onclick="setAnim('scroll','${id}')"><b>${n}</b><span>${d}</span></button>`).join('')}
+   ${FX_SCROLL.map(f=>`<button class="fxbtn ${fxScrollId()===f[0]?'on':''}" onclick="setAnim('scroll','${f[0]}')"><b>${f[1]}${f[3]?' 🔒':''}</b><span>${f[2]}</span></button>`).join('')}
    </div>
    <label class="togglerow" style="margin-top:10px"><span><span style="font-size:12px;font-weight:500">Variasikan efek tiap bagian</span><span style="display:block;font-size:10px;color:var(--mut)">ON: gerak atas/bawah dan kiri/kanan bergantian. OFF: pakai satu efek sama di semua bagian.</span></span><input type="checkbox" ${state.anim.scrollMix!==false?'checked':''} onchange="setAnim('scrollMix',this.checked)"></label>
   </div></div>
@@ -1679,6 +1707,7 @@ function fpDragStart(e){if(e.button!==0||e.target.closest('button'))return;
 }
 window.addEventListener('resize',fitFloat);
 
+if(paksaTier())save();
 render();
 </script>
 </body>
