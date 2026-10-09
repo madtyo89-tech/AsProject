@@ -1,7 +1,12 @@
 /* Shared scroll animation geometry: Studio and published invitations stay identical.
    Visible by default: missing JS/observer must never hide invitation content. */
 .scroll-reveal.sr-ready:not(.sr-in){opacity:0}
-.scroll-reveal.sr-ready.sr-in{animation:var(--scroll-fx,sr-fade-up) .85s cubic-bezier(.22,.8,.36,1) both}
+.scroll-reveal.sr-dir-down{--sr-entry-x:0px;--sr-entry-y:22px}
+.scroll-reveal.sr-dir-up{--sr-entry-x:0px;--sr-entry-y:-22px}
+.scroll-reveal.sr-axis-x.sr-dir-down{--sr-entry-x:22px;--sr-entry-y:0px}
+.scroll-reveal.sr-axis-x.sr-dir-up{--sr-entry-x:-22px;--sr-entry-y:0px}
+.scroll-reveal.sr-ready.sr-in{animation:var(--scroll-fx,sr-fade-up) .85s cubic-bezier(.22,.8,.36,1) both,sr-flow-in .65s cubic-bezier(.22,.8,.36,1) both}
+@keyframes sr-flow-in{from{translate:var(--sr-entry-x,0px) var(--sr-entry-y,22px)}to{translate:0 0}}
 .scroll-reveal.fx-s-fade-up{--scroll-fx:sr-fade-up}
 @keyframes sr-fade-up{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:none;}}
 .scroll-reveal.fx-s-fade-down{--scroll-fx:sr-fade-down}
@@ -50,10 +55,32 @@
 @keyframes sr-wave{from{opacity:0;transform:translateX(-55px) skewY(9deg);}60%{opacity:1;transform:translateX(8px) skewY(-3deg)}to{opacity:1;transform:none;}}
 .scroll-reveal.fx-s-cinematic{--scroll-fx:sr-cinematic}
 @keyframes sr-cinematic{from{opacity:0;transform:scale(1.12);filter:blur(12px) brightness(1.5);}to{opacity:1;transform:none;filter:none;}}
+.scroll-reveal.fx-s-tilt-in{--scroll-fx:sr-tilt-in}
+@keyframes sr-tilt-in{from{opacity:0;transform:perspective(900px) rotateZ(-11deg) rotateX(10deg) translateY(18px);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-flip-y{--scroll-fx:sr-flip-y}
+@keyframes sr-flip-y{from{opacity:0;transform:perspective(850px) rotateY(-78deg) translateX(24px);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-roll-in{--scroll-fx:sr-roll-in}
+@keyframes sr-roll-in{from{opacity:0;transform:translateX(-58px) rotateZ(-16deg) scale(.88);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-bounce-in{--scroll-fx:sr-bounce-in}
+@keyframes sr-bounce-in{from{opacity:0;transform:translateY(74px) scale(.86);}58%{opacity:1;transform:translateY(-12px) scale(1.03)}78%{transform:translateY(5px) scale(.99)}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-wipe-up{--scroll-fx:sr-wipe-up}
+@keyframes sr-wipe-up{from{opacity:0;transform:translateY(24px);clip-path:inset(100% 0 0 0);}to{opacity:1;transform:none;clip-path:inset(0 0 0 0);}}
+.scroll-reveal.fx-s-wipe-right{--scroll-fx:sr-wipe-right}
+@keyframes sr-wipe-right{from{opacity:0;transform:none;clip-path:inset(0 100% 0 0);}to{opacity:1;transform:none;clip-path:inset(0 0 0 0);}}
+.scroll-reveal.fx-s-unfold{--scroll-fx:sr-unfold}
+@keyframes sr-unfold{from{opacity:0;transform:perspective(900px) rotateX(88deg) scaleY(.72);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-squeeze{--scroll-fx:sr-squeeze}
+@keyframes sr-squeeze{from{opacity:0;transform:scaleX(.48) scaleY(.9);}58%{opacity:1;transform:scaleX(1.07) scaleY(1.02)}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-glow{--scroll-fx:sr-glow}
+@keyframes sr-glow{from{opacity:0;transform:translateY(14px) scale(.98);filter:blur(5px) brightness(1.45);}to{opacity:1;transform:none;filter:none;}}
+.scroll-reveal.fx-s-blur-down{--scroll-fx:sr-blur-down}
+@keyframes sr-blur-down{from{opacity:0;transform:translateY(-36px);filter:blur(10px);}to{opacity:1;transform:none;filter:none;}}
 .scroll-reveal.fx-s-book{transform-origin:left center}
 .scroll-reveal.fx-s-cube{transform-origin:right center}
 .scroll-reveal.fx-s-fold{transform-origin:center top}
+.scroll-reveal.fx-s-flip-y{transform-origin:center center}
+.scroll-reveal.fx-s-unfold{transform-origin:center bottom}
 .scroll-reveal.fx-s-swing{transform-origin:top left}
 @media(prefers-reduced-motion:reduce){
- .scroll-reveal.sr-ready,.scroll-reveal.sr-ready.sr-in{opacity:1;animation:none;transform:none;filter:none;clip-path:none}
+ .scroll-reveal.sr-ready,.scroll-reveal.sr-ready.sr-in{opacity:1;animation:none;transform:none;translate:none;filter:none;clip-path:none}
 }

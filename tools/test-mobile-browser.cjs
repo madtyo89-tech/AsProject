@@ -72,12 +72,15 @@ const assert = require('node:assert/strict');
   // Creation workflow: local Supabase fixture, no production writes.
   await page.addInitScript(() => {
    window.publishCalls=0;window.publishMode='success';
-   window.supabase={createClient:()=>({from:()=>({upsert:async payload=>{
-    window.publishCalls++;window.lastPayload=payload;
-    if(window.publishMode==='pending')await new Promise(resolve=>window.releasePublish=resolve);
-    if(window.publishMode==='throw')throw new Error('offline');
-    return {error:window.publishMode==='error'?{message:'test rejection'}:null};
-   }})})};
+   window.supabase={createClient:()=>{
+    if(localStorage.getItem('asproject_test_disable_supabase_sdk')==='1')return undefined;
+    return {from:()=>({upsert:async payload=>{
+     window.publishCalls++;window.lastPayload=payload;
+     if(window.publishMode==='pending')await new Promise(resolve=>window.releasePublish=resolve);
+     if(window.publishMode==='throw')throw new Error('offline');
+     return {error:window.publishMode==='error'?{message:'test rejection'}:null};
+    }})};
+   }};
   });
   await page.evaluate(()=>localStorage.removeItem('asproject_studio_v3'));
   await page.goto('http://localhost:8080/studio.html');
@@ -123,5 +126,32 @@ const assert = require('node:assert/strict');
   console.log('PASS: blank start, draft recovery, validation, publish failures, busy guard, ready links, mobile completion and new invitation confirmation.');
   assert.deepEqual(errors, []);
   console.log('PASS: private master share, draft guard, guest separation and live invitation width; no JS errors.');
+
+  // Publish still works if the Supabase JS CDN is blocked; error messages explain schema setup.
+  let restResponse={status:201,body:''},restRequest=null;
+  await page.route(/https:\/\/aalrhvirqwjtbbxmteeg\.supabase\.co\/rest\/v1\/invitation_drafts/,async route=>{
+   restRequest=route.request();await route.fulfill({status:restResponse.status,body:restResponse.body});
+  });
+  await page.evaluate(()=>{
+   localStorage.setItem('asproject_test_disable_supabase_sdk','1');
+   state.form.namaPria='REST';state.form.namaWanita='Fallback';state.form.tanggalAcara='2027-02-20';
+   state.form.jamAcara='10:30';state.form.venue='Gedung';state.slug='rest-fallback';
+   state.started=true;state.published=false;state.publishedLink='';state.stage='editor';save();
+  });
+  await page.reload();
+  assert.equal(await page.evaluate(()=>typeof db),'undefined','Test simulates blocked Supabase SDK CDN');
+  await page.evaluate(async()=>{await publish()});
+  await page.locator('#ready-title').waitFor();
+  assert.equal(restRequest.method(),'POST','REST fallback sends an upsert request');
+  assert.equal(new URL(restRequest.url()).searchParams.get('on_conflict'),'slug');
+  assert.equal(JSON.parse(restRequest.postData()).slug,'rest-fallback');
+  assert.match(restRequest.headers().apikey,/^eyJ/,'REST fallback sends the public Supabase key');
+  assert.match(restRequest.headers().authorization,/^Bearer eyJ/,'REST fallback authorizes with the public key');
+  restResponse={status:400,body:JSON.stringify({code:'PGRST204',message:"Could not find the 'data' column of 'invitation_drafts' in the schema cache"})};
+  await page.evaluate(()=>{state.published=false;state.publishedLink='';state.stage='editor';save();render()});
+  await page.evaluate(async()=>{await publish()});
+  assert.equal(await page.locator('#ready-title').count(),0,'Schema error never reports success');
+  assert((await page.locator('.notice').textContent()).includes('supabase-schema.sql'),'Schema error shows the exact repair step');
+  console.log('PASS: publish falls back to Supabase REST when CDN is blocked and diagnoses missing snapshot schema.');
  } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });
