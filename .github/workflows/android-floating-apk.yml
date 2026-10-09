@@ -1,0 +1,172 @@
+name: Android APK (AsProject Floating)
+
+# Membangun APK gelembung melayang pembuka aplikasi (floating/).
+#
+# Dua jalur build saling memeriksa, sama seperti workflow AsProject Studio:
+#   1. `apk-offline` — skrip floating/buildkit/build-apk.sh (aapt2 → ecj → d8 → apksigner),
+#      jalur utama/terverifikasi + uji logika JVM + verifikasi APK.
+#   2. `apk-gradle`  — build Gradle/AGP standar, ditandai continue-on-error.
+#
+# Rahasia APK rilis (Settings → Secrets and variables → Actions):
+#   KEYSTORE_BASE64 / KEYSTORE_PASSWORD / RELEASE_KEY_ALIAS / RELEASE_KEY_PASSWORD
+# Keystore TIDAK pernah disimpan di repositori.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'floating/**'
+      - 'android/tools/**'
+      - '.github/workflows/android-floating-apk.yml'
+    tags: ['v*']
+  pull_request:
+    paths:
+      - 'floating/**'
+      - 'android/tools/**'
+      - '.github/workflows/android-floating-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GRADLE_VERSION: '8.9'
+  ANDROID_COMPILE_SDK: '34'
+  ANDROID_BUILD_TOOLS: '34.0.0'
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Jalur utama: skrip tanpa Gradle + seluruh verifikasi.
+  # ---------------------------------------------------------------------------
+  apk-offline:
+    name: Build + verifikasi APK (skrip tanpa Gradle)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Siapkan JDK 17 (javac + keytool + java)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Pakai ulang debug keystore antar-run (tanda tangan tetap sama)
+        uses: actions/cache@v4
+        with:
+          path: floating/.tools/tools/debug.keystore
+          key: asproject-floating-debug-keystore-v1
+
+      - name: Bangun APK debug (tanpa Gradle)
+        run: |
+          set -uo pipefail
+          LOG=/tmp/build-floating.log
+          if ! env FETCH_TOOLS=1 bash -x floating/buildkit/build-apk.sh > "$LOG" 2>&1; then
+            tail -n 10 "$LOG" | while IFS= read -r baris; do
+              echo "::error::${baris//%/%25}"
+            done
+            exit 1
+          fi
+          tail -n 15 "$LOG"
+
+      - name: Uji logika murni (JVM)
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/float
+          javac -encoding UTF-8 -d /tmp/float \
+            floating/app/src/main/java/my/id/asproject/floating/Shortcut.java \
+            floating/app/src/main/java/my/id/asproject/floating/ShortcutCatalog.java \
+            floating/app/src/main/java/my/id/asproject/floating/ShortcutCodec.java \
+            floating/tests/jvm/FloatingCatalogTest.java
+          java -cp /tmp/float FloatingCatalogTest
+
+      - name: Periksa isi, izin, dan tanda tangan APK
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/venv-verify-floating
+          /tmp/venv-verify-floating/bin/pip install --quiet --upgrade pip
+          /tmp/venv-verify-floating/bin/pip install --quiet androguard
+          APKSIGNER_JAR="$(ls floating/.tools/tools/apksigner.jar 2>/dev/null || true)"
+          [ -n "$APKSIGNER_JAR" ] && export APKSIGNER_JAR
+          /tmp/venv-verify-floating/bin/python floating/tools/verify_apk.py \
+            floating/out/asproject-floating-1.0.0-debug.apk
+
+      - name: Siapkan artefak
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          cp floating/out/asproject-floating-1.0.0-debug.apk artifacts/
+          ( cd artifacts && sha256sum ./*.apk > SHA256SUMS.txt && cat SHA256SUMS.txt )
+
+      - name: Bangun APK rilis dengan keystore Anda (bila rahasia diisi)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          KEYSTORE: /tmp/asproject-floating-release.jks
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "${KEYSTORE_BASE64:-}" ]; then
+            echo "::notice::Rahasia keystore belum diisi — APK rilis dilewati."
+            exit 0
+          fi
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$KEYSTORE"
+          cd floating && BUILD_TYPE=release KEYSTORE="$KEYSTORE" \
+            KEYSTORE_PASSWORD="$KEYSTORE_PASSWORD" KEY_ALIAS="$KEY_ALIAS" \
+            KEY_PASSWORD="$KEY_PASSWORD" bash buildkit/build-apk.sh
+          cp out/*-release.apk ../artifacts/
+          ( cd ../artifacts && sha256sum ./*.apk > SHA256SUMS.txt )
+
+      - name: Unggah artefak
+        uses: actions/upload-artifact@v4
+        with:
+          name: asproject-floating-apk
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Lampirkan ke GitHub Release (khusus tag v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "AsProject Floating ${GITHUB_REF_NAME}" \
+            --generate-notes \
+            artifacts/*.apk artifacts/SHA256SUMS.txt
+
+  # ---------------------------------------------------------------------------
+  # 2. Jalur Android Studio: Gradle + AGP. Tidak menghalangi jalur 1 di atas.
+  # ---------------------------------------------------------------------------
+  apk-gradle:
+    name: Build APK (Gradle/Android Studio)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Siapkan JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Siapkan Gradle ${{ env.GRADLE_VERSION }}
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+
+      - name: Bangun APK debug dengan Gradle
+        working-directory: floating
+        run: gradle --no-daemon :app:assembleDebug
+
+      - name: Unggah artefak Gradle
+        uses: actions/upload-artifact@v4
+        with:
+          name: asproject-floating-apk-gradle
+          path: floating/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: warn
+          retention-days: 30

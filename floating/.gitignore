@@ -1,0 +1,17 @@
+# Hasil build APK & berkas antara (jangan di-commit — biner besar).
+/out/
+/build/offline/
+/.tools/
+/app/build/
+/.gradle/
+/local.properties
+*.apk
+*.keystore
+*.jks
+*.idsig
+
+# PENGECUALIAN: satu APK debug disertakan sengaja sebagai salinan unduhan untuk
+# uji coba di ponsel (lihat releases/README.md). Aturan harus berada paling bawah
+# agar menang atas pola *.apk di atas.
+!/releases/asproject-floating-1.0.0-debug.apk
+!/releases/SHA256SUMS.txt

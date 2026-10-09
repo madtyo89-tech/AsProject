@@ -1,0 +1,22 @@
+// AsProject Floating — proyek Android mandiri (Android Studio / Gradle).
+// Sama seperti modul `android/`: tanpa AndroidX dan tanpa pustaka pihak ketiga,
+// seluruh kode memakai API framework Android saja.
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "AsProjectFloating"
+include ':app'

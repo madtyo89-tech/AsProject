@@ -256,3 +256,15 @@ fitur situs yang sudah berjalan.
 - Hasil tes & keterbatasan: [`android/docs/HASIL-TES-DAN-KETERBATASAN.md`](android/docs/HASIL-TES-DAN-KETERBATASAN.md).
 - Workflow APK otomatis: `.github/workflows/android-apk.yml` (artefak tiap push yang
   menyentuh `android/**`, dan Release saat tag `v*` dipush).
+
+## Aplikasi Android (gelembung melayang / floating)
+
+Selain pembungkus Studio, repositori ini juga punya **AsProject Floating** di folder
+**[`floating/`](floating/)** — aplikasi mandiri yang menampilkan gelembung melayang di atas
+aplikasi lain untuk membuka **inDrive**, **Google Maps**, WhatsApp, Grab, Gojek, dan
+aplikasi lain yang Anda tambahkan.
+
+- Tanpa AndroidX & tanpa izin internet — murni API framework, offline penuh.
+- APK uji: `floating/releases/asproject-floating-1.0.0-debug.apk`.
+- Petunjuk build & verifikasi: [`floating/docs/BUILD-APK.md`](floating/docs/BUILD-APK.md).
+- Workflow APK otomatis: `.github/workflows/android-floating-apk.yml`.

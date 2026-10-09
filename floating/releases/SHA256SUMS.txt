@@ -1,0 +1,1 @@
+b4caa59eee86aece0487bec933d9e792f2e22c3031b4c1c7292bbee1281a2496  ./asproject-floating-1.0.0-debug.apk

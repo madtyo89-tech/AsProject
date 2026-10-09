@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AsProject Floating</string>
+    <string name="app_tagline">Gelembung melayang untuk membuka inDrive, Google Maps, dan aplikasi lain</string>
+
+    <!-- Kartu gelembung -->
+    <string name="card_bubble_title">Gelembung melayang</string>
+    <string name="state_on">Status: aktif — gelembung tampil di atas semua aplikasi</string>
+    <string name="state_off">Status: nonaktif</string>
+    <string name="hint_usage">Geser gelembung untuk memindah, ketuk untuk membuka daftar aplikasi, ketuk lagi untuk menutup.</string>
+    <string name="hint_permission_needed">Izin “Tampil di atas aplikasi lain” belum aktif. Nyalakan lebih dulu supaya gelembung bisa muncul di atas aplikasi lain.</string>
+    <string name="btn_overlay_permission">Izinkan tampil di atas aplikasi lain</string>
+    <string name="action_start">Nyalakan gelembung</string>
+    <string name="action_stop">Matikan gelembung</string>
+
+    <!-- Kartu daftar aplikasi -->
+    <string name="card_list_title">Aplikasi di gelembung</string>
+    <string name="card_list_hint">Centang aplikasi yang mau ditampilkan. Urutan daftar = urutan di gelembung.</string>
+    <string name="list_empty">Belum ada aplikasi yang ditampilkan. Centang salah satu atau tekan “Tambah aplikasi”.</string>
+    <string name="btn_add">Tambah aplikasi</string>
+    <string name="btn_reset">Kembalikan bawaan</string>
+    <string name="detail_link">Tautan (tanpa aplikasi)</string>
+    <string name="detail_not_installed">Belum terpasang — ketuk untuk memasang</string>
+
+    <!-- Kartu setelan -->
+    <string name="card_settings_title">Setelan</string>
+    <string name="chk_show_uninstalled">Tampilkan juga aplikasi yang belum terpasang</string>
+    <string name="chk_autostart">Nyalakan gelembung otomatis saat HP dinyalakan</string>
+
+    <!-- Dialog -->
+    <string name="cancel">Batal</string>
+    <string name="remove_title">Hapus dari gelembung?</string>
+    <string name="remove_message">%1$s akan dihapus dari daftar. Gunakan “Kembalikan bawaan” untuk mengembalikannya.</string>
+    <string name="remove_yes">Hapus</string>
+    <string name="reset_title">Kembalikan daftar bawaan?</string>
+    <string name="reset_message">Urutan, centang, dan aplikasi tambahan Anda akan diganti daftar bawaan.</string>
+    <string name="reset_yes">Kembalikan</string>
+    <string name="picker_title">Pilih aplikasi</string>
+    <string name="picker_empty">Semua aplikasi yang terpasang sudah ada di daftar.</string>
+
+    <!-- Toast -->
+    <string name="toast_permission_needed">Izin “Tampil di atas aplikasi lain” perlu dinyalakan lebih dulu.</string>
+    <string name="toast_started">Gelembung aktif — coba buka aplikasi lain lalu ketuk gelembung.</string>
+    <string name="toast_stopped">Gelembung dimatikan.</string>
+    <string name="toast_notification_denied">Notifikasi ditolak. Gelembung tetap jalan, tetapi Android bisa menutupnya lebih cepat.</string>
+
+    <!-- Panel & gelembung -->
+    <string name="panel_title">Buka aplikasi</string>
+    <string name="panel_empty">Belum ada aplikasi yang dicentang.</string>
+    <string name="panel_close">Tutup panel</string>
+    <string name="bubble_description">Gelembung pembuka aplikasi AsProject</string>
+
+    <!-- Notifikasi layanan -->
+    <string name="notif_channel_name">Gelembung aplikasi</string>
+    <string name="notif_channel_description">Menjaga gelembung melayang tetap aktif di atas aplikasi lain.</string>
+    <string name="notif_title">Gelembung aplikasi aktif</string>
+    <string name="notif_text">Ketuk untuk mengatur aplikasi di gelembung</string>
+
+    <!-- Baris daftar -->
+    <string name="row_move_up">Naikkan</string>
+    <string name="row_move_down">Turunkan</string>
+    <string name="row_remove">Hapus</string>
+    <string name="row_toggle">Tampilkan di gelembung</string>
+
+    <string name="footer_note">AsProject Floating %1$s · hanya memakai izin overlay, notifikasi, dan mulai-otomatis. Tidak ada data yang dikirim ke luar perangkat.</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Warna sama dengan AsProject Studio (emas #D4AF37 di atas hitam). -->
+    <color name="brand_gold">#FFD4AF37</color>
+    <color name="brand_gold_deep">#FF9C7A24</color>
+    <color name="brand_ink">#FF0A0A0A</color>
+    <color name="brand_background">#FFFAF9F7</color>
+    <color name="brand_surface">#FFFFFFFF</color>
+    <color name="brand_line">#FFE8E4DC</color>
+    <color name="brand_muted">#FF8A8577</color>
+    <color name="brand_text">#FF16161A</color>
+
+    <!-- Gelembung & panel: latar gelap agak transparan agar tidak menutupi layar. -->
+    <color name="bubble_ink">#F20A0A0A</color>
+    <color name="panel_text">#FFF2F2F2</color>
+    <color name="panel_muted">#FFB8B2A6</color>
+
+    <color name="ic_launcher_background">#FF0A0A0A</color>
+</resources>

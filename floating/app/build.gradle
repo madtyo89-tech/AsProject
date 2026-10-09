@@ -1,0 +1,75 @@
+// Modul aplikasi AsProject Floating.
+//
+// Dua jalur build memakai sumber yang sama ini:
+//   • Gradle (berkas ini)                    — Android Studio / CI GitHub Actions.
+//   • buildkit/build-apk.sh (tanpa Gradle)   — aapt2 + ecj + d8 + apksigner langsung.
+// Karena itu AndroidManifest.xml tidak memuat atribut `package` (AGP 8 menolaknya) dan
+// buildkit/build-apk.sh menyuntikkannya saat menyalin manifest.
+
+plugins {
+    id 'com.android.application'
+}
+
+// ---------------------------------------------------------------------------
+// Tanda tangan rilis: hanya dibaca dari variabel lingkungan / properti Gradle.
+// Tidak ada keystore atau kata sandi yang disimpan di repositori.
+// ---------------------------------------------------------------------------
+def keystoreFile = System.getenv('ASPROJECT_KEYSTORE_FILE') ?: (project.findProperty('asprojectKeystoreFile') as String)
+def keystorePassword = System.getenv('ASPROJECT_KEYSTORE_PASSWORD') ?: (project.findProperty('asprojectKeystorePassword') as String)
+def keyAlias = System.getenv('ASPROJECT_KEY_ALIAS') ?: (project.findProperty('asprojectKeyAlias') as String)
+def keyPassword = System.getenv('ASPROJECT_KEY_PASSWORD') ?: (project.findProperty('asprojectKeyPassword') as String)
+def hasReleaseSigning = keystoreFile && keystorePassword && keyAlias && keyPassword
+
+android {
+    namespace 'my.id.asproject.floating'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'my.id.asproject.floating'
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    if (hasReleaseSigning) {
+        signingConfigs {
+            release {
+                storeFile file(keystoreFile)
+                storePassword keystorePassword
+                keyAlias keyAlias
+                keyPassword keyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            // APK debug untuk uji instalasi (ditandatangani kunci debug Android).
+        }
+        release {
+            minifyEnabled false      // kode kecil, tidak perlu R8
+            shrinkResources false
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
+            // Tanpa variabel lingkungan tanda tangan, `assembleRelease` menghasilkan APK
+            // belum tertanda (…-release-unsigned.apk).
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        // Proyek ditulis tangan tanpa AndroidX; lint tidak dijadikan penghalang build.
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    // Sengaja kosong: aplikasi hanya memakai API framework Android.
+}
