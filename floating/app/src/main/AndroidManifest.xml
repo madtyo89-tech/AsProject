@@ -29,6 +29,14 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!--
+      WRITE_SECURE_SETTINGS dipakai HANYA untuk menyalakan mode freeform (jendela melayang)
+      bila pengguna memberikannya lewat ADB sekali (pm grant). Tanpa izin ini, aplikasi tetap
+      berfungsi normal dan membuka aplikasi layar penuh. Izin ini tidak bisa diminta lewat
+      dialog pemasangan — harus diberi manual, jadi tidak "meminta" apa pun saat install.
+    -->
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />

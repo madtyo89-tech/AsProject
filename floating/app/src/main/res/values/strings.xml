@@ -56,6 +56,21 @@
     <string name="notif_title">Gelembung aplikasi aktif</string>
     <string name="notif_text">Ketuk untuk mengatur aplikasi di gelembung</string>
 
+    <!-- Freeform / jendela melayang -->
+    <string name="card_freeform_title">Jendela melayang (freeform)</string>
+    <string name="chk_freeform">Coba buka aplikasi sebagai jendela melayang</string>
+    <string name="btn_freeform_help">Cara aktifkan freeform (ADB)</string>
+    <string name="freeform_unsupported">Android di bawah 7.0 tidak punya mode freeform — aplikasi akan terbuka normal (layar penuh).</string>
+    <string name="freeform_status">Mendukung freeform: %1$s\nIzin WRITE_SECURE_SETTINGS (ADB): %2$s\nSetelan freeform aktif: %3$s</string>
+    <string name="ya">ya</string>
+    <string name="belum">belum</string>
+    <string name="freeform_help_title">Aktifkan freeform lewat ADB (sekali saja)</string>
+    <string name="freeform_help_message">Android membatasi aplikasi melayang. Untuk membuka aplikasi lain sebagai jendela melayang, sambungkan HP ke komputer dan jalankan sekali:\n\n%1$s\n\nLalu buka lagi aplikasi ini dan centang “Coba buka aplikasi sebagai jendela melayang”. Tanpa langkah ini, aplikasi tetap terbuka normal.</string>
+    <string name="freeform_copy">Salin perintah</string>
+    <string name="freeform_copied">Perintah ADB disalin ke papan klip</string>
+    <string name="freeform_enabled_toast">Setelan freeform dinyalakan.</string>
+    <string name="freeform_need_adb">Izin ADB belum ada — salin perintah lalu jalankan di komputer.</string>
+
     <!-- Baris daftar -->
     <string name="row_move_up">Naikkan</string>
     <string name="row_move_down">Turunkan</string>

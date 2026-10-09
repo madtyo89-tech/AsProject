@@ -40,8 +40,26 @@ aplikasi di toko (Play Store) agar bisa dipasang.
 | `FOREGROUND_SERVICE` + `FOREGROUND_SERVICE_SPECIAL_USE` | Menahan gelembung tetap hidup saat aplikasi ditutup. |
 | `POST_NOTIFICATIONS` | Notifikasi wajib layanan foreground (Android 13+). |
 | `RECEIVE_BOOT_COMPLETED` | Opsional: nyalakan gelembung lagi setelah HP dinyalakan. |
+| `WRITE_SECURE_SETTINGS` | Hanya untuk menyalakan mode freeform; TIDAK bisa diminta lewat dialog — harus diberi manual lewat ADB (`pm grant`). Tanpa ini aplikasi tetap jalan normal. |
 
 Tidak ada izin internet, lokasi, kontak, penyimpanan, atau mikrofon.
+
+## Jendela melayang (freeform) — jujur tentang batasannya
+
+Android **tidak punya API publik** untuk memaksa aplikasi pihak ketiga (inDrive, Maps, …)
+tampil melayang; secara bawaan aplikasi target terbuka layar penuh dan hanya **gelembung**
+kita yang melayang. Untuk membuat aplikasi target ikut melayang, aplikasi ini mencoba mode
+**freeform** (Android 7+) secara *best-effort*:
+
+1. Bila `WRITE_SECURE_SETTINGS` diberikan lewat ADB, aplikasi menyalakan
+   `enable_freeform_support` + `force_resizable_activities`.
+2. Saat membuka aplikasi, diluncurkan dengan `setLaunchWindowingMode(freeform)` +
+   `setLaunchBounds(...)` lewat refleksi.
+
+Bila perangkat/ROM tidak mendukung atau refleksi diblokir, panggilan gagal dengan aman dan
+aplikasi terbuka **layar penuh** (fallback). Jadi: di sebagian perangkat aplikasi benar-benar
+melayang; di yang lain, tidak — dan itu batas platform, bukan bug yang bisa dihilangkan.
+Lihat kartu "Jendela melayang (freeform)" di aplikasi untuk status & perintah ADB.
 
 ## Daftar aplikasi bawaan
 

@@ -382,7 +382,7 @@ public final class FloatingService extends Service {
             @Override
             public void onClick(View v) {
                 removePanel();
-                AppOpener.open(FloatingService.this, item);
+                AppOpener.open(FloatingService.this, item, store.preferFreeform());
             }
         });
         return cell;

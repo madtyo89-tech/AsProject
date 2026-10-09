@@ -26,19 +26,29 @@ public final class AppOpener {
     }
 
     /**
-     * Buka {@code shortcut}.
+     * Buka {@code shortcut} (layar penuh).
      *
      * @return {@code true} bila ada aplikasi/tautan yang berhasil dibuka.
      */
     public static boolean open(Context context, Shortcut shortcut) {
+        return open(context, shortcut, false);
+    }
+
+    /**
+     * Buka {@code shortcut}. Bila {@code preferFreeform} dan perangkat mendukung, coba buka
+     * dalam jendela melayang lebih dulu; bila gagal, jatuh ke layar penuh.
+     *
+     * @return {@code true} bila ada aplikasi/tautan yang berhasil dibuka.
+     */
+    public static boolean open(Context context, Shortcut shortcut, boolean preferFreeform) {
         if (context == null || shortcut == null) {
             return false;
         }
         String installed = firstInstalled(context, shortcut.packages);
-        if (installed != null && launchPackage(context, installed)) {
+        if (installed != null && launchPackage(context, installed, preferFreeform)) {
             return true;
         }
-        if (shortcut.uri != null && openUri(context, shortcut.uri)) {
+        if (shortcut.uri != null && openUri(context, shortcut.uri, preferFreeform)) {
             return true;
         }
         // Tidak terpasang: arahkan ke toko aplikasi (bila entri berbasis paket).
@@ -71,8 +81,13 @@ public final class AppOpener {
         return firstInstalled(context, packages) != null;
     }
 
-    /** Luncurkan activity utama sebuah paket. */
+    /** Luncurkan activity utama sebuah paket (layar penuh). */
     public static boolean launchPackage(Context context, String pkg) {
+        return launchPackage(context, pkg, false);
+    }
+
+    /** Luncurkan activity utama sebuah paket, opsional sebagai jendela melayang. */
+    public static boolean launchPackage(Context context, String pkg, boolean preferFreeform) {
         if (context == null || pkg == null || pkg.trim().isEmpty()) {
             return false;
         }
@@ -81,15 +96,27 @@ public final class AppOpener {
             intent = new Intent(Intent.ACTION_MAIN).setPackage(pkg.trim());
         }
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        if (preferFreeform && Freeform.launch(context, intent)) {
+            return true;
+        }
         return start(context, intent, "paket " + pkg);
     }
 
-    /** Buka tautan (geo:, https:, dan sebagainya). */
+    /** Buka tautan (geo:, https:, dan sebagainya) layar penuh. */
     public static boolean openUri(Context context, String uri) {
+        return openUri(context, uri, false);
+    }
+
+    /** Buka tautan, opsional sebagai jendela melayang. */
+    public static boolean openUri(Context context, String uri, boolean preferFreeform) {
         if (context == null || uri == null || uri.trim().isEmpty()) {
             return false;
         }
-        return start(context, new Intent(Intent.ACTION_VIEW, Uri.parse(uri.trim())), "tautan " + uri);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri.trim()));
+        if (preferFreeform && Freeform.launch(context, intent)) {
+            return true;
+        }
+        return start(context, intent, "tautan " + uri);
     }
 
     /**

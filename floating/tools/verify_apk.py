@@ -28,6 +28,8 @@ EXPECTED_PERMISSIONS = {
     "android.permission.FOREGROUND_SERVICE_SPECIAL_USE",
     "android.permission.POST_NOTIFICATIONS",
     "android.permission.RECEIVE_BOOT_COMPLETED",
+    # Hanya aktif bila pengguna memberi lewat ADB (pm grant) untuk freeform.
+    "android.permission.WRITE_SECURE_SETTINGS",
 }
 REQUIRED_CLASSES = [
     "Lmy/id/asproject/floating/LauncherActivity;",
@@ -149,7 +151,7 @@ def verify_manifest(apk: Path) -> None:
     permissions = set(manifest.get_permissions())
     extra = permissions - EXPECTED_PERMISSIONS
     missing = EXPECTED_PERMISSIONS - permissions
-    check("izin tepat 5 (overlay, fgs, fgs-special, notifikasi, boot)",
+    check("izin tepat 6 (overlay, fgs, fgs-special, notifikasi, boot, secure[adb])",
           not extra and not missing, f"kurang={sorted(missing)} lebih={sorted(extra)}")
 
     dangerous = {

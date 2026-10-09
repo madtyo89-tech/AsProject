@@ -209,6 +209,47 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
+        <!-- 4. Jendela melayang (freeform) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                style="@style/CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/card_freeform_title" />
+
+            <TextView
+                android:id="@+id/freeform_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/brand_muted"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/chk_freeform"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/chk_freeform"
+                android:textColor="@color/brand_text"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/btn_freeform_help"
+                style="@style/BrandButtonGhost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/btn_freeform_help" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/version_note"
             android:layout_width="match_parent"

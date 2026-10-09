@@ -51,6 +51,8 @@ public final class LauncherActivity extends Activity {
     private TextView listEmpty;
     private CheckBox showUninstalled;
     private CheckBox autostart;
+    private TextView freeformStatus;
+    private CheckBox freeformCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,8 @@ public final class LauncherActivity extends Activity {
         listEmpty = (TextView) findViewById(R.id.list_empty);
         showUninstalled = (CheckBox) findViewById(R.id.chk_show_uninstalled);
         autostart = (CheckBox) findViewById(R.id.chk_autostart);
+        freeformStatus = (TextView) findViewById(R.id.freeform_status);
+        freeformCheck = (CheckBox) findViewById(R.id.chk_freeform);
 
         overlayPermission.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +108,18 @@ public final class LauncherActivity extends Activity {
                 store.setAutostart(checked);
             }
         });
+        freeformCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton button, boolean checked) {
+                store.setPreferFreeform(checked);
+            }
+        });
+        findViewById(R.id.btn_freeform_help).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFreeformHelp();
+            }
+        });
 
         TextView version = (TextView) findViewById(R.id.version_note);
         version.setText(getString(R.string.footer_note, versionName()));
@@ -115,7 +131,9 @@ public final class LauncherActivity extends Activity {
         items = store.load();
         showUninstalled.setChecked(store.showUninstalled());
         autostart.setChecked(store.autostart());
+        freeformCheck.setChecked(store.preferFreeform());
         refreshStatus();
+        refreshFreeform();
         renderList();
     }
 
@@ -131,6 +149,52 @@ public final class LauncherActivity extends Activity {
             overlayHint.setText(R.string.hint_permission_needed);
         } else {
             overlayHint.setText(R.string.hint_usage);
+        }
+    }
+
+    private void refreshFreeform() {
+        if (!Freeform.supported()) {
+            freeformStatus.setText(R.string.freeform_unsupported);
+            freeformCheck.setEnabled(false);
+            return;
+        }
+        freeformCheck.setEnabled(true);
+        String support = getString(R.string.ya);
+        String secure = Freeform.hasSecureSettings(this)
+                ? getString(R.string.ya) : getString(R.string.belum);
+        String enabled = Freeform.isSupportEnabled(this)
+                ? getString(R.string.ya) : getString(R.string.belum);
+        freeformStatus.setText(getString(R.string.freeform_status, support, secure, enabled));
+
+        // Bila izin ADB sudah ada tapi setelan belum, nyalakan otomatis.
+        if (Freeform.hasSecureSettings(this) && !Freeform.isSupportEnabled(this)
+                && Freeform.enableSupport(this)) {
+            refreshFreeform();
+        }
+    }
+
+    private void showFreeformHelp() {
+        final String command = Freeform.adbCommand(getPackageName());
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.freeform_help_title)
+                .setMessage(getString(R.string.freeform_help_message, command))
+                .setNeutralButton(R.string.freeform_copy, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        copyText(command);
+                        Toast.makeText(LauncherActivity.this, R.string.freeform_copied,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    private void copyText(String text) {
+        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)
+                getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard != null) {
+            clipboard.setPrimaryClip(android.content.ClipData.newPlainText("asproject", text));
         }
     }
 

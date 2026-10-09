@@ -21,6 +21,7 @@ public final class ShortcutStore {
     private static final String KEY_BUBBLE_Y = "bubble_y";
     private static final String KEY_SHOW_UNINSTALLED = "show_uninstalled";
     private static final String KEY_AUTOSTART = "autostart";
+    private static final String KEY_PREFER_FREEFORM = "prefer_freeform";
 
     private final SharedPreferences prefs;
 
@@ -83,5 +84,18 @@ public final class ShortcutStore {
 
     public void setAutostart(boolean value) {
         prefs.edit().putBoolean(KEY_AUTOSTART, value).apply();
+    }
+
+    /**
+     * Coba buka aplikasi dalam jendela melayang (freeform) bila perangkat mendukung.
+     * Bawaan {@code true} karena tujuan aplikasi ini memang membuat aplikasi ikut melayang;
+     * bila tidak didukung, otomatis jatuh ke layar penuh.
+     */
+    public boolean preferFreeform() {
+        return prefs.getBoolean(KEY_PREFER_FREEFORM, true);
+    }
+
+    public void setPreferFreeform(boolean value) {
+        prefs.edit().putBoolean(KEY_PREFER_FREEFORM, value).apply();
     }
 }
