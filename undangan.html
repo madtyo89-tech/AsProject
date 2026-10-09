@@ -187,6 +187,26 @@ body.theme-ivory-pearl #cover .date{background:rgba(255,255,255,.82);border-colo
 body.theme-rose-gold-blush #cover .date{background:rgba(255,255,255,.82);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#5A3A31}
 body.theme-ivory-pearl #cover .open{background:linear-gradient(135deg,#5d4830,#a98b62 52%,#5d4830);color:#fff8ec;border:1px solid rgba(255,248,236,.75);text-shadow:none}
 body.theme-rose-gold-blush #cover .open{background:linear-gradient(135deg,#8f4f3f,#b76b58 52%,#8f4f3f);color:#fff4ef;border:1px solid rgba(255,244,239,.75);text-shadow:none}
+/* PREMIUM batch baru — skin kartu pernikahan (5 tema) */
+body.theme-terracotta-boho #cover .wedding-invite-card{background:linear-gradient(150deg,rgba(255,251,246,.96),rgba(246,231,217,.94))!important;border-color:color-mix(in srgb,var(--accent) 48%,transparent)!important;box-shadow:0 22px 58px rgba(120,80,50,.3),inset 0 0 0 1px color-mix(in srgb,var(--accent) 26%,transparent)}
+body.theme-terracotta-boho #cover .date{background:rgba(255,252,248,.85);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#5C3A26}
+body.theme-terracotta-boho #cover .open{background:linear-gradient(135deg,#8a5230,#c07a4e 52%,#8a5230);color:#fff6ee;border:1px solid rgba(255,246,238,.75);text-shadow:none}
+body.theme-midnight-celestial #cover .wedding-invite-card{background:linear-gradient(150deg,rgba(8,10,26,.9),rgba(18,24,52,.88))!important;border-color:color-mix(in srgb,var(--accent) 46%,transparent)!important;box-shadow:0 24px 64px rgba(0,0,0,.55),inset 0 0 0 1px color-mix(in srgb,var(--accent) 24%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+body.theme-midnight-celestial #cover h1{color:#F0F3FF;text-shadow:0 2px 20px rgba(0,0,0,.5)}
+body.theme-midnight-celestial #cover .wedding-subtitle,body.theme-midnight-celestial #cover .wedding-meta,body.theme-midnight-celestial #cover .host{color:#D8DEF2}
+body.theme-midnight-celestial #cover .date{background:rgba(228,197,126,.14);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#F0DCA6}
+body.theme-midnight-celestial #cover .open{background:linear-gradient(135deg,#9a7a34,#E4C57E 52%,#b98a3e);color:#0B1026;border:1px solid rgba(255,244,214,.7);text-shadow:none}
+body.theme-sakura-spring #cover .wedding-invite-card{background:linear-gradient(150deg,rgba(255,251,252,.96),rgba(250,233,238,.94))!important;border-color:color-mix(in srgb,var(--accent) 44%,transparent)!important;box-shadow:0 22px 58px rgba(150,80,100,.26),inset 0 0 0 1px color-mix(in srgb,var(--accent) 24%,transparent)}
+body.theme-sakura-spring #cover .date{background:rgba(255,250,251,.86);border-color:color-mix(in srgb,var(--accent) 42%,transparent);color:#5A2E3A}
+body.theme-sakura-spring #cover .open{background:linear-gradient(135deg,#96455c,#c26a82 52%,#96455c);color:#fff2f5;border:1px solid rgba(255,242,245,.75);text-shadow:none}
+body.theme-velvet-cocoa #cover .wedding-invite-card{background:linear-gradient(150deg,rgba(32,19,12,.92),rgba(56,34,22,.9))!important;border-color:color-mix(in srgb,var(--accent) 46%,transparent)!important;box-shadow:0 24px 64px rgba(0,0,0,.5),inset 0 0 0 1px color-mix(in srgb,var(--accent) 24%,transparent);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px)}
+body.theme-velvet-cocoa #cover h1{color:#F7EDE2;text-shadow:0 2px 18px rgba(0,0,0,.42)}
+body.theme-velvet-cocoa #cover .wedding-subtitle,body.theme-velvet-cocoa #cover .wedding-meta,body.theme-velvet-cocoa #cover .host{color:#E4D2BE}
+body.theme-velvet-cocoa #cover .date{background:rgba(232,201,160,.14);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#F0DCC2}
+body.theme-velvet-cocoa #cover .open{background:linear-gradient(135deg,#c9a273,#F0DCC2 52%,#c9a273);color:#2A1A12;border:1px solid rgba(255,244,230,.75);text-shadow:none}
+body.theme-golden-hour #cover .wedding-invite-card{background:linear-gradient(150deg,rgba(255,252,244,.96),rgba(252,236,204,.94))!important;border-color:color-mix(in srgb,var(--accent) 46%,transparent)!important;box-shadow:0 22px 58px rgba(150,100,30,.28),inset 0 0 0 1px color-mix(in srgb,var(--accent) 26%,transparent)}
+body.theme-golden-hour #cover .date{background:rgba(255,252,244,.86);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#573A10}
+body.theme-golden-hour #cover .open{background:linear-gradient(135deg,#c99646,#f0cd8a 52%,#c99646);color:#4a3008;border:1px solid rgba(255,248,232,.8);text-shadow:none}
 
 /* Seluruh halaman tamu ikut memakai palet template, bukan kartu krem/gold generik. */
 body.wedding-cover .wrap{background-color:#fffdf8;background-color:color-mix(in srgb,var(--g0) 7%,#fff);background-image:radial-gradient(color-mix(in srgb,var(--accent) 15%,transparent) 1px,transparent 1.5px);background-size:24px 24px}
@@ -384,7 +404,17 @@ const TPL=[
  {id:'ivory-pearl',nama:'Ivory Pearl',ev:'all',g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',char:'🕊️',bg3d:'assets/tema-3d/ivory-pearl.webp',deco:'🕊️ ✦ 🕊️',pat:'',ft:'cormorant'},
  {id:'emerald-royale',nama:'Emerald Royale',ev:'all',g:['#07271F','#0D3B2E','#155240'],accent:'#D9B45B',ink:'#E9F3EC',char:'💠',bg3d:'assets/tema-3d/emerald-royale.webp',deco:'❖ ✦ ',pat:'',ft:'ebgaramond'},
  {id:'rose-gold-blush',nama:'Rose Gold Blush',ev:'all',g:['#FDF6F3','#F7E3DC','#EAC9BE'],accent:'#A05C4B',ink:'#5A3A31',char:'💐',bg3d:'assets/tema-3d/rose-gold-blush.webp',deco:'💐 ✦ 💐',pat:'',ft:'sacramento'},
- {id:'onyx-platinum',nama:'Onyx Platinum',ev:'all',g:['#101114','#1C1E22','#2B2E33'],accent:'#C9CED6',ink:'#F0F2F4',char:'🖤',bg3d:'assets/tema-3d/onyx-platinum.webp',deco:'◆ ✦ ◆',pat:'',ft:'playfair'}];
+ {id:'onyx-platinum',nama:'Onyx Platinum',ev:'all',g:['#101114','#1C1E22','#2B2E33'],accent:'#C9CED6',ink:'#F0F2F4',char:'🖤',bg3d:'assets/tema-3d/onyx-platinum.webp',deco:'◆ ✦ ◆',pat:'',ft:'playfair'},
+ {id:'terracotta-boho',nama:'Terracotta Boho',ev:'pernikahan',g:['#FBF1E8','#F2DCC8','#E0BFA0'],accent:'#A0623D',ink:'#5C3A26',char:'🌾',bg3d:'assets/tema-3d/terracotta-boho.webp',deco:'🌾 ✦ 🌾',pat:'',ft:'cormorant'},
+ {id:'midnight-celestial',nama:'Midnight Celestial',ev:'pernikahan',g:['#0B1026','#141B3C','#20295A'],accent:'#E4C57E',ink:'#E8ECFA',char:'🌙',bg3d:'assets/tema-3d/midnight-celestial.webp',deco:'🌙 ✦ 🌙',pat:'',ft:'playfair'},
+ {id:'sakura-spring',nama:'Sakura Spring',ev:'pernikahan',g:['#FDF4F6','#F9DFE6','#EFC3CF'],accent:'#B05268',ink:'#5A2E3A',char:'🌸',bg3d:'assets/tema-3d/sakura-spring.webp',deco:'🌸 ✦ 🌸',pat:'',ft:'dancing'},
+ {id:'velvet-cocoa',nama:'Velvet Cocoa',ev:'pernikahan',g:['#2A1A12','#3B2519','#523322'],accent:'#E8C9A0',ink:'#F4E9DE',char:'🤎',bg3d:'assets/tema-3d/velvet-cocoa.webp',deco:'🤎 ✦ 🤎',pat:'',ft:'ebgaramond'},
+ {id:'golden-hour',nama:'Golden Hour',ev:'pernikahan',g:['#FFF6E5','#FBE3B8','#F2C879'],accent:'#8A5A1F',ink:'#573A10',char:'🌅',bg3d:'assets/tema-3d/golden-hour.webp',deco:'🌅 ✦ 🌅',pat:'',ft:'lora'},
+ {id:'mecca-dawn',nama:'Mecca Dawn',ev:'khitanan',g:['#123B2E','#1D5443','#2A6B55'],accent:'#E9C87A',ink:'#EAF4EC',char:'🕌',bg3d:'assets/tema-3d/mecca-dawn.webp',deco:'🕌 ✦ 🕌',pat:'',ft:'lora'},
+ {id:'samurai-legend',nama:'Samurai Legend',ev:'khitanan',g:['#1D1410','#2E1B14','#45241A'],accent:'#E5A33C',ink:'#F6E8DC',char:'⛩️',bg3d:'assets/tema-3d/samurai-legend.webp',deco:'⛩️ ✦ ⛩️',pat:'',ft:'bebas'},
+ {id:'pilot-cilik',nama:'Pilot Cilik',ev:'khitanan',g:['#E8F4FD','#CBE6F8','#A5D3F0'],accent:'#2A6CA8',ink:'#1E3A56',char:'✈️',bg3d:'assets/tema-3d/pilot-cilik.webp',deco:'✈️ ✦ ✈️',pat:'',ft:'poppins'},
+ {id:'horse-rider',nama:'Ksatria Kuda',ev:'khitanan',g:['#F4EBDA','#E7D4B4','#D3B98C'],accent:'#6E5A2E',ink:'#4A3A1C',char:'🐴',bg3d:'assets/tema-3d/horse-rider.webp',deco:'🐴  🐴',pat:'',ft:'ebgaramond'},
+ {id:'archer-legacy',nama:'Pemanah Legenda',ev:'khitanan',g:['#26190E','#3A2817','#543A22'],accent:'#E3B45B',ink:'#F3E8D8',char:'🏹',bg3d:'assets/tema-3d/archer-legacy.webp',deco:'🏹  🏹',pat:'',ft:'oswald'}];
 
 const FONTS=[
  {id:'cormorant',fam:'"Cormorant Garamond",serif'},
