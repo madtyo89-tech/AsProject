@@ -101,6 +101,58 @@ body.foto-full #cover .bdfr{position:relative;z-index:2;margin:0 auto 14px;paddi
 body.foto-full #cover .date{background:rgba(18,14,10,.5);border-color:rgba(255,255,255,.3)}
 body.foto-full #cover .brand{opacity:.8}
 
+/* ---------- SKIN PERNIKAHAN: editorial paper card seperti stationery premium ---------- */
+body.wedding-cover #cover{
+ --ink:var(--ink-body,#344238);--accent-cover:var(--accent);
+ justify-content:center;padding:22px 18px 48px;
+ background:linear-gradient(160deg,var(--g0),var(--g1) 58%,var(--g2));
+}
+body.wedding-cover.art3d #cover{background:linear-gradient(180deg,rgba(12,10,8,.34),rgba(12,10,8,.2) 42%,rgba(12,10,8,.48)),var(--cover-art,none) center/cover no-repeat}
+body.wedding-paper-art.theme-minimalist-sage #cover{background:var(--wedding-paper-art) center/100% 100% no-repeat}
+body.wedding-cover #cover .pat{opacity:.28}
+body.wedding-cover #cover .veil{box-shadow:inset 0 0 100px rgba(255,255,255,.18)}
+body.wedding-cover #cover .wedding-invite-card{
+ width:min(100%,430px);max-width:430px;margin:auto;padding:24px 20px 22px;
+ border:1px solid rgba(255,255,255,.72);border-radius:24px;
+ background:rgba(255,253,247,.94);box-shadow:0 22px 58px rgba(20,25,20,.2);
+ -webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)
+}
+body.wedding-cover #cover .inner{max-width:360px}
+body.wedding-cover #cover .chara{display:none}
+body.wedding-cover #cover .orn{font-size:13px;letter-spacing:8px;margin-bottom:5px;color:var(--accent);opacity:.85}
+body.wedding-cover #cover .kicker{margin-top:0;font-family:'Sacramento','Dancing Script',var(--ft),cursive;font-size:clamp(25px,7vw,34px);font-weight:400;letter-spacing:.02em;text-transform:none;color:var(--accent);opacity:1}
+body.wedding-cover #cover h1{margin-top:7px;font-size:clamp(32px,9vw,46px);line-height:1.02;letter-spacing:-.025em;color:var(--ink-body,#344238)}
+body.wedding-cover #cover .amp{font-size:20px;margin:3px 0;color:var(--accent)}
+body.wedding-cover #cover .wedding-subtitle{margin:6px 0 -3px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-body,#344238);opacity:.72}
+body.wedding-cover #cover .cvf{width:min(35vw,122px);margin:8px auto 11px;box-shadow:0 8px 22px rgba(26,38,30,.18)}
+body.wedding-cover #cover .kicker+.chara{display:none}
+body.wedding-cover #cover .date{margin-top:16px;padding:9px 16px;border-radius:12px;background:rgba(255,255,255,.78);border-color:rgba(60,80,65,.18);color:var(--ink-body,#344238);font-size:12px}
+body.wedding-cover #cover .wedding-meta{display:flex;align-items:center;justify-content:center;gap:9px;margin:11px auto 0;font-size:13px;font-weight:600;color:var(--ink-body,#344238)}
+body.wedding-cover #cover .wedding-meta .wi-icon{font-size:18px;color:var(--accent);line-height:1}
+body.wedding-cover #cover .host{display:flex;align-items:flex-start;justify-content:center;gap:8px;max-width:340px;margin:10px auto 0;font-size:12px;line-height:1.55;color:var(--ink-body,#344238);opacity:.9;letter-spacing:0}
+body.wedding-cover #cover .host .wi-icon{flex:none;color:var(--accent);font-size:16px;line-height:1.2}
+body.wedding-cover #cover .wedding-note{max-width:310px;margin:13px auto 0;padding-top:11px;border-top:1px solid rgba(80,90,75,.2);font-family:var(--fb);font-size:11.5px;line-height:1.65;color:#555d54}
+body.wedding-cover #cover .open{height:48px;min-width:min(250px,85%);justify-content:center;margin-top:16px;padding:0 25px;border-radius:99px;background:var(--ink-body,#344238);color:var(--ink-body-fg,#fff);box-shadow:0 9px 22px rgba(30,45,35,.2);font-size:13px}
+body.wedding-cover #cover .wedding-hint{margin-top:8px;font-size:10px;letter-spacing:.08em;color:var(--accent);opacity:.8}
+body.wedding-cover #cover .brand{color:#fff;opacity:.8;bottom:16px}
+body.theme-jawa-elegan #cover .wedding-invite-card{background-color:#f5ebd6;background-image:var(--wedding-paper-art);background-position:center;background-size:100% 100%;background-repeat:no-repeat;border-color:rgba(126,85,44,.34)}
+body.theme-minimalist-sage #cover .wedding-invite-card{background:rgba(255,255,250,.63);border-color:rgba(95,122,92,.28);box-shadow:0 12px 34px rgba(56,80,60,.08);-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px)}
+body.theme-minimalist-frost #cover .wedding-invite-card{background:rgba(255,255,255,.94);border-color:rgba(56,189,248,.28)}
+body.theme-ice-blue #cover .wedding-invite-card{background:rgba(248,253,255,.93);border-color:rgba(14,165,233,.3)}
+
+/* Seluruh halaman tamu ikut memakai palet template, bukan kartu krem/gold generik. */
+body.wedding-cover .wrap{background-color:#fffdf8;background-color:color-mix(in srgb,var(--g0) 7%,#fff);background-image:radial-gradient(color-mix(in srgb,var(--accent) 15%,transparent) 1px,transparent 1.5px);background-size:24px 24px}
+body.wedding-cover .card{background:#fffdf9;background:color-mix(in srgb,var(--g0) 5%,#fff);border-color:color-mix(in srgb,var(--accent) 24%,#fff);box-shadow:0 14px 34px color-mix(in srgb,var(--g0) 12%,transparent)}
+body.wedding-cover .divider{color:var(--accent-body)}
+body.wedding-cover .divider::before,body.wedding-cover .divider::after{background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent-body) 44%,#fff))}
+body.wedding-cover .divider::after{background:linear-gradient(90deg,color-mix(in srgb,var(--accent-body) 44%,#fff),transparent)}
+body.wedding-cover .acara{border-color:color-mix(in srgb,var(--accent) 22%,#fff);background:linear-gradient(170deg,#fffdf9,color-mix(in srgb,var(--g1) 20%,#fff))}
+body.wedding-cover .cdw .u{background:linear-gradient(170deg,#fff,color-mix(in srgb,var(--g1) 22%,#fff));border-color:color-mix(in srgb,var(--accent) 22%,#fff)}
+body.wedding-cover .amp-row,body.wedding-cover .couple .c{background:linear-gradient(170deg,#fffdf9,color-mix(in srgb,var(--g1) 16%,#fff));border-color:color-mix(in srgb,var(--accent) 22%,#fff)}
+body.wedding-cover .amp-row .nm,body.wedding-cover .footer .orn{color:var(--accent-body)}
+body.wedding-cover .copy{border-color:color-mix(in srgb,var(--accent-body) 35%,#fff);background:color-mix(in srgb,var(--g1) 24%,#fff);color:var(--accent-body)}
+body.wedding-cover .gal img{border-color:color-mix(in srgb,var(--accent) 25%,#fff)}
+
 body.opened #cover{opacity:0;visibility:hidden}
 
 /* ---------- CONTENT ---------- */
@@ -237,12 +289,12 @@ const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
 
 const TPL=[
- {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',bg3d:'assets/tema-3d/jawa-elegan.webp',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant'},
- {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',deco:'🌿',pat:'',ft:'inter'},
+ {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',bg3d:'assets/tema-3d/jawa-elegan.webp',bgPaper:'assets/wedding/jawa-batik-watercolor.webp',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant'},
+ {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',bgPaper:'assets/wedding/minimalist-sage-watercolor.webp',deco:'🌿',pat:'botanical',ft:'inter'},
  {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',bg3d:'assets/tema-3d/luxury-gold.webp',deco:'✨ ◆ ✨',pat:'',ft:'playfair'},
  {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',bg3d:'assets/tema-3d/floral-rustic.webp',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant'},
  {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',bg3d:'assets/tema-3d/ice-blue.webp',deco:'❄ ✦ ❄',pat:'',ft:'playfair'},
- {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',deco:'❄',pat:'',ft:'inter'},
+ {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',deco:'❄',pat:'frost',ft:'inter'},
  {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',bg3d:'assets/tema-3d/ocean-breeze.webp',deco:'🌊 ✦ 🌊',pat:'',ft:'playfair'},
  {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',deco:'⭐ 🕌 ⭐',pat:'',ft:'poppins'},
  {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#2e4228',deco:'☪ ✦ ☪',pat:'arab',ft:'lora'},
@@ -256,7 +308,7 @@ const TPL=[
  {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',char:'👑',bg3d:'assets/tema-3d/navy-royal.webp',deco:'✦ ❖ ✦',pat:'',ft:'playfair'},
  {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',char:'🦌',bg3d:'assets/tema-3d/forest-classic.webp',deco:'🌲 ❖ 🌲',pat:'',ft:'ebgaramond'},
  {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',char:'🎩',bg3d:'assets/tema-3d/charcoal-gold.webp',deco:'◆ ✦ ◆',pat:'',ft:'bebas'},
- {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',char:'🌿',deco:'— ✦ —',pat:'',ft:'oswald'},
+ {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',char:'🌿',deco:'— ✦ —',pat:'botanical',ft:'oswald'},
  {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',char:'🎖️',bg3d:'assets/tema-3d/burgundy-regal.webp',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond'},
  {id:'dino-adventure',nama:'Petualang Dino',ev:'khitanan',g:['#DFF3E4','#B8E3C0','#8FD3A0'],accent:'#2E7D4F',ink:'#1E4A2E',char:'🦖',deco:'🦖 ⭐ 🦖',pat:'',ft:'bebas'},
  {id:'football-champ',nama:'Juara Sepak Bola',ev:'khitanan',g:['#E3F6E9','#BCEBCF','#8FD8AE'],accent:'#1F6E43',ink:'#163F28',char:'⚽',deco:'⚽ ✦ ⚽',pat:'',ft:'oswald'},
@@ -327,7 +379,7 @@ const QUOTES={
  khitanan:{text:'Sebaik-baik kalian adalah orang yang paling baik kepada keluarganya.',author:'HR. Ahmad'},
  ultah:{text:'Semoga tahun yang baru ini membawa kebahagiaan yang lebih besar dari sebelumnya.',author:'Ucapan Terbaik'},
  aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
-/* 24 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan studio.html */
+/* 34 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan studio.html */
 const FX_SCROLL=[
  ['fade-up','Fade Up'],['fade-down','Fade Down'],['slide-left','Slide Kiri'],['slide-right','Slide Kanan'],
  ['zoom-in','Zoom In'],['zoom-out','Zoom Out'],['rotate','Rotate'],['blur','Blur'],['pop','Pop'],['flip','Flip 3D'],
@@ -344,7 +396,25 @@ const FX_SCROLL=[
  ['spiral', 'Putar Spiral', 'berputar membesar ke posisi akhir'],
  ['float', 'Melayang', 'mengambang naik dengan lembut'],
  ['wave', 'Gelombang', 'meliuk dari samping lalu lurus'],
- ['cinematic', 'Fokus Sinematik', 'fokus tajam dari cahaya kabur']];
+ ['cinematic', 'Fokus Sinematik', 'fokus tajam dari cahaya kabur'],
+ ['tilt-in', 'Tilt Masuk', 'kartu miring masuk lalu tegak'],
+ ['flip-y', 'Flip Samping', 'berputar pada sumbu vertikal'],
+ ['roll-in', 'Gulir Masuk', 'meluncur menyamping sambil berputar'],
+ ['bounce-in', 'Lenting', 'naik memantul lalu stabil'],
+ ['wipe-up', 'Wipe Vertikal', 'terbuka dari bawah ke atas'],
+ ['wipe-right', 'Wipe Horizontal', 'terbuka dari kiri ke kanan'],
+ ['unfold', 'Buka Lipatan', 'bidang membuka ke depan'],
+ ['squeeze', 'Lentur', 'melebar perlahan dari tengah'],
+ ['glow', 'Glow', 'cahaya lembut berubah menjadi fokus'],
+ ['blur-down', 'Blur Turun', 'turun sambil menjernih']];
+/* Efek reveal bergantian antarbagian namun tetap menghormati pilihan efek dasar Studio. */
+const FX_SCROLL_MIX=['fade-up','slide-left','fade-down','slide-right','tilt-in','flip-y','bounce-in','roll-in','wipe-up','wipe-right','unfold','book','blur-down','cube','glow','wave'];
+function fxScrollForSection(base,index,mix=true){
+ if(!mix||index===0)return base;
+ const start=FX_SCROLL_MIX.indexOf(base);
+ return FX_SCROLL_MIX[((start<0?0:start)+index)%FX_SCROLL_MIX.length];
+}
+function fxScrollAxis(id){return ['slide-left','slide-right','flip-y','roll-in','wipe-right','book','cube','wave'].includes(id)?'x':'y'}
 const FX_COVER=[
  ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
  ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic']];
@@ -356,7 +426,19 @@ const $=id=>document.getElementById(id);
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
 function patCss(t){
- if(t.pat==='batik')return `background-image:radial-gradient(${t.accent}26 1.5px,transparent 1.8px),radial-gradient(${t.accent}1c 1px,transparent 1.3px);background-size:26px 26px,13px 13px;background-position:0 0,13px 13px;`;
+ const tile=(svg,size)=>`background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${size};background-repeat:repeat;`;
+ if(t.pat==='batik'){
+  const c=t.accent||'#8b653d';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".24" stroke-width="1.5"><path d="M48 4C65 17 65 27 48 41 31 27 31 17 48 4ZM92 48C79 65 69 65 55 48 69 31 79 31 92 48ZM48 92C31 79 31 69 48 55 65 69 65 79 48 92ZM4 48C17 31 27 31 41 48 27 65 17 65 4 48Z"/><path d="M48 31 65 48 48 65 31 48Z"/><circle cx="48" cy="48" r="4"/></g></svg>`, '48px 48px');
+ }
+ if(t.pat==='botanical'){
+  const c=t.accent||'#66816a';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><g fill="none" stroke="${c}" stroke-opacity=".17" stroke-width="1.5" stroke-linecap="round"><path d="M14 108C42 87 65 56 106 13"/><path d="M34 92C17 89 15 73 16 67 31 65 42 75 34 92ZM52 73C36 71 34 57 35 51 51 49 60 59 52 73ZM72 51C57 48 56 34 58 28 73 28 81 39 72 51ZM39 89C42 73 56 69 63 70 64 85 53 95 39 89ZM59 66C62 51 76 47 83 49 83 64 73 73 59 66ZM81 42C84 29 96 24 102 26 103 39 94 48 81 42Z"/></g></svg>`, '120px 120px');
+ }
+ if(t.pat==='frost'){
+  const c=t.accent||'#38BDF8';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".2" stroke-width="1.35" stroke-linecap="round"><path d="M24 12v28M12 19l24 14M36 19 12 33M70 52v32M56 61l28 15M84 61 56 76M48 48l7 7-7 7-7-7Z"/><path d="m20 17 4 4 4-4m-16 12 5-1 1 5m16-5-5-1-1 5m28 30 4 5 4-5m-16 13 5-1 1 5m16-5-5-1-1 5"/></g></svg>`, '96px 96px');
+ }
  if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}14 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0f 0 2px,transparent 2px 16px);`;
  if(t.pat==='confetti')return `background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
  return ''}
@@ -513,6 +595,10 @@ function boot(draft){
 
  /* tema */
  const rs=document.documentElement.style;
+ const isWedding=ev==='pernikahan';
+ const PAPER=isWedding?(tplF.bgPaper||''):'';
+ if(isWedding){document.body.classList.add('wedding-cover','theme-'+tplF.id)}
+ if(PAPER){document.body.classList.add('wedding-paper-art');rs.setProperty('--wedding-paper-art',"url('"+PAPER+"')")}
  rs.setProperty('--g0',tplF.g[0]);rs.setProperty('--g1',tplF.g[1]);rs.setProperty('--g2',tplF.g[2]);
  rs.setProperty('--accent',tplF.accent);rs.setProperty('--ink',tplF.ink);
  /* Kontras: cover memakai ink tema apa adanya (gradasinya mengikuti tema), tapi
@@ -580,7 +666,12 @@ function boot(draft){
  const h1d=tplF.char?850:550,dtD=tplF.char?1500:1300,hoD=tplF.char?1650:1450,btD=tplF.char?1800:1600;
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
  const wspan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="anim-word" style="animation-delay:${d0+i*90}ms">${esc(w)}</span>`).join(' ');
- const RV=cls=>rvOn?cls+' scroll-reveal fx-s-'+SC:cls;
+ let scrollSectionIndex=0;
+ const RV=cls=>{
+  if(!rvOn)return cls;
+  const effect=fxScrollForSection(SC,scrollSectionIndex++,AN.scrollMix!==false);
+  return cls+' scroll-reveal fx-s-'+effect+' sr-axis-'+fxScrollAxis(effect)
+ };
  const BD=BORDERS.find(b=>b.id===(d&&d.border))||null;let bdStyle='';
  if(BD){const A=tplF.accent;if(BD.s)bdStyle=BD.s(A);if(BD.extra)bdStyle+=(bdStyle?';':'')+BD.extra(A)}
  const bdCorners=(()=>{if(!BD||!BD.corner)return'';const w=BD.corner,A=tplF.accent;
@@ -589,13 +680,13 @@ function boot(draft){
 
  /* ---------- HTML ---------- */
  let h='';
- h+=`<div id="cover" class="${covOn?'cov':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="bdfr" style="${bdStyle}">${bdCorners}<div class="inner">
+ h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="bdfr ${isWedding?'wedding-invite-card':''}" style="${bdStyle}">${bdCorners}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
    ${cvStyle==='none'?'':(cvStyle==='full'
      ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`
      :`<div class="cvf cvf-${cvStyle} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`)}
-   <div class="kicker ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(EV_KICKER[ev]||'Undangan')}</div>
-   ${tplF.char?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms':''}">${tplF.char}</div>`:''}`;
+   <div class="kicker ${isWedding?'wedding-kicker':''} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(isWedding?"You're Invited":EV_KICKER[ev]||'Undangan')}</div>
+   ${tplF.char&&!isWedding?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms':''}">${tplF.char}</div>`:''}`;
  if(ev==='pernikahan'){
   h+=txOn
    ?`<h1>${wspan(titleMain,h1d)}</h1><div class="amp anim-word" style="animation-delay:${h1d+nW(titleMain)*90+150}ms">&amp;</div><h1>${wspan(titleSub,h1d+nW(titleMain)*90+300)}</h1>`
@@ -603,9 +694,13 @@ function boot(draft){
  }else{
   h+=txOn?`<h1>${wspan(titleMain,h1d)}</h1>`:`<h1 class="${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+h1d+'ms':''}">${esc(titleMain)}</h1>`;
  }
- h+=`<div class="date ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+dtD+'ms':''}">🗓 ${esc(dateStr||'—')}${timeStr?' • '+esc(timeStr):''}</div>`;
- if(venue)h+=`<div class="host ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+hoD+'ms':''}">${esc(venue)}</div>`;
+ h+=`<div class="date ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+dtD+'ms':''}">🗓 ${esc(dateStr||'—')}${!isWedding&&timeStr?' • '+esc(timeStr):''}</div>`;
+ if(isWedding)h+=`<div class="wedding-subtitle ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(dtD+80)+'ms':''}">akan melangsungkan pernikahan</div>`;
+ if(isWedding&&timeStr)h+=`<div class="wedding-meta ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(hoD-100)+'ms':''}"><span class="wi-icon" aria-hidden="true">◷</span><span>${esc(timeStr)} ${esc(form.zona||'WIB')}</span></div>`;
+ if(venue)h+=`<div class="host ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+hoD+'ms':''}">${isWedding?'<span class="wi-icon" aria-hidden="true">⌖</span>':''}${esc(venue)}</div>`;
+ if(isWedding)h+=`<p class="wedding-note ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(hoD+100)+'ms':''}">Bersama keluarga, dengan penuh kebahagiaan, kami mengundang Anda untuk merayakan hari istimewa kami.</p>`;
  h+=`<button class="open ${covOn?'anim-pop':''}" id="btnOpen" style="${covOn?'animation-delay:'+btD+'ms':''}"><span class="env">✉️</span> Buka Undangan</button>
+ ${isWedding?'<div class="wedding-hint">DETAIL ACARA · RSVP</div>':''}
  </div></div><div class="brand">AsProject • Undangan Digital</div></div>`;
 
  h+=`<div id="content"><div class="wrap">`;

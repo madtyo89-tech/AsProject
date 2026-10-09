@@ -174,6 +174,24 @@ input,textarea,select{outline:0}
 }
 @media(max-width:360px){.grid2{grid-template-columns:minmax(0,1fr)}.span2{grid-column:auto}}
 
+/* Pratinjau wedding meniru layout stationery: kartu terang, aksen sesuai template, dan tipografi editorial. */
+.phone .screen .wedding-cover{--preview-paper:#fffdf7;color:#344238}
+.phone .screen .wedding-cover .wedding-preview-inner{padding:12px 12px 18px!important}
+.phone .screen .wedding-cover .wedding-invite-card{
+ padding:16px 12px!important;margin:0 0 14px!important;border-radius:18px;
+ background:rgba(255,253,247,.92);border:1px solid rgba(255,255,255,.72);
+ box-shadow:0 10px 28px rgba(25,35,27,.15)
+}
+.phone .screen .wedding-cover.theme-jawa-elegan .wedding-invite-card{background:#f5ebd6 url('assets/wedding/jawa-batik-watercolor.webp') center/100% 100% no-repeat}
+.phone .screen .wedding-cover .wedding-kicker{font-family:'Sacramento','Dancing Script',cursive!important;font-size:24px!important;letter-spacing:0!important;text-transform:none!important;color:var(--accent)!important;opacity:1!important}
+.phone .screen .wedding-cover .wedding-subtitle{margin:5px 0;color:#5d685d;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+.phone .screen .wedding-cover .wedding-date{margin:10px auto 0;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.72);font-size:10px;color:#37433a}
+.phone .screen .wedding-cover .wedding-meta{margin-top:8px;font-size:10px;color:#37433a}
+.phone .screen .wedding-cover .wedding-note{font-size:9px;line-height:1.5;color:#59645a}
+.phone .screen .wedding-cover .wedding-open{height:38px;margin-top:10px;padding:0 18px;border-radius:99px;background:#526b55;color:#fff;font-size:10px;font-weight:600}
+.phone .screen .wedding-cover.theme-ice-blue .wedding-invite-card{background:rgba(247,252,255,.94);border-color:rgba(14,165,233,.24)}
+.phone .screen .wedding-cover.theme-minimalist-frost .wedding-invite-card{background:rgba(255,255,255,.96);border-color:rgba(56,189,248,.25)}
+.phone .screen .wedding-cover.theme-minimalist-sage .wedding-invite-card{background:rgba(255,255,250,.62);border-color:rgba(95,122,92,.28);box-shadow:0 8px 24px rgba(56,80,60,.08)}
 .flow-page{max-width:620px;margin:0 auto;padding:clamp(24px,8vh,80px) 16px 40px;min-height:100dvh;display:grid;align-content:center;gap:20px}
 .flow-page h1{font-size:28px;line-height:1.25;margin-bottom:12px}
 .flow-page p{color:var(--mut);line-height:1.8}
@@ -274,12 +292,12 @@ const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶'};
 
 /* ===== 15 TEMPLATE: 12 sesuai katalog + 3 varian Ice Blue dari folder Drive "Katalog demo" ===== */
 const TPL=[
- {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',badge:'BEST SELLER',bg3d:'assets/tema-3d/jawa-elegan.webp',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},
- {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',badge:'',deco:'🌿',pat:'',ft:'inter',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet'},
+ {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',badge:'BEST SELLER',bg3d:'assets/tema-3d/jawa-elegan.webp',bgPaper:'assets/wedding/jawa-batik-watercolor.webp',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant',desc:'Nuansa pranakan Jawa, kertas batik kawung/parang, dan aksen emas'},
+ {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',badge:'',bgPaper:'assets/wedding/minimalist-sage-watercolor.webp',deco:'🌿',pat:'botanical',ft:'inter',desc:'Minimalis sage dengan bingkai eucalyptus watercolor dan kertas ivory'},
  {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#5a4a12',badge:'LUXURY',bg3d:'assets/tema-3d/luxury-gold.webp',deco:'✨ ◆ ✨',pat:'',ft:'playfair',desc:'Glam soft luxury, emboss gold & black tie vibe'},
  {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',badge:'',bg3d:'assets/tema-3d/floral-rustic.webp',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
  {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',harga:75000,g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',badge:'NEW',bg3d:'assets/tema-3d/ice-blue.webp',deco:'❄ ✦ ❄',pat:'',ft:'playfair',desc:'Biru es elegan ala winter wedding, efek glass & floral frost yang sejuk'},
- {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',harga:75000,g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',badge:'',deco:'❄',pat:'',ft:'inter',desc:'Clean & dingin, tipografi besar, fokus penuh ke foto couple'},
+ {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',harga:75000,g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',badge:'',deco:'❄',pat:'frost',ft:'inter',desc:'Putih salju, detail kristal tipis, dan tipografi minimal'},
  {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',harga:79000,g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',badge:'',bg3d:'assets/tema-3d/ocean-breeze.webp',deco:'🌊 ✦ 🌊',pat:'',ft:'playfair',desc:'Gradasi biru laut & ombak halus, pas buat acara outdoor atau pantai'},
  {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',badge:'FAVORIT',deco:'⭐ 🕌 ⭐',pat:'',ft:'poppins',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},
  {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#2e4228',badge:'',deco:'☪ ✦ ☪',pat:'arab',ft:'lora',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},
@@ -293,7 +311,7 @@ const TPL=[
  {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',harga:89000,g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',badge:'BARU',char:'👑',bg3d:'assets/tema-3d/navy-royal.webp',deco:'✦ ❖ ✦',pat:'',ft:'playfair',desc:'Navy gelap maskulin & gold regal, vibe sultan yang tenang'},
  {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',harga:79000,g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',badge:'',char:'🦌',bg3d:'assets/tema-3d/forest-classic.webp',deco:'🌲 ❖ 🌲',pat:'',ft:'ebgaramond',desc:'Hijau hutan klasik, gagah & hangat buat groom yang berkarakter'},
  {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',harga:89000,g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',badge:'BARU',char:'🎩',bg3d:'assets/tema-3d/charcoal-gold.webp',deco:'◆ ✦ ◆',pat:'',ft:'bebas',desc:'Hitam charcoal & gold tegas, black tie yang bersih dan mahal'},
- {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',harga:75000,g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',badge:'',char:'🌿',deco:'— ✦ —',pat:'',ft:'oswald',desc:'Slate abu maskulin dengan sage lembut, modern & tenang'},
+ {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',harga:75000,g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',badge:'',char:'🌿',deco:'— ✦ —',pat:'botanical',ft:'oswald',desc:'Slate abu-batu dipadu sage dan ornamen daun yang tenang'},
  {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',harga:85000,g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',badge:'',char:'🎖️',bg3d:'assets/tema-3d/burgundy-regal.webp',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond',desc:'Burgundy tua & emas, elegan klasik dengan sentuhan tegas'},
  {id:'dino-adventure',nama:'Petualang Dino',ev:'khitanan',harga:75000,g:['#DFF3E4','#B8E3C0','#8FD3A0'],accent:'#2E7D4F',ink:'#1E4A2E',badge:'BARU',char:'🦖',deco:'🦖 ⭐ 🦖',pat:'',ft:'bebas',desc:'Dinosaurus hijau buat jagoan kecilmu yang suka petualangan'},
  {id:'football-champ',nama:'Juara Sepak Bola',ev:'khitanan',harga:75000,g:['#E3F6E9','#BCEBCF','#8FD8AE'],accent:'#1F6E43',ink:'#163F28',badge:'',char:'⚽',deco:'⚽ ✦ ⚽',pat:'',ft:'oswald',desc:'Teman-teman, jagoan kita siap jadi juara! Nuansa lapangan hijau'},
@@ -314,7 +332,19 @@ function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
 function tplsFor(ev){return TPL.filter(t=>t.ev===ev&&!state.katalogHide.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
 function patCss(t){
- if(t.pat==='batik')return `background-image:radial-gradient(${t.accent}26 1.5px,transparent 1.8px),radial-gradient(${t.accent}1c 1px,transparent 1.3px);background-size:26px 26px,13px 13px;background-position:0 0,13px 13px;`;
+ const tile=(svg,size)=>`background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${size};background-repeat:repeat;`;
+ if(t.pat==='batik'){
+  const c=t.accent||'#8b653d';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".24" stroke-width="1.5"><path d="M48 4C65 17 65 27 48 41 31 27 31 17 48 4ZM92 48C79 65 69 65 55 48 69 31 79 31 92 48ZM48 92C31 79 31 69 48 55 65 69 65 79 48 92ZM4 48C17 31 27 31 41 48 27 65 17 65 4 48Z"/><path d="M48 31 65 48 48 65 31 48Z"/><circle cx="48" cy="48" r="4"/></g></svg>`, '48px 48px');
+ }
+ if(t.pat==='botanical'){
+  const c=t.accent||'#66816a';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><g fill="none" stroke="${c}" stroke-opacity=".17" stroke-width="1.5" stroke-linecap="round"><path d="M14 108C42 87 65 56 106 13"/><path d="M34 92C17 89 15 73 16 67 31 65 42 75 34 92ZM52 73C36 71 34 57 35 51 51 49 60 59 52 73ZM72 51C57 48 56 34 58 28 73 28 81 39 72 51ZM39 89C42 73 56 69 63 70 64 85 53 95 39 89ZM59 66C62 51 76 47 83 49 83 64 73 73 59 66ZM81 42C84 29 96 24 102 26 103 39 94 48 81 42Z"/></g></svg>`, '120px 120px');
+ }
+ if(t.pat==='frost'){
+  const c=t.accent||'#38BDF8';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".2" stroke-width="1.35" stroke-linecap="round"><path d="M24 12v28M12 19l24 14M36 19 12 33M70 52v32M56 61l28 15M84 61 56 76M48 48l7 7-7 7-7-7Z"/><path d="m20 17 4 4 4-4m-16 12 5-1 1 5m16-5-5-1-1 5m28 30 4 5 4-5m-16 13 5-1 1 5m16-5-5-1-1 5"/></g></svg>`, '96px 96px');
+ }
  if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}12 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0d 0 2px,transparent 2px 16px);`;
  if(t.pat==='confetti')return `background-image:radial-gradient(#E5737366 2px,transparent 2.6px),radial-gradient(#64B5F666 2px,transparent 2.6px),radial-gradient(#8BC34A66 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
  return ''}
@@ -384,7 +414,7 @@ const DEF={
   map:{on:false},
   rsvp:{on:false},
   closing:{on:false,text:''}},
- anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'},
+ anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up',scrollMix:true},
  floatPrevOn:true,floatPos:null,
  slug:'',customDomain:'',published:false,publishedLink:'',started:false,stage:'editor',
  katalog:TPL.map((t,i)=>({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:340-i*23})),
@@ -415,7 +445,7 @@ DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.pu
 function save(){try{const c=Object.assign({},state);localStorage.setItem('asproject_studio_v3',JSON.stringify(c))}catch(e){}}
 /* ===== Animasi pratinjau: diputar ulang HANYA saat struktur berubah
    (template / event / slide on-off), agar tidak berkedip tiap ketik ===== */
-/* 24 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan undangan.html */
+/* 34 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan undangan.html */
 const FX_SCROLL=[
  ['fade-up','Fade Up','naik pelan sambil muncul'],['fade-down','Fade Down','turun pelan sambil muncul'],
  ['slide-left','Slide Kiri','geser dari kanan'],['slide-right','Slide Kanan','geser dari kiri'],
@@ -435,7 +465,25 @@ const FX_SCROLL=[
  ['spiral', 'Putar Spiral', 'berputar membesar ke posisi akhir'],
  ['float', 'Melayang', 'mengambang naik dengan lembut'],
  ['wave', 'Gelombang', 'meliuk dari samping lalu lurus'],
- ['cinematic', 'Fokus Sinematik', 'fokus tajam dari cahaya kabur']];
+ ['cinematic', 'Fokus Sinematik', 'fokus tajam dari cahaya kabur'],
+ ['tilt-in', 'Tilt Masuk', 'kartu miring masuk lalu tegak'],
+ ['flip-y', 'Flip Samping', 'berputar pada sumbu vertikal'],
+ ['roll-in', 'Gulir Masuk', 'meluncur menyamping sambil berputar'],
+ ['bounce-in', 'Lenting', 'naik memantul lalu stabil'],
+ ['wipe-up', 'Wipe Vertikal', 'terbuka dari bawah ke atas'],
+ ['wipe-right', 'Wipe Horizontal', 'terbuka dari kiri ke kanan'],
+ ['unfold', 'Buka Lipatan', 'bidang membuka ke depan'],
+ ['squeeze', 'Lentur', 'melebar perlahan dari tengah'],
+ ['glow', 'Glow', 'cahaya lembut berubah menjadi fokus'],
+ ['blur-down', 'Blur Turun', 'turun sambil menjernih']];
+/* Campuran halus: satu efek utama, lalu variasi arah/gaya bergilir per bagian. */
+const FX_SCROLL_MIX=['fade-up','slide-left','fade-down','slide-right','tilt-in','flip-y','bounce-in','roll-in','wipe-up','wipe-right','unfold','book','blur-down','cube','glow','wave'];
+function fxScrollForSection(base,index,mix=true){
+ if(!mix||index===0)return base;
+ const start=FX_SCROLL_MIX.indexOf(base);
+ return FX_SCROLL_MIX[((start<0?0:start)+index)%FX_SCROLL_MIX.length];
+}
+function fxScrollAxis(id){return ['slide-left','slide-right','flip-y','roll-in','wipe-right','book','cube','wave'].includes(id)?'x':'y'}
 const FX_COVER=[
  ['fade','Fade','muncul lembut'],['zoom','Zoom','membesar halus (default)'],
  ['rise','Rise','terbang naik'],['drop','Drop','turun dari atas'],
@@ -445,7 +493,7 @@ const FX_COVER=[
 function fxScrollId(){const v=state.anim.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxCoverId(){const v=state.anim.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 let animSig=null;
-function animTrigger(){const cur=state.tpl+'|'+state.event+'|'+Object.keys(state.slides).filter(k=>state.slides[k].on).sort().join(',')+'|'+fxCoverId()+'|'+fxScrollId();const play=animSig!==cur;animSig=cur;return play}
+function animTrigger(){const cur=state.tpl+'|'+state.event+'|'+Object.keys(state.slides).filter(k=>state.slides[k].on).sort().join(',')+'|'+fxCoverId()+'|'+fxScrollId()+'|'+(state.anim.scrollMix===false?'single':'mix');const play=animSig!==cur;animSig=cur;return play}
 /* ===== Slide konten & animasi ===== */
 const SLIDES=[
  {id:'timeline',ic:'⏱️',nm:'Timeline Acara',ds:'Urutan sesi acara (jam — judul)',type:'list',ph:'08:00 — Akad Nikah\n11:00 — Resepsi'},
@@ -480,6 +528,8 @@ function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function slugify(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,32)}
 function notify(msg){document.querySelectorAll('.notice').forEach(n=>n.remove());const n=document.createElement('div');n.className='notice';n.innerHTML='<span style="width:20px;height:20px;border-radius:99px;background:#10b981;display:grid;place-items:center;font-size:12px">✓</span>'+esc(msg);document.body.append(n);setTimeout(()=>n.remove(),3000)}
 function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
+/* Family names contain quotes; HTML-escape them before placing them in a quoted style="" attribute. */
+function fontAttr(id){return esc(fontFam(id))}
 function titleOf(){return state.event==='pernikahan'?'The Wedding Of':state.event==='khitanan'?'Tasyakuran Khitanan':state.event==='ultah'?'Sweet Birthday Party':'Tasyakuran Aqiqah'}
 function displayName(){return state.event==='pernikahan'?`${state.form.namaPria} & ${state.form.namaWanita}`:state.form.namaAnak}
 function hostBase(){return 'https://'+(state.customDomain?state.customDomain.replace(/^https?:\/\//,''):'asproject.my.id')}
@@ -540,6 +590,45 @@ function audioExt(file){
  return (fromName||map[file.type]||'mp3').toLowerCase()}
 function audioMime(ext){const m={mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg',webm:'audio/webm',flac:'audio/flac'};return m[ext]||'audio/mpeg'}
 function notifyErr(msg,ms){document.querySelectorAll('.notice').forEach(n=>n.remove());const n=document.createElement('div');n.className='notice';n.style.maxWidth='340px';n.style.lineHeight='1.5';n.innerHTML='<span style="width:20px;height:20px;border-radius:99px;background:#ef4444;display:grid;place-items:center;font-size:12px;flex:none">!</span><span>'+msg+'</span>';document.body.append(n);setTimeout(()=>n.remove(),ms||8000)}
+function isNetworkError(e){return /failed to fetch|networkerror|network request failed|load failed|fetch failed/i.test(String(e&&e.message||e||''))}
+async function upsertInvitationDraft(payload){
+ /* Gunakan client normal bila CDN Supabase berhasil dimuat. Bila diblokir/gagal,
+    endpoint REST Supabase tetap bisa dipakai langsung — Publish tidak bergantung
+    pada CDN pihak ketiga. Retry REST hanya untuk kegagalan jaringan, bukan error DB. */
+ if(db){
+  try{
+   const {error}=await db.from('invitation_drafts').upsert(payload,{onConflict:'slug'});
+   if(!error)return;
+   if(!isNetworkError(error))throw error;
+  }catch(e){if(!isNetworkError(e))throw e}
+ }
+ const response=await fetch(SUPABASE_URL+'/rest/v1/invitation_drafts?on_conflict=slug',{
+  method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,
+   'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},
+  body:JSON.stringify(payload)});
+ if(response.ok)return;
+ let raw='',detail='',code='';
+ try{raw=await response.text()}catch(e){}
+ if(raw){try{const body=JSON.parse(raw);detail=body.message||body.error_description||body.error||raw;code=body.code||''}catch(e){detail=raw}}
+ const err=new Error(detail||('Supabase HTTP '+response.status));
+ err.code=code;err.status=response.status;throw err;
+}
+function publishErrorHtml(e){
+ const message=String(e&&e.message||e||'Kesalahan tidak diketahui');
+ const code=String(e&&e.code||'');const status=e&&e.status?String(e.status):'';
+ const detail=(status?'HTTP '+status+': ':'')+message;
+ const text=(detail+' '+code).toLowerCase();
+ let help='Periksa koneksi internet dan coba lagi. Undangan tetap tersimpan sebagai draft di perangkat ini.';
+ if(/data.*(column|field)|column.*data|schema cache|pgrst204|42703/.test(text))
+  help='Kolom snapshot belum tersedia. Buka Supabase → SQL Editor, jalankan file <b>supabase-schema.sql</b>, lalu coba Publish lagi.';
+ else if(/row.?level security|rls|42501|permission denied|violates.*policy/.test(text))
+  help='Supabase menolak izin simpan. Jalankan ulang <b>supabase-schema.sql</b> di SQL Editor untuk memperbaiki policy tabel <b>invitation_drafts</b>.';
+ else if(/invalid api key|jwt expired|invalid jwt|unauthorized|\b401\b/.test(text))
+  help='Kunci API Supabase tidak diterima. Periksa konfigurasi URL dan anon key Supabase di <b>studio.html</b>.';
+ else if(/failed to fetch|networkerror|network request failed|load failed|fetch failed|\b(502|503|504)\b/.test(text))
+  help='Browser tidak dapat menghubungi Supabase. Periksa koneksi, lalu pastikan proyek Supabase masih aktif.';
+ return '<b>Publish gagal:</b> '+esc(detail)+(code?' ('+esc(code)+')':'')+'<br>'+help;
+}
 async function uploadMusic(input){
  const file=input.files&&input.files[0];if(!file)return;
  const okType=file.type.startsWith('audio/')||/\.(mp3|m4a|aac|ogg|wav|flac)$/i.test(file.name)||!/\./.test(file.name);
@@ -654,7 +743,6 @@ async function publish(){
  if(!f.tanggalAcara)missing.push('tanggal acara');if(!f.jamAcara)missing.push('jam acara');if(!f.venue.trim())missing.push('lokasi acara');
  if(!state.slug)missing.push('slug/link undangan');
  if(missing.length){notify('Lengkapi '+missing.join(', ')+' terlebih dahulu.');return}
- if(!db){notify('Koneksi publikasi belum tersedia. Muat ulang dan coba lagi; undangan belum dipublish.');return}
  _publishing=true;$('root').inert=true;$('root').setAttribute('aria-busy','true');
  const publishButtons=Array.from(document.querySelectorAll('[onclick="publish()"]')).map(button=>({button,label:button.textContent}));
  publishButtons.forEach(({button})=>{button.textContent='Menyiapkan link…'});notify('Sedang menyiapkan link undangan…');
@@ -679,15 +767,14 @@ async function publish(){
   publishedAt:new Date().toISOString()};
  if(JSON.stringify(data).length>1500000){notify('Data terlalu besar. Kurangi ukuran foto sebelum menyelesaikan undangan.');return}
  payload.data=data;
- const {error}=await db.from('invitation_drafts').upsert(payload,{onConflict:'slug'});
- if(error){notify('Undangan belum selesai: '+error.message);return}
+ await upsertInvitationDraft(payload);
  state.published=true;state.publishedLink=baseUrl();
  const nama=displayName();
  const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
   snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos())}};
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  state.stage='ready';save();render();window.scrollTo(0,0);document.querySelectorAll('.notice').forEach(n=>n.remove());
- }catch(e){notify('Undangan belum selesai. Periksa koneksi lalu coba lagi.')}
+ }catch(e){console.error('Publish undangan gagal:',e);notifyErr(publishErrorHtml(e),15000)}
  finally{_publishing=false;$('root').inert=false;$('root').setAttribute('aria-busy','false');publishButtons.forEach(({button,label})=>{button.textContent=label})}
 }
 function unpublish(){state.published=false;save();render();notify('Status kembali ke Draft')}
@@ -713,20 +800,28 @@ async function dlUndangan(){
   /* Penyesuaian kontras tema (assets/theme-contrast.js) ikut disematkan supaya
      teks tetap terbaca saat file dibuka offline — aset di folder assets/ tidak
      terbawa saat file dipindah. Gagal mengambil aset tidak membatalkan simpan. */
-  let tcSrc='';
+  let tcSrc='',scrollFxCss='',scrollFxJs='';
   try{const tr=await fetch('assets/theme-contrast.js');if(tr.ok)tcSrc=await tr.text()}catch(e){}
-  /* Artwork 3D tema ikut disematkan (base64, hanya bila berkasnya wajar) supaya file
-     undangan yang disimpan tetap tampil benar walau folder assets/ tidak ikut dibawa. */
+  /* Efek gulir juga disematkan supaya reveal tetap bekerja pada HTML mandiri/offline. */
+  try{const sr=await fetch('assets/scroll-effects.css');if(sr.ok)scrollFxCss=await sr.text()}catch(e){}
+  try{const sj=await fetch('assets/scroll-effects.js');if(sj.ok)scrollFxJs=await sj.text()}catch(e){}
+  /* Artwork tema (termasuk kertas Batik & watercolor Sage) ikut disematkan bila ringan,
+     supaya file HTML mandiri tetap mempertahankan tampilan tanpa folder assets/. */
   const tpUndang=TPL.find(t=>t.id===state.tpl)||null;
-  let artSrc='';
-  if(tpUndang&&tpUndang.bg3d){
-   try{const ar=await fetch(tpUndang.bg3d);if(ar.ok){const bl=await ar.blob();
-    if(bl.size&&bl.size<300000)artSrc=await new Promise(res=>{const fr=new FileReader();
-     fr.onload=()=>res(String(fr.result||''));fr.onerror=()=>res('');fr.readAsDataURL(bl)})}}catch(e){}
-  }
-  const artCss=artSrc?`<style>html{--cover-art:url(${artSrc}) !important}</style>`:'';
-  const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>'+(tcSrc?'\n<script>'+tcSrc.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'');
-  if(artCss)html=html.replace('</head>',artCss+'\n</head>');
+  const embedVisual=async path=>{if(!path)return'';try{const r=await fetch(path);if(!r.ok)return'';
+   const bl=await r.blob();if(!bl.size||bl.size>=300000)return'';
+   return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result||''));fr.onerror=()=>res('');fr.readAsDataURL(bl)})
+  }catch(e){return''}};
+  const artSrc=await embedVisual(tpUndang&&tpUndang.bg3d);
+  const paperSrc=await embedVisual(tpUndang&&tpUndang.bgPaper);
+  const artVars=(artSrc?`--cover-art:url(${artSrc}) !important;`:'')+
+   (paperSrc?`--wedding-paper-art:url(${paperSrc}) !important;`:'');
+  const artCss=artVars?`<style>html{${artVars}}</style>`:'';
+  const scrollCss=scrollFxCss?`<style data-asproject-scroll-effects>${scrollFxCss}</style>`:'';
+  const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>'+
+   (scrollFxJs?'\n<script>'+scrollFxJs.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'')+
+   (tcSrc?'\n<script>'+tcSrc.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'');
+  if(artCss||scrollCss)html=html.replace('</head>',scrollCss+artCss+'\n</head>');
   const i=html.indexOf('</head>');
   const final=i>=0?html.slice(0,i)+inj+'\n'+html.slice(i):html.replace('</html>',inj+'\n</html>');
   const a=document.createElement('a');
@@ -855,8 +950,13 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
      <span class="chip" style="font-family:ui-monospace,monospace">${state.accent}</span>
     </div></div>
    <div class="grid2">
-    <label class="f">Font Judul (15 pilihan)<select onchange="set('fontTitle',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" ${state.fontTitle===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
-    <label class="f">Font Isi (15 pilihan)<select onchange="set('fontBody',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" ${state.fontBody===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+    <label class="f">Font Judul (15 pilihan)<select onchange="set('fontTitle',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontTitle===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+    <label class="f">Font Isi (15 pilihan)<select onchange="set('fontBody',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontBody===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+   </div>
+   <div class="card" style="padding:14px;background:#111;color:#fff;border-color:#111">
+    <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.65)">Preview Font — berubah saat dipilih</div>
+    <div class="font-preview-title" style="margin-top:10px;font-size:22px;line-height:1.2;font-family:${fontAttr(state.fontTitle)}">The Beauty of ${esc(state.form.namaWanita||'Your Name')} · Aa Bb 123</div>
+    <div class="font-preview-body" style="font-size:12px;color:rgba(255,255,255,.78);margin-top:8px;font-family:${fontAttr(state.fontBody)}">Dengan penuh rasa syukur, kami mengundang Anda untuk hadir.</div>
    </div>
    <div><div class="f" style="margin-bottom:8px">Background Type</div>
     <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
@@ -872,14 +972,9 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    </div>
   </div>
  </div>
- <div class="card" style="background:#111;color:#fff;border-color:#111">
-  <div style="font-size:12px;font-weight:600">Preview Font</div>
-  <div style="margin-top:12px;font-size:22px;line-height:1.2;font-family:${fontFam(state.fontTitle)}">The Beauty of ${esc(state.form.namaWanita)}</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:8px;font-family:${fontFam(state.fontBody)}">Font isi untuk alamat, doa, ucapan dan detail acara — rapi & readable di HP.</div>
- </div>
  <div class="card"><h4>✨ Animasi Undangan</h4>
-  <p style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.6">Efek scroll diputar saat bagian terlihat di panel, floating preview, dan undangan live. Efek 3D adalah animasi per bagian, bukan pergantian halaman.</p>
-  ${[['cover','Animasi Cover','Nama & ornamen masuk dengan efek terpilih di halaman pembuka.'],['text','Animasi Teks','Nama tampil per kata, satu per satu (efek stagger).'],['reveal','Scroll Reveal','Setiap bagian muncul halus saat tamu menggulir ke bawah.']].map(([k,l,d])=>`<label class="togglerow"><span><span style="font-size:12px;font-weight:500">${l}</span><span style="display:block;font-size:10px;color:var(--mut)">${d}</span></span><input type="checkbox" ${state.anim[k]?'checked':''} onchange="setAnim('${k}',this.checked)"></label>`).join('')}
+  <p style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.6">Tiap bagian bisa memakai gerak berbeda. Reveal diulang saat bagian masuk viewport lagi; arah masuk mengikuti scroll naik atau turun.</p>
+  ${[['cover','Animasi Cover','Nama & ornamen masuk dengan efek terpilih di halaman pembuka.'],['text','Animasi Teks','Nama tampil per kata, satu per satu (efek stagger).'],['reveal','Scroll Reveal','Bagian muncul ulang saat masuk layar, saat menggulir naik maupun turun.']].map(([k,l,d])=>`<label class="togglerow"><span><span style="font-size:12px;font-weight:500">${l}</span><span style="display:block;font-size:10px;color:var(--mut)">${d}</span></span><input type="checkbox" ${state.anim[k]?'checked':''} onchange="setAnim('${k}',this.checked)"></label>`).join('')}
   <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
    <div style="font-size:11px;font-weight:600;margin-bottom:2px">🎬 Efek Animasi Cover — pilih 1 dari 10</div>
    <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Cara halaman pembuka masuk saat undangan dibuka.</div>
@@ -887,11 +982,13 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    ${FX_COVER.map(([id,n,d])=>`<button class="fxbtn ${fxCoverId()===id?'on':''}" onclick="setAnim('effect','${id}')"><b>${n}</b><span>${d}</span></button>`).join('')}
    </div></div>
   <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
-   <div style="font-size:11px;font-weight:600;margin-bottom:2px">📜 Efek Scroll Reveal — pilih 1 dari ${FX_SCROLL.length}</div>
-   <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Cara tiap bagian muncul saat tamu menggulir ke bawah.</div>
+   <div style="font-size:11px;font-weight:600;margin-bottom:2px">📜 Efek Scroll Reveal — pilih efek dasar dari ${FX_SCROLL.length}</div>
+   <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Bagian masuk dari arah beragam dan reveal diputar ulang saat menggulir naik/turun.</div>
    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
    ${FX_SCROLL.map(([id,n,d])=>`<button class="fxbtn ${fxScrollId()===id?'on':''}" onclick="setAnim('scroll','${id}')"><b>${n}</b><span>${d}</span></button>`).join('')}
-   </div></div>
+   </div>
+   <label class="togglerow" style="margin-top:10px"><span><span style="font-size:12px;font-weight:500">Variasikan efek tiap bagian</span><span style="display:block;font-size:10px;color:var(--mut)">ON: gerak atas/bawah dan kiri/kanan bergantian. OFF: pakai satu efek sama di semua bagian.</span></span><input type="checkbox" ${state.anim.scrollMix!==false?'checked':''} onchange="setAnim('scrollMix',this.checked)"></label>
+  </div></div>
  </div></div>`}
 
 /* ============ VIEW: SLIDE (10 slide konten baru) ============ */
@@ -1276,7 +1373,7 @@ function listLines(v){return String(v||'').split('\n').map(x=>x.trim()).filter(B
 function hexOk(h){return/^#[0-9a-fA-F]{3,8}$/.test(h)}
 function slideBlocks(){
  const f=state.form,SL=state.slides,out=[];
- const card=(inner,extra)=>`<div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${fontFam(state.fontBody)};${extra||''}">${inner}</div>`;
+ const card=(inner,extra)=>`<div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${fontAttr(state.fontBody)};${extra||''}">${inner}</div>`;
  const kicker=t=>`<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">${t}</div>`;
  if(SL.timeline.on){const it=listLines(SL.timeline.items);
   if(it.length)out.push(card(`${kicker('⏱️ Timeline Acara')}<div style="margin-top:12px">`+it.map((x,i)=>{const s=slideItem(x);return `
@@ -1288,7 +1385,7 @@ function slideBlocks(){
     <div style="${i<it.length-1?'padding-bottom:14px':''}"><div style="font-size:12px;font-weight:700;color:#111">${esc(s.a||'Sesi')} ${s.b?`<span style="font-weight:400;color:#737373">• ${esc(s.b)}</span>`:''}</div></div>
    </div>`}).join('')+'</div>'))}
  if(SL.story.on&&SL.story.text.trim())out.push(`<div style="margin-top:24px;text-align:center;padding:20px 18px;border-radius:20px;background:linear-gradient(170deg,rgba(255,255,255,.92),rgba(255,255,255,.72));border:1px solid #ddd">
-  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;font-family:${fontFam(state.fontBody)}">💞 Cerita Kami</div>
+  <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;font-family:${fontAttr(state.fontBody)}">💞 Cerita Kami</div>
   <p style="margin-top:10px;font-size:12.5px;font-style:italic;line-height:1.8;color:#444;font-family:Georgia,serif">${esc(SL.story.text)}</p></div>`);
  {const q=SL.quote.custom?{text:SL.quote.text,author:SL.quote.author}:(QUOTES[state.event]||QUOTES.pernikahan);
   if(SL.quote.on&&q.text)out.push(`<div style="margin-top:24px;text-align:center;padding:22px 18px;border-radius:20px;background:rgba(255,255,255,.9);border:1px solid #ddd">
@@ -1328,30 +1425,41 @@ function slideBlocks(){
 
 function phoneHtml(){
  const f=state.form,tp=tplOf(),g=selGuest(),single=state.linkMode==='single';
- const dark=state.darkMode;
+ const dark=state.darkMode,wedding=state.event==='pernikahan';
  const play=animTrigger(),AN=state.anim,CV=play&&AN.cover,TX=play&&AN.text,RV=AN.reveal;
  const CE=fxCoverId(),SC=fxScrollId(),h1d=tp.char?520:350;
- const WR=(d,html)=>RV?`<div class="scroll-reveal fx-s-${SC}">${html}</div>`:html;
+ let scrollSectionIndex=0;
+ const WR=(d,html)=>{
+  if(!RV)return html;
+  const effect=fxScrollForSection(SC,scrollSectionIndex++,AN.scrollMix!==false);
+  return `<div class="scroll-reveal fx-s-${effect} sr-axis-${fxScrollAxis(effect)}">${html}</div>`
+ };
  /* Artwork 3D tema (bila ada & latar masih "gradient" bawaan): dipakai sebagai
     latar layar supaya yang dilihat pemilik sama dengan yang dilihat tamu. */
  const cvGaya=cvGayaAktif();
  const art3d=(!dark&&tp.bg3d&&state.bgType==='gradient'&&cvGaya!=='full')?tp.bg3d:'';
+ const paperArt=(!dark&&wedding&&tp.bgPaper&&state.bgType==='gradient'&&cvGaya!=='full')?tp.bgPaper:'';
  let bg='';
  if(!dark){
   if(cvGaya==='full')bg=`background:linear-gradient(180deg,rgba(8,6,5,.5),rgba(8,6,5,.14) 26%,rgba(8,6,5,.42) 50%,rgba(8,6,5,.9) 76%,rgba(8,6,5,.95)),url(${state.cover}) center/cover;color:#fff`;
   else if(art3d)bg=`background:linear-gradient(180deg,rgba(12,10,8,.5),rgba(12,10,8,.22) 30%,rgba(12,10,8,.34) 62%,rgba(12,10,8,.7)),url(${art3d}) center/cover;color:#F7F2E9`;
+  else if(paperArt)bg=`background:url(${paperArt}) center/100% 100%;color:${tp.ink}`;
   else if(state.bgType==='polos')bg=`background:${tp.g[0]};color:${tp.ink}`;
   else if(state.bgType==='foto'&&state.cover)bg=`background:linear-gradient(rgba(255,255,255,.82),rgba(255,255,255,.88)),url(${state.cover}) center/cover;color:${tp.ink}`;
   else bg=`background:${tplGrad(tp)};color:${tp.ink}`;
  }
- const patStyle=(dark||art3d||cvGaya==='full')?'':(state.bgType==='pattern'?(patCss(tp)||`background-image:radial-gradient(${tp.accent}26 1.5px,transparent 1.8px);background-size:22px 22px;`):state.bgType==='foto'?'':patCss(tp));
- const tF=fontFam(state.fontTitle),bF=fontFam(state.fontBody);
- const nameColor=dark?'#FDE68A':(cvGaya==='full'?'#FFFFFF':(art3d?'#F7F2E9':state.accent));
+ const patStyle=(dark||art3d||paperArt||cvGaya==='full')?'':(state.bgType==='pattern'?(patCss(tp)||`background-image:radial-gradient(${tp.accent}26 1.5px,transparent 1.8px);background-size:22px 22px;`):state.bgType==='foto'?'':patCss(tp));
+ const tF=fontAttr(state.fontTitle),bF=fontAttr(state.fontBody);
+ const nameColor=dark?'#FDE68A':(cvGaya==='full'?'#FFFFFF':(wedding?'#344238':(art3d?'#F7F2E9':state.accent)));
  /* Bingkai foto cover di pratinjau — cermin gaya yang dipakai undangan tamu. */
  const cvB=CV_BENTUK[cvGaya]||CV_BENTUK.kotak,cvp=cvPos();
  const blokFotoPrev=(cvGaya==='none'||cvGaya==='full')?''
   :`<div style="margin:12px auto 0;width:${cvB.w}%;aspect-ratio:${cvB.as};border-radius:${cvB.r};padding:${cvB.p};background:${cvB.bg};box-shadow:${cvB.sh};box-sizing:border-box;overflow:hidden;position:relative;${cvB.rot?'transform:rotate('+cvB.rot+');':''}"><img src="${state.cover}" alt="Foto cover" style="width:100%;height:100%;object-fit:cover;object-position:${cvp.x}% ${cvp.y}%;transform:scale(${cvp.z});border-radius:${cvB.ir};display:block"></div>`;
  const dt=new Date(f.tanggalAcara);
+ const MONTH_NAMES=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+ const dateParts=String(f.tanggalAcara||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+ const weddingDateLabel=dateParts?`${Number(dateParts[3])} ${MONTH_NAMES[Number(dateParts[2])-1]} ${dateParts[1]}`:'Tanggal acara';
+ const weddingPaperCard=paperArt&&tp.id==='jawa-elegan'?`background-image:url(${paperArt});background-size:100% 100%;background-position:center;background-repeat:no-repeat;`:'';
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
  const wordSpan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="a-word" style="animation-delay:${d0+i*80}ms">${esc(w)}</span>`).join(' ');
  const h1Inner=state.event==='pernikahan'
@@ -1371,20 +1479,22 @@ function phoneHtml(){
    <div style="width:12px;height:12px;border-radius:99px;background:#ddd"></div>
   </div>
   <div class="notch"></div>
-   <div class="${dark?'emerald-bg':''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg}">
-   <div class="${(CV||TX||RV)?'ap':''}" style="padding:20px;text-align:center;font-family:${tF};${patStyle}">
-   <div style="position:relative;${borderOf().id!=='none'?'padding:18px 12px;margin:0 0 14px;':''}${borderCss()}">${borderCorners()}
+   <div class="${dark?'emerald-bg ':''}${wedding?'wedding-cover theme-'+tp.id:''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg}">
+   <div class="${(CV||TX||RV?'ap ':'')}${wedding?'wedding-preview-inner':''}" style="padding:${wedding?'12px 12px 18px':'20px'};text-align:center;font-family:${tF};${patStyle}">
+   <div class="${wedding?'wedding-invite-card':''}" style="position:relative;${wedding?'padding:16px 12px;margin:0 0 14px;border-radius:18px;background:rgba(255,253,247,.92);box-shadow:0 10px 28px rgba(25,35,27,.15);':''}${weddingPaperCard}${!wedding&&borderOf().id!=='none'?'padding:18px 12px;margin:0 0 14px;':''}${borderCss()}">${borderCorners()}
     ${f.showBismillah?`<div class="${CV?'fx-c-'+CE:''}" style="margin-bottom:12px;${CV?'animation-delay:250ms':''}"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
      <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}
     ${tp.deco?`<div class="${CV?'a-deco':''}" style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px;${CV?'animation-delay:150ms':''}">${tp.deco}</div>`:''}
     ${state.goldOrn?`<div class="${CV?'a-deco':''}" style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent);${CV?'animation-delay:250ms':''}"></div>`:''}
     ${blokFotoPrev}
-    <div class="${CV?'fx-c-'+CE:''}" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF};${CV?'animation-delay:300ms':''}">${titleOf()}</div>
-    ${tp.char?`<div class="${CV?'fx-c-'+CE:''}" title="Karakter tema" style="font-size:42px;line-height:1.1;margin-top:14px;${CV?'animation-delay:420ms':''}">${tp.char}</div>`:''}
-    <h1 class="${CV&&!TX?'fx-c-'+CE:''}" style="margin-top:${tp.char?6:12}px;font-size:28px;line-height:.95;font-weight:700;color:${nameColor};${CV&&!TX?'animation-delay:'+h1d+'ms':''}">${h1Inner}</h1>
+    <div class="${wedding?'wedding-kicker ':''}${CV?'fx-c-'+CE:''}" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF};${CV?'animation-delay:300ms':''}">${wedding?'You’re Invited':titleOf()}</div>
+    ${tp.char&&!wedding?`<div class="${CV?'fx-c-'+CE:''}" title="Karakter tema" style="font-size:42px;line-height:1.1;margin-top:14px;${CV?'animation-delay:420ms':''}">${tp.char}</div>`:''}
+    <h1 class="${CV&&!TX?'fx-c-'+CE:''}" style="margin-top:${tp.char&&!wedding?6:12}px;font-size:${wedding?32:28}px;line-height:${wedding?1.02:.95};font-weight:700;color:${nameColor};${CV&&!TX?'animation-delay:'+h1d+'ms':''}">${h1Inner}</h1>
+    ${wedding?`<div class="wedding-subtitle">akan melangsungkan pernikahan</div>`:''}
     <div class="${CV?'fx-c-'+CE:''}" style="margin-top:12px;font-size:11px;line-height:1.7;opacity:.8;font-family:${bF};${CV?'animation-delay:'+(tp.char?980:800)+'ms':''}">
     ${state.event==='pernikahan'?`<div>${esc(f.putraPutri)}</div><div style="margin-top:4px">${esc(f.putriDari)}</div>`
      :`<div>${esc(f.putraDari)} ${f.umurAnak||f.usia?`• ${esc(f.umurAnak||f.usia+' Tahun')}`:''} ${f.temaUltah||f.temaAqiqah?`• ${esc(state.event==='ultah'?f.temaUltah:f.temaAqiqah)}`:''}</div>`}</div>
+    ${wedding?`<div class="wedding-date">${esc(weddingDateLabel)}</div>${f.jamAcara?`<div class="wedding-meta">◷ ${esc(f.jamAcara)} ${esc(f.zona||'WIB')}</div>`:''}${f.venue?`<div class="wedding-meta">⌖ ${esc(f.venue)}</div>`:''}<p class="wedding-note">Bersama keluarga, kami mengundang Anda untuk merayakan hari bahagia kami.</p><button class="wedding-open">✉ Buka Undangan</button>`:''}
     ${g?`<div style="margin:20px auto 0;max-width:260px;border-radius:16px;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border:1px solid #ddd;padding:12px;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.05);font-family:${bF}">
      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;display:flex;align-items:center;justify-content:center;gap:4px">Kepada YTH ${single?'<span style="padding:2px 6px;border-radius:99px;background:#111;color:#fff;font-size:8px">1 LINK MODE</span>':''}</div>
      <div style="font-size:14px;font-weight:600;margin-top:4px">${single?'Tamu Undangan':esc(g.nama)}</div>

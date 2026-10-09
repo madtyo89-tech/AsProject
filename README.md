@@ -42,17 +42,41 @@ Catatan:
 - **Selesaikan Undangan** memvalidasi nama, tanggal, jam, lokasi, dan slug.
   Layar **Undangan sudah jadi!** baru muncul setelah Supabase mengonfirmasi
   penyimpanan snapshot lengkap. Kegagalan jaringan/database tidak dianggap sukses.
+  Publish memakai Supabase JS bila CDN tersedia, dengan fallback REST bila CDN diblokir;
+  jika Supabase menolak simpan, Studio menampilkan pesan penyebab dan langkah perbaikannya.
 - Layar selesai menyediakan salin link tamu, WhatsApp, lihat undangan, edit,
   serta akses menu master terpisah. Link master bersifat privat.
 - Membuat undangan baru meminta konfirmasi sebelum mengganti draft aktif.
   Arsip/katalog tetap dipertahankan dan kunci master baru dibuat.
 
-Uji UI opsional: pasang `jsdom`, `playwright-core`, dan `@sparticuz/chromium`
-melalui npm dengan `--no-save --package-lock=false`. Jalankan
+Uji publish tanpa menulis ke database produksi: `node tools/test-publish-fallback.cjs`
+(dengan `jsdom`). Uji UI opsional: pasang `jsdom`, `playwright-core`, dan
+`@sparticuz/chromium` melalui npm dengan `--no-save --package-lock=false`. Jalankan
 `node tools/test-floating-preview.cjs`, `node tools/test-scroll-effects.cjs`,
 dan (setelah server lokal aktif di :8080) `node tools/test-mobile-browser.cjs`.
 Browser memerlukan library sistem Chromium; atur `LD_LIBRARY_PATH` bila memakai
-library bundled. Tes publish menggunakan fixture lokal, **bukan database produksi**.
+library bundled. Tes publish memakai fixture lokal, **bukan database produksi**.
+
+## Pembaruan template pernikahan
+
+Cover pernikahan kini memakai susunan editorial seperti contoh: judul undangan, nama pasangan,
+tanggal, jam, lokasi, pesan singkat, dan tombol menuju detail/RSVP. Kartu, aksen, dan halaman
+isi mengambil palet dari template yang dipilih. Setiap desain tetap dibedakan menurut namanya:
+Adat Jawa Elegan memakai bingkai batik kawung/parang, Minimalist Sage memakai watercolor
+eucalyptus, Ice Blue memakai artwork floral es biru, dan tema lain mempertahankan artwork
+serta palet khas masing-masing. Preview Studio dan undangan live memakai skin yang sama;
+artwork ringan juga disematkan saat menyimpan file HTML mandiri.
+
+Uji: `node tools/test-wedding-templates.cjs` (dengan `jsdom` untuk uji render; tanpa `jsdom`
+tetap memeriksa pasangan tema/aset secara statis).
+
+## Efek gulir undangan
+
+Editor menyediakan 34 pilihan Scroll Reveal; 10 efek baru mencakup Tilt Masuk, Flip Samping,
+Gulir Masuk, Lenting, Wipe Vertikal/Horizontal, Buka Lipatan, Lentur, Glow, dan Blur Turun.
+Efek bisa diseragamkan atau dibuat bervariasi otomatis per bagian; reveal diputar ulang saat scroll naik/turun dan arah masuk mengikuti gerak. Perilakunya sama di Studio dan undangan live, serta CSS/observer disematkan pada unduhan HTML mandiri agar tetap berjalan offline.
+
+Uji: `node tools/test-scroll-effects.cjs`.
 
 ## Bantuan tombol
 

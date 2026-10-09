@@ -272,7 +272,8 @@ def _fx_ids(s, nama_arr):
     m = re.search(r"const %s=\[(.*?)\];" % nama_arr, s, re.S)
     if not m:
         return None
-    return re.findall(r"\['([a-z-]+)'", m.group(1))
+    ids = re.findall(r"\['([a-z-]+)'", m.group(1))
+    return ids or re.findall(r"'([a-z-]+)'", m.group(1))
 
 
 def _font_ids(s):
@@ -337,15 +338,18 @@ def cek_pipeline_undangan():
     # 10) snapshot publish membawa slides + anim
     lapor("ok" if "slides:JSON.parse(JSON.stringify(state.slides)),anim" in studio else "masalah",
           "studio.html: publish() menyimpan slides & anim ke snapshot data")
-    # 11) 10 efek animasi cover & 24 efek scroll: daftar id identik di kedua file
+    # 11) 10 efek animasi cover & 34 efek scroll: daftar id identik di kedua file
     for nama_arr in ("FX_COVER", "FX_SCROLL"):
         a, b = _fx_ids(studio, nama_arr), _fx_ids(undangan, nama_arr)
         if a is None or b is None:
             lapor("masalah", f"array {nama_arr} tidak ditemukan di studio/undangan")
-        elif a == b and len(a) == (24 if nama_arr == "FX_SCROLL" else 10):
+        elif a == b and len(a) == (34 if nama_arr == "FX_SCROLL" else 10):
             lapor("ok", f"{nama_arr} identik di studio & undangan ({len(a)} efek)")
         else:
             lapor("masalah", f"{nama_arr} studio != undangan! studio={a} undangan={b}")
+    ma, mb = _fx_ids(studio, "FX_SCROLL_MIX"), _fx_ids(undangan, "FX_SCROLL_MIX")
+    lapor("ok" if ma == mb and ma and len(ma) == 16 else "masalah",
+          f"urutan efek campuran per bagian konsisten ({len(ma or [])} efek)")
     # 12) daftar font (15) identik di kedua file
     fa, fb = _font_ids(studio), _font_ids(undangan)
     if fa is None or fb is None:
@@ -672,6 +676,38 @@ def cek_scan_panitia():
           "aplikasi Android: kamera web untuk scan QR diizinkan")
 
 
+# ------------------------------------ 20. tema pernikahan sesuai nama template
+def cek_template_pernikahan():
+    print("\n[20] Skin template pernikahan (Batik, Sage, Ice Blue, dan palet tema)")
+    st, und = baca("studio.html"), baca("undangan.html")
+    expected = {
+        "jawa-elegan": "assets/wedding/jawa-batik-watercolor.webp",
+        "minimalist-sage": "assets/wedding/minimalist-sage-watercolor.webp",
+    }
+    for tid, asset in expected.items():
+        for rel, text in (("studio.html", st), ("undangan.html", und)):
+            cocok = f"id:'{tid}'" in text and f"bgPaper:'{asset}'" in text
+            lapor("ok" if cocok else "masalah", f"{rel}: {tid} memakai artwork tema yang tepat")
+        full = os.path.join(ROOT, asset)
+        ada = os.path.isfile(full)
+        lapor("ok" if ada else "masalah", f"artwork {asset} ada")
+        if ada:
+            ringan = os.path.getsize(full) < 300000
+            lapor("ok" if ringan else "masalah", f"artwork {asset} ringan untuk mobile/export (<300 KB)")
+    ok_ice = all(f"id:'ice-blue'" in text and "assets/tema-3d/ice-blue.webp" in text for text in (st, und))
+    lapor("ok" if ok_ice else "masalah", "Ice Blue tetap memakai artwork floral es biru")
+    for token in ("body.wedding-cover #cover", "body.wedding-cover .wrap", "wedding-invite-card"):
+        lapor("ok" if token in und else "masalah", f"undangan.html: skin wedding {token} tersedia")
+    if shutil.which("node"):
+        skrip = os.path.join(ROOT, "tools", "test-wedding-templates.cjs")
+        r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+        baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith(("PASS:", "INFO:"))]
+        lapor("ok" if r.returncode == 0 else "masalah",
+              "uji template pernikahan: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+    else:
+        lapor("info", "node tidak tersedia — uji template pernikahan dilewati")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -680,7 +716,8 @@ def main():
                cek_selector_injeksi, cek_konten, cek_duplikat_injeksi, cek_peta_demo,
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
-               cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia):
+               cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
+               cek_template_pernikahan):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
