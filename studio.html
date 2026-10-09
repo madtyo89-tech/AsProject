@@ -69,6 +69,7 @@ input,textarea,select{outline:0}
 .urlbar{height:36px;background:var(--soft);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 12px;gap:8px}
 .urlpill{flex:1;min-width:0;font-family:ui-monospace,monospace;font-size:10px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .notice{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:99px;z-index:99;font-size:12px;font-weight:500;box-shadow:0 12px 40px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px}
+.notice button{background:#fff;color:#111;border:0;border-radius:99px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;margin-top:6px}
 .guestrow{border-radius:12px;border:1px solid var(--line);padding:10px;display:flex;align-items:center;gap:8px;background:#fbfaf8;margin-bottom:8px}
 .guestrow.sel{border-color:var(--gold);background:var(--cream)}
 .upload-dash{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:12px;border:2px dashed rgba(212,175,55,.4);background:rgba(255,251,235,.5);cursor:pointer;font-size:13px;transition:.15s}
@@ -597,6 +598,16 @@ function audioExt(file){
  return (fromName||map[file.type]||'mp3').toLowerCase()}
 function audioMime(ext){const m={mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg',webm:'audio/webm',flac:'audio/flac'};return m[ext]||'audio/mpeg'}
 function notifyErr(msg,ms){document.querySelectorAll('.notice').forEach(n=>n.remove());const n=document.createElement('div');n.className='notice';n.style.maxWidth='340px';n.style.lineHeight='1.5';n.innerHTML='<span style="width:20px;height:20px;border-radius:99px;background:#ef4444;display:grid;place-items:center;font-size:12px;flex:none">!</span><span>'+msg+'</span>';document.body.append(n);setTimeout(()=>n.remove(),ms||8000)}
+function notifyWarn(msg,ms){document.querySelectorAll('.notice').forEach(n=>n.remove());const n=document.createElement('div');n.className='notice';n.style.maxWidth='340px';n.style.lineHeight='1.5';n.innerHTML='<span style="width:20px;height:20px;border-radius:99px;background:#f59e0b;display:grid;place-items:center;font-size:12px;flex:none">!</span><span>'+msg+'</span>';document.body.append(n);setTimeout(()=>n.remove(),ms||10000)}
+/* Kolom snapshot "data" belum ada di tabel invitation_drafts (schema lama atau
+   cache PostgREST basi) → error PGRST204/42703 yang menyebut kolom 'data'. */
+function isMissingDataCol(e){const msg=String(e&&e.message||e||'').toLowerCase();const code=String(e&&e.code||'').toUpperCase();
+ return (code==='PGRST204'||code==='42703')&&/data/.test(msg)&&/column|field|schema cache/.test(msg)}
+/* SQL minimal perbaikan schema — bisa disalin sekali klik dari peringatan/toast. */
+const FIX_SQL="alter table public.invitation_drafts add column if not exists data jsonb;";
+function copyFixSql(){const done=()=>notifyWarn('SQL disalin — buka Supabase → SQL Editor, tempel, jalankan, lalu Publish ulang.',6000);
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(FIX_SQL).then(done).catch(()=>{window.prompt('Salin SQL perbaikan:',FIX_SQL)})}
+ else{window.prompt('Salin SQL perbaikan:',FIX_SQL)}}
 function isNetworkError(e){return /failed to fetch|networkerror|network request failed|load failed|fetch failed/i.test(String(e&&e.message||e||''))}
 async function upsertInvitationDraft(payload){
  /* Gunakan client normal bila CDN Supabase berhasil dimuat. Bila diblokir/gagal,
@@ -627,7 +638,7 @@ function publishErrorHtml(e){
  const text=(detail+' '+code).toLowerCase();
  let help='Periksa koneksi internet dan coba lagi. Undangan tetap tersimpan sebagai draft di perangkat ini.';
  if(/data.*(column|field)|column.*data|schema cache|pgrst204|42703/.test(text))
-  help='Kolom snapshot belum tersedia. Buka Supabase → SQL Editor, jalankan file <b>supabase-schema.sql</b>, lalu coba Publish lagi.';
+  help='Kolom snapshot belum tersedia. Buka Supabase → SQL Editor, jalankan file <b>supabase-schema.sql</b>, lalu coba Publish lagi.<br><button onclick="copyFixSql()">Salin SQL perbaikan</button>';
  else if(/row.?level security|rls|42501|permission denied|violates.*policy/.test(text))
   help='Supabase menolak izin simpan. Jalankan ulang <b>supabase-schema.sql</b> di SQL Editor untuk memperbaiki policy tabel <b>invitation_drafts</b>.';
  else if(/invalid api key|jwt expired|invalid jwt|unauthorized|\b401\b/.test(text))
@@ -774,13 +785,24 @@ async function publish(){
   publishedAt:new Date().toISOString()};
  if(JSON.stringify(data).length>1500000){notify('Data terlalu besar. Kurangi ukuran foto sebelum menyelesaikan undangan.');return}
  payload.data=data;
- await upsertInvitationDraft(payload);
+ let snapshotSkipped=false;
+ try{await upsertInvitationDraft(payload)}
+ catch(e){
+  /* Kolom snapshot "data" belum ada di Supabase (schema lama) — jangan gagalkan
+     Publish sepenuhnya: simpan kolom dasar saja supaya link tamu tetap hidup.
+     Undangan live dirender dari kolom dasar + template sampai schema diperbarui. */
+  if(!isMissingDataCol(e))throw e;
+  delete payload.data;
+  await upsertInvitationDraft(payload);
+  snapshotSkipped=true;
+ }
  state.published=true;state.publishedLink=baseUrl();
  const nama=displayName();
  const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
   snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos())}};
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  state.stage='ready';save();render();window.scrollTo(0,0);document.querySelectorAll('.notice').forEach(n=>n.remove());
+ if(snapshotSkipped)notifyWarn('<b>Publish berhasil tanpa snapshot.</b> Kolom <b>data</b> belum ada di Supabase — undangan live memakai kolom dasar + template (tampilan bisa berbeda dari studio, dashboard Master terbatas). Jalankan <b>supabase-schema.sql</b> di SQL Editor, atau <button onclick="copyFixSql()">salin SQL perbaikan</button>, lalu Publish ulang.',25000);
  }catch(e){console.error('Publish undangan gagal:',e);notifyErr(publishErrorHtml(e),15000)}
  finally{_publishing=false;$('root').inert=false;$('root').setAttribute('aria-busy','false');publishButtons.forEach(({button,label})=>{button.textContent=label})}
 }

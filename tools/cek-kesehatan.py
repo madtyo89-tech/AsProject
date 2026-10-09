@@ -338,6 +338,13 @@ def cek_pipeline_undangan():
     # 10) snapshot publish membawa slides + anim
     lapor("ok" if "slides:JSON.parse(JSON.stringify(state.slides)),anim" in studio else "masalah",
           "studio.html: publish() menyimpan slides & anim ke snapshot data")
+    # 10b) Publish tidak gagal total bila kolom snapshot belum ada (PGRST204):
+    #      fallback simpan kolom dasar + peringatan berisi SQL perbaikan sekali klik
+    ok = ("isMissingDataCol" in studio and "delete payload.data" in studio
+          and "snapshotSkipped" in studio and "copyFixSql" in studio
+          and "add column if not exists data jsonb" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: Publish fallback tanpa snapshot + SQL perbaikan bila kolom 'data' belum ada")
     # 11) 10 efek animasi cover & 34 efek scroll: daftar id identik di kedua file
     for nama_arr in ("FX_COVER", "FX_SCROLL"):
         a, b = _fx_ids(studio, nama_arr), _fx_ids(undangan, nama_arr)

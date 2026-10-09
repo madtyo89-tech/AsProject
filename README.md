@@ -29,6 +29,11 @@ Catatan:
   jalankan ulang di SQL Editor Supabase agar publish baru menyimpan snapshot
   lengkap. Draft lama (tanpa `data`) tetap bisa dibuka — renderer memakai
   kolom dasar + template.
+- Bila kolom `data` belum ada (error PGRST204), **Publish tidak gagal total**:
+  studio menyimpan kolom dasar saja, menampilkan peringatan amber berisi
+  tombol **Salin SQL perbaikan** (`alter table … add column if not exists
+  data jsonb;`), dan undangan live dirender dari kolom dasar + template.
+  Setelah schema diperbarui, Publish ulang untuk menyimpan snapshot lengkap.
 - Uji pipeline: `python3 tools/cek-kesehatan.py` dan
   server lokal `python3 tools/serve.py` (emulasi 404-routing Pages, default :8080).
 
