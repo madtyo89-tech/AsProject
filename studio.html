@@ -295,8 +295,8 @@ const DOA={
  khitanan:{ar:'اللَّهُمَّ اجْعَلْهُ مِنَ الصَّالِحِيْنَ',latin:'Allahummaj\u2018alhu minash shalihin',arti:'Ya Allah jadikanlah ia anak yang shalih...'},
  ultah:{ar:'اللَّهُمَّ طَوِّلْ عُمْرَهُ وَصَحِّحْ جَسَدَهُ',latin:'Allahumma thawwil \u2018umrahu...',arti:'Ya Allah panjangkan umurnya...'},
  aqiqah:{ar:'أُعِيْذُكَ بِكَلِمَاتِ اللهِ التَّامَّةِ',latin:'U\u2018idzuka bikalimatillahit tammah',arti:'Aku memohon perlindungan...'}};
-const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ultah Anak',aqiqah:'Aqiqah'};
-const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶'};
+const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ultah Anak',aqiqah:'Aqiqah',all:'Semua Acara'};
+const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶',all:'✨'};
 
 /* ===== 42 TEMPLATE: katalog publik (index.html) + varian premium; urutan array
    HARUS identik dengan undangan.html & katalog Pn di index.html (cek-kesehatan [12]/[13]) ===== */
@@ -339,9 +339,15 @@ const TPL=[
  {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',harga:75000,g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',badge:'',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins',desc:'Merah kereta & aspal kota, chugga-chugga si kecil melaju'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',badge:'BARU',char:'👸',bg3d:'assets/tema-3d/fairy-princess.webp',deco:'👸 ✨ 👸',pat:'',ft:'dancing',desc:'Rosa pastel & kelopak bunga, ultah si kecil sang putri peri'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',badge:'BARU',char:'🦄',bg3d:'assets/tema-3d/unicorn-magic.webp',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico',desc:'Lavender magis & bintang-bintang, mimpi si kecil jadi nyata'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',badge:'BARU',char:'🌸',bg3d:'assets/tema-3d/rose-bouquet.webp',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento',desc:'Bunga mekar & pita merah muda, ultah feminin yang manis sempurna'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',badge:'BARU',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair',desc:'Mawar lembut nan anggun, aqiqah si mungil perempuan terkasih'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',badge:'BARU',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing',desc:'Krem hangat & sayap peri, aqiqah si putri kecil yang bercahaya'},
  /* ==== 2 TEMA PREMIUM BARU (wedding, tier 89k, artwork satin & beludru) ==== */
  {id:'champagne-royale',nama:'Champagne Royale',ev:'pernikahan',harga:89000,g:['#FBF6EC','#F1E3C9','#DFC49A'],accent:'#9A742D',ink:'#54402B',badge:'PREMIUM',char:'🥂',bg3d:'assets/tema-3d/champagne-royale.webp',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',desc:'Satin sampanye & foil emas — kemewahan ballroom yang lembut dan timeless'},
- {id:'violet-imperial',nama:'Violet Imperial',ev:'pernikahan',harga:89000,g:['#241028','#37193E','#4E2656'],accent:'#E2B458',ink:'#F2E8F7',badge:'PREMIUM',char:'🦚',bg3d:'assets/tema-3d/violet-imperial.webp',deco:'❖ ✦ ❖',pat:'',ft:'playfair',desc:'Beludru ungu royal & emas majestik — resepsi malam yang anggun berwibawa'}];
+ {id:'violet-imperial',nama:'Violet Imperial',ev:'pernikahan',harga:89000,g:['#241028','#37193E','#4E2656'],accent:'#E2B458',ink:'#F2E8F7',badge:'PREMIUM',char:'🦚',bg3d:'assets/tema-3d/violet-imperial.webp',deco:'❖ ✦ ❖',pat:'',ft:'playfair',desc:'Beludru ungu royal & emas majestik — resepsi malam yang anggun berwibawa'},
+ /* ==== 5 TEMA EKSKLUSIF UNIVERSAL (ev:'all', tier 119k) ==== */
+ {id:'aurora-celestial',nama:'Aurora Celestial',ev:'all',harga:119000,g:['#062A2B','#0B3D3C','#12544E'],accent:'#E7C873',ink:'#E6F4EF',badge:'EKSKLUSIF',char:'🌌',bg3d:'assets/tema-3d/aurora-celestial.webp',deco:'🌌 ✦ 🌌',pat:'',ft:'playfair',desc:'Gradasi aurora teal & emas celestial — mewah untuk acara apa pun'},
+ {id:'ivory-pearl',nama:'Ivory Pearl',ev:'all',harga:119000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'EKSKLUSIF',char:'🕊️',bg3d:'assets/tema-3d/ivory-pearl.webp',deco:'🕊️ ✦ 🕊️',pat:'',ft:'cormorant',desc:'Ivory mutiara tenang dengan kilau perunggu — elegan lintas generasi'},
+ {id:'emerald-royale',nama:'Emerald Royale',ev:'all',harga:119000,g:['#07271F','#0D3B2E','#155240'],accent:'#D9B45B',ink:'#E9F3EC',badge:'EKSKLUSIF',char:'💠',bg3d:'assets/tema-3d/emerald-royale.webp',deco:'❖ ✦ ',pat:'',ft:'ebgaramond',desc:'Zamrud royal & kuningan hangat — kesan berwibawa yang bersahaja'},
+ {id:'rose-gold-blush',nama:'Rose Gold Blush',ev:'all',harga:119000,g:['#FDF6F3','#F7E3DC','#EAC9BE'],accent:'#A05C4B',ink:'#5A3A31',badge:'EKSKLUSIF',char:'💐',bg3d:'assets/tema-3d/rose-gold-blush.webp',deco:'💐 ✦ 💐',pat:'',ft:'sacramento',desc:'Blush lembut & rose gold metalik — manis untuk semua momen'},
+ {id:'onyx-platinum',nama:'Onyx Platinum',ev:'all',harga:119000,g:['#101114','#1C1E22','#2B2E33'],accent:'#C9CED6',ink:'#F0F2F4',badge:'EKSKLUSIF',char:'🖤',bg3d:'assets/tema-3d/onyx-platinum.webp',deco:'◆ ✦ ◆',pat:'',ft:'playfair',desc:'Onyx gelap & platinum — modern, tegas, dan mahal'}];
 function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
-function tplsFor(ev){return TPL.filter(t=>t.ev===ev&&!state.katalogHide.includes(t.id))}
+function tplsFor(ev){return TPL.filter(t=>(t.ev===ev||t.ev==='all')&&!state.katalogHide.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
 function patCss(t){
  const tile=(svg,size)=>`background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${size};background-repeat:repeat;`;
@@ -588,7 +594,7 @@ function qrDataUndangan(g){return qrTeks(g.link,state.showNameQr?`${g.nama.slice
 function set(k,v){state[k]=v;save();render()}
 function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Template: '+t.nama)}
 function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle}save();render()}
-function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;state.event=t.ev;state.doa=t.ev;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Preview: '+t.nama)}
+function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Preview: '+t.nama)}
 function upd(k,v){state[k]=v;save();renderPreview()}
 function updF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();renderPreview()}
 function setF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();render()}
@@ -1341,7 +1347,7 @@ function katalog(){return `<div style="padding:16px;display:grid;gap:16px">
    <div style="font-size:13px;font-weight:600">Daftar Template</div>
    <div style="font-size:11px;color:var(--mut)">Klik Preview untuk lihat di phone kanan • Edit inline harga & promo</div>
   </div>
-  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const rows=state.katalog.filter(k=>((TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0]).ev===ev));if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template</div>
+  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const rows=state.katalog.filter(k=>{const te=(TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0]).ev;return te===ev||te==='all'});if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template</div>
  ${rows.map(k=>{const t=TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0];const hid=state.katalogHide.includes(t.id);return `<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;${hid?'opacity:.55':''}">
    <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?17:13}px">${t.char||t.deco.split(' ')[0]||''}</div>
    <div style="flex:1;min-width:0">

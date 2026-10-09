@@ -431,8 +431,14 @@ def cek_fitur_terbaru():
               f"{rel}: 5 tema feminin baru ada ({len(ada)}/5)")
     ids_st = _tpl_ids("studio.html") or []
     ids_ud = _tpl_ids("undangan.html") or []
-    lapor("ok" if ids_st == ids_ud and len(ids_st) == 42 else "masalah",
+    lapor("ok" if ids_st == ids_ud and len(ids_st) == 47 else "masalah",
           f"urutan TPL identik di studio & undangan ({len(ids_st)} template)")
+    # 5 tema eksklusif universal (ev:'all') wajib ada & identik paletnya di kedua file
+    uni = ["aurora-celestial", "ivory-pearl", "emerald-royale", "rose-gold-blush", "onyx-platinum"]
+    ada = [i for i in uni if ("id:'%s'" % i) in studio and ("id:'%s'" % i) in undangan
+           and ("ev:'all'" in studio and "ev:'all'" in undangan)]
+    lapor("ok" if len(ada) == 5 else "masalah",
+          f"studio & undangan: 5 tema eksklusif universal ev:'all' ({len(ada)}/5)")
     # 2) 20 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
     def _border_ids(s):
         m = re.search(r"const BORDERS=\[(.*?)\];", s, re.S)
