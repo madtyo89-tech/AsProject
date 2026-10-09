@@ -99,6 +99,8 @@ input,textarea,select{outline:0}
 @keyframes cElastic{0%{opacity:0;transform:scale(.4)}55%{opacity:1;transform:scale(1.12)}75%{transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
 @keyframes cShimmer{0%{opacity:0;filter:brightness(1.9) saturate(1.3)}60%{opacity:1;filter:brightness(1.15)}100%{opacity:1;filter:none}}
 @keyframes cCurtain{0%{opacity:0;transform:scaleX(.55)}100%{opacity:1;transform:none}}
+@keyframes cVipZoom{0%{opacity:0;transform:scale(1.28);filter:blur(6px)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
+@keyframes cVipCurt{0%{clip-path:inset(0 50% 0 50%);opacity:.4}100%{clip-path:inset(0 0 0 0);opacity:1}}
 .ap .fx-c-fade{animation:cFade .8s ease both}
 .ap .fx-c-zoom{animation:cZoom .7s cubic-bezier(.22,.8,.36,1) both}
 .ap .fx-c-rise{animation:cRise .7s cubic-bezier(.22,.8,.36,1) both}
@@ -111,6 +113,8 @@ input,textarea,select{outline:0}
 .ap .fx-c-elastic{animation:cElastic .8s cubic-bezier(.22,.8,.36,1) both}
 .ap .fx-c-shimmer{animation:cShimmer 1s ease both}
 .ap .fx-c-curtain{animation:cCurtain .9s cubic-bezier(.22,.8,.36,1) both;transform-origin:50% 0}
+.ap .fx-c-vip-zoom{animation:cVipZoom 1.4s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-vip-curtain{animation:cVipCurt 1.2s cubic-bezier(.5,0,.3,1) both}
 .fxbtn{text-align:left;border-radius:12px;padding:10px 12px;display:grid;gap:2px;background:#fff;border:1px solid var(--line);cursor:pointer;transition:.15s;font-family:inherit}
 .fxbtn b{font-size:11px;font-weight:600;color:#111}
 .fxbtn span{font-size:10px;color:var(--mut);line-height:1.4}
@@ -373,7 +377,12 @@ const TPL=[
  {id:'honey-bear',nama:'Honey Bear',ev:'aqiqah',harga:89000,g:['#FFF7E8','#FBE7C2','#F3D193'],accent:'#8F5B15',ink:'#54370E',badge:'PREMIUM',char:'🧸',bg3d:'assets/tema-3d/honey-bear.webp',deco:'🧸 ✦ 🧸',pat:'',ft:'poppins',desc:'Madu hangat & pelukan bear — aqiqah si manis penuh syukur'},
  {id:'blossom-bunny',nama:'Blossom Bunny',ev:'aqiqah',harga:89000,g:['#FBF4FB','#F2E1F2','#E4C8E6'],accent:'#8E4E92',ink:'#4E2A52',badge:'PREMIUM',char:'🐰',bg3d:'assets/tema-3d/blossom-bunny.webp',deco:'🐰 ✦ ',pat:'',ft:'playfair',desc:'Kelinci & kelopak lilac — lembut selembut doa pertama'},
  {id:'little-duck',nama:'Bebek Kuning',ev:'aqiqah',harga:89000,g:['#FFFBEA','#FFF0C2','#FFE28A'],accent:'#9A6A10',ink:'#5C4008',badge:'PREMIUM',char:'🦆',bg3d:'assets/tema-3d/little-duck.webp',deco:'🦆 ✦ ',pat:'',ft:'poppins',desc:'Bebek kuning berenang riang — ceria dan menggemaskan'},
- {id:'moon-lullaby',nama:'Bulan Nina Bobo',ev:'aqiqah',harga:89000,g:['#101A33','#1A2749','#263560'],accent:'#F0D48A',ink:'#E9EDFA',badge:'PREMIUM',char:'🌛',bg3d:'assets/tema-3d/moon-lullaby.webp',deco:'🌛 ✦ ',pat:'',ft:'cormorant',desc:'Bulan sabit & ninabobo bintang — tidur manis, bidadari kecil'}];
+ {id:'moon-lullaby',nama:'Bulan Nina Bobo',ev:'aqiqah',harga:89000,g:['#101A33','#1A2749','#263560'],accent:'#F0D48A',ink:'#E9EDFA',badge:'PREMIUM',char:'🌛',bg3d:'assets/tema-3d/moon-lullaby.webp',deco:'🌛 ✦ ',pat:'',ft:'cormorant',desc:'Bulan sabit & ninabobo bintang — tidur manis, bidadari kecil'},
+ /* ==== 4 TEMA VIP (satu per kategori, 4D, tier 149k) ==== */
+ {id:'royal-garden',nama:'Royal Garden',ev:'pernikahan',harga:149000,g:['#16261B','#22392A','#33513C'],accent:'#E5B7C4',ink:'#EFF5EE',badge:'VIP',tier:'vip',char:'🌹',bg3d:'assets/tema-3d/royal-garden.webp',deco:'🌹 ✦ ',pat:'',ft:'cormorant',part:'petal',scene:'curtain',desc:'Taman mawar royal berlapis depth — kelopak jatuh & parallax 4D'},
+ {id:'galaxy-prestige',nama:'Galaxy Prestige',ev:'khitanan',harga:149000,g:['#0A0E24','#141A3E','#232C63'],accent:'#F0C75E',ink:'#E9EDFC',badge:'VIP',tier:'vip',char:'🌌',bg3d:'assets/tema-3d/galaxy-prestige.webp',deco:'🌌 ✦ ',pat:'',ft:'bebas',part:'gold',scene:'zoom',desc:'Nebula & bintang tiga lapis — zoom-through sinematik kelas VIP'},
+ {id:'abyss-pearl',nama:'Abyss Pearl',ev:'ultah',harga:149000,g:['#062A33','#0B414D','#12596A'],accent:'#F4D8A8',ink:'#E6F5F6',badge:'VIP',tier:'vip',char:'🫗',bg3d:'assets/tema-3d/abyss-pearl.webp',deco:'🫧 ✦ ',pat:'',ft:'pacifico',part:'bubble',scene:'rise',desc:'Palung mutiara bercahaya — gelembung naik & sinar air hidup'},
+ {id:'winter-prestige',nama:'Winter Prestige',ev:'aqiqah',harga:149000,g:['#0E1B2C','#16293E','#223951'],accent:'#BFE3F2',ink:'#EDF5FA',badge:'VIP',tier:'vip',char:'❄️',bg3d:'assets/tema-3d/winter-prestige.webp',deco:'❄️ ✦ ❄️',pat:'',ft:'poppins',part:'snow',scene:'curtain',desc:'Salju pertama yang tenang — tirai terbuka & keping salju melayang'}];
 function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
 function tplsFor(ev){return TPL.filter(t=>(t.ev===ev||t.ev==='all')&&!state.katalogHide.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
@@ -428,21 +437,27 @@ function borderCorners(){const b=borderOf();if(!b||!b.corner)return'';const A=bo
  return c(`top:10px;left:10px;border-top-width:${w}px;border-left-width:${w}px`)+c(`top:10px;right:10px;border-top-width:${w}px;border-right-width:${w}px`)+c(`bottom:10px;left:10px;border-bottom-width:${w}px;border-left-width:${w}px`)+c(`bottom:10px;right:10px;border-bottom-width:${w}px;border-right-width:${w}px`)}
 /* ---- Tier & gating konten EKSKLUSIF: border/font/efek ber-ex hanya aktif
    bila template yang sedang dipakai bertier Eksklusif (Rp119.000). ---- */
-function tierAktif(){const t=tplOf();return (t.tier==='eksklusif'||t.harga>=119000)?'eksklusif':t.harga>=89000?'premium':'basic'}
-function bolehEks(){return tierAktif()==='eksklusif'}
+function tierAktif(){const t=tplOf();return (t.tier==='vip'||t.harga>=149000)?'vip':(t.tier==='eksklusif'||t.harga>=119000)?'eksklusif':t.harga>=89000?'premium':'basic'}
+function bolehEks(){const t=tierAktif();return t==='eksklusif'||t==='vip'}
+function bolehVip(){return tierAktif()==='vip'}
+function isVipFx(k,v){const arr=k==='effect'?FX_COVER:FX_SCROLL;const f=arr.find(x=>x[0]===v);return !!(f&&f[4]==='vip')}
 function isEksB(id){const b=BORDERS.find(x=>x.id===id);return !!(b&&b.ex)}
 function isEksF(id){const f=FONTS.find(x=>x.id===id);return !!(f&&f.ex)}
 function isEksFx(k,v){const arr=k==='effect'?FX_COVER:FX_SCROLL;const f=arr.find(x=>x[0]===v);return !!(f&&f[3])}
 function kunciEks(){notify('🔒 Konten EKSKLUSIF hanya bisa dipakai saat tema tier Eksklusif (Rp119.000) aktif — ganti tema dulu di picker template.');render();return false}
 /* Lepas konten eksklusif bila tema aktif bukan tier Eksklusif (ganti template / buka draft). */
-function paksaTier(){if(bolehEks())return false;let ch=false;
- if(isEksB(state.border)){state.border='double';ch=true}
- if(isEksF(state.fontTitle)){state.fontTitle=tplOf().ft||'playfair';ch=true}
- if(isEksF(state.fontBody)){state.fontBody='inter';ch=true}
- if(isEksFx('effect',state.anim.effect)){state.anim.effect='zoom';ch=true}
- if(isEksFx('scroll',state.anim.scroll)){state.anim.scroll='fade-up';ch=true}
- if(ch)notify('Konten EKSKLUSIF dilepas otomatis karena tema aktif bukan tier Eksklusif.');
- return ch}
+function paksaTier(){let ch=false;
+ if(!bolehVip()&&(isVipFx('effect',state.anim.effect)||isVipFx('scroll',state.anim.scroll))){state.anim.effect='zoom';state.anim.scroll='fade-up';ch=true;
+  notify('Konten VIP dilepas otomatis karena tema aktif bukan tier VIP.')}
+ if(bolehEks())return ch;
+ let ce=false;
+ if(isEksB(state.border)){state.border='double';ce=true}
+ if(isEksF(state.fontTitle)){state.fontTitle=tplOf().ft||'playfair';ce=true}
+ if(isEksF(state.fontBody)){state.fontBody='inter';ce=true}
+ if(isEksFx('effect',state.anim.effect)){state.anim.effect='zoom';ce=true}
+ if(isEksFx('scroll',state.anim.scroll)){state.anim.scroll='fade-up';ce=true}
+ if(ce)notify('Konten EKSKLUSIF dilepas otomatis karena tema aktif bukan tier Eksklusif.');
+ return ch||ce}
 function setBorder(id){if(isEksB(id)&&!bolehEks()){kunciEks();return}state.border=id;save();render()}
 function setFontK(k,v){if(isEksF(v)&&!bolehEks()){kunciEks();return}set(k,v)}
 function miniBorder(b){const A='#8b7358';if(b.corner)return `border:1px dashed ${A}`;let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
@@ -557,7 +572,8 @@ const FX_COVER=[
  ['blur','Blur','kabur lalu fokus'],['pop','Pop','memantul ke ukuran'],
  ['flip','Flip 3D','terangkat dari bawah'],['slide','Slide','meluncur dari samping'],
  ['swing','Swing','bergoyang dari atas'],['elastic','Elastic','pancingan kenur'],
- ['shimmer','Shimmer Gold','kilau emas menyapu',1],['curtain','Tirai Royal','membuka mewah bagai tirai',1]];
+ ['shimmer','Shimmer Gold','kilau emas menyapu',1],['curtain','Tirai Royal','membuka mewah bagai tirai',1],
+ ['vip-zoom','VIP Deep Zoom','zoom dalam sinematik 👑',1,'vip'],['vip-curtain','VIP Curtain','tirai terbuka megah 👑',1,'vip']];
 function fxScrollId(){const v=state.anim.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxCoverId(){const v=state.anim.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 let animSig=null;
@@ -581,7 +597,7 @@ const QUOTES={
  aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
 function setSlide(id,on){if(!state.slides[id])return;state.slides[id].on=on;save();render()}
 function upSlide(id,k,v){if(!state.slides[id])return;state.slides[id][k]=v;save();renderPreview()}
-function setAnim(k,v){if((k==='effect'||k==='scroll')&&isEksFx(k,v)&&!bolehEks()){kunciEks();return}state.anim[k]=v;animSig=null;save();render()}
+function setAnim(k,v){if((k==='effect'||k==='scroll')&&isVipFx(k,v)&&!bolehVip()){notify('👑 Efek VIP hanya untuk tema tier VIP (Rp149.000).');render();return}if((k==='effect'||k==='scroll')&&isEksFx(k,v)&&!bolehEks()){kunciEks();return}state.anim[k]=v;animSig=null;save();render()}
 function rsvpWa(){const n=document.getElementById('rvpN')?document.getElementById('rvpN').value:'Tamu',h=document.getElementById('rvpH')?document.getElementById('rvpH').value:'Hadir',m=document.getElementById('rvpM')?document.getElementById('rvpM').value:'';const t='RSVP — '+titleOf()+' '+displayName()+'\nNama: '+n+'\nKonfirmasi: '+h+(m?'\nPesan: '+m:'')+'\nTautan: '+previewUrl();window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
 /* Tulisan undangan yang dikirim lewat WA — pakai template (bisa diatur di tab Tamu) */
 function waShareText(){const g=selGuest();
@@ -894,6 +910,8 @@ async function dlUndangan(){
   /* Efek gulir juga disematkan supaya reveal tetap bekerja pada HTML mandiri/offline. */
   try{const sr=await fetch('assets/scroll-effects.css');if(sr.ok)scrollFxCss=await sr.text()}catch(e){}
   try{const sj=await fetch('assets/scroll-effects.js');if(sj.ok)scrollFxJs=await sj.text()}catch(e){}
+ let vipJs='';
+ try{const vj=await fetch('assets/vip-4d.js');if(vj.ok)vipJs=await vj.text()}catch(e){}
   /* Artwork tema (termasuk kertas Batik & watercolor Sage) ikut disematkan bila ringan,
      supaya file HTML mandiri tetap mempertahankan tampilan tanpa folder assets/. */
   const tpUndang=TPL.find(t=>t.id===state.tpl)||null;
@@ -909,7 +927,8 @@ async function dlUndangan(){
   const scrollCss=scrollFxCss?`<style data-asproject-scroll-effects>${scrollFxCss}</style>`:'';
   const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>'+
    (scrollFxJs?'\n<script>'+scrollFxJs.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'')+
-   (tcSrc?'\n<script>'+tcSrc.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'');
+   (tcSrc?'\n<script>'+tcSrc.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'')+
+   +(vipJs?'\n<script>'+vipJs.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'');
   if(artCss||scrollCss)html=html.replace('</head>',scrollCss+artCss+'\n</head>');
   const i=html.indexOf('</head>');
   const final=i>=0?html.slice(0,i)+inj+'\n'+html.slice(i):html.replace('</html>',inj+'\n</html>');
@@ -1730,6 +1749,8 @@ function fpDragStart(e){if(e.button!==0||e.target.closest('button'))return;
 window.addEventListener('resize',fitFloat);
 
 if(paksaTier())save();
+/* pratinjau ringan 4D: geser latar pratinjau mengikuti mouse saat tier VIP */
+document.addEventListener('mousemove',function(e){if(typeof bolehVip!=='function'||!bolehVip())return;var ap=document.querySelector('.ap');if(!ap)return;var r=ap.getBoundingClientRect();if(!r.width)return;var dx=(e.clientX-r.left)/r.width*2-1,dy=(e.clientY-r.top)/r.height*2-1;if(dx<-1.2||dx>1.2||dy<-1.2||dy>1.2)return;ap.style.backgroundPosition=(50+dx*3).toFixed(1)+'% '+(50+dy*3).toFixed(1)+'%';},{passive:true});
 render();
 </script>
 </body>

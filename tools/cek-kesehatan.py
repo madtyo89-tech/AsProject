@@ -350,7 +350,7 @@ def cek_pipeline_undangan():
         a, b = _fx_ids(studio, nama_arr), _fx_ids(undangan, nama_arr)
         if a is None or b is None:
             lapor("masalah", f"array {nama_arr} tidak ditemukan di studio/undangan")
-        elif a == b and len(a) == (34 if nama_arr == "FX_SCROLL" else 12):
+        elif a == b and len(a) == (34 if nama_arr == "FX_SCROLL" else 14):
             lapor("ok", f"{nama_arr} identik di studio & undangan ({len(a)} efek)")
         else:
             lapor("masalah", f"{nama_arr} studio != undangan! studio={a} undangan={b}")
@@ -431,7 +431,7 @@ def cek_fitur_terbaru():
               f"{rel}: 5 tema feminin baru ada ({len(ada)}/5)")
     ids_st = _tpl_ids("studio.html") or []
     ids_ud = _tpl_ids("undangan.html") or []
-    lapor("ok" if ids_st == ids_ud and len(ids_st) == 67 else "masalah",
+    lapor("ok" if ids_st == ids_ud and len(ids_st) == 71 else "masalah",
           f"urutan TPL identik di studio & undangan ({len(ids_st)} template)")
     # 5 tema eksklusif universal (ev:'all') wajib ada & identik paletnya di kedua file
     uni = ["aurora-celestial", "ivory-pearl", "emerald-royale", "rose-gold-blush", "onyx-platinum"]
@@ -730,6 +730,18 @@ def cek_template_pernikahan():
         lapor("info", "node tidak tersedia — uji template pernikahan dilewati")
 
 
+def cek_vip_4d():
+    print("\n[21] Mesin & tema VIP 4D (assets/vip-4d.js)")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji VIP 4D dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-vip-4d.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji VIP 4D: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -739,7 +751,7 @@ def main():
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
-               cek_template_pernikahan):
+               cek_template_pernikahan, cek_vip_4d):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

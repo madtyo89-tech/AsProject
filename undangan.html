@@ -207,6 +207,41 @@ body.theme-velvet-cocoa #cover .open{background:linear-gradient(135deg,#c9a273,#
 body.theme-golden-hour #cover .wedding-invite-card{background:linear-gradient(150deg,rgba(255,252,244,.96),rgba(252,236,204,.94))!important;border-color:color-mix(in srgb,var(--accent) 46%,transparent)!important;box-shadow:0 22px 58px rgba(150,100,30,.28),inset 0 0 0 1px color-mix(in srgb,var(--accent) 26%,transparent)}
 body.theme-golden-hour #cover .date{background:rgba(255,252,244,.86);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#573A10}
 body.theme-golden-hour #cover .open{background:linear-gradient(135deg,#c99646,#f0cd8a 52%,#c99646);color:#4a3008;border:1px solid rgba(255,248,232,.8);text-shadow:none}
+/* ---------- VIP 4D: lapisan parallax, partikel, entrance sinematik ---------- */
+body.vip4d #cover{background:linear-gradient(160deg,var(--g0),var(--g1) 58%,var(--g2))!important}
+.vip-bg{position:absolute;inset:-6%;z-index:0;background:center/cover no-repeat;will-change:transform}
+.vip-mid{position:absolute;inset:0;z-index:1;display:grid;place-items:center;font-size:60px;letter-spacing:16px;opacity:.26;pointer-events:none;text-shadow:0 0 30px rgba(0,0,0,.45);will-change:transform}
+.vip-fg{position:absolute;inset:0;z-index:2;pointer-events:none;will-change:transform}
+body.vip4d #cover>.bdfr,body.vip4d #cover>.pat,body.vip4d #cover>.veil,body.vip4d #cover>.brand{position:relative;z-index:3}
+#cover.vip-scene-curtain::before,#cover.vip-scene-curtain::after{content:'';position:absolute;top:0;bottom:0;width:51%;z-index:6;pointer-events:none;background:linear-gradient(180deg,#0b0906,#221a10 60%,#0b0906)}
+#cover.vip-scene-curtain::before{left:0;animation:vipCurtL 1.15s cubic-bezier(.5,0,.3,1) .2s both}
+#cover.vip-scene-curtain::after{right:0;animation:vipCurtR 1.15s cubic-bezier(.5,0,.3,1) .2s both}
+@keyframes vipCurtL{from{transform:none}to{transform:translateX(-103%)}}
+@keyframes vipCurtR{from{transform:none}to{transform:translateX(103%)}}
+#cover.vip-scene-zoom>.bdfr{animation:vipZoom 1.15s cubic-bezier(.22,.8,.36,1) both}
+@keyframes vipZoom{0%{opacity:0;transform:scale(1.22)}100%{opacity:1;transform:scale(1)}}
+#cover.vip-scene-rise>.bdfr{animation:vipRise 1.05s cubic-bezier(.22,.8,.36,1) both}
+@keyframes vipRise{0%{opacity:0;transform:translateY(46px)}100%{opacity:1;transform:none}}
+.vip-btn{position:absolute;z-index:7;right:12px;bottom:12px;border:1px solid rgba(255,255,255,.4);background:rgba(10,8,6,.55);color:#ffe9b8;font-size:11px;font-weight:600;border-radius:99px;padding:8px 14px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+/* VIP skin: kartu kaca gelap + aksen per tema */
+body.theme-royal-garden #cover .wedding-invite-card,body.theme-galaxy-prestige #cover .wedding-invite-card,body.theme-abyss-pearl #cover .wedding-invite-card,body.theme-winter-prestige #cover .wedding-invite-card{position:relative;overflow:hidden;background:linear-gradient(150deg,rgba(8,10,12,.9),rgba(20,26,30,.88))!important;border-color:color-mix(in srgb,var(--accent) 50%,transparent)!important;box-shadow:0 26px 70px rgba(0,0,0,.55),inset 0 0 0 1px color-mix(in srgb,var(--accent) 24%,transparent);-webkit-backdrop-filter:blur(11px);backdrop-filter:blur(11px)}
+body.theme-royal-garden #cover .wedding-invite-card::before,body.theme-galaxy-prestige #cover .wedding-invite-card::before,body.theme-abyss-pearl #cover .wedding-invite-card::before,body.theme-winter-prestige #cover .wedding-invite-card::before{content:'';position:absolute;z-index:0;inset:8px;border:1px solid color-mix(in srgb,var(--accent) 36%,transparent);border-radius:17px;pointer-events:none}
+body.theme-royal-garden #cover .wedding-invite-card .inner,body.theme-galaxy-prestige #cover .wedding-invite-card .inner,body.theme-abyss-pearl #cover .wedding-invite-card .inner,body.theme-winter-prestige #cover .wedding-invite-card .inner{position:relative;z-index:1}
+body.theme-royal-garden #cover h1,body.theme-galaxy-prestige #cover h1,body.theme-abyss-pearl #cover h1,body.theme-winter-prestige #cover h1{color:#F4F7F4;text-shadow:0 2px 20px rgba(0,0,0,.45)}
+body.theme-royal-garden #cover .wedding-subtitle,body.theme-galaxy-prestige #cover .wedding-subtitle,body.theme-abyss-pearl #cover .wedding-subtitle,body.theme-winter-prestige #cover .wedding-subtitle,body.theme-royal-garden #cover .wedding-meta,body.theme-galaxy-prestige #cover .wedding-meta,body.theme-abyss-pearl #cover .wedding-meta,body.theme-winter-prestige #cover .wedding-meta,body.theme-royal-garden #cover .host,body.theme-galaxy-prestige #cover .host,body.theme-abyss-pearl #cover .host,body.theme-winter-prestige #cover .host{color:#DCE4DE}
+body.theme-royal-garden #cover .date{background:rgba(229,183,196,.14);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#F2DCE2}
+body.theme-galaxy-prestige #cover .date{background:rgba(240,199,94,.14);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#F4DFA8}
+body.theme-abyss-pearl #cover .date{background:rgba(244,216,168,.14);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#F6E6C6}
+body.theme-winter-prestige #cover .date{background:rgba(191,227,242,.14);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:#DFF1F9}
+body.theme-royal-garden #cover .open{background:linear-gradient(135deg,#96455c,#E5B7C4 52%,#96455c);color:#16261B;border:1px solid rgba(255,240,244,.7);text-shadow:none}
+body.theme-galaxy-prestige #cover .open{background:linear-gradient(135deg,#9a7a34,#F0C75E 52%,#b98a3e);color:#0A0E24;border:1px solid rgba(255,244,214,.7);text-shadow:none}
+body.theme-abyss-pearl #cover .open{background:linear-gradient(135deg,#b98d4f,#F4D8A8 52%,#b98d4f);color:#062A33;border:1px solid rgba(255,246,226,.7);text-shadow:none}
+body.theme-winter-prestige #cover .open{background:linear-gradient(135deg,#7fb6cc,#DFF3FB 52%,#7fb6cc);color:#0E1B2C;border:1px solid rgba(240,250,255,.75);text-shadow:none}
+/* fx cover terpilih khusus VIP (dikunci tier VIP di Studio) */
+.cov .fx-c-vip-zoom{animation:uVipZoom 1.4s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uVipZoom{0%{opacity:0;transform:scale(1.28);filter:blur(6px)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
+.cov .fx-c-vip-curtain{animation:uVipCurt 1.2s cubic-bezier(.5,0,.3,1) both}
+@keyframes uVipCurt{0%{clip-path:inset(0 50% 0 50%);opacity:.4}100%{clip-path:inset(0 0 0 0);opacity:1}}
 
 /* Seluruh halaman tamu ikut memakai palet template, bukan kartu krem/gold generik. */
 body.wedding-cover .wrap{background-color:#fffdf8;background-color:color-mix(in srgb,var(--g0) 7%,#fff);background-image:radial-gradient(color-mix(in srgb,var(--accent) 15%,transparent) 1px,transparent 1.5px);background-size:24px 24px}
@@ -337,6 +372,7 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 </style>
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
+<script src="assets/vip-4d.js"></script>
 <script src="assets/theme-contrast.js"></script>
 <link rel="stylesheet" href="assets/button-help.css">
 <script src="assets/button-help.js" defer></script>
@@ -424,7 +460,12 @@ const TPL=[
  {id:'honey-bear',nama:'Honey Bear',ev:'aqiqah',g:['#FFF7E8','#FBE7C2','#F3D193'],accent:'#8F5B15',ink:'#54370E',char:'🧸',bg3d:'assets/tema-3d/honey-bear.webp',deco:'🧸 ✦ 🧸',pat:'',ft:'poppins'},
  {id:'blossom-bunny',nama:'Blossom Bunny',ev:'aqiqah',g:['#FBF4FB','#F2E1F2','#E4C8E6'],accent:'#8E4E92',ink:'#4E2A52',char:'🐰',bg3d:'assets/tema-3d/blossom-bunny.webp',deco:'🐰 ✦ ',pat:'',ft:'playfair'},
  {id:'little-duck',nama:'Bebek Kuning',ev:'aqiqah',g:['#FFFBEA','#FFF0C2','#FFE28A'],accent:'#9A6A10',ink:'#5C4008',char:'🦆',bg3d:'assets/tema-3d/little-duck.webp',deco:'🦆 ✦ ',pat:'',ft:'poppins'},
- {id:'moon-lullaby',nama:'Bulan Nina Bobo',ev:'aqiqah',g:['#101A33','#1A2749','#263560'],accent:'#F0D48A',ink:'#E9EDFA',char:'🌛',bg3d:'assets/tema-3d/moon-lullaby.webp',deco:'🌛 ✦ ',pat:'',ft:'cormorant'}];
+ {id:'moon-lullaby',nama:'Bulan Nina Bobo',ev:'aqiqah',g:['#101A33','#1A2749','#263560'],accent:'#F0D48A',ink:'#E9EDFA',char:'🌛',bg3d:'assets/tema-3d/moon-lullaby.webp',deco:'🌛 ✦ ',pat:'',ft:'cormorant'},
+ /* ==== 4 TEMA VIP (satu per kategori, 4D) ==== */
+ {id:'royal-garden',nama:'Royal Garden',ev:'pernikahan',g:['#16261B','#22392A','#33513C'],accent:'#E5B7C4',ink:'#EFF5EE',char:'🌹',bg3d:'assets/tema-3d/royal-garden.webp',deco:'🌹 ✦ 🌹',pat:'',ft:'cormorant',part:'petal',scene:'curtain'},
+ {id:'galaxy-prestige',nama:'Galaxy Prestige',ev:'khitanan',g:['#0A0E24','#141A3E','#232C63'],accent:'#F0C75E',ink:'#E9EDFC',char:'🌌',bg3d:'assets/tema-3d/galaxy-prestige.webp',deco:'🌌 ✦ 🌌',pat:'',ft:'bebas',part:'gold',scene:'zoom'},
+ {id:'abyss-pearl',nama:'Abyss Pearl',ev:'ultah',g:['#062A33','#0B414D','#12596A'],accent:'#F4D8A8',ink:'#E6F5F6',char:'🫗',bg3d:'assets/tema-3d/abyss-pearl.webp',deco:'🫧  🫧',pat:'',ft:'pacifico',part:'bubble',scene:'rise'},
+ {id:'winter-prestige',nama:'Winter Prestige',ev:'aqiqah',g:['#0E1B2C','#16293E','#223951'],accent:'#BFE3F2',ink:'#EDF5FA',char:'❄️',bg3d:'assets/tema-3d/winter-prestige.webp',deco:'❄️ ✦ ❄️',pat:'',ft:'poppins',part:'snow',scene:'curtain'}];
 
 const FONTS=[
  {id:'cormorant',fam:'"Cormorant Garamond",serif'},
@@ -522,7 +563,7 @@ function fxScrollForSection(base,index,mix=true){
 function fxScrollAxis(id){return ['slide-left','slide-right','flip-y','roll-in','wipe-right','book','cube','wave'].includes(id)?'x':'y'}
 const FX_COVER=[
  ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
- ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal']];
+ ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal'],['vip-zoom','VIP Deep Zoom'],['vip-curtain','VIP Curtain']];
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxCoverId(AN){const v=AN&&AN.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 
@@ -728,6 +769,7 @@ function boot(draft){
  const cvZ=(()=>{const n=parseFloat(cpo.z);return isFinite(n)?Math.min(2.2,Math.max(1,n)):1})();
  const cvP={x:angkaPos(cpo.x,50),y:angkaPos(cpo.y,50),z:cvZ};
  if(ART&&cvStyle!=='full'){document.body.classList.add('art3d');rs.setProperty('--cover-art',"url('"+ART+"')")}
+ if(tplF.tier==='vip'&&window.AsVip4d){document.body.classList.add('vip4d');AsVip4d.mount({art:ART||'',deco:tplF.deco||'',part:tplF.part||'gold',scene:tplF.scene||'zoom'})}
  const KB=TC&&TC.perbaiki?TC.perbaiki(tplF.accent,'#241d16',3):tplF.accent;
  const KT=TC&&TC.untukKonten?TC.untukKonten(tplF.ink,tplF.accent,tplF.g):null;
  rs.setProperty('--ink-body',KT?KT.ink:tplF.ink);

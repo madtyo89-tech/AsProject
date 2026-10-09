@@ -13,7 +13,8 @@ const WEDDING_IDS=[
  'jawa-elegan','minimalist-sage','luxury-gold','floral-rustic','ice-blue','minimalist-frost',
  'ocean-breeze','navy-royal','forest-classic','charcoal-gold','slate-sage','burgundy-regal',
  'champagne-royale','violet-imperial',
- 'terracotta-boho','midnight-celestial','sakura-spring','velvet-cocoa','golden-hour'
+ 'terracotta-boho','midnight-celestial','sakura-spring','velvet-cocoa','golden-hour',
+ 'royal-garden'
 ];
 function templates(source){
  const block=(source.match(/const TPL=\[(.*?)\];/s)||[])[1];
