@@ -86,7 +86,7 @@ function tema(rel) {
     console.log(`  ..  menunggu artwork berikutnya: ${tanpaArt.join(', ')}`);
   }
   /* Pernikahan: tema "minimalist-*"/"slate-sage" sengaja dibiarkan bersih (arti namanya). */
-  const SENGAJA_BERSIH = ['minimalist-sage', 'minimalist-frost', 'slate-sage'];
+  const SENGAJA_BERSIH = ['minimalist-sage', 'minimalist-frost', 'slate-sage', 'sage-blossom'];
   const wedArt = und.filter((t) => t.ev === 'pernikahan' && t.art);
   const wedTanpa = und.filter((t) => t.ev === 'pernikahan' && !t.art).map((t) => t.id);
   const wedBelum = wedTanpa.filter((id) => !SENGAJA_BERSIH.includes(id));

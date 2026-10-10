@@ -103,7 +103,7 @@ function draftFor(tpl, idx) {
   w.addEventListener('error', e => evS.push(String(e.message)));
 
   const tpls = w.eval('TPL.map(x=>[x.id,x.ev,x.tier||"",x.harga||0,x.char||"",x.deco||"",x.ft||""])');
-  t('studio: boot & TPL 71 tema', tpls.length === 71, 'dapat ' + tpls.length);
+  t('studio: boot & TPL 72 tema', tpls.length === 72, 'dapat ' + tpls.length);
 
   /* evPick 4 event */
   let evOk = 0;
@@ -120,7 +120,7 @@ function draftFor(tpl, idx) {
       nRender++;
     } catch (e) { if (!renderErr) renderErr = id + ': ' + e.message; }
   }
-  t('studio: render 71/71 tema tanpa error', nRender === 71, renderErr || (nRender + '/71'));
+  t('studio: render 72/72 tema tanpa error', nRender === 72, renderErr || (nRender + "/72"));
 
   /* border ber-tier: VIP boleh semua, basic terkunci */
   w.eval(`state.tpl='royal-garden'`);
@@ -223,7 +223,7 @@ function draftFor(tpl, idx) {
   const wU = domU.window;
   await sleep(400);
   const tplsU = wU.eval('TPL.map(x=>x.id)');
-  t('undangan: boot & TPL 71 tema', tplsU.length === 71, 'dapat ' + tplsU.length);
+  t('undangan: boot & TPL 72 tema', tplsU.length === 72, 'dapat ' + tplsU.length);
 
   let bootErr = null, nBoot = 0, charBad = null, wedBad = null;
   for (let i = 0; i < tplsU.length; i++) {
@@ -243,7 +243,7 @@ function draftFor(tpl, idx) {
       if (isW && !wU.document.body.className.includes('wedding-cover')) wedBad = id;
     } catch (e) { if (!bootErr) bootErr = id + ': ' + e.message; }
   }
-  t('undangan: boot 71/71 tema tanpa error', nBoot === 71, bootErr || (nBoot + '/71'));
+  t('undangan: boot 72/72 tema tanpa error', nBoot === 72, bootErr || (nBoot + "/72"));
   t('undangan: char kata selalu besar di cover non-wedding', !charBad, charBad || '');
   t('undangan: tema pernikahan selalu dapat kelas wedding-cover', !wedBad, wedBad || '');
 

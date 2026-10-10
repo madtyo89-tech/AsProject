@@ -14,7 +14,8 @@ const WEDDING_IDS=[
  'ocean-breeze','navy-royal','forest-classic','charcoal-gold','slate-sage','burgundy-regal',
  'champagne-royale','violet-imperial',
  'terracotta-boho','midnight-celestial','sakura-spring','velvet-cocoa','golden-hour',
- 'royal-garden'
+ 'royal-garden',
+ 'sage-blossom'
 ];
 function templates(source){
  const block=(source.match(/const TPL=\[(.*?)\];/s)||[])[1];
