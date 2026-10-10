@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <title>The Wedding of {{NAMA_PENGANTIN_WANITA}} &amp; {{NAMA_PENGANTIN_PRIA}} — {{TANGGAL_TITLE}}</title>
 <!--
   ============================================
@@ -39,14 +39,14 @@
 -->
 <style>
   :root{
-    --sage:#C9A86A; --sage-dark:#1A1A1A; --sage-soft:#FBF6EC;
-    --cream:#F5F2EB; --beige:#efe9da; --gold:#B8924F;
-    --ink:#1A1A1A; --muted:#7A7A72; --white:#ffffff;
+    --sage:#0EA5E9; --sage-dark:#0c4a6e; --sage-soft:#F0F9FF;
+    --cream:#F0F9FF; --beige:#E0F2FE; --gold:#0284C7;
+    --ink:#0c4a6e; --muted:#5B7A8C; --white:#ffffff;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:#ded9ca;color:var(--ink);line-height:1.7}
+  body{font-family:Poppins,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#DDEFFA;color:var(--ink);line-height:1.7}
   body.locked{overflow:hidden}
   .script{font-family:"Brush Script MT","Segoe Script","Lucida Handwriting",cursive}
   .frame{max-width:480px;margin:0 auto;background:var(--cream);min-height:100vh;
@@ -57,7 +57,7 @@
     background:
       linear-gradient(180deg,rgba(46,52,35,0) 0%,rgba(46,52,35,.12) 40%,rgba(56,63,42,.72) 74%,rgba(38,43,28,.92) 100%),
       url('{{FOTO_COVER_1}}') center/cover no-repeat,
-      linear-gradient(165deg,#C9A86A,#1A1A1A);
+      linear-gradient(165deg,#0EA5E9,#0c4a6e);
     transition:transform 1s cubic-bezier(.7,0,.3,1),opacity 1s ease}
   .cover.opened{transform:translateY(-101%);opacity:.5;pointer-events:none}
   .cover-inner{width:100%;max-width:480px;text-align:center;padding:0 26px 44px;color:#fff}
@@ -65,17 +65,17 @@
   .cover h1{font-size:46px;font-weight:400;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.35)}
   .cover .date{font-size:14px;letter-spacing:3px;margin:2px 0 18px;opacity:.95}
   .cover .to{font-size:12px;opacity:.88}
-  .cover .guest{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:17px;margin:2px 0 20px}
+  .cover .guest{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:17px;margin:2px 0 20px}
   .open-btn{background:#fff;color:var(--sage-dark);border:none;cursor:pointer;font-size:14px;font-weight:700;
     padding:13px 34px;border-radius:50px;box-shadow:0 10px 26px rgba(0,0,0,.3);transition:transform .2s}
   .open-btn:hover{transform:scale(1.05)}
 
   /* ---------- UMUM ---------- */
   section{padding:58px 24px;text-align:center;position:relative}
-  .sec-title{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:26px;color:var(--sage-dark)}
+  .sec-title{font-family:'Playfair Display',Georgia,serif;font-weight:400;font-size:26px;color:var(--sage-dark)}
   .sec-sub{font-size:11.5px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:700}
   .divider{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px auto 24px;max-width:200px}
-  .divider::before,.divider::after{content:"";height:1px;flex:1;background:#cfc7ad}
+  .divider::before,.divider::after{content:"";height:1px;flex:1;background:#BAE6FD}
   .divider svg{display:block}
   .fl{position:absolute;width:120px;pointer-events:none;opacity:.85}
   .fl.tl{top:0;left:0}
@@ -83,42 +83,42 @@
   .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
   .reveal.visible{opacity:1;transform:none}
   .card{background:var(--white);border-radius:16px;box-shadow:0 8px 22px rgba(78,90,61,.1);
-    border:1px solid #eee8d8;padding:22px 18px}
+    border:1px solid #E0F2FE;padding:22px 18px}
   .btn-sage{display:inline-block;background:var(--sage);color:#fff;font-size:13px;font-weight:700;
     padding:11px 26px;border-radius:50px;text-decoration:none;border:none;cursor:pointer;transition:.2s}
   .btn-sage:hover{background:var(--sage-dark)}
 
   /* ---------- QUOTE & COUPLE ---------- */
-  .quote-txt{font-size:13.5px;font-style:italic;color:#6d7259;max-width:360px;margin:0 auto}
+  .quote-txt{font-size:13.5px;font-style:italic;color:#0369A1;max-width:360px;margin:0 auto}
   .mono-wrap{width:130px;height:130px;margin:6px auto 22px;position:relative;display:flex;align-items:center;justify-content:center}
   .mono-wrap svg{position:absolute;inset:0;width:100%;height:100%}
-  .mono-wrap .mono{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:30px;color:var(--sage-dark)}
-  .couple h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:22px;color:var(--sage-dark)}
-  .couple .amp{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:30px;color:var(--gold);margin:10px 0}
+  .mono-wrap .mono{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:30px;color:var(--sage-dark)}
+  .couple h3{font-family:'Playfair Display',Georgia,serif;font-weight:400;font-size:22px;color:var(--sage-dark)}
+  .couple .amp{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:30px;color:var(--gold);margin:10px 0}
   .couple p{font-size:13px;color:var(--muted)}
 
   /* ---------- COUNTDOWN ---------- */
   .cd-grid{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
   .cd-box{background:var(--beige);border-radius:14px;width:80px;padding:16px 0 12px;box-shadow:0 6px 16px rgba(78,90,61,.08)}
-  .cd-box b{display:block;font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;color:var(--ink)}
+  .cd-box b{display:block;font-family:'Playfair Display',Georgia,serif;font-size:30px;color:var(--ink)}
   .cd-box small{font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
 
   /* ---------- ACARA ---------- */
   .ev-card{margin:0 auto 16px;max-width:380px;text-align:left}
   .ev-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
   .ev-icon{width:46px;height:46px;border-radius:50%;background:var(--sage-soft);display:flex;align-items:center;justify-content:center;flex:none}
-  .ev-head b{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:19px;color:var(--sage-dark)}
-  .ev-body{font-size:13.5px;color:#4A4A44;padding-left:58px}
+  .ev-head b{font-family:'Playfair Display',Georgia,serif;font-weight:400;font-size:19px;color:var(--sage-dark)}
+  .ev-body{font-size:13.5px;color:#075985;padding-left:58px}
   .ev-body .btn-sage{margin-top:10px;font-size:12px;padding:9px 20px}
   .note-bawah{font-size:13px;color:var(--muted);max-width:360px;margin:26px auto 0;font-style:italic}
 
   /* ---------- LOVE STORY ---------- */
   .story{max-width:360px;margin:0 auto;text-align:left;position:relative;padding-left:64px}
-  .story::before{content:"";position:absolute;left:26px;top:14px;bottom:14px;width:2px;background:#dcd3b8}
+  .story::before{content:"";position:absolute;left:26px;top:14px;bottom:14px;width:2px;background:#BAE6FD}
   .st-item{position:relative;margin-bottom:24px}
   .st-photo{position:absolute;left:-64px;top:0;width:52px;height:52px;border-radius:50%;
     border:3px solid #fff;box-shadow:0 4px 12px rgba(78,90,61,.18);background-size:cover;background-position:center}
-  .st-item b{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;color:var(--sage-dark);font-size:16px;display:block}
+  .st-item b{font-family:'Playfair Display',Georgia,serif;font-weight:400;color:var(--sage-dark);font-size:16px;display:block}
   .st-item .yr{font-size:11px;font-weight:800;letter-spacing:2px;color:var(--gold)}
   .st-item p{font-size:12.5px;color:var(--muted);margin-top:2px}
 
@@ -127,7 +127,7 @@
   .gal-item{aspect-ratio:1/1.15;border-radius:14px;background-size:cover;background-position:center;
     box-shadow:0 6px 16px rgba(78,90,61,.15)}
   .gal-dots{display:flex;justify-content:center;gap:6px;align-items:center;margin-top:16px;color:var(--sage)}
-  .gal-dots i{width:7px;height:7px;border-radius:50%;background:#cfc7ad;display:block}
+  .gal-dots i{width:7px;height:7px;border-radius:50%;background:#BAE6FD;display:block}
   .gal-dots i.on{background:var(--sage)}
   .gal-dots span{font-size:16px;margin:0 8px;cursor:pointer;user-select:none}
   .gal-item{cursor:pointer;position:relative;transition:transform .25s ease}
@@ -157,14 +157,14 @@
   /* ---------- MUSIK LATAR ---------- */
   .music-btn{position:fixed;left:calc(50% - 230px);bottom:130px;z-index:91;
     width:50px;height:64px;border:none;background:rgba(255,255,255,.95);
-    border:1px solid #e4ddc9;border-radius:28px;display:flex;flex-direction:column;
+    border:1px solid #BAE6FD;border-radius:28px;display:flex;flex-direction:column;
     align-items:center;justify-content:center;gap:2px;cursor:pointer;
     box-shadow:0 8px 20px rgba(78,90,61,.25);color:var(--sage-dark)}
   .music-ic{font-size:20px;line-height:1}
   .music-tx{font-size:8.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
   .music-btn.playing .music-ic{animation:spinDisk 3.2s linear infinite}
   .music-btn.playing{background:var(--sage);color:#fff}
-  .music-btn.playing .music-tx{color:#FBF6EC}
+  .music-btn.playing .music-tx{color:#F0F9FF}
   @keyframes spinDisk{to{transform:rotate(360deg)}}
   @media(max-width:520px){ .music-btn{left:14px} }
 
@@ -185,23 +185,23 @@
 
   /* Tombol & panel pilih animasi */
   .fx-btn{position:fixed;left:calc(50% - 230px);bottom:204px;z-index:91;width:50px;height:58px;
-    border:none;background:rgba(255,255,255,.95);border:1px solid #e4ddc9;border-radius:24px;
+    border:none;background:rgba(255,255,255,.95);border:1px solid #BAE6FD;border-radius:24px;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
     cursor:pointer;box-shadow:0 8px 20px rgba(78,90,61,.25);color:var(--sage-dark);font-size:18px}
   .fx-btn .fx-tx{font-size:8.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
   .fx-panel{position:fixed;left:calc(50% - 238px);bottom:272px;z-index:110;display:none;
-    width:295px;max-width:92vw;background:rgba(255,255,255,.97);border:1px solid #e4ddc9;
+    width:295px;max-width:92vw;background:rgba(255,255,255,.97);border:1px solid #BAE6FD;
     border-radius:16px;padding:10px;box-shadow:0 14px 34px rgba(78,90,61,.3)}
   .fx-panel.show{display:block;animation:fadeIn .2s ease}
   .fx-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:5px 2px}
-  .fx-row button{border:1px solid #e4ddc9;background:#fff;color:var(--muted);font-size:12px;
+  .fx-row button{border:1px solid #BAE6FD;background:#fff;color:var(--muted);font-size:12px;
     font-weight:700;padding:7px 12px;border-radius:50px;cursor:pointer;transition:.2s}
   .fx-row button.on{background:var(--sage);border-color:var(--sage);color:#fff}
-  .fx-row.premium-row{background:linear-gradient(135deg,#fdf6e3,#f6ead0);
-    border:1px solid #ecd9ab;border-radius:12px;padding:8px}
-  .fx-row.premium-row button{color:#8a6a1f;border-color:#ecd9ab;background:#fffdf6}
-  .fx-row.premium-row button.on{background:linear-gradient(135deg,#caa14e,#a67c2e);
-    border-color:#b98d3e;color:#fff;box-shadow:0 4px 10px rgba(166,124,46,.35)}
+  .fx-row.premium-row{background:linear-gradient(135deg,#F0F9FF,#F0F9FF);
+    border:1px solid #BAE6FD;border-radius:12px;padding:8px}
+  .fx-row.premium-row button{color:#0369A1;border-color:#BAE6FD;background:#F8FDFF}
+  .fx-row.premium-row button.on{background:linear-gradient(135deg,#38BDF8,#0369A1);
+    border-color:#0EA5E9;color:#fff;box-shadow:0 4px 10px rgba(166,124,46,.35)}
   @media(max-width:520px){ .fx-btn{left:14px} .fx-panel{left:14px} }
 
   /* ---------- RSVP ---------- */
@@ -209,21 +209,21 @@
   .rsvp-card .lead{font-size:13px;color:var(--muted);text-align:center;margin-bottom:16px}
   .pill-row{display:flex;gap:12px;margin-bottom:14px}
   .pill{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:50px;
-    border:1.5px solid #d8d2bd;background:var(--beige);font-size:13.5px;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+    border:1.5px solid #BAE6FD;background:var(--beige);font-size:13.5px;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
   .pill.active{background:var(--sage);border-color:var(--sage);color:#fff}
   .pill .ic{width:20px;height:20px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex:none}
-  .rsvp-card textarea{width:100%;padding:12px 14px;border:1px solid #ddd5c0;border-radius:12px;background:var(--cream);
+  .rsvp-card textarea{width:100%;padding:12px 14px;border:1px solid #BAE6FD;border-radius:12px;background:var(--cream);
     font-size:13.5px;font-family:inherit;resize:vertical;min-height:72px;color:var(--ink)}
   .rsvp-card textarea:focus{outline:none;border-color:var(--sage)}
   .rsvp-card .full{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;
     background:var(--sage);color:#fff;border:none;font-size:14px;font-weight:700;padding:14px;border-radius:50px;cursor:pointer}
   .rsvp-card .full:hover{background:var(--sage-dark)}
-  .rsvp-ok{display:none;background:var(--sage-soft);border:1px solid #cdd6bc;color:var(--sage-dark);
+  .rsvp-ok{display:none;background:var(--sage-soft);border:1px solid #BAE6FD;color:var(--sage-dark);
     border-radius:14px;padding:20px;font-size:13.5px;text-align:center}
   .wish-list{max-width:380px;margin:22px auto 0;text-align:left}
-  .wish{background:var(--white);border:1px solid #eee8d8;border-radius:12px;padding:12px 16px;margin-bottom:10px;box-shadow:0 4px 12px rgba(78,90,61,.06)}
+  .wish{background:var(--white);border:1px solid #E0F2FE;border-radius:12px;padding:12px 16px;margin-bottom:10px;box-shadow:0 4px 12px rgba(78,90,61,.06)}
   .wish b{font-size:13px;color:var(--sage-dark)}
-  .wish p{font-size:12.5px;color:#62674f;margin-top:2px}
+  .wish p{font-size:12.5px;color:#075985;margin-top:2px}
 
   /* ---------- AMPLOP ---------- */
   .gift-note{font-size:13px;color:var(--muted);max-width:340px;margin:0 auto 18px}
@@ -231,8 +231,8 @@
   .bank-row{display:flex;align-items:center;gap:14px}
   .bank-logo{width:52px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
   .bca{background:#e8f0fa;color:#0f4c9b;font-weight:800;font-style:italic;font-size:15px;letter-spacing:-.5px}
-  .dana{background:#e6f2fd;color:#108ee9;font-weight:800;font-size:12px;letter-spacing:1px}
-  .bank-info .num{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;letter-spacing:1.5px;color:var(--ink)}
+  .dana{background:#E0F2FE;color:#108ee9;font-weight:800;font-size:12px;letter-spacing:1px}
+  .bank-info .num{font-family:'Playfair Display',Georgia,serif;font-size:19px;letter-spacing:1.5px;color:var(--ink)}
   .bank-info .an{font-size:11.5px;color:var(--muted)}
   .copy-mini{margin-left:auto;background:transparent;border:1.5px solid var(--sage);color:var(--sage);
     font-size:11px;font-weight:700;padding:7px 14px;border-radius:50px;cursor:pointer}
@@ -245,17 +245,17 @@
   .dot{width:44px;height:44px;border-radius:50%;margin:0 auto 6px;border:2px solid #fff;box-shadow:0 4px 12px rgba(78,90,61,.18)}
   .dot-item small{font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
   .dress-grid{display:flex;gap:14px;max-width:380px;margin:0 auto}
-  .dress-card{flex:1;background:var(--white);border:1px solid #eee8d8;border-radius:14px;padding:18px 12px;box-shadow:0 6px 16px rgba(78,90,61,.08)}
+  .dress-card{flex:1;background:var(--white);border:1px solid #E0F2FE;border-radius:14px;padding:18px 12px;box-shadow:0 6px 16px rgba(78,90,61,.08)}
   .dress-card svg{display:block;margin:0 auto 10px}
   .dress-card b{font-size:13px;color:var(--sage-dark);display:block}
   .dress-card small{font-size:11.5px;color:var(--muted)}
 
   /* ---------- LOKASI ---------- */
   .map-box{max-width:380px;margin:0 auto;overflow:hidden;border-radius:16px;background:var(--white);
-    border:1px solid #eee8d8;box-shadow:0 8px 22px rgba(78,90,61,.1)}
+    border:1px solid #E0F2FE;box-shadow:0 8px 22px rgba(78,90,61,.1)}
   .map-draw{display:block;width:100%;height:auto}
   .map-info{padding:16px 18px 20px;text-align:left}
-  .map-info b{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:16px;color:var(--sage-dark);display:block;margin-bottom:2px}
+  .map-info b{font-family:'Playfair Display',Georgia,serif;font-weight:400;font-size:16px;color:var(--sage-dark);display:block;margin-bottom:2px}
   .map-info p{font-size:12.5px;color:var(--muted);margin-bottom:12px}
   .arah-info{max-width:380px;margin:18px auto 0;font-size:12.5px;color:var(--muted)}
 
@@ -265,26 +265,26 @@
   .closing .big{font-size:40px;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.4);margin-bottom:10px}
   .closing p{font-size:13px;max-width:300px;margin:0 auto 14px;color:#f3efe0}
   .closing .cl-names{font-size:22px;color:#fff}
-  .closing .cl-date{font-size:13px;letter-spacing:3px;margin-top:4px;color:#e8e2cc}
+  .closing .cl-date{font-size:13px;letter-spacing:3px;margin-top:4px;color:#E0F2FE}
 
   /* ---------- FOOTER ---------- */
-  .footstrip{background:var(--sage-dark);color:#e8e2cc;font-size:10.5px;letter-spacing:2px;
+  .footstrip{background:var(--sage-dark);color:#E0F2FE;font-size:10.5px;letter-spacing:2px;
     text-transform:uppercase;text-align:center;padding:16px 12px}
   .footstrip a{color:#fff;text-decoration:none;font-weight:700}
 
   /* ---------- MODE NAVIGASI (Gulir / Snap / Slide + Premium) ---------- */
   .mode-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:90;
-    display:flex;gap:4px;background:rgba(255,255,255,.94);border:1px solid #e4ddc9;
+    display:flex;gap:4px;background:rgba(255,255,255,.94);border:1px solid #BAE6FD;
     border-radius:50px;padding:5px;box-shadow:0 8px 22px rgba(78,90,61,.25);
     max-width:96vw;overflow-x:auto;scrollbar-width:none}
   .mode-bar::-webkit-scrollbar{display:none}
   .mode-bar button{border:none;background:transparent;color:var(--muted);font-size:12px;
     font-weight:700;padding:8px 12px;border-radius:50px;cursor:pointer;white-space:nowrap}
   .mode-bar button.on{background:var(--sage);color:#fff}
-  .mode-bar button.premium{color:#a67c2e}
-  .mode-bar button.premium.on{background:linear-gradient(135deg,#caa14e,#a67c2e);color:#fff}
+  .mode-bar button.premium{color:#0369A1}
+  .mode-bar button.premium.on{background:linear-gradient(135deg,#38BDF8,#0369A1);color:#fff}
   .slide-arrow{position:fixed;top:50%;transform:translateY(-50%);z-index:89;width:42px;height:42px;
-    border-radius:50%;background:rgba(255,255,255,.94);border:1px solid #e4ddc9;color:var(--sage-dark);
+    border-radius:50%;background:rgba(255,255,255,.94);border:1px solid #BAE6FD;color:var(--sage-dark);
     font-size:20px;line-height:1;cursor:pointer;display:none;align-items:center;justify-content:center;
     box-shadow:0 6px 16px rgba(78,90,61,.25)}
   body.pager .slide-arrow{display:flex}
@@ -293,7 +293,7 @@
   .dots{position:fixed;left:50%;transform:translateX(-50%);bottom:126px;z-index:89;
     display:none;gap:6px}
   body.pager .dots{display:flex}
-  .dots i{width:7px;height:7px;border-radius:50%;background:#cfc7ad;cursor:pointer;transition:.2s}
+  .dots i{width:7px;height:7px;border-radius:50%;background:#BAE6FD;cursor:pointer;transition:.2s}
   .dots i.on{background:var(--sage);transform:scale(1.3)}
   /* Mode satu-layar: satu bagian penuh layar, geser pakai panah/swipe */
   body.pager{overflow:hidden}
@@ -331,37 +331,37 @@
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <g id="corner-sage">
-      <path d="M4,116 C8,78 24,48 58,26" fill="none" stroke="#C9A86A" stroke-width="1.6"/>
-      <ellipse cx="24" cy="86" rx="12" ry="5.5" transform="rotate(-50 24 86)" fill="#D8C7A0"/>
-      <ellipse cx="36" cy="66" rx="12" ry="5.5" transform="rotate(-46 36 66)" fill="#93a583"/>
-      <ellipse cx="50" cy="48" rx="11" ry="5" transform="rotate(-40 50 48)" fill="#D8C7A0"/>
+      <path d="M4,116 C8,78 24,48 58,26" fill="none" stroke="#0EA5E9" stroke-width="1.6"/>
+      <ellipse cx="24" cy="86" rx="12" ry="5.5" transform="rotate(-50 24 86)" fill="#BAE6FD"/>
+      <ellipse cx="36" cy="66" rx="12" ry="5.5" transform="rotate(-46 36 66)" fill="#7DD3FC"/>
+      <ellipse cx="50" cy="48" rx="11" ry="5" transform="rotate(-40 50 48)" fill="#BAE6FD"/>
       <g transform="translate(66,28)">
-        <ellipse cx="0" cy="-9" rx="5" ry="8" fill="#e8cabb"/>
-        <ellipse cx="8.5" cy="-2.8" rx="5" ry="8" transform="rotate(72 8.5 -2.8)" fill="#e4c0ae"/>
-        <ellipse cx="5.2" cy="7.3" rx="5" ry="8" transform="rotate(144 5.2 7.3)" fill="#e8cabb"/>
-        <ellipse cx="-5.2" cy="7.3" rx="5" ry="8" transform="rotate(216 -5.2 7.3)" fill="#e4c0ae"/>
-        <ellipse cx="-8.5" cy="-2.8" rx="5" ry="8" transform="rotate(288 -8.5 -2.8)" fill="#e8cabb"/>
+        <ellipse cx="0" cy="-9" rx="5" ry="8" fill="#BAE6FD"/>
+        <ellipse cx="8.5" cy="-2.8" rx="5" ry="8" transform="rotate(72 8.5 -2.8)" fill="#BAE6FD"/>
+        <ellipse cx="5.2" cy="7.3" rx="5" ry="8" transform="rotate(144 5.2 7.3)" fill="#BAE6FD"/>
+        <ellipse cx="-5.2" cy="7.3" rx="5" ry="8" transform="rotate(216 -5.2 7.3)" fill="#BAE6FD"/>
+        <ellipse cx="-8.5" cy="-2.8" rx="5" ry="8" transform="rotate(288 -8.5 -2.8)" fill="#BAE6FD"/>
         <circle r="4" fill="#d8a48f"/>
       </g>
       <g transform="translate(96,58) scale(.62)">
-        <ellipse cx="0" cy="-9" rx="5" ry="8" fill="#f0ddc4"/>
-        <ellipse cx="8.5" cy="-2.8" rx="5" ry="8" transform="rotate(72 8.5 -2.8)" fill="#ead3b2"/>
-        <ellipse cx="5.2" cy="7.3" rx="5" ry="8" transform="rotate(144 5.2 7.3)" fill="#f0ddc4"/>
-        <ellipse cx="-5.2" cy="7.3" rx="5" ry="8" transform="rotate(216 -5.2 7.3)" fill="#ead3b2"/>
-        <ellipse cx="-8.5" cy="-2.8" rx="5" ry="8" transform="rotate(288 -8.5 -2.8)" fill="#f0ddc4"/>
+        <ellipse cx="0" cy="-9" rx="5" ry="8" fill="#E0F2FE"/>
+        <ellipse cx="8.5" cy="-2.8" rx="5" ry="8" transform="rotate(72 8.5 -2.8)" fill="#E0F2FE"/>
+        <ellipse cx="5.2" cy="7.3" rx="5" ry="8" transform="rotate(144 5.2 7.3)" fill="#E0F2FE"/>
+        <ellipse cx="-5.2" cy="7.3" rx="5" ry="8" transform="rotate(216 -5.2 7.3)" fill="#E0F2FE"/>
+        <ellipse cx="-8.5" cy="-2.8" rx="5" ry="8" transform="rotate(288 -8.5 -2.8)" fill="#E0F2FE"/>
         <circle r="4" fill="#cfa983"/>
       </g>
-      <circle cx="82" cy="44" r="3" fill="#d8b4ad"/>
-      <circle cx="104" cy="80" r="2.4" fill="#D8C7A0"/>
-      <path d="M60,70 C76,74 92,88 100,108" fill="none" stroke="#C9A86A" stroke-width="1.4"/>
-      <ellipse cx="84" cy="88" rx="10" ry="4.6" transform="rotate(38 84 88)" fill="#93a583"/>
+      <circle cx="82" cy="44" r="3" fill="#BAE6FD"/>
+      <circle cx="104" cy="80" r="2.4" fill="#BAE6FD"/>
+      <path d="M60,70 C76,74 92,88 100,108" fill="none" stroke="#0EA5E9" stroke-width="1.4"/>
+      <ellipse cx="84" cy="88" rx="10" ry="4.6" transform="rotate(38 84 88)" fill="#7DD3FC"/>
     </g>
     <g id="div-flower">
-      <ellipse cx="0" cy="-6" rx="3" ry="5" fill="#B8924F"/>
-      <ellipse cx="5.7" cy="1.8" rx="3" ry="5" transform="rotate(72 5.7 1.8)" fill="#B8924F"/>
-      <ellipse cx="3.5" cy="-4.8" rx="3" ry="5" transform="rotate(144 3.5 -4.8)" fill="#B8924F"/>
-      <ellipse cx="-3.5" cy="-4.8" rx="3" ry="5" transform="rotate(216 -3.5 -4.8)" fill="#B8924F"/>
-      <ellipse cx="-5.7" cy="1.8" rx="3" ry="5" transform="rotate(288 -5.7 1.8)" fill="#B8924F"/>
+      <ellipse cx="0" cy="-6" rx="3" ry="5" fill="#0284C7"/>
+      <ellipse cx="5.7" cy="1.8" rx="3" ry="5" transform="rotate(72 5.7 1.8)" fill="#0284C7"/>
+      <ellipse cx="3.5" cy="-4.8" rx="3" ry="5" transform="rotate(144 3.5 -4.8)" fill="#0284C7"/>
+      <ellipse cx="-3.5" cy="-4.8" rx="3" ry="5" transform="rotate(216 -3.5 -4.8)" fill="#0284C7"/>
+      <ellipse cx="-5.7" cy="1.8" rx="3" ry="5" transform="rotate(288 -5.7 1.8)" fill="#0284C7"/>
       <circle r="2.4" fill="#8a6f3c"/>
     </g>
   </defs>
@@ -396,7 +396,7 @@
       <div class="divider" style="margin-top:22px"><svg width="18" height="18" viewBox="-9 -9 18 18"><use href="#div-flower"/></svg></div>
 
       <div class="mono-wrap">
-        <svg viewBox="0 0 130 130"><circle cx="65" cy="65" r="58" fill="none" stroke="#B8924F" stroke-width="1.2" stroke-dasharray="4 4"/><circle cx="65" cy="65" r="50" fill="none" stroke="#C9A86A" stroke-width="1"/></svg>
+        <svg viewBox="0 0 130 130"><circle cx="65" cy="65" r="58" fill="none" stroke="#0284C7" stroke-width="1.2" stroke-dasharray="4 4"/><circle cx="65" cy="65" r="50" fill="none" stroke="#0EA5E9" stroke-width="1"/></svg>
         <span class="mono">R &amp; D</span>
       </div>
 
@@ -439,7 +439,7 @@
 
       <div class="card ev-card">
         <div class="ev-head">
-          <div class="ev-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A86A" stroke-width="1.8"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 9.5h18"/></svg></div>
+          <div class="ev-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="1.8"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 9.5h18"/></svg></div>
           <b>Akad Nikah</b>
         </div>
         <div class="ev-body">
@@ -451,7 +451,7 @@
 
       <div class="card ev-card">
         <div class="ev-head">
-          <div class="ev-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A86A" stroke-width="1.8"><circle cx="9" cy="14" r="5.5"/><circle cx="15" cy="14" r="5.5"/><path d="M12 6.5L13.5 9h-3L12 6.5z"/></svg></div>
+          <div class="ev-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="1.8"><circle cx="9" cy="14" r="5.5"/><circle cx="15" cy="14" r="5.5"/><path d="M12 6.5L13.5 9h-3L12 6.5z"/></svg></div>
           <b>Resepsi</b>
         </div>
         <div class="ev-body">
@@ -525,8 +525,8 @@
       <form class="card rsvp-card" id="rsvpForm">
         <p class="lead">Mohon konfirmasi kehadiran Bapak/Ibu/Saudara/i sebelum <b>{{BATAS_RSVP}}</b></p>
         <div class="pill-row">
-          <button type="button" class="pill active" data-val="Hadir"><span class="ic"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C9A86A" stroke-width="4"><path d="M4 12l6 6L20 6"/></svg></span>Hadir</button>
-          <button type="button" class="pill" data-val="Tidak Hadir"><span class="ic"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#7A7A72" stroke-width="4"><path d="M5 5l14 14M19 5L5 19"/></svg></span>Tidak Hadir</button>
+          <button type="button" class="pill active" data-val="Hadir"><span class="ic"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="4"><path d="M4 12l6 6L20 6"/></svg></span>Hadir</button>
+          <button type="button" class="pill" data-val="Tidak Hadir"><span class="ic"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#5B7A8C" stroke-width="4"><path d="M5 5l14 14M19 5L5 19"/></svg></span>Tidak Hadir</button>
         </div>
         <textarea id="rsvpMsg" placeholder="Tulis ucapan atau doa terbaik..."></textarea>
         <button class="full" type="submit">✈&nbsp;&nbsp;Kirim</button>
@@ -583,17 +583,17 @@
       <div class="divider"><svg width="18" height="18" viewBox="-9 -9 18 18"><use href="#div-flower"/></svg></div>
       <div class="dot-row">
         <div class="dot-item"><div class="dot" style="background:#f4efe2"></div><small>Putih / Krem</small></div>
-        <div class="dot-item"><div class="dot" style="background:#d8b4ad"></div><small>Dusty Pink</small></div>
+        <div class="dot-item"><div class="dot" style="background:#BAE6FD"></div><small>Dusty Pink</small></div>
         <div class="dot-item"><div class="dot" style="background:#9aa88c"></div><small>Sage Green</small></div>
         <div class="dot-item"><div class="dot" style="background:#c9a97e"></div><small>Coklat Muda</small></div>
       </div>
       <div class="dress-grid">
         <div class="dress-card">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C9A86A" stroke-width="1.6"><path d="M9 3L5 7l2 2.5V21h10V9.5L19 7l-4-4-1.5 2h-3L9 3z"/><path d="M12 8v13"/></svg>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="1.6"><path d="M9 3L5 7l2 2.5V21h10V9.5L19 7l-4-4-1.5 2h-3L9 3z"/><path d="M12 8v13"/></svg>
           <b>Pria</b><small>Kemeja / Jas<br>(warna bebas)</small>
         </div>
         <div class="dress-card">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C9A86A" stroke-width="1.6"><path d="M9 3l-2 5 2 2-3 11h12l-3-11 2-2-2-5"/><path d="M10 8h4"/></svg>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="1.6"><path d="M9 3l-2 5 2 2-3 11h12l-3-11 2-2-2-5"/><path d="M10 8h4"/></svg>
           <b>Wanita</b><small>Dress / Kebaya<br>(warna pastel)</small>
         </div>
       </div>
@@ -614,13 +614,13 @@
           <path d="M-10 40 C100 52 220 26 390 44" stroke="#fff" stroke-width="10" fill="none"/>
           <path d="M120 -10 C128 60 110 120 132 180" stroke="#fff" stroke-width="9" fill="none"/>
           <path d="M-10 120 C80 108 160 128 390 96" stroke="#f3d9a4" stroke-width="3" fill="none"/>
-          <circle cx="70" cy="30" r="14" fill="#EADFC6"/><circle cx="320" cy="140" r="18" fill="#EADFC6"/><circle cx="330" cy="30" r="10" fill="#EADFC6"/>
+          <circle cx="70" cy="30" r="14" fill="#E0F2FE"/><circle cx="320" cy="140" r="18" fill="#E0F2FE"/><circle cx="330" cy="30" r="10" fill="#E0F2FE"/>
           <g transform="translate(226,66)">
             <path d="M0 38 C-18 20 -22 8 -22 0 A22 22 0 1 1 22 0 C22 8 18 20 0 38z" fill="#e05a5a"/>
             <circle r="8" fill="#fff"/>
           </g>
-          <rect x="180" y="118" width="150" height="22" rx="11" fill="#fff" stroke="#e4ddc9"/>
-          <text x="255" y="133" font-size="10.5" text-anchor="middle" fill="#4A4A44" font-family="Arial">{{NAMA_TEMPAT_RESEPSI}}</text>
+          <rect x="180" y="118" width="150" height="22" rx="11" fill="#fff" stroke="#BAE6FD"/>
+          <text x="255" y="133" font-size="10.5" text-anchor="middle" fill="#075985" font-family="Arial">{{NAMA_TEMPAT_RESEPSI}}</text>
         </svg>
         <div class="map-info">
           <b>{{NAMA_TEMPAT_RESEPSI}}</b>

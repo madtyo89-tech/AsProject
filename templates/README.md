@@ -95,3 +95,26 @@ grep -c "{{" /tmp/s.html /tmp/d.html        # harus 0
 
 Tampilan belum dicek di browser dari sandbox ini. Cek visual perlu dilakukan
 manual di browser.
+
+## Template tambahan (dari referensi Drive)
+
+Dibuat oleh `buat-tema-turunan.py` dari template sage, dengan palet dan font
+dari `references/drive-katalog/`:
+
+| Kode | Template | Acuan | Data contoh |
+|---|---|---|---|
+| `ice` | Ice Blue (pernikahan) | `undangan_x5f_online_x5f_ice_x5f_blue.html` | `contoh-data.json` |
+| `khitanan-basic` | Khitanan dasar, hijau terang, Amiri & Poppins | `undangan-online-khitanan-basic.html` | `contoh-data-khitanan.json` |
+| `khitanan-premium` | Khitanan premium, hijau gelap & emas, Cormorant & Poppins | `undangan-online-khitanan-premium.html` | `contoh-data-khitanan.json` |
+
+Untuk khitanan, bagian pasangan diganti data anak dan orang tua, bagian
+"Love Story" dihapus, dan kata "pernikahan/kado" diganti "khitanan/tanda kasih".
+Placeholder khitanan: `NAMA_ANAK`, `NAMA_LENGKAP_ANAK`, `INISIAL_ANAK`,
+`AYAH_ORTU`, `IBU_ORTU`, `NAMA_REKENING_1`, `NAMA_REKENING_2`.
+
+Catatan: palet gelap pada `khitanan-premium` dibuat dari palet terang secara
+otomatis. Cek kontras teks di browser sebelum dipakai ke klien.
+
+Contoh hasil ada di `contoh-hasil/<kode>/index.html`.
+Kode `ice`, `khitanan-basic`, `khitanan-premium` juga bisa dipakai di
+`isi-template.py` dengan cara yang sama seperti `sage` dan `demo`.
