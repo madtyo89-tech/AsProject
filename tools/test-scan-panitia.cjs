@@ -21,7 +21,7 @@ function cek(kondisi, pesan) {
 }
 
 function cariModul(nama) {
-  const kandidat = ['/tmp/domtest/node_modules', '/tmp/jstest/node_modules'];
+  const kandidat = [path.join(ROOT, 'node_modules'), '/tmp/domtest/node_modules', '/tmp/jstest/node_modules'];
   for (const d of kandidat) {
     try { return require(path.join(d, nama)); } catch (e) {}
   }

@@ -338,12 +338,19 @@ def cek_pipeline_undangan():
     # 10) snapshot publish membawa slides + anim
     lapor("ok" if "slides:JSON.parse(JSON.stringify(state.slides)),anim" in studio else "masalah",
           "studio.html: publish() menyimpan slides & anim ke snapshot data")
+    # 10b) Publish tidak gagal total bila kolom snapshot belum ada (PGRST204):
+    #      fallback simpan kolom dasar + peringatan berisi SQL perbaikan sekali klik
+    ok = ("isMissingDataCol" in studio and "delete payload.data" in studio
+          and "snapshotSkipped" in studio and "copyFixSql" in studio
+          and "add column if not exists data jsonb" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: Publish fallback tanpa snapshot + SQL perbaikan bila kolom 'data' belum ada")
     # 11) 10 efek animasi cover & 34 efek scroll: daftar id identik di kedua file
     for nama_arr in ("FX_COVER", "FX_SCROLL"):
         a, b = _fx_ids(studio, nama_arr), _fx_ids(undangan, nama_arr)
         if a is None or b is None:
             lapor("masalah", f"array {nama_arr} tidak ditemukan di studio/undangan")
-        elif a == b and len(a) == (34 if nama_arr == "FX_SCROLL" else 10):
+        elif a == b and len(a) == (34 if nama_arr == "FX_SCROLL" else 14):
             lapor("ok", f"{nama_arr} identik di studio & undangan ({len(a)} efek)")
         else:
             lapor("masalah", f"{nama_arr} studio != undangan! studio={a} undangan={b}")
@@ -354,7 +361,7 @@ def cek_pipeline_undangan():
     fa, fb = _font_ids(studio), _font_ids(undangan)
     if fa is None or fb is None:
         lapor("masalah", "array FONTS tidak ditemukan di studio/undangan")
-    elif fa == fb and len(fa) == 15:
+    elif fa == fb and len(fa) == 17:
         lapor("ok", f"FONTS identik di studio & undangan ({len(fa)} font)")
     else:
         lapor("masalah", f"FONTS studio != undangan! studio={fa} undangan={fb}")
@@ -424,20 +431,36 @@ def cek_fitur_terbaru():
               f"{rel}: 5 tema feminin baru ada ({len(ada)}/5)")
     ids_st = _tpl_ids("studio.html") or []
     ids_ud = _tpl_ids("undangan.html") or []
-    lapor("ok" if ids_st == ids_ud and len(ids_st) == 40 else "masalah",
+    lapor("ok" if ids_st == ids_ud and len(ids_st) == 71 else "masalah",
           f"urutan TPL identik di studio & undangan ({len(ids_st)} template)")
-    # 2) 20 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
+    # 5 tema eksklusif universal (ev:'all') wajib ada & identik paletnya di kedua file
+    uni = ["aurora-celestial", "ivory-pearl", "emerald-royale", "rose-gold-blush", "onyx-platinum"]
+    ada = [i for i in uni if ("id:'%s'" % i) in studio and ("id:'%s'" % i) in undangan
+           and ("ev:'all'" in studio and "ev:'all'" in undangan)]
+    lapor("ok" if len(ada) == 5 else "masalah",
+          f"studio & undangan: 5 tema eksklusif universal ev:'all' ({len(ada)}/5)")
+    # 2) 23 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
     def _border_ids(s):
         m = re.search(r"const BORDERS=\[(.*?)\];", s, re.S)
-        return re.findall(r"\{id:'([a-z0-9]+)'", m.group(1)) if m else None
+        return re.findall(r"\{id:'([a-z0-9-]+)'", m.group(1)) if m else None
     bs, bu = _border_ids(studio), _border_ids(undangan)
-    lapor("ok" if bs and bu and len(bs) == 20 and len(set(bs)) == 20 and bs == bu else "masalah",
-          "BORDERS 20 id unik, identik di studio & undangan")
+    lapor("ok" if bs and bu and len(bs) == 32 and len(set(bs)) == 32 and bs == bu else "masalah",
+          "BORDERS 32 id unik, identik di studio & undangan")
+    # 2b) gating konten EKSKLUSIF: kunci tier di studio + konten baru sinkron di undangan
+    ok = ("bolehEks" in studio and "paksaTier" in studio and "kunciEks" in studio
+          and all(i in studio and i in undangan for i in
+                  ("id:'laurel'", "id:'artdeco'", "id:'pearl'", "id:'cinzel'", "id:'marcellus'"))
+          and "fx-c-shimmer" in studio and "fx-c-shimmer" in undangan
+          and "tier:'eksklusif'" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio: gating konten EKSKLUSIF per tier; border/font/fx baru sinkron di undangan")
     ok = "border:state.border" in studio
     lapor("ok" if ok else "masalah", "studio.html: publish() menyimpan border ke snapshot data")
     ok = "const BD=BORDERS.find(b=>b.id===(d&&d.border))" in undangan and "#cover .bdfr" in undangan
     lapor("ok" if ok else "masalah", "undangan.html: live cover memakai data.border (frame .bdfr)")
-    ok = "border:'double'" in studio and "setBorder(id){state.border=id" in studio
+    ok = ("border:'double'" in studio and "function setBorder(id){" in studio
+          and "lockOfB" in studio and "LOCK_RANK" in studio and "tk:'vip'" in studio
+          and all(i in studio and i in undangan for i in ("id:'gold-leaf'", "id:'filigree'", "id:'vip-diamond'")))
     lapor("ok" if ok else "masalah", "studio.html: picker border (state.border + setBorder) tersedia")
     # 3) hide template di katalog + urut per kategori
     ok = "function tglKatHide(id)" in studio and "katalogHide" in studio
@@ -708,6 +731,34 @@ def cek_template_pernikahan():
         lapor("info", "node tidak tersedia — uji template pernikahan dilewati")
 
 
+def cek_vip_4d():
+    print("\n[21] Mesin & tema VIP 4D (assets/vip-4d.js)")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji VIP 4D dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-vip-4d.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji VIP 4D: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+
+
+def cek_simulasi():
+    print("\n[22] Simulasi pemakaian (studio → export → undangan live)")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — simulasi pemakaian dilewati")
+        return
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    if probe.returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — simulasi pemakaian dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-simulasi.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji simulasi pemakaian: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -717,7 +768,7 @@ def main():
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
-               cek_template_pernikahan):
+               cek_template_pernikahan, cek_vip_4d, cek_simulasi):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

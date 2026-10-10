@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111">
 <title>asproject.my.id — Studio Undangan Premium 4in1</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
 <style>
 :root{--bg:#fafaf8;--card:#fff;--line:#eee;--line2:#e9e9e9;--ink:#1a1a1a;--mut:#737373;--mut2:#a3a3a3;--gold:#D4AF37;--cream:#FFFBEB;--cream2:#FDE68A;--soft:#f5f5f4}
@@ -69,6 +69,7 @@ input,textarea,select{outline:0}
 .urlbar{height:36px;background:var(--soft);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 12px;gap:8px}
 .urlpill{flex:1;min-width:0;font-family:ui-monospace,monospace;font-size:10px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .notice{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:99px;z-index:99;font-size:12px;font-weight:500;box-shadow:0 12px 40px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px}
+.notice button{background:#fff;color:#111;border:0;border-radius:99px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;margin-top:6px}
 .guestrow{border-radius:12px;border:1px solid var(--line);padding:10px;display:flex;align-items:center;gap:8px;background:#fbfaf8;margin-bottom:8px}
 .guestrow.sel{border-color:var(--gold);background:var(--cream)}
 .upload-dash{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:12px;border:2px dashed rgba(212,175,55,.4);background:rgba(255,251,235,.5);cursor:pointer;font-size:13px;transition:.15s}
@@ -96,6 +97,10 @@ input,textarea,select{outline:0}
 @keyframes cSlideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
 @keyframes cSwing{from{opacity:0;transform:rotate(-7deg) translateY(-14px)}to{opacity:1;transform:none}}
 @keyframes cElastic{0%{opacity:0;transform:scale(.4)}55%{opacity:1;transform:scale(1.12)}75%{transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
+@keyframes cShimmer{0%{opacity:0;filter:brightness(1.9) saturate(1.3)}60%{opacity:1;filter:brightness(1.15)}100%{opacity:1;filter:none}}
+@keyframes cCurtain{0%{opacity:0;transform:scaleX(.55)}100%{opacity:1;transform:none}}
+@keyframes cVipZoom{0%{opacity:0;transform:scale(1.28);filter:blur(6px)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
+@keyframes cVipCurt{0%{clip-path:inset(0 50% 0 50%);opacity:.4}100%{clip-path:inset(0 0 0 0);opacity:1}}
 .ap .fx-c-fade{animation:cFade .8s ease both}
 .ap .fx-c-zoom{animation:cZoom .7s cubic-bezier(.22,.8,.36,1) both}
 .ap .fx-c-rise{animation:cRise .7s cubic-bezier(.22,.8,.36,1) both}
@@ -106,6 +111,10 @@ input,textarea,select{outline:0}
 .ap .fx-c-slide{animation:cSlideIn .7s cubic-bezier(.22,.8,.36,1) both}
 .ap .fx-c-swing{animation:cSwing .7s cubic-bezier(.22,.8,.36,1) both}
 .ap .fx-c-elastic{animation:cElastic .8s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-shimmer{animation:cShimmer 1s ease both}
+.ap .fx-c-curtain{animation:cCurtain .9s cubic-bezier(.22,.8,.36,1) both;transform-origin:50% 0}
+.ap .fx-c-vip-zoom{animation:cVipZoom 1.4s cubic-bezier(.22,.8,.36,1) both}
+.ap .fx-c-vip-curtain{animation:cVipCurt 1.2s cubic-bezier(.5,0,.3,1) both}
 .fxbtn{text-align:left;border-radius:12px;padding:10px 12px;display:grid;gap:2px;background:#fff;border:1px solid var(--line);cursor:pointer;transition:.15s;font-family:inherit}
 .fxbtn b{font-size:11px;font-weight:600;color:#111}
 .fxbtn span{font-size:10px;color:var(--mut);line-height:1.4}
@@ -288,55 +297,94 @@ const FONTS=[
  {id:'pacifico',name:'Pacifico (script)',fam:'"Pacifico",cursive'},
  {id:'dancing',name:'Dancing Script',fam:'"Dancing Script",cursive'},
  {id:'caveat',name:'Caveat (tulis tangan)',fam:'"Caveat",cursive'},
- {id:'sacramento',name:'Sacramento (elegan)',fam:'"Sacramento",cursive'}];
+ {id:'sacramento',name:'Sacramento (elegan)',fam:'"Sacramento",cursive'},
+ {id:'cinzel',name:'Cinzel Imperial 🔒',fam:'"Cinzel",serif',ex:1},
+ {id:'marcellus',name:'Marcellus Royal 🔒',fam:'"Marcellus",serif',ex:1}];
 const DOA={
  pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu...'},
  khitanan:{ar:'اللَّهُمَّ اجْعَلْهُ مِنَ الصَّالِحِيْنَ',latin:'Allahummaj\u2018alhu minash shalihin',arti:'Ya Allah jadikanlah ia anak yang shalih...'},
  ultah:{ar:'اللَّهُمَّ طَوِّلْ عُمْرَهُ وَصَحِّحْ جَسَدَهُ',latin:'Allahumma thawwil \u2018umrahu...',arti:'Ya Allah panjangkan umurnya...'},
  aqiqah:{ar:'أُعِيْذُكَ بِكَلِمَاتِ اللهِ التَّامَّةِ',latin:'U\u2018idzuka bikalimatillahit tammah',arti:'Aku memohon perlindungan...'}};
-const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ultah Anak',aqiqah:'Aqiqah'};
-const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶'};
+const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ultah Anak',aqiqah:'Aqiqah',all:'Semua Acara'};
+const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶',all:'✨'};
 
-/* ===== 15 TEMPLATE: 12 sesuai katalog + 3 varian Ice Blue dari folder Drive "Katalog demo" ===== */
+/* ===== 42 TEMPLATE: katalog publik (index.html) + varian premium; urutan array
+   HARUS identik dengan undangan.html & katalog Pn di index.html (cek-kesehatan [12]/[13]) ===== */
 const TPL=[
  {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#4a3826',badge:'BEST SELLER',bg3d:'assets/tema-3d/jawa-elegan.webp',bgPaper:'assets/wedding/jawa-batik-watercolor.webp',deco:'❖ ✦ ❖',pat:'batik',ft:'cormorant',desc:'Nuansa pranakan Jawa, kertas batik kawung/parang, dan aksen emas'},
- {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',badge:'',bgPaper:'assets/wedding/minimalist-sage-watercolor.webp',deco:'🌿',pat:'botanical',ft:'inter',desc:'Minimalis sage dengan bingkai eucalyptus watercolor dan kertas ivory'},
+ {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#38503c',badge:'',bgPaper:'assets/wedding/minimalist-sage-watercolor.webp',deco:'❧ ✦ ❧',pat:'botanical',ft:'inter',desc:'Minimalis sage dengan bingkai eucalyptus watercolor dan kertas ivory'},
  {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#D4AF37',ink:'#5a4a12',badge:'LUXURY',bg3d:'assets/tema-3d/luxury-gold.webp',deco:'✦ ◆ ✦',pat:'',ft:'playfair',desc:'Black tie mewah dengan marmer gelap, ukiran emas, dan tipografi klasik'},
- {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',badge:'',bg3d:'assets/tema-3d/floral-rustic.webp',deco:'🌸 ❀ 🌸',pat:'',ft:'cormorant',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
- {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',harga:75000,g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',badge:'NEW',bg3d:'assets/tema-3d/ice-blue.webp',deco:'❄ ✦ ❄',pat:'',ft:'playfair',desc:'Biru es elegan ala winter wedding, efek glass & floral frost yang sejuk'},
- {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',harga:75000,g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',badge:'',deco:'❄',pat:'frost',ft:'inter',desc:'Putih salju, detail kristal tipis, dan tipografi minimal'},
- {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',harga:79000,g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',badge:'',bg3d:'assets/tema-3d/ocean-breeze.webp',deco:'🌊 ✦ 🌊',pat:'',ft:'playfair',desc:'Gradasi biru laut & ombak halus, pas buat acara outdoor atau pantai'},
- {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',badge:'FAVORIT',deco:'⭐ 🕌 ⭐',pat:'',ft:'poppins',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},
+ {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#6e4038',badge:'',bg3d:'assets/tema-3d/floral-rustic.webp',deco:'❀ ✦ ❀',pat:'',ft:'cormorant',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
+ {id:'ice-blue',nama:'Ice Blue Floral',ev:'pernikahan',harga:75000,g:['#F0F9FF','#BAE6FD','#7DD3FC'],accent:'#0EA5E9',ink:'#0c4a6e',badge:'NEW',bg3d:'assets/tema-3d/ice-blue.webp',deco:'❆ ✦ ❆',pat:'',ft:'playfair',desc:'Biru es elegan ala winter wedding, efek glass & floral frost yang sejuk'},
+ {id:'minimalist-frost',nama:'Minimalist Frost',ev:'pernikahan',harga:75000,g:['#FCFEFF','#F0F9FF','#E0F2FE'],accent:'#38BDF8',ink:'#075985',badge:'',deco:'❆',pat:'frost',ft:'inter',desc:'Putih salju, detail kristal tipis, dan tipografi minimal'},
+ {id:'ocean-breeze',nama:'Ocean Breeze',ev:'pernikahan',harga:79000,g:['#BAE6FD','#7DD3FC','#38BDF8'],accent:'#0284C7',ink:'#0c4a6e',badge:'',bg3d:'assets/tema-3d/ocean-breeze.webp',deco:'❈ ✦ ❈',pat:'',ft:'playfair',desc:'Gradasi biru laut & ombak halus, pas buat acara outdoor atau pantai'},
+ {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#1e3a5c',badge:'FAVORIT',deco:'☪ ✦ ☪',pat:'',ft:'poppins',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},
  {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#2e4228',badge:'',deco:'☪ ✦ ☪',pat:'arab',ft:'lora',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},
- {id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',badge:'CERIA',bg3d:'assets/tema-3d/kids-party.webp',deco:'🎈 🎉 🎈',pat:'confetti',ft:'poppins',desc:'Warna-warni happy, balon & confetti buat si kecil'},
- {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',badge:'AESTHETIC',bg3d:'assets/tema-3d/sweet-17.webp',deco:'💖 ✨ 💖',pat:'',ft:'playfair',desc:'Pink soft, aesthetic banget buat sweet seventeen-mu, Kak'},
+ {id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#6b4b16',badge:'CERIA',bg3d:'assets/tema-3d/kids-party.webp',deco:'✧ ✦ ✧',pat:'confetti',ft:'poppins',desc:'Warna-warni happy, balon & confetti buat si kecil'},
+ {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#6e2e44',badge:'AESTHETIC',bg3d:'assets/tema-3d/sweet-17.webp',deco:'❥ ✦ ❥',pat:'',ft:'playfair',desc:'Pink soft, aesthetic banget buat sweet seventeen-mu, Kak'},
  {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#3a3835',badge:'',deco:'◆',pat:'',ft:'inter',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},
- {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',badge:'',deco:'🍼 ☁️ 🍼',pat:'',ft:'poppins',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},
- {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',badge:'FAVORIT',deco:'🎀 🍼 🎀',pat:'',ft:'playfair',desc:'Pink blush super lembut buat si putri kecil kesayangan'},
+ {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#2a4a6e',badge:'',deco:'☁ ✦ ☁',pat:'',ft:'poppins',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},
+ {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#7a3450',badge:'FAVORIT',deco:'✿ ✦ ✿',pat:'',ft:'playfair',desc:'Pink blush super lembut buat si putri kecil kesayangan'},
  {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#4e452e',badge:'',deco:'☪ ❖ ☪',pat:'arab',ft:'lora',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'},
  /* ==== 20 TEMA BARU (5 per acara, nuansa maskulin + karakter maskot di cover) ==== */
- {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',harga:89000,g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',badge:'BARU',char:'👑',bg3d:'assets/tema-3d/navy-royal.webp',deco:'✦ ❖ ✦',pat:'',ft:'playfair',desc:'Navy gelap maskulin & gold regal, vibe sultan yang tenang'},
- {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',harga:79000,g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',badge:'',char:'🦌',bg3d:'assets/tema-3d/forest-classic.webp',deco:'🌲 ❖ 🌲',pat:'',ft:'ebgaramond',desc:'Hijau hutan klasik, gagah & hangat buat groom yang berkarakter'},
- {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',harga:89000,g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',badge:'BARU',char:'🎩',bg3d:'assets/tema-3d/charcoal-gold.webp',deco:'◆ ✦ ◆',pat:'',ft:'bebas',desc:'Hitam charcoal & gold tegas, black tie yang bersih dan mahal'},
- {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',harga:75000,g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',badge:'',char:'🌿',deco:'— ✦ —',pat:'botanical',ft:'oswald',desc:'Slate abu-batu dipadu sage dan ornamen daun yang tenang'},
- {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',harga:85000,g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',badge:'',char:'🎖️',bg3d:'assets/tema-3d/burgundy-regal.webp',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond',desc:'Burgundy tua & emas, elegan klasik dengan sentuhan tegas'},
- {id:'dino-adventure',nama:'Petualang Dino',ev:'khitanan',harga:75000,g:['#DFF3E4','#B8E3C0','#8FD3A0'],accent:'#2E7D4F',ink:'#1E4A2E',badge:'BARU',char:'🦖',deco:'🦖 ⭐ 🦖',pat:'',ft:'bebas',desc:'Dinosaurus hijau buat jagoan kecilmu yang suka petualangan'},
- {id:'football-champ',nama:'Juara Sepak Bola',ev:'khitanan',harga:75000,g:['#E3F6E9','#BCEBCF','#8FD8AE'],accent:'#1F6E43',ink:'#163F28',badge:'',char:'⚽',deco:'⚽ ✦ ⚽',pat:'',ft:'oswald',desc:'Teman-teman, jagoan kita siap jadi juara! Nuansa lapangan hijau'},
- {id:'space-explorer',nama:'Petualang Antariksa',ev:'khitanan',harga:79000,g:['#1A2450','#28356B','#3A4A8C'],accent:'#F0C75E',ink:'#E8ECFF',badge:'',char:'🚀',deco:'🚀 ✦ 🚀',pat:'',ft:'bebas',desc:'Biru malam & starlight, si kecil siap menjelajah galaksi'},
- {id:'robot-tech',nama:'Robot Cerdas',ev:'khitanan',harga:75000,g:['#E5F1F5','#C4DEE8','#9CC4D4'],accent:'#33658A',ink:'#243B4D',badge:'',char:'🤖',deco:'🤖 ✦ 🤖',pat:'',ft:'oswald',desc:'Robot & teknologi, seru dan futuristis buat anak engineer cilik'},
- {id:'knight-quest',nama:'Pangeran Knight',ev:'khitanan',harga:79000,g:['#3D2B52','#533B6B','#6C4E88'],accent:'#E0B84C',ink:'#F0E9F7',badge:'',char:'🛡️',deco:'⚔ ✦ ⚔',pat:'',ft:'ebgaramond',desc:'Ungu knight & emas, pahlawan kecil yang gagah berani'},
- {id:'superhero-power',nama:'Super Hero',ev:'ultah',harga:75000,g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',badge:'BARU',char:'🦸',bg3d:'assets/tema-3d/superhero-power.webp',deco:'🦸 ⚡ 🦸',pat:'confetti',ft:'bebas',desc:'Merah biru superhero, si kecil punya kekuatan luar biasa'},
- {id:'race-car',nama:'Balap Mobil',ev:'ultah',harga:75000,g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',badge:'',char:'🏎️',bg3d:'assets/tema-3d/race-car.webp',deco:'🏁 ✦ 🏁',pat:'',ft:'oswald',desc:'Hitam balap & merah garis start, gaspol ke garis finish!'},
- {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',harga:79000,g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',badge:'',char:'🏴‍☠️',bg3d:'assets/tema-3d/pirate-sea.webp',deco:'⚓ ✦ ⚓',pat:'',ft:'bebas',desc:'Navy lautan & jangkar emas, harta karun si kecil menanti'},
- {id:'dragon-fire',nama:'Naga Api',ev:'ultah',harga:79000,g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',badge:'',char:'🐉',bg3d:'assets/tema-3d/dragon-fire.webp',deco:'🐉 ✦ 🐉',pat:'',ft:'bebas',desc:'Merah naga & api oranye, garang tapi tetap imut'},
- {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',harga:75000,g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',badge:'',char:'🥷',bg3d:'assets/tema-3d/ninja-mastery.webp',deco:'🥷 ✦ 🥷',pat:'',ft:'oswald',desc:'Hitam ninja & aksen jingga, senyap tapi penuh kejutan'},
- {id:'baby-prince',nama:'Pangeran Cilik',ev:'aqiqah',harga:75000,g:['#E7F0FB','#C9DCF5','#A5C4EC'],accent:'#3E6BA8',ink:'#234066',badge:'BARU',char:'🤴',deco:'🤴 ✦ 🤴',pat:'',ft:'poppins',desc:'Biru royal lembut, sultan mungil siap menaiki singgasana'},
- {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',harga:75000,g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',badge:'',char:'🦕',deco:'🦕 ✦ 🦕',pat:'',ft:'poppins',desc:'Hijau dino lembut, si kecil adalah dinosaurus paling gemes'},
- {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',harga:79000,g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',badge:'',char:'🧑‍🚀',deco:'🧑‍🚀 ✦ 🧑‍🚀',pat:'',ft:'oswald',desc:'Biru malam & bintang emas, petualangan si kecil dimulai'},
- {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',harga:75000,g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',badge:'',char:'🐯',deco:'🐯 ✦ 🐯',pat:'',ft:'bebas',desc:'Kuning keharuman tiger, si jagoan mungil yang menggemaskan'},
- {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',harga:75000,g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',badge:'',char:'🚂',deco:'🚂 ✦ 🚂',pat:'',ft:'poppins',desc:'Merah kereta & aspal kota, chugga-chugga si kecil melaju'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',badge:'BARU',char:'👸',bg3d:'assets/tema-3d/fairy-princess.webp',deco:'👸 ✨ 👸',pat:'',ft:'dancing',desc:'Rosa pastel & kelopak bunga, ultah si kecil sang putri peri'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',badge:'BARU',char:'🦄',bg3d:'assets/tema-3d/unicorn-magic.webp',deco:'🦄 ⭐ 🦄',pat:'confetti',ft:'pacifico',desc:'Lavender magis & bintang-bintang, mimpi si kecil jadi nyata'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',badge:'BARU',char:'🌸',bg3d:'assets/tema-3d/rose-bouquet.webp',deco:'🌸 🌷 🌸',pat:'',ft:'sacramento',desc:'Bunga mekar & pita merah muda, ultah feminin yang manis sempurna'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',badge:'BARU',char:'🌹',deco:'🌹 🍼 🌹',pat:'arab',ft:'playfair',desc:'Mawar lembut nan anggun, aqiqah si mungil perempuan terkasih'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',badge:'BARU',char:'🤷',deco:'🤷 🌙 🤷',pat:'arab',ft:'dancing',desc:'Krem hangat & sayap peri, aqiqah si putri kecil yang bercahaya'}];
+ {id:'navy-royal',nama:'Navy Royal',ev:'pernikahan',harga:89000,g:['#0F1B3D','#1B2C5E','#2A4080'],accent:'#D4AF37',ink:'#DCE3F5',badge:'BARU',char:'ROYAL',bg3d:'assets/tema-3d/navy-royal.webp',deco:'✦ ❖ ✦',pat:'',ft:'playfair',desc:'Navy gelap maskulin & gold regal, vibe sultan yang tenang'},
+ {id:'forest-classic',nama:'Forest Classic',ev:'pernikahan',harga:79000,g:['#0E2A1E','#17402E','#205C41'],accent:'#C9A961',ink:'#E3EDE6',badge:'',char:'FOREST',bg3d:'assets/tema-3d/forest-classic.webp',deco:'❧ ❖ ❧',pat:'',ft:'ebgaramond',desc:'Hijau hutan klasik, gagah & hangat buat groom yang berkarakter'},
+ {id:'charcoal-gold',nama:'Charcoal Gold',ev:'pernikahan',harga:89000,g:['#17181A','#26282C','#3A3D44'],accent:'#D4AF37',ink:'#EDEDEF',badge:'BARU',char:'GOLD',bg3d:'assets/tema-3d/charcoal-gold.webp',deco:'◆ ✦ ◆',pat:'',ft:'bebas',desc:'Hitam charcoal & gold tegas, black tie yang bersih dan mahal'},
+ {id:'slate-sage',nama:'Slate & Sage',ev:'pernikahan',harga:75000,g:['#3E4A52','#566870','#6E848C'],accent:'#D8C9A3',ink:'#F0F2F0',badge:'',char:'SAGE',deco:'— ✦ —',pat:'botanical',ft:'oswald',desc:'Slate abu-batu dipadu sage dan ornamen daun yang tenang'},
+ {id:'burgundy-regal',nama:'Burgundy Regal',ev:'pernikahan',harga:85000,g:['#3B0D12','#5A141C','#7A1E28'],accent:'#D9A441',ink:'#F7E9EA',badge:'',char:'REGAL',bg3d:'assets/tema-3d/burgundy-regal.webp',deco:'✦ ❖ ✦',pat:'',ft:'ebgaramond',desc:'Burgundy tua & emas, elegan klasik dengan sentuhan tegas'},
+ {id:'dino-adventure',nama:'Petualang Dino',ev:'khitanan',harga:75000,g:['#DFF3E4','#B8E3C0','#8FD3A0'],accent:'#2E7D4F',ink:'#1E4A2E',badge:'BARU',char:'DINO',deco:'✧ ◆ ✧',pat:'',ft:'bebas',desc:'Dinosaurus hijau buat jagoan kecilmu yang suka petualangan'},
+ {id:'football-champ',nama:'Juara Sepak Bola',ev:'khitanan',harga:75000,g:['#E3F6E9','#BCEBCF','#8FD8AE'],accent:'#1F6E43',ink:'#163F28',badge:'',char:'GOAL',deco:'◆ ✦ ◆',pat:'',ft:'oswald',desc:'Teman-teman, jagoan kita siap jadi juara! Nuansa lapangan hijau'},
+ {id:'space-explorer',nama:'Petualang Antariksa',ev:'khitanan',harga:79000,g:['#1A2450','#28356B','#3A4A8C'],accent:'#F0C75E',ink:'#E8ECFF',badge:'',char:'SPACE',deco:'✦ ✧ ✦',pat:'',ft:'bebas',desc:'Biru malam & starlight, si kecil siap menjelajah galaksi'},
+ {id:'robot-tech',nama:'Robot Cerdas',ev:'khitanan',harga:75000,g:['#E5F1F5','#C4DEE8','#9CC4D4'],accent:'#33658A',ink:'#243B4D',badge:'',char:'ROBOT',deco:'◆ ✦ ◆',pat:'',ft:'oswald',desc:'Robot & teknologi, seru dan futuristis buat anak engineer cilik'},
+ {id:'knight-quest',nama:'Pangeran Knight',ev:'khitanan',harga:79000,g:['#3D2B52','#533B6B','#6C4E88'],accent:'#E0B84C',ink:'#F0E9F7',badge:'',char:'KNIGHT',deco:'⚔ ✦ ⚔',pat:'',ft:'ebgaramond',desc:'Ungu knight & emas, pahlawan kecil yang gagah berani'},
+ {id:'superhero-power',nama:'Super Hero',ev:'ultah',harga:75000,g:['#FDE8E8','#F9C6C6','#F09C9C'],accent:'#C0392B',ink:'#5C1A12',badge:'BARU',char:'HERO',bg3d:'assets/tema-3d/superhero-power.webp',deco:'✦ ✧ ✦',pat:'confetti',ft:'bebas',desc:'Merah biru superhero, si kecil punya kekuatan luar biasa'},
+ {id:'race-car',nama:'Balap Mobil',ev:'ultah',harga:75000,g:['#26292E','#3A3F46','#525962'],accent:'#E74C3C',ink:'#F0F0F0',badge:'',char:'RACE',bg3d:'assets/tema-3d/race-car.webp',deco:'❖ ✦ ❖',pat:'',ft:'oswald',desc:'Hitam balap & merah garis start, gaspol ke garis finish!'},
+ {id:'pirate-sea',nama:'Bajak Laut Cilik',ev:'ultah',harga:79000,g:['#12303F','#1E4A5C','#2C6478'],accent:'#E8B54A',ink:'#E9F4F8',badge:'',char:'PIRATE',bg3d:'assets/tema-3d/pirate-sea.webp',deco:'☠ ✦ ☠',pat:'',ft:'bebas',desc:'Navy lautan & jangkar emas, harta karun si kecil menanti'},
+ {id:'dragon-fire',nama:'Naga Api',ev:'ultah',harga:79000,g:['#3A1418','#571F24','#74292F'],accent:'#F2A03D',ink:'#FBE9E4',badge:'',char:'DRAGON',bg3d:'assets/tema-3d/dragon-fire.webp',deco:'❈ ✦ ❈',pat:'',ft:'bebas',desc:'Merah naga & api oranye, garang tapi tetap imut'},
+ {id:'ninja-mastery',nama:'Ninja Cilik',ev:'ultah',harga:75000,g:['#20242B','#2F3540','#414A57'],accent:'#E4572E',ink:'#ECEFF3',badge:'',char:'NINJA',bg3d:'assets/tema-3d/ninja-mastery.webp',deco:'✧ ✦ ✧',pat:'',ft:'oswald',desc:'Hitam ninja & aksen jingga, senyap tapi penuh kejutan'},
+ {id:'baby-prince',nama:'Pangeran Cilik',ev:'aqiqah',harga:75000,g:['#E7F0FB','#C9DCF5','#A5C4EC'],accent:'#3E6BA8',ink:'#234066',badge:'BARU',char:'PRINCE',deco:'⚜ ✦ ⚜',pat:'',ft:'poppins',desc:'Biru royal lembut, sultan mungil siap menaiki singgasana'},
+ {id:'baby-dino',nama:'Baby Dino',ev:'aqiqah',harga:75000,g:['#E0F4EA','#BFE7D2','#9AD8B5'],accent:'#3B8E6A',ink:'#1F4A37',badge:'',char:'DINO',deco:'✧ ❖ ✧',pat:'',ft:'poppins',desc:'Hijau dino lembut, si kecil adalah dinosaurus paling gemes'},
+ {id:'baby-astro',nama:'Astronaut Cilik',ev:'aqiqah',harga:79000,g:['#1C2A55','#2A3C74','#3A5094'],accent:'#F0C75E',ink:'#E9EEFF',badge:'',char:'ASTRO',deco:'✦ ✧ ✦',pat:'',ft:'oswald',desc:'Biru malam & bintang emas, petualangan si kecil dimulai'},
+ {id:'baby-tiger',nama:'Tiger Cute',ev:'aqiqah',harga:75000,g:['#FFF3D6','#FFE3A1','#FFD166'],accent:'#B26A1B',ink:'#5F3C10',badge:'',char:'TIGER',deco:'❁ ✦ ❁',pat:'',ft:'bebas',desc:'Kuning keharuman tiger, si jagoan mungil yang menggemaskan'},
+ {id:'baby-train',nama:'Kereta Cilik',ev:'aqiqah',harga:75000,g:['#FBE9E7','#F6C9C2','#EDA59A'],accent:'#A63B2E',ink:'#5C241C',badge:'',char:'TRAIN',deco:'◆ ✦ ◆',pat:'',ft:'poppins',desc:'Merah kereta & aspal kota, chugga-chugga si kecil melaju'},{id:'fairy-princess',nama:'Putri Peri',ev:'ultah',harga:75000,g:['#FDF2F8','#FBCFE8','#F472B6'],accent:'#DB2777',ink:'#831843',badge:'BARU',char:'FAIRY',bg3d:'assets/tema-3d/fairy-princess.webp',deco:'❀ ✦ ❀',pat:'',ft:'dancing',desc:'Rosa pastel & kelopak bunga, ultah si kecil sang putri peri'},{id:'unicorn-magic',nama:'Unicorn Magic',ev:'ultah',harga:75000,g:['#F5F3FF','#E9D5FF','#C4B5FD'],accent:'#7C3AED',ink:'#4C1D95',badge:'BARU',char:'UNICORN',bg3d:'assets/tema-3d/unicorn-magic.webp',deco:'✧ ✦ ✧',pat:'confetti',ft:'pacifico',desc:'Lavender magis & bintang-bintang, mimpi si kecil jadi nyata'},{id:'rose-bouquet',nama:'Buket Mawar',ev:'ultah',harga:75000,g:['#FDF2F8','#FECDD3','#FB7185'],accent:'#E11D48',ink:'#881337',badge:'BARU',char:'ROSE',bg3d:'assets/tema-3d/rose-bouquet.webp',deco:'❀ ✿ ❀',pat:'',ft:'sacramento',desc:'Bunga mekar & pita merah muda, ultah feminin yang manis sempurna'},{id:'baby-rose',nama:'Baby Rose',ev:'aqiqah',harga:75000,g:['#FFF1F2','#FFE4E6','#FECDD3'],accent:'#BE123C',ink:'#881337',badge:'BARU',char:'ROSE',deco:'❁ ✦ ❁',pat:'arab',ft:'playfair',desc:'Mawar lembut nan anggun, aqiqah si mungil perempuan terkasih'},{id:'baby-fairy',nama:'Baby Fairy',ev:'aqiqah',harga:79000,g:['#FFF7ED','#FFE4E6','#FBCFE8'],accent:'#DB2777',ink:'#9D174D',badge:'BARU',char:'FAIRY',deco:'☾ ✦ ☾',pat:'arab',ft:'dancing',desc:'Krem hangat & sayap peri, aqiqah si putri kecil yang bercahaya'},
+ /* ==== 2 TEMA PREMIUM BARU (wedding, tier 89k, artwork satin & beludru) ==== */
+ {id:'champagne-royale',nama:'Champagne Royale',ev:'pernikahan',harga:89000,g:['#FBF6EC','#F1E3C9','#DFC49A'],accent:'#9A742D',ink:'#54402B',badge:'PREMIUM',char:'CHEERS',bg3d:'assets/tema-3d/champagne-royale.webp',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',desc:'Satin sampanye & foil emas — kemewahan ballroom yang lembut dan timeless'},
+ {id:'violet-imperial',nama:'Violet Imperial',ev:'pernikahan',harga:89000,g:['#241028','#37193E','#4E2656'],accent:'#E2B458',ink:'#F2E8F7',badge:'PREMIUM',char:'NOBLE',bg3d:'assets/tema-3d/violet-imperial.webp',deco:'❖ ✦ ❖',pat:'',ft:'playfair',desc:'Beludru ungu royal & emas majestik — resepsi malam yang anggun berwibawa'},
+ /* ==== 5 TEMA EKSKLUSIF UNIVERSAL (ev:'all', tier 119k) ==== */
+ {id:'aurora-celestial',nama:'Aurora Celestial',ev:'all',harga:119000,g:['#062A2B','#0B3D3C','#12544E'],accent:'#E7C873',ink:'#E6F4EF',badge:'EKSKLUSIF',tier:'eksklusif',char:'AURORA',bg3d:'assets/tema-3d/aurora-celestial.webp',deco:'❈ ✦ ❈',pat:'',ft:'playfair',desc:'Gradasi aurora teal & emas celestial — mewah untuk acara apa pun'},
+ {id:'ivory-pearl',nama:'Ivory Pearl',ev:'all',harga:119000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'EKSKLUSIF',tier:'eksklusif',char:'PEARL',bg3d:'assets/tema-3d/ivory-pearl.webp',deco:'❦ ✦ ❦',pat:'',ft:'cormorant',desc:'Ivory mutiara tenang dengan kilau perunggu — elegan lintas generasi'},
+ {id:'emerald-royale',nama:'Emerald Royale',ev:'all',harga:119000,g:['#07271F','#0D3B2E','#155240'],accent:'#D9B45B',ink:'#E9F3EC',badge:'EKSKLUSIF',tier:'eksklusif',char:'ROYALE',bg3d:'assets/tema-3d/emerald-royale.webp',deco:'❖ ✦ ',pat:'',ft:'ebgaramond',desc:'Zamrud royal & kuningan hangat — kesan berwibawa yang bersahaja'},
+ {id:'rose-gold-blush',nama:'Rose Gold Blush',ev:'all',harga:119000,g:['#FDF6F3','#F7E3DC','#EAC9BE'],accent:'#A05C4B',ink:'#5A3A31',badge:'EKSKLUSIF',tier:'eksklusif',char:'BLUSH',bg3d:'assets/tema-3d/rose-gold-blush.webp',deco:'❀ ✦ ❀',pat:'',ft:'sacramento',desc:'Blush lembut & rose gold metalik — manis untuk semua momen'},
+ {id:'onyx-platinum',nama:'Onyx Platinum',ev:'all',harga:119000,g:['#101114','#1C1E22','#2B2E33'],accent:'#C9CED6',ink:'#F0F2F4',badge:'EKSKLUSIF',tier:'eksklusif',char:'ONYX',bg3d:'assets/tema-3d/onyx-platinum.webp',deco:'◆ ✦ ◆',pat:'',ft:'playfair',desc:'Onyx gelap & platinum — modern, tegas, dan mahal'},
+ /* ==== 20 TEMA PREMIUM BARU (5 per kategori, tier 89k) ==== */
+ {id:'terracotta-boho',nama:'Terracotta Boho',ev:'pernikahan',harga:89000,g:['#FBF1E8','#F2DCC8','#E0BFA0'],accent:'#A0623D',ink:'#5C3A26',badge:'PREMIUM',char:'BOHO',bg3d:'assets/tema-3d/terracotta-boho.webp',deco:'❧ ✦ ❧',pat:'',ft:'cormorant',desc:'Pampas & terracotta boho — garden party yang hangat dan estetis'},
+ {id:'midnight-celestial',nama:'Midnight Celestial',ev:'pernikahan',harga:89000,g:['#0B1026','#141B3C','#20295A'],accent:'#E4C57E',ink:'#E8ECFA',badge:'PREMIUM',char:'MOON',bg3d:'assets/tema-3d/midnight-celestial.webp',deco:'☾ ✦ ☾',pat:'',ft:'playfair',desc:'Langit tengah malam bertabur bintang emas — sakral dan dramatis'},
+ {id:'sakura-spring',nama:'Sakura Spring',ev:'pernikahan',harga:89000,g:['#FDF4F6','#F9DFE6','#EFC3CF'],accent:'#B05268',ink:'#5A2E3A',badge:'PREMIUM',char:'SAKURA',bg3d:'assets/tema-3d/sakura-spring.webp',deco:'❀ ✦ ❀',pat:'',ft:'dancing',desc:'Kelopak sakura musim semi — romantis lembut sepanjang hari'},
+ {id:'velvet-cocoa',nama:'Velvet Cocoa',ev:'pernikahan',harga:89000,g:['#2A1A12','#3B2519','#523322'],accent:'#E8C9A0',ink:'#F4E9DE',badge:'PREMIUM',char:'VELVET',bg3d:'assets/tema-3d/velvet-cocoa.webp',deco:'❥ ✦ ❥',pat:'',ft:'ebgaramond',desc:'Beludru cocoa & krim hangat — intim, mewah, bersahaja'},
+ {id:'golden-hour',nama:'Golden Hour',ev:'pernikahan',harga:89000,g:['#FFF6E5','#FBE3B8','#F2C879'],accent:'#8A5A1F',ink:'#573A10',badge:'PREMIUM',char:'GOLDEN',bg3d:'assets/tema-3d/golden-hour.webp',deco:'✺ ✦ ✺',pat:'',ft:'lora',desc:'Cahaya jam emas sore hari — outdoor wedding yang berkilau'},
+ {id:'mecca-dawn',nama:'Mecca Dawn',ev:'khitanan',harga:89000,g:['#123B2E','#1D5443','#2A6B55'],accent:'#E9C87A',ink:'#EAF4EC',badge:'PREMIUM',char:'MUBARAK',bg3d:'assets/tema-3d/mecca-dawn.webp',deco:'☪ ✦ ☪',pat:'',ft:'lora',desc:'Fajar hijau keemasan — khitanan yang khidmat dan terang'},
+ {id:'samurai-legend',nama:'Samurai Legend',ev:'khitanan',harga:89000,g:['#1D1410','#2E1B14','#45241A'],accent:'#E5A33C',ink:'#F6E8DC',badge:'PREMIUM',char:'SAMURAI',bg3d:'assets/tema-3d/samurai-legend.webp',deco:'⚔ ✦ ⚔',pat:'',ft:'bebas',desc:'Crimson samurai & emas — jagoan kecil pewaris semangat bushido'},
+ {id:'pilot-cilik',nama:'Pilot Cilik',ev:'khitanan',harga:89000,g:['#E8F4FD','#CBE6F8','#A5D3F0'],accent:'#2A6CA8',ink:'#1E3A56',badge:'PREMIUM',char:'PILOT',bg3d:'assets/tema-3d/pilot-cilik.webp',deco:'✧ ✦ ✧',pat:'',ft:'poppins',desc:'Langit biru & awan — siap terbang tinggi, Nak!'},
+ {id:'horse-rider',nama:'Ksatria Kuda',ev:'khitanan',harga:89000,g:['#F4EBDA','#E7D4B4','#D3B98C'],accent:'#6E5A2E',ink:'#4A3A1C',badge:'PREMIUM',char:'RIDER',bg3d:'assets/tema-3d/horse-rider.webp',deco:'❖ ✦ ❖',pat:'',ft:'ebgaramond',desc:'Ksatria penunggang kuda padang — gagah ala perayaan id'},
+ {id:'archer-legacy',nama:'Pemanah Legenda',ev:'khitanan',harga:89000,g:['#26190E','#3A2817','#543A22'],accent:'#E3B45B',ink:'#F3E8D8',badge:'PREMIUM',char:'ARCHER',bg3d:'assets/tema-3d/archer-legacy.webp',deco:'➶ ✦ ➶',pat:'',ft:'oswald',desc:'Pemanah gurun & panah emas — fokus, tenang, tepat sasaran'},
+ /* ==== 10 TEMA PREMIUM BATCH 2 (5 ultah + 5 aqiqah) ==== */
+ {id:'mermaid-lagoon',nama:'Mermaid Lagoon',ev:'ultah',harga:89000,g:['#062E33','#0C454C','#156069'],accent:'#F2C879',ink:'#E4F4F4',badge:'PREMIUM',char:'MERMAID',bg3d:'assets/tema-3d/mermaid-lagoon.webp',deco:'❈ ✦ ❈',pat:'',ft:'pacifico',desc:'Laguna putri duyung berkilau sisik — ultah ajaib bawah laut'},
+ {id:'rock-star',nama:'Rock Star',ev:'ultah',harga:89000,g:['#151013','#24161C','#3A2029'],accent:'#E8524A',ink:'#F4E6E8',badge:'PREMIUM',char:'ROCK',bg3d:'assets/tema-3d/rock-star.webp',deco:'★ ✦ ★',pat:'',ft:'bebas',desc:'Panggung lampu & gitar — si kecil siap jadi bintang rock'},
+ {id:'ballet-princess',nama:'Ballet Princess',ev:'ultah',harga:89000,g:['#FDF5F8','#F8E1EA','#EFC9D8'],accent:'#A34E6E',ink:'#57293C',badge:'PREMIUM',char:'BALLET',bg3d:'assets/tema-3d/ballet-princess.webp',deco:'❀ ✦ ❀',pat:'',ft:'dancing',desc:'Tutu & pita balet merah muda — panggung gracile si putri'},
+ {id:'candy-pop',nama:'Candy Pop',ev:'ultah',harga:89000,g:['#FFF4F9','#FFE3F0','#FFC9E2'],accent:'#C2417E',ink:'#6E2A4C',badge:'PREMIUM',char:'CANDY',bg3d:'assets/tema-3d/candy-pop.webp',deco:'✿ ✦ ✿',pat:'',ft:'poppins',desc:'Toko permen pastel penuh kejutan manis dan seru'},
+ {id:'jungle-safari',nama:'Jungle Safari',ev:'ultah',harga:89000,g:['#F3EDDC','#E2D9B8','#C9BE8F'],accent:'#5F6D26',ink:'#3E4416',badge:'PREMIUM',char:'SAFARI',bg3d:'assets/tema-3d/jungle-safari.webp',deco:'❁ ✦ ❁',pat:'',ft:'poppins',desc:'Savana hijau & singa kecil — petualangan safari ulang tahun'},
+ {id:'cloud-angel',nama:'Cloud Angel',ev:'aqiqah',harga:89000,g:['#F2F8FD','#DDEBF7','#C2DBEF'],accent:'#5B84AD',ink:'#31495E',badge:'PREMIUM',char:'ANGEL',bg3d:'assets/tema-3d/cloud-angel.webp',deco:'✧ ✦ ✧',pat:'',ft:'poppins',desc:'Awan lembut & sayap kecil — malaikat mungil dari langit'},
+ {id:'honey-bear',nama:'Honey Bear',ev:'aqiqah',harga:89000,g:['#FFF7E8','#FBE7C2','#F3D193'],accent:'#8F5B15',ink:'#54370E',badge:'PREMIUM',char:'BEAR',bg3d:'assets/tema-3d/honey-bear.webp',deco:'❥ ✦ ❥',pat:'',ft:'poppins',desc:'Madu hangat & pelukan bear — aqiqah si manis penuh syukur'},
+ {id:'blossom-bunny',nama:'Blossom Bunny',ev:'aqiqah',harga:89000,g:['#FBF4FB','#F2E1F2','#E4C8E6'],accent:'#8E4E92',ink:'#4E2A52',badge:'PREMIUM',char:'BUNNY',bg3d:'assets/tema-3d/blossom-bunny.webp',deco:'✿ ✦ ✿',pat:'',ft:'playfair',desc:'Kelinci & kelopak lilac — lembut selembut doa pertama'},
+ {id:'little-duck',nama:'Bebek Kuning',ev:'aqiqah',harga:89000,g:['#FFFBEA','#FFF0C2','#FFE28A'],accent:'#9A6A10',ink:'#5C4008',badge:'PREMIUM',char:'DUCK',bg3d:'assets/tema-3d/little-duck.webp',deco:'❁ ✦ ❁',pat:'',ft:'poppins',desc:'Bebek kuning berenang riang — ceria dan menggemaskan'},
+ {id:'moon-lullaby',nama:'Bulan Nina Bobo',ev:'aqiqah',harga:89000,g:['#101A33','#1A2749','#263560'],accent:'#F0D48A',ink:'#E9EDFA',badge:'PREMIUM',char:'MOON',bg3d:'assets/tema-3d/moon-lullaby.webp',deco:'☾ ✦ ☾',pat:'',ft:'cormorant',desc:'Bulan sabit & ninabobo bintang — tidur manis, bidadari kecil'},
+ /* ==== 4 TEMA VIP (satu per kategori, 4D, tier 149k) ==== */
+ {id:'royal-garden',nama:'Royal Garden',ev:'pernikahan',harga:149000,g:['#16261B','#22392A','#33513C'],accent:'#E5B7C4',ink:'#EFF5EE',badge:'VIP',tier:'vip',char:'ROYAL',bg3d:'assets/tema-3d/royal-garden.webp',deco:'❁ ✦ ❁',pat:'',ft:'cormorant',part:'petal',scene:'curtain',desc:'Taman mawar royal berlapis depth — kelopak jatuh & parallax 4D'},
+ {id:'galaxy-prestige',nama:'Galaxy Prestige',ev:'khitanan',harga:149000,g:['#0A0E24','#141A3E','#232C63'],accent:'#F0C75E',ink:'#E9EDFC',badge:'VIP',tier:'vip',char:'GALAXY',bg3d:'assets/tema-3d/galaxy-prestige.webp',deco:'✦ ✧ ✦',pat:'',ft:'bebas',part:'gold',scene:'zoom',desc:'Nebula & bintang tiga lapis — zoom-through sinematik kelas VIP'},
+ {id:'abyss-pearl',nama:'Abyss Pearl',ev:'ultah',harga:149000,g:['#062A33','#0B414D','#12596A'],accent:'#F4D8A8',ink:'#E6F5F6',badge:'VIP',tier:'vip',char:'ABYSS',bg3d:'assets/tema-3d/abyss-pearl.webp',deco:'❈ ✦ ❈',pat:'',ft:'pacifico',part:'bubble',scene:'rise',desc:'Palung mutiara bercahaya — gelembung naik & sinar air hidup'},
+ {id:'winter-prestige',nama:'Winter Prestige',ev:'aqiqah',harga:149000,g:['#0E1B2C','#16293E','#223951'],accent:'#BFE3F2',ink:'#EDF5FA',badge:'VIP',tier:'vip',char:'WINTER',bg3d:'assets/tema-3d/winter-prestige.webp',deco:'❆ ✦ ❆',pat:'',ft:'poppins',part:'snow',scene:'curtain',desc:'Salju pertama yang tenang — tirai terbuka & keping salju melayang'}];
 function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
-function tplsFor(ev){return TPL.filter(t=>t.ev===ev&&!state.katalogHide.includes(t.id))}
+function tplsFor(ev){return TPL.filter(t=>(t.ev===ev||t.ev==='all')&&!state.katalogHide.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
 function patCss(t){
  const tile=(svg,size)=>`background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${size};background-repeat:repeat;`;
@@ -377,14 +425,60 @@ const BORDERS=[
  {id:'halo',n:'Halo Lembut',s:A=>`box-shadow:inset 0 0 0 1px ${A}55,inset 0 0 26px ${A}22`},
  {id:'corners',n:'Sudut Elegan',corner:3},
  {id:'cornersthin',n:'Sudut Halus',corner:1,extra:A=>`border:1px solid ${A}33`},
- {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`}];
+ {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`},
+ {id:'laurel',n:'Laurel Emas',ex:1,s:A=>`border:2px solid ${A};box-shadow:0 0 0 5px color-mix(in srgb,${A} 20%,transparent),inset 0 0 0 1px ${A}`},
+ {id:'artdeco',n:'Art Deco',ex:1,s:A=>`border:3px double ${A};box-shadow:inset 0 0 0 5px #fffdf9,inset 0 0 0 6px ${A}`},
+ {id:'pearl',n:'Untaian Mutiara',ex:1,s:A=>`border:2px dotted ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 4px ${A}`},
+ /* ==== 9 BORDER BER-TIER: PREMIUM ⭐ / EKSKLUSIF 🔒 / VIP 👑 ==== */
+ {id:'gold-leaf',n:'Daun Emas',tk:'premium',s:A=>`border:5px solid ${A};border-image:linear-gradient(135deg,${A} 15%,#fffdf9 50%,${A} 85%) 1`},
+ {id:'lace-ivory',n:'Renda Ivory',tk:'premium',s:A=>`border:2px dotted ${A};outline:2px dotted ${A};outline-offset:5px`},
+ {id:'ribbon-satin',n:'Pita Satin',tk:'premium',s:A=>`border:8px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9`},
+ {id:'filigree',n:'Filigree Emas',tk:'eks',s:A=>`border:3px double ${A};box-shadow:inset 0 0 12px ${A}44,inset 0 0 0 2px #fffdf9`},
+ {id:'pearl-crown',n:'Mahkota Mutiara',tk:'eks',s:A=>`border:4px double ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 5px ${A}55`},
+ {id:'onyx-inlay',n:'Inlay Onyx',tk:'eks',s:A=>`border:6px solid #17181a;box-shadow:inset 0 0 0 2px ${A}`},
+ {id:'vip-crown',n:'Crown VIP',tk:'vip',s:A=>`border:3px double ${A};outline:2px solid ${A};outline-offset:4px;box-shadow:inset 0 0 0 2px #fffdf9`},
+ {id:'vip-aurora',n:'Aurora VIP',tk:'vip',s:A=>`border:6px solid ${A};border-image:linear-gradient(160deg,${A},#8e4e92 35%,#0ea5e9 70%,${A}) 1`},
+ {id:'vip-diamond',n:'Diamond VIP',tk:'vip',s:A=>`border:7px ridge ${A};box-shadow:0 0 18px ${A}66,inset 0 0 0 2px #fffdf9`}];
 function borderOf(){return BORDERS.find(b=>b.id===state.border)||BORDERS[0]}
 function borderColor(){return state.darkMode?'#FDE68A':state.accent}
 function borderCss(){const b=borderOf(),A=borderColor();let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
 function borderCorners(){const b=borderOf();if(!b||!b.corner)return'';const A=borderColor(),w=b.corner;
  const c=pos=>`<i style="position:absolute;width:22px;height:22px;border:0 solid ${A};${pos};pointer-events:none;z-index:2"></i>`;
  return c(`top:10px;left:10px;border-top-width:${w}px;border-left-width:${w}px`)+c(`top:10px;right:10px;border-top-width:${w}px;border-right-width:${w}px`)+c(`bottom:10px;left:10px;border-bottom-width:${w}px;border-left-width:${w}px`)+c(`bottom:10px;right:10px;border-bottom-width:${w}px;border-right-width:${w}px`)}
-function setBorder(id){state.border=id;save();render()}
+/* ---- Tier & gating konten EKSKLUSIF: border/font/efek ber-ex hanya aktif
+   bila template yang sedang dipakai bertier Eksklusif (Rp119.000). ---- */
+function tierAktif(){const t=tplOf();return (t.tier==='vip'||t.harga>=149000)?'vip':(t.tier==='eksklusif'||t.harga>=119000)?'eksklusif':t.harga>=89000?'premium':'basic'}
+function bolehEks(){const t=tierAktif();return t==='eksklusif'||t==='vip'}
+function bolehVip(){return tierAktif()==='vip'}
+function isVipFx(k,v){const arr=k==='effect'?FX_COVER:FX_SCROLL;const f=arr.find(x=>x[0]===v);return !!(f&&f[4]==='vip')}
+function isEksB(id){const b=BORDERS.find(x=>x.id===id);return !!(b&&b.ex)}
+/* Kunci border berjenjang: premium(1) < eks(2) < vip(3); terbuka untuk tier ke atas */
+const LOCK_RANK={premium:1,eks:2,vip:3};
+const LOCK_LABEL={premium:'PREMIUM',eks:'EKSKLUSIF',vip:'VIP'};
+function lockOfB(id){const b=BORDERS.find(x=>x.id===id);if(!b)return null;return b.tk||(b.ex?'eks':null)}
+function tierRank(){return {basic:0,premium:1,eksklusif:2,vip:3}[tierAktif()]||0}
+function lockIcon(lk){return lk==='vip'?'👑 ':lk==='eks'?'🔒 ':lk==='premium'?'⭐ ':''}
+function isEksF(id){const f=FONTS.find(x=>x.id===id);return !!(f&&f.ex)}
+function isEksFx(k,v){const arr=k==='effect'?FX_COVER:FX_SCROLL;const f=arr.find(x=>x[0]===v);return !!(f&&f[3])}
+function kunciEks(){notify('🔒 Konten EKSKLUSIF hanya bisa dipakai saat tema tier Eksklusif (Rp119.000) aktif — ganti tema dulu di picker template.');render();return false}
+/* Lepas konten eksklusif bila tema aktif bukan tier Eksklusif (ganti template / buka draft). */
+function paksaTier(){let ch=false;
+ if(!bolehVip()&&(isVipFx('effect',state.anim.effect)||isVipFx('scroll',state.anim.scroll))){state.anim.effect='zoom';state.anim.scroll='fade-up';ch=true;
+  notify('Konten VIP dilepas otomatis karena tema aktif bukan tier VIP.')}
+ /* Border ber-tier dilepas duluan (sebelum early-return bolehEks) supaya border VIP ikut ter-reset di tier Eksklusif */
+ let cb=false;
+ {const bl=lockOfB(state.border);if(bl&&tierRank()<LOCK_RANK[bl]){state.border='double';cb=true;
+  notify(lockIcon(bl)+'Border '+LOCK_LABEL[bl]+' dilepas otomatis — butuh tema tier '+LOCK_LABEL[bl]+' ke atas.')}}
+ if(bolehEks())return ch||cb;
+ let ce=false;
+ if(isEksF(state.fontTitle)){state.fontTitle=tplOf().ft||'playfair';ce=true}
+ if(isEksF(state.fontBody)){state.fontBody='inter';ce=true}
+ if(isEksFx('effect',state.anim.effect)){state.anim.effect='zoom';ce=true}
+ if(isEksFx('scroll',state.anim.scroll)){state.anim.scroll='fade-up';ce=true}
+ if(ce)notify('Konten EKSKLUSIF dilepas otomatis karena tema aktif bukan tier Eksklusif.');
+ return ch||cb||ce}
+function setBorder(id){const lk=lockOfB(id);if(lk&&tierRank()<LOCK_RANK[lk]){notify(lockIcon(lk)+'Border '+LOCK_LABEL[lk]+' hanya untuk tema tier '+LOCK_LABEL[lk]+' ke atas.');render();return}state.border=id;save();render()}
+function setFontK(k,v){if(isEksF(v)&&!bolehEks()){kunciEks();return}set(k,v)}
 function miniBorder(b){const A='#8b7358';if(b.corner)return `border:1px dashed ${A}`;let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
 
 /* ===== MUSIK DEMO (dari Google Drive user, tersimpan di repo /music) ===== */
@@ -496,7 +590,9 @@ const FX_COVER=[
  ['rise','Rise','terbang naik'],['drop','Drop','turun dari atas'],
  ['blur','Blur','kabur lalu fokus'],['pop','Pop','memantul ke ukuran'],
  ['flip','Flip 3D','terangkat dari bawah'],['slide','Slide','meluncur dari samping'],
- ['swing','Swing','bergoyang dari atas'],['elastic','Elastic','pancingan kenur']];
+ ['swing','Swing','bergoyang dari atas'],['elastic','Elastic','pancingan kenur'],
+ ['shimmer','Shimmer Gold','kilau emas menyapu',1],['curtain','Tirai Royal','membuka mewah bagai tirai',1],
+ ['vip-zoom','VIP Deep Zoom','zoom dalam sinematik 👑',1,'vip'],['vip-curtain','VIP Curtain','tirai terbuka megah 👑',1,'vip']];
 function fxScrollId(){const v=state.anim.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxCoverId(){const v=state.anim.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 let animSig=null;
@@ -520,7 +616,7 @@ const QUOTES={
  aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
 function setSlide(id,on){if(!state.slides[id])return;state.slides[id].on=on;save();render()}
 function upSlide(id,k,v){if(!state.slides[id])return;state.slides[id][k]=v;save();renderPreview()}
-function setAnim(k,v){state.anim[k]=v;animSig=null;save();render()}
+function setAnim(k,v){if((k==='effect'||k==='scroll')&&isVipFx(k,v)&&!bolehVip()){notify('👑 Efek VIP hanya untuk tema tier VIP (Rp149.000).');render();return}if((k==='effect'||k==='scroll')&&isEksFx(k,v)&&!bolehEks()){kunciEks();return}state.anim[k]=v;animSig=null;save();render()}
 function rsvpWa(){const n=document.getElementById('rvpN')?document.getElementById('rvpN').value:'Tamu',h=document.getElementById('rvpH')?document.getElementById('rvpH').value:'Hadir',m=document.getElementById('rvpM')?document.getElementById('rvpM').value:'';const t='RSVP — '+titleOf()+' '+displayName()+'\nNama: '+n+'\nKonfirmasi: '+h+(m?'\nPesan: '+m:'')+'\nTautan: '+previewUrl();window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
 /* Tulisan undangan yang dikirim lewat WA — pakai template (bisa diatur di tab Tamu) */
 function waShareText(){const g=selGuest();
@@ -581,9 +677,9 @@ function qrDataUndangan(g){return qrTeks(g.link,state.showNameQr?`${g.nama.slice
 
 /* state setters */
 function set(k,v){state[k]=v;save();render()}
-function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Template: '+t.nama)}
-function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle}save();render()}
-function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;state.event=t.ev;state.doa=t.ev;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;save();render();notify('Preview: '+t.nama)}
+function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;paksaTier();save();render();notify('Template: '+t.nama)}
+function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle}paksaTier();save();render()}
+function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;paksaTier();save();render();notify('Preview: '+t.nama)}
 function upd(k,v){state[k]=v;save();renderPreview()}
 function updF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();renderPreview()}
 function setF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();render()}
@@ -597,6 +693,16 @@ function audioExt(file){
  return (fromName||map[file.type]||'mp3').toLowerCase()}
 function audioMime(ext){const m={mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg',webm:'audio/webm',flac:'audio/flac'};return m[ext]||'audio/mpeg'}
 function notifyErr(msg,ms){document.querySelectorAll('.notice').forEach(n=>n.remove());const n=document.createElement('div');n.className='notice';n.style.maxWidth='340px';n.style.lineHeight='1.5';n.innerHTML='<span style="width:20px;height:20px;border-radius:99px;background:#ef4444;display:grid;place-items:center;font-size:12px;flex:none">!</span><span>'+msg+'</span>';document.body.append(n);setTimeout(()=>n.remove(),ms||8000)}
+function notifyWarn(msg,ms){document.querySelectorAll('.notice').forEach(n=>n.remove());const n=document.createElement('div');n.className='notice';n.style.maxWidth='340px';n.style.lineHeight='1.5';n.innerHTML='<span style="width:20px;height:20px;border-radius:99px;background:#f59e0b;display:grid;place-items:center;font-size:12px;flex:none">!</span><span>'+msg+'</span>';document.body.append(n);setTimeout(()=>n.remove(),ms||10000)}
+/* Kolom snapshot "data" belum ada di tabel invitation_drafts (schema lama atau
+   cache PostgREST basi) → error PGRST204/42703 yang menyebut kolom 'data'. */
+function isMissingDataCol(e){const msg=String(e&&e.message||e||'').toLowerCase();const code=String(e&&e.code||'').toUpperCase();
+ return (code==='PGRST204'||code==='42703')&&/data/.test(msg)&&/column|field|schema cache/.test(msg)}
+/* SQL minimal perbaikan schema — bisa disalin sekali klik dari peringatan/toast. */
+const FIX_SQL="alter table public.invitation_drafts add column if not exists data jsonb;";
+function copyFixSql(){const done=()=>notifyWarn('SQL disalin — buka Supabase → SQL Editor, tempel, jalankan, lalu Publish ulang.',6000);
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(FIX_SQL).then(done).catch(()=>{window.prompt('Salin SQL perbaikan:',FIX_SQL)})}
+ else{window.prompt('Salin SQL perbaikan:',FIX_SQL)}}
 function isNetworkError(e){return /failed to fetch|networkerror|network request failed|load failed|fetch failed/i.test(String(e&&e.message||e||''))}
 async function upsertInvitationDraft(payload){
  /* Gunakan client normal bila CDN Supabase berhasil dimuat. Bila diblokir/gagal,
@@ -627,7 +733,7 @@ function publishErrorHtml(e){
  const text=(detail+' '+code).toLowerCase();
  let help='Periksa koneksi internet dan coba lagi. Undangan tetap tersimpan sebagai draft di perangkat ini.';
  if(/data.*(column|field)|column.*data|schema cache|pgrst204|42703/.test(text))
-  help='Kolom snapshot belum tersedia. Buka Supabase → SQL Editor, jalankan file <b>supabase-schema.sql</b>, lalu coba Publish lagi.';
+  help='Kolom snapshot belum tersedia. Buka Supabase → SQL Editor, jalankan file <b>supabase-schema.sql</b>, lalu coba Publish lagi.<br><button onclick="copyFixSql()">Salin SQL perbaikan</button>';
  else if(/row.?level security|rls|42501|permission denied|violates.*policy/.test(text))
   help='Supabase menolak izin simpan. Jalankan ulang <b>supabase-schema.sql</b> di SQL Editor untuk memperbaiki policy tabel <b>invitation_drafts</b>.';
  else if(/invalid api key|jwt expired|invalid jwt|unauthorized|\b401\b/.test(text))
@@ -774,13 +880,24 @@ async function publish(){
   publishedAt:new Date().toISOString()};
  if(JSON.stringify(data).length>1500000){notify('Data terlalu besar. Kurangi ukuran foto sebelum menyelesaikan undangan.');return}
  payload.data=data;
- await upsertInvitationDraft(payload);
+ let snapshotSkipped=false;
+ try{await upsertInvitationDraft(payload)}
+ catch(e){
+  /* Kolom snapshot "data" belum ada di Supabase (schema lama) — jangan gagalkan
+     Publish sepenuhnya: simpan kolom dasar saja supaya link tamu tetap hidup.
+     Undangan live dirender dari kolom dasar + template sampai schema diperbarui. */
+  if(!isMissingDataCol(e))throw e;
+  delete payload.data;
+  await upsertInvitationDraft(payload);
+  snapshotSkipped=true;
+ }
  state.published=true;state.publishedLink=baseUrl();
  const nama=displayName();
  const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
   snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,theme:state.theme,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos())}};
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  state.stage='ready';save();render();window.scrollTo(0,0);document.querySelectorAll('.notice').forEach(n=>n.remove());
+ if(snapshotSkipped)notifyWarn('<b>Publish berhasil tanpa snapshot.</b> Kolom <b>data</b> belum ada di Supabase — undangan live memakai kolom dasar + template (tampilan bisa berbeda dari studio, dashboard Master terbatas). Jalankan <b>supabase-schema.sql</b> di SQL Editor, atau <button onclick="copyFixSql()">salin SQL perbaikan</button>, lalu Publish ulang.',25000);
  }catch(e){console.error('Publish undangan gagal:',e);notifyErr(publishErrorHtml(e),15000)}
  finally{_publishing=false;$('root').inert=false;$('root').setAttribute('aria-busy','false');publishButtons.forEach(({button,label})=>{button.textContent=label})}
 }
@@ -812,6 +929,8 @@ async function dlUndangan(){
   /* Efek gulir juga disematkan supaya reveal tetap bekerja pada HTML mandiri/offline. */
   try{const sr=await fetch('assets/scroll-effects.css');if(sr.ok)scrollFxCss=await sr.text()}catch(e){}
   try{const sj=await fetch('assets/scroll-effects.js');if(sj.ok)scrollFxJs=await sj.text()}catch(e){}
+ let vipJs='';
+ try{const vj=await fetch('assets/vip-4d.js');if(vj.ok)vipJs=await vj.text()}catch(e){}
   /* Artwork tema (termasuk kertas Batik & watercolor Sage) ikut disematkan bila ringan,
      supaya file HTML mandiri tetap mempertahankan tampilan tanpa folder assets/. */
   const tpUndang=TPL.find(t=>t.id===state.tpl)||null;
@@ -827,7 +946,8 @@ async function dlUndangan(){
   const scrollCss=scrollFxCss?`<style data-asproject-scroll-effects>${scrollFxCss}</style>`:'';
   const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>'+
    (scrollFxJs?'\n<script>'+scrollFxJs.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'')+
-   (tcSrc?'\n<script>'+tcSrc.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'');
+   (tcSrc?'\n<script>'+tcSrc.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'')+
+   (vipJs?'\n<script>'+vipJs.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'');
   if(artCss||scrollCss)html=html.replace('</head>',scrollCss+artCss+'\n</head>');
   const i=html.indexOf('</head>');
   const final=i>=0?html.slice(0,i)+inj+'\n'+html.slice(i):html.replace('</html>',inj+'\n</html>');
@@ -883,7 +1003,7 @@ function sidebar(){
    <span class="lbl">Template ${EV_LABEL[state.event]}</span><span class="chip">${tplsFor(state.event).length} desain</span>
   </div>
   ${tplsFor(state.event).map(t=>`<button class="thbtn ${state.tpl===t.id?'on':''}" onclick="pickTpl('${t.id}')">
-   <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?17:13}px">${t.char||t.deco.split(' ')[0]||''}</div>
+   <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?(t.char.length>2?10:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.02em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
    <div style="flex:1"><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">${t.nama}${t.badge?`<span style="font-size:8px;padding:2px 6px;border-radius:99px;background:var(--gold);color:#000;font-weight:700">${t.badge}</span>`:''}</div>
    <div class="sub">${t.desc}</div></div>
    <div style="width:20px;height:20px;border-radius:99px;display:grid;place-items:center;border:1px solid ${state.tpl===t.id?'#fff':'#ddd'};background:#fff;color:#000;font-size:11px">${state.tpl===t.id?'✓':''}</div></button>`).join('')}
@@ -957,8 +1077,8 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
      <span class="chip" style="font-family:ui-monospace,monospace">${state.accent}</span>
     </div></div>
    <div class="grid2">
-    <label class="f">Font Judul (15 pilihan)<select onchange="set('fontTitle',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontTitle===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
-    <label class="f">Font Isi (15 pilihan)<select onchange="set('fontBody',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontBody===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+    <label class="f">Font Judul (17 pilihan)<select onchange="setFontK('fontTitle',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontTitle===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
+    <label class="f">Font Isi (17 pilihan)<select onchange="setFontK('fontBody',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontBody===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
    </div>
    <div class="card" style="padding:14px;background:#111;color:#fff;border-color:#111">
     <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.65)">Preview Font — berubah saat dipilih</div>
@@ -971,7 +1091,7 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    <div style="border-top:1px solid var(--line);padding-top:12px">
     <div><div class="f" style="margin-bottom:8px">Border Undangan (20 jenis) — berlaku semua kategori</div>
      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
-     ${BORDERS.map(b=>`<button class="tabbtn ${state.border===b.id?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setBorder('${b.id}')"><span style="width:26px;height:16px;border-radius:4px;background:#fff;${miniBorder(b)}"></span><span style="font-size:9px;line-height:1.05;text-align:center">${b.n}</span></button>`).join('')}
+     ${BORDERS.map(b=>{const lk=lockOfB(b.id);const rg=lk==='vip'?'box-shadow:inset 0 0 0 1px #8E4E92;':lk==='eks'?'box-shadow:inset 0 0 0 1px #D4AF37;':lk==='premium'?'box-shadow:inset 0 0 0 1px #C9A548;':'';return `<button class="tabbtn ${state.border===b.id?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setBorder('${b.id}')" title="${lk?'Border '+LOCK_LABEL[lk]+' — butuh tema tier '+LOCK_LABEL[lk]+' ke atas':b.n}"><span style="width:26px;height:16px;border-radius:4px;background:#fff;${rg}${miniBorder(b)}"></span><span style="font-size:9px;line-height:1.05;text-align:center">${lockIcon(lk)}${b.n}</span></button>`}).join('')}
      </div>
      <div style="font-size:10px;color:var(--mut);margin-top:6px">Warna border mengikuti aksen tema (mode gelap: emas) • ikut tersimpan ke undangan live saat publish.</div>
     </div>
@@ -986,13 +1106,13 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    <div style="font-size:11px;font-weight:600;margin-bottom:2px">🎬 Efek Animasi Cover — pilih 1 dari 10</div>
    <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Cara halaman pembuka masuk saat undangan dibuka.</div>
    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-   ${FX_COVER.map(([id,n,d])=>`<button class="fxbtn ${fxCoverId()===id?'on':''}" onclick="setAnim('effect','${id}')"><b>${n}</b><span>${d}</span></button>`).join('')}
+   ${FX_COVER.map(f=>`<button class="fxbtn ${fxCoverId()===f[0]?'on':''}" onclick="setAnim('effect','${f[0]}')"><b>${f[1]}${f[3]?' 🔒':''}</b><span>${f[2]}</span></button>`).join('')}
    </div></div>
   <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
    <div style="font-size:11px;font-weight:600;margin-bottom:2px">📜 Efek Scroll Reveal — pilih efek dasar dari ${FX_SCROLL.length}</div>
    <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Bagian masuk dari arah beragam dan reveal diputar ulang saat menggulir naik/turun.</div>
    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-   ${FX_SCROLL.map(([id,n,d])=>`<button class="fxbtn ${fxScrollId()===id?'on':''}" onclick="setAnim('scroll','${id}')"><b>${n}</b><span>${d}</span></button>`).join('')}
+   ${FX_SCROLL.map(f=>`<button class="fxbtn ${fxScrollId()===f[0]?'on':''}" onclick="setAnim('scroll','${f[0]}')"><b>${f[1]}${f[3]?' 🔒':''}</b><span>${f[2]}</span></button>`).join('')}
    </div>
    <label class="togglerow" style="margin-top:10px"><span><span style="font-size:12px;font-weight:500">Variasikan efek tiap bagian</span><span style="display:block;font-size:10px;color:var(--mut)">ON: gerak atas/bawah dan kiri/kanan bergantian. OFF: pakai satu efek sama di semua bagian.</span></span><input type="checkbox" ${state.anim.scrollMix!==false?'checked':''} onchange="setAnim('scrollMix',this.checked)"></label>
   </div></div>
@@ -1315,9 +1435,9 @@ function katalog(){return `<div style="padding:16px;display:grid;gap:16px">
    <div style="font-size:13px;font-weight:600">Daftar Template</div>
    <div style="font-size:11px;color:var(--mut)">Klik Preview untuk lihat di phone kanan • Edit inline harga & promo</div>
   </div>
-  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const rows=state.katalog.filter(k=>((TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0]).ev===ev));if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template</div>
+  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const rows=state.katalog.filter(k=>{const te=(TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0]).ev;return te===ev||te==='all'});if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template</div>
  ${rows.map(k=>{const t=TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0];const hid=state.katalogHide.includes(t.id);return `<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;${hid?'opacity:.55':''}">
-   <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?17:13}px">${t.char||t.deco.split(' ')[0]||''}</div>
+   <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?(t.char.length>2?10:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.02em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
    <div style="flex:1;min-width:0">
     <input value="${esc(k.nama)}" oninput="updKat('${k.id}','nama',this.value)" style="width:100%;font-size:12px;font-weight:500;border:0;background:transparent;padding:0">
     <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
@@ -1498,7 +1618,7 @@ function phoneHtml(){
     ${state.goldOrn?`<div class="${CV?'a-deco':''}" style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent);${CV?'animation-delay:250ms':''}"></div>`:''}
     ${blokFotoPrev}
     <div class="${wedding?'wedding-kicker ':''}${CV?'fx-c-'+CE:''}" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF};${CV?'animation-delay:300ms':''}">${wedding?'You’re Invited':titleOf()}</div>
-    ${tp.char&&!wedding?`<div class="${CV?'fx-c-'+CE:''}" title="Karakter tema" style="font-size:42px;line-height:1.1;margin-top:14px;${CV?'animation-delay:420ms':''}">${tp.char}</div>`:''}
+    ${tp.char&&!wedding?`<div class="${CV?'fx-c-'+CE:''}" title="Karakter tema" style="font-size:${tp.char.length>2?(tp.char.length>6?19:tp.char.length>4?23:28):42}px;line-height:1.05;margin-top:${tp.char.length>2?12:14}px;${tp.char.length>2?'letter-spacing:.06em;font-weight:800;text-transform:uppercase;color:'+state.accent+';':''}${CV?'animation-delay:420ms':''}">${tp.char}</div>`:''}
     <h1 class="${CV&&!TX?'fx-c-'+CE:''}" style="margin-top:${tp.char&&!wedding?6:12}px;font-size:${wedding?32:28}px;line-height:${wedding?1.02:.95};font-weight:700;color:${nameColor};${CV&&!TX?'animation-delay:'+h1d+'ms':''}">${h1Inner}</h1>
     ${wedding?`<div class="wedding-subtitle">akan melangsungkan pernikahan</div>`:''}
     <div class="${CV?'fx-c-'+CE:''}" style="margin-top:12px;font-size:11px;line-height:1.7;opacity:.8;font-family:${bF};${CV?'animation-delay:'+(tp.char?980:800)+'ms':''}">
@@ -1647,6 +1767,9 @@ function fpDragStart(e){if(e.button!==0||e.target.closest('button'))return;
 }
 window.addEventListener('resize',fitFloat);
 
+if(paksaTier())save();
+/* pratinjau ringan 4D: geser latar pratinjau mengikuti mouse saat tier VIP */
+document.addEventListener('mousemove',function(e){if(typeof bolehVip!=='function'||!bolehVip())return;var ap=document.querySelector('.ap');if(!ap)return;var r=ap.getBoundingClientRect();if(!r.width)return;var dx=(e.clientX-r.left)/r.width*2-1,dy=(e.clientY-r.top)/r.height*2-1;if(dx<-1.2||dx>1.2||dy<-1.2||dy>1.2)return;ap.style.backgroundPosition=(50+dx*3).toFixed(1)+'% '+(50+dy*3).toFixed(1)+'%';},{passive:true});
 render();
 </script>
 </body>
