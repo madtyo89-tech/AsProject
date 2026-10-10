@@ -442,10 +442,10 @@ def cek_fitur_terbaru():
     # 2) 23 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
     def _border_ids(s):
         m = re.search(r"const BORDERS=\[(.*?)\];", s, re.S)
-        return re.findall(r"\{id:'([a-z0-9]+)'", m.group(1)) if m else None
+        return re.findall(r"\{id:'([a-z0-9-]+)'", m.group(1)) if m else None
     bs, bu = _border_ids(studio), _border_ids(undangan)
-    lapor("ok" if bs and bu and len(bs) == 23 and len(set(bs)) == 23 and bs == bu else "masalah",
-          "BORDERS 23 id unik, identik di studio & undangan")
+    lapor("ok" if bs and bu and len(bs) == 32 and len(set(bs)) == 32 and bs == bu else "masalah",
+          "BORDERS 32 id unik, identik di studio & undangan")
     # 2b) gating konten EKSKLUSIF: kunci tier di studio + konten baru sinkron di undangan
     ok = ("bolehEks" in studio and "paksaTier" in studio and "kunciEks" in studio
           and all(i in studio and i in undangan for i in
@@ -459,7 +459,8 @@ def cek_fitur_terbaru():
     ok = "const BD=BORDERS.find(b=>b.id===(d&&d.border))" in undangan and "#cover .bdfr" in undangan
     lapor("ok" if ok else "masalah", "undangan.html: live cover memakai data.border (frame .bdfr)")
     ok = ("border:'double'" in studio and "function setBorder(id){" in studio
-          and "isEksB(id)&&!bolehEks()" in studio)
+          and "lockOfB" in studio and "LOCK_RANK" in studio and "tk:'vip'" in studio
+          and all(i in studio and i in undangan for i in ("id:'gold-leaf'", "id:'filigree'", "id:'vip-diamond'")))
     lapor("ok" if ok else "masalah", "studio.html: picker border (state.border + setBorder) tersedia")
     # 3) hide template di katalog + urut per kategori
     ok = "function tglKatHide(id)" in studio and "katalogHide" in studio

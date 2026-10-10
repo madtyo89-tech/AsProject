@@ -509,7 +509,17 @@ const BORDERS=[
  {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`},
  {id:'laurel',n:'Laurel Emas',ex:1,s:A=>`border:2px solid ${A};box-shadow:0 0 0 5px color-mix(in srgb,${A} 20%,transparent),inset 0 0 0 1px ${A}`},
  {id:'artdeco',n:'Art Deco',ex:1,s:A=>`border:3px double ${A};box-shadow:inset 0 0 0 5px #fffdf9,inset 0 0 0 6px ${A}`},
- {id:'pearl',n:'Untaian Mutiara',ex:1,s:A=>`border:2px dotted ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 4px ${A}`}];
+ {id:'pearl',n:'Untaian Mutiara',ex:1,s:A=>`border:2px dotted ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 4px ${A}`},
+ /* ==== 9 BORDER BER-TIER: PREMIUM ⭐ / EKSKLUSIF 🔒 / VIP 👑 ==== */
+ {id:'gold-leaf',n:'Daun Emas',tk:'premium',s:A=>`border:5px solid ${A};border-image:linear-gradient(135deg,${A} 15%,#fffdf9 50%,${A} 85%) 1`},
+ {id:'lace-ivory',n:'Renda Ivory',tk:'premium',s:A=>`border:2px dotted ${A};outline:2px dotted ${A};outline-offset:5px`},
+ {id:'ribbon-satin',n:'Pita Satin',tk:'premium',s:A=>`border:8px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9`},
+ {id:'filigree',n:'Filigree Emas',tk:'eks',s:A=>`border:3px double ${A};box-shadow:inset 0 0 12px ${A}44,inset 0 0 0 2px #fffdf9`},
+ {id:'pearl-crown',n:'Mahkota Mutiara',tk:'eks',s:A=>`border:4px double ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 5px ${A}55`},
+ {id:'onyx-inlay',n:'Inlay Onyx',tk:'eks',s:A=>`border:6px solid #17181a;box-shadow:inset 0 0 0 2px ${A}`},
+ {id:'vip-crown',n:'Crown VIP',tk:'vip',s:A=>`border:3px double ${A};outline:2px solid ${A};outline-offset:4px;box-shadow:inset 0 0 0 2px #fffdf9`},
+ {id:'vip-aurora',n:'Aurora VIP',tk:'vip',s:A=>`border:6px solid ${A};border-image:linear-gradient(160deg,${A},#8e4e92 35%,#0ea5e9 70%,${A}) 1`},
+ {id:'vip-diamond',n:'Diamond VIP',tk:'vip',s:A=>`border:7px ridge ${A};box-shadow:0 0 18px ${A}66,inset 0 0 0 2px #fffdf9`}];
 
 const DOA={
  pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu, memberi keberkahan atasmu, dan mempertemukan kalian berdua dalam kebaikan.'},

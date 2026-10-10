@@ -428,7 +428,17 @@ const BORDERS=[
  {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`},
  {id:'laurel',n:'Laurel Emas',ex:1,s:A=>`border:2px solid ${A};box-shadow:0 0 0 5px color-mix(in srgb,${A} 20%,transparent),inset 0 0 0 1px ${A}`},
  {id:'artdeco',n:'Art Deco',ex:1,s:A=>`border:3px double ${A};box-shadow:inset 0 0 0 5px #fffdf9,inset 0 0 0 6px ${A}`},
- {id:'pearl',n:'Untaian Mutiara',ex:1,s:A=>`border:2px dotted ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 4px ${A}`}];
+ {id:'pearl',n:'Untaian Mutiara',ex:1,s:A=>`border:2px dotted ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 4px ${A}`},
+ /* ==== 9 BORDER BER-TIER: PREMIUM ⭐ / EKSKLUSIF 🔒 / VIP 👑 ==== */
+ {id:'gold-leaf',n:'Daun Emas',tk:'premium',s:A=>`border:5px solid ${A};border-image:linear-gradient(135deg,${A} 15%,#fffdf9 50%,${A} 85%) 1`},
+ {id:'lace-ivory',n:'Renda Ivory',tk:'premium',s:A=>`border:2px dotted ${A};outline:2px dotted ${A};outline-offset:5px`},
+ {id:'ribbon-satin',n:'Pita Satin',tk:'premium',s:A=>`border:8px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9`},
+ {id:'filigree',n:'Filigree Emas',tk:'eks',s:A=>`border:3px double ${A};box-shadow:inset 0 0 12px ${A}44,inset 0 0 0 2px #fffdf9`},
+ {id:'pearl-crown',n:'Mahkota Mutiara',tk:'eks',s:A=>`border:4px double ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 5px ${A}55`},
+ {id:'onyx-inlay',n:'Inlay Onyx',tk:'eks',s:A=>`border:6px solid #17181a;box-shadow:inset 0 0 0 2px ${A}`},
+ {id:'vip-crown',n:'Crown VIP',tk:'vip',s:A=>`border:3px double ${A};outline:2px solid ${A};outline-offset:4px;box-shadow:inset 0 0 0 2px #fffdf9`},
+ {id:'vip-aurora',n:'Aurora VIP',tk:'vip',s:A=>`border:6px solid ${A};border-image:linear-gradient(160deg,${A},#8e4e92 35%,#0ea5e9 70%,${A}) 1`},
+ {id:'vip-diamond',n:'Diamond VIP',tk:'vip',s:A=>`border:7px ridge ${A};box-shadow:0 0 18px ${A}66,inset 0 0 0 2px #fffdf9`}];
 function borderOf(){return BORDERS.find(b=>b.id===state.border)||BORDERS[0]}
 function borderColor(){return state.darkMode?'#FDE68A':state.accent}
 function borderCss(){const b=borderOf(),A=borderColor();let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
@@ -442,6 +452,12 @@ function bolehEks(){const t=tierAktif();return t==='eksklusif'||t==='vip'}
 function bolehVip(){return tierAktif()==='vip'}
 function isVipFx(k,v){const arr=k==='effect'?FX_COVER:FX_SCROLL;const f=arr.find(x=>x[0]===v);return !!(f&&f[4]==='vip')}
 function isEksB(id){const b=BORDERS.find(x=>x.id===id);return !!(b&&b.ex)}
+/* Kunci border berjenjang: premium(1) < eks(2) < vip(3); terbuka untuk tier ke atas */
+const LOCK_RANK={premium:1,eks:2,vip:3};
+const LOCK_LABEL={premium:'PREMIUM',eks:'EKSKLUSIF',vip:'VIP'};
+function lockOfB(id){const b=BORDERS.find(x=>x.id===id);if(!b)return null;return b.tk||(b.ex?'eks':null)}
+function tierRank(){return {basic:0,premium:1,eksklusif:2,vip:3}[tierAktif()]||0}
+function lockIcon(lk){return lk==='vip'?'👑 ':lk==='eks'?'🔒 ':lk==='premium'?'⭐ ':''}
 function isEksF(id){const f=FONTS.find(x=>x.id===id);return !!(f&&f.ex)}
 function isEksFx(k,v){const arr=k==='effect'?FX_COVER:FX_SCROLL;const f=arr.find(x=>x[0]===v);return !!(f&&f[3])}
 function kunciEks(){notify('🔒 Konten EKSKLUSIF hanya bisa dipakai saat tema tier Eksklusif (Rp119.000) aktif — ganti tema dulu di picker template.');render();return false}
@@ -449,16 +465,19 @@ function kunciEks(){notify('🔒 Konten EKSKLUSIF hanya bisa dipakai saat tema t
 function paksaTier(){let ch=false;
  if(!bolehVip()&&(isVipFx('effect',state.anim.effect)||isVipFx('scroll',state.anim.scroll))){state.anim.effect='zoom';state.anim.scroll='fade-up';ch=true;
   notify('Konten VIP dilepas otomatis karena tema aktif bukan tier VIP.')}
- if(bolehEks())return ch;
+ /* Border ber-tier dilepas duluan (sebelum early-return bolehEks) supaya border VIP ikut ter-reset di tier Eksklusif */
+ let cb=false;
+ {const bl=lockOfB(state.border);if(bl&&tierRank()<LOCK_RANK[bl]){state.border='double';cb=true;
+  notify(lockIcon(bl)+'Border '+LOCK_LABEL[bl]+' dilepas otomatis — butuh tema tier '+LOCK_LABEL[bl]+' ke atas.')}}
+ if(bolehEks())return ch||cb;
  let ce=false;
- if(isEksB(state.border)){state.border='double';ce=true}
  if(isEksF(state.fontTitle)){state.fontTitle=tplOf().ft||'playfair';ce=true}
  if(isEksF(state.fontBody)){state.fontBody='inter';ce=true}
  if(isEksFx('effect',state.anim.effect)){state.anim.effect='zoom';ce=true}
  if(isEksFx('scroll',state.anim.scroll)){state.anim.scroll='fade-up';ce=true}
  if(ce)notify('Konten EKSKLUSIF dilepas otomatis karena tema aktif bukan tier Eksklusif.');
- return ch||ce}
-function setBorder(id){if(isEksB(id)&&!bolehEks()){kunciEks();return}state.border=id;save();render()}
+ return ch||cb||ce}
+function setBorder(id){const lk=lockOfB(id);if(lk&&tierRank()<LOCK_RANK[lk]){notify(lockIcon(lk)+'Border '+LOCK_LABEL[lk]+' hanya untuk tema tier '+LOCK_LABEL[lk]+' ke atas.');render();return}state.border=id;save();render()}
 function setFontK(k,v){if(isEksF(v)&&!bolehEks()){kunciEks();return}set(k,v)}
 function miniBorder(b){const A='#8b7358';if(b.corner)return `border:1px dashed ${A}`;let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
 
@@ -1072,7 +1091,7 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    <div style="border-top:1px solid var(--line);padding-top:12px">
     <div><div class="f" style="margin-bottom:8px">Border Undangan (20 jenis) — berlaku semua kategori</div>
      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
-     ${BORDERS.map(b=>`<button class="tabbtn ${state.border===b.id?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setBorder('${b.id}')" title="${b.ex?'EKSKLUSIF — hanya tema tier Eksklusif':b.n}"><span style="width:26px;height:16px;border-radius:4px;background:#fff;${b.ex?'box-shadow:inset 0 0 0 1px #D4AF37;':''}${miniBorder(b)}"></span><span style="font-size:9px;line-height:1.05;text-align:center">${b.ex?'🔒 ':''}${b.n}</span></button>`).join('')}
+     ${BORDERS.map(b=>{const lk=lockOfB(b.id);const rg=lk==='vip'?'box-shadow:inset 0 0 0 1px #8E4E92;':lk==='eks'?'box-shadow:inset 0 0 0 1px #D4AF37;':lk==='premium'?'box-shadow:inset 0 0 0 1px #C9A548;':'';return `<button class="tabbtn ${state.border===b.id?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setBorder('${b.id}')" title="${lk?'Border '+LOCK_LABEL[lk]+' — butuh tema tier '+LOCK_LABEL[lk]+' ke atas':b.n}"><span style="width:26px;height:16px;border-radius:4px;background:#fff;${rg}${miniBorder(b)}"></span><span style="font-size:9px;line-height:1.05;text-align:center">${lockIcon(lk)}${b.n}</span></button>`}).join('')}
      </div>
      <div style="font-size:10px;color:var(--mut);margin-top:6px">Warna border mengikuti aksen tema (mode gelap: emas) • ikut tersimpan ke undangan live saat publish.</div>
     </div>
