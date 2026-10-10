@@ -41,7 +41,7 @@ Kalau suatu saat file aslinya bisa masuk: timpa `demo/ice-blue.html`, lalu jalan
 
 ## Isi demo `ice-blue.html`
 
-- **Sampul** "Buka Undangan" + musik (tombol putar/stop di bilah atas; lagu belum diisi, akan diambil dari Drive).
+- **Sampul** "Buka Undangan" + musik `music/backsound-asproject.mp3` (tombol putar/stop di bilah atas).
 - **Custom nama tamu**: lewat URL `demo/ice-blue.html?to=Nama%20Tamu`, atau kotak
   "Tulis namamu, Kak" di sampul (nama ikut mengisi form RSVP).
 - **Hitung mundur** — hari-H dihitung `hari ini + 47 hari` (sama seperti template aslinya),
