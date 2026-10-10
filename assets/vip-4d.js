@@ -40,6 +40,7 @@
 
     /* ---------- partikel ---------- */
     var x = cv.getContext('2d'), P = [], W = 0, H = 0;
+    if (!x) return null; /* canvas 2d tak tersedia — degrade anggun tanpa partikel */
     var DPR = Math.min(2, window.devicePixelRatio || 1);
     function size() { W = cv.width = Math.max(1, cv.offsetWidth * DPR); H = cv.height = Math.max(1, cv.offsetHeight * DPR); }
     size(); window.addEventListener('resize', size);

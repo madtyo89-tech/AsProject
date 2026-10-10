@@ -59,6 +59,7 @@ for (const id of VIP) {
   cek(pa === pb && !!pa, id + ': palet identik');
   cek(/part:'(gold|petal|snow|bubble)'/.test(a) && /scene:'(zoom|curtain|rise)'/.test(a), id + ': part & scene di studio');
   cek(/part:'(gold|petal|snow|bubble)'/.test(b) && /scene:'(zoom|curtain|rise)'/.test(b), id + ': part & scene di undangan');
+  cek(/tier:'vip'/.test(b), id + ": tier:'vip' di baris undangan (syarat mount 4D live)");
   cek(/harga:149000/.test(a) && /badge:'VIP'/.test(a) && /tier:'vip'/.test(a), id + ': harga 149k + badge/tier VIP');
   const art = (b.match(/bg3d:'([^']+)'/) || [])[1];
   if (art) {

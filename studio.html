@@ -947,7 +947,7 @@ async function dlUndangan(){
   const inj='<script>window.EMBEDDED_DATA='+JSON.stringify(draft).replace(/</g,'\\u003c')+';</scr'+'ipt>'+
    (scrollFxJs?'\n<script>'+scrollFxJs.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'')+
    (tcSrc?'\n<script>'+tcSrc.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'')+
-   +(vipJs?'\n<script>'+vipJs.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'');
+   (vipJs?'\n<script>'+vipJs.replace(/<\/script/gi,'<\\/script')+'</scr'+'ipt>':'');
   if(artCss||scrollCss)html=html.replace('</head>',scrollCss+artCss+'\n</head>');
   const i=html.indexOf('</head>');
   const final=i>=0?html.slice(0,i)+inj+'\n'+html.slice(i):html.replace('</html>',inj+'\n</html>');

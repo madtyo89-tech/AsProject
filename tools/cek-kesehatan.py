@@ -743,6 +743,22 @@ def cek_vip_4d():
           "uji VIP 4D: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
 
 
+def cek_simulasi():
+    print("\n[22] Simulasi pemakaian (studio → export → undangan live)")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — simulasi pemakaian dilewati")
+        return
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    if probe.returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — simulasi pemakaian dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-simulasi.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji simulasi pemakaian: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -752,7 +768,7 @@ def main():
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
-               cek_template_pernikahan, cek_vip_4d):
+               cek_template_pernikahan, cek_vip_4d, cek_simulasi):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

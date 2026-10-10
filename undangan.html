@@ -462,10 +462,10 @@ const TPL=[
  {id:'little-duck',nama:'Bebek Kuning',ev:'aqiqah',g:['#FFFBEA','#FFF0C2','#FFE28A'],accent:'#9A6A10',ink:'#5C4008',char:'DUCK',bg3d:'assets/tema-3d/little-duck.webp',deco:'❁ ✦ ❁',pat:'',ft:'poppins'},
  {id:'moon-lullaby',nama:'Bulan Nina Bobo',ev:'aqiqah',g:['#101A33','#1A2749','#263560'],accent:'#F0D48A',ink:'#E9EDFA',char:'MOON',bg3d:'assets/tema-3d/moon-lullaby.webp',deco:'☾ ✦ ☾',pat:'',ft:'cormorant'},
  /* ==== 4 TEMA VIP (satu per kategori, 4D) ==== */
- {id:'royal-garden',nama:'Royal Garden',ev:'pernikahan',g:['#16261B','#22392A','#33513C'],accent:'#E5B7C4',ink:'#EFF5EE',char:'ROYAL',bg3d:'assets/tema-3d/royal-garden.webp',deco:'❁ ✦ ❁',pat:'',ft:'cormorant',part:'petal',scene:'curtain'},
- {id:'galaxy-prestige',nama:'Galaxy Prestige',ev:'khitanan',g:['#0A0E24','#141A3E','#232C63'],accent:'#F0C75E',ink:'#E9EDFC',char:'GALAXY',bg3d:'assets/tema-3d/galaxy-prestige.webp',deco:'✦ ✧ ✦',pat:'',ft:'bebas',part:'gold',scene:'zoom'},
- {id:'abyss-pearl',nama:'Abyss Pearl',ev:'ultah',g:['#062A33','#0B414D','#12596A'],accent:'#F4D8A8',ink:'#E6F5F6',char:'ABYSS',bg3d:'assets/tema-3d/abyss-pearl.webp',deco:'❈ ✦ ❈',pat:'',ft:'pacifico',part:'bubble',scene:'rise'},
- {id:'winter-prestige',nama:'Winter Prestige',ev:'aqiqah',g:['#0E1B2C','#16293E','#223951'],accent:'#BFE3F2',ink:'#EDF5FA',char:'WINTER',bg3d:'assets/tema-3d/winter-prestige.webp',deco:'❆ ✦ ❆',pat:'',ft:'poppins',part:'snow',scene:'curtain'}];
+ {id:'royal-garden',nama:'Royal Garden',ev:'pernikahan',g:['#16261B','#22392A','#33513C'],accent:'#E5B7C4',ink:'#EFF5EE',tier:'vip',char:'ROYAL',bg3d:'assets/tema-3d/royal-garden.webp',deco:'❁ ✦ ❁',pat:'',ft:'cormorant',part:'petal',scene:'curtain'},
+ {id:'galaxy-prestige',nama:'Galaxy Prestige',ev:'khitanan',g:['#0A0E24','#141A3E','#232C63'],accent:'#F0C75E',ink:'#E9EDFC',tier:'vip',char:'GALAXY',bg3d:'assets/tema-3d/galaxy-prestige.webp',deco:'✦ ✧ ✦',pat:'',ft:'bebas',part:'gold',scene:'zoom'},
+ {id:'abyss-pearl',nama:'Abyss Pearl',ev:'ultah',g:['#062A33','#0B414D','#12596A'],accent:'#F4D8A8',ink:'#E6F5F6',tier:'vip',char:'ABYSS',bg3d:'assets/tema-3d/abyss-pearl.webp',deco:'❈ ✦ ❈',pat:'',ft:'pacifico',part:'bubble',scene:'rise'},
+ {id:'winter-prestige',nama:'Winter Prestige',ev:'aqiqah',g:['#0E1B2C','#16293E','#223951'],accent:'#BFE3F2',ink:'#EDF5FA',tier:'vip',char:'WINTER',bg3d:'assets/tema-3d/winter-prestige.webp',deco:'❆ ✦ ❆',pat:'',ft:'poppins',part:'snow',scene:'curtain'}];
 
 const FONTS=[
  {id:'cormorant',fam:'"Cormorant Garamond",serif'},
@@ -779,7 +779,8 @@ function boot(draft){
  const cvZ=(()=>{const n=parseFloat(cpo.z);return isFinite(n)?Math.min(2.2,Math.max(1,n)):1})();
  const cvP={x:angkaPos(cpo.x,50),y:angkaPos(cpo.y,50),z:cvZ};
  if(ART&&cvStyle!=='full'){document.body.classList.add('art3d');rs.setProperty('--cover-art',"url('"+ART+"')")}
- if(tplF.tier==='vip'&&window.AsVip4d){document.body.classList.add('vip4d');AsVip4d.mount({art:ART||'',deco:tplF.deco||'',part:tplF.part||'gold',scene:tplF.scene||'zoom'})}
+ if(tplF.tier==='vip'&&window.AsVip4d){document.body.classList.add('vip4d');
+  try{AsVip4d.mount({art:ART||'',deco:tplF.deco||'',part:tplF.part||'gold',scene:tplF.scene||'zoom'})}catch(e){/* efek VIP gagal mount — undangan tetap tampil normal */}}
  const KB=TC&&TC.perbaiki?TC.perbaiki(tplF.accent,'#241d16',3):tplF.accent;
  const KT=TC&&TC.untukKonten?TC.untukKonten(tplF.ink,tplF.accent,tplF.g):null;
  rs.setProperty('--ink-body',KT?KT.ink:tplF.ink);
