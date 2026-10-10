@@ -33,6 +33,12 @@ TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 hitung = {"ok": 0, "masalah": 0, "info": 0}
 
 
+# Id tema dari katalog lama (72 tema). Setelah katalog direset, id-id ini tidak
+# boleh muncul lagi di berkas yang disajikan ke publik (tautan mati = memalukan).
+TEMA_LAMA = {"jawa-elegan", "minimalist-sage", "luxury-gold", "floral-rustic",
+             "ice-blue", "royal-garden", "galaxy-prestige", "abyss-pearl", "winter-prestige"}
+
+
 def lapor(status, pesan):
     hitung[status] += 1
     print({"ok": "  ok  ", "masalah": "  !!  ", "info": "  ..  "}[status] + pesan)
@@ -267,6 +273,24 @@ def _tpl_ids(rel):
     return re.findall(r"id:'([a-z0-9-]+)'", m.group(1))
 
 
+def _tpl_rows(rel):
+    """Baris array TPL sebagai dict (id, nama, ev, tier, char, bg3d, bgPaper, harga)."""
+    s = baca(rel)
+    m = re.search(r"const TPL=\[(.*?)\];", s, re.S)
+    if not m:
+        return []
+    rows = []
+    for chunk in m.group(1).split("{id:'")[1:]:
+        row = {"id": chunk.split("'")[0]}
+        for key in ("ev", "tier", "char", "bg3d", "bgPaper", "nama", "accent"):
+            g = re.search(r"%s:'([^']*)'" % key, chunk)
+            row[key] = g.group(1) if g else ''
+        g = re.search(r"harga:(\d+)", chunk)
+        row["harga"] = int(g.group(1)) if g else 0
+        rows.append(row)
+    return rows
+
+
 def _fx_ids(s, nama_arr):
     """Urutan id efek di array FX_COVER / FX_SCROLL sebuah file."""
     m = re.search(r"const %s=\[(.*?)\];" % nama_arr, s, re.S)
@@ -365,11 +389,11 @@ def cek_pipeline_undangan():
         lapor("ok", f"FONTS identik di studio & undangan ({len(fa)} font)")
     else:
         lapor("masalah", f"FONTS studio != undangan! studio={fa} undangan={fb}")
-    # 13) 20 tema baru punya karakter (char) di kedua file
-    for label, s in (("studio.html", studio), ("undangan.html", undangan)):
-        n = len(re.findall(r"char:'", s))
-        lapor("ok" if n >= 20 else "masalah",
-              f"{label}: 20 tema baru membawa karakter maskot (char: {n})")
+    # 13) karakter maskot (char) harus sama persis di kedua array TPL
+    ch_st = [(r["id"], r["char"]) for r in _tpl_rows("studio.html") if r["char"]]
+    ch_ud = [(r["id"], r["char"]) for r in _tpl_rows("undangan.html") if r["char"]]
+    lapor("ok" if ch_st == ch_ud else "masalah",
+          f"karakter maskot sinkron studio & undangan ({len(ch_st)} tema ber-char)")
     # 14) floating preview undangan di studio
     ok = ('id="floatPrev"' in studio and "function syncFloat" in studio
           and "function setFloat" in studio and "syncAudio();syncFloat()}" in studio)
@@ -414,31 +438,39 @@ def cek_katalog_publik():
     ok = "location.replace('/AsProject/undangan.html'+q)" not in index
     lapor("ok" if ok else "masalah",
           "index.html: root github.io tetap menampilkan katalog (tombol Katalog \u2197 tidak mati)")
-    ok = "%d template premium" % len(studio_ids) in index
+    ok = "%d template" % len(studio_ids) in index
     lapor("ok" if ok else "masalah",
-          "index.html: teks jumlah template sinkron (%d)" % len(studio_ids))
+          "index.html: teks jumlah template sinkron (%d template)" % len(studio_ids))
 
 
 def cek_fitur_terbaru():
-    print("\n[13] Fitur terbaru (hide katalog, 5 tema feminin, 20 border, teks WA)")
+    print("\n[13] Katalog tema pasca-reset, hide katalog, border, teks WA")
     studio = baca("studio.html")
     undangan = baca("undangan.html")
-    # 1) 5 tema feminin baru (ultah & aqiqah) di kedua file, urutan TPL tetap identik
-    baru = ["fairy-princess", "unicorn-magic", "rose-bouquet", "baby-rose", "baby-fairy"]
-    for rel, s in (("studio.html", studio), ("undangan.html", undangan)):
-        ada = [i for i in baru if ("id:'%s'" % i) in s]
-        lapor("ok" if len(ada) == 5 else "masalah",
-              f"{rel}: 5 tema feminin baru ada ({len(ada)}/5)")
+    # 1) katalog tema pasca-reset: >=1 tema, id unik, urutan sama dengan undangan,
+    #    kategori acara sah, dan tiap rujukan artwork menunjuk berkas yang ada
     ids_st = _tpl_ids("studio.html") or []
     ids_ud = _tpl_ids("undangan.html") or []
-    lapor("ok" if ids_st == ids_ud and len(ids_st) == 72 else "masalah",
-          f"urutan TPL identik di studio & undangan ({len(ids_st)} template)")
-    # 5 tema eksklusif universal (ev:'all') wajib ada & identik paletnya di kedua file
-    uni = ["aurora-celestial", "ivory-pearl", "emerald-royale", "rose-gold-blush", "onyx-platinum"]
-    ada = [i for i in uni if ("id:'%s'" % i) in studio and ("id:'%s'" % i) in undangan
-           and ("ev:'all'" in studio and "ev:'all'" in undangan)]
-    lapor("ok" if len(ada) == 5 else "masalah",
-          f"studio & undangan: 5 tema eksklusif universal ev:'all' ({len(ada)}/5)")
+    ok = bool(ids_st) and len(set(ids_st)) == len(ids_st) and ids_st == ids_ud
+    lapor("ok" if ok else "masalah",
+          f"urutan TPL identik & id unik di studio & undangan ({len(ids_st)} template)")
+    rows = _tpl_rows("studio.html")
+    ev_ok = bool(rows) and all(r["ev"] in ("pernikahan", "khitanan", "ultah", "aqiqah", "all") for r in rows)
+    lapor("ok" if ev_ok else "masalah", "setiap tema punya kategori acara (ev) yang sah")
+    kategori = ("pernikahan", "khitanan", "ultah", "aqiqah")
+    kurang = [ev for ev in kategori if not any(r["ev"] in (ev, "all") for r in rows)]
+    lapor("ok" if not kurang else "masalah",
+          "setiap kategori acara punya tema terpakai"
+          + ("" if not kurang else " — belum ada: " + ", ".join(kurang)))
+    yatim = []
+    for rel in ("studio.html", "undangan.html"):
+        for r in _tpl_rows(rel):
+            for aset in (r["bg3d"], r["bgPaper"]):
+                if aset and not os.path.isfile(os.path.join(ROOT, aset)):
+                    yatim.append(f"{rel}:{r['id']}->{aset}")
+    lapor("ok" if not yatim else "masalah",
+          "rujukan artwork tema utuh" if not yatim else "artwork tema hilang: " + ", ".join(yatim[:4]))
+
     # 2) 23 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
     def _border_ids(s):
         m = re.search(r"const BORDERS=\[(.*?)\];", s, re.S)
@@ -447,13 +479,15 @@ def cek_fitur_terbaru():
     lapor("ok" if bs and bu and len(bs) == 32 and len(set(bs)) == 32 and bs == bu else "masalah",
           "BORDERS 32 id unik, identik di studio & undangan")
     # 2b) gating konten EKSKLUSIF: kunci tier di studio + konten baru sinkron di undangan
+    eks_dipakai = any(r["tier"] == "eksklusif" for r in _tpl_rows("studio.html"))
     ok = ("bolehEks" in studio and "paksaTier" in studio and "kunciEks" in studio
           and all(i in studio and i in undangan for i in
                   ("id:'laurel'", "id:'artdeco'", "id:'pearl'", "id:'cinzel'", "id:'marcellus'"))
           and "fx-c-shimmer" in studio and "fx-c-shimmer" in undangan
-          and "tier:'eksklusif'" in studio)
+          and (not eks_dipakai or "tier:'eksklusif'" in studio))
     lapor("ok" if ok else "masalah",
-          "studio: gating konten EKSKLUSIF per tier; border/font/fx baru sinkron di undangan")
+          "studio: gating konten EKSKLUSIF per tier; border/font/fx baru sinkron di undangan"
+          + ("" if not ok or eks_dipakai else " (tidak ada tema tier eksklusif di katalog — syarat dilonggarkan)"))
     ok = "border:state.border" in studio
     lapor("ok" if ok else "masalah", "studio.html: publish() menyimpan border ke snapshot data")
     ok = "const BD=BORDERS.find(b=>b.id===(d&&d.border))" in undangan and "#cover .bdfr" in undangan
@@ -563,16 +597,13 @@ def cek_kontras_tema():
 
 # ------------------------------------------------- 16. tema 3D (artwork realistis)
 def cek_tema_3d():
-    print("\n[16] Tema 3D ulang tahun (assets/tema-3d/)")
+    print("\n[16] Mesin artwork tema (assets/tema-3d/)")
     folder = os.path.join(ROOT, "assets", "tema-3d")
     berkas = sorted(f for f in os.listdir(folder) if f.endswith(".webp")) if os.path.isdir(folder) else []
-    lapor("ok" if berkas else "masalah",
-          f"artwork 3D tersedia ({len(berkas)} berkas webp)")
     for rel in ("undangan.html", "studio.html"):
-        isi = baca(rel)
-        jumlah = isi.count("bg3d:'assets/tema-3d/")
+        jumlah = len([r for r in _tpl_rows(rel) if r["bg3d"]])
         lapor("ok" if jumlah == len(berkas) else "masalah",
-              f"{rel}: {jumlah} tema memakai artwork 3D (berkas: {len(berkas)})")
+              f"{rel}: {jumlah} tema memakai artwork 3D (berkas di disk: {len(berkas)})")
     und = baca("undangan.html")
     lapor("ok" if "body.art3d #cover" in und else "masalah",
           "undangan.html: aturan latar artwork + lapisan gelap ada")
@@ -701,34 +732,40 @@ def cek_scan_panitia():
 
 # ------------------------------------ 20. tema pernikahan sesuai nama template
 def cek_template_pernikahan():
-    print("\n[20] Skin template pernikahan (Batik, Sage, Ice Blue, dan palet tema)")
-    st, und = baca("studio.html"), baca("undangan.html")
-    expected = {
-        "jawa-elegan": "assets/wedding/jawa-batik-watercolor.webp",
-        "minimalist-sage": "assets/wedding/minimalist-sage-watercolor.webp",
-    }
-    for tid, asset in expected.items():
-        for rel, text in (("studio.html", st), ("undangan.html", und)):
-            cocok = f"id:'{tid}'" in text and f"bgPaper:'{asset}'" in text
-            lapor("ok" if cocok else "masalah", f"{rel}: {tid} memakai artwork tema yang tepat")
-        full = os.path.join(ROOT, asset)
-        ada = os.path.isfile(full)
-        lapor("ok" if ada else "masalah", f"artwork {asset} ada")
-        if ada:
-            ringan = os.path.getsize(full) < 300000
-            lapor("ok" if ringan else "masalah", f"artwork {asset} ringan untuk mobile/export (<300 KB)")
-    ok_ice = all(f"id:'ice-blue'" in text and "assets/tema-3d/ice-blue.webp" in text for text in (st, und))
-    lapor("ok" if ok_ice else "masalah", "Ice Blue tetap memakai artwork floral es biru")
+    """Dulu memeriksa 21 skin tema pernikahan satu per satu; sejak katalog direset
+    yang dicek tema dasar + kebersihan berkas. Mesin skin (kelas wedding-cover,
+    kartu, aksen) sengaja dipertahankan supaya tema baru tinggal memakai."""
+    print("\n[20] Tema dasar katalog & skin undangan pernikahan")
+    st, und, index = baca("studio.html"), baca("undangan.html"), baca("index.html")
+    rows = _tpl_rows("studio.html")
+    lapor("ok" if rows else "masalah",
+          f"studio.html: {len(rows)} tema terdaftar di katalog")
+    if not rows:
+        return
+    dasar = rows[0]
+    for rel, text in (("studio.html", st), ("undangan.html", und)):
+        ok = (f"id:'{dasar['id']}'" in text and f"nama:'{dasar['nama']}'" in text
+              and f"accent:'{dasar['accent']}'" in text)
+        lapor("ok" if ok else "masalah",
+              f"{rel}: tema dasar {dasar['id']} lengkap (id/nama/aksen)")
+    ok = f'id:"{dasar["id"]}",name:"{dasar["nama"]}"' in index
+    lapor("ok" if ok else "masalah", "index.html: katalog publik memakai tema dasar yang sama")
     for token in ("body.wedding-cover #cover", "body.wedding-cover .wrap", "wedding-invite-card"):
         lapor("ok" if token in und else "masalah", f"undangan.html: skin wedding {token} tersedia")
+    for rel in ("studio.html", "undangan.html", "index.html"):
+        sisa = sorted(t for t in TEMA_LAMA if t in baca(rel))
+        lapor("ok" if not sisa else "masalah",
+              f"{rel}: bersih dari id tema lama" if not sisa
+              else f"{rel}: masih menyebut id tema lama: {', '.join(sisa)}")
     if shutil.which("node"):
         skrip = os.path.join(ROOT, "tools", "test-wedding-templates.cjs")
         r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
-        baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith(("PASS:", "INFO:"))]
+        baris = [b.strip() for b in r.stdout.splitlines()
+                 if b.strip().startswith(("PASS:", "INFO:", "FAIL:"))]
         lapor("ok" if r.returncode == 0 else "masalah",
-              "uji template pernikahan: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+              "uji skin template: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
     else:
-        lapor("info", "node tidak tersedia — uji template pernikahan dilewati")
+        lapor("info", "node tidak tersedia — uji skin template dilewati")
 
 
 def cek_vip_4d():

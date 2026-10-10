@@ -1,20 +1,21 @@
 #!/usr/bin/env node
 /*
- * Uji latar tema 3D — artwork realistis untuk tema ulang tahun.
+ * Uji mesin latar artwork tema (dulu "tema 3D ulang tahun").
  *
  *   node tools/test-tema-3d.cjs               (uji statis)
  *   NODE_PATH=… node tools/test-tema-3d.cjs   (tambahan uji render bila jsdom ada)
  *
- * Yang diperiksa:
- *   1. setiap berkas di assets/tema-3d/*.webp dipakai oleh tema dengan id yang sama di
- *      studio.html DAN undangan.html (tidak ada artwork yatim maupun rujukan hilang);
- *   2. ukuran tiap artwork wajar (< 250 KB) supaya undangan tetap ringan;
- *   3. undangan.html: tema ber-artwork memasang latar gambar + teks cover terang,
- *      sementara teks konten tetap memakai nada gelap tema; bingkai foto muncul hanya
- *      bila undangan memang punya foto utama;
- *   4. tema tanpa artwork tetap memakai gradasi & warna tema seperti semula;
- *   5. studio.html: pratinjau HP memakai artwork + menandai "3D", publish() menyimpan
- *      foto utama, dan membuka arsip memulihkannya.
+ * Katalog tema pernah berisi 72 tema dengan artwork per tema di assets/tema-3d/.
+ * Katalog itu direset (2026-10-10) menjadi satu tema dasar tanpa artwork, jadi uji
+ * ini TIDAK lagi menuntut jumlah berkas tertentu. Yang dijaga:
+ *   1. pairing dua arah: setiap berkas di assets/tema-3d/ dipakai tema dengan id yang
+ *      sama di studio.html DAN undangan.html — dan setiap `bg3d:` menunjuk berkas yang
+ *      ada. Folder kosong / tidak ada = sah selama tidak ada tema yang memakai bg3d;
+ *   2. ukuran artwork wajar (< 250 KB) supaya undangan tetap ringan;
+ *   3. mesinnya utuh: undangan.html memasang kelas art3d + --cover-art + teks cover
+ *      terang, studio.html meniru di pratinjau HP dan menyematkan artwork saat export;
+ *   4. tema tanpa artwork tetap memakai gradasi & warna tema seperti semula
+ *      (dibuktikan dengan fixture tema ber-artwork yang disuntik saat uji render).
  */
 'use strict';
 
@@ -25,9 +26,6 @@ const ROOT = path.resolve(__dirname, '..');
 const DIR_ART = path.join(ROOT, 'assets', 'tema-3d');
 const MAKS_KB = 250;
 
-/* Tema ulang tahun yang artworknya belum dibuat (dilaporkan, tidak menggagalkan uji). */
-const MENUNGGU_ARTWORK = ['adult-elegant'];
-
 let JSDOM = null;
 try { ({ JSDOM } = require('jsdom')); } catch (e) { /* jsdom opsional */ }
 
@@ -36,9 +34,11 @@ let gagal = 0;
 const cek = (hasil, pesan) => { hasil ? (lulus++) : (gagal++, console.log('  [FAIL] ' + pesan)); };
 const baca = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 
+/* Ambil daftar tema dari array TPL (per objek, bukan regex lintas baris). */
 function tema(rel) {
   const out = [];
-  for (const b of baca(rel).split("{id:'").slice(1)) {
+  const blok = (baca(rel).match(/const TPL=\[([\s\S]*?)\];/) || [, ''])[1];
+  for (const b of blok.split("{id:'").slice(1)) {
     const id = b.slice(0, b.indexOf("'"));
     const nama = b.match(/nama:'([^']*)'/);
     const ev = b.match(/ev:'([^']*)'/);
@@ -50,19 +50,23 @@ function tema(rel) {
 }
 
 (async function main() {
-  console.log('Uji latar tema 3D\n');
+  console.log('Uji mesin artwork tema\n');
 
   /* ------------------------------------------------- 1. berkas & pemakaiannya */
   console.log('1) Berkas artwork & pemakaiannya');
-  const berkas = fs.existsSync(DIR_ART)
-    ? fs.readdirSync(DIR_ART).filter((f) => f.endsWith('.webp')).sort()
-    : [];
-  cek(berkas.length > 0, 'ada artwork di assets/tema-3d/');
-
+  const ada = fs.existsSync(DIR_ART);
+  const berkas = ada ? fs.readdirSync(DIR_ART).filter((f) => f.endsWith('.webp')).sort() : [];
   const und = tema('undangan.html');
   const stu = tema('studio.html');
   const petaU = new Map(und.map((t) => [t.id, t]));
   const petaS = new Map(stu.map((t) => [t.id, t]));
+  const pakaiU = und.filter((t) => t.art);
+  const pakaiS = stu.filter((t) => t.art);
+
+  cek(berkas.length > 0 || pakaiU.length === 0,
+      'folder artwork boleh tidak ada selama tidak ada tema yang memakai bg3d');
+  cek(pakaiU.length === pakaiS.length && pakaiU.every((t, i) => pakaiS[i] && pakaiS[i].id === t.id),
+      `tema ber-artwork identik di studio & undangan (${pakaiU.length} tema)`);
 
   let total = 0;
   for (const f of berkas) {
@@ -75,29 +79,20 @@ function tema(rel) {
     cek(!!s && s.art.endsWith(f), `studio.html: tema ${id} memakai ${f}`);
     cek(kb <= MAKS_KB, `${f} berukuran wajar (${kb} KB ≤ ${MAKS_KB} KB)`);
   }
-  console.log(`  ${berkas.length} artwork, total ${total} KB`);
-
-  const tanpaArt = und.filter((t) => t.ev === 'ultah' && !t.art).map((t) => t.id);
-  const yatim = und.filter((t) => t.art).map((t) => t.id).filter((id) => !berkas.includes(id + '.webp'));
+  const yatim = pakaiU.filter((t) => !berkas.includes(path.basename(t.art))).map((t) => t.id);
   cek(yatim.length === 0, `tidak ada rujukan artwork yang hilang (${yatim.join(', ') || 'bersih'})`);
-  const belum = tanpaArt.filter((id) => !MENUNGGU_ARTWORK.includes(id));
-  cek(belum.length === 0, `semua tema ulang tahun punya artwork 3D (belum: ${belum.join(', ') || '—'})`);
-  if (tanpaArt.length) {
-    console.log(`  ..  menunggu artwork berikutnya: ${tanpaArt.join(', ')}`);
-  }
-  /* Pernikahan: tema "minimalist-*"/"slate-sage" sengaja dibiarkan bersih (arti namanya). */
-  const SENGAJA_BERSIH = ['minimalist-sage', 'minimalist-frost', 'slate-sage', 'sage-blossom'];
-  const wedArt = und.filter((t) => t.ev === 'pernikahan' && t.art);
-  const wedTanpa = und.filter((t) => t.ev === 'pernikahan' && !t.art).map((t) => t.id);
-  const wedBelum = wedTanpa.filter((id) => !SENGAJA_BERSIH.includes(id));
-  cek(wedBelum.length === 0, `semua tema pernikahan punya artwork (belum: ${wedBelum.join(', ') || '—'})`);
-  console.log(`  pernikahan: ${wedArt.length} ber-artwork, ${wedTanpa.length} sengaja bersih (${wedTanpa.join(', ')})`);
+  const tanpaArt = und.filter((t) => !t.art).map((t) => t.id);
+  console.log(`  ${berkas.length} artwork di disk (total ${total} KB), ${pakaiU.length} tema ber-artwork, ` +
+              `${tanpaArt.length} tema bersih (${tanpaArt.join(', ') || '—'})`);
+  cek(und.length > 0, `katalog terbaca (${und.length} tema)`);
 
   /* ------------------------------- 1b. keterbacaan teks di atas artwork */
   /* sharp hanya dipakai saat pengembangan; di CI tanpa sharp bagian ini dilewati. */
   let sharp = null;
   try { sharp = require('sharp'); } catch (e) { /* opsional */ }
-  if (!sharp) {
+  if (!berkas.length) {
+    console.log('  ..  ukur kecerahan artwork dilewati (tidak ada artwork di katalog aktif)');
+  } else if (!sharp) {
     console.log('  ..  ukur kecerahan artwork dilewati (sharp belum terpasang)');
   } else {
     console.log('\n1b) Keterbacaan teks cover di atas artwork (sharp)');
@@ -124,7 +119,6 @@ function tema(rel) {
       const kaki = await sharp(path.join(DIR_ART, f))
         .extract({ left: 0, top: bawah, width: meta.width, height: meta.height - bawah })
         .resize(1, 1).raw().toBuffer();
-      // lapisan gelap CSS: 0,55 di atas → 0,24 pada 30%, ~0,72 di kaki halaman
       const rAtas = kontras(hexLum(TEKS_COVER), lum(...campur([...atas], LAPIS, 0.5)));
       const rBawah = kontras(hexLum(TEKS_COVER), lum(...campur([...kaki], LAPIS, 0.65)));
       if (rAtas < terburukAtas.rasio) terburukAtas = { rasio: rAtas, id };
@@ -135,29 +129,40 @@ function tema(rel) {
                 `bawah ${terburukBawah.rasio.toFixed(1)}:1 (${terburukBawah.id})`);
   }
 
-  /* ------------------------------------------- 2. halaman undangan (jsdom) */
-  console.log('\n2) Halaman undangan (jsdom)');
+  /* ------------------------------------------------------ 2. mesin masih utuh */
+  console.log('\n2) Mesin artwork di halaman live & Studio');
+  const undHtml = baca('undangan.html');
+  const stuHtml = baca('studio.html');
+  cek(/body\.art3d #cover\{/.test(undHtml) || undHtml.includes('body.art3d #cover'),
+      'undangan.html: aturan CSS art3d (latar artwork + lapisan gelap) tersedia');
+  cek(undHtml.includes("classList.add('art3d')"), 'undangan.html: kelas art3d dipasang saat tema ber-artwork');
+  cek(undHtml.includes("'--cover-art'"), 'undangan.html: --cover-art dipasang dari bg3d tema');
+  cek(undHtml.includes("'#F7F2E9'"), 'undangan.html: teks cover jadi terang di atas artwork');
+  cek(stuHtml.includes('const art3d='), 'studio.html: pratinjau HP mengikuti latar artwork');
+  cek(stuHtml.includes('bg3d'), 'studio.html: field bg3d masih dikenal (siap dipakai tema baru)');
+
+  /* ------------------------------------------- 3. halaman undangan (jsdom) */
+  console.log('\n3) Render halaman undangan (jsdom)');
   if (!JSDOM) {
     console.log('  (dilewati: jsdom belum terpasang — npm install --no-save jsdom)');
   } else {
-    const das = (tpl, tambahan = {}) => {
-      const draft = {
-        slug: 'demo', name1: 'Ahsan', name2: '', theme: 0,
-        data: {
-          event: 'ultah', tpl, doa: 'ultah',
-          form: {
-            namaAnak: 'Ahsan', tanggalAcara: '2026-12-28', jamAcara: '08:00',
-            venue: 'Gedung', alamat: '', mapsLink: '', zona: 'WIB', temaUltah: '', usia: '',
-          },
-          slides: {}, anim: { cover: false, text: false, reveal: false, effect: 'zoom', scroll: 'fade-up' },
+    /* Tema ber-artwork pertama dari katalog (kalau ada). TPL tidak bisa disuntik dari
+       luar: const di halaman tidak jadi milik global saat skripnya dieval manual. */
+    const berArt = und.filter((t) => t.art)[0];
+    const das = (tpl) => ({
+      slug: 'demo', name1: 'Ahsan', name2: '', theme: 0,
+      data: {
+        event: 'ultah', tpl, doa: 'ultah',
+        form: {
+          namaAnak: 'Ahsan', tanggalAcara: '2026-12-28', jamAcara: '08:00',
+          venue: 'Gedung', alamat: '', mapsLink: '', zona: 'WIB', temaUltah: '', usia: '',
         },
-      };
-      Object.assign(draft.data, tambahan);
-      return draft;
-    };
+        slides: {}, anim: { cover: false, text: false, reveal: false, effect: 'zoom', scroll: 'fade-up' },
+      },
+    });
 
     async function render(draft) {
-      const dom = new JSDOM(baca('undangan.html'), {
+      const dom = new JSDOM(undHtml, {
         url: 'https://asproject.my.id/undangan.html?slug=demo',
         runScripts: 'outside-only', pretendToBeVisual: true,
       });
@@ -177,140 +182,32 @@ function tema(rel) {
       return { dom, w };
     }
 
-    {
-      const { dom, w } = await render(das('race-car', { cover: 'assets/demo/foto.webp' }));
+    if (berArt) {
+      const { dom, w } = await render(das(berArt.id));
       const st = w.document.documentElement.style;
-      cek(w.document.body.classList.contains('art3d'), 'tema 3D: <body> memakai kelas art3d');
-      cek(/assets\/tema-3d\/race-car\.webp/.test(st.getPropertyValue('--cover-art')),
-          'artwork dipasang sebagai --cover-art');
-      cek(String(st.getPropertyValue('--ink')).trim().toLowerCase() === '#f7f2e9',
-          'teks cover jadi terang (#F7F2E9) agar terbaca di atas artwork');
-      cek(String(st.getPropertyValue('--ink-body')).trim().toLowerCase() === '#26292e',
-          'teks konten tetap nada gelap tema (#26292e)');
-      const bingkai = w.document.querySelector('#cover .cvf img');
-      cek(!!bingkai, 'foto utama muncul dalam bingkai di cover (gaya kotak = bawaan)');
-      cek(!!bingkai && /foto\.webp/.test(bingkai.getAttribute('src')),
-          'bingkai memakai foto dari data undangan');
+      cek(w.document.body.classList.contains('art3d'), 'tema ber-artwork: kelas art3d dipasang');
+      cek((st.getPropertyValue('--cover-art') || '').includes(berArt.art.split('/').pop()),
+          'tema ber-artwork: --cover-art menunjuk berkas artwork tema');
+      cek(st.getPropertyValue('--ink').trim().toUpperCase() === '#F7F2E9',
+          'tema ber-artwork: teks cover dipaksa terang (#F7F2E9)');
       dom.window.close();
+    } else {
+      console.log('  ..  dilewati: katalog aktif tidak punya tema ber-artwork');
     }
+
     {
-      const { dom, w } = await render(das('race-car'));
-      cek(!w.document.querySelector('#cover .cvf'), 'tanpa foto utama: tidak ada bingkai kosong');
-      dom.window.close();
-    }
-    {
-      /* minimalist-frost = tema yang memang sengaja tanpa artwork (bersih/minimalis) */
-      const { dom, w } = await render(das('minimalist-frost'));
+      const dasar = und[0];
+      const { dom, w } = await render(das(dasar.id));
       const st = w.document.documentElement.style;
-      cek(!w.document.body.classList.contains('art3d'), 'tema tanpa artwork: kelas art3d tidak dipasang');
-      cek(String(st.getPropertyValue('--ink')).trim().toLowerCase() === '#075985',
-          'tema biasa: teks cover tetap warna tema (#075985)');
-      cek(!w.document.querySelector('#cover .cvf'), 'tema biasa tanpa foto: tidak ada bingkai');
+      cek(!w.document.body.classList.contains('art3d'), `tema dasar ${dasar.id}: tidak memakai kelas art3d`);
+      cek(st.getPropertyValue('--cover-art').trim() === '', `tema dasar ${dasar.id}: tidak ada --cover-art`);
+      cek(st.getPropertyValue('--g0').trim() !== '' && st.getPropertyValue('--accent').trim() !== '',
+          `tema dasar ${dasar.id}: gradasi & aksen tema tetap dipakai`);
+      cek(/Ahsan/.test(w.document.body.textContent), 'nama anak dirender di halaman live');
       dom.window.close();
     }
-    {
-      /* undangan pernikahan ber-artwork: cover memakai gambar tema + foto di bingkai */
-      const { dom, w } = await render(das('burgundy-regal', {
-        event: 'pernikahan', cover: 'assets/demo/foto.webp', coverStyle: 'oval',
-        form: {
-          namaPria: 'Rina', namaWanita: 'Bagas', gelarPria: '', gelarWanita: '',
-          tanggalAcara: '2026-12-28', jamAcara: '08:00', zona: 'WIB',
-          venue: 'Gedung Bersama', alamat: '', mapsLink: '', showBismillah: false,
-        },
-      }));
-      const st = w.document.documentElement.style;
-      cek(w.document.body.classList.contains('art3d'), 'pernikahan: tema ber-artwork memakai latar gambar (art3d)');
-      cek(/burgundy-regal\.webp/.test(st.getPropertyValue('--cover-art')), 'pernikahan: artwork tema burgundy dipasang');
-      cek(String(st.getPropertyValue('--ink')).trim().toLowerCase() === '#f7f2e9', 'pernikahan: teks cover terang agar terbaca');
-      cek(!!w.document.querySelector('#cover .cvf-oval img'), 'pernikahan: foto pengantin tampil di bingkai oval');
-      dom.window.close();
-    }
-  }
-
-  /* -------------------------------------------- 3. studio (pratinjau & publish) */
-  console.log('\n3) Studio (pratinjau & publish)');
-  const stu2 = baca('studio.html');
-  cek(/const art3d=\(!dark&&tp\.bg3d&&state\.bgType==='gradient'/.test(stu2),
-      'pratinjau HP memakai artwork tema 3D');
-  cek(/art3d\?'#F7F2E9'/.test(stu2), 'nama pada pratinjau tetap terbaca di atas artwork');
-  cek(stu2.includes("${art3d?' • 3D':''}"), 'label pratinjau menandai tema 3D');
-  cek(/snap:\{[\s\S]*?cover:state\.cover\|\|''/.test(stu2),
-      'publish() menyimpan foto utama (cover) ke snapshot');
-  cek(stu2.includes("if(a.snap.cover!==undefined)state.cover=a.snap.cover;"),
-      'membuka arsip memulihkan foto utama');
-
-  if (JSDOM) {
-    const dom = new JSDOM(stu2, { url: 'https://studio.test/', runScripts: 'outside-only', pretendToBeVisual: true });
-    const w = dom.window;
-    w.HTMLMediaElement.prototype.pause = () => {};
-    w.HTMLMediaElement.prototype.play = () => Promise.resolve();
-    w.scrollTo = () => {};
-    w.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
-    w.eval(baca('assets/scroll-effects.js'));
-    for (const tag of w.document.querySelectorAll('script:not([src])')) w.eval(tag.textContent);
-    w.startInvitation();
-    w.pickTpl('race-car');
-    const html = w.phoneHtml();
-    cek(html.includes('assets/tema-3d/race-car.webp'), 'html pratinjau memuat berkas artwork');
-    cek(html.includes('• 3D'), 'html pratinjau menampilkan penanda 3D');
-    w.pickTpl('minimalist-frost');
-    cek(!w.phoneHtml().includes('assets/tema-3d/'), 'tema non-artwork tidak memuat artwork');
-    w.pickTpl('burgundy-regal');
-    cek(w.phoneHtml().includes('assets/tema-3d/burgundy-regal.webp'),
-        'tema pernikahan ber-artwork memuat gambarnya di pratinjau');
-    dom.window.close();
-  } else {
-    console.log('  (pratinjau studio dilewati: jsdom belum terpasang)');
-  }
-
-  /* ------------------------------- 4. file HTML mandiri memuat artwork 3D */
-  console.log('\n4) Simpan File HTML dengan tema 3D (jsdom)');
-  if (!JSDOM) {
-    console.log('  (dilewati: jsdom belum terpasang)');
-  } else {
-    const dom = new JSDOM(stu2, { url: 'https://studio.test/', runScripts: 'outside-only', pretendToBeVisual: true });
-    const w = dom.window;
-    w.HTMLMediaElement.prototype.pause = () => {};
-    w.HTMLMediaElement.prototype.play = () => Promise.resolve();
-    w.scrollTo = () => {};
-    w.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
-    w.eval(baca('assets/scroll-effects.js'));
-    for (const tag of w.document.querySelectorAll('script:not([src])')) w.eval(tag.textContent);
-    w.startInvitation();
-    w.pickTpl('race-car');
-
-    let blob = null;
-    w.URL.createObjectURL = (b) => { blob = b; return 'blob:uji-3d'; };
-    w.URL.revokeObjectURL = () => {};
-    const gambar = fs.readFileSync(path.join(DIR_ART, 'race-car.webp'));
-    w.fetch = (u) => {
-      const url = String(u);
-      if (url.indexOf('undangan.html') >= 0) return Promise.resolve({ ok: true, text: () => Promise.resolve('<html><head></head><body>tamu</body></html>') });
-      if (url.indexOf('theme-contrast.js') >= 0) return Promise.resolve({ ok: true, text: () => Promise.resolve(baca('assets/theme-contrast.js')) });
-      if (url.indexOf('tema-3d/race-car.webp') >= 0) {
-        return Promise.resolve({ ok: true, blob: () => Promise.resolve(new w.Blob([gambar], { type: 'image/webp' })) });
-      }
-      return Promise.reject(new Error('offline: ' + url));
-    };
-    const buatAsli = w.document.createElement.bind(w.document);
-    w.document.createElement = (tag) => {
-      const el = buatAsli(tag);
-      if (String(tag).toLowerCase() === 'a') el.click = () => {};
-      return el;
-    };
-
-    await w.dlUndangan();
-    await new Promise((r) => setTimeout(r, 80));
-    cek(!!blob, 'file HTML mandiri tetap dihasilkan untuk tema 3D');
-    if (blob && typeof blob.text === 'function') {
-      const isi = await blob.text();
-      cek(isi.includes('data:image/webp'), 'artwork 3D disematkan ke file (base64) — tetap tampil offline');
-      cek(/--cover-art:url\(/.test(isi), 'artwork menggantikan latar cover di file ekspor');
-      cek(isi.includes('EMBEDDED_DATA'), 'data undangan tetap tertanam');
-    }
-    dom.window.close();
   }
 
   console.log(`\nRingkasan: ${lulus} lulus, ${gagal} gagal`);
   process.exit(gagal ? 1 : 0);
-})();
+})().catch((e) => { console.error('Harness crash:', e); process.exit(2); });
