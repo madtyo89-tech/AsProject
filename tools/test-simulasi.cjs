@@ -1,3 +1,4 @@
+const blobText=(win,b)=>typeof b.text==='function'?b.text():new Promise((ok,no)=>{const r=new win.FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsText(b)});
 /* Simulasi pemakaian nyata AsProject (jsdom, offline):
    1) studio.html  : boot, evPick 4 event, render 71 tema, 32 border ber-tier,
                      17 font, semua fx cover/scroll, render 8 tab, publish offline,
@@ -185,7 +186,7 @@ function draftFor(tpl, idx) {
   await sleep(200);
   t('studio: dlUndangan tanpa error & file dinamai', !dlErr && captured && capturedName.startsWith('undangan-'), dlErr || capturedName || 'tidak ada blob');
   let exp = '';
-  if (captured) { try { exp = await captured.text(); } catch (e) { exp = ''; } }
+  if (captured) { try { exp = await blobText(w, captured); } catch (e) { exp = ''; } }
   t('export: memuat EMBEDDED_DATA + vip-4d + theme-contrast',
     exp.includes('window.EMBEDDED_DATA') && exp.includes('AsVip4d') && /contrast|kontras/i.test(exp),
     'EMBEDDED=' + exp.includes('window.EMBEDDED_DATA') + ' vip=' + exp.includes('AsVip4d'));

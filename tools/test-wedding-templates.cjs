@@ -1,3 +1,4 @@
+const blobText=(win,b)=>typeof b.text==='function'?b.text():new Promise((ok,no)=>{const r=new win.FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsText(b)});
 // Wedding theme regression tests: template identity, artwork pairing and live/Studio parity.
 // Run: NODE_PATH=... node tools/test-wedding-templates.cjs (jsdom required)
 const fs=require('node:fs');
@@ -148,7 +149,7 @@ async function testStudioPreview(){
   w.eval(`state.event='pernikahan';state.tpl='${id}';state.accent=tplOf().accent;state.slug='wedding-test';state.form.namaPria='Emma';state.form.namaWanita='Noah';state.music={local:true}`);
   exported=null;await w.dlUndangan();
   assert(exported,`${id}: offline HTML download is generated`);
-  const html=await exported.text(),bytes=fs.readFileSync(path.join(ROOT,asset)).toString('base64');
+  const html=await blobText(w,exported),bytes=fs.readFileSync(path.join(ROOT,asset)).toString('base64');
   assert(html.includes('--wedding-paper-art:url(data:image/webp;base64,'+bytes+')'),`${id}: full paper artwork is embedded for offline use`);
   if(id==='jawa-elegan')assert(html.includes('--cover-art:url(data:image/webp;base64,'),`${id}: background artwork is embedded too`);
  }
