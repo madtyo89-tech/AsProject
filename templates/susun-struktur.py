@@ -6,8 +6,10 @@ Dijalankan SETELAH buat-tema-turunan.py, karena mengubah file hasilnya:
   - undangan-khitanan-basic-template.html   -> struktur "Khitanan Basic" (Save the Date, Doa, Buku Tamu)
   - undangan-khitanan-premium-template.html -> struktur "Khitanan Premium" (Detail, Doa Khitan, Konfirmasi & Doa)
 
-Bagian yang tidak ada di referensi (Love Story, Galeri, Dress Code, Lokasi terpisah)
-dihapus. Lokasi sudah ada di bagian Detail Acara. Isi tiap bagian diambil dari file
+Bagian yang tidak ada di referensi (Love Story, Dress Code, Lokasi terpisah) dihapus.
+Galeri dan Amplop Digital tetap ada di khitanan. Keduanya bisa dimatikan di Studio
+(galeri tampil bila ada foto, amplop bila showAmplop aktif). Lokasi sudah ada di
+bagian Detail Acara. Isi tiap bagian diambil dari file
 hasil sebelumnya, jadi token, tautan, dan skrip tetap utuh.
 
   python3 susun-struktur.py
@@ -42,7 +44,7 @@ KONFIG = {
         "ganti": [],
     },
     "undangan-khitanan-basic-template.html": {
-        "urutan": ["QUOTE & MEMPELAI", "DETAIL ACARA", "COUNTDOWN", "DOA", "RSVP", "PENUTUP"],
+        "urutan": ["QUOTE & MEMPELAI", "DETAIL ACARA", "COUNTDOWN", "GALERI", "DOA", "RSVP", "AMPLOP DIGITAL", "PENUTUP"],
         "doa": {"SUB": "Doa &amp; Harapan", "JUDUL": "Doa Khitan",
                 "KUTIPAN": "Semoga Allah memberkahi usia, rezeki &amp; ilmunya.",
                 "SUMBER": "Keluarga Besar {{AYAH_ORTU}} &amp; {{IBU_ORTU}}"},
@@ -58,7 +60,7 @@ KONFIG = {
         ],
     },
     "undangan-khitanan-premium-template.html": {
-        "urutan": ["QUOTE & MEMPELAI", "DETAIL ACARA", "COUNTDOWN", "DOA", "RSVP", "PENUTUP"],
+        "urutan": ["QUOTE & MEMPELAI", "DETAIL ACARA", "COUNTDOWN", "GALERI", "DOA", "RSVP", "AMPLOP DIGITAL", "PENUTUP"],
         "doa": {"SUB": "Doa Khitan", "JUDUL": "Doa untuk Ananda",
                 "KUTIPAN": "Semoga Allah menjadikannya anak yang sholeh dan berbakti.",
                 "SUMBER": "Dengan penuh rasa syukur"},

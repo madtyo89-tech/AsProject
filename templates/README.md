@@ -132,10 +132,12 @@ python3 susun-struktur.py
 | Template | Urutan bagian |
 |---|---|
 | `ice` | Pembuka & mempelai → Detail Acara (akad & resepsi) → Hitung Mundur → RSVP → Amplop Digital → Penutup |
-| `khitanan-basic` | Pembuka → Save the Date → Hitung Mundur → Doa & Harapan → Buku Tamu → Penutup (Wassalamualaikum, Keluarga Besar) |
-| `khitanan-premium` | Walimatul Khitan (hadis) → Detail Acara → Hitung Mundur → Doa Khitan → Konfirmasi & Doa → Penutup |
+| `khitanan-basic` | Pembuka → Save the Date → Hitung Mundur → Galeri → Doa & Harapan → Buku Tamu → Amplop Digital → Penutup (Wassalamualaikum, Keluarga Besar) |
+| `khitanan-premium` | Walimatul Khitan (hadis) → Detail Acara → Hitung Mundur → Galeri → Doa Khitan → Konfirmasi & Doa → Amplop Digital → Penutup |
 
 Bagian yang dihapus dari template sage agar sama dengan referensi: Love Story,
-Galeri Foto, Dress Code, dan Lokasi terpisah (lokasi sudah ada di Detail Acara).
-Amplop Digital hanya ada di `ice`. Untuk khitanan, bagian ini bisa dikembalikan
-jika diperlukan.
+Dress Code, dan Lokasi terpisah (lokasi sudah ada di Detail Acara). Galeri dan
+Amplop Digital dipertahankan di khitanan. Keduanya bisa dimatikan di Studio:
+galeri tampil hanya jika ada foto, dan amplop tampil jika `showAmplop` aktif.
+Di file HTML statis, bagian ini tidak punya saklar, jadi hapus blok
+`<!-- ============ NAMA ============ -->` jika tidak dipakai.
