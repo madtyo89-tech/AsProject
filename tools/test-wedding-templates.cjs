@@ -23,8 +23,11 @@ const blobText = (win, b) => typeof b.text === 'function'
     });
 
 const studioHtml = read('studio.html'), liveHtml = read('undangan.html'), indexHtml = read('index.html');
-const TEMA_LAMA = ['jawa-elegan', 'minimalist-sage', 'luxury-gold', 'floral-rustic', 'ice-blue',
-  'royal-garden', 'galaxy-prestige', 'abyss-pearl', 'winter-prestige'];
+/* Id tema lama yang tidak boleh kembali. jawa-elegan / minimalist-sage / luxury-gold /
+ * floral-rustic sengaja tidak di daftar: sejak 2026-10-10 id itu dipakai ulang oleh
+ * katalog AsProject (sumber Google Drive) dengan palet & mesin tema repo, bukan
+ * salinan desain lama. */
+const TEMA_LAMA = ['ice-blue', 'royal-garden', 'galaxy-prestige', 'abyss-pearl', 'winter-prestige'];
 
 function entri(source) {
   const blok = (source.match(/const TPL=\[([\s\S]*?)\];/) || [, ''])[1];

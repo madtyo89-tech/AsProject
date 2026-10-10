@@ -35,8 +35,11 @@ hitung = {"ok": 0, "masalah": 0, "info": 0}
 
 # Id tema dari katalog lama (72 tema). Setelah katalog direset, id-id ini tidak
 # boleh muncul lagi di berkas yang disajikan ke publik (tautan mati = memalukan).
-TEMA_LAMA = {"jawa-elegan", "minimalist-sage", "luxury-gold", "floral-rustic",
-             "ice-blue", "royal-garden", "galaxy-prestige", "abyss-pearl", "winter-prestige"}
+# Id tema lama yang tidak boleh muncul lagi. jawa-elegan / minimalist-sage /
+# luxury-gold / floral-rustic sengaja TIDAK dipasang: sejak 2026-10-10 id itu
+# dipakai ulang oleh katalog AsProject (sumber: Google Drive) dengan desain baru.
+TEMA_LAMA = {"ice-blue", "royal-garden", "galaxy-prestige", "abyss-pearl",
+             "winter-prestige"}
 
 
 def lapor(status, pesan):
@@ -176,11 +179,13 @@ def cek_resolusi_demo():
     tema = re.findall(r'\{id:"([^"]+)",name:"([^"]+)",category:"([^"]+)"', pn.group(1))
     i_nama = s.index("var DEMO_BY_NAME")
     i_kat = s.index("var DEMO_BY_CATEGORY", i_nama)
-    nama = dict(re.findall(r"'([^']+)':\s*'(demo/[^']+)'", s[i_nama:i_kat]))
-    kat_blok = s[i_kat:i_kat + 1200]
+    # nilai boleh '...' atau "..."; berkas demo boleh di demo/ atau katalog-demo/
+    pol = r"['\"]([^'\"]+)['\"]:\s*['\"]((?:demo|katalog-demo)/[^'\"]+)['\"]"
+    nama = dict(re.findall(pol, s[i_nama:i_kat]))
+    kat_blok = s[i_kat:s.find('var WA_ICON', i_kat) if 'var WA_ICON' in s[i_kat:] else i_kat + 1200]
     kat = {}
-    for k, v in re.findall(r"'([^']+)':\s*(\[[^\]]*\]|'demo/[^']+')", kat_blok):
-        kat[k] = re.findall(r"'(demo/[^']+)'", v) if v.startswith("[") else [v]
+    for k, v in re.findall(r"['\"]([^'\"]+)['\"]:\s*(\[[^\]]*\]|['\"](?:demo|katalog-demo)/[^'\"]+['\"])", kat_blok):
+        kat[k] = re.findall(r"['\"]((?:demo|katalog-demo)/[^'\"]+)['\"]", v) if v.strip().startswith("[") else [v.strip("'\"")]
     dapat = 0
     for tid, tnama, tkat in tema:
         kandidat = nama.get(tnama) or None

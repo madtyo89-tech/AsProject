@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AsProject — Undangan Digital Elegan, Jadi 1×24 Jam</title>
+<!--
+  ============================================
+  CARA PAKAI: ganti bagian-bagian ini sesuai usahamu:
+  1) Ganti nomor WhatsApp: cari "6281234567890" (ada 4 tempat)
+  2) Ganti nama brand "AsProject"
+  3) Sesuaikan harga di bagian #harga dengan daftar-harga.md
+  4) Ganti testimoni dengan testimoni asli klienmu
+  ============================================
+-->
+<style>
+  :root{
+    --green:#1e4d3b; --green-dark:#123527; --gold:#b98d3e; --gold-light:#e5cf9a;
+    --cream:#faf6ef; --ink:#2b2b26; --muted:#6b6b60; --wa:#22c15e; --white:#ffffff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:var(--cream);line-height:1.6}
+  h1,h2,h3,.serif{font-family:Georgia,"Times New Roman",serif;line-height:1.25}
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  .btn{display:inline-block;padding:13px 28px;border-radius:50px;text-decoration:none;font-weight:700;
+    transition:transform .15s ease,box-shadow .15s ease;border:none;cursor:pointer;font-size:15px}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-gold{background:linear-gradient(135deg,#caa14e,#a67c2e);color:#fff;box-shadow:0 8px 20px rgba(166,124,46,.35)}
+  .btn-outline{border:2px solid var(--green);color:var(--green);background:transparent}
+  .btn-outline:hover{background:var(--green);color:#fff}
+  .btn-wa{background:var(--wa);color:#fff;box-shadow:0 8px 20px rgba(34,193,94,.35)}
+  .tag{display:inline-block;background:#eee3c8;color:#7c5f1e;font-size:13px;font-weight:700;
+    padding:6px 16px;border-radius:50px;letter-spacing:.5px}
+
+  /* ---------- Header ---------- */
+  header{position:sticky;top:0;z-index:50;background:rgba(250,246,239,.92);backdrop-filter:blur(10px);
+    border-bottom:1px solid #e8e0d0}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+  .logo{font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--green);text-decoration:none}
+  .logo span{color:var(--gold)}
+  .nav-links{display:flex;gap:26px;align-items:center}
+  .nav-links a{text-decoration:none;font-size:15px;color:var(--ink);font-weight:600}
+  .nav-links a:hover{color:var(--gold)}
+  .nav-cta{text-decoration:none;background:var(--green);color:#fff;padding:9px 20px;border-radius:50px;
+    font-size:14px;font-weight:700}
+
+  /* ---------- Hero ---------- */
+  .hero{background:
+    radial-gradient(circle at 85% 15%,rgba(185,141,62,.14),transparent 45%),
+    radial-gradient(circle at 10% 90%,rgba(30,77,59,.10),transparent 40%), var(--cream);
+    padding:70px 0 80px;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}
+  .hero h1{font-size:46px;color:var(--green-dark);margin:18px 0 16px}
+  .hero h1 em{font-style:italic;color:var(--gold)}
+  .hero p{font-size:17px;color:var(--muted);max-width:480px;margin-bottom:28px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-stats{display:flex;gap:34px;margin-top:38px}
+  .hero-stats b{font-family:Georgia,serif;font-size:26px;color:var(--green);display:block}
+  .hero-stats small{color:var(--muted);font-size:13px}
+
+  /* Phone mockup */
+  .phone-wrap{display:flex;justify-content:center}
+  .phone{width:280px;height:560px;background:#111;border-radius:38px;padding:12px;
+    box-shadow:0 30px 60px rgba(0,0,0,.25),inset 0 0 0 3px #333;position:relative}
+  .phone::before{content:"";position:absolute;top:22px;left:50%;transform:translateX(-50%);
+    width:90px;height:22px;background:#111;border-radius:12px;z-index:2}
+  .screen{width:100%;height:100%;border-radius:28px;overflow:hidden;background:linear-gradient(170deg,#1e4d3b,#123527);
+    color:#f3ead3;text-align:center;padding:44px 16px 20px;display:flex;flex-direction:column;align-items:center}
+  .screen .mono{width:74px;height:74px;border:2px solid var(--gold-light);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:24px;
+    color:var(--gold-light);margin-bottom:16px;font-style:italic}
+  .screen .mini-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;opacity:.8}
+  .screen .mini-names{font-family:Georgia,serif;font-size:26px;font-style:italic;margin:10px 0 4px;color:#f9f1dc}
+  .screen .mini-date{font-size:12px;opacity:85%;margin-bottom:18px}
+  .screen .mini-orn{width:120px;height:26px;opacity:.9;margin-bottom:14px}
+  .screen .mini-btn{margin-top:auto;background:var(--gold);color:#123527;font-size:12px;font-weight:700;
+    padding:9px 22px;border-radius:50px}
+  .screen .mini-photo{width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,#e5cf9a,#b98d3e);
+    display:flex;align-items:center;justify-content:center;margin:12px 0 6px;font-size:26px}
+
+  /* ---------- Sections ---------- */
+  section{padding:72px 0}
+  .sec-head{text-align:center;max-width:640px;margin:0 auto 46px}
+  .sec-head h2{font-size:34px;color:var(--green-dark);margin:14px 0 10px}
+  .sec-head p{color:var(--muted)}
+
+  /* Keunggulan */
+  .feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .feat{background:#fff;border:1px solid #ece3d2;border-radius:18px;padding:26px 22px;text-align:center;
+    transition:transform .2s,box-shadow .2s}
+  .feat:hover{transform:translateY(-5px);box-shadow:0 16px 34px rgba(30,77,59,.12)}
+  .feat .icon{width:54px;height:54px;border-radius:16px;background:#eef3ec;display:flex;align-items:center;
+    justify-content:center;margin:0 auto 14px}
+  .feat h3{font-size:17px;color:var(--green-dark);margin-bottom:6px}
+  .feat p{font-size:14px;color:var(--muted)}
+
+  /* Tema */
+  .tema-section{background:var(--green);background:linear-gradient(180deg,#1e4d3b,#173f31)}
+  .tema-section .sec-head h2{color:#f6eed9}
+  .tema-section .sec-head p{color:#cfdcc9}
+  .tema-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .tema-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.18)}
+  .tema-preview{height:180px;position:relative;display:flex;align-items:center;justify-content:center}
+  .tema-preview .bar{position:absolute;top:0;left:0;right:0;height:22px;background:rgba(255,255,255,.55);
+    display:flex;align-items:center;gap:4px;padding:0 8px}
+  .tema-preview .bar i{width:7px;height:7px;border-radius:50%;background:#c66;display:inline-block}
+  .tema-preview .bar i:nth-child(2){background:#db4}
+  .tema-preview .bar i:nth-child(3){background:#5a5}
+  .tema-preview .initial{font-family:Georgia,serif;font-style:italic;font-size:34px;color:rgba(255,255,255,.95)}
+  .t1{background:linear-gradient(135deg,#f6d9d3,#e8a9a0)}
+  .t2{background:linear-gradient(135deg,#3d2b1f,#7a5230)}
+  .t3{background:linear-gradient(135deg,#eef0e8,#b7c4a3)}
+  .t4{background:linear-gradient(135deg,#123527,#1e4d3b)}
+  .t5{background:linear-gradient(135deg,#d9c9a3,#a38b5f)}
+  .t6{background:linear-gradient(135deg,#1f2a44,#e2703a)}
+  .t1 .initial,.t3 .initial{color:#7c4a42}
+  .t3 .initial{color:#3e5233}
+  .tema-body{padding:18px 20px 20px}
+  .tema-body h3{font-size:17px;color:var(--green-dark)}
+  .tema-body p{font-size:13px;color:var(--muted);margin:4px 0 14px}
+  .tema-body a{font-size:14px;font-weight:700;color:var(--gold);text-decoration:none}
+
+  /* Harga */
+  .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
+  .price{background:#fff;border:1px solid #ece3d2;border-radius:20px;padding:30px 26px;position:relative;
+    display:flex;flex-direction:column}
+  .price.best{border:2px solid var(--gold);box-shadow:0 20px 44px rgba(185,141,62,.22);transform:scale(1.03)}
+  .badge-best{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--gold);
+    color:#fff;font-size:12px;font-weight:800;letter-spacing:1px;padding:6px 18px;border-radius:50px}
+  .price h3{color:var(--green-dark);font-size:19px}
+  .price .amt{font-family:Georgia,serif;font-size:34px;color:var(--green);margin:12px 0 2px}
+  .price .amt s{font-size:16px;color:#b3a88f;font-weight:400;margin-right:8px}
+  .price .per{font-size:13px;color:var(--muted);margin-bottom:18px}
+  .price ul{list-style:none;margin:0 0 24px;flex:1}
+  .price li{font-size:14px;padding:7px 0 7px 28px;position:relative;color:#45453d}
+  .price li::before{content:"";position:absolute;left:0;top:11px;width:16px;height:16px;border-radius:50%;
+    background:#e6efe4 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%231e4d3b" stroke-width="4"><path d="M4 12l6 6L20 6"/></svg>') center/9px no-repeat}
+  .price .btn{width:100%;text-align:center}
+
+  /* Cara pesan */
+  .steps{background:#fff}
+  .step-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .step{text-align:center;padding:10px}
+  .step .num{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#caa14e,#a67c2e);
+    color:#fff;font-family:Georgia,serif;font-size:24px;display:flex;align-items:center;justify-content:center;
+    margin:0 auto 14px;box-shadow:0 8px 18px rgba(166,124,46,.3)}
+  .step h3{font-size:16px;color:var(--green-dark);margin-bottom:6px}
+  .step p{font-size:13.5px;color:var(--muted)}
+
+  /* Testimoni */
+  .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .testi{background:#fff;border:1px solid #ece3d2;border-radius:18px;padding:24px}
+  .testi .stars{color:#e2a93b;font-size:15px;letter-spacing:2px;margin-bottom:10px}
+  .testi p{font-size:14.5px;color:#45453d;font-style:italic;margin-bottom:16px}
+  .testi .who{display:flex;align-items:center;gap:12px}
+  .testi .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#e5cf9a,#b98d3e);
+    color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .testi .who b{font-size:14px;display:block;color:var(--green-dark)}
+  .testi .who small{font-size:12px;color:var(--muted)}
+
+  /* FAQ */
+  .faq-list{max-width:760px;margin:0 auto}
+  details{background:#fff;border:1px solid #ece3d2;border-radius:14px;margin-bottom:12px;overflow:hidden}
+  summary{padding:18px 22px;font-weight:700;cursor:pointer;color:var(--green-dark);list-style:none;
+    display:flex;justify-content:space-between;align-items:center;font-size:15px}
+  summary::after{content:"+";font-size:22px;color:var(--gold);font-weight:400}
+  details[open] summary::after{content:"–"}
+  details .ans{padding:0 22px 18px;color:var(--muted);font-size:14.5px}
+
+  /* CTA final */
+  .cta-final{background:linear-gradient(135deg,#123527,#1e4d3b);text-align:center;color:#f6eed9}
+  .cta-final h2{font-size:34px;margin-bottom:12px;color:#f9f1dc}
+  .cta-final p{color:#cfdcc9;max-width:520px;margin:0 auto 28px}
+
+  footer{background:#0d271e;color:#9fb3a3;padding:28px 0;text-align:center;font-size:13.5px}
+  footer b{color:#e9dcb9}
+
+  /* Floating WA */
+  .wa-float{position:fixed;bottom:22px;right:22px;z-index:60;width:58px;height:58px;border-radius:50%;
+    background:var(--wa);display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 24px rgba(34,193,94,.45);text-decoration:none;transition:transform .2s}
+  .wa-float:hover{transform:scale(1.1)}
+
+  @media(max-width:900px){
+    .hero-grid{grid-template-columns:1fr;text-align:center}
+    .hero h1{font-size:34px}
+    .hero p{margin:0 auto 26px}
+    .hero-btns,.hero-stats{justify-content:center}
+    .feat-grid{grid-template-columns:repeat(2,1fr)}
+    .tema-grid,.price-grid,.testi-grid{grid-template-columns:1fr}
+    .step-grid{grid-template-columns:repeat(2,1fr)}
+    .price.best{transform:none}
+    .nav-links{display:none}
+  }
+
+    .tema-body .no-demo{font-size:13px;color:var(--muted);font-weight:600}
+    .tema-body h3 small{font-size:11px;color:var(--muted);font-weight:400}
+  </style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#top">As<span>Project</span></a>
+    <nav class="nav-links">
+      <a href="#keunggulan">Keunggulan</a>
+      <a href="#tema">Tema</a>
+      <a href="#harga">Harga</a>
+      <a href="#cara">Cara Pesan</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <!-- GANTI NOMOR WA DI SINI -->
+    <a class="nav-cta" href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20tanya%20undangan%20digital" target="_blank" rel="noopener">Chat WhatsApp</a>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="tag">✦ Jasa Undangan Digital No. 1</span>
+      <h1>Undangan Pernikahan Digital <em>Elegan</em>, Siap Dibagikan dalam Hitungan Menit</h1>
+      <p>Satu link untuk semua tamu — lengkap dengan RSVP, buku tamu online, peta lokasi, hitung mundur, dan amplop digital. Praktis, hemat, dan ramah lingkungan.</p>
+      <div class="hero-btns">
+        <a class="btn btn-gold" href="#tema">Lihat Katalog Tema</a>
+        <!-- GANTI NOMOR WA DI SINI -->
+        <a class="btn btn-outline" href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20pesan%20undangan%20digital" target="_blank" rel="noopener">Konsultasi Gratis</a>
+      </div>
+      <div class="hero-stats">
+        <div><b>500+</b><small>Pasangan terbantu</small></div>
+        <div><b>50+</b><small>Pilihan tema</small></div>
+        <div><b>1×24 jam</b><small>Pengerjaan kilat</small></div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen">
+          <div class="mini-label">The Wedding Of</div>
+          <div class="mono">R&nbsp;&amp;&nbsp;L</div>
+          <svg class="mini-orn" viewBox="0 0 120 26">
+            <path d="M0 13 H48 M72 13 H120" stroke="#e5cf9a" stroke-width="1"/>
+            <path d="M60 3 C55 8 55 18 60 23 C65 18 65 8 60 3 Z" fill="none" stroke="#e5cf9a" stroke-width="1.2"/>
+            <circle cx="54" cy="13" r="1.6" fill="#e5cf9a"/><circle cx="66" cy="13" r="1.6" fill="#e5cf9a"/>
+          </svg>
+          <div class="mini-names">Raka &amp; Laras</div>
+          <div class="mini-date">Sabtu, 12 Desember 2026</div>
+          <div class="mini-photo">💍</div>
+          <div class="mini-btn">Buka Undangan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= KEUNGGULAN ================= -->
+<section id="keunggulan">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">Kenapa Kami</span>
+      <h2>Semua yang Kamu Butuhkan dalam Satu Link</h2>
+      <p>Tanpa cetak, tanpa antre, tanpa ribet. Tamu cukup klik link dari WhatsApp.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e4d3b" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+        <h3>Kilat 1×24 Jam</h3><p>Undangan jadi super cepat, ada opsi express 3 jam untuk kebutuhan mendesak.</p>
+      </div>
+      <div class="feat">
+        <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e4d3b" stroke-width="2"><path d="M12 2l2.9 6.3 6.6.7-5 4.5 1.4 6.5L12 16.7 6.1 20l1.4-6.5-5-4.5 6.6-.7L12 2z"/></svg></div>
+        <h3>Desain Premium</h3><p>50+ tema elegan: minimalis, floral, adat, hingga modern — bebas ganti tema.</p>
+      </div>
+      <div class="feat">
+        <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e4d3b" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 9h18"/></svg></div>
+        <h3>Fitur Lengkap</h3><p>RSVP, buku tamu digital, hitung mundur, galeri foto, musik, dan kado cashless.</p>
+      </div>
+      <div class="feat">
+        <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e4d3b" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 01-8.5 8.4c-1.5 0-2.9-.4-4.1-1L3 20l1.2-5.2A8.4 8.4 0 1121 11.5z"/></svg></div>
+        <h3>Fast Response</h3><p>Admin siap membantu setiap hari. Revisi mudah cukup lewat chat WhatsApp.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TEMA ================= -->
+<section id="tema" class="tema-section">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">Katalog</span>
+      <h2>Pilih Tema Favoritmu</h2>
+      <p>Semua tema sudah termasuk di setiap paket. Klik untuk melihat contoh undangan jadinya.</p>
+    </div>
+    <div class="tema-grid">
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#E8DCCA,#C2A88B)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#6C5237">AE&amp;AE</span></div>
+        <div class="tema-body"><h3>Adat Jawa Elegan ⭐</h3><p>Nuansa pranakan jawa yang anggun, motif batik halus & gold foil</p><a href="undangan-demo.html" target="_blank" rel="noopener">Lihat Demo →</a></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#D9E4D7,#A8BEA3)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#4A6647">MS&amp;MS</span></div>
+        <div class="tema-body"><h3>Minimalist Sage</h3><p>Bersih, modern, sage green aesthetic buat couple anti ribet</p><a href="undangan-sage.html" target="_blank" rel="noopener">Lihat Demo →</a></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#FFF8E1,#D4AF37)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#6B5724">LG&amp;LG</span></div>
+        <div class="tema-body"><h3>Luxury Gold</h3><p>Glam soft luxury, emboss gold & black tie vibe</p><a href="undangan-wedding-gold.html" target="_blank" rel="noopener">Lihat Demo →</a></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#FBE9E7,#E8AFA4)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#70463E">FR&amp;FR</span></div>
+        <div class="tema-body"><h3>Floral Rustic</h3><p>Bunga-bunga rustic yang manis, cocok outdoor garden party</p><a href="undangan-wedding-gold.html" target="_blank" rel="noopener">Lihat Demo →</a></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#E0F2FF,#7FB8F0)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#2D5680">BC&amp;BC</span></div>
+        <div class="tema-body"><h3>Biru Ceria</h3><p>Ceria & playful buat jagoan yang lagi disunat, tetap sopan</p><a href="undangan-sky-blue.html" target="_blank" rel="noopener">Lihat Demo →</a></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#E6F0E6,#A3C4A3)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#4C6A43">IE&amp;IE</span></div>
+        <div class="tema-body"><h3>Islamic Elegant</h3><p>Islami elegan dengan ornamen arabesque gold yang halus</p><a href="undangan-khitanan-premium.html" target="_blank" rel="noopener">Lihat Demo →</a></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#FFF1C1,#FFB74D)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#82602B">KP&amp;KP</span></div>
+        <div class="tema-body"><h3>Kids Party ⭐</h3><p>Warna-warni happy, balon & confetti buat si kecil</p><span class="no-demo">Demo menyusul</span></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#F9D5E5,#E57AA0)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#76374C">S1&amp;S1</span></div>
+        <div class="tema-body"><h3>Sweet 17</h3><p>Pink soft, aesthetic banget buat sweet seventeen-mu, beb</p><span class="no-demo">Demo menyusul</span></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#E8E6E1,#B8B2A8)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#665947">AE&amp;AE</span></div>
+        <div class="tema-body"><h3>Adult Elegant</h3><p>Mature, minimal, buat ultah ke-30, 40, 50 yang classy</p><span class="no-demo">Demo menyusul</span></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#E3F2FD,#90CAF9)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#32567B">BB&amp;BB</span></div>
+        <div class="tema-body"><h3>Baby Boy</h3><p>Lembut biru langit, ilustrasi baby boy yang gemes</p><span class="no-demo">Demo menyusul</span></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#FCE4EC,#F48FB1)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#78364D">BG&amp;BG</span></div>
+        <div class="tema-body"><h3>Baby Girl</h3><p>Pink blush super lembut buat si putri kecil kesayangan</p><span class="no-demo">Demo menyusul</span></div>
+      </div>
+      <div class="tema-card">
+        <div class="tema-preview" style="background:linear-gradient(135deg,#F5F0E6,#D4C4A0)"><div class="bar"><i></i><i></i><i></i></div><span class="initial" style="color:#6A5F44">IN&amp;IN</span></div>
+        <div class="tema-body"><h3>Islamic Neutral</h3><p>Gender neutral, kaligrafi doa & nuansa cream hangat</p><span class="no-demo">Demo menyusul</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HARGA ================= -->
+<section id="harga">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">Investasi</span>
+      <h2>Harga Transparan, Sekali Bayar</h2>
+      <p>Tanpa biaya bulanan. Tanpa biaya tersembunyi. Lebih hemat dari cetak 50 undangan kertas.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price">
+        <h3>🌱 Hemat</h3>
+        <div class="amt"><s>Rp129.000</s>Rp79.000</div>
+        <div class="per">sekali bayar · aktif 6 bulan</div>
+        <ul>
+          <li>25+ tema siap pakai</li>
+          <li>Detail mempelai &amp; acara</li>
+          <li>Countdown &amp; Google Maps</li>
+          <li>Musik latar</li>
+          <li>Ucapan &amp; doa tamu</li>
+          <li>Revisi 2× · jadi 2 hari</li>
+        </ul>
+        <!-- GANTI NOMOR WA DI SINI -->
+        <a class="btn btn-outline" href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20pesan%20Paket%20Hemat" target="_blank" rel="noopener">Pilih Hemat</a>
+      </div>
+      <div class="price best">
+        <span class="badge-best">PALING LARIS</span>
+        <h3>💎 Premium</h3>
+        <div class="amt"><s>Rp249.000</s>Rp149.000</div>
+        <div class="per">sekali bayar · aktif 1 tahun</div>
+        <ul>
+          <li><b>Semua tema premium</b></li>
+          <li>Galeri 10 foto lightbox + video prewed</li>
+          <li>Animasi kelopak, salju & kilau emas</li>
+          <li>Love story &amp; dress code</li>
+          <li>RSVP &amp; buku tamu digital</li>
+          <li>Amplop / kado digital</li>
+          <li>3 mode navigasi (Gulir/Snap/Slide)</li>
+          <li>Revisi 5× · jadi 1×24 jam</li>
+        </ul>
+        <a class="btn btn-gold" href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20pesan%20Paket%20Premium" target="_blank" rel="noopener">Pilih Premium</a>
+      </div>
+      <div class="price">
+        <h3>👑 Eksklusif</h3>
+        <div class="amt"><s>Rp450.000</s>Rp299.000</div>
+        <div class="per">sekali bayar · support VIP</div>
+        <ul>
+          <li>Semua fitur Premium</li>
+          <li>Domain sendiri (namakamu.my.id)</li>
+          <li>Undangan video 60 detik</li>
+          <li>QR check-in buku tamu</li>
+          <li>6 mode navigasi premium 👑 (Fade, Buku, Zoom, dll)</li>
+          <li>Animasi premium 👑 (kupu-kupu, balon, bintang)</li>
+          <li>Tanpa watermark</li>
+          <li>Revisi bebas · prioritas same-day</li>
+        </ul>
+        <a class="btn btn-outline" href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20pesan%20Paket%20Eksklusif" target="_blank" rel="noopener">Pilih Eksklusif</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CARA PESAN ================= -->
+<section class="steps" id="cara">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">Semudah Itu</span>
+      <h2>Pesan dalam 4 Langkah</h2>
+    </div>
+    <div class="step-grid">
+      <div class="step"><div class="num">1</div><h3>Pilih Tema &amp; Paket</h3><p>Lihat katalog, tentukan tema dan paket yang paling pas.</p></div>
+      <div class="step"><div class="num">2</div><h3>Kirim Data via WA</h3><p>Isi form: nama, tanggal, lokasi, foto, dan lagu favorit.</p></div>
+      <div class="step"><div class="num">3</div><h3>Terima Link Preview</h3><p>Undangan jadi 1×24 jam. Cek dan ajukan revisi bila perlu.</p></div>
+      <div class="step"><div class="num">4</div><h3>Sebarkan!</h3><p>Bagikan 1 link ke semua tamu lewat WhatsApp atau IG.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONI ================= -->
+<section id="testimoni">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">Kata Mereka</span>
+      <h2>Dipercaya Ratusan Pasangan</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p>"Pesan Kamis malam, Jumat pagi sudah jadi! Tamu-tamu pada bilang undangannya bagus banget. Bakal rekomendasiin ke teman-teman."</p>
+        <div class="who"><div class="avatar">DN</div><div><b>Dina &amp; Nanda</b><small>Bandung · Paket Premium</small></div></div>
+      </div>
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p>"Admin fast respon, revisi dibantu terus sampai cocok. Fitur RSVP-nya sangat membantu buat hitung katering. Worth it banget harga segini!"</p>
+        <div class="who"><div class="avatar">RA</div><div><b>Rani &amp; Agus</b><small>Jakarta · Paket Premium</small></div></div>
+      </div>
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p>"Ambil paket Eksklusif dengan domain sendiri, hasilnya jauh melebihi ekspektasi. Undangan videonya juga keren untuk status WA."</p>
+        <div class="who"><div class="avatar">SF</div><div><b>Sari &amp; Fajar</b><small>Yogyakarta · Paket Eksklusif</small></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq" style="background:#fff">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">FAQ</span>
+      <h2>Pertanyaan yang Sering Diajukan</h2>
+    </div>
+    <div class="faq-list">
+      <details>
+        <summary>Berapa lama pengerjaan undangannya?</summary>
+        <div class="ans">Paket Hemat maksimal 2 hari, Premium 1×24 jam, dan Eksklusif bisa jadi di hari yang sama (same-day). Butuh lebih cepat? Ada layanan express 3 jam dengan tambahan Rp49.000 dengan sistem antrian prioritas.</div>
+      </details>
+      <details>
+        <summary>Bisakah saya request revisi?</summary>
+        <div class="ans">Tentu! Paket Hemat mendapat 2× revisi, Premium 5× revisi, dan Eksklusif bebas revisi sampai H-3 acara. Revisi tambahan di luar jatah hanya Rp15.000 per revisi.</div>
+      </details>
+      <details>
+        <summary>Berapa lama undangan aktif?</summary>
+        <div class="ans">Paket Hemat aktif 6 bulan dan Premium aktif 1 tahun sejak tanggal pembuatan — lebih dari cukup sampai acara selesai. Undangan tetap bisa diakses sebagai kenang-kenangan selama masa aktif.</div>
+      </details>
+      <details>
+        <summary>Bagaimana cara pembayarannya?</summary>
+        <div class="ans">Cukup DP 50% dulu untuk mengunci antrean pengerjaan. Pembayaran bisa via transfer bank (BCA, Mandiri, BRI, BNI), QRIS, GoPay, OVO, dan DANA. Pelunasan dilakukan setelah kamu menyetujui hasil akhirnya.</div>
+      </details>
+      <details>
+        <summary>Apakah bisa pakai nama domain sendiri?</summary>
+        <div class="ans">Bisa, di Paket Eksklusif kamu mendapat domain sendiri seperti <b>namakamu.my.id</b> aktif 1 tahun. Tersedia juga opsi upgrade ke .com atau .id dengan biaya tambahan.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA FINAL ================= -->
+<section class="cta-final">
+  <div class="wrap">
+    <h2>Hari Bahagia Sekali Seumur Hidup,<br>Buat Undangannya Berkesan ✨</h2>
+    <p>Slot pengerjaan minggu ini terbatas. Amankan antreanmu sekarang — konsultasi gratis, tanpa komitmen.</p>
+    <a class="btn btn-wa" href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20konsultasi%20undangan%20digital" target="_blank" rel="noopener">💬 Chat WhatsApp Sekarang</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <b>AsProject</b> · Undangan digital elegan untuk momen spesialmu<br>
+    © 2026 AsProject. Dibuat dengan ❤ di Bandung.
+  </div>
+</footer>
+
+<!-- GANTI NOMOR WA DI SINI -->
+<a class="wa-float" href="https://wa.me/6281234567890?text=Halo%2C%20saya%20mau%20tanya%20undangan%20digital" target="_blank" rel="noopener" aria-label="Chat WhatsApp">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.9-1.4A10 10 0 1012 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .3-3.3-.7-2.8-1.2-4.6-4.1-4.7-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.2c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.9 1.5 2 2.4 1.4 1.2 2.5 1.6 2.8 1.7.3.2.5.1.7-.1l1.1-1.3c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .8-.2 1z"/></svg>
+</a>
+
+</body>
+</html>

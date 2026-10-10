@@ -1,11 +1,12 @@
 # Folder Demo Template
 
 > [!NOTE]
-> **2026-10-10 — katalog tema Studio direset** menjadi satu tema dasar (`ivory-klasik`);
-> 72 tema lama beserta artwork-nya dihapus. Halaman demo di folder ini masih bisa dibuka
-> langsung (mis. `demo/wedding-premium.html?tema=jawa-elegan`) dan berguna sebagai acuan
-> visual saat tema baru dibuat, tapi sejak reset **tidak lagi ditautkan** dari katalog
-> publik (`DEMO_BY_NAME` / `DEMO_BY_CATEGORY` di `index.html` dikosongkan).
+> **2026-10-10 — katalog tema Studio direset lalu diisi ulang** (1 tema dasar `ivory-klasik`
+> + 12 tema dari Google Drive). 72 tema lama beserta artwork-nya dihapus, jadi halaman demo
+> di folder ini menampilkan palet tema yang **sudah tidak ada** — masih berguna sebagai acuan
+> visual dan untuk menguji mesin tema, tapi jangan dipakai sebagai contoh hasil jualan.
+> Yang ditautkan tombol *Demo Live* di katalog publik sekarang adalah templat jadi di
+> **`katalog-demo/`** (`DEMO_BY_NAME` / `DEMO_BY_CATEGORY` di `index.html` menunjuk ke sana).
 
 
 Folder ini berisi halaman **demo live** yang ditautkan tombol "Demo Live" pada modal
