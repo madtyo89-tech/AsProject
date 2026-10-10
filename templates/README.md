@@ -70,15 +70,28 @@ Catatan: cerita perjalanan cinta (mis. "Lamaran 2023"), ucapan tamu contoh,
 dan galeri foto di template demo masih berisi teks contoh. Ganti langsung di
 hasil akhir atau tambahkan placeholder baru bila sering dipakai.
 
+## Gaya Premium
+
+Kedua template sudah memakai gaya Premium (palet emas, font Cormorant Garamond
+dan Playfair Display), mengikuti referensi "Premium Wedding" di
+`references/drive-katalog/`. Perubahannya dibuat oleh `premiumkan.py`, dan
+hanya perlu dijalankan sekali. File sumber di `katalog-demo/` tidak berubah.
+
+## Contoh hasil
+
+`contoh-hasil/sage/index.html` dan `contoh-hasil/demo/index.html` adalah hasil
+isian dengan data contoh, dengan foto yang sudah disalin. Buka lewat server
+lokal, misalnya `python3 -m http.server 8000` di folder `contoh-hasil`.
+
 ## Verifikasi
 
-Mengisi template dengan contoh data harus menghasilkan file yang sama dengan
-sumbernya (kecuali komentar petunjuk di template demo):
+Semua placeholder harus habis setelah diisi, dan tag HTML harus seimbang:
 
 ```
 python3 isi-template.py sage contoh-data.json /tmp/s.html
-diff ../katalog-demo/undangan-sage.html /tmp/s.html        # kosong
-
 python3 isi-template.py demo contoh-data-demo.json /tmp/d.html
-diff ../katalog-demo/undangan-demo.html /tmp/d.html        # hanya komentar petunjuk
+grep -c "{{" /tmp/s.html /tmp/d.html        # harus 0
 ```
+
+Tampilan belum dicek di browser dari sandbox ini. Cek visual perlu dilakukan
+manual di browser.
