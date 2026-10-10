@@ -104,7 +104,16 @@ function draftFor(tpl, idx) {
   w.addEventListener('error', e => evS.push(String(e.message)));
 
   const tpls = w.eval('TPL.map(x=>[x.id,x.ev,x.tier||"",x.harga||0,x.char||"",x.deco||"",x.ft||""])');
-  t('studio: boot & TPL 72 tema', tpls.length === 72, 'dapat ' + tpls.length);
+  t('studio: boot & katalog tema terisi', tpls.length >= 1, 'dapat ' + tpls.length);
+  /* Katalog direset 2026-10-10 ke satu tema dasar. Tema tier VIP untuk uji gating
+     disuntik sebagai fixture runtime, bukan tema produksi. */
+  const DASAR = tpls[0][0];
+  const UJI_VIP_OBJ = { id: 'uji-vip', nama: 'VIP Uji Coba', ev: 'pernikahan', harga: 149000, tier: 'vip',
+    g: ['#101014', '#1E2228', '#2A2E36'], accent: '#C9A86A', ink: '#F2F2F4', char: 'UJI',
+    deco: '✦ ❖ ✦', pat: '', ft: 'cormorant', part: 'gold', scene: 'zoom' };
+  const UJI_VIP = UJI_VIP_OBJ.id;
+  w.eval(`TPL.push(${JSON.stringify(UJI_VIP_OBJ)})`);
+
 
   /* evPick 4 event */
   let evOk = 0;
@@ -113,7 +122,7 @@ function draftFor(tpl, idx) {
   }
   t('studio: evPick 4 event', evOk === 4, evOk + '/4');
 
-  /* render semua 71 tema */
+  /* render semua tema katalog */
   let renderErr = null, nRender = 0;
   for (const [id] of tpls) {
     try {
@@ -121,15 +130,15 @@ function draftFor(tpl, idx) {
       nRender++;
     } catch (e) { if (!renderErr) renderErr = id + ': ' + e.message; }
   }
-  t('studio: render 72/72 tema tanpa error', nRender === 72, renderErr || (nRender + "/72"));
+  t(`studio: render ${tpls.length}/${tpls.length} tema tanpa error`, nRender === tpls.length, renderErr || (nRender + "/" + tpls.length));
 
   /* border ber-tier: VIP boleh semua, basic terkunci */
-  w.eval(`state.tpl='royal-garden'`);
+  w.eval(`state.tpl='${UJI_VIP}'`);
   const borders = w.eval('BORDERS.map(b=>b.id)');
   let bAll = 0;
   for (const b of borders) { w.eval(`setBorder('${b}')`); if (w.eval(`state.border==='${b}'`)) bAll++; }
   t('studio: tier VIP bisa pakai 32/32 border', bAll === borders.length, bAll + '/' + borders.length);
-  w.eval(`state.tpl='jawa-elegan';state.border='double'`);
+  w.eval(`state.tpl='${DASAR}';state.border='double'`);
   w.eval(`setBorder('vip-diamond')`);
   const blocked1 = w.eval(`state.border==='double'`);
   w.eval(`setBorder('lace')`);
@@ -138,21 +147,21 @@ function draftFor(tpl, idx) {
 
   /* font: semua 17 di VIP; font eks terkunci di basic */
   const fonts = w.eval('FONTS.map(f=>f.id)');
-  w.eval(`state.tpl='royal-garden'`);
+  w.eval(`state.tpl='${UJI_VIP}'`);
   let fAll = 0;
   for (const f of fonts) { w.eval(`setFontK('fontTitle','${f}');setFontK('fontBody','${f}')`); if (w.eval(`state.fontTitle==='${f}'&&state.fontBody==='${f}'`)) fAll++; }
   t('studio: tier VIP bisa pakai 17/17 font', fAll === fonts.length, fAll + '/' + fonts.length);
-  w.eval(`state.tpl='jawa-elegan';setFontK('fontTitle','cinzel')`);
+  w.eval(`state.tpl='${DASAR}';setFontK('fontTitle','cinzel')`);
   t('studio: tier basic — font EKSKLUSIF terkunci', w.eval(`state.fontTitle!=='cinzel'`));
 
   /* fx cover & scroll: VIP semua; vip-fx terkunci di basic */
   const fxC = w.eval('FX_COVER.map(f=>f[0])'), fxS = w.eval('FX_SCROLL.map(f=>f[0])');
-  w.eval(`state.tpl='royal-garden'`);
+  w.eval(`state.tpl='${UJI_VIP}'`);
   let fxOk = 0;
   for (const f of fxC) { w.eval(`setAnim('effect','${f}')`); if (w.eval(`state.anim.effect==='${f}'`)) fxOk++; }
   for (const f of fxS) { w.eval(`setAnim('scroll','${f}')`); if (w.eval(`state.anim.scroll==='${f}'`)) fxOk++; }
   t('studio: tier VIP bisa pakai semua fx (' + (fxC.length + fxS.length) + ')', fxOk === fxC.length + fxS.length, fxOk + '/' + (fxC.length + fxS.length));
-  w.eval(`state.tpl='jawa-elegan';state.anim.effect='zoom';setAnim('effect','vip-zoom')`);
+  w.eval(`state.tpl='${DASAR}';state.anim.effect='zoom';setAnim('effect','vip-zoom')`);
   t('studio: tier basic — fx VIP terkunci', w.eval(`state.anim.effect==='zoom'`));
 
   /* semua tab dirender, bebas 'undefined'/'NaN' bocor */
@@ -169,7 +178,7 @@ function draftFor(tpl, idx) {
   t('studio: 8 tab render bersih (tanpa undefined/NaN)', tabBad.length === 0, tabBad.join(' | '));
 
   /* publish offline: tidak boleh crash, _publishing harus lepas lagi */
-  w.eval(`state.tpl='royal-garden';state.slug='simulasi-vip';state.event='pernikahan';state.doa='pernikahan'`);
+  w.eval(`state.tpl='${UJI_VIP}';state.slug='simulasi-vip';state.event='pernikahan';state.doa='pernikahan'`);
   for (const k of Object.keys(FORM_MENIKAH)) w.eval(`setF('${k}',${JSON.stringify(String(FORM_MENIKAH[k]))})`);
   w.eval(`state.page='editor';state.tab='info';render()`);
   let pubErr = null;
@@ -179,7 +188,7 @@ function draftFor(tpl, idx) {
 
   /* dlUndangan: export HTML mandiri (tema VIP) */
   captured = null; capturedName = '';
-  w.eval(`state.event='ultah';state.doa='ultah';state.tpl='royal-garden';state.anim.effect='vip-zoom';state.border='vip-diamond';state.music={name:'',url:'',local:false}`);
+  w.eval(`state.event='ultah';state.doa='ultah';state.tpl='${UJI_VIP}';state.anim.effect='vip-zoom';state.border='vip-diamond';state.music={name:'',url:'',local:false}`);
   w.eval(`setF('namaAnak','Arkana Zein');setF('usia','7');setF('temaUltah','Royal Garden')`);
   let dlErr = null;
   try { await w.eval(`dlUndangan()`); } catch (e) { dlErr = e.message; }
@@ -203,15 +212,23 @@ function draftFor(tpl, idx) {
     const wE = domE.window;
     const coverE = wE.document.getElementById('cover');
     t('export: boot mandiri → #cover terender', !!coverE);
-    t('export: char kata Royal tampil besar (38px)', (() => {
-      const c = wE.document.querySelector('.chara'); return !!c && /font-size:38px/.test(c.getAttribute('style') || '');
+    /* File export membawa TPL dari berkas (tanpa tema fixture) → suntik tema VIP yang
+       sama lalu boot ulang, supaya jalur 'char' & mount 4D di file mandiri teruji. */
+    try {
+      wE.eval(`TPL.push(${JSON.stringify(UJI_VIP_OBJ)})`);
+      wE.eval('boot(window.EMBEDDED_DATA)');
+      await sleep(300);
+    } catch (e) { t('export: boot ulang dengan tema fixture', false, e.message); }
+    t('export: char kata tema tampil besar di cover', (() => {
+      const c = wE.document.querySelector('.chara');
+      return !!c && /font-size:(32|38|46)px/.test(c.getAttribute('style') || '');
     })(), (wE.document.querySelector('.chara') || {}).textContent);
     t('export: body dapat kelas vip4d (tema VIP)', wE.document.body.className.includes('vip4d'));
     domE.window.close();
   } else t('export: boot mandiri → #cover terender', false, 'export kosong');
 
-  /* ============ 3) UNDANGAN LIVE, 71 TEMA ============ */
-  console.log('— Simulasi undangan.html (live, 71 tema) —');
+  /* ============ 3) UNDANGAN LIVE, SEMUA TEMA KATALOG ============ */
+  console.log('— Simulasi undangan.html (live, semua tema katalog) —');
   const domU = new JSDOM(read('undangan.html'), {
     runScripts: 'dangerously', url: 'https://x.test/undangan.html?slug=simulasi', pretendToBeVisual: true,
     beforeParse(w3) {
@@ -224,14 +241,14 @@ function draftFor(tpl, idx) {
   const wU = domU.window;
   await sleep(400);
   const tplsU = wU.eval('TPL.map(x=>x.id)');
-  t('undangan: boot & TPL 72 tema', tplsU.length === 72, 'dapat ' + tplsU.length);
+  t('undangan: boot & katalog tema terisi', tplsU.length >= 1, 'dapat ' + tplsU.length);
 
   let bootErr = null, nBoot = 0, charBad = null, wedBad = null;
   for (let i = 0; i < tplsU.length; i++) {
     const id = tplsU[i];
     const row = wU.eval(`(function(){const x=TPL.find(y=>y.id==='${id}');return [x.ev,x.tier||'',x.char||'',x.deco||'']})()`);
     try {
-      const draft = draftFor({ id, ev: row[0], tier: row[1] || (id === 'royal-garden' || id === 'galaxy-prestige' || id === 'abyss-pearl' || id === 'winter-prestige' ? 'vip' : ''), accent: '#D4AF37', ft: 'playfair', harga: 0 }, i);
+      const draft = draftFor({ id, ev: row[0], tier: row[1] || '', accent: '#D4AF37', ft: 'playfair', harga: 0 }, i);
       wU.eval('boot(' + JSON.stringify(draft) + ')');
       nBoot++;
       const isW = (row[0] === 'pernikahan');
@@ -244,7 +261,7 @@ function draftFor(tpl, idx) {
       if (isW && !wU.document.body.className.includes('wedding-cover')) wedBad = id;
     } catch (e) { if (!bootErr) bootErr = id + ': ' + e.message; }
   }
-  t('undangan: boot 72/72 tema tanpa error', nBoot === 72, bootErr || (nBoot + "/72"));
+  t(`undangan: boot ${tplsU.length}/${tplsU.length} tema tanpa error`, nBoot === tplsU.length, bootErr || (nBoot + "/" + tplsU.length));
   t('undangan: char kata selalu besar di cover non-wedding', !charBad, charBad || '');
   t('undangan: tema pernikahan selalu dapat kelas wedding-cover', !wedBad, wedBad || '');
 
@@ -252,10 +269,11 @@ function draftFor(tpl, idx) {
   let demoErr = null;
   try { wU.eval('boot(DEMO_DRAFT)'); } catch (e) { demoErr = e.message; }
   t('undangan: boot(DEMO_DRAFT) aman', !demoErr, demoErr || '');
-  const vipTplIdx = wU.eval(`TPL.findIndex(x=>x.id==='royal-garden')`);
+  wU.eval(`TPL.push(${JSON.stringify(UJI_VIP_OBJ)})`);
+  const vipTplIdx = wU.eval(`TPL.findIndex(x=>x.id==='${UJI_VIP}')`);
   let vipErr = null;
   try {
-    wU.eval('boot(' + JSON.stringify(draftFor({ id: 'royal-garden', ev: 'ultah', tier: 'vip', accent: '#E5B7C4', ft: 'cormorant' }, vipTplIdx)) + ')');
+    wU.eval('boot(' + JSON.stringify(draftFor({ id: UJI_VIP, ev: 'ultah', tier: 'vip', accent: '#E5B7C4', ft: 'cormorant' }, vipTplIdx)) + ')');
   } catch (e) { vipErr = e.message; }
   t('undangan: tema VIP mount 4D tanpa melempar (canvas null → degrade)', !vipErr && wU.document.body.className.includes('vip4d'), vipErr || '');
 

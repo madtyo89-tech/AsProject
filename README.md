@@ -22,9 +22,10 @@ asproject.my.id, dihosting GitHub Pages + Supabase.
 
 Catatan:
 
-- Urutan array `TPL` di `studio.html` dan `undangan.html` **harus identik**
-  (kolom `theme` adalah index ke array itu) — dicek otomatis oleh
-  `python3 tools/cek-kesehatan.py` (bagian [11]).
+- Urutan array `TPL` di `studio.html`, `undangan.html`, dan katalog `Pn` di `index.html`
+  **harus identik** (kolom `theme` adalah index ke array itu) — dicek otomatis oleh
+  `python3 tools/cek-kesehatan.py` (bagian [11], [12], [13]). Sejak 2026-10-10 katalog
+  berisi satu tema dasar + 12 tema warisan Google Drive; lihat **Katalog tema** di bawah.
 - Kolom snapshot `data jsonb` ditambahkan idempoten di `supabase-schema.sql`;
   jalankan ulang di SQL Editor Supabase agar publish baru menyimpan snapshot
   lengkap. Draft lama (tanpa `data`) tetap bisa dibuka — renderer memakai
@@ -62,18 +63,72 @@ dan (setelah server lokal aktif di :8080) `node tools/test-mobile-browser.cjs`.
 Browser memerlukan library sistem Chromium; atur `LD_LIBRARY_PATH` bila memakai
 library bundled. Tes publish memakai fixture lokal, **bukan database produksi**.
 
+## Katalog tema (direset + diisi ulang 2026-10-10)
+
+Katalog lama berisi 72 tema lengkap dengan artwork-nya. Seluruhnya dihapus, lalu diisi
+ulang dengan **12 tema dari halaman katalog AsProject di Google Drive** (data nama,
+kategori, harga, palet, rating, dan deskripsi diambil apa adanya dari sana). Jadi sekarang:
+**1 tema dasar** `ivory-klasik` / *Ivory Klasik* — `ev:'all'`, selalu di indeks 0 — diikuti
+4 tema pernikahan, 2 khitanan, 3 ulang tahun, dan 3 aqiqah. Yang ikut terhapus bersamanya:
+`assets/tema-3d/` (50 artwork webp), `assets/wedding/` (2 paper art), dan folder
+`templates/` (pipeline isi-manual Python).
+
+Tema-tema itu **tidak** membawa artwork (`bg3d`/`bgPaper` kosong), jadi halaman tamu
+memakai gradasi + pola SVG (`pat`) + ornamen (`deco`) dari paletnya. Contoh tampilan
+hidupnya ada di folder **`katalog-demo/`** — templat jadi satu berkas dari Drive yang
+sudah dibersihkan dan di-rebrand ke AsProject (lihat README di folder itu).
+
+Mesinnya sengaja **tidak** dihapus dan tetap diuji: skin cover pernikahan
+(`body.wedding-cover`, kartu stationery, paper art), kelas `art3d` untuk tema
+ber-artwork, partikel VIP 4D, penyesuaian kontras, 17 font, 32 border, 34 efek gulir,
+9 gaya foto cover, dan sematan artwork base64 saat *Simpan File HTML*.
+
+Menambah tema = menambah **satu baris di tiga tempat** yang urutannya wajib sama:
+
+1. `const TPL` di `studio.html` — lengkap:
+   `id, nama, ev, harga, g[3], accent, ink, badge, tier, char, bg3d, bgPaper, deco, pat, ft, desc`;
+2. `const TPL` di `undangan.html` — `id, nama, ev, g[3], accent, ink, char, bg3d, bgPaper,
+   deco, pat, ft` (tanpa harga/desc/badge);
+3. `var Pn` di `index.html` (katalog publik) — `id, name, category, price, rating, reviews,
+   gradient, accent, description`; tiga warna `gradient:"from-[#…] via-[#…] to-[#…]"`
+   **harus** punya rule CSS `.from-\[#…]` / `.via-\[#…]` / `.to-\[#…]` di berkas yang sama.
+
+12 tema Drive tadi dipasang dengan aturan yang sama: `ink` dihitung dari aksen tema sendiri
+(nada gelap sewarna, minimum kontras 3:1 terhadap `g[0]` dan `g[2]` — syarat
+`node tools/test-kontras-tema.cjs`), `ev` dipetakan dari kategori (`Pernikahan` →
+`pernikahan`, `Ulang Tahun` → `ultah`), dan tiap nama tema didaftarkan di `DEMO_BY_NAME` /
+`DEMO_BY_CATEGORY` hanya kalau berkas demonya benar-benar ada. Teks jumlah di hero katalog
+(`"13 template"`) dan daftar kategori (`Xm`) ikut berubah — keduanya diperiksa oleh
+`tools/cek-kesehatan.py` bagian [12].
+
+Daftar `TEMA_LAMA` di `tools/cek-kesehatan.py` dan `tools/test-wedding-templates.cjs` menjaga
+agar id tema lama tidak kembali. Empat id (`jawa-elegan`, `minimalist-sage`, `luxury-gold`,
+`floral-rustic`) sengaja **tidak** lagi masuk daftar itu: sejak 2026-10-10 id tersebut dipakai
+ulang oleh katalog AsProject dengan palet dan mesin tema repo — bukan salinan desain lama.
+
+Uji: `python3 tools/cek-kesehatan.py` (bagian [11], [12], [13], [16], [20]) dan
+`node tools/test-wedding-templates.cjs`. Kolom `theme` di Supabase adalah **indeks**
+array ini — tambah tema selalu di **akhir** agar undangan yang sudah terbit tidak
+berpindah tema. Draft lama yang temanya sudah tidak ada otomatis jatuh ke tema dasar;
+`LEGACY_EV` di `undangan.html` menjaga jenis acara (pernikahan vs satu nama) tetap benar
+untuk draft tanpa snapshot `data`.
+
 ## Pembaruan template pernikahan
 
-Cover pernikahan kini memakai susunan editorial seperti contoh: judul undangan, nama pasangan,
-tanggal, jam, lokasi, pesan singkat, dan tombol menuju detail/RSVP. Kartu, aksen, dan halaman
-isi mengambil palet dari template yang dipilih. Setiap desain tetap dibedakan menurut namanya:
-Adat Jawa Elegan memakai bingkai batik kawung/parang, Minimalist Sage memakai watercolor
-eucalyptus, Ice Blue memakai artwork floral es biru, dan tema lain mempertahankan artwork
-serta palet khas masing-masing. Preview Studio dan undangan live memakai skin yang sama;
-artwork ringan juga disematkan saat menyimpan file HTML mandiri.
+Cover pernikahan memakai susunan editorial: judul undangan, nama pasangan, tanggal, jam,
+lokasi, pesan singkat, dan tombol menuju detail/RSVP. Kartu, aksen, dan halaman isi
+mengambil palet dari tema yang dipilih. Dulu tiap tema pernikahan punya artwork kertas
+sendiri (batik kawung/parang untuk Adat Jawa, watercolor eucalyptus untuk Minimalist
+Sage, floral es biru untuk Ice Blue); artwork itu dihapus bersama katalog lama, jadi
+semua tema kini memakai lapisan warna/gradasi dari paletnya. Saat menambahkan tema
+pernikahan baru, tambahkan `bgPaper:'assets/wedding/<id-tema>.webp'` (opsional, ≤ 300 KB)
+di **kedua** berkas — skin `wedding-paper-art` dan sematan base64-nya masih terpasang.
+Folder `assets/wedding/` dan `assets/tema-3d/` sudah dihapus beserta katalog lama, jadi
+buat foldernya lebih dulu kalau mau memakai artwork lagi; `tools/cek-kesehatan.py` [16]
+memastikan jumlah tema ber-artwork sama dengan jumlah berkas di disk.
 
-Uji: `node tools/test-wedding-templates.cjs` (dengan `jsdom` untuk uji render; tanpa `jsdom`
-tetap memeriksa pasangan tema/aset secara statis).
+Uji: `node tools/test-wedding-templates.cjs` (dengan `jsdom` untuk uji render; tanpa
+`jsdom` tetap memeriksa paritas katalog studio/live/publik, palet, dan rule CSS gradient).
 
 ## Efek gulir undangan
 
@@ -96,7 +151,8 @@ mendukung tombol yang dirender ulang. Tes: `node tools/test-button-help.cjs`
 ## Kontras teks tema undangan
 
 Beberapa palet tema sengaja memakai warna teks ("ink") terang karena covernya gelap —
-contoh **Balap Mobil** `#F0F0F0`, **Naga Api** `#FBE9E4`, **Ninja Cilik** `#ECEFF3`.
+begitu pula tema-tema lama seperti *Balap Mobil* `#F0F0F0` dan *Naga Api* `#FBE9E4`
+(keduanya sudah tidak ada sejak katalog direset 2026-10-10; polanya tetap sama).
 Cover-nya tetap memakai warna tema apa adanya, tetapi **kartu konten di halaman tamu
 selalu berlatar terang**, jadi dulu teksnya nyaris tidak terlihat (nama, tanggal,
 countdown, alamat, doa). Sekarang `assets/theme-contrast.js` menghitung ulang warna
@@ -104,7 +160,7 @@ teks konten saat halaman dibuka:
 
 - **teks konten** (nama, tanggal, countdown, alamat, doa) minimal **4.5:1** terhadap
   latar kartu; bila ink tema terlalu terang, dipakai **nada paling gelap dari gradasi
-  tema itu sendiri** (mis. Balap Mobil → `#26292E`, Naga Api → `#3A1418`) supaya tetap
+  tema itu sendiri** (mis. `#26292E` untuk palet arang) supaya tetap
   sewarna, bukan abu-abu generik;
 - **label/ornamen aksen** minimal **3:1** — hanya tema yang aksennya benar-benar pudar
   yang disesuaikan;
@@ -113,7 +169,7 @@ teks konten saat halaman dibuka:
   ini, jadi teks tetap terbaca walau dibuka offline tanpa folder `assets/`.
 
 Uji: `node tools/test-kontras-tema.cjs` (tanpa jsdom: cek palet & rumus; dengan jsdom:
-merender `undangan.html` sungguhan dengan tema Balap Mobil dan memeriksa variabel yang
+merender `undangan.html` sungguhan dengan tema paling gelap di katalog dan memeriksa variabel yang
 dipasang). Pemeriksa repo `python3 tools/cek-kesehatan.py` ikut menjalankannya.
 
 ## Foto cover undangan (9 gaya, bisa digeser)
@@ -207,67 +263,29 @@ tabel `checkin` (`unique(slug, guest)` — scan ulang memperbarui waktu). QR dig
 dengan pustaka `assets/qrcode.js` (*qrcode-generator*, MIT, © Kazuhiko Arase), level
 koreksi M + quiet zone 6 modul supaya nyaman dipindai.
 
-## Latar artwork tema (ulang tahun & pernikahan)
+## Latar artwork tema (opsional)
 
-Tema **ulang tahun** dan **pernikahan** memakai latar artwork realistis dari
-`assets/tema-3d/<id-tema>.webp` (rasio 2:3, ≤ 250 KB per berkas):
+Tema boleh membawa gambar latar cover: `bg3d:'assets/tema-3d/<id-tema>.webp'` untuk
+latar penuh, dan/atau `bgPaper:'assets/wedding/<id-tema>.webp'` untuk kertas bertas.
+Katalog hasil reset belum punya tema ber-artwork, jadi kedua folder itu tidak ada di
+repo — mesinnya tetap siap dan tetap diuji.
 
-**Ulang tahun (10 tema):** Balap Mobil, Naga Api, Ninja Cilik, Super Hero, Bajak Laut
-Cilik, Putri Peri, Unicorn Magic, Buket Mawar, Kids Party, Sweet 17.
-*(Adult Elegant menyusul.)*
+Cara kerja:
 
-**Pernikahan (9 tema) — sesuai nama masing-masing:**
+- tema dengan `bg3d` memakai gambar itu sebagai **latar cover**; tema lain tetap memakai
+  gradasi seperti semula;
+- teks cover otomatis diterangkan (`#F7F2E9`) dan dilapis gelap (`body.art3d #cover`)
+  supaya kontras ≥ 7:1 terukur; teks kartu isi tetap memakai nada gelap tema;
+- **foto utama undangan** (diatur di Studio) tampil dalam bingkai kaca di tengah cover;
+- pratinjau Studio ikut memakai artwork (label *3D*), dan *Simpan File HTML*
+  **menyematkan artwork** sebagai base64 (bila < 300 KB) supaya file mandiri tetap
+  tampil benar tanpa folder `assets/`.
 
-| Tema | Nuansa artwork |
-|------|----------------|
-| `burgundy-regal` | maroon beludru + filigree bunga emas di 4 sudut |
-| `luxury-gold` | marmer hitam + ornamen art-deco emas |
-| `navy-royal` | navy beludru + ornamen barok emas |
-| `charcoal-gold` | batu arang + geometris emas art-deco |
-| `forest-classic` | dedaunan hijau hutan + cahaya keemasan |
-| `jawa-elegan` | coklat hangat + motif ukir/batik emas |
-| `floral-rustic` | kayu tua + pampas & mawar kering terracotta |
-| `ocean-breeze` | biru laut + gelombang lembut & karang |
-| `ice-blue` | es biru muda + kristal & bunga beku |
-
-Tema **`minimalist-sage`, `minimalist-frost`, `slate-sage`** sengaja **tetap bersih**
-tanpa artwork — itu arti namanya. Tema ini tetap 100% berfungsi seperti sebelumnya.
-
-Cara kerja: sama dengan tema 3D ulang tahun — artwork jadi latar cover, teks cover
-otomatis memakai warna terang (≥ 7:1 terukur di atas artwork, termasuk yang paling
-terang), **teks kartu isi tetap terbaca** (nada gelap tema), foto pengantin tetap bisa
-dipasang lewat 9 gaya bingkai, dan undangan tanpa artwork tampil persis seperti semula.
-
-## Tema 3D ulang tahun (artwork realistis)
-
-Tema **ulang tahun** memakai latar artwork 3D realistis (bukan ilustrasi flat):
-`assets/tema-3d/<id-tema>.webp` — satu berkas per tema, ≤ 250 KB.
-
-| Tema | Berkas | Tema | Berkas |
-|------|--------|------|--------|
-| Balap Mobil (`race-car`) | `race-car.webp` | Putri Peri (`fairy-princess`) | `fairy-princess.webp` |
-| Naga Api (`dragon-fire`) | `dragon-fire.webp` | Unicorn Magic (`unicorn-magic`) | `unicorn-magic.webp` |
-| Ninja Cilik (`ninja-mastery`) | `ninja-mastery.webp` | Buket Mawar (`rose-bouquet`) | `rose-bouquet.webp` |
-| Super Hero (`superhero-power`) | `superhero-power.webp` | Kids Party (`kids-party`) | `kids-party.webp` |
-| Bajak Laut Cilik (`pirate-sea`) | `pirate-sea.webp` | Sweet 17 (`sweet-17`) | `sweet-17.webp` |
-
-Cara kerjanya:
-
-- tema dengan kode `bg3d:'assets/tema-3d/…'` di `TPL` memakai gambar itu sebagai
-  **latar cover** undangan; tema lain tetap memakai gradasi seperti semula;
-- lapisan gelap tipis (`body.art3d #cover`) menjaga teks tetap terbaca — diuji
-  ≥ 14:1 untuk warna teks cover yang dipakai;
-- **foto utama undangan** (diatur di Studio) tampil dalam **bingkai kaca** di tengah
-  cover, seperti konsep “pasang foto di sini” pada artwork-nya;
-- pratinjau di Studio ikut memakai latar 3D (label *3D* di atas pratinjau), dan tombol
-  *Simpan File HTML* **menyematkan artwork** ke berkas (base64, bila < 300 KB) supaya
-  file yang disimpan tetap tampil benar walau folder `assets/` tidak ikut dibawa.
-
-Mengganti/menambah artwork: taruh berkas `<id-tema>.webp` (rasio 2:3, sisi panjang
-± 1300 px, latar atas & bawah dibuat agak gelap agar teks terbaca), lalu tambahkan
-`bg3d:'assets/tema-3d/<id-tema>.webp'` pada tema di **kedua** berkas (`studio.html`
-dan `undangan.html` — daftar `TPL` harus tetap identik). Uji:
-`node tools/test-tema-3d.cjs`.
+Menambah artwork: taruh `<id-tema>.webp` (rasio 2:3, sisi panjang ± 1300 px, bagian
+atas & bawah agak gelap agar teks terbaca, ≤ 250 KB), lalu tambahkan `bg3d:` pada tema di
+**kedua** berkas (`studio.html` dan `undangan.html` — daftar `TPL` harus tetap identik).
+Uji: `node tools/test-tema-3d.cjs` (memeriksa pairing dua arah: setiap berkas webp
+dipakai tema, dan setiap `bg3d:` menunjuk berkas yang ada).
 
 > Artwork dibuat khusus untuk AsProject (gambar hasil AI, disimpan di repositori ini);
 > tidak memakai aset berhak cipta pihak lain.

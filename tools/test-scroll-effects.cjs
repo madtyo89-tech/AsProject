@@ -8,6 +8,7 @@ const path = require('node:path');
 const { Script } = require('node:vm');
 const read = f => fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
 const studio = read('studio.html'), live = read('undangan.html');
+const DASAR = (studio.match(/\{id:'([a-z0-9-]+)'/) || [, ''])[1];   // tema pertama katalog aktif
 const css = read('assets/scroll-effects.css');
 const ids = html => [...html.match(/const FX_SCROLL=\[([\s\S]*?)\];/)[1].matchAll(/\[\s*'([^']+)'/g)].map(m => m[1]);
 const mixIds = html => [...html.match(/const FX_SCROLL_MIX=\[([\s\S]*?)\];/)[1].matchAll(/'([^']+)'/g)].map(m => m[1]);
@@ -114,7 +115,7 @@ assert.equal(w.document.querySelector('.scroll-reveal'), null, 'Reveal toggle di
  w.URL.createObjectURL=blob=>{exported=blob;return 'blob:scroll-test'};w.URL.revokeObjectURL=()=>{};
  const createElement=w.document.createElement.bind(w.document);
  w.document.createElement=tag=>{const el=createElement(tag);if(String(tag).toLowerCase()==='a')el.click=()=>{};return el};
- w.set('tpl','minimalist-frost');w.set('slug','scroll-test');w.set('music',{local:true});
+ w.set('tpl',DASAR);   // tema pertama katalog aktif (dulu 'minimalist-frost' yang sudah direset)w.set('slug','scroll-test');w.set('music',{local:true});
  w.fetch=async url=>{
   const rel=String(url);
   if(rel==='undangan.html')return{ok:true,text:async()=>live};

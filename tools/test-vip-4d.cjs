@@ -47,7 +47,11 @@ cek(und.includes('<script src="assets/vip-4d.js"></script>'), 'undangan.html mem
 cek(/tplF\.tier==='vip'&&window\.AsVip4d/.test(und), 'mount hanya saat template tier vip');
 cek(/fetch\('assets\/vip-4d\.js'\)/.test(stu) && /vipJs\?/.test(stu), 'studio menyematkan module ke export mandiri');
 
-const VIP = ['royal-garden', 'galaxy-prestige', 'abyss-pearl', 'winter-prestige'];
+/* Tema VIP diambil dari katalog, bukan daftar tetap: sejak 2026-10-10 katalog direset
+   ke satu tema dasar sehingga tidak ada tema tier 'vip'. Mesin 4D & gating tetap diuji. */
+const idVip = (s) => [...s.matchAll(/\{id:'([a-z0-9-]+)'[^\n]*?tier:'vip'/g)].map((m) => m[1]);
+const VIP = idVip(stu).filter((id) => idVip(und).includes(id));
+if (!VIP.length) console.log('  ..  katalog tanpa tema tier VIP — pemeriksaan pasangan tema dilewati');
 function entri(s, id) {
   const m = s.match(new RegExp("\\{id:'" + id + "'[^\\n]*\\}"));
   return m ? m[0] : '';

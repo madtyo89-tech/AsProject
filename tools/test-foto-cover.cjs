@@ -24,7 +24,9 @@ const ROOT = path.resolve(__dirname, '..');
 const baca = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 
 const GAYA = ['kotak', 'oval', 'lingkaran', 'arch', 'polaroid', 'emas', 'kapsul', 'full', 'none'];
-const TEMA_UJI = 'minimalist-frost';   // tema pernikahan tanpa artwork 3D
+/* Tema uji = tema pertama katalog aktif (dulu 'minimalist-frost'; sejak 2026-10-10
+   katalog berisi satu tema dasar). Yang diuji di sini mesin foto cover, bukan temanya. */
+const TEMA_UJI = (baca('undangan.html').match(/\{id:'([a-z0-9-]+)'/) || [, ''])[1];
 
 /* Nilai tema diambil dari tabel TPL di undangan.html supaya uji tidak menebak warna. */
 function tema(id) {
