@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<title>The Wedding of {{NAMA_PENGANTIN_PRIA}} &amp; {{NAMA_PENGANTIN_WANITA}} — {{TANGGAL_TITLE}}</title>
+<!--
+  ============================================
+  CONTOH UNDANGAN DIGITAL — gaya "Emerald Gold"
+  Cara ubah isi:
+  1) Nama mempelai: cari "{{NAMA_PENGANTIN_PRIA}}" dan "{{NAMA_PENGANTIN_WANITA}}"
+  2) Tanggal acara: cari "weddingDate" di bagian <script>
+  3) Lokasi & peta: cari "google.com/maps"
+  4) No. rekening kado: cari "{{NO_REKENING}}"
+  5) Nama tamu otomatis dari link: tambahkan ?to=Nama+Tamu di akhir URL
+     contoh: undangan.html?to=Nama+Tamu
+  6) Foto galeri: ganti kotak gradien dengan <img src="foto.jpg"> milikmu
+  7) FOTO COVER: simpan foto customer sebagai "foto-cover.jpg" SATU FOLDER
+     dengan file ini. Cover otomatis memakai foto itu. Kalau file tidak ada,
+     cover kembali ke latar hijau polos.
+     Tips foto: vertikal/potrait, resolusi min 1080px, ukuran <500KB.
+  ============================================
+-->
+<style>
+  :root{
+    --green:#1A1A1A; --green-dark:#0F0F0F; --gold:#C9A86A; --gold-light:#E8D9B5;
+    --cream:#F5F2EB; --paper:#FFFBF2; --ink:#33332c; --muted:#7a7a6b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#e9e2d2;color:var(--ink);line-height:1.7}
+  .script{font-family:"Brush Script MT","Segoe Script","Lucida Handwriting",cursive}
+  .serif{font-family:'Cormorant Garamond',Georgia,serif}
+  body.locked{overflow:hidden}
+
+  .frame{max-width:520px;margin:0 auto;background:var(--paper);
+    box-shadow:0 0 40px rgba(0,0,0,.18);min-height:100vh;position:relative;overflow:hidden}
+
+  /* ---------- COVER ---------- */
+  .cover{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+    background:
+      linear-gradient(165deg,rgba(18,53,39,.68) 0%,rgba(13,39,30,.82) 60%,rgba(9,26,20,.92) 100%),
+      url('foto-cover.jpg') center 20%/cover no-repeat,
+      linear-gradient(165deg,#1A1A1A 0%,#123527 60%,#0d271e 100%);
+    transition:transform 1s cubic-bezier(.7,0,.3,1),opacity 1s ease}
+  .cover.opened{transform:translateY(-101%);opacity:.6;pointer-events:none}
+  .cover-inner{max-width:440px;width:88%;text-align:center;color:#f3ead3;padding:36px 26px;
+    border:1px solid rgba(229,207,154,.5);border-radius:8px;position:relative;background:rgba(255,255,255,.03)}
+  .cover-inner::before,.cover-inner::after{content:"";position:absolute;width:64px;height:64px;
+    border:2px solid var(--gold-light);opacity:.85}
+  .cover-inner::before{top:-2px;left:-2px;border-right:none;border-bottom:none;border-radius:8px 0 0 0}
+  .cover-inner::after{bottom:-2px;right:-2px;border-left:none;border-top:none;border-radius:0 0 8px 0}
+  .cover .label{font-size:11px;letter-spacing:4px;text-transform:uppercase;opacity:.8;margin-bottom:22px}
+  .cover .mono{width:86px;height:86px;margin:0 auto 18px;border:1.5px solid var(--gold-light);
+    border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;font-style:italic;color:var(--gold-light)}
+  .cover h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:38px;font-style:italic;font-weight:400;
+    color:#f9f1dc;margin:8px 0 2px}
+  .cover .amp{font-size:26px;color:var(--gold-light);font-style:italic;display:block;margin:2px 0}
+  .cover .date{font-size:13.5px;letter-spacing:2px;opacity:.9;margin:14px 0 26px}
+  .cover .to{font-size:13px;opacity:.9;margin-bottom:4px}
+  .cover .guest{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;color:#f9f1dc;margin-bottom:26px;font-style:italic}
+  .open-btn{background:linear-gradient(135deg,#D4B57A,#A8884A);color:#fff;border:none;cursor:pointer;
+    font-size:14px;font-weight:700;padding:14px 34px;border-radius:50px;letter-spacing:.5px;
+    box-shadow:0 10px 26px rgba(0,0,0,.35);transition:transform .2s}
+  .open-btn:hover{transform:scale(1.05)}
+  .cover .hint{display:block;margin-top:14px;font-size:11px;opacity:.65;letter-spacing:1px}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:64px 28px;text-align:center;position:relative}
+  .eyebrow{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:700}
+  h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:29px;color:var(--green-dark);margin-bottom:8px}
+  .divider{display:flex;align-items:center;justify-content:center;gap:10px;margin:16px auto 26px;max-width:220px}
+  .divider::before,.divider::after{content:"";height:1px;background:var(--gold);flex:1;opacity:.6}
+  .divider span{color:var(--gold);font-size:15px}
+
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+  .reveal.visible{opacity:1;transform:none}
+
+  .orn-top{position:absolute;top:0;left:0;width:150px;opacity:.55;pointer-events:none}
+  .orn-bottom{position:absolute;bottom:0;right:0;width:150px;opacity:.55;transform:rotate(180deg);pointer-events:none}
+
+  /* Opening quote */
+  .opening{background:var(--cream)}
+  .opening p{font-size:14.5px;color:#55554a;max-width:400px;margin:0 auto;font-style:italic}
+  .opening .src{margin-top:14px;font-size:12.5px;letter-spacing:2px;color:var(--gold);font-weight:700;font-style:normal}
+
+  /* Couple */
+  .couple-card{background:#fff;border:1px solid #ece3cf;border-radius:16px;padding:26px 20px;margin:18px auto;
+    max-width:400px;box-shadow:0 10px 26px rgba(30,77,59,.08)}
+  .couple-photo{width:120px;height:120px;border-radius:50%;margin:0 auto 16px;border:3px solid var(--gold-light);
+    background:linear-gradient(135deg,#dce8da,#A9A294);display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',Georgia,serif;font-size:38px;font-style:italic;color:var(--green-dark)}
+  .couple-card h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:22px;color:var(--green-dark)}
+  .couple-card .ig{font-size:12.5px;color:var(--gold);margin:2px 0 10px;letter-spacing:1px}
+  .couple-card p{font-size:13.5px;color:var(--muted)}
+  .couple-amp{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:40px;color:var(--gold);margin:6px 0}
+
+  /* Countdown */
+  .countdown-sec{background:linear-gradient(170deg,#1A1A1A,#0F0F0F);color:#f3ead3}
+  .countdown-sec h2{color:#f9f1dc}
+  .cd-grid{display:flex;justify-content:center;gap:14px;margin-top:24px;flex-wrap:wrap}
+  .cd-box{background:rgba(255,255,255,.07);border:1px solid rgba(229,207,154,.4);border-radius:14px;
+    width:84px;padding:16px 0 10px}
+  .cd-box b{display:block;font-family:'Cormorant Garamond',Georgia,serif;font-size:32px;color:#fff}
+  .cd-box small{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;opacity:.75}
+  .save-btn{margin-top:28px;background:transparent;border:1.5px solid var(--gold-light);color:var(--gold-light);
+    font-size:13px;font-weight:700;padding:12px 28px;border-radius:50px;cursor:pointer;transition:.2s}
+  .save-btn:hover{background:var(--gold-light);color:var(--green-dark)}
+
+  /* Event */
+  .event-card{background:#fff;border:1px solid #ece3cf;border-radius:16px;padding:26px 22px;
+    max-width:400px;margin:0 auto 20px;box-shadow:0 10px 26px rgba(30,77,59,.08)}
+  .event-card .ev-icon{width:52px;height:52px;border-radius:50%;background:#FBF6EC;margin:0 auto 12px;
+    display:flex;align-items:center;justify-content:center}
+  .event-card h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:21px;color:var(--green-dark)}
+  .event-card .ev-date{color:var(--gold);font-weight:700;font-size:14.5px;margin:4px 0 2px}
+  .event-card .ev-time{font-size:13.5px;color:var(--muted)}
+  .event-card .ev-place{font-size:14px;margin:12px 0 14px;color:#45453c}
+  .map-btn{display:inline-block;background:var(--green);color:#fff;text-decoration:none;font-size:12.5px;
+    font-weight:700;padding:11px 24px;border-radius:50px;transition:.2s}
+  .map-btn:hover{background:var(--green-dark)}
+
+  /* Gallery */
+  .gal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:420px;margin:0 auto}
+  .gal-item{aspect-ratio:1;border-radius:14px;display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:30px;color:rgba(255,255,255,.9);
+    box-shadow:0 8px 20px rgba(30,77,59,.12)}
+  .g1{background:linear-gradient(135deg,#e8b7b0,#c5827a)}
+  .g2{background:linear-gradient(135deg,#A9A294,#4e7355)}
+  .g3{background:linear-gradient(135deg,#d9c9a3,#a38b5f)}
+  .g4{background:linear-gradient(135deg,#234a5c,#143341)}
+  .gal-note{font-size:12px;color:var(--muted);margin-top:14px}
+
+  /* Love story */
+  .story{max-width:400px;margin:0 auto;text-align:left;position:relative;padding-left:26px}
+  .story::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;
+    background:linear-gradient(#E8D9B5,#C9A86A)}
+  .story-item{position:relative;margin-bottom:26px}
+  .story-item::before{content:"";position:absolute;left:-24px;top:5px;width:12px;height:12px;
+    border-radius:50%;background:var(--gold);border:3px solid var(--paper);box-shadow:0 0 0 2px var(--gold)}
+  .story-item b{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;color:var(--green-dark);font-size:17px;display:block}
+  .story-item .yr{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:2px}
+  .story-item p{font-size:13.5px;color:var(--muted);margin-top:4px}
+
+  /* RSVP */
+  .rsvp-sec{background:var(--cream)}
+  .form-card{background:#fff;border:1px solid #ece3cf;border-radius:16px;padding:26px 22px;
+    max-width:400px;margin:0 auto;text-align:left;box-shadow:0 10px 26px rgba(30,77,59,.08)}
+  .form-card label{font-size:12.5px;font-weight:700;color:var(--green-dark);display:block;margin:14px 0 5px}
+  .form-card label:first-child{margin-top:0}
+  .form-card input,.form-card select,.form-card textarea{width:100%;padding:12px 14px;border:1px solid #ddd3ba;
+    border-radius:10px;font-size:14px;background:var(--paper);font-family:inherit;color:var(--ink)}
+  .form-card input:focus,.form-card select:focus,.form-card textarea:focus{outline:none;border-color:var(--gold)}
+  .form-card button{width:100%;margin-top:20px;background:linear-gradient(135deg,#D4B57A,#A8884A);color:#fff;
+    border:none;font-size:14px;font-weight:700;padding:14px;border-radius:50px;cursor:pointer;transition:.2s}
+  .form-card button:hover{filter:brightness(1.05)}
+  .rsvp-success{display:none;background:#FBF6EC;border:1px solid #bcd1bd;color:var(--green-dark);
+    border-radius:14px;padding:22px;font-size:14.5px;text-align:center}
+
+  /* Wishes */
+  .wish-list{max-width:400px;margin:24px auto 0;text-align:left;max-height:240px;overflow-y:auto;padding-right:4px}
+  .wish{background:#fff;border:1px solid #ece3cf;border-radius:12px;padding:14px 16px;margin-bottom:10px}
+  .wish b{font-size:13.5px;color:var(--green-dark)}
+  .wish p{font-size:13px;color:#55554a;margin-top:2px}
+
+  /* Gift */
+  .gift-sec{background:linear-gradient(170deg,#1A1A1A,#0F0F0F);color:#f3ead3}
+  .gift-sec h2{color:#f9f1dc}
+  .gift-sec .note{max-width:380px;margin:0 auto 24px;font-size:14px;color:#cfdcc9}
+  .bank-card{background:rgba(255,255,255,.07);border:1px solid rgba(229,207,154,.4);border-radius:16px;
+    padding:22px;max-width:360px;margin:0 auto 14px}
+  .bank-card .bank{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold-light)}
+  .bank-card .num{font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;color:#fff;margin:8px 0 2px;letter-spacing:2px}
+  .bank-card .name{font-size:13px;opacity:.85;margin-bottom:16px}
+  .copy-btn{background:transparent;border:1.5px solid var(--gold-light);color:var(--gold-light);font-size:12.5px;
+    font-weight:700;padding:10px 24px;border-radius:50px;cursor:pointer;transition:.2s}
+  .copy-btn:hover{background:var(--gold-light);color:var(--green-dark)}
+
+  /* Closing */
+  .closing p{font-size:14.5px;color:#55554a;max-width:400px;margin:0 auto 22px}
+  .closing .names{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:30px;color:var(--green-dark)}
+  .hashtag{margin-top:14px;font-size:13px;color:var(--gold);font-weight:700;letter-spacing:1px}
+  .credit{margin-top:30px;font-size:11.5px;color:#b0a98e;letter-spacing:1px}
+  .credit a{color:var(--gold);text-decoration:none;font-weight:700}
+</style>
+</head>
+<body class="locked">
+
+<!-- Ornamen sudut (dipakai ulang di beberapa section) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="flora" fill="none" stroke="#C9A86A" stroke-width="1.6" stroke-linecap="round">
+      <path d="M6,120 C10,80 30,50 66,32"/>
+      <path d="M26,84 C40,86 50,78 52,64 C38,62 28,70 26,84 Z"/>
+      <path d="M44,60 C58,62 68,54 70,40 C56,38 46,46 44,60 Z"/>
+      <circle cx="74" cy="28" r="7" />
+      <circle cx="86" cy="40" r="4.5"/>
+      <circle cx="63" cy="14" r="4.5"/>
+      <path d="M80,52 C96,56 106,70 108,90"/>
+      <path d="M94,66 C106,64 114,72 114,84 C102,86 94,78 94,66 Z"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- ============ COVER ============ -->
+<div class="cover" id="cover">
+  <div class="cover-inner">
+    <div class="label">Undangan Pernikahan</div>
+    <div class="mono">R&amp;L</div>
+    <h1>{{NAMA_PENGANTIN_PRIA}} <span class="amp">&amp;</span> {{NAMA_PENGANTIN_WANITA}}</h1>
+    <div class="date">{{TANGGAL_HEADER}}</div>
+    <p class="to">Kepada Yth.<br>Bapak/Ibu/Saudara/i</p>
+    <p class="guest" id="guestName">Tamu Undangan</p>
+    <button class="open-btn" id="openBtn">💌 &nbsp;Buka Undangan</button>
+    <span class="hint">*Mohon maaf apabila ada kesalahan penulisan nama &amp; gelar</span>
+  </div>
+</div>
+
+<div class="frame">
+
+  <!-- ============ QUOTE ============ -->
+  <section class="opening">
+    <svg class="orn-top" viewBox="0 0 120 120"><use href="#flora"/></svg>
+    <div class="reveal">
+      <div class="eyebrow">Assalamu'alaikum Wr. Wb.</div>
+      <h2>Om Swastiastu — Ahlan Wa Sahlan</h2>
+      <div class="divider"><span>✦</span></div>
+      <p>"Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu agar kamu merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang."</p>
+      <div class="src">— Q.S. AR-RŪM : 21 —</div>
+    </div>
+    <svg class="orn-bottom" viewBox="0 0 120 120"><use href="#flora"/></svg>
+  </section>
+
+  <!-- ============ MEMPELAI ============ -->
+  <section id="mempelai">
+    <div class="reveal">
+      <div class="eyebrow">Kami yang Berbahagia</div>
+      <h2>Mempelai</h2>
+      <div class="divider"><span>💍</span></div>
+      <div class="couple-card">
+        <div class="couple-photo">R</div>
+        <h3>{{NAMA_LENGKAP_PRIA}}</h3>
+        <div class="ig">{{IG_PRIA}}</div>
+        <p>Putra pertama dari<br>{{ORTU_PRIA}}</p>
+      </div>
+      <div class="couple-amp">&amp;</div>
+      <div class="couple-card">
+        <div class="couple-photo">L</div>
+        <h3>{{NAMA_LENGKAP_WANITA}}</h3>
+        <div class="ig">{{IG_WANITA}}</div>
+        <p>Putri kedua dari<br>{{ORTU_WANITA}}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COUNTDOWN ============ -->
+  <section class="countdown-sec">
+    <div class="reveal">
+      <div class="eyebrow" style="color:var(--gold-light)">Save The Date</div>
+      <h2>Menghitung Hari Bahagia</h2>
+      <div class="cd-grid">
+        <div class="cd-box"><b id="cdD">00</b><small>Hari</small></div>
+        <div class="cd-box"><b id="cdH">00</b><small>Jam</small></div>
+        <div class="cd-box"><b id="cdM">00</b><small>Menit</small></div>
+        <div class="cd-box"><b id="cdS">00</b><small>Detik</small></div>
+      </div>
+      <button class="save-btn" id="icsBtn">🗓 &nbsp;Simpan ke Kalender</button>
+    </div>
+  </section>
+
+  <!-- ============ ACARA ============ -->
+  <section id="acara">
+    <div class="reveal">
+      <div class="eyebrow">Rangkaian Acara</div>
+      <h2>Waktu &amp; Tempat</h2>
+      <div class="divider"><span>✦</span></div>
+      <div class="event-card">
+        <div class="ev-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2"><path d="M12 21s-7-5.1-7-11a7 7 0 0114 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <h3>Akad Nikah</h3>
+        <div class="ev-date">{{HARI_TANGGAL}}</div>
+        <div class="ev-time">Pukul {{JAM_AKAD}} WIB</div>
+        <p class="ev-place"><b>{{NAMA_TEMPAT}}</b><br>{{ALAMAT_TEMPAT}}</p>
+        <a class="map-btn" href="https://www.google.com/maps/search/?api=1&amp;query={{MAPS_QUERY}}" target="_blank" rel="noopener">📍 Lihat Peta Lokasi</a>
+      </div>
+      <div class="event-card">
+        <div class="ev-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2"><path d="M8 21h8M12 15v6M5 3h14l-2 7a5.5 5.5 0 01-11 0L5 3z"/></svg></div>
+        <h3>Resepsi</h3>
+        <div class="ev-date">{{HARI_TANGGAL}}</div>
+        <div class="ev-time">Pukul {{JAM_RESEPSI}} WIB</div>
+        <p class="ev-place"><b>{{NAMA_TEMPAT}}</b><br>{{ALAMAT_TEMPAT}}</p>
+        <a class="map-btn" href="https://www.google.com/maps/search/?api=1&amp;query={{MAPS_QUERY}}" target="_blank" rel="noopener">📍 Lihat Peta Lokasi</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GALERI ============ -->
+  <section id="galeri" style="background:var(--cream)">
+    <div class="reveal">
+      <div class="eyebrow">Momen Kami</div>
+      <h2>Galeri</h2>
+      <div class="divider"><span>📸</span></div>
+      <div class="gal-grid">
+        <div class="gal-item g1">R♥L</div>
+        <div class="gal-item g2">26.10</div>
+        <div class="gal-item g3">{{TANGGAL_GALERI}}</div>
+        <div class="gal-item g4">2026</div>
+      </div>
+      <p class="gal-note">✎ (Area galeri — ganti dengan foto prewed asli di undangan klien)</p>
+    </div>
+  </section>
+
+  <!-- ============ LOVE STORY ============ -->
+  <section id="story">
+    <div class="reveal">
+      <div class="eyebrow">Perjalanan Kami</div>
+      <h2>Love Story</h2>
+      <div class="divider"><span>💌</span></div>
+      <div class="story">
+        <div class="story-item"><span class="yr">2019</span><b>Awal Bertemu</b><p>Dipertemukan di kampus dalam satu organisasi. Berawal dari teman satu divisi, berlanjut jadi teman cerita.</p></div>
+        <div class="story-item"><span class="yr">2023</span><b>Lamaran</b><p>{{NAMA_PENGANTIN_PRIA}} memberanikan diri datang ke rumah dan meminta {{NAMA_PENGANTIN_WANITA}} secara resmi di hadapan kedua keluarga besar.</p></div>
+        <div class="story-item"><span class="yr">2026</span><b>Menikah</b><p>Kini, dengan restu kedua orang tua, kami melangkah bersama menuju babak baru kehidupan. 🤍</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RSVP ============ -->
+  <section class="rsvp-sec" id="rsvp">
+    <div class="reveal">
+      <div class="eyebrow">RSVP</div>
+      <h2>Konfirmasi Kehadiran</h2>
+      <div class="divider"><span>✦</span></div>
+      <form class="form-card" id="rsvpForm">
+        <label for="rName">Nama</label>
+        <input id="rName" type="text" placeholder="Nama kamu" required>
+        <label for="rCount">Jumlah Tamu</label>
+        <select id="rCount"><option>1 orang</option><option>2 orang</option><option>3 orang</option><option>4 orang</option></select>
+        <label for="rAttend">Kehadiran</label>
+        <select id="rAttend"><option>Hadir, insya Allah</option><option>Berhalangan hadir</option></select>
+        <button type="submit">Kirim Konfirmasi</button>
+      </form>
+      <div class="rsvp-success" id="rsvpOk">🎉 <b>Terima kasih!</b><br>Konfirmasi kamu sudah kami terima.<br><small>(Demo — di undangan asli, data otomatis masuk ke dashboard admin)</small></div>
+    </div>
+  </section>
+
+  <!-- ============ UCAPAN ============ -->
+  <section id="ucapan">
+    <div class="reveal">
+      <div class="eyebrow">Untuk Kami Berdua</div>
+      <h2>Ucapan &amp; Doa</h2>
+      <div class="divider"><span>🤍</span></div>
+      <form class="form-card" id="wishForm">
+        <label for="wName">Nama</label>
+        <input id="wName" type="text" placeholder="Nama kamu" required>
+        <label for="wMsg">Ucapan &amp; Doa</label>
+        <textarea id="wMsg" rows="3" placeholder="Tulis doa terbaikmu di sini..." required></textarea>
+        <button type="submit">Kirim Ucapan</button>
+      </form>
+      <div class="wish-list" id="wishList">
+        <div class="wish"><b>Nadia &amp; Keluarga</b><p>Barakallahu laka wa baraka 'alaika wa jama'a bainakuma fii khair. Selamat {{NAMA_PENGANTIN_PRIA}} &amp; {{NAMA_PENGANTIN_WANITA}}! 🥰</p></div>
+        <div class="wish"><b>Mas Yogi</b><p>Akhirnya ya! Selamat menempuh hidup baru, semoga samawa sampai kakek nenek. 🤲</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KADO DIGITAL ============ -->
+  <section class="gift-sec" id="kado">
+    <div class="reveal">
+      <div class="eyebrow" style="color:var(--gold-light)">Tanda Kasih</div>
+      <h2>Amplop Digital</h2>
+      <p class="note">Kehadiranmu adalah hadiah terindah. Namun jika ingin berbagi tanda kasih, kami sediakan dengan tulus hati:</p>
+      <div class="bank-card">
+        <div class="bank">{{BANK_1}}</div>
+        <div class="num" id="acc1">{{NO_REKENING}}</div>
+        <div class="name">a.n. {{NAMA_REKENING_PRIA}}</div>
+        <button class="copy-btn" data-copy="{{NO_REKENING_POLOS}}">📋 Salin No. Rekening</button>
+      </div>
+      <div class="bank-card">
+        <div class="bank">{{BANK_2}}</div>
+        <div class="num" id="acc2">{{NO_EWALLET}}</div>
+        <div class="name">a.n. {{NAMA_REKENING_WANITA}}</div>
+        <button class="copy-btn" data-copy="{{NO_EWALLET_POLOS}}">📋 Salin No. E-Wallet</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PENUTUP ============ -->
+  <section class="closing">
+    <svg class="orn-top" viewBox="0 0 120 120"><use href="#flora"/></svg>
+    <div class="reveal">
+      <div class="eyebrow">Terima Kasih</div>
+      <h2>Sampai Jumpa di Hari Bahagia</h2>
+      <div class="divider"><span>✦</span></div>
+      <p>Merupakan suatu kehormatan dan kebahagiaan bagi kami sekeluarga apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.</p>
+      <p style="font-style:italic">Kami yang berbahagia, beserta keluarga besar</p>
+      <div class="names">{{NAMA_PENGANTIN_PRIA}} &amp; {{NAMA_PENGANTIN_WANITA}}</div>
+      <div class="hashtag">{{HASHTAG}}</div>
+      <div class="credit">Dibuat dengan ❤ oleh <a href="index.html">AsProject</a></div>
+    </div>
+    <svg class="orn-bottom" viewBox="0 0 120 120"><use href="#flora"/></svg>
+  </section>
+
+</div><!-- /frame -->
+
+<script type="734c702500c0871503cf59fa-text/javascript">
+/* ====== 1. NAMA TAMU DARI URL (?to=Nama+Tamu) ====== */
+(function(){
+  var to = new URLSearchParams(location.search).get('to');
+  if(to){ document.getElementById('guestName').textContent = to; }
+})();
+
+/* ====== 2. BUKA UNDANGAN ====== */
+document.getElementById('openBtn').addEventListener('click', function(){
+  document.getElementById('cover').classList.add('opened');
+  document.body.classList.remove('locked');
+});
+
+/* ====== 3. COUNTDOWN — ubah tanggal acara di sini ====== */
+var weddingDate = new Date('{{TANGGAL_ISO}}');
+function pad(n){ return String(n).padStart(2,'0'); }
+function tick(){
+  var diff = weddingDate - new Date();
+  if(diff < 0) diff = 0;
+  document.getElementById('cdD').textContent = pad(Math.floor(diff/864e5));
+  document.getElementById('cdH').textContent = pad(Math.floor(diff/36e5)%24);
+  document.getElementById('cdM').textContent = pad(Math.floor(diff/6e4)%60);
+  document.getElementById('cdS').textContent = pad(Math.floor(diff/1e3)%60);
+}
+tick(); setInterval(tick, 1000);
+
+/* ====== 4. SIMPAN KE KALENDER (.ics) ====== */
+document.getElementById('icsBtn').addEventListener('click', function(){
+  var ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AsProject//ID','BEGIN:VEVENT',
+    'UID:{{UID_ICS}}','DTSTAMP:20261001T000000Z',
+    'DTSTART:20261212T010000Z','DTEND:20261212T070000Z',
+    'SUMMARY:Pernikahan {{NAMA_PENGANTIN_PRIA}} \\& {{NAMA_PENGANTIN_WANITA}}',
+    'LOCATION:{{LOKASI_ICS}}',
+    'DESCRIPTION:Akad Nikah {{JAM_AKAD_RINGKAS}} WIB dilanjutkan Resepsi {{JAM_RESEPSI_RINGKAS}} WIB',
+    'BEGIN:VALARM','TRIGGER:-P2D','ACTION:DISPLAY','END:VALARM',
+    'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  var url = URL.createObjectURL(new Blob([ics], {type:'text/calendar'}));
+  var a = document.createElement('a');
+  a.href = url; a.download = 'Pernikahan-{{NAMA_PENGANTIN_PRIA}}-{{NAMA_PENGANTIN_WANITA}}.ics';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+});
+
+/* ====== 5. RSVP ====== */
+document.getElementById('rsvpForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  this.style.display = 'none';
+  document.getElementById('rsvpOk').style.display = 'block';
+});
+
+/* ====== 6. UCAPAN & DOA ====== */
+document.getElementById('wishForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var nama = document.getElementById('wName').value.trim();
+  var pesan = document.getElementById('wMsg').value.trim();
+  if(!nama || !pesan) return;
+  var el = document.createElement('div');
+  el.className = 'wish';
+  var b = document.createElement('b'); b.textContent = nama;
+  var p = document.createElement('p'); p.textContent = pesan;
+  el.appendChild(b); el.appendChild(p);
+  document.getElementById('wishList').prepend(el);
+  this.reset();
+});
+
+/* ====== 7. SALIN REKENING ====== */
+document.querySelectorAll('.copy-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var text = btn.getAttribute('data-copy');
+    function done(){ var old = btn.textContent; btn.textContent = '✓ Tersalin!';
+      setTimeout(function(){ btn.textContent = old; }, 1600); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(done);
+    } else {
+      var ta = document.createElement('textarea'); ta.value = text;
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); }catch(e){}
+      ta.remove(); done();
+    }
+  });
+});
+
+/* ====== 8. ANIMASI MUNCUL SAAT SCROLL ====== */
+var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+  entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('visible'); io.unobserve(en.target); } });
+}, {threshold:.15}) : null;
+document.querySelectorAll('.reveal').forEach(function(el){
+  if(io){ io.observe(el); } else { el.classList.add('visible'); }
+});
+</script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="734c702500c0871503cf59fa-|49" defer></script></body>
+</html>

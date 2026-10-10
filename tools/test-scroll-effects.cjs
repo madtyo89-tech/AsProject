@@ -1,3 +1,4 @@
+const blobText=(win,b)=>typeof b.text==='function'?b.text():new Promise((ok,no)=>{const r=new win.FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsText(b)});
 // npm install --no-save --package-lock=false jsdom
 // node tools/test-scroll-effects.cjs
 const { JSDOM } = require('jsdom');
@@ -124,7 +125,7 @@ assert.equal(w.document.querySelector('.scroll-reveal'), null, 'Reveal toggle di
  };
  await w.dlUndangan();
  assert(exported,'standalone invitation HTML is generated');
- const html=await exported.text();
+ const html=await blobText(w,exported);
  assert(html.includes('<style data-asproject-scroll-effects>'),'standalone file embeds scroll effect CSS');
  assert(html.includes('.scroll-reveal.fx-s-tilt-in{')&&html.includes('@keyframes sr-blur-down{'),'new effect keyframes work offline');
  assert(html.includes('function (container, root = null)')||html.includes('window.setupScrollReveal'),'standalone file embeds scroll observer code');
