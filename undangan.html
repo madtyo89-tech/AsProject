@@ -843,7 +843,7 @@ function boot(draft){
      ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`
      :`<div class="cvf cvf-${cvStyle} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`)}
    <div class="kicker ${isWedding?'wedding-kicker':''} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(isWedding?"You're Invited":EV_KICKER[ev]||'Undangan')}</div>
-   ${tplF.char&&!isWedding?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms;':''}${tplF.char.length>2?'font-size:19px;letter-spacing:.28em;font-weight:700;text-transform:uppercase;margin-top:22px;filter:none;':''}">${tplF.char}</div>`:''}`;
+   ${tplF.char&&!isWedding?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms;':''}${tplF.char.length>2?'font-size:'+(tplF.char.length>6?32:tplF.char.length>4?38:46)+'px;font-family:var(--ft);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-cover);line-height:1;margin-top:16px;filter:none;text-shadow:0 2px 12px rgba(0,0,0,.14);':''}">${tplF.char}</div>`:''}`;
  if(ev==='pernikahan'){
   h+=txOn
    ?`<h1>${wspan(titleMain,h1d)}</h1><div class="amp anim-word" style="animation-delay:${h1d+nW(titleMain)*90+150}ms">&amp;</div><h1>${wspan(titleSub,h1d+nW(titleMain)*90+300)}</h1>`

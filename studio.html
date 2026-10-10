@@ -1003,7 +1003,7 @@ function sidebar(){
    <span class="lbl">Template ${EV_LABEL[state.event]}</span><span class="chip">${tplsFor(state.event).length} desain</span>
   </div>
   ${tplsFor(state.event).map(t=>`<button class="thbtn ${state.tpl===t.id?'on':''}" onclick="pickTpl('${t.id}')">
-   <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?(t.char.length>2?9:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.04em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
+   <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?(t.char.length>2?10:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.02em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
    <div style="flex:1"><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">${t.nama}${t.badge?`<span style="font-size:8px;padding:2px 6px;border-radius:99px;background:var(--gold);color:#000;font-weight:700">${t.badge}</span>`:''}</div>
    <div class="sub">${t.desc}</div></div>
    <div style="width:20px;height:20px;border-radius:99px;display:grid;place-items:center;border:1px solid ${state.tpl===t.id?'#fff':'#ddd'};background:#fff;color:#000;font-size:11px">${state.tpl===t.id?'✓':''}</div></button>`).join('')}
@@ -1437,7 +1437,7 @@ function katalog(){return `<div style="padding:16px;display:grid;gap:16px">
   </div>
   ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const rows=state.katalog.filter(k=>{const te=(TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0]).ev;return te===ev||te==='all'});if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template</div>
  ${rows.map(k=>{const t=TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0];const hid=state.katalogHide.includes(t.id);return `<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;${hid?'opacity:.55':''}">
-   <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?(t.char.length>2?9:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.04em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
+   <div style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);flex:none;background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?(t.char.length>2?10:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.02em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
    <div style="flex:1;min-width:0">
     <input value="${esc(k.nama)}" oninput="updKat('${k.id}','nama',this.value)" style="width:100%;font-size:12px;font-weight:500;border:0;background:transparent;padding:0">
     <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
@@ -1618,7 +1618,7 @@ function phoneHtml(){
     ${state.goldOrn?`<div class="${CV?'a-deco':''}" style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent);${CV?'animation-delay:250ms':''}"></div>`:''}
     ${blokFotoPrev}
     <div class="${wedding?'wedding-kicker ':''}${CV?'fx-c-'+CE:''}" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF};${CV?'animation-delay:300ms':''}">${wedding?'You’re Invited':titleOf()}</div>
-    ${tp.char&&!wedding?`<div class="${CV?'fx-c-'+CE:''}" title="Karakter tema" style="font-size:${tp.char.length>2?17:42}px;line-height:1.1;margin-top:${tp.char.length>2?16:14}px;${tp.char.length>2?'letter-spacing:.26em;font-weight:700;text-transform:uppercase;':''}${CV?'animation-delay:420ms':''}">${tp.char}</div>`:''}
+    ${tp.char&&!wedding?`<div class="${CV?'fx-c-'+CE:''}" title="Karakter tema" style="font-size:${tp.char.length>2?(tp.char.length>6?19:tp.char.length>4?23:28):42}px;line-height:1.05;margin-top:${tp.char.length>2?12:14}px;${tp.char.length>2?'letter-spacing:.06em;font-weight:800;text-transform:uppercase;color:'+state.accent+';':''}${CV?'animation-delay:420ms':''}">${tp.char}</div>`:''}
     <h1 class="${CV&&!TX?'fx-c-'+CE:''}" style="margin-top:${tp.char&&!wedding?6:12}px;font-size:${wedding?32:28}px;line-height:${wedding?1.02:.95};font-weight:700;color:${nameColor};${CV&&!TX?'animation-delay:'+h1d+'ms':''}">${h1Inner}</h1>
     ${wedding?`<div class="wedding-subtitle">akan melangsungkan pernikahan</div>`:''}
     <div class="${CV?'fx-c-'+CE:''}" style="margin-top:12px;font-size:11px;line-height:1.7;opacity:.8;font-family:${bF};${CV?'animation-delay:'+(tp.char?980:800)+'ms':''}">
