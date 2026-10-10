@@ -118,3 +118,24 @@ otomatis. Cek kontras teks di browser sebelum dipakai ke klien.
 Contoh hasil ada di `contoh-hasil/<kode>/index.html`.
 Kode `ice`, `khitanan-basic`, `khitanan-premium` juga bisa dipakai di
 `isi-template.py` dengan cara yang sama seperti `sage` dan `demo`.
+
+## Struktur mengikuti referensi
+
+Urutan bagian ketiga template tambahan disamakan dengan referensi Drive oleh
+`susun-struktur.py`. Jalankan setelah `buat-tema-turunan.py`:
+
+```
+python3 buat-tema-turunan.py
+python3 susun-struktur.py
+```
+
+| Template | Urutan bagian |
+|---|---|
+| `ice` | Pembuka & mempelai → Detail Acara (akad & resepsi) → Hitung Mundur → RSVP → Amplop Digital → Penutup |
+| `khitanan-basic` | Pembuka → Save the Date → Hitung Mundur → Doa & Harapan → Buku Tamu → Penutup (Wassalamualaikum, Keluarga Besar) |
+| `khitanan-premium` | Walimatul Khitan (hadis) → Detail Acara → Hitung Mundur → Doa Khitan → Konfirmasi & Doa → Penutup |
+
+Bagian yang dihapus dari template sage agar sama dengan referensi: Love Story,
+Galeri Foto, Dress Code, dan Lokasi terpisah (lokasi sudah ada di Detail Acara).
+Amplop Digital hanya ada di `ice`. Untuk khitanan, bagian ini bisa dikembalikan
+jika diperlukan.
