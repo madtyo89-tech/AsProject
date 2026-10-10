@@ -6,15 +6,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<title>The Wedding of {{NAMA_PENGANTIN_PRIA}} &amp; {{NAMA_PENGANTIN_WANITA}} — {{TANGGAL_TITLE}}</title>
+<title>The Wedding of Raka &amp; Laras — 12.12.2026</title>
 <!--
   ============================================
   CONTOH UNDANGAN DIGITAL — gaya "Emerald Gold"
   Cara ubah isi:
-  1) Nama mempelai: cari "{{NAMA_PENGANTIN_PRIA}}" dan "{{NAMA_PENGANTIN_WANITA}}"
+  1) Nama mempelai: cari "Raka" dan "Laras"
   2) Tanggal acara: cari "weddingDate" di bagian <script>
   3) Lokasi & peta: cari "google.com/maps"
-  4) No. rekening kado: cari "{{NO_REKENING}}"
+  4) No. rekening kado: cari "123 4567 890"
   5) Nama tamu otomatis dari link: tambahkan ?to=Nama+Tamu di akhir URL
      contoh: undangan.html?to=Nama+Tamu
   6) Foto galeri: ganti kotak gradien dengan <img src="foto.jpg"> milikmu
@@ -212,8 +212,8 @@
   <div class="cover-inner">
     <div class="label">Undangan Pernikahan</div>
     <div class="mono">R&amp;L</div>
-    <h1>{{NAMA_PENGANTIN_PRIA}} <span class="amp">&amp;</span> {{NAMA_PENGANTIN_WANITA}}</h1>
-    <div class="date">{{TANGGAL_HEADER}}</div>
+    <h1>Raka <span class="amp">&amp;</span> Laras</h1>
+    <div class="date">SABTU ✦ 12 DESEMBER 2026 ✦ BANDUNG</div>
     <p class="to">Kepada Yth.<br>Bapak/Ibu/Saudara/i</p>
     <p class="guest" id="guestName">Tamu Undangan</p>
     <button class="open-btn" id="openBtn">💌 &nbsp;Buka Undangan</button>
@@ -244,16 +244,16 @@
       <div class="divider"><span>💍</span></div>
       <div class="couple-card">
         <div class="couple-photo">R</div>
-        <h3>{{NAMA_LENGKAP_PRIA}}</h3>
-        <div class="ig">{{IG_PRIA}}</div>
-        <p>Putra pertama dari<br>{{ORTU_PRIA}}</p>
+        <h3>Raka Aditya Pratama, S.T.</h3>
+        <div class="ig">@rakaaditya</div>
+        <p>Putra pertama dari<br>Bpk. H. Surya Pratama &amp; Ibu Hj. Dewi Anggraini</p>
       </div>
       <div class="couple-amp">&amp;</div>
       <div class="couple-card">
         <div class="couple-photo">L</div>
-        <h3>{{NAMA_LENGKAP_WANITA}}</h3>
-        <div class="ig">{{IG_WANITA}}</div>
-        <p>Putri kedua dari<br>{{ORTU_WANITA}}</p>
+        <h3>Laras Ayu Wulandari, S.E.</h3>
+        <div class="ig">@larasayu</div>
+        <p>Putri kedua dari<br>Bpk. Drs. Bambang Wulandari &amp; Ibu Siti Rahayu</p>
       </div>
     </div>
   </section>
@@ -282,18 +282,18 @@
       <div class="event-card">
         <div class="ev-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2"><path d="M12 21s-7-5.1-7-11a7 7 0 0114 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
         <h3>Akad Nikah</h3>
-        <div class="ev-date">{{HARI_TANGGAL}}</div>
-        <div class="ev-time">Pukul {{JAM_AKAD}} WIB</div>
-        <p class="ev-place"><b>{{NAMA_TEMPAT}}</b><br>{{ALAMAT_TEMPAT}}</p>
-        <a class="map-btn" href="https://www.google.com/maps/search/?api=1&amp;query={{MAPS_QUERY}}" target="_blank" rel="noopener">📍 Lihat Peta Lokasi</a>
+        <div class="ev-date">Sabtu, 12 Desember 2026</div>
+        <div class="ev-time">Pukul 08.00 – 10.00 WIB</div>
+        <p class="ev-place"><b>Grand Ballroom Hotel Savoy</b><br>Jl. Asia Afrika No. 112, Bandung</p>
+        <a class="map-btn" href="https://www.google.com/maps/search/?api=1&amp;query=Savoy+Homann+Bandung" target="_blank" rel="noopener">📍 Lihat Peta Lokasi</a>
       </div>
       <div class="event-card">
         <div class="ev-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2"><path d="M8 21h8M12 15v6M5 3h14l-2 7a5.5 5.5 0 01-11 0L5 3z"/></svg></div>
         <h3>Resepsi</h3>
-        <div class="ev-date">{{HARI_TANGGAL}}</div>
-        <div class="ev-time">Pukul {{JAM_RESEPSI}} WIB</div>
-        <p class="ev-place"><b>{{NAMA_TEMPAT}}</b><br>{{ALAMAT_TEMPAT}}</p>
-        <a class="map-btn" href="https://www.google.com/maps/search/?api=1&amp;query={{MAPS_QUERY}}" target="_blank" rel="noopener">📍 Lihat Peta Lokasi</a>
+        <div class="ev-date">Sabtu, 12 Desember 2026</div>
+        <div class="ev-time">Pukul 11.00 – 14.00 WIB</div>
+        <p class="ev-place"><b>Grand Ballroom Hotel Savoy</b><br>Jl. Asia Afrika No. 112, Bandung</p>
+        <a class="map-btn" href="https://www.google.com/maps/search/?api=1&amp;query=Savoy+Homann+Bandung" target="_blank" rel="noopener">📍 Lihat Peta Lokasi</a>
       </div>
     </div>
   </section>
@@ -307,7 +307,7 @@
       <div class="gal-grid">
         <div class="gal-item g1">R♥L</div>
         <div class="gal-item g2">26.10</div>
-        <div class="gal-item g3">{{TANGGAL_GALERI}}</div>
+        <div class="gal-item g3">12.12</div>
         <div class="gal-item g4">2026</div>
       </div>
       <p class="gal-note">✎ (Area galeri — ganti dengan foto prewed asli di undangan klien)</p>
@@ -322,7 +322,7 @@
       <div class="divider"><span>💌</span></div>
       <div class="story">
         <div class="story-item"><span class="yr">2019</span><b>Awal Bertemu</b><p>Dipertemukan di kampus dalam satu organisasi. Berawal dari teman satu divisi, berlanjut jadi teman cerita.</p></div>
-        <div class="story-item"><span class="yr">2023</span><b>Lamaran</b><p>{{NAMA_PENGANTIN_PRIA}} memberanikan diri datang ke rumah dan meminta {{NAMA_PENGANTIN_WANITA}} secara resmi di hadapan kedua keluarga besar.</p></div>
+        <div class="story-item"><span class="yr">2023</span><b>Lamaran</b><p>Raka memberanikan diri datang ke rumah dan meminta Laras secara resmi di hadapan kedua keluarga besar.</p></div>
         <div class="story-item"><span class="yr">2026</span><b>Menikah</b><p>Kini, dengan restu kedua orang tua, kami melangkah bersama menuju babak baru kehidupan. 🤍</p></div>
       </div>
     </div>
@@ -361,7 +361,7 @@
         <button type="submit">Kirim Ucapan</button>
       </form>
       <div class="wish-list" id="wishList">
-        <div class="wish"><b>Nadia &amp; Keluarga</b><p>Barakallahu laka wa baraka 'alaika wa jama'a bainakuma fii khair. Selamat {{NAMA_PENGANTIN_PRIA}} &amp; {{NAMA_PENGANTIN_WANITA}}! 🥰</p></div>
+        <div class="wish"><b>Nadia &amp; Keluarga</b><p>Barakallahu laka wa baraka 'alaika wa jama'a bainakuma fii khair. Selamat Raka &amp; Laras! 🥰</p></div>
         <div class="wish"><b>Mas Yogi</b><p>Akhirnya ya! Selamat menempuh hidup baru, semoga samawa sampai kakek nenek. 🤲</p></div>
       </div>
     </div>
@@ -374,16 +374,16 @@
       <h2>Amplop Digital</h2>
       <p class="note">Kehadiranmu adalah hadiah terindah. Namun jika ingin berbagi tanda kasih, kami sediakan dengan tulus hati:</p>
       <div class="bank-card">
-        <div class="bank">{{BANK_1}}</div>
-        <div class="num" id="acc1">{{NO_REKENING}}</div>
-        <div class="name">a.n. {{NAMA_REKENING_PRIA}}</div>
-        <button class="copy-btn" data-copy="{{NO_REKENING_POLOS}}">📋 Salin No. Rekening</button>
+        <div class="bank">Bank BCA</div>
+        <div class="num" id="acc1">123 4567 890</div>
+        <div class="name">a.n. Raka Aditya Pratama</div>
+        <button class="copy-btn" data-copy="1234567890">📋 Salin No. Rekening</button>
       </div>
       <div class="bank-card">
-        <div class="bank">{{BANK_2}}</div>
-        <div class="num" id="acc2">{{NO_EWALLET}}</div>
-        <div class="name">a.n. {{NAMA_REKENING_WANITA}}</div>
-        <button class="copy-btn" data-copy="{{NO_EWALLET_POLOS}}">📋 Salin No. E-Wallet</button>
+        <div class="bank">GoPay / DANA</div>
+        <div class="num" id="acc2">0812 3456 7890</div>
+        <div class="name">a.n. Laras Ayu Wulandari</div>
+        <button class="copy-btn" data-copy="081234567890">📋 Salin No. E-Wallet</button>
       </div>
     </div>
   </section>
@@ -397,8 +397,8 @@
       <div class="divider"><span>✦</span></div>
       <p>Merupakan suatu kehormatan dan kebahagiaan bagi kami sekeluarga apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.</p>
       <p style="font-style:italic">Kami yang berbahagia, beserta keluarga besar</p>
-      <div class="names">{{NAMA_PENGANTIN_PRIA}} &amp; {{NAMA_PENGANTIN_WANITA}}</div>
-      <div class="hashtag">{{HASHTAG}}</div>
+      <div class="names">Raka &amp; Laras</div>
+      <div class="hashtag">#RakaLarasMenujuHalal</div>
       <div class="credit">Dibuat dengan ❤ oleh <a href="index.html">AsProject</a></div>
     </div>
     <svg class="orn-bottom" viewBox="0 0 120 120"><use href="#flora"/></svg>
@@ -420,7 +420,7 @@ document.getElementById('openBtn').addEventListener('click', function(){
 });
 
 /* ====== 3. COUNTDOWN — ubah tanggal acara di sini ====== */
-var weddingDate = new Date('{{TANGGAL_ISO}}');
+var weddingDate = new Date('2026-12-12T08:00:00+07:00');
 function pad(n){ return String(n).padStart(2,'0'); }
 function tick(){
   var diff = weddingDate - new Date();
@@ -435,16 +435,16 @@ tick(); setInterval(tick, 1000);
 /* ====== 4. SIMPAN KE KALENDER (.ics) ====== */
 document.getElementById('icsBtn').addEventListener('click', function(){
   var ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AsProject//ID','BEGIN:VEVENT',
-    'UID:{{UID_ICS}}','DTSTAMP:20261001T000000Z',
+    'UID:raka-laras-2026@arunika','DTSTAMP:20261001T000000Z',
     'DTSTART:20261212T010000Z','DTEND:20261212T070000Z',
-    'SUMMARY:Pernikahan {{NAMA_PENGANTIN_PRIA}} \\& {{NAMA_PENGANTIN_WANITA}}',
-    'LOCATION:{{LOKASI_ICS}}',
-    'DESCRIPTION:Akad Nikah {{JAM_AKAD_RINGKAS}} WIB dilanjutkan Resepsi {{JAM_RESEPSI_RINGKAS}} WIB',
+    'SUMMARY:Pernikahan Raka \\& Laras',
+    'LOCATION:Grand Ballroom Hotel Savoy\\, Jl. Asia Afrika No. 112\\, Bandung',
+    'DESCRIPTION:Akad Nikah 08.00 WIB dilanjutkan Resepsi 11.00-14.00 WIB',
     'BEGIN:VALARM','TRIGGER:-P2D','ACTION:DISPLAY','END:VALARM',
     'END:VEVENT','END:VCALENDAR'].join('\r\n');
   var url = URL.createObjectURL(new Blob([ics], {type:'text/calendar'}));
   var a = document.createElement('a');
-  a.href = url; a.download = 'Pernikahan-{{NAMA_PENGANTIN_PRIA}}-{{NAMA_PENGANTIN_WANITA}}.ics';
+  a.href = url; a.download = 'Pernikahan-Raka-Laras.ics';
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
 });
