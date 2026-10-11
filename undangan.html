@@ -96,10 +96,19 @@ body.foto-full #cover{background:#0b0908;justify-content:flex-end;padding:0}
 body.foto-full #cover .pat,body.foto-full #cover .veil{display:none}
 body.foto-full #cover .cvlatar{position:absolute;inset:0;overflow:hidden}
 body.foto-full #cover .cvlatar img{width:100%;height:100%;object-fit:cover;display:block}
-body.foto-full #cover::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(8,6,5,.5) 0%,rgba(8,6,5,.14) 26%,rgba(8,6,5,.42) 50%,rgba(8,6,5,.9) 76%,rgba(8,6,5,.95) 100%)}
-body.foto-full #cover .bdfr{position:relative;z-index:2;margin:0 auto 14px;padding:18px 14px;border-radius:22px;background:rgba(10,8,6,.84);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-body.foto-full #cover .date{background:rgba(18,14,10,.5);border-color:rgba(255,255,255,.3)}
-body.foto-full #cover .brand{opacity:.8}
+body.foto-full #cover::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(8,6,5,.55) 0%,rgba(8,6,5,.1) 28%,rgba(8,6,5,.34) 52%,rgba(8,6,5,.86) 76%,rgba(8,6,5,.97) 100%)}
+/* Mode foto penuh: TANPA panel — foto tampil utuh dari tepi ke tepi, teks
+   langsung di atas foto. Gradient bawah yang pekat + text-shadow menjaga
+   keterbacaan teks putih (>=4.5:1) walau fotonya terang. */
+body.foto-full #cover .bdfr{position:relative;z-index:2;margin:0 auto 28px;width:calc(100% - 28px);padding:0;background:transparent!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body.foto-full #cover .inner{padding:0 4px}
+body.foto-full #cover .inner h1,body.foto-full #cover .inner .amp,body.foto-full #cover .inner .date,body.foto-full #cover .inner .orn,body.foto-full #cover .inner .wedding-subtitle,body.foto-full #cover .inner .wedding-meta,body.foto-full #cover .inner .wedding-note,body.foto-full #cover .inner .host{color:#fff}
+body.foto-full #cover .inner .kicker,body.foto-full #cover .inner .wedding-meta .wi-icon{color:var(--accent-cover,#EAD7A8)}
+body.foto-full #cover .inner h1,body.foto-full #cover .inner .amp{text-shadow:0 3px 24px rgba(0,0,0,.68),0 1px 5px rgba(0,0,0,.5)}
+body.foto-full #cover .inner .wedding-subtitle,body.foto-full #cover .inner .wedding-meta,body.foto-full #cover .inner .wedding-note,body.foto-full #cover .inner .host,body.foto-full #cover .inner .date,body.foto-full #cover .inner .orn,body.foto-full #cover .inner .kicker{text-shadow:0 1px 12px rgba(0,0,0,.62)}
+body.foto-full #cover .date{background:rgba(18,14,10,.52);border-color:rgba(255,255,255,.32)}
+body.foto-full #cover .brand{opacity:.9;text-shadow:0 1px 8px rgba(0,0,0,.65)}
+body.foto-full #cover .bdfr .bd-c,body.foto-full #cover .bdfr .orn-c{opacity:.92}
 /* Blur halus di keempat sudut foto penuh — sudut tampak lembut/dreamy,
    bagian tengah tetap tajam. Mask radial memudarkan blur ke arah tengah. */
 body.foto-full #cover .cvlatar .cvbl{position:absolute;width:62%;height:52%;pointer-events:none;
@@ -333,6 +342,7 @@ body:not(.opened) .nv-bar{display:none}
 .nv-dots i.on{width:18px;opacity:1}
 
 /* ===== Rombakan dinamis: kinetic · galeri · countdown · ambient · interaksi ===== */
+.kn-w{display:inline-block;white-space:nowrap}
 .kn-l{display:inline-block;opacity:0;animation:knIn .62s cubic-bezier(.22,.8,.36,1) both}
 @keyframes knIn{from{opacity:0;transform:translateY(.42em) rotate(1.6deg)}to{opacity:1;transform:none}}
 .kn-l::after{content:"";position:absolute;inset:-2px -5px;pointer-events:none;mix-blend-mode:overlay;
@@ -954,10 +964,11 @@ function boot(draft){
  const CE=fxCoverId(AN),SC=fxScrollId(AN);
  const h1d=tplF.char?850:550,dtD=tplF.char?1500:1300,hoD=tplF.char?1650:1450,btD=tplF.char?1800:1600;
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
- const wspan=(txt,d0)=>{let k=0;return String(txt||'').split('').map(ch=>{
- if(!ch.trim())return ch===' '?'\u00a0':'';
- const d=d0+(k++)*44;
- return `<span class="kn-l" style="animation-delay:${d}ms;--sh:${d+340}ms;position:relative">${esc(ch)}</span>`}).join('')};
+ const wspan=(txt,d0)=>{let k=0;return String(txt||'').split(' ').map(word=>{
+ if(!word)return '';
+ return '<span class="kn-w">'+word.split('').map(ch=>{
+  const d=d0+(k++)*44;
+  return `<span class="kn-l" style="animation-delay:${d}ms;--sh:${d+340}ms;position:relative">${esc(ch)}</span>`}).join('')+'</span>'}).join(' ')};
  let scrollSectionIndex=0;
  const RV=cls=>{
   if(!rvOn)return cls;
