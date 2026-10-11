@@ -1313,6 +1313,7 @@ const DEMO_DRAFT={
  event_date:'2026-12-28',event_time:'08:00',music_url:'music/backsound-asproject.mp3',music_name:'Backsound AsProject — rtyo',theme:2,
  data:{event:'pernikahan',tpl:'ivory-klasik',doa:'pernikahan',accent:'#8A6E4B',fontTitle:'playfair',fontBody:'inter',border:'double',
   gallery:['assets/demo/wedding/01-jawa-elegan.jpg','assets/demo/wedding/02-minimalist-sage.jpg','assets/demo/wedding/03-luxury-gold.jpg'],
+  cover:'assets/demo/wedding/02-minimalist-sage.jpg',coverStyle:'emas',coverPos:{x:50,y:42,z:1},
   form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
    putraPutri:'Bpk. Hartono & Ibu Sulastri',putriDari:'Bpk. Faisal & Ibu Dewi',
    tanggalAcara:'2026-12-28',jamAcara:'08:00',zona:'WIB',venue:'The Ballroom at Ritz Carlton',
@@ -1353,6 +1354,10 @@ if(DEMO){const _t=(Q.get('tpl')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
    khitanan:['assets/demo/khitanan/01-islamic-elegant.jpg','assets/demo/khitanan/02-biru-ceria.jpg'],
    ultah:['assets/demo/ultah/01-kids-party.jpg','assets/demo/ultah/02-sweet-17.jpg','assets/demo/ultah/03-adult-elegant.jpg'],
    aqiqah:['assets/demo/aqiqah/01-baby-boy.jpg','assets/demo/aqiqah/02-baby-girl.jpg','assets/demo/aqiqah/03-islamic-neutral.jpg']}[_ev]||[]).slice();
+  DEMO_DRAFT.data.cover=({pernikahan:'assets/demo/wedding/02-minimalist-sage.jpg',
+   khitanan:'assets/demo/khitanan/01-islamic-elegant.jpg',
+   ultah:'assets/demo/ultah/01-kids-party.jpg',
+   aqiqah:'assets/demo/aqiqah/01-baby-boy.jpg'}[_ev]||'assets/demo/wedding/02-minimalist-sage.jpg');
   if(_ev!=='pernikahan'){
    DEMO_DRAFT.data.event=_ev;DEMO_DRAFT.data.doa=_ev;
    DEMO_DRAFT.data.slides.story.items=[
