@@ -943,6 +943,23 @@ const DEMO_DRAFT={
   anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'},
   amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true}}};
 
+/* Preview katalog: undangan.html?demo=1&tpl={id-tema} — dipakai iframe live
+   di kartu katalog supaya tiap tema tampil dengan palet/font/konten sesuai
+   kategorinya (bukan satu demo statis untuk semua). */
+if(DEMO){const _t=(Q.get('tpl')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
+ const _n=(Q.get('tema')||'').toLowerCase();
+ let _i=TPL.findIndex(x=>x.id===_t);
+ if(_i<0&&_n)_i=TPL.findIndex(x=>(x.nama||'').toLowerCase()===_n);
+ if(_i>=0){const _T=TPL[_i];DEMO_DRAFT.theme=_i;
+  DEMO_DRAFT.data.tpl=_T.id;DEMO_DRAFT.data.accent=_T.accent;
+  DEMO_DRAFT.data.fontTitle=_T.ft||DEMO_DRAFT.data.fontTitle;
+  const _ev=_T.ev==='all'?'pernikahan':_T.ev;
+  if(_ev!=='pernikahan'){
+   DEMO_DRAFT.data.event=_ev;DEMO_DRAFT.data.doa=_ev;
+   DEMO_DRAFT.name2='';DEMO_DRAFT.data.form.namaAnak=
+    _ev==='khitanan'?'Muhammad Ali':_ev==='ultah'?'Nara Putri':'Baby Alif';
+   DEMO_DRAFT.data.form.ucapanCustom='Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.';}}}
+
 /* ---------- mulai ---------- */
 if(typeof EMBEDDED_DATA!=='undefined'&&EMBEDDED_DATA){loading();setTimeout(()=>boot(EMBEDDED_DATA),350)}
 else if(DEMO){loading();setTimeout(()=>boot(DEMO_DRAFT),350)}

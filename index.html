@@ -1242,5 +1242,231 @@ var DEMO_BY_NAME = {'Adat Jawa Elegan': 'katalog-demo/undangan-demo.html', 'Mini
 })();
 </script>
 
+<style id="asp-live-demo">
+  /* ============ Preview demo langsung di kartu katalog ============ */
+  #katalog .catalog-art .catalog-paper{display:none}
+  .asp-live{width:68%;aspect-ratio:3/4;border-radius:14px;overflow:hidden;position:relative;
+    flex:none;background:#fff;box-shadow:0 16px 38px rgba(0,0,0,.35);
+    transition:transform .65s cubic-bezier(.22,.9,.34,1),box-shadow .35s ease}
+  .catalog-card:hover .asp-live{box-shadow:0 22px 50px rgba(0,0,0,.45)}
+  .asp-live iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
+  .asp-live::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(115deg,transparent 42%,rgba(255,235,190,.22) 50%,transparent 58%);
+    transform:translateX(-75%);transition:transform .95s ease}
+  .catalog-card:hover .asp-live::after{transform:translateX(75%)}
+
+  /* Tata letak tidak monoton — baris kartu berjenjang halus */
+  @media (min-width:640px){
+    #katalog .catalog-grid .catalog-card:nth-child(3n+2){translate:0 18px}
+    #katalog .catalog-grid .catalog-card:nth-child(3n+3){translate:0 8px}
+    #katalog .catalog-grid .catalog-card:nth-child(4n){border-radius:28px 20px 28px 20px}
+    #katalog .catalog-grid .catalog-card:nth-child(4n+2){border-radius:20px 28px 20px 28px}
+  }
+
+  /* ============ Lightbox demo live ============ */
+  .asp-lb{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:14px;padding:18px}
+  .asp-lb[hidden]{display:none}
+  .asp-lb-bg{position:absolute;inset:0;background:rgba(8,7,5,.78);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);animation:aspLbIn .3s ease both}
+  @keyframes aspLbIn{from{opacity:0}to{opacity:1}}
+  .asp-lb-phone{position:relative;width:min(348px,88vw);height:min(72vh,690px);
+    border-radius:30px;overflow:hidden;background:#fff;border:9px solid #171310;
+    box-shadow:0 46px 110px rgba(0,0,0,.65),0 0 0 1px rgba(201,162,91,.4);
+    animation:aspLbUp .38s cubic-bezier(.22,.9,.34,1) both}
+  @keyframes aspLbUp{from{opacity:0;transform:translateY(26px) scale(.96)}to{opacity:1;transform:none}}
+  .asp-lb-phone iframe{width:100%;height:100%;border:0}
+  .asp-lb-bar{position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    justify-content:center;max-width:520px;text-align:center}
+  .asp-lb-title{width:100%;font:600 17px 'Cinzel',Georgia,serif;color:#F3E6C6;letter-spacing:.04em}
+  .asp-lb-btn{display:inline-flex;align-items:center;gap:7px;height:42px;padding:0 18px;
+    border-radius:99px;font:600 12.5px 'Inter',system-ui,sans-serif;text-decoration:none;
+    letter-spacing:.03em;cursor:pointer;transition:transform .22s ease,filter .22s ease}
+  .asp-lb-btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+  .asp-lb-wa{background:linear-gradient(135deg,#E8C86A,#C9A25B 55%,#A8823F);color:#221A08;
+    border:0;box-shadow:0 14px 34px -12px rgba(201,162,91,.65)}
+  .asp-lb-full{background:transparent;color:#EAD7A8;border:1px solid rgba(201,162,91,.5)}
+  .asp-lb-x{width:42px;height:42px;border-radius:99px;border:1px solid rgba(201,162,91,.4);
+    background:rgba(255,255,255,.06);color:#F3E6C6;font-size:15px;cursor:pointer}
+  .asp-lb-x:hover{background:rgba(201,162,91,.18)}
+  .asp-lb-hint{position:relative;font:500 10.5px 'Inter',system-ui,sans-serif;
+    color:#9C8C6F;letter-spacing:.14em;text-transform:uppercase}
+
+  @media (prefers-reduced-motion:reduce){
+    .asp-lb-bg,.asp-lb-phone{animation:none}
+    .asp-live::after{display:none}
+  }
+</style>
+<script>
+/* ===== AsProject · Demo langsung katalog (vanilla, di luar React bundle) =====
+   Kartu katalog memutar demo asli (iframe undangan.html?demo=1&tema=… per
+   tema — palet/font/konten mengikuti tema itu), dan klik kartu langsung
+   membuka demo live di lightbox — bukan preview statis. */
+(function () {
+  'use strict';
+
+  function node(tag, cls, html) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html != null) n.innerHTML = html;
+    return n;
+  }
+  function textOf(n) { return n && n.textContent ? n.textContent.trim() : ''; }
+  function reduced() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+  function srcUntuk(nama) {
+    return 'undangan.html?demo=1&tema=' + encodeURIComponent(nama);
+  }
+
+  /* ---------- Lightbox demo live ---------- */
+  var lb = null;
+  function pastikanLightbox() {
+    if (lb && lb.isConnected) return lb;
+    lb = node('div', 'asp-lb');
+    lb.id = 'aspLb';
+    lb.hidden = true;
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+    lb.setAttribute('aria-label', 'Demo langsung tema');
+    lb.innerHTML =
+      '<div class="asp-lb-bg"></div>' +
+      '<div class="asp-lb-phone"><iframe title="Demo langsung" allow="autoplay"></iframe></div>' +
+      '<div class="asp-lb-bar">' +
+      '<div class="asp-lb-title"></div>' +
+      '<a class="asp-lb-btn asp-lb-wa" target="_blank" rel="noopener">💬 Pesan Tema Ini</a>' +
+      '<a class="asp-lb-btn asp-lb-full" target="_blank" rel="noopener">Buka Tab Baru ↗</a>' +
+      '<button class="asp-lb-x" aria-label="Tutup demo">✕</button>' +
+      '<div class="asp-lb-hint">Demo asli — gulir untuk melihat isi undangannya</div>' +
+      '</div>';
+    document.body.appendChild(lb);
+    lb.addEventListener('click', function (e) {
+      if (e.target.classList.contains('asp-lb-bg') || e.target.closest('.asp-lb-x')) tutupDemo();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lb && !lb.hidden) tutupDemo();
+    });
+    return lb;
+  }
+
+  function bukaDemo(nama) {
+    if (!nama) return;
+    var box = pastikanLightbox();
+    var f = box.querySelector('iframe');
+    f.src = srcUntuk(nama);
+    box.querySelector('.asp-lb-title').textContent = nama;
+    box.querySelector('.asp-lb-wa').href = 'https://wa.me/6285196755675?text=' +
+      encodeURIComponent('Halo AsProject.My.Id! Aku tertarik sama tema *' + nama + '*, masih tersedia? ✨');
+    box.querySelector('.asp-lb-full').href = srcUntuk(nama);
+    box.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function tutupDemo() {
+    if (!lb) return;
+    lb.hidden = true;
+    var f = lb.querySelector('iframe');
+    if (f) f.src = 'about:blank';
+    document.body.style.overflow = '';
+  }
+
+  /* Klik kartu (di mana pun, termasuk tombol "Lihat Demo") → langsung demo.
+     Link "Pesan" (anchor) sengaja dibiarkan. */
+  document.addEventListener('click', function (e) {
+    if (!e.target || !e.target.closest) return;
+    var card = e.target.closest('.catalog-card');
+    if (!card) return;
+    if (e.target.closest('a')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    bukaDemo(textOf(card.querySelector('h3')));
+  }, true);
+
+  /* ---------- Preview live di dalam kartu (lazy) ---------- */
+  var previewIO = ('IntersectionObserver' in window)
+    ? new IntersectionObserver(function (entri) {
+        entri.forEach(function (e) {
+          var f = e.target.querySelector('iframe');
+          if (!f) return;
+          if (e.isIntersecting) {
+            if (!f.src || f.src === 'about:blank') f.src = f.getAttribute('data-src');
+          } else if (e.boundingClientRect.top > 2400 || e.boundingClientRect.bottom < -2400) {
+            /* jauh dari pandangan — bebaskan memori, muat lagi saat mendekat */
+            f.src = 'about:blank';
+          }
+        });
+      }, { rootMargin: '520px 0px' })
+    : null;
+
+  function pasangPreview() {
+    var cards = document.querySelectorAll('.catalog-card');
+    cards.forEach(function (card) {
+      var art = card.querySelector('.catalog-art');
+      if (!art || art.querySelector('.asp-live')) return;
+      var nama = textOf(card.querySelector('h3'));
+      if (!nama) return;
+      var wrap = node('div', 'asp-live');
+      wrap.setAttribute('aria-hidden', 'true');
+      var f = document.createElement('iframe');
+      f.loading = 'lazy';
+      f.tabIndex = -1;
+      f.title = 'Preview tema ' + nama;
+      f.setAttribute('data-src', srcUntuk(nama));
+      wrap.appendChild(f);
+      art.appendChild(wrap);
+      if (previewIO) previewIO.observe(wrap);
+      else f.src = f.getAttribute('data-src');
+    });
+  }
+
+  /* ---------- Geser pelan isi demo saat hover (daya tarik) ---------- */
+  var geser = 0;
+  function berhentiGeser() { if (geser) { clearInterval(geser); geser = 0; } }
+  function pasangGeser() {
+    var grid = document.querySelector('.catalog-grid');
+    if (!grid || grid.getAttribute('data-asp-geser') || reduced()) return;
+    grid.setAttribute('data-asp-geser', '1');
+    grid.addEventListener('pointerover', function (e) {
+      if (!(e.target.closest && e.target.closest('.catalog-card'))) return;
+      berhentiGeser();
+      if (!(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches)) return;
+      var card = e.target.closest('.catalog-card');
+      var f = card && card.querySelector('.asp-live iframe');
+      if (!f || !f.contentWindow) return;
+      geser = setInterval(function () {
+        try {
+          var w = f.contentWindow;
+          var tinggi = w.document.documentElement.scrollHeight - w.innerHeight;
+          if (w.scrollY < tinggi - 4) w.scrollBy(0, 1);
+          else w.scrollTo(0, 0);
+        } catch (err) { /* lintas asal / belum siap — abaikan */ }
+      }, 42);
+    });
+    grid.addEventListener('pointerleave', berhentiGeser);
+    grid.addEventListener('click', berhentiGeser, true);
+  }
+
+  /* ---------- Susulan ---------- */
+  function enhance() { pasangPreview(); pasangGeser(); }
+  var timer = null;
+  function schedule() {
+    if (timer) return;
+    timer = setTimeout(function () { timer = null; enhance(); }, 150);
+  }
+  function boot() {
+    enhance();
+    if ('MutationObserver' in window) {
+      new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
+    }
+    var tries = 0;
+    (function find() {
+      if (document.querySelector('.catalog-grid') || ++tries > 60) { enhance(); return; }
+      setTimeout(find, 100);
+    })();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+
 </body>
 </html>
