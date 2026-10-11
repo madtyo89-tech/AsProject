@@ -610,6 +610,11 @@ function fmtDateShort(s){const d=parseDate(s);if(!d)return String(s||'');return 
 function targetTime(draft,form){const ds=(form&&form.tanggalAcara)||draft.event_date;if(!ds)return null;const t=((form&&form.jamAcara)||draft.event_time||'').slice(0,5);const d=parseDate(ds);if(!d)return null;if(t){const p=t.split(':');d.setHours(+p[0]||0,+p[1]||0,0,0)}return d}
 
 /* ---------- parameter ---------- */
+/* Koneksi Supabase — nilai sama dengan studio.html/master.html. Wajib ada
+   di sini: halaman tamu (/u/{slug} → undangan.html?slug=…) memuat draft
+   + buku tamu langsung dari REST. */
+const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
 const Q=new URLSearchParams(location.search);
 const GUEST=(Q.get('to')||'').trim();
 const DEMO=Q.get('demo')==='1';
@@ -738,24 +743,48 @@ function liveRsvp(){
 /* RSVP cepat → tabel rsvp (Supabase) agar visible realtime di Undangan Master.
    Tabel dibuat lewat tools/rsvp.sql; bila tabel/akses belum ada, tamu tetap
    bisa kirim lewat tombol WA di atas. */
+const BT_LOCAL=[];
+function ucapanBaru(n,st,pesan){return{guest:n,status:st,pesan:pesan,t:Date.now()}}
+function toastRsvp(st,n){return st==='hadir'?('Terima kasih, '+n+'! Konfirmasi hadir tercatat ✅')
+ :st==='ragu'?('Terima kasih, '+n+'. Semoga bisa hadir ya 🤞')
+ :('Terima kasih, '+n+'. Konfirmasi tidak hadir tercatat 🙏')}
+let rsvpJalan=false;
 async function rsvpSave(st){
+ if(rsvpJalan)return;rsvpJalan=true;
  const n=((document.getElementById('rvpN')?document.getElementById('rvpN').value:GUEST)||'Tamu').trim()||'Tamu';
  const pesan=(document.getElementById('rvpM')?document.getElementById('rvpM').value:'').trim();
  document.querySelectorAll('[data-rsvpb]').forEach(b=>{b.disabled=true;b.style.opacity=.55});
  document.querySelectorAll('[data-r="'+st+'"]').forEach(b=>{b.classList.add('sent');setTimeout(()=>b.classList.remove('sent'),900)});
+ /* Mode demo / file mandiri: simpan lokal saja — jangan menulis baris palsu
+    ke database produksi. */
+ if(DEMO||!SLUG){
+  BT_LOCAL.unshift(ucapanBaru(n,st,pesan));
+  tampilBukuTamu(daftarUcapanDemo());
+  ivToast(toastRsvp(st,n));
+  document.querySelectorAll('[data-rsvpb]').forEach(b=>{b.disabled=false;b.style.opacity=1});
+  rsvpJalan=false;
+  return;
+ }
+ const base={slug:SLUG,guest:n,status:st,updated_at:new Date().toISOString()};
+ const kirim=(url,body)=>fetch(url,{method:'POST',
+  headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+  body:JSON.stringify(body)});
+ let ok=false;
  try{
-  const r=await fetch(SUPABASE_URL+'/rest/v1/rsvp?on_conflict=slug,guest',{method:'POST',
-   headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
-   body:JSON.stringify({slug:SLUG||'demo',guest:n,status:st,pesan:pesan,updated_at:new Date().toISOString()})});
-  if(!r.ok)throw new Error('http');
-  ivToast(st==='hadir'?('Terima kasih, '+n+'! Konfirmasi hadir tercatat ✅')
-   :st==='ragu'?('Terima kasih, '+n+'. Semoga bisa hadir ya 🤞')
-   :('Terima kasih, '+n+'. Konfirmasi tidak hadir tercatat 🙏'));
+  let r=await kirim(SUPABASE_URL+'/rest/v1/rsvp?on_conflict=slug,guest',Object.assign({pesan:pesan},base));
+  if(!r.ok){/* skema lama: tanpa kolom pesan / tanpa unique(slug,guest) — coba cara lama */}
+  else ok=true;
+  if(!ok)r=await kirim(SUPABASE_URL+'/rest/v1/rsvp',base),ok=r.ok;
+ }catch(e){ok=false}
+ if(ok){
+  ivToast(toastRsvp(st,n));
+  BT_LOCAL.length=0;
   muatBukuTamu(true);
- }catch(e){
+ }else{
   ivToast('Mohon maaf, konfirmasi belum bisa disimpan — pakai tombol WA 🙏',5000);
  }
  document.querySelectorAll('[data-rsvpb]').forEach(b=>{b.disabled=false;b.style.opacity=1});
+ rsvpJalan=false;
 }
 function ivToast(msg,ms){let t=document.getElementById('ivToast');
  if(!t){t=document.createElement('div');t.id='ivToast';
@@ -770,7 +799,8 @@ const DEMO_WISHES=[
  {guest:'Bu Sri Wahyuni',status:'hadir',pesan:'Barakallahu lakuma wa baraka alaikuma.',ago:3*24*3600e3},
  {guest:'Dimas & Nanda',status:'tidak',pesan:'Mohon maaf belum bisa hadir. Doa terbaik untuk kalian berdua!',ago:5*24*3600e3},
  {guest:'Tante Ratna',status:'hadir',pesan:'Semoga menjadi keluarga yang penuh berkah dan kebahagiaan sampai tua.',ago:9*24*3600e3}];
-function waktuLalu(ts){const s=Math.max(0,Math.floor((Date.now()-ts)/1000));
+function waktuLalu(ts){let t=Number(ts);if(!Number.isFinite(t))t=Date.now();
+ const s=Math.max(0,Math.floor((Date.now()-t)/1000));
  if(s<60)return 'baru saja';
  if(s<3600)return Math.floor(s/60)+' menit lalu';
  if(s<86400)return Math.floor(s/3600)+' jam lalu';
@@ -786,16 +816,26 @@ function tampilBukuTamu(rows){const el=document.getElementById('btList');if(!el)
    '<div class="bt-st '+cls+'">'+lb+'</div>'+
    '<div class="bt-wk">'+esc(waktuLalu(r.t||Date.now()))+'</div></div>'+
    (r.pesan?'<div class="bt-msg">\u201C'+esc(r.pesan)+'\u201D</div>':'')+'</div>'}).join('')}
+function daftarUcapanDemo(){
+ return [...BT_LOCAL,...DEMO_WISHES.map(w=>({guest:w.guest,status:w.status,pesan:w.pesan,t:Date.now()-w.ago}))]}
 async function muatBukuTamu(paksa){const el=document.getElementById('btList');if(!el)return;
- if(DEMO||!SLUG){tampilBukuTamu(DEMO_WISHES.map(w=>({guest:w.guest,status:w.status,pesan:w.pesan,t:Date.now()-w.ago})));return}
+ if(DEMO||!SLUG){tampilBukuTamu(daftarUcapanDemo());return}
  if(!paksa)el.innerHTML='<div class="bt-memuat">Memuat ucapan…</div>';
+ const H={headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}};
+ const ctl=(typeof AbortController!=='undefined')?new AbortController():null;
+ const tw=ctl?setTimeout(()=>ctl.abort(),8000):0;
  try{
-  const r=await fetch(SUPABASE_URL+'/rest/v1/rsvp?slug=eq.'+encodeURIComponent(SLUG)+'&select=guest,status,pesan,updated_at&order=updated_at.desc&limit=12',
-   {headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}});
+  let r=await fetch(SUPABASE_URL+'/rest/v1/rsvp?slug=eq.'+encodeURIComponent(SLUG)+'&select=guest,status,pesan,updated_at&order=updated_at.desc&limit=12',
+   Object.assign({signal:ctl?ctl.signal:undefined},H));
+  if(!r.ok){/* skema lama tanpa kolom pesan */}
+  else{}
+  if(!r.ok)r=await fetch(SUPABASE_URL+'/rest/v1/rsvp?slug=eq.'+encodeURIComponent(SLUG)+'&select=guest,status,updated_at&order=updated_at.desc&limit=12',
+   Object.assign({signal:ctl?ctl.signal:undefined},H));
   if(!r.ok)throw new Error('http');
   const rows=await r.json();
   tampilBukuTamu((Array.isArray(rows)?rows:[]).filter(x=>x&&x.guest).map(x=>({guest:x.guest,status:x.status,pesan:x.pesan||'',t:Date.parse(x.updated_at)||Date.now()})));
- }catch(e){tampilBukuTamu([])}}
+ }catch(e){tampilBukuTamu([])}
+ finally{if(tw)clearTimeout(tw)}}
 
 /* ---------- build halaman ---------- */
 function boot(draft){
@@ -806,6 +846,8 @@ function boot(draft){
  if(!d&&tplF.ev==='all'){const li=Number.isFinite(+draft.theme)?+draft.theme:-1;if(LEGACY_EV[li]&&LEGACY_KEY[LEGACY_EV[li]]!=='all')ev=LEGACY_KEY[LEGACY_EV[li]]}
  const form=(d&&d.form)||{};
  const doa=(d&&DOA[d.doa])?DOA[d.doa]:(DOA[ev]||DOA.pernikahan);
+ const urlAman=u=>{const s=String(u||'').trim();if(!s)return '';
+  try{const x=new URL(s,location.href);if(x.protocol==='https:'||x.protocol==='http:')return x.href}catch(e){}return ''};
  const salamBuka=String((form.salamBuka!==undefined&&form.salamBuka!==null)?form.salamBuka:'Assalamu\u2019alaikum wr. wb.').trim();
  const salamTutup=String((form.salamTutup!==undefined&&form.salamTutup!==null)?form.salamTutup:'Wassalamu\u2019alaikum wr. wb.').trim();
 
@@ -982,14 +1024,14 @@ function boot(draft){
     <div class="jam">Pukul ${esc(timeStr||'—')}${form.zona?esc(' '+form.zona):''}</div>
     ${venue?`<div class="vt"><b>${esc(venue)}</b>${alamat?'<br>'+esc(alamat):''}</div>`:''}
     ${mapsLink?`<a class="mapbtn" href="${esc(mapsLink)}" target="_blank" rel="noopener">📍 Buka di Peta</a>`:''}
-    ${form.liveAkad?`<a class="livebtn" href="${esc(form.liveAkad)}" target="_blank" rel="noopener"><i></i>Tonton Live</a>`:''}
+    ${urlAman(form.liveAkad)?`<a class="livebtn" href="${esc(urlAman(form.liveAkad))}" target="_blank" rel="noopener"><i></i>Tonton Live</a>`:''}
    </div>`;
  if(ev==='pernikahan'&&sesiKedua&&form.jamResepsi){
   h+=`<div class="acara"><div class="lbl">Resepsi</div>
    <div class="tgl">${esc(dateStr||'—')}</div>
    <div class="jam">Pukul ${esc(form.jamResepsi)}${form.zona?esc(' '+form.zona):''}</div>
    ${venue?`<div class="vt"><b>${esc(venue)}</b>${alamat?'<br>'+esc(alamat):''}</div>`:''}
-   ${form.liveResepsi?`<a class="livebtn" href="${esc(form.liveResepsi)}" target="_blank" rel="noopener"><i></i>Tonton Live</a>`:''}</div>`;
+   ${urlAman(form.liveResepsi)?`<a class="livebtn" href="${esc(urlAman(form.liveResepsi))}" target="_blank" rel="noopener"><i></i>Tonton Live</a>`:''}</div>`;
  }
  h+=`</div>`;
 

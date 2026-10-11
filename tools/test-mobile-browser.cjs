@@ -87,7 +87,7 @@ const assert = require('node:assert/strict');
   assert.equal(await page.locator('.hdr').count(),0,'No top studio header');
   assert.equal(await page.locator('.fp-box').count(),0,'No floating preview before starting');
   await page.getByRole('button',{name:'Membuat Undangan',exact:true}).click();
-  assert(await page.evaluate(()=>Object.entries(state.form).every(([k,v])=>typeof v!=='string'||k==='zona'||v==='')));
+  assert(await page.evaluate(()=>Object.entries(state.form).every(([k,v])=>typeof v!=='string'||k==='zona'||k==='salamBuka'||k==='salamTutup'||v==='')));
   assert(await page.evaluate(()=>state.guestsRaw===''&&state.amplop.noRek===''&&state.slug===''&&state.gallery.length===0));
   await page.getByRole('button',{name:'Selesaikan Undangan',exact:true}).click();
   assert.equal(await page.evaluate(()=>window.publishCalls),0,'Blank form cannot publish');
