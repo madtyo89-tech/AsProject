@@ -555,6 +555,9 @@ function targetTime(draft,form){const ds=(form&&form.tanggalAcara)||draft.event_
 const Q=new URLSearchParams(location.search);
 const GUEST=(Q.get('to')||'').trim();
 const DEMO=Q.get('demo')==='1';
+/* demo auto-buka (dipakai hero dinamis index): tampilkan isi undangan langsung,
+   tanpa memutar musik — tombol Buka Undangan tidak dipicu */
+if(DEMO&&Q.get('buka')==='1')document.body.classList.add('opened');
 let SLUG=(Q.get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
 if(!SLUG){const h=location.hostname.toLowerCase();
  if(h.slice(-16)==='.asproject.my.id'&&h.length>16)SLUG=h.split('.')[0]}

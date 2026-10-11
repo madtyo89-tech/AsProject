@@ -1468,5 +1468,166 @@ var DEMO_BY_NAME = {'Adat Jawa Elegan': 'katalog-demo/undangan-demo.html', 'Mini
 })();
 </script>
 
+<style id="asp-hero-hidup">
+  /* ===== Hero dinamis: mockup jadi demo hidup + badge berputar ===== */
+  .asp-hero-live{position:relative;width:100%;height:100%;border-radius:14px;overflow:hidden;background:#fff}
+  .asp-hero-live iframe{width:100%;height:100%;border:0;display:block;pointer-events:none}
+  .asp-hero-float{animation:aspHeroFloat 7.5s ease-in-out infinite}
+  .asp-hero-float.asp-hf-dua{animation-duration:9s;animation-delay:-2.5s}
+  @keyframes aspHeroFloat{0%,100%{translate:0 0}50%{translate:0 -13px}}
+  .asp-badge-hidup{animation:aspBadgeBob 4.6s ease-in-out infinite}
+  @keyframes aspBadgeBob{0%,100%{translate:0 0}50%{translate:0 -6px}}
+  .asp-badge-txt{display:inline-block;transition:opacity .45s ease}
+  .asp-badge-txt.ganti{opacity:0}
+  @media (prefers-reduced-motion:reduce){
+    .asp-hero-float,.asp-badge-hidup{animation:none}
+    .asp-badge-txt{transition:none}
+  }
+</style>
+<script>
+/* ===== AsProject · Hero hidup (vanilla, di luar React bundle) =====
+   Mockup statis hero diganti demo asli yang bergerak — kiri: sampul tema
+   dengan ayunan parallax pelan; kanan: isi undangan mengalir naik-turun;
+   badge "jadi 1 hari" berdenyut dan pesannya berganti. Semua mati saat
+   prefers-reduced-motion, dan iframe tidak mengganggu gulir halaman. */
+(function () {
+  'use strict';
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SE = [
+    { tema: 'Minimalist Sage', buka: false, langkah: 1, ms: 70,
+      maks: function (w) { return (w.innerHeight || 600) * 1.15; } },
+    { tema: 'Midnight Gold', buka: true, langkah: 2, ms: 50,
+      maks: function (w) { try { return w.document.documentElement.scrollHeight - (w.innerHeight || 600); } catch (e) { return 0; } } }
+  ];
+  var frs = [];
+
+  function pasangHero() {
+    var hero = document.querySelector('section.relative.overflow-hidden');
+    if (!hero) return false;
+    var frames = [].slice.call(hero.querySelectorAll('[class*="rotate-"]')).filter(function (el) {
+      return /aspect-/.test(el.className || '');
+    });
+    if (frames.length < 2) return false;
+    frames.slice(0, 2).forEach(function (f, i) {
+      if (f.getAttribute('data-asp-hero')) return;
+      f.setAttribute('data-asp-hero', '1');
+      if (!RM) f.className += ' asp-hero-float' + (i ? ' asp-hf-dua' : '');
+      var cfg = SE[i];
+      var wrap = document.createElement('div');
+      wrap.className = 'asp-hero-live';
+      wrap.setAttribute('aria-hidden', 'true');
+      var fr = document.createElement('iframe');
+      fr.title = 'Demo langsung tema ' + cfg.tema;
+      fr.tabIndex = -1;
+      fr.loading = 'eager';
+      fr.setAttribute('data-src', 'undangan.html?demo=1&tema=' + encodeURIComponent(cfg.tema) + (cfg.buka ? '&buka=1' : ''));
+      wrap.appendChild(fr);
+      f.replaceChildren(wrap);
+      frs[i] = fr;
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (e) {
+          if (e[0] && e[0].isIntersecting) {
+            if (!fr.src) fr.src = fr.getAttribute('data-src');
+            io.disconnect();
+          }
+        }, { rootMargin: '400px 0px' });
+        io.observe(wrap);
+      } else {
+        fr.src = fr.getAttribute('data-src');
+      }
+    });
+    return true;
+  }
+
+  function pasangBadge() {
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    var n;
+    while ((n = w.nextNode())) {
+      if ((n.nodeValue || '').indexOf('Jadi dalam 1 hari') < 0) continue;
+      if (n.parentNode && n.parentNode.classList && n.parentNode.classList.contains('asp-badge-txt')) return true;
+      var span = document.createElement('span');
+      span.className = 'asp-badge-txt';
+      span.textContent = (n.nodeValue || '').trim();
+      n.parentNode.replaceChild(span, n);
+      if (!RM && span.parentNode) span.parentNode.classList.add('asp-badge-hidup');
+      if (!RM) {
+        var pesan = [
+          'Jadi dalam 1 hari, revisi sepuasnya ya, Kak!',
+          'Gratis konsultasi dulu — chat aja, Kak!',
+          'Udah 500+ klien bahagia, tinggal giliran kamu ✨'
+        ];
+        var k = 0;
+        setInterval(function () {
+          if (document.hidden) return;
+          span.classList.add('ganti');
+          setTimeout(function () {
+            k = (k + 1) % pesan.length;
+            span.textContent = pesan[k];
+            span.classList.remove('ganti');
+          }, 450);
+        }, 4200);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  /* gulir demo pelan naik-turun (ayun parallax di kartu kiri,
+     aliran isi undangan di kartu kanan) */
+  if (!RM) {
+    var arah = [1, 1];
+    setInterval(function () {
+      if (document.hidden) return;
+      frs.forEach(function (fr, i) {
+        if (!fr || !fr.contentWindow) return;
+        try {
+          var w = fr.contentWindow;
+          var maks = SE[i].maks(w);
+          if (!(maks > 4)) return;
+          var y = w.scrollY + arah[i] * SE[i].langkah;
+          if (y >= maks) { y = maks; arah[i] = -1; }
+          if (y <= 0) { y = 0; arah[i] = 1; }
+          w.scrollTo(0, y);
+        } catch (e) { /* lintas asal / belum siap — abaikan */ }
+      });
+    }, 50);
+  }
+
+  function boot() {
+    pasangHero();
+    pasangBadge();
+    var tries = 0, selesai = false;
+    var cek = function () {
+      if (selesai) return;
+      pasangHero();
+      pasangBadge();
+      var adaFr = document.querySelectorAll('[data-asp-hero]').length >= 2;
+      var adaB = !!document.querySelector('.asp-badge-txt');
+      if (adaFr && adaB) { selesai = true; return; }
+      if (++tries > 60) return;
+      setTimeout(cek, 120);
+    };
+    cek();
+    if ('MutationObserver' in window) {
+      var t = null, mo = new MutationObserver(function () {
+        if (t) return;
+        t = setTimeout(function () {
+          t = null;
+          pasangHero();
+          pasangBadge();
+          if (document.querySelectorAll('[data-asp-hero]').length >= 2 && document.querySelector('.asp-badge-txt')) {
+            selesai = true;
+            mo.disconnect();
+          }
+        }, 350);
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+
 </body>
 </html>
