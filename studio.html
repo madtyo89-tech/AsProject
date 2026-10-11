@@ -437,6 +437,7 @@ const DEF={
   tanggalAcara:'',jamAcara:'',zona:'WIB',venue:'',
   alamat:'',mapsLink:'',
   showMapsBtn:true,sesiKedua:false,jamAkad:'',jamResepsi:'',showBismillah:true,
+  salamBuka:'',salamTutup:'',liveAkad:'',liveResepsi:'',
   ucapanCustom:''},
  musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverPos:{x:50,y:50,z:1},gallery:[],videoLink:'',
  doa:'pernikahan',
@@ -447,7 +448,7 @@ const DEF={
  /* 10 slide konten baru — tiap slide: on + isi */
  slides:{
   timeline:{on:false,items:''},
-  story:{on:false,text:''},
+  story:{on:false,text:'',items:[]},
   quote:{on:false,custom:false,text:'',author:''},
   menu:{on:false,items:''},
   party:{on:false,items:''},
@@ -544,7 +545,7 @@ function animTrigger(){const cur=state.tpl+'|'+state.event+'|'+Object.keys(state
 /* ===== Slide konten & animasi ===== */
 const SLIDES=[
  {id:'timeline',ic:'⏱️',nm:'Timeline Acara',ds:'Urutan sesi acara (jam — judul)',type:'list',ph:'08:00 — Akad Nikah\n11:00 — Resepsi'},
- {id:'story',ic:'💞',nm:'Cerita Kami',ds:'Kisah singkat di balik acara ini',type:'area',ph:'Kami bertemu di ...'},
+ {id:'story',ic:'💞',nm:'Cerita Kami',ds:'Kisah perjalanan — tanggal, judul, cerita, dan foto',type:'story',ph:'Kami bertemu di ...'},
  {id:'quote',ic:'❝',nm:'Quote / Ayat',ds:'Kutipan atau ayat — bawaan per acara bila dikosongkan',type:'quote'},
  {id:'menu',ic:'🍽️',nm:'Menu Acara',ds:'Daftar menu (nama — deskripsi)',type:'list',ph:'Sup Iga — Bawang Bakar\nAyam Panggang — Timun'},
  {id:'party',ic:'🎩',nm:'Panitia / Bridal Party',ds:'Nama — peran',type:'list',ph:'Budi — Groomsman\nSari — Bridesmaid'},
@@ -560,6 +561,12 @@ const QUOTES={
  aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
 function setSlide(id,on){if(!state.slides[id])return;state.slides[id].on=on;save();render()}
 function upSlide(id,k,v){if(!state.slides[id])return;state.slides[id][k]=v;save();renderPreview()}
+/* Cerita berfoto: kelola item story (maks 6) */
+function upStory(i,k,v){const s=state.slides.story;if(!s)return;if(!Array.isArray(s.items))s.items=[];if(s.items[i]){s.items[i][k]=v;save();renderPreview()}}
+function storyAdd(){const s=state.slides.story;if(!s)return;if(!Array.isArray(s.items))s.items=[];if(s.items.length>=6){notify('Maksimal 6 cerita.');return}s.items.push({tgl:'',judul:'',teks:'',foto:''});save();render()}
+function storyDel(i){const s=state.slides.story;if(s&&Array.isArray(s.items)){s.items.splice(i,1);save();render()}}
+function upStoryFoto(input,i){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const asal=r.result;const s=state.slides.story;if(!s||!Array.isArray(s.items)||!s.items[i])return;s.items[i].foto=asal;save();render();
+ kecilkanFoto(asal,f.type).then(k=>{const it=state.slides.story.items[i];if(k!==asal&&it&&it.foto===asal){it.foto=k;save();render()}})};r.readAsDataURL(f)}
 function setAnim(k,v){if((k==='effect'||k==='scroll')&&isVipFx(k,v)&&!bolehVip()){notify('👑 Efek VIP hanya untuk tema tier VIP (Rp149.000).');render();return}if((k==='effect'||k==='scroll')&&isEksFx(k,v)&&!bolehEks()){kunciEks();return}state.anim[k]=v;animSig=null;save();render()}
 function rsvpWa(){const n=document.getElementById('rvpN')?document.getElementById('rvpN').value:'Tamu',h=document.getElementById('rvpH')?document.getElementById('rvpH').value:'Hadir',m=document.getElementById('rvpM')?document.getElementById('rvpM').value:'';const t='RSVP — '+titleOf()+' '+displayName()+'\nNama: '+n+'\nKonfirmasi: '+h+(m?'\nPesan: '+m:'')+'\nTautan: '+previewUrl();window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
 /* Tulisan undangan yang dikirim lewat WA — pakai template (bisa diatur di tab Tamu) */
@@ -1004,6 +1011,10 @@ function tabInfo(){const f=state.form,e=state.event;
    <label class="f span2">Nama Venue / Gedung<input value="${esc(f.venue)}" oninput="updF('venue',this.value)"></label>
    <label class="f span2">Alamat Lengkap<textarea rows="2" oninput="updF('alamat',this.value)">${esc(f.alamat)}</textarea></label>
    <label class="f span2">Link Google Maps<input value="${esc(f.mapsLink)}" placeholder="https://maps.app.goo.gl/..." oninput="updF('mapsLink',this.value)"></label>
+  <label class="f span2">Link Live Acara / Akad (opsional)<input value="${esc(f.liveAkad||'')}" placeholder="https://youtube.com/... atau https://instagram.com/..." oninput="updF('liveAkad',this.value)"></label>
+  ${f.sesiKedua?`<label class="f span2">Link Live Resepsi (opsional)<input value="${esc(f.liveResepsi||'')}" placeholder="https://youtube.com/..." oninput="updF('liveResepsi',this.value)"></label>`:''}
+  <label class="f">Salam Pembuka<input value="${esc(f.salamBuka||'')}" placeholder="Assalamu'alaikum wr. wb." oninput="updF('salamBuka',this.value)"></label>
+  <label class="f">Salam Penutup<input value="${esc(f.salamTutup||'')}" placeholder="Wassalamu'alaikum wr. wb." oninput="updF('salamTutup',this.value)"></label>
   </div>
   <label class="togglerow" style="margin-top:16px">Tambah Sesi Kedua (Akad & Resepsi terpisah)<input type="checkbox" ${f.sesiKedua?'checked':''} onchange="setF('sesiKedua',this.checked)"></label>
   ${f.sesiKedua?`<div class="grid2" style="padding:12px;border-radius:12px;background:var(--cream);border:1px solid var(--cream2)">
@@ -1067,6 +1078,23 @@ function slideEditor(s,d){
  if(s.type==='list')return `<div style="margin-top:12px"><label class="f">Isi — 1 baris = 1 item (format: <b>bagian — detail</b>)<textarea rows="3" oninput="upSlide('${s.id}','items',this.value)">${esc(d.items||'')}</textarea></label>
   <div style="font-size:10px;color:var(--mut);margin-top:4px">Contoh: ${esc(s.ph||'')}</div></div>`;
  if(s.type==='area')return `<div style="margin-top:12px"><label class="f">Isi<textarea rows="3" oninput="upSlide('${s.id}','text',this.value)">${esc(d.text||'')}</textarea></label></div>`;
+ if(s.type==='story'){const items=Array.isArray(d.items)?d.items:[];
+  return `<div style="margin-top:12px">
+   ${items.map((x,i)=>`<div style="padding:10px;border-radius:12px;background:var(--cream);border:1px solid var(--cream2);margin-bottom:8px">
+    <div style="display:flex;gap:8px">
+     <label class="f" style="flex:1;min-width:0">Tanggal / Tahun<input value="${esc(x.tgl||'')}" placeholder="Maret 2019" oninput="upStory(${i},'tgl',this.value)"></label>
+     <label class="f" style="flex:1;min-width:0">Judul<input value="${esc(x.judul||'')}" placeholder="Pertama Kenal" oninput="upStory(${i},'judul',this.value)"></label>
+    </div>
+    <label class="f" style="margin-top:8px">Cerita<textarea rows="2" oninput="upStory(${i},'teks',this.value)">${esc(x.teks||'')}</textarea></label>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+     ${x.foto?`<img src="${esc(x.foto)}" alt="" style="width:56px;height:42px;object-fit:cover;border-radius:8px;border:1px solid var(--line);flex:none">`:''}
+     <label class="upload-dash" style="position:relative;flex:1;min-height:38px;display:flex;align-items:center;justify-content:center;font-size:10px">📷 ${x.foto?'Ganti Foto Cerita':'Upload Foto Cerita'}<input type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="upStoryFoto(this,${i})"></label>
+     <button class="modebtn" type="button" onclick="storyDel(${i})" style="flex:none;padding:6px 10px" aria-label="Hapus cerita">✕</button>
+    </div></div>`).join('')}
+   <button class="modebtn" type="button" onclick="storyAdd()" style="width:100%;justify-content:center">+ Tambah Cerita</button>
+   ${!items.length?`<div style="margin-top:8px"><label class="f">Teks Cerita (format lama)<textarea rows="3" oninput="upSlide('${s.id}','text',this.value)">${esc(d.text||'')}</textarea></label></div>`:''}
+   <div style="font-size:10px;color:var(--mut);margin-top:6px">Maksimal 6 cerita. Foto bersifat opsional dan otomatis dikompres.</div>
+  </div>`}
  if(s.type==='quote')return `<div style="margin-top:12px">
   <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:10px"><input type="checkbox" ${d.custom?'checked':''} onchange="upSlide('quote','custom',this.checked)"> Tulis quote sendiri</label>
   ${d.custom?`<label class="f" style="margin-bottom:8px">Teks Quote<textarea rows="2" oninput="upSlide('quote','text',this.value)">${esc(d.text||'')}</textarea></label>
@@ -1467,9 +1495,20 @@ function slideBlocks(){
     </div>
     <div style="${i<it.length-1?'padding-bottom:14px':''}"><div style="font-size:12px;font-weight:700;color:#111">${esc(s.a||'Sesi')} ${s.b?`<span style="font-weight:400;color:#737373">• ${esc(s.b)}</span>`:''}</div></div>
    </div>`}).join('')+'</div>'))}
- if(SL.story.on&&SL.story.text.trim())out.push(`<div style="margin-top:24px;text-align:center;padding:20px 18px;border-radius:20px;background:linear-gradient(170deg,rgba(255,255,255,.92),rgba(255,255,255,.72));border:1px solid #ddd">
+ if(SL.story.on){const sit=(Array.isArray(SL.story.items)?SL.story.items:[]).filter(x=>x&&(x.judul||x.teks||x.foto));
+  if(sit.length)out.push(`<div style="margin-top:24px;text-align:left;padding:20px 18px;border-radius:20px;background:linear-gradient(170deg,rgba(255,255,255,.92),rgba(255,255,255,.72));border:1px solid #ddd">
+   <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;text-align:center;font-family:${fontAttr(state.fontBody)}">💞 Cerita Kami</div>
+   ${sit.map(x=>`<div style="margin-top:14px;display:flex;gap:12px;align-items:flex-start">
+    <div style="width:9px;height:9px;border-radius:99px;background:${esc(state.accent||'#C9A25B')};margin-top:5px;flex:none"></div>
+    <div style="flex:1;min-width:0">
+     ${x.tgl?`<div style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:${esc(state.accent||'#C9A25B')}">${esc(x.tgl)}</div>`:''}
+     ${x.judul?`<div style="margin-top:2px;font-size:13px;font-weight:700;color:#333">${esc(x.judul)}</div>`:''}
+     ${x.teks?`<div style="margin-top:4px;font-size:11.5px;line-height:1.7;color:#555">${esc(x.teks)}</div>`:''}
+     ${x.foto?`<img src="${esc(x.foto)}" alt="" style="margin-top:8px;width:100%;height:110px;object-fit:cover;border-radius:12px;border:1px solid rgba(0,0,0,.08)">`:''}
+    </div></div>`).join('')}</div>`);
+  else if(SL.story.text.trim())out.push(`<div style="margin-top:24px;text-align:center;padding:20px 18px;border-radius:20px;background:linear-gradient(170deg,rgba(255,255,255,.92),rgba(255,255,255,.72));border:1px solid #ddd">
   <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;font-family:${fontAttr(state.fontBody)}">💞 Cerita Kami</div>
-  <p style="margin-top:10px;font-size:12.5px;font-style:italic;line-height:1.8;color:#444;font-family:Georgia,serif">${esc(SL.story.text)}</p></div>`);
+  <p style="margin-top:10px;font-size:12.5px;font-style:italic;line-height:1.8;color:#444;font-family:Georgia,serif">${esc(SL.story.text)}</p></div>`)}
  {const q=SL.quote.custom?{text:SL.quote.text,author:SL.quote.author}:(QUOTES[state.event]||QUOTES.pernikahan);
   if(SL.quote.on&&q.text)out.push(`<div style="margin-top:24px;text-align:center;padding:22px 18px;border-radius:20px;background:rgba(255,255,255,.9);border:1px solid #ddd">
   <div style="font-size:30px;line-height:.8;color:${state.accent};opacity:.5">❝</div>
