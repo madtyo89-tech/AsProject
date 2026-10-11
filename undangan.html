@@ -100,6 +100,19 @@ body.foto-full #cover::after{content:'';position:absolute;inset:0;pointer-events
 body.foto-full #cover .bdfr{position:relative;z-index:2;margin:0 auto 14px;padding:18px 14px;border-radius:22px;background:rgba(10,8,6,.84);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 body.foto-full #cover .date{background:rgba(18,14,10,.5);border-color:rgba(255,255,255,.3)}
 body.foto-full #cover .brand{opacity:.8}
+/* Blur halus di keempat sudut foto penuh — sudut tampak lembut/dreamy,
+   bagian tengah tetap tajam. Mask radial memudarkan blur ke arah tengah. */
+body.foto-full #cover .cvlatar .cvbl{position:absolute;width:62%;height:52%;pointer-events:none;
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+body.foto-full #cover .cvlatar .cvbl.tl{top:0;left:0;
+  -webkit-mask-image:radial-gradient(115% 115% at 0% 0%,#000 34%,transparent 72%);mask-image:radial-gradient(115% 115% at 0% 0%,#000 34%,transparent 72%)}
+body.foto-full #cover .cvlatar .cvbl.tr{top:0;right:0;
+  -webkit-mask-image:radial-gradient(115% 115% at 100% 0%,#000 34%,transparent 72%);mask-image:radial-gradient(115% 115% at 100% 0%,#000 34%,transparent 72%)}
+body.foto-full #cover .cvlatar .cvbl.bl{bottom:0;left:0;
+  -webkit-mask-image:radial-gradient(115% 115% at 0% 100%,#000 34%,transparent 72%);mask-image:radial-gradient(115% 115% at 0% 100%,#000 34%,transparent 72%)}
+body.foto-full #cover .cvlatar .cvbl.br{bottom:0;right:0;
+  -webkit-mask-image:radial-gradient(115% 115% at 100% 100%,#000 34%,transparent 72%);mask-image:radial-gradient(115% 115% at 100% 100%,#000 34%,transparent 72%)}
+@media (prefers-reduced-motion:reduce){body.foto-full #cover .cvlatar .cvbl{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}}
 
 /* ---------- SKIN PERNIKAHAN: editorial paper card seperti stationery premium ---------- */
 body.wedding-cover #cover{
@@ -961,11 +974,12 @@ function boot(draft){
 
  /* ---------- HTML ---------- */
  let h='';
- h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div><div class="bdfr ${isWedding?'wedding-invite-card':''}" style="${bdStyle}">${bdCorners}${ORN}<div class="inner">
+ h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div>${cvStyle==='full'
+  ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"><i class="cvbl tl"></i><i class="cvbl tr"></i><i class="cvbl bl"></i><i class="cvbl br"></i></div>`
+  :''}<div class="bdfr ${isWedding?'wedding-invite-card':''}" style="${bdStyle}">${bdCorners}${ORN}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
-   ${cvStyle==='none'?'':(cvStyle==='full'
-     ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`
-     :`<div class="cvf cvf-${cvStyle} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`)}
+   ${cvStyle==='none'||cvStyle==='full'?''
+     :`<div class="cvf cvf-${cvStyle} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`}
    <div class="kicker ${isWedding?'wedding-kicker':''} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(isWedding?"You're Invited":EV_KICKER[ev]||'Undangan')}</div>
    ${tplF.char&&!isWedding?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms;':''}${tplF.char.length>2?'font-size:'+(tplF.char.length>6?32:tplF.char.length>4?38:46)+'px;font-family:var(--ft);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-cover);line-height:1;margin-top:16px;filter:none;text-shadow:0 2px 12px rgba(0,0,0,.14);':''}">${tplF.char}</div>`:''}`;
  if(ev==='pernikahan'){
@@ -1313,7 +1327,7 @@ const DEMO_DRAFT={
  event_date:'2026-12-28',event_time:'08:00',music_url:'music/backsound-asproject.mp3',music_name:'Backsound AsProject — rtyo',theme:2,
  data:{event:'pernikahan',tpl:'ivory-klasik',doa:'pernikahan',accent:'#8A6E4B',fontTitle:'playfair',fontBody:'inter',border:'double',
   gallery:['assets/demo/wedding/01-jawa-elegan.jpg','assets/demo/wedding/02-minimalist-sage.jpg','assets/demo/wedding/03-luxury-gold.jpg'],
-  cover:'assets/demo/wedding/02-minimalist-sage.jpg',coverStyle:'emas',coverPos:{x:50,y:42,z:1},
+  cover:'assets/demo/wedding/02-minimalist-sage.jpg',coverStyle:'full',coverPos:{x:50,y:38,z:1},
   form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
    putraPutri:'Bpk. Hartono & Ibu Sulastri',putriDari:'Bpk. Faisal & Ibu Dewi',
    tanggalAcara:'2026-12-28',jamAcara:'08:00',zona:'WIB',venue:'The Ballroom at Ritz Carlton',
