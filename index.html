@@ -937,5 +937,310 @@ var DEMO_BY_NAME = {'Adat Jawa Elegan': 'katalog-demo/undangan-demo.html', 'Mini
 })();
 </script>
 
+<style id="asp-showcase">
+  /* ============ Showcase pilihan tema + kemeriahan katalog ============ */
+  .asp-showcase{position:relative;margin:20px 0 2px;overflow:hidden}
+  .asp-show-label{display:flex;align-items:center;justify-content:center;gap:12px;
+    font:600 10px 'Inter',system-ui,sans-serif;letter-spacing:.32em;text-transform:uppercase;
+    color:#8A6D2F;margin-bottom:12px}
+  .asp-show-label::before,.asp-show-label::after{content:"";height:1px;width:52px;flex:none;
+    background:linear-gradient(90deg,transparent,#C9A25B,transparent)}
+  .asp-showcase-mask{
+    mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+  .asp-showcase-track{display:flex;gap:10px;width:max-content;
+    animation:aspMarq 52s linear infinite}
+  .asp-showcase:hover .asp-showcase-track{animation-play-state:paused}
+  @keyframes aspMarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .asp-show-chip{display:flex;align-items:center;gap:9px;padding:7px 14px 7px 7px;border-radius:99px;
+    border:1px solid rgba(201,162,91,.25);background:rgba(27,23,18,.92);cursor:pointer;white-space:nowrap;
+    transition:transform .25s cubic-bezier(.22,.9,.34,1),border-color .25s ease,box-shadow .25s ease}
+  .asp-show-chip:hover{transform:translateY(-3px) scale(1.05);border-color:rgba(201,162,91,.7);
+    box-shadow:0 16px 32px -14px rgba(201,162,91,.55)}
+  .asp-show-chip:active{transform:translateY(-1px) scale(1.01)}
+  .asp-sw{width:30px;height:30px;border-radius:99px;flex:none;
+    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5),0 4px 10px rgba(0,0,0,.35)}
+  .asp-ct{display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+  .asp-ct b{font:600 11.5px 'Cinzel',Georgia,serif;color:#F0E2C2;letter-spacing:.03em}
+  .asp-ct i{font:italic 400 10px 'Cormorant Garamond',Georgia,serif;color:#B9A98C}
+
+  /* Kartu disorot dari showcase */
+  #katalog .catalog-card.asp-glow{border-color:rgba(212,175,55,.85)!important;
+    box-shadow:0 0 0 2px rgba(212,175,55,.45),0 30px 60px -28px rgba(201,162,91,.45)!important}
+
+  /* Kertas preview melayang halus — pakai properti 'translate' supaya
+     tidak bentrok dengan transform:hover (scale) dari CSS kartu. */
+  #katalog .catalog-paper{animation:aspPaperFloat 6.5s ease-in-out infinite;
+    animation-delay:calc(var(--asp-i,0) * -0.9s)}
+  @keyframes aspPaperFloat{0%,100%{translate:0 0}50%{translate:0 -7px}}
+
+  /* Pita kilau emas pada badge kategori */
+  #katalog .catalog-art .bg-white\/80{overflow:hidden}
+  #katalog .catalog-art .bg-white\/80::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(115deg,transparent 40%,rgba(255,235,190,.35) 50%,transparent 60%);
+    transform:translateX(-80%);animation:aspChipShine 5.2s ease-in-out infinite;
+    animation-delay:calc(var(--asp-i,0) * -0.7s)}
+  @keyframes aspChipShine{0%,62%{transform:translateX(-80%)}82%,100%{transform:translateX(80%)}}
+
+  /* Bohlam cahaya melayang di hero */
+  .asp-orb{position:absolute;border-radius:99px;pointer-events:none;filter:blur(42px);
+    animation:aspOrb 12s ease-in-out infinite alternate}
+  @keyframes aspOrb{from{transform:translate(0,0) scale(1)}to{transform:translate(30px,-24px) scale(1.14)}}
+
+  /* Kartu bernapas (bayangan hidup) */
+  #katalog .catalog-card{animation:aspCardBreathe 7s ease-in-out infinite;
+    animation-delay:calc(var(--asp-i,0) * -1.1s)}
+  @keyframes aspCardBreathe{0%,100%{box-shadow:0 18px 44px -26px rgba(0,0,0,.75)}
+    50%{box-shadow:0 22px 52px -24px rgba(201,162,91,.28),0 18px 44px -26px rgba(0,0,0,.75)}}
+
+  @media (prefers-reduced-motion:reduce){
+    .asp-showcase-track{animation:none}
+    .asp-showcase-mask{overflow-x:auto}
+    #katalog .catalog-paper{animation:none}
+    #katalog .catalog-art .bg-white\/80::after{animation:none}
+    .asp-orb{animation:none}
+    #katalog .catalog-card{animation:none}
+    .asp-show-chip:hover{transform:none}
+  }
+</style>
+<script>
+/* ===== AsProject · Katalog showcase & kemeriahan (vanilla, di luar React bundle) =====
+   Deretan pilihan tema yang berjalan, kartu yang lebih hidup, angka berjalan,
+   bohlam cahaya hero, dan ledakan kilau saat memilih kategori. */
+(function () {
+  'use strict';
+
+  function node(tag, cls, html) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html != null) n.innerHTML = html;
+    return n;
+  }
+  function textOf(n) { return n && n.textContent ? n.textContent.trim() : ''; }
+  function reduced() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  /* ---------- Deretan pilihan tema ---------- */
+  function gradOf(card) {
+    var art = card.querySelector('.catalog-art');
+    if (!art) return 'linear-gradient(135deg,#C9A25B,#8C6D1F)';
+    var cls = art.className;
+    var f = (cls.match(/from-\[#([0-9A-Fa-f]{6})\]/) || [])[1];
+    var v = (cls.match(/via-\[#([0-9A-Fa-f]{6})\]/) || [])[1];
+    var t = (cls.match(/to-\[#([0-9A-Fa-f]{6})\]/) || [])[1];
+    if (!f || !t) return 'linear-gradient(135deg,#C9A25B,#8C6D1F)';
+    return 'linear-gradient(135deg,#' + f + (v ? ',#' + v : '') + ',#' + t + ')';
+  }
+
+  function findCard(name) {
+    var cards = document.querySelectorAll('.catalog-card');
+    for (var i = 0; i < cards.length; i++) {
+      if (textOf(cards[i].querySelector('h3')) === name) return cards[i];
+    }
+    return null;
+  }
+
+  function openTheme(name) {
+    var card = findCard(name);
+    if (!card) {
+      /* tema sedang tersembunyi oleh filter — tampilkan semua dulu, lalu ulangi */
+      var sec = document.getElementById('katalog');
+      var all = sec && sec.querySelector('.catalog-filters button');
+      if (all && all.getAttribute('aria-pressed') !== 'true') {
+        all.click();
+        setTimeout(function () { openTheme(name); }, 420);
+      }
+      return;
+    }
+    var btn = card.querySelector('.catalog-art button') || card.querySelector('button') || card;
+    btn.click();
+    if (card.scrollIntoView) card.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' });
+  }
+
+  function buildShowcase() {
+    var grid = document.querySelector('.catalog-grid');
+    if (!grid) return;
+    var sec = document.getElementById('katalog') || grid.closest('section');
+    if (!sec) return;
+    var filters = sec.querySelector('.catalog-filters');
+    if (!filters || sec.querySelector('.asp-showcase')) return;
+    var cards = grid.querySelectorAll('.catalog-card');
+    if (!cards.length) return;
+
+    var wrap = node('div', 'asp-showcase');
+    wrap.setAttribute('aria-label', 'Pilihan tema undangan');
+    wrap.appendChild(node('div', 'asp-show-label', 'Pilihan Tema &bull; Klik untuk melihat'));
+    var mask = node('div', 'asp-showcase-mask');
+    var track = node('div', 'asp-showcase-track');
+
+    var buat = function () {
+      cards.forEach(function (card) {
+        var name = textOf(card.querySelector('h3'));
+        var art = card.querySelector('.catalog-art');
+        if (!name || !art) return;
+        var cat = textOf(art.querySelector('span'));
+        var chip = node('button', 'asp-show-chip');
+        chip.type = 'button';
+        chip.title = 'Lihat tema ' + name;
+        chip.innerHTML = '<span class="asp-sw" style="background-image:' + gradOf(card) + '"></span>' +
+          '<span class="asp-ct"><b>' + name + '</b><i>' + (cat || 'Tema') + '</i></span>';
+        chip.addEventListener('click', function () { openTheme(name); });
+        chip.addEventListener('mouseenter', function () {
+          var c = findCard(name); if (c) c.classList.add('asp-glow');
+        });
+        chip.addEventListener('mouseleave', function () {
+          var c = findCard(name); if (c) c.classList.remove('asp-glow');
+        });
+        track.appendChild(chip);
+      });
+    };
+    buat();
+    if (!reduced()) buat();          /* salin kedua untuk loop mulus */
+    mask.appendChild(track);
+    wrap.appendChild(mask);
+    filters.parentNode.insertBefore(wrap, filters);
+  }
+
+  /* ---------- Angka berjalan ---------- */
+  var counted = new WeakSet();
+  function animNum(el) {
+    if (counted.has(el) || reduced()) return;
+    var m = (el.textContent || '').match(/(\d[\d.]*)/);
+    if (!m) return;
+    counted.add(el);
+    var target = parseInt(m[1], 10);
+    if (!isFinite(target) || target <= 0) return;
+    var teks = el.textContent;
+    var t0 = performance.now(), dur = 900;
+    (function step(t) {
+      var p = Math.min(1, (t - t0) / dur);
+      var e = 1 - Math.pow(1 - p, 3);
+      var kini = Math.round(target * e);
+      el.textContent = teks.replace(/\d[\d.]*/, String(kini));
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = teks;
+    })(t0);
+  }
+  function animCounts() {
+    document.querySelectorAll('.catalog-count span.font-semibold').forEach(animNum);
+    document.querySelectorAll('.catalog-filters button span').forEach(animNum);
+  }
+
+  /* ---------- Ledakan kilau saat memilih kategori ---------- */
+  function layerKilau() {
+    var sec = document.getElementById('katalog');
+    if (!sec) return null;
+    var l = sec.querySelector('.asp-kilau-layer');
+    if (l) return l;
+    l = node('div', 'asp-kilau-layer');
+    l.setAttribute('aria-hidden', 'true');
+    if (getComputedStyle(sec).position === 'static') sec.style.position = 'relative';
+    sec.appendChild(l);
+    return l;
+  }
+  function burst(x, y) {
+    if (reduced() || !layerKilau()) return;
+    var layer = layerKilau();
+    var r = layer.getBoundingClientRect();
+    for (var n = 0; n < 7; n++) {
+      var el = node('span', 'asp-kilau asp-bintang');
+      el.style.setProperty('--u', (6 + Math.random() * 9).toFixed(0) + 'px');
+      layer.appendChild(el);
+      var dx = (Math.random() - 0.5) * 120, dy = -30 - Math.random() * 90;
+      var a = el.animate(
+        [{ transform: 'translate(' + (x - r.left) + 'px,' + (y - r.top) + 'px) scale(.35)', opacity: 1 },
+         { transform: 'translate(' + (x - r.left + dx) + 'px,' + (y - r.top + dy) + 'px) scale(1.05)', opacity: 0 }],
+        { duration: 750 + Math.random() * 450, easing: 'cubic-bezier(.22,.9,.34,1)', fill: 'forwards' });
+      a.onfinish = function () { this.effect.target.remove(); };
+    }
+  }
+  function pasangFilter() {
+    var sec = document.getElementById('katalog');
+    if (!sec || sec.getAttribute('data-asp-filt')) return;
+    var filters = sec.querySelector('.catalog-filters');
+    if (!filters) return;
+    sec.setAttribute('data-asp-filt', '1');
+    filters.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button') : null;
+      if (b) burst(e.clientX, e.clientY);
+    }, true);
+  }
+
+  /* ---------- Kartu miring 3D saat hover (perangkat berkursor) ---------- */
+  var tiltRaf = 0;
+  function pasangTilt() {
+    var grid = document.querySelector('.catalog-grid');
+    if (!grid || grid.getAttribute('data-asp-tilt')) return;
+    if (reduced() || !(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches)) return;
+    grid.setAttribute('data-asp-tilt', '1');
+    grid.addEventListener('pointermove', function (e) {
+      if (tiltRaf) return;
+      tiltRaf = requestAnimationFrame(function () {
+        tiltRaf = 0;
+        var card = e.target.closest ? e.target.closest('.catalog-card') : null;
+        grid.querySelectorAll('.catalog-card.asp-tilt').forEach(function (c) {
+          if (c !== card) { c.classList.remove('asp-tilt'); c.style.transform = ''; }
+        });
+        if (!card) return;
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width - 0.5;
+        var py = (e.clientY - r.top) / r.height - 0.5;
+        card.classList.add('asp-tilt');
+        card.style.transform = 'perspective(950px) rotateX(' + (-py * 5.5).toFixed(2) +
+          'deg) rotateY(' + (px * 7).toFixed(2) + 'deg) translateY(-7px)';
+      });
+    }, { passive: true });
+    grid.addEventListener('pointerleave', function () {
+      grid.querySelectorAll('.catalog-card.asp-tilt').forEach(function (c) {
+        c.classList.remove('asp-tilt'); c.style.transform = '';
+      });
+    });
+  }
+
+  /* ---------- Bohlam cahaya hero ---------- */
+  function pasangOrb() {
+    if (reduced()) return;
+    var hero = document.querySelector('section.relative.overflow-hidden');
+    if (!hero || hero.getAttribute('data-asp-orb')) return;
+    hero.setAttribute('data-asp-orb', '1');
+    var peta = [
+      ['420px', 'rgba(201,162,91,.22)', 'right:-90px;top:-70px', '0s'],
+      ['320px', 'rgba(212,175,55,.16)', 'left:-80px;bottom:-90px', '-4s'],
+      ['240px', 'rgba(232,200,106,.12)', 'right:22%;bottom:-60px', '-8s']
+    ];
+    peta.forEach(function (o) {
+      var el = node('div', 'asp-orb');
+      el.setAttribute('aria-hidden', 'true');
+      el.style.cssText = 'width:' + o[0] + ';height:' + o[0] + ';background:' + o[1] + ';' + o[2] + ';animation-delay:' + o[3];
+      hero.appendChild(el);
+    });
+  }
+
+  /* ---------- Susulan & pemantau ---------- */
+  function enhance() { buildShowcase(); animCounts(); pasangFilter(); pasangTilt(); pasangOrb(); }
+  var timer = null;
+  function schedule() {
+    if (timer) return;
+    timer = setTimeout(function () { timer = null; enhance(); }, 140);
+  }
+
+  function boot() {
+    enhance();
+    if ('MutationObserver' in window) {
+      new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
+    }
+    var tries = 0;
+    (function find() {
+      if (document.querySelector('.catalog-grid') || ++tries > 60) { enhance(); return; }
+      setTimeout(find, 100);
+    })();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+
 </body>
 </html>
