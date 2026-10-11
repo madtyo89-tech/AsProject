@@ -53,7 +53,7 @@ button{font-family:inherit;cursor:pointer}
 #cover .orn{font-size:20px;letter-spacing:14px;color:var(--accent-cover);opacity:.85}
 #cover .kicker{margin-top:26px;font-size:11px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--ink);opacity:.85}
 #cover .chara{font-size:52px;line-height:1;margin-top:18px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.15))}
-#cover h1{font-family:var(--ft);font-weight:700;color:var(--ink);font-size:clamp(40px,11vw,58px);line-height:1.04;margin-top:14px}
+#cover h1{font-family:var(--ft);font-weight:700;color:var(--ink);font-size:clamp(33px,8.8vw,48px);line-height:1.04;margin-top:14px}
 #cover .amp{font-family:var(--ft);font-style:italic;font-size:24px;color:var(--accent-cover);margin:6px 0}
 #cover .date{margin-top:22px;display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border:1px solid rgba(255,255,255,.55);border-radius:99px;background:rgba(255,255,255,.35);backdrop-filter:blur(6px);font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--ink)}
 #cover .host{margin-top:14px;font-size:12px;color:var(--ink);opacity:.75;letter-spacing:.06em}
@@ -149,7 +149,7 @@ body.wedding-cover #cover .inner{max-width:360px}
 body.wedding-cover #cover .chara{display:none}
 body.wedding-cover #cover .orn{font-size:13px;letter-spacing:8px;margin-bottom:5px;color:var(--accent);opacity:.85}
 body.wedding-cover #cover .kicker{margin-top:0;font-family:'Sacramento','Dancing Script',var(--ft),cursive;font-size:clamp(25px,7vw,34px);font-weight:400;letter-spacing:.02em;text-transform:none;color:var(--accent);opacity:1}
-body.wedding-cover #cover h1{margin-top:7px;font-size:clamp(32px,9vw,46px);line-height:1.02;letter-spacing:-.025em;color:var(--ink-body,#344238)}
+body.wedding-cover #cover h1{margin-top:7px;font-size:clamp(27px,7.6vw,39px);line-height:1.02;letter-spacing:-.025em;color:var(--ink-body,#344238)}
 body.wedding-cover #cover .amp{font-size:20px;margin:3px 0;color:var(--accent)}
 body.wedding-cover #cover .wedding-subtitle{margin:6px 0 -3px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-body,#344238);opacity:.72}
 body.wedding-cover #cover .cvf{width:min(35vw,122px);margin:8px auto 11px;box-shadow:0 8px 22px rgba(26,38,30,.18)}
@@ -479,6 +479,25 @@ body:not(.opened) #aspAmbient{opacity:.42}
 .orn-c.br{bottom:10px;right:10px;transform:scale(-1,-1)}
 #cover .bdfr,.card.guest{position:relative}
 @media (max-width:420px){.orn-c{width:54px;height:54px}}
+
+/* ==== Tombol "Buka Undangan" bentuk amplop kertas + segel lilin ==== */
+body.wedding-cover #cover .open,body.foto-full #cover .open,#cover .open{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  width:min(300px,84%);height:auto;min-height:120px;padding:58px 18px 17px;border-radius:13px;border:1px solid rgba(168,130,63,.48);
+  background:linear-gradient(172deg,#FFFCF5 0%,#F7EBD2 100%);box-shadow:0 22px 42px rgba(20,12,4,.32),inset 0 1px 0 rgba(255,255,255,.85);
+  color:#5C4222;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+body.wedding-cover #cover .open::before,body.foto-full #cover .open::before,#cover .open::before{content:'';position:absolute;left:0;right:0;top:0;height:56%;border-radius:12px 12px 0 0;
+  background:linear-gradient(180deg,#FDF5E3 0%,#F0E1BC 100%);clip-path:polygon(0 0,100% 0,50% 100%);pointer-events:none}
+body.wedding-cover #cover .open::after,body.foto-full #cover .open::after,#cover .open::after{content:'';position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;
+  background:radial-gradient(circle at 33% 28%,#EFCF88 0%,#C9A25B 55%,#A8823F 100%);border:1px solid rgba(255,255,255,.42);
+  box-shadow:0 7px 16px rgba(20,12,4,.32),inset 0 1px 2px rgba(255,255,255,.5);pointer-events:none}
+body.wedding-cover #cover .open .env,body.foto-full #cover .open .env,#cover .open .env{position:absolute;left:50%;top:56%;transform:translate(-50%,-54%);z-index:2;margin:0;font-size:15px;line-height:1;
+  filter:drop-shadow(0 1px 2px rgba(60,40,10,.45))}
+body.wedding-cover #cover .open:active,body.foto-full #cover .open:active,#cover .open:active{transform:translateY(2px) scale(.98)}
+
+/* ==== Tombol musik mungil ==== */
+#musikBtn{height:32px;padding:0 11px;gap:6px;font-size:10px;max-width:150px}
+#musikBtn .disc{width:14px;height:14px}
+#musikBtn .disc::after{width:4px;height:4px}
 </style>
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
