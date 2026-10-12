@@ -498,6 +498,20 @@ body.wedding-cover #cover .open:active,body.foto-full #cover .open:active,#cover
 #musikBtn{height:32px;padding:0 11px;gap:6px;font-size:10px;max-width:150px}
 #musikBtn .disc{width:14px;height:14px}
 #musikBtn .disc::after{width:4px;height:4px}
+
+/* ==== Animasi buka amplop: flap terangkat, segel jatuh, cover fade perlahan ==== */
+#cover .open::before{transform-origin:50% 0;transition:transform .55s cubic-bezier(.34,0,.2,1)}
+#cover .open::after,#cover .open .env{transition:transform .45s ease .16s,opacity .38s ease .22s}
+body.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .55s ease .62s,visibility 0s linear 1.2s}
+body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:perspective(720px) rotateX(-168deg)}
+body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after{transform:translate(-50%,8%) scale(.5);opacity:0}
+body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,4%) scale(.5);opacity:0}
+@media (prefers-reduced-motion:reduce){
+  #cover .open::before,#cover .open::after,#cover .open .env,body.opened #cover{transition:none!important}
+  body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:none}
+  body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after,
+  body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,-50%);opacity:0}
+}
 </style>
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
