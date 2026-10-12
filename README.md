@@ -113,6 +113,47 @@ berpindah tema. Draft lama yang temanya sudah tidak ada otomatis jatuh ke tema d
 `LEGACY_EV` di `undangan.html` menjaga jenis acara (pernikahan vs satu nama) tetap benar
 untuk draft tanpa snapshot `data`.
 
+## Studio Template (perancang tema baru)
+
+`template-studio.html` adalah meja kerja untuk **membuat tema undangan baru** —
+bukan mengedit satu undangan (itu tugas `studio.html`). Buka halaman ini, duplikat
+salah satu dari 13 tema bawaan (atau mulai dari nol), lalu atur:
+
+- **Identitas** — nama, id (otomatis dari nama, bisa dikunci), kategori acara, karakter cover, deskripsi katalog.
+- **Palet & kontras** — gradasi `g0/g1/g2`, aksen, warna teks cover, palet siap pakai dari tema bawaan,
+  palet acak, dan tombol **Hitung teks aman** yang menjaga ≥ 3:1 di cover **dan** ≥ 4.5:1 di kartu isi.
+- **Tipografi, motif & ornamen, border, animasi, bagian undangan** — semua daftarnya adalah salinan
+  persis mesin `studio.html`, jadi tema terlihat sama di undangan tamu.
+- **Publikasi** — harga (menentukan tier basic/premium/eksklusif/vip), badge katalog, rating, artwork opsional.
+
+Pratinjau HP di kanan memakai **CSS cover yang sama dengan `undangan.html`** (ditandai
+`<style data-cover-undangan>`), lengkap dengan mode **Isi** yang memakai kelas
+`scroll-reveal fx-s-*` milik repo. Panel **Pemeriksaan** menandai id bentrok, kontras
+kurang, konten terkunci tier, dan artwork yang belum ada.
+
+### Memasang tema hasil rancangan
+
+```bash
+node tools/pasang-template.cjs tema-saya.json        # pasang ke 3 berkas
+node tools/pasang-template.cjs tema-saya.json --kering   # uji dulu, tanpa menulis
+node tools/pasang-template.cjs --batalkan            # kembalikan dari cadangan
+```
+
+Skrip menambahkan baris di **akhir** `const TPL` (studio.html), `const TPL` (undangan.html),
+dan `var Pn` (index.html) + rule CSS gradasi katalog + angka "N template siap pakai".
+Berkas asli disalin ke `*.bak-template` sebelum diubah, dan menjalankan dua kali tidak
+menggandakan baris. Urutan array = kolom `theme` di Supabase, jadi tema baru **selalu**
+ditambahkan di akhir supaya undangan yang sudah terbit tidak bergeser. Selain lewat JSON,
+modal **Ekspor & pasang** bisa menampilkan 4 potongan kode untuk disalin manual.
+
+Tema juga boleh membawa **resep** (`rec:{body,border,cover,scroll,mix,slides}`): saat tema
+dipilih di `studio.html`, resep itu mengisi font isi, border, efek animasi, dan bagian yang
+disarankan — dan jadi cadangan saat snapshot undangan belum menyimpan pengaturan itu.
+Tema lama tanpa `rec` berjalan persis seperti sebelumnya.
+
+Uji: `node tools/test-template-studio.cjs` (paritas mesin, 13 tema, ekspor, dan pemasangan
+ke salinan repo di folder sementara) serta `python3 tools/cek-kesehatan.py` bagian `[23]`.
+
 ## Pembaruan template pernikahan
 
 Cover pernikahan memakai susunan editorial: judul undangan, nama pasangan, tanggal, jam,

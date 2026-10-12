@@ -602,6 +602,9 @@ function boot(draft){
  const d=(draft.data&&typeof draft.data==='object')?draft.data:null;
  const tpl=(d&&d.tpl)?(TPL.find(t=>t.id===d.tpl)||null):null;
  const tplF=tpl||TPL[Math.max(0,Math.min(TPL.length-1,(Number.isFinite(+draft.theme)?+draft.theme:0))) ]||TPL[0];
+ /* Resep bawaan tema (opsional, ditulis Studio Template): dipakai HANYA saat
+    snapshot belum menyimpan pengaturan itu, supaya draf lama tidak berubah. */
+ const REC=(tplF&&tplF.rec)||{};
  let ev=(d&&d.event)||tplF.ev;
  if(!d&&tplF.ev==='all'){const li=Number.isFinite(+draft.theme)?+draft.theme:-1;if(LEGACY_EV[li]&&LEGACY_KEY[LEGACY_EV[li]]!=='all')ev=LEGACY_KEY[LEGACY_EV[li]]}
  const form=(d&&d.form)||{};
@@ -676,7 +679,7 @@ function boot(draft){
   }
  }
  rs.setProperty('--ft',fontFam((d&&d.fontTitle)||tplF.ft));
- rs.setProperty('--fb',fontFam((d&&d.fontBody)||'inter'));
+ rs.setProperty('--fb',fontFam((d&&d.fontBody)||REC.body||'inter'));
 
  const fullNm=titleMain+(titleSub?' & '+titleSub:'');
  document.title=fullNm+' — Undangan';
@@ -691,7 +694,7 @@ function boot(draft){
  const play=setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
 
  /* ---------- animasi (diatur dari Studio: cover / teks / scroll reveal + pilihan efek) ---------- */
- const AN=(d&&d.anim)||{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'};
+ const AN=(d&&d.anim)||{cover:true,text:true,reveal:true,effect:REC.cover||'zoom',scroll:REC.scroll||'fade-up',scrollMix:REC.mix!==false};
  const RM=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
  const covOn=!!AN.cover&&!RM,txOn=!!AN.text&&!RM,rvOn=!!AN.reveal&&!RM;
  const CE=fxCoverId(AN),SC=fxScrollId(AN);
@@ -704,7 +707,7 @@ function boot(draft){
   const effect=fxScrollForSection(SC,scrollSectionIndex++,AN.scrollMix!==false);
   return cls+' scroll-reveal fx-s-'+effect+' sr-axis-'+fxScrollAxis(effect)
  };
- const BD=BORDERS.find(b=>b.id===(d&&d.border))||null;let bdStyle='';
+ const BD=BORDERS.find(b=>b.id===(d&&d.border))||BORDERS.find(b=>b.id===REC.border)||null;let bdStyle='';
  if(BD){const A=tplF.accent;if(BD.s)bdStyle=BD.s(A);if(BD.extra)bdStyle+=(bdStyle?';':'')+BD.extra(A)}
  const bdCorners=(()=>{if(!BD||!BD.corner)return'';const w=BD.corner,A=tplF.accent;
   const c=p=>`<i class="bdc" style="border:0 solid ${A};${p}"></i>`;

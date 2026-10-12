@@ -27,7 +27,8 @@ import posixpath
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HALAMAN = ["index.html", "studio.html", "undangan.html", "404.html",
-           "checkin.html", "demo/ice-blue.html", "master.html", "scan.html"]
+           "checkin.html", "demo/ice-blue.html", "master.html", "scan.html",
+           "template-studio.html"]
 TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 
 hitung = {"ok": 0, "masalah": 0, "info": 0}
@@ -801,6 +802,107 @@ def cek_simulasi():
           "uji simulasi pemakaian: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
 
 
+# ------------------------------------- 23. Studio Template (perancang tema baru)
+def _blok_array(teks, pembuka):
+    """Isi array/objek sumber mulai dari '[' pertama setelah `pembuka`."""
+    i = teks.find(pembuka)
+    if i < 0:
+        return ""
+    b = teks.find("[", i)
+    d, k = 0, b
+    while k < len(teks) and b >= 0:
+        c = teks[k]
+        if c in "'\"`":
+            k += 1
+            while k < len(teks):
+                if teks[k] == "\\":
+                    k += 2
+                    continue
+                if teks[k] == c:
+                    break
+                k += 1
+        elif c in "[{":
+            d += 1
+        elif c in "]}":
+            d -= 1
+            if d == 0:
+                break
+        k += 1
+    return teks[b + 1:k]
+
+
+def _id_objek(b):
+    return re.findall(r"\{\s*id\s*:\s*'([^']+)'", b)
+
+
+def _id_fx(b):
+    return re.findall(r"\[\s*'([^']+)'", b)
+
+
+def cek_studio_template():
+    print("\n[23] Studio Template (perancang tema undangan)")
+    rel = "template-studio.html"
+    if not os.path.isfile(os.path.join(ROOT, rel)):
+        lapor("info", "template-studio.html belum ada — Studio Template opsional")
+        return
+    hal, stu, und = baca(rel), baca("studio.html"), baca("undangan.html")
+    # 1) mesin tema harus sama persis (kalau tidak, tema rancangan ≠ tampilan undangan)
+    for nama, pola, label, jumlah in (("FONTS", _id_objek, "font", 17),
+                                      ("BORDERS", _id_objek, "border", 32),
+                                      ("SLIDES", _id_objek, "bagian undangan", 10),
+                                      ("FX_COVER", _id_fx, "efek pembuka", 14),
+                                      ("FX_SCROLL", _id_fx, "efek gulir", 34)):
+        a = pola(_blok_array(hal, "const %s=" % nama))
+        b = pola(_blok_array(stu, "const %s=" % nama))
+        sama = bool(a) and a == b and len(a) == jumlah
+        lapor("ok" if sama else "masalah",
+              "%s: %d %s sama & berurutan dengan studio.html" % (rel, len(a), label))
+    # 2) 13 tema bawaan harus urutan yang sama dengan mesin undangan & katalog
+    bawaan = _id_objek(_blok_array(hal, "const TPL_BAWAAN="))
+    mesin = _id_objek(_blok_array(stu, "const TPL="))
+    tamu = _id_objek(_blok_array(und, "const TPL="))
+    katalog = re.findall(r'\{id:"([^"]+)"', _blok_array(baca("index.html"), "var Pn=["))
+    lapor("ok" if bawaan and bawaan == mesin[:len(bawaan)] else "masalah",
+          "%s: %d tema bawaan sejalan dengan studio.html" % (rel, len(bawaan)))
+    lapor("ok" if bawaan == tamu[:len(bawaan)] else "masalah",
+          "%s: tema bawaan sejalan dengan undangan.html" % rel)
+    lapor("ok" if bawaan == katalog[:len(bawaan)] else "masalah",
+          "%s: tema bawaan sejalan dengan katalog index.html" % rel)
+    # 3) halaman memakai aset repo, bukan salinan liar
+    for berkas in ("assets/theme-contrast.js", "assets/scroll-effects.js", "assets/scroll-effects.css"):
+        lapor("ok" if berkas in hal else "masalah", "%s: memakai %s" % (rel, berkas))
+    lapor("ok" if "data-cover-undangan" in hal else "masalah",
+          "%s: CSS cover disalin dari undangan.html (pratinjau = halaman tamu)" % rel)
+    lapor("ok" if "function patCss(t)" in hal else "masalah",
+          "%s: patCss() ikut disalin supaya motif identik" % rel)
+    # 4) daftar id tema lama harus sama dengan daftar di berkas ini
+    app_lama = set(re.findall(r"'([a-z][a-z-]+)'", _blok_array(hal, "const TEMA_LAMA=[")))
+    lapor("ok" if app_lama == TEMA_LAMA else "masalah",
+          "%s: daftar TEMA_LAMA sama dengan pemeriksa ini (%d id)" % (rel, len(app_lama)))
+    # 5) skrip pemasang ada & mendukung uji kering + pembatalan
+    psg = os.path.join(ROOT, "tools", "pasang-template.cjs")
+    if not os.path.isfile(psg):
+        lapor("masalah", "tools/pasang-template.cjs tidak ada — alur ekspor tidak bisa otomatis")
+    else:
+        isi = baca("tools/pasang-template.cjs")
+        kurang = [t for t in ("--kering", "--batalkan", ".bak-template", "const TPL=[", "var Pn=[") if t not in isi]
+        lapor("ok" if not kurang else "masalah",
+              "tools/pasang-template.cjs siap dipakai (kering/batalkan/cadangan)" +
+              ("" if not kurang else " — kurang: " + ", ".join(kurang)))
+    # 6) uji halaman itu sendiri
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji Studio Template dilewati")
+    else:
+        uji = os.path.join(ROOT, "tools", "test-template-studio.cjs")
+        if not os.path.isfile(uji):
+            lapor("masalah", "tools/test-template-studio.cjs tidak ada")
+        else:
+            r = subprocess.run(["node", uji], capture_output=True, text=True, cwd=ROOT)
+            ringkas = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan:")]
+            pesan = ringkas[0] if ringkas else (r.stdout.strip() or r.stderr.strip())[-220:]
+            lapor("ok" if r.returncode == 0 else "masalah", "uji Studio Template: " + pesan)
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -810,7 +912,8 @@ def main():
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
-               cek_template_pernikahan, cek_vip_4d, cek_simulasi):
+               cek_template_pernikahan, cek_vip_4d, cek_simulasi,
+               cek_studio_template):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

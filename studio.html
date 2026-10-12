@@ -597,9 +597,23 @@ function qrDataUndangan(g){return qrTeks(g.link,state.showNameQr?`${g.nama.slice
 
 /* state setters */
 function set(k,v){state[k]=v;save();render()}
-function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;paksaTier();save();render();notify('Template: '+t.nama)}
-function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle}paksaTier();save();render()}
-function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;paksaTier();save();render();notify('Preview: '+t.nama)}
+/* Resep bawaan template (opsional, ditulis oleh Studio Template): font isi,
+   border, efek pembuka/gulir, dan bagian awal yang disarankan. Theme lama tanpa
+   `rec` dilewati begitu saja, jadi perilakunya persis seperti sebelumnya. */
+function terapRec(t){const r=t&&t.rec;if(!r)return;
+ if(r.body&&FONTS.some(f=>f.id===r.body))state.fontBody=r.body;
+ if(r.border&&BORDERS.some(b=>b.id===r.border))state.border=r.border;
+ if(r.cover&&FX_COVER.some(f=>f[0]===r.cover))state.anim.effect=r.cover;
+ if(r.scroll&&FX_SCROLL.some(f=>f[0]===r.scroll))state.anim.scroll=r.scroll;
+ if(typeof r.mix==='boolean')state.anim.scrollMix=r.mix;
+ if(Array.isArray(r.slides)&&r.slides.length)Object.keys(state.slides).forEach(id=>{if(state.slides[id])state.slides[id].on=r.slides.includes(id)});
+ animSig=null}
+/* Jembatan ke Studio Template: tema aktif dibawa sebagai titik awal duplikat. */
+function bukaStudioTemplate(){const url='template-studio.html?dup='+encodeURIComponent(state.tpl);
+ const w=window.open(url,'_blank');if(!w)location.href=url}
+function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;terapRec(t);paksaTier();save();render();notify('Template: '+t.nama)}
+function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle;terapRec(ft)}paksaTier();save();render()}
+function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;terapRec(t);paksaTier();save();render();notify('Preview: '+t.nama)}
 function upd(k,v){state[k]=v;save();renderPreview()}
 function updF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();renderPreview()}
 function setF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();render()}
@@ -922,6 +936,7 @@ function sidebar(){
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
    <span class="lbl">Template ${EV_LABEL[state.event]}</span><span class="chip">${tplsFor(state.event).length} desain</span>
   </div>
+  <button class="sm-btn" style="margin-bottom:10px" onclick="bukaStudioTemplate()" data-help="Buka Studio Template untuk merancang tema baru — dimulai dari tema yang sedang dipakai, lalu ekspor kodenya.">🎨 Buat template baru di Studio Template</button>
   ${tplsFor(state.event).map(t=>`<button class="thbtn ${state.tpl===t.id?'on':''}" onclick="pickTpl('${t.id}')">
    <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?(t.char.length>2?10:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.02em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
    <div style="flex:1"><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">${t.nama}${t.badge?`<span style="font-size:8px;padding:2px 6px;border-radius:99px;background:var(--gold);color:#000;font-weight:700">${t.badge}</span>`:''}</div>
