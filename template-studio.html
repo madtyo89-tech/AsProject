@@ -10,11 +10,9 @@
 <link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
 <link rel="stylesheet" href="assets/button-help.css">
 <link rel="stylesheet" href="assets/scroll-effects.css">
-<style data-cover-undangan>
-/* ===== CSS mesin undangan (disalin dari undangan.html: cover + animasi) =====
-   Dipakai apa adanya supaya pratinjau HP di halaman ini identik dengan
-   halaman tamu. Bila daftar/CSS di mesin berubah, salin ulang bagian ini dari
-   undangan.html — node tools/test-template-studio.cjs akan menunjuk bagian yang beda. ===== */
+<style data-cover-undangan>/* ===== CSS mesin undangan (disalin dari undangan.html: cover + animasi + dekorasi) =====
+   Dipakai apa adanya supaya pratinjau HP di halaman ini identik dengan halaman tamu.
+   Jalankan ulang: python3 tools/sinkron-studio-template.py ===== */
 /* ---------- COVER ---------- */
 #cover{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 26px;
   background:linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));
@@ -35,46 +33,39 @@
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 #cover .open .env{font-size:18px}
 #cover .brand{position:absolute;bottom:22px;left:0;right:0;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);opacity:.55}
-/* ---------- ANIMASI ---------- */
-@keyframes uUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-@keyframes uZoom{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
-@keyframes uWord{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@keyframes uDeco{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:scaleX(1)}}
-@keyframes uPop{0%{opacity:0;transform:scale(.5)}60%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
-.cov .anim-up{animation:uUp .8s cubic-bezier(.22,.8,.36,1) both}
-.cov .anim-zoom{animation:uZoom .9s cubic-bezier(.22,.8,.36,1) both}
-.cov .anim-word{display:inline-block;animation:uWord .7s cubic-bezier(.22,.8,.36,1) both}
-.cov .anim-deco{transform-origin:center;animation:uDeco .9s cubic-bezier(.22,.8,.36,1) both}
-.cov .anim-pop{animation:uPop .7s cubic-bezier(.22,.8,.36,1) both}
-/* 10 efek animasi cover (pilihan state.anim.effect) */
-@keyframes uFade{from{opacity:0}to{opacity:1}}
-@keyframes uRise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
-@keyframes uDrop{from{opacity:0;transform:translateY(-28px)}to{opacity:1;transform:none}}
-@keyframes uBlurIn{from{opacity:0;filter:blur(12px)}to{opacity:1;filter:blur(0)}}
-@keyframes uFlip{from{opacity:0;transform:perspective(800px) rotateX(24deg) translateY(20px)}to{opacity:1;transform:none}}
-@keyframes uSlideIn{from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:none}}
-@keyframes uSwing{from{opacity:0;transform:rotate(-7deg) translateY(-16px)}to{opacity:1;transform:none}}
-@keyframes uElastic{0%{opacity:0;transform:scale(.4)}55%{opacity:1;transform:scale(1.12)}75%{transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
-@keyframes uShimmer{0%{opacity:0;filter:brightness(1.9) saturate(1.3)}60%{opacity:1;filter:brightness(1.15)}100%{opacity:1;filter:none}}
-@keyframes uCurtain{0%{opacity:0;transform:scaleX(.55)}100%{opacity:1;transform:none}}
-.cov .fx-c-fade{animation:uFade .9s ease both}
-.cov .fx-c-zoom{animation:uZoom .9s cubic-bezier(.22,.8,.36,1) both}
-.cov .fx-c-rise{animation:uRise .8s cubic-bezier(.22,.8,.36,1) both}
-.cov .fx-c-drop{animation:uDrop .8s cubic-bezier(.22,.8,.36,1) both}
-.cov .fx-c-blur{animation:uBlurIn .9s ease both}
-.cov .fx-c-pop{animation:uPop .7s cubic-bezier(.22,.8,.36,1) both}
-.cov .fx-c-flip{animation:uFlip .85s cubic-bezier(.22,.8,.36,1) both}
-.cov .fx-c-slide{animation:uSlideIn .8s cubic-bezier(.22,.8,.36,1) both}
-.cov .fx-c-swing{animation:uSwing .8s cubic-bezier(.22,.8,.36,1) both}
-.cov .fx-c-elastic{animation:uElastic .9s cubic-bezier(.22,.8,.36,1) both}
-.cov .fx-c-shimmer{animation:uShimmer 1s ease both}
-.cov .fx-c-curtain{animation:uCurtain .9s cubic-bezier(.22,.8,.36,1) both;transform-origin:50% 0}
+/* ---------- DEKORASI TEMA (hiasan sudut, kelopak melayang, pembatas nama) ----------
+   Kelas generik supaya dipakai bersama oleh undangan live, pratinjau Studio, dan
+   Studio Template. Semua dekorasi bersifat hiasan: tidak menangkap klik. */
+.deko-sudut{position:absolute;width:50px;height:50px;pointer-events:none;z-index:2;color:var(--accent-cover,var(--accent,#8A6E4B));opacity:.92;animation:dekoAyun 7s ease-in-out infinite alternate}
+.deko-sudut svg{width:100%;height:100%;display:block}
+.deko-sudut.tl{top:4px;left:4px}
+.deko-sudut.tr{top:4px;right:4px;transform:scaleX(-1)}
+.deko-sudut.br{bottom:4px;right:4px;transform:scale(-1,-1);animation-delay:-2s}
+.deko-sudut.bl{bottom:4px;left:4px;transform:scaleY(-1);animation-delay:-4s}
+@keyframes dekoAyun{from{opacity:.72;transform:scale(.97)}to{opacity:1;transform:scale(1.03)}}
+.deko-sudut.tr{animation-name:dekoAyunX}.deko-sudut.br{animation-name:dekoAyunX2}.deko-sudut.bl{animation-name:dekoAyunX3}
+@keyframes dekoAyunX{from{opacity:.72;transform:scaleX(-1) scale(.97)}to{opacity:1;transform:scaleX(-1) scale(1.03)}}
+@keyframes dekoAyunX2{from{opacity:.72;transform:scale(-1) scale(.97)}to{opacity:1;transform:scale(-1) scale(1.03)}}
+@keyframes dekoAyunX3{from{opacity:.72;transform:scaleY(-1) scale(.97)}to{opacity:1;transform:scaleY(-1) scale(1.03)}}
+/* z-index 0: kelopak tampil di atas motif latar, tapi TIDAK menutupi kartu nama. */
+.deko-flt{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.deko-flt i{position:absolute;top:-6%;left:var(--x,50%);width:var(--w,15px);height:var(--w,15px);opacity:var(--o,.72);color:var(--accent-cover,var(--accent,#8A6E4B));
+ animation:dekoTurun var(--t,13s) linear var(--d,0s) infinite;will-change:transform}
+.deko-flt i svg{width:100%;height:100%;display:block}
+.deko-flt.g-dust i{background:radial-gradient(circle,var(--gold,#D4AF37) 0 28%,rgba(212,175,55,0) 72%);border-radius:50%}
+.deko-flt.g-bubble i{border:1px solid var(--accent-cover,var(--accent,#8A6E4B));border-radius:50%;background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.75),rgba(255,255,255,0) 62%)}
+@keyframes dekoTurun{
+ 0%{transform:translate3d(0,-8vh,0) rotate(0deg) scale(.9)}
+ 50%{transform:translate3d(var(--sw,16px),44vh,0) rotate(180deg) scale(1.04)}
+ 100%{transform:translate3d(0,98vh,0) rotate(360deg) scale(.94)}}
+.deko-dvd{margin:13px auto 0;display:flex;align-items:center;justify-content:center;color:var(--accent-cover,var(--accent,#8A6E4B));animation:dekoBinar 4.5s ease-in-out infinite alternate}
+.deko-dvd svg{width:132px;height:auto;display:block;max-width:64vw}
+.deko-dvd.d-flower svg,.deko-dvd.d-ribbon svg{width:124px}
+@keyframes dekoBinar{from{opacity:.62}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){
- .cov .anim-up,.cov .anim-zoom,.cov .anim-word,.cov .anim-deco,.cov .anim-pop{animation:none}
- #cover .open{animation:none}
+ .deko-flt{display:none}
+ .deko-sudut,.deko-dvd{animation:none}
 }
-
-
 </style>
 <style>
 /* ---------- token tampilan (sama dengan studio.html supaya terasa satu keluarga) ---------- */
@@ -260,8 +251,12 @@ input,textarea,select{outline:0}
 <script src="assets/button-help.js"></script>
 <script>
 /* ====================== MESIN (SALINAN PERSIS dari studio.html) ======================
-   Daftar font, border, efek, motif, slide, dan tema bawaan disalin apa adanya
-   supaya tema yang dirancang di sini tampil sama di undangan tamu. ==================== */
+   Daftar font, border, motif, efek, bagian, tema bawaan, dan mesin dekorasi
+   disalin apa adanya supaya tema yang dirancang di sini tampil sama di undangan
+   tamu. Jalankan ulang: python3 tools/sinkron-studio-template.py
+   ============================================================================ */
+const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
 const FONTS=[
  {id:'cormorant',name:'Cormorant Garamond',fam:'"Cormorant Garamond",serif'},
  {id:'playfair',name:'Playfair Display',fam:'"Playfair Display",serif'},
@@ -314,7 +309,16 @@ const BORDERS=[
  {id:'onyx-inlay',n:'Inlay Onyx',tk:'eks',s:A=>`border:6px solid #17181a;box-shadow:inset 0 0 0 2px ${A}`},
  {id:'vip-crown',n:'Crown VIP',tk:'vip',s:A=>`border:3px double ${A};outline:2px solid ${A};outline-offset:4px;box-shadow:inset 0 0 0 2px #fffdf9`},
  {id:'vip-aurora',n:'Aurora VIP',tk:'vip',s:A=>`border:6px solid ${A};border-image:linear-gradient(160deg,${A},#8e4e92 35%,#0ea5e9 70%,${A}) 1`},
- {id:'vip-diamond',n:'Diamond VIP',tk:'vip',s:A=>`border:7px ridge ${A};box-shadow:0 0 18px ${A}66,inset 0 0 0 2px #fffdf9`}]
+ {id:'vip-diamond',n:'Diamond VIP',tk:'vip',s:A=>`border:7px ridge ${A};box-shadow:0 0 18px ${A}66,inset 0 0 0 2px #fffdf9`},
+{id:'floral-corner',n:'Bunga Sudut',tk:'premium',art:'floral',s:A=>`border:2px solid ${A};box-shadow:inset 0 0 0 1px ${A}55`},
+ {id:'batik-frame',n:'Bingkai Batik',tk:'premium',art:'batik',s:A=>`border:3px solid ${A};box-shadow:inset 0 0 0 7px ${A}22`},
+ {id:'vine-frame',n:'Sulur Daun',art:'vine',s:A=>`border:2px solid ${A}99;box-shadow:inset 0 0 16px ${A}22`},
+ {id:'gold-corner',n:'Sudut Emas',tk:'eks',art:'gold',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 8px ${A}1a`},
+ {id:'ribbon-corner',n:'Pita Sudut',tk:'premium',art:'ribbon',s:A=>`border:2px solid ${A};box-shadow:0 8px 22px ${A}22`},
+ {id:'lace-edge',n:'Renda Tepi',tk:'premium',art:'lace',s:A=>`border:1px solid ${A};outline:2px dotted ${A}99;outline-offset:-9px;box-shadow:inset 0 0 0 4px ${A}1f`},
+ {id:'diamond-stud',n:'Paku Intan',s:A=>`border:2px solid ${A};background-image:radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px);background-size:9px 9px;background-position:center 2px,center calc(100% - 2px),2px center,calc(100% - 2px) center;background-repeat:repeat-x,repeat-x,repeat-y,repeat-y`},
+ {id:'triple-frame',n:'Tiga Garis',s:A=>`border:1px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9,inset 0 0 0 4px ${A},inset 0 0 0 8px #fffdf9,inset 0 0 0 9px ${A}88`}
+]
 const FX_SCROLL=[
  ['fade-up','Fade Up','naik pelan sambil muncul'],['fade-down','Fade Down','turun pelan sambil muncul'],
  ['slide-left','Slide Kiri','geser dari kanan'],['slide-right','Slide Kanan','geser dari kiri'],
@@ -368,7 +372,19 @@ const SLIDES=[
 const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ultah Anak',aqiqah:'Aqiqah',all:'Semua Acara'}
 const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶',all:'✨'}
 const TPL_BAWAAN=[
- {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',harga:49000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'DASAR',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',desc:'Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu'},{id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',badge:'LARIS',deco:'❖ ✦ ❖',pat:'batik',ft:'marcellus',char:'JAWA',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},{id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',badge:'',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet'},{id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'PREMIUM',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'GOLD',desc:'Glam soft luxury, emboss gold & black tie vibe'},{id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',badge:'',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},{id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',badge:'',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},{id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',badge:'',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'ISLAMI',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},{id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'LARIS',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Warna-warni happy, balon & confetti buat si kecil'},{id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',badge:'FAVORIT',deco:'✦ ❀ ✦',pat:'',ft:'dancing',char:'SWEET',desc:'Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya'},{id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',badge:'',deco:'❖ ─ ❖',pat:'',ft:'ebgaramond',char:'ELEGAN',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},{id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',badge:'',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},{id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',badge:'',deco:'✿ ✦ ✿',pat:'',ft:'caveat',char:'PUTRI',desc:'Pink blush super lembut buat si putri kecil kesayangan'},{id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',badge:'',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'ADAB',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'}]
+ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',harga:49000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'DASAR',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',desc:'Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu'},
+ {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',badge:'LARIS',deco:'❖ ✦ ❖',pat:'batik',ft:'marcellus',char:'JAWA',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},
+ {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',badge:'',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet'},
+ {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'PREMIUM',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'GOLD',desc:'Glam soft luxury, emboss gold & black tie vibe'},
+ {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',badge:'',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
+ {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',badge:'',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},
+ {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',badge:'',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'ISLAMI',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},
+ {id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'LARIS',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Warna-warni happy, balon & confetti buat si kecil'},
+ {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',badge:'FAVORIT',deco:'✦ ❀ ✦',pat:'',ft:'dancing',char:'SWEET',desc:'Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya'},
+ {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',badge:'',deco:'❖ ─ ❖',pat:'',ft:'ebgaramond',char:'ELEGAN',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},
+ {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',badge:'',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},
+ {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',badge:'',deco:'✿ ✦ ✿',pat:'',ft:'caveat',char:'PUTRI',desc:'Pink blush super lembut buat si putri kecil kesayangan'},
+ {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',badge:'',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'ADAB',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'}]
 function patCss(t){
  const tile=(svg,size)=>`background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${size};background-repeat:repeat;`;
  if(t.pat==='batik'){
@@ -383,8 +399,38 @@ function patCss(t){
   const c=t.accent||'#38BDF8';
   return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".2" stroke-width="1.35" stroke-linecap="round"><path d="M24 12v28M12 19l24 14M36 19 12 33M70 52v32M56 61l28 15M84 61 56 76M48 48l7 7-7 7-7-7Z"/><path d="m20 17 4 4 4-4m-16 12 5-1 1 5m16-5-5-1-1 5m28 30 4 5 4-5m-16 13 5-1 1 5m16-5-5-1-1 5"/></g></svg>`, '96px 96px');
  }
- if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}12 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0d 0 2px,transparent 2px 16px);`;
- if(t.pat==='confetti')return `background-image:radial-gradient(#E5737366 2px,transparent 2.6px),radial-gradient(#64B5F666 2px,transparent 2.6px),radial-gradient(#8BC34A66 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
+ if(t.pat==='rose'){
+  const c=t.accent||'#C2708A';
+  const mawar=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})" fill="none" stroke="${c}" stroke-opacity=".22" stroke-width="1.3" stroke-linecap="round"><path d="M2 3a6 6 0 1 0-6-6 12 12 0 1 0 12 12 18 18 0 1 0-18-18"/><path d="M13 17c6 3 12 1 14-4-6-2-12 0-14 4"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">${mawar(26,28,1)}${mawar(72,74,.8)}</svg>`, '96px 96px');
+ }
+ if(t.pat==='sakura'){
+  const c=t.accent||'#D98BAA';
+  const kelopak=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><g fill="none" stroke="${c}" stroke-opacity=".24" stroke-width="1.2">${[0,72,144,216,288].map(a=>`<path transform="rotate(${a})" d="M0-19c5 6 5 12 0 17-5-5-5-11 0-17Z"/>`).join('')}</g><circle r="2.6" fill="${c}" fill-opacity=".3"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 84">${kelopak(24,24,1)}${kelopak(62,64,.78)}</svg>`, '84px 84px');
+ }
+ if(t.pat==='daisy'){
+  const c=t.accent||'#C7A24A';
+  const bunga=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><g fill="none" stroke="${c}" stroke-opacity=".22" stroke-width="1.1">${[0,45,90,135,180,225,270,315].map(a=>`<ellipse transform="rotate(${a})" cx="0" cy="-12" rx="3.4" ry="6.2"/>`).join('')}<circle r="3"/></g></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">${bunga(20,20,1)}${bunga(52,54,.8)}</svg>`, '72px 72px');
+ }
+ if(t.pat==='vine'){
+  const c=t.accent||'#66816a';
+  const daun=(x,y,a)=>`<g transform="translate(${x} ${y}) rotate(${a})"><path d="M0 0q7-9 15 0-7 9-15 0Z" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-opacity=".28" stroke-width="1"/><path d="M1 0h12" stroke="${c}" stroke-opacity=".24" stroke-width=".8"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><g fill="none" stroke="${c}" stroke-opacity=".2" stroke-width="1.3" stroke-linecap="round"><path d="M6 122C40 104 74 74 122 6"/></g>${daun(30,94,-38)}${daun(52,74,-24)}${daun(76,50,-16)}${daun(98,26,-8)}${daun(44,86,142)}${daun(82,44,150)}</svg>`, '128px 128px');
+ }
+ if(t.pat==='parang'){
+  const c=t.accent||'#8b653d';
+  const bilah=(x,y)=>`<g transform="translate(${x} ${y})"><path d="M0 44C16 34 26 20 28 0 18 16 8 26 0 30Z" fill="${c}" fill-opacity=".13" stroke="${c}" stroke-opacity=".26" stroke-width="1.1"/><path d="M6 8c3 10 1 20-4 28" stroke="${c}" stroke-opacity=".2" stroke-width=".9" fill="none"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g opacity=".95">${bilah(6,26)}${bilah(50,26)}${bilah(6,74)}${bilah(50,74)}</g><path d="M0 20h96M0 68h96" stroke="${c}" stroke-opacity=".1" stroke-width="1"/></svg>`, '96px 96px');
+ }
+ if(t.pat==='mendung'){
+  const c=t.accent||'#7A93C4';
+  const awan=(y,w)=>{let d='M0 '+y+'q'+w/2+' -'+w/2+' '+w+' 0';for(let k=1;k<4;k++)d+='t'+w+' 0';return d};
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><g fill="none" stroke="${c}" stroke-linecap="round"><path d="${awan(20,30)}" stroke-opacity=".22" stroke-width="1.4"/><path d="${awan(34,30)}" stroke-opacity=".17" stroke-width="1.3"/><path d="${awan(48,30)}" stroke-opacity=".12" stroke-width="1.2"/><path d="${awan(76,30)}" stroke-opacity=".2" stroke-width="1.4"/><path d="${awan(90,30)}" stroke-opacity=".14" stroke-width="1.2"/></g></svg>`, '120px 120px');
+ }
+ if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}14 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0f 0 2px,transparent 2px 16px);`;
+ if(t.pat==='confetti')return `background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
  return ''}
 function fxScrollAxis(id){return ['slide-left','slide-right','flip-y','roll-in','wipe-right','book','cube','wave'].includes(id)?'x':'y'}
 function fxScrollForSection(base,index,mix=true){
@@ -393,8 +439,64 @@ function fxScrollForSection(base,index,mix=true){
  return FX_SCROLL_MIX[((start<0?0:start)+index)%FX_SCROLL_MIX.length];
 }
 function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
-const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
+const DKO_IDS=['floral','batik','vine','gold','lace','ribbon']
+const FLT_IDS=['petal','sakura','leaf','dust','snow','bubble']
+const DVD_IDS=['line','diamond','flower','batik','ribbon']
+const DKO_NAMA={floral:'Bunga',batik:'Batik',vine:'Sulur Daun',gold:'Emas',lace:'Renda',ribbon:'Pita'}
+const FLT_NAMA={petal:'Kelopak Mawar',sakura:'Sakura',leaf:'Daun',dust:'Kilau Emas',snow:'Salju',bubble:'Gelembung'}
+const DVD_NAMA={line:'Garis Intan',diamond:'Belah Ketupat',flower:'Bunga',batik:'Batik',ribbon:'Pita'}
+const DEKO_SEMUA={dko:DKO_IDS,flt:FLT_IDS,dvd:DVD_IDS}
+function dekoNilai(k,v){
+ if(v==='none'||v===''||v==null)return '';
+ return (DEKO_SEMUA[k]||[]).indexOf(v)>=0?v:''}
+function dekoPilih(d,tplF,BD){
+ const ambil=(k,bawaan)=>{
+  const a=d&&d[k];if(typeof a==='string'&&a!=='')return dekoNilai(k,a);
+  const b=tplF&&tplF[k];if(typeof b==='string'&&b!=='')return dekoNilai(k,b);
+  return dekoNilai(k,bawaan||'')};
+ return {art:ambil('dko',(BD&&BD.art)||''),flt:ambil('flt',''),dvd:ambil('dvd','')}}
+function artDekoSudut(kind){
+ if(kind==='floral')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M3 61C20 47 33 30 44 6"/><path d="M44 6c2 9 9 15 17 15-4 8-13 12-21 8"/><path d="M33 24c-8-2-14-8-15-16 9 0 16 5 18 13"/><path d="M18 43c-8 0-14-4-16-12 8-2 15 1 19 8"/><circle cx="47" cy="21" r="2.4" fill="currentColor" stroke="none"/></svg>';
+ if(kind==='batik')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 61C18 52 28 38 34 16"/><path d="M34 16c7 3 13 2 18-3-1 8-6 13-13 14"/><path d="M20 33c-8 1-14-3-16-10 8-1 14 3 17 10"/><path d="M34 16c-8-1-13-6-14-14 8 1 13 6 14 14Z"/><circle cx="46" cy="30" r="2"/><circle cx="17" cy="41" r="2"/><path d="M12 56h10M50 12h9"/></svg>';
+ if(kind==='vine')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2 62C20 50 34 32 46 8"/><path d="M46 8c-9 0-16-4-18-12 9-1 16 4 18 12Z" fill="currentColor" fill-opacity=".12"/><path d="M32 27c-9 1-16-1-19-8 8-2 15 1 19 8Z" fill="currentColor" fill-opacity=".12"/><path d="M17 46c-8 2-15 1-19-5 7-3 14-1 19 5Z" fill="currentColor" fill-opacity=".12"/><path d="M40 16c8-3 15-2 19 4-7 4-14 2-19-4Z" fill="currentColor" fill-opacity=".12"/></svg>';
+ if(kind==='gold')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 61C16 44 26 27 30 4"/><path d="M30 4c8 6 17 9 27 8-6 8-16 12-27 8"/><path d="M30 4c-4 8-11 14-20 15 3 8 12 12 20 8"/><path d="M8 44h14M44 16h14"/><circle cx="38" cy="34" r="3"/><circle cx="22" cy="52" r="2.2"/></svg>';
+ if(kind==='lace')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 60h20a10 10 0 0 1 10-10 10 10 0 0 0 10-10 10 10 0 0 0 6-9"/><path d="M4 60a9 9 0 0 0 9-9" stroke-dasharray="2 3"/><path d="M34 50a9 9 0 0 1 9-9M24 60a9 9 0 0 1 9-9" stroke-dasharray="2 3"/><circle cx="13" cy="51" r="2.4"/><circle cx="53" cy="11" r="2.4"/></svg>';
+ if(kind==='ribbon')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M4 60C18 50 30 36 40 16"/><path d="M40 16c-8-6-9-16-2-13 5 2 6 8 2 13Z"/><path d="M40 16c8-6 9-16 2-13-5 2-6 8-2 13Z"/><path d="M42 22c4 6 2 12-2 12s-6-6-2-12Z" fill="currentColor" fill-opacity=".18"/><path d="M24 40c-3 7-9 10-14 8 2-7 8-11 14-8Z"/></svg>';
+ return ''}
+function artDekoDiv(kind){
+ if(kind==='line')return '<svg viewBox="0 0 140 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 7h46M92 7h46"/><path d="M70 1.5 75 7l-5 5.5L65 7Z" fill="currentColor" stroke="none"/><circle cx="57" cy="7" r="2"/><circle cx="83" cy="7" r="2"/></svg>';
+ if(kind==='diamond')return '<svg viewBox="0 0 140 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 7h34M104 7h34"/><path d="M70 1 76 7l-6 6-6-6Z" fill="currentColor" stroke="none"/><path d="M52 3 58 7l-6 4-6-4Z" fill="currentColor" fill-opacity=".45" stroke="none"/><path d="M88 3 94 7l-6 4-6-4Z" fill="currentColor" fill-opacity=".45" stroke="none"/></svg>';
+ if(kind==='flower')return '<svg viewBox="0 0 140 22" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M2 11h40M98 11h40"/><path d="M52 11c4-4 8-4 10 0"/><circle cx="70" cy="8" r="3.4"/><path d="M70 11c0 4 0 7-1 10"/><path d="M69 17c-4-1-6-3-6-5 3-1 5 1 6 5Z" fill="currentColor" fill-opacity=".3"/><path d="M69 17c4-1 6-3 6-5-3-1-5 1-6 5Z" fill="currentColor" fill-opacity=".3"/><path d="M61 11c3-5 6-5 9 0-3 5-6 5-9 0Z" fill="currentColor" fill-opacity=".25"/><path d="M79 11c-3-5-6-5-9 0 3 5 6 5 9 0Z" fill="currentColor" fill-opacity=".25"/></svg>';
+ if(kind==='batik')return '<svg viewBox="0 0 140 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 9c6-6 12-6 18 0s12 6 18 0 12-6 18 0 12 6 18 0"/><path d="M66 9c6-6 12-6 18 0s12 6 18 0 12-6 18 0 12 6 18 0"/><circle cx="70" cy="4" r="1.8"/><circle cx="97" cy="4" r="1.8"/></svg>';
+ if(kind==='ribbon')return '<svg viewBox="0 0 140 20" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 10h44M94 10h44"/><path d="M70 4c-6-4-12-3-12 1s6 6 12 5Z" fill="currentColor" fill-opacity=".25"/><path d="M70 4c6-4 12-3 12 1s-6 6-12 5Z" fill="currentColor" fill-opacity=".25"/><circle cx="70" cy="4" r="2.6"/><path d="M70 12c-2 3-4 5-7 6M70 12c2 3 4 5 7 6"/></svg>';
+ return ''}
+function dekoSudutHtml(kind){
+ if(!kind||DKO_IDS.indexOf(kind)<0)return '';
+ const svg=artDekoSudut(kind);if(!svg)return '';
+ return ['tl','tr','br','bl'].map(s=>'<span class="deko-sudut '+s+'" aria-hidden="true">'+svg+'</span>').join('');
+}
+const DEKO_BENTUK={
+ petal:'<svg viewBox="0 0 24 24"><path d="M12 2c5 5 7 10 5 14-1 3-3 5-5 5s-4-2-5-5C5 12 7 7 12 2Z" fill="currentColor" opacity=".5"/></svg>',
+ sakura:'<svg viewBox="0 0 24 24">'+[0,72,144,216,288].map(a=>'<path transform="rotate('+a+' 12 12)" d="M12 2c2.4 2.8 2.4 5.6 0 8-2.4-2.4-2.4-5.2 0-8Z" fill="currentColor" opacity=".46"/>').join('')+'<circle cx="12" cy="12" r="1.6" fill="currentColor" opacity=".5"/></svg>',
+ leaf:'<svg viewBox="0 0 24 24"><path d="M3 21C4 9 12 3 21 3c0 9-6 17-18 18Z" fill="currentColor" opacity=".4"/><path d="M4 20 18 6" stroke="currentColor" stroke-width="1" opacity=".55"/></svg>',
+ snow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".55"><path d="M12 2v20M4 7l16 10M20 7 4 17"/><path d="m12 5 2 2-2 2-2-2ZM12 15l2 2-2 2-2-2Z"/></svg>',
+ dust:'',bubble:''};
+function dekoFltHtml(kind){
+ if(!kind||FLT_IDS.indexOf(kind)<0)return '';
+ const bentuk=DEKO_BENTUK[kind]||'';
+ let out='';
+ for(let i=0;i<12;i++){
+  const x=(i*8.1+3.5)%95,t=11+((i*5)%7),d=-((i*1.6)%12),w=(kind==='dust')?7:(kind==='bubble'?13:(kind==='snow'?12:15));
+  out+='<i style="--x:'+x.toFixed(1)+'%;--t:'+t+'s;--d:'+d+'s;--w:'+w+'px;--o:'+(kind==='dust'?.55:.72)+';--sw:'+(i%2?18:-16)+'px">'+bentuk+'</i>';
+ }
+ return '<div class="deko-flt g-'+kind+'" aria-hidden="true">'+out+'</div>';
+}
+function dekoDivHtml(kind){
+ if(!kind||DVD_IDS.indexOf(kind)<0)return '';
+ const svg=artDekoDiv(kind);if(!svg)return '';
+ return '<div class="deko-dvd d-'+kind+'" aria-hidden="true">'+svg+'</div>';
+}
+
 /* ============================================================================
    STUDIO TEMPLATE AsProject — perancang tema undangan digital.
 
@@ -413,8 +515,18 @@ const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 
 const TS_KEY='asproject.templateStudio.v1';
 const KATEGORI={all:'Semua',pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ulang Tahun',aqiqah:'Aqiqah'};
-const PAT_IDS=['','batik','botanical','frost','arab','confetti'];
-const PAT_NAMA={'':'Tanpa Motif','batik':'Batik Kawung','botanical':'Botani','frost':'Kristal Salju','arab':'Arabesque','confetti':'Confetti'};
+const PAT_IDS=['','batik','parang','mendung','botanical','vine','rose','sakura','daisy','frost','arab','confetti'];
+const PAT_NAMA={'':'Tanpa Motif','batik':'Batik Kawung','parang':'Batik Parang','mendung':'Batik Mega Mendung','botanical':'Botani',
+ 'vine':'Sulur Daun','rose':'Mawar','sakura':'Sakura','daisy':'Daisy','frost':'Kristal Salju','arab':'Arabesque','confetti':'Confetti'};
+/* Rekomendasi dekorasi menurut motif & border tema — satu klik di tab Dekorasi. */
+function dekoRekomendasi(t){
+ const pat=t.pat||'',art=(BORDERS.filter(b=>b.id===t.rec.border)[0]||{}).art||'';
+ const bunga=['rose','sakura','daisy','botanical','vine'].indexOf(pat)>=0;
+ const batik=['batik','parang','mendung'].indexOf(pat)>=0;
+ t.dko=bunga?'floral':(batik?'batik':(art||'gold'));
+ t.flt=bunga?(pat==='sakura'?'sakura':'petal'):(batik?'dust':(pat==='confetti'?'bubble':(pat==='frost'?'snow':'leaf')));
+ t.dvd=bunga?'flower':(batik?'batik':'diamond');
+ return t}
 const BADGE_IDS=['','DASAR','LARIS','PREMIUM','FAVORIT','TERLARIS','BEST'];
 const BADGE_BESTSELLER=/LARIS|BEST|TERLARIS/i;
 const VIP_PART=['gold','petal','snow','bubble'],VIP_SCENE=['zoom','rise','curtain'];
@@ -492,6 +604,7 @@ function normTpl(t){t=t||{};const hex=v=>HEX6.test(String(v||''))?String(v).toUp
   bg3d:String(t.bg3d||'').trim(),bgPaper:String(t.bgPaper||'').trim(),
   part:VIP_PART.indexOf(t.part)>=0?t.part:'gold',scene:VIP_SCENE.indexOf(t.scene)>=0?t.scene:'zoom',
   rating:Math.max(0,Math.min(5,Number(t.rating)||4.9)),reviews:Math.max(0,parseInt(t.reviews,10)||0),
+  dko:dekoNilai('dko',t.dko),flt:dekoNilai('flt',t.flt),dvd:dekoNilai('dvd',t.dvd),
   rec:{border:BORDERS.some(b=>b.id===r.border)?r.border:'double',
        cover:FX_COVER.some(f=>f[0]===r.cover)?r.cover:'zoom',
        scroll:FX_SCROLL.some(f=>f[0]===r.scroll)?r.scroll:'fade-up',
@@ -500,7 +613,7 @@ function normTpl(t){t=t||{};const hex=v=>HEX6.test(String(v||''))?String(v).toUp
   meta:{dibuat:(t.meta&&t.meta.dibuat)||Date.now(),diubah:Date.now()},
   sumber:String(t.sumber||'baru'),idManual:!!t.idManual}}
 function kosong(){return normTpl({nama:'',ev:'pernikahan',harga:75000,g:['#F7F3EC','#EADFCB','#D9C6A5'],accent:'#8A6E4B',ink:'#4B4237',
- deco:'✦ ❖ ✦',ft:'cormorant',body:'inter',char:'',desc:'',rec:{border:'double',cover:'zoom',scroll:'fade-up',mix:true,slides:SLIDE_BAWAAN.slice()},sumber:'baru'})}
+ deco:'✦ ❖ ✦',ft:'cormorant',body:'inter',char:'',desc:'',dko:'',flt:'',dvd:'',rec:{border:'double',cover:'zoom',scroll:'fade-up',mix:true,slides:SLIDE_BAWAAN.slice()},sumber:'baru'})}
 function muatKoleksi(){try{const raw=localStorage.getItem(TS_KEY);if(!raw)return;const d=JSON.parse(raw);
  if(!d||typeof d!=='object')return;TS.user=(Array.isArray(d.user)?d.user:[]).map(normTpl);
  Object.assign(TS.ui,d.ui||{});TS.cur=d.cur||''}catch(e){/* data rusak — mulai dari koleksi bersih */}}
@@ -559,7 +672,7 @@ function renderLib(){const el=$('#libList');if(!el)return;const q=(TS.ui.cari||'
 
 /* ---------- tab & panel editor ---------- */
 const TAB=[['identitas','🎫 Identitas'],['warna','🎨 Palet & kontras'],['tipografi','🔤 Tipografi'],['motif','✿ Motif & ornamen'],
- ['border','🖼 Border'],['animasi','✨ Animasi'],['bagian','🧩 Bagian'],['publikasi','🚀 Publikasi']];
+ ['dekorasi','🌸 Dekorasi'],['border','🖼 Border'],['animasi','✨ Animasi'],['bagian','🧩 Bagian'],['publikasi','🚀 Publikasi']];
 function renderTabbar(){const el=$('#tabbar');if(!el)return;
  el.innerHTML=TAB.map(x=>'<button class="tabbtn'+(TS.ui.tab===x[0]?' on':'')+'" onclick="tabKe(\''+x[0]+'\')">'+x[1]+'</button>').join('')}
 function tabKe(id){TS.ui.tab=id;simpanKoleksi();renderTabbar();renderPanel()}
@@ -627,6 +740,30 @@ function renderPanel(){const el=$('#panel');if(!el)return;const t=tpl();
   isi.push(kartu('✿ Motif latar',fPilih('pat','Motif latar',PAT_IDS.map(p=>[p,PAT_NAMA[p]]),{note:'Motif SVG halus memakai warna aksen tema.'})
    +fTeks('deco','Ornamen cover',{ph:'✦ ❖ ✦',max:24,note:'Ikon kecil di atas nama pada cover.'})
    +'<div class="rowbtns">'+DECO_PILIH.map(d=>'<button class="chip mini" data-aksi="deco" data-nilai="'+esc(d)+'">'+esc(d)+'</button>').join('')+'</div>'))}
+ else if(tab==='dekorasi'){
+  const bdT=BORDERS.filter(x=>x.id===t.rec.border)[0];
+  const DK=dekoPilih(null,t,bdT);
+  const baris=[[['dko','Hiasan sudut bingkai'],DKO_IDS,DKO_NAMA],[['flt','Kelopak melayang'],FLT_IDS,FLT_NAMA],[['dvd','Pembatas nama'],DVD_IDS,DVD_NAMA]];
+  const opsi=baris.map(function(x){
+   const k=x[0][0],label=x[0][1],ids=x[1],nama=x[2];
+   const pilihan=['<option value=""'+(t[k]===''?' selected':'')+'>Ikut border (bawaan)</option>',
+    '<option value="none"'+(t[k]==='none'?' selected':'')+'>Tanpa (matikan)</option>']
+    .concat(ids.map(id=>'<option value="'+id+'"'+(t[k]===id?' selected':'')+'>'+esc(nama[id])+'</option>')).join('');
+   return '<label class="f">'+esc(label)+'<select data-deko="'+k+'">'+pilihan+'</select></label>'});
+  const aktif=[DK.art?('sudut '+(DKO_NAMA[DK.art]||DK.art)):'', DK.flt?('kelopak '+(FLT_NAMA[DK.flt]||DK.flt)):'',
+   DK.dvd?('pembatas '+(DVD_NAMA[DK.dvd]||DK.dvd)):''].filter(Boolean).join(' \u00b7 ')||'belum ada';
+  isi.push(kartu('\uD83C\uDF38 Dekorasi dinamis',
+   '<div class="rowbtns" style="margin-bottom:12px">'
+   +'<button class="chip on" data-aksi="dekoRekomendasi" data-help="Pilih dekorasi yang serasi dengan motif & border tema ini.">\u2728 Rekomendasi sesuai motif</button>'
+   +'<button class="chip" data-aksi="dekoBersih" data-help="Matikan semua hiasan (tema tetap bersih).">Tanpa dekorasi</button></div>'
+   +opsi.join('')
+   +'<div class="mini" style="margin-top:4px">Hiasan sudut & kelopak memakai warna aksen tema. Semua hiasan bersifat latar (tidak menutupi tombol) dan otomatis mati bila tamu memilih "kurangi gerakan".</div>'));
+  isi.push(kartu('\uD83D\uDD0E Yang sedang dipakai',
+   '<div class="kv"><span class="k">Hiasan sudut</span><span class="v">'+esc(DK.art?(DKO_NAMA[DK.art]||DK.art):'\u2014')+'</span></div>'
+   +'<div class="kv"><span class="k">Kelopak melayang</span><span class="v">'+esc(DK.flt?(FLT_NAMA[DK.flt]||DK.flt):'\u2014')+'</span></div>'
+   +'<div class="kv"><span class="k">Pembatas nama</span><span class="v">'+esc(DK.dvd?(DVD_NAMA[DK.dvd]||DK.dvd):'\u2014')+'</span></div>'
+   +'<div class="kv"><span class="k">Aktif sekarang</span><span class="v">'+esc(aktif)+'</span></div>'
+   +(bdT&&bdT.art?'<div class="mini" style="margin-top:6px">Border "'+esc(bdT.n)+'" sudah membawa hiasan sudut sendiri \u2014 pilihan di atas menimpanya.</div>':'')))}
  else if(tab==='border'){
   isi.push(kartu('🖼 Border kartu','<div class="pilih">'+BORDERS.map(b=>'<button class="'+(b.id===rec.border?'on':'')+'" data-aksi="border" data-nilai="'+esc(b.id)+'" data-help="'+esc('Border '+b.n)+'">'
    +bdPreview(b)+'<span style="min-width:0"><b style="font-weight:600;font-size:12px">'+esc(b.n)+'</b>'
@@ -678,7 +815,9 @@ function aksi(nama,nilai){const t=tpl();if(!t)return;
  else if(nama==='putarAnim')putarAnim();
  else if(nama==='bagianPaket'){t.rec.slides=SLIDE_BAWAAN.slice();simpanKoleksi();renderSemua()}
  else if(nama==='bagianSemua'){t.rec.slides=SLIDES.map(s=>s.id);simpanKoleksi();renderSemua()}
- else if(nama==='bagianKosong'){t.rec.slides=[];simpanKoleksi();renderSemua()}}
+ else if(nama==='bagianKosong'){t.rec.slides=[];simpanKoleksi();renderSemua()}
+ else if(nama==='dekoRekomendasi'){dekoRekomendasi(t);simpanKoleksi();renderSemua();notify('Dekorasi disesuaikan dengan motif tema.')}
+ else if(nama==='dekoBersih'){t.dko='none';t.flt='none';t.dvd='none';simpanKoleksi();renderSemua();notify('Dekorasi dimatikan.')}}
 function pasangPanel(){const panel=$('#panel');if(!panel||panel.dataset.siap)return;panel.dataset.siap='1';
  panel.addEventListener('input',e=>{const el=e.target;
   if(el.dataset.k){ubah(el.dataset.k,el.value,true);sinkronKembar(el);
@@ -690,6 +829,7 @@ function pasangPanel(){const panel=$('#panel');if(!panel||panel.dataset.siap)ret
  panel.addEventListener('change',e=>{const el=e.target;
   if(el.dataset.mix){const t=tpl();if(!t)return;t.rec.mix=!!el.checked;simpanKoleksi();renderPreview();renderCek();return}
   if(el.dataset.k&&el.tagName==='SELECT'){ubah(el.dataset.k,el.value,false);return}
+  if(el.dataset.deko){ubah(el.dataset.deko,el.value,false);return}
   if(el.type==='checkbox'&&el.dataset.slide!==undefined){const t=tpl();if(!t)return;
    const id=el.dataset.slide,s=t.rec.slides.indexOf(id);
    if(el.checked&&s<0)t.rec.slides.push(id);if(!el.checked&&s>=0)t.rec.slides.splice(s,1);
@@ -717,14 +857,16 @@ function htmlCover(t,anim){const c=CONTOH[t.ev]||CONTOH.all,wed=t.ev==='pernikah
  const b=BORDERS.filter(x=>x.id===t.rec.border)[0]||BORDERS[0];
  let bd=b.s?b.s(t.accent):'';if(b.extra)bd+=(bd?';':'')+b.extra(t.accent);
  const a=anim?CE:'',d=(ms)=>anim?'animation-delay:'+ms+'ms':'',fx=anim?'fx-c-'+CE:'';
+ const DK=dekoPilih(null,t,b);
  return '<div id="cover" class="'+(anim?'cov':'')+'">'
- +'<div class="pat" style="'+patCss(t)+'"></div><div class="veil"></div>'
- +'<div class="bdfr" style="'+bd+'">'+(b.corner?sudutHtml(t.accent,b.corner):'')
+ +'<div class="pat" style="'+patCss(t)+'"></div><div class="veil"></div>'+dekoFltHtml(DK.flt)
+ +'<div class="bdfr" style="'+bd+'">'+(b.corner?sudutHtml(t.accent,b.corner):'')+dekoSudutHtml(DK.art)
  +'<div class="orn '+(anim?'anim-deco':'')+'" style="'+d(200)+'">'+esc(t.deco||'')+'</div>'
  +'<div class="kicker '+fx+'" style="'+d(400)+'">'+(wed?"You're Invited":esc(EV_LABEL[t.ev]))+'</div>'
  +(t.char?'<div class="chara '+fx+'" style="'+d(650)+'">'+esc(t.char)+'</div>':'')
  +'<h1 class="'+fx+'" style="'+d(550)+'">'+esc(c.utama)+'</h1>'
  +(c.kedua?'<div class="amp '+fx+'" style="'+d(700)+'">&amp;</div><h1 class="'+fx+'" style="'+d(850)+'">'+esc(c.kedua)+'</h1>':'')
+ +dekoDivHtml(DK.dvd)
  +'<div class="date '+fx+'" style="'+d(1300)+'">🗓 Sabtu, 12 Desember 2026</div>'
  +'<div class="host '+fx+'" style="'+d(1450)+'">Gedung Balai Kartini, Jakarta</div>'
  +'<button class="open '+(anim?'anim-pop':'')+'" style="'+d(1800)+'"><span class="env">✉️</span> Buka Undangan</button>'
@@ -793,6 +935,10 @@ function periksa(){const t=tpl(),rows=[];if(!t)return rows;
  if(t.bg3d&&!/^assets\/.+\.(webp|png|jpg)$/i.test(t.bg3d))bad('Path bg3d harus seperti assets/tema-3d/nama.webp.');
  if(t.bgPaper&&!/^assets\/.+\.(webp|png|jpg)$/i.test(t.bgPaper))bad('Path bgPaper harus seperti assets/paper/nama.webp.');
  if(t.bg3d||t.bgPaper)warn('Artwork diisi — pastikan berkasnya benar-benar ada. Checker [16] menghitung tema ber-bg3d dan harus sama dengan jumlah berkas .webp di assets/tema-3d/.');
+ const DK=dekoPilih(null,t,BORDERS.filter(x=>x.id===t.rec.border)[0]);
+ const dekoAktif=[DK.art?('sudut '+(DKO_NAMA[DK.art]||DK.art)):'',DK.flt?('kelopak '+(FLT_NAMA[DK.flt]||DK.flt)):'',DK.dvd?('pembatas '+(DVD_NAMA[DK.dvd]||DVD_NAMA[DK.dvd])):''].filter(Boolean);
+ if(dekoAktif.length)ok('Dekorasi aktif: '+dekoAktif.join(' · ')+'.');
+ else warn('Belum ada dekorasi — tab Dekorasi bisa menambah hiasan sudut/kelopak/pembatas.');
  if(tier!=='basic')ok('Tier '+tier+' akan ditulis eksplisit (tier:\''+tier+'\') di baris tema.');
  if(t.rec.border==='none')warn('Border "Tanpa Border" membuat kartu menyentuh tepi — banyak tema memakai border tipis.');
  ok('Siap diekspor ke studio.html, undangan.html, index.html ('+tierDari(t.harga)+' · '+t.g[0]+'/'+t.g[1]+'/'+t.g[2]+').');
@@ -817,6 +963,9 @@ function ekorUmum(t){const tier=tierDari(t.harga);let s='';
  if(t.bgPaper)s+=",bgPaper:'"+q(t.bgPaper)+"'";
  if(tier!=='basic')s+=",tier:'"+tier+"'";
  if(tier==='vip')s+=",part:'"+t.part+"',scene:'"+t.scene+"'";
+ if(t.dko)s+=",dko:'"+t.dko+"'";
+ if(t.flt)s+=",flt:'"+t.flt+"'";
+ if(t.dvd)s+=",dvd:'"+t.dvd+"'";
  return s}
 function rowStudio(t){return ' {id:\''+t.id+'\',nama:\''+q(t.nama)+'\',ev:\''+t.ev+'\',harga:'+t.harga+',g:[\''+t.g.join('\',\'')+'\'],accent:\''+t.accent+'\',ink:\''+t.ink+'\',badge:\''+q(t.badge)+'\',deco:\''+q(t.deco)+'\',pat:\''+t.pat+'\',ft:\''+t.ft+'\',desc:\''+q(t.desc)+'\''+ekorUmum(t)+recKode(t)+'},'}
 function rowUndangan(t){return ' {id:\''+t.id+'\',nama:\''+q(t.nama)+'\',ev:\''+t.ev+'\',g:[\''+t.g.join('\',\'')+'\'],accent:\''+t.accent+'\',ink:\''+t.ink+'\',deco:\''+q(t.deco)+'\',pat:\''+t.pat+'\',ft:\''+t.ft+'\''+ekorUmum(t)+recKode(t)+'},'}
@@ -834,6 +983,7 @@ function semuaSnippet(t){return '/* ===== 1. studio.html → const TPL = [ … t
  +'\n\n/* ===== 4. index.html → sebelum </style> ===== */\n'+ruleCss(t)}
 function teksJson(t){const o={v:1,id:t.id,nama:t.nama,ev:t.ev,harga:t.harga,g:t.g.slice(),accent:t.accent,ink:t.ink,badge:t.badge,deco:t.deco,
  pat:t.pat,ft:t.ft,body:t.body,char:t.char,desc:t.desc,bg3d:t.bg3d,bgPaper:t.bgPaper,part:t.part,scene:t.scene,
+ dko:t.dko,flt:t.flt,dvd:t.dvd,
  rating:t.rating,reviews:t.reviews,rec:{border:t.rec.border,cover:t.rec.cover,scroll:t.rec.scroll,mix:t.rec.mix,slides:t.rec.slides.slice()}};
  return JSON.stringify(o,null,1)}
 

@@ -71,7 +71,7 @@ const index = baca('index.html');
 const mesinHal = (pembuka) => blokArray(hal, pembuka);
 cek(idObjek(mesinHal('const FONTS=')).length === 17, 'FONTS 17 font disalin', String(idObjek(mesinHal('const FONTS=')).length));
 cek(JSON.stringify(idObjek(mesinHal('const FONTS='))) === JSON.stringify(idObjek(blokArray(studio, 'const FONTS='))), 'urutan id font sama dengan studio.html');
-cek(idObjek(mesinHal('const BORDERS=')).length === 32, 'BORDERS 32 border disalin');
+cek(idObjek(mesinHal('const BORDERS=')).length === 40, 'BORDERS 40 border disalin (termasuk hiasan bunga/batik)', String(idObjek(mesinHal('const BORDERS=')).length));
 cek(JSON.stringify(idObjek(mesinHal('const BORDERS='))) === JSON.stringify(idObjek(blokArray(studio, 'const BORDERS='))), 'urutan id border sama dengan studio.html');
 cek(JSON.stringify(idFx(mesinHal('const FX_COVER='))) === JSON.stringify(idFx(blokArray(studio, 'const FX_COVER='))), 'FX_COVER sama dengan studio.html');
 cek(JSON.stringify(idFx(mesinHal('const FX_SCROLL='))) === JSON.stringify(idFx(blokArray(studio, 'const FX_SCROLL='))), 'FX_SCROLL sama dengan studio.html');
@@ -85,9 +85,13 @@ console.log('\n2) 13 tema bawaan identik & berurutan');
 const bawaan = barisTpl(hal.replace('const TPL_BAWAAN=[', 'const TPL=['));
 const tplStudio = barisTpl(studio), tplUndangan = barisTpl(undangan);
 cek(bawaan.length === 13, '13 tema bawaan ada di Studio Template', String(bawaan.length));
-cek(idObjek(blokArray(hal, 'const TPL_BAWAAN=')).join() === idObjek(blokArray(studio, 'const TPL=')).join(), 'urutan id sama dengan studio.html');
-cek(idObjek(blokArray(hal, 'const TPL_BAWAAN=')).join() === idObjek(blokArray(undangan, 'const TPL=')).join(), 'urutan id sama dengan undangan.html');
-cek(idObjek(blokArray(hal, 'const TPL_BAWAAN=')).join() === (index.match(/\{id:"([^"]+)"/g) || []).slice(0, 13).map((x) => x.replace(/\{id:"/, '').replace(/"$/, '')).join(), 'urutan id sama dengan katalog index.html');
+/* studio.html/undangan.html boleh punya tema TAMBAHAN hasil pemasangan (selalu di akhir
+   array) — yang wajib sama adalah 13 tema bawaan di depan. */
+const idBawaan = idObjek(blokArray(hal, 'const TPL_BAWAAN='));
+cek(idBawaan.join() === idObjek(blokArray(studio, 'const TPL=')).slice(0, idBawaan.length).join(), '13 tema bawaan sejalan dengan studio.html (tema terpasang boleh menyusul di akhir)');
+cek(idBawaan.join() === idObjek(blokArray(undangan, 'const TPL=')).slice(0, idBawaan.length).join(), '13 tema bawaan sejalan dengan undangan.html');
+cek(idObjek(blokArray(studio, 'const TPL=')).length === idObjek(blokArray(undangan, 'const TPL=')).length, 'jumlah tema studio.html & undangan.html sama');
+cek(idBawaan.join() === (index.match(/\{id:"([^"]+)"/g) || []).slice(0, 13).map((x) => x.replace(/\{id:"/, '').replace(/"$/, '')).join(), '13 tema bawaan sejalan dengan katalog index.html');
 const sama = (a, b, kunci) => kunci.every((k) => (k === 'g' ? JSON.stringify(a.match(/g:\[[^\]]+\]/)) === JSON.stringify(b.match(/g:\[[^\]]+\]/)) : ambil(a, k) === ambil(b, k)));
 const bidangStudio = ['id', 'nama', 'ev', 'accent', 'ink', 'badge', 'deco', 'pat', 'ft', 'char'];
 const bidangUndangan = ['id', 'nama', 'ev', 'accent', 'ink', 'deco', 'pat', 'ft', 'char'];
@@ -118,7 +122,7 @@ if (!JSDOM) {
 } else {
   const buka = (url) => new JSDOM(hal, { runScripts: 'dangerously', pretendToBeVisual: true, url: url || 'https://asproject.my.id/template-studio.html' });
   const dom = buka(), w = dom.window, d = w.document;
-  cek(!!w.TS && d.querySelectorAll('.tabbtn').length === 8, 'halaman memuat & 8 tab editor dirender');
+  cek(!!w.TS && d.querySelectorAll('.tabbtn').length === 9, 'halaman memuat & 9 tab editor dirender', String(d.querySelectorAll('.tabbtn').length));
   cek(d.querySelector('#libList').textContent.includes('Ivory Klasik'), 'koleksi 13 tema bawaan tampil');
   w.duplikat('minimalist-sage');
   const t = w.tpl();
@@ -135,6 +139,20 @@ if (!JSDOM) {
   const tk = w.tpl();
   cek(w.kontras(tk.ink, tk.g[0]) >= 3 && w.kontras(tk.ink, tk.g[2]) >= 3 && w.kontras(tk.ink, '#fffdf9') >= 4.5,
     'Hitung teks aman: cover ≥3:1 dan kartu isi ≥4.5:1', [w.kontras(tk.ink, tk.g[0]), w.kontras(tk.ink, tk.g[2]), w.kontras(tk.ink, '#fffdf9')].map((x) => x.toFixed(2)).join('/'));
+  w.ubah('pat', 'sakura'); w.ubah('rec.border', 'floral-corner');
+  cek(w.periksa().some((r) => /Dekorasi aktif/.test(r.b)), 'border ber-art membuat pemeriksaan melaporkan dekorasi aktif', JSON.stringify(w.periksa().filter((r) => /[Dd]ekorasi/.test(r.b)).map((r) => r.b.slice(0, 60))));
+  w.aksi('dekoRekomendasi');
+  const td = w.tpl();
+  cek(td.dko === 'floral' && td.flt === 'sakura' && td.dvd === 'flower', 'tombol rekomendasi memilih dekorasi serasi motif bunga', JSON.stringify([td.dko, td.flt, td.dvd]));
+  cek(/deko-sudut/.test(d.querySelector('#gelut').innerHTML) && /deko-flt/.test(d.querySelector('#gelut').innerHTML) && /deko-dvd/.test(d.querySelector('#gelut').innerHTML),
+    'pratinjau HP menampilkan hiasan sudut, kelopak, dan pembatas');
+  cek((d.querySelector('#gelut').innerHTML.match(/<i style="--x:/g) || []).length === 12, 'dua belas kelopak dirender di pratinjau');
+  cek(/dko:'floral',flt:'sakura',dvd:'flower'/.test(w.rowStudio(td)), 'hiasan ikut tertulis di baris ekspor');
+  const jd = JSON.parse(w.teksJson(td));
+  cek(jd.dko === 'floral' && jd.flt === 'sakura' && jd.dvd === 'flower', 'hiasan ikut tertulis di JSON tema', JSON.stringify([jd.dko, jd.flt, jd.dvd]));
+  w.aksi('dekoBersih');
+  cek(/dko:'none'/.test(w.rowStudio(w.tpl())) && !/deko-sudut/.test(d.querySelector('#gelut').innerHTML), 'tombol "Tanpa dekorasi" menulis none & membersihkan pratinjau');
+  w.aksi('dekoRekomendasi');
   const st = w.rowStudio(tk), un = w.rowUndangan(tk), ix = w.rowIndex(tk), css = w.ruleCss(tk);
   cek(/^ \{id:'uji-studio',nama:'.+',ev:'(pernikahan|all)',harga:\d+,g:\['#/.test(st), 'baris studio.html sesuai bentuk mesin');
   cek(st.includes("rec:{body:'") && st.includes("border:'") && st.includes("slides:["), 'baris studio memuat resep (rec)');
@@ -143,7 +161,7 @@ if (!JSDOM) {
   cek(css.includes('.from-\\[\\#' + tk.g[0].slice(1) + '\\]{') && css.includes('.via-\\[\\#') && css.includes('.to-\\[\\#'), 'rule CSS gradasi memakai backslash tunggal (pola yang dicari checker)');
   cek(w.semuaSnippet(tk).split('/* =====').length === 5, '"Semua kode" memuat 4 bagian siap tempel');
   const js = JSON.parse(w.teksJson(tk));
-  cek(js.id === 'uji-studio' && js.rec && Array.isArray(js.rec.slides) && js.g.length === 3, 'JSON tema sah & lengkap');
+  cek(js.id === 'uji-studio' && js.rec && Array.isArray(js.rec.slides) && js.g.length === 3 && 'dko' in js, 'JSON tema sah & lengkap (termasuk dekorasi)');
   const demo = w.htmlDemo(tk);
   cek(demo.includes('id="cover"') && demo.includes('</html>') && demo.includes('.from-') === false, 'demo HTML mandiri terbentuk');
   w.setMode('isi');
@@ -170,6 +188,12 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'asproject-ts-'));
 fs.mkdirSync(path.join(tmp, 'tools'));
 fs.copyFileSync(path.join(ROOT, 'tools', 'pasang-template.cjs'), path.join(tmp, 'tools', 'pasang-template.cjs'));
 const md5 = (f) => require('node:crypto').createHash('md5').update(fs.readFileSync(path.join(tmp, f))).digest('hex');
+/* Hitung jumlah tema AWAL di salinan repo — jangan pernah mengunci angka 14, karena
+   pengguna bisa sudah memasang beberapa tema sebelum menjalankan uji ini lagi. */
+const isiAwal = (f) => fs.readFileSync(path.join(tmp, f), 'utf8');
+const hitungTpl = (teks) => (blokArray(teks, 'const TPL=[').match(/\{id:'/g) || []).length;
+const hitungPn = (teks) => (blokArray(teks, 'var Pn=[').match(/\{id:"/g) || []).length;
+const nStudio = hitungTpl(isiAwal('studio.html')), nUndangan = hitungTpl(isiAwal('undangan.html')), nKatalog = hitungPn(isiAwal('index.html'));
 const sidikAwal = { studio: md5('studio.html'), undangan: md5('undangan.html'), index: md5('index.html') };
 const tema = {
   v: 1, id: 'uji-pasang', nama: 'Uji Pasang', ev: 'pernikahan', harga: 75000,
@@ -207,11 +231,13 @@ const und = fs.readFileSync(path.join(tmp, 'undangan.html'), 'utf8');
 const idx = fs.readFileSync(path.join(tmp, 'index.html'), 'utf8');
 cek(blokArray(stu, 'const TPL=[').includes("id:'uji-pasang'"), 'baris masuk ke array TPL studio.html');
 cek(blokArray(und, 'const TPL=[').includes("id:'uji-pasang'"), 'baris masuk ke array TPL undangan.html');
-cek(idObjek(blokArray(stu, 'const TPL=')).length === 14 && idObjek(blokArray(und, 'const TPL=')).length === 14, 'jumlah tema jadi 14 di studio & undangan');
+cek(hitungTpl(stu) === nStudio + 1 && hitungTpl(und) === nUndangan + 1,
+  'jumlah tema bertambah satu di studio & undangan (' + [nStudio, nUndangan].join('/') + ' → ' + [hitungTpl(stu), hitungTpl(und)].join('/') + ')');
+cek(hitungTpl(stu) === hitungTpl(und), 'jumlah tema studio.html & undangan.html tetap sama');
 cek(blokArray(idx, 'var Pn=[').includes('"uji-pasang"'), 'kartu katalog masuk ke var Pn');
 cek(idx.includes('.from-\\[\\#' + tema.g[0].slice(1) + '\\]{') && idx.includes('gradasi template kustom (uji-pasang)'), 'rule CSS gradasi katalog ditambahkan');
-cek(/14 template siap pakai/.test(idx), 'angka hero katalog diperbarui (14 template)');
-cek((blokArray(idx, 'var Pn=[').match(/\{id:"/g) || []).length === 14, 'katalog berisi 14 kartu tema');
+cek(new RegExp((nKatalog + 1) + ' template siap pakai').test(idx), 'angka hero katalog diperbarui (' + (nKatalog + 1) + ' template)');
+cek(hitungPn(idx) === nKatalog + 1, 'katalog berisi ' + (nKatalog + 1) + ' kartu tema (naik satu)');
 cek(sintaksBersih('studio.html') && sintaksBersih('undangan.html') && sintaksBersih('index.html'), 'JS studio.html, undangan.html & index.html tetap sah setelah dipatch');
 cek(fs.existsSync(path.join(tmp, 'studio.html.bak-template')), 'cadangan .bak-template dibuat');
 const lagi = jalan(['uji-pasang.json']);

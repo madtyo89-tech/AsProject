@@ -477,13 +477,16 @@ def cek_fitur_terbaru():
     lapor("ok" if not yatim else "masalah",
           "rujukan artwork tema utuh" if not yatim else "artwork tema hilang: " + ", ".join(yatim[:4]))
 
-    # 2) 23 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
+    # 2) 40 border (32 lama + 8 baru berhiasan bunga/batik/renda): array identik di
+    #    studio & undangan, tersimpan saat publish, dan dipakai live.
     def _border_ids(s):
         m = re.search(r"const BORDERS=\[(.*?)\];", s, re.S)
         return re.findall(r"\{id:'([a-z0-9-]+)'", m.group(1)) if m else None
     bs, bu = _border_ids(studio), _border_ids(undangan)
-    lapor("ok" if bs and bu and len(bs) == 32 and len(set(bs)) == 32 and bs == bu else "masalah",
-          "BORDERS 32 id unik, identik di studio & undangan")
+    ekor = ("id:'diamond-stud'", "id:'triple-frame'", "id:'floral-corner'", "id:'batik-frame'")
+    lapor("ok" if (bs and bu and len(bs) == 40 and len(set(bs)) == 40 and bs == bu
+                   and all(i in studio and i in undangan for i in ekor)) else "masalah",
+          "BORDERS 40 id unik, identik di studio & undangan")
     # 2b) gating konten EKSKLUSIF: kunci tier di studio + konten baru sinkron di undangan
     eks_dipakai = any(r["tier"] == "eksklusif" for r in _tpl_rows("studio.html"))
     ok = ("bolehEks" in studio and "paksaTier" in studio and "kunciEks" in studio
@@ -848,7 +851,7 @@ def cek_studio_template():
     hal, stu, und = baca(rel), baca("studio.html"), baca("undangan.html")
     # 1) mesin tema harus sama persis (kalau tidak, tema rancangan ≠ tampilan undangan)
     for nama, pola, label, jumlah in (("FONTS", _id_objek, "font", 17),
-                                      ("BORDERS", _id_objek, "border", 32),
+                                      ("BORDERS", _id_objek, "border", 40),
                                       ("SLIDES", _id_objek, "bagian undangan", 10),
                                       ("FX_COVER", _id_fx, "efek pembuka", 14),
                                       ("FX_SCROLL", _id_fx, "efek gulir", 34)):
@@ -903,6 +906,66 @@ def cek_studio_template():
             lapor("ok" if r.returncode == 0 else "masalah", "uji Studio Template: " + pesan)
 
 
+# --------------------------------- 24. Dekorasi tema (hiasan sudut/kelopak/pembatas)
+def cek_dekorasi_tema():
+    print("\n[24] Dekorasi tema (bunga/batik, hiasan sudut & kelopak)")
+    stu, und = baca("studio.html"), baca("undangan.html")
+    # 1) motif bunga & batik baru harus tersedia di mesin kedua halaman
+    pat = lambda s: re.findall(r"t\.pat==='([a-z]+)'", s[s.index("function patCss(t){"):s.index("function patCss(t){") + 9000])
+    motif = pat(stu)
+    baru = [m for m in ("rose", "sakura", "daisy", "vine", "parang", "mendung") if m not in motif]
+    lapor("ok" if not baru else "masalah",
+          "motif bunga & batik baru tersedia (%d motif: %s)" % (len(motif), ", ".join(motif[:6])) +
+          ("" if not baru else " — kurang: " + ", ".join(baru)))
+    lapor("ok" if motif == pat(und) else "masalah", "daftar motif studio.html & undangan.html sama")
+    # 2) border ber-art harus merujuk hiasan sudut yang ada
+    dko = re.findall(r"'([a-z]+)'", _blok_array(stu, "const DKO_IDS=["))
+    art = re.findall(r"art:'([a-z]+)'", stu)
+    asing = sorted({a for a in art if a not in dko})
+    lapor("ok" if art and not asing else "masalah",
+          "%d border memakai hiasan sudut yang terdaftar" % len(art) +
+          ("" if not asing else " — tidak dikenal: " + ", ".join(asing)))
+    # 3) mesin dekorasi sama di studio, undangan, dan Studio Template
+    wajib = ("function artDekoSudut(", "function dekoSudutHtml(", "function dekoFltHtml(",
+             "function dekoDivHtml(", "function dekoPilih(", "const DKO_IDS=", "const FLT_IDS=", "const DVD_IDS=")
+    for rel, isi in (("studio.html", stu), ("undangan.html", und), ("template-studio.html", baca("template-studio.html"))):
+        kurang = [w for w in wajib if w not in isi]
+        lapor("ok" if not kurang else "masalah",
+              "%s: mesin dekorasi lengkap" % rel + ("" if not kurang else " — kurang: " + ", ".join(kurang)))
+    # 4) CSS + aksesibilitas
+    for kelas in (".deko-sudut{", ".deko-flt{", ".deko-dvd{", "@keyframes dekoTurun", "@keyframes dekoBinar"):
+        lapor("ok" if kelas in und and kelas in stu else "masalah", "CSS %s ada di kedua halaman" % kelas)
+    lapor("ok" if ".deko-flt{display:none}" in und else "masalah",
+          "undangan.html: kelopak mati otomatis saat tamu memilih kurangi gerakan")
+    lapor("ok" if "pointer-events:none" in und[und.index(".deko-sudut{"):und.index(".deko-sudut{") + 400] else "masalah",
+          "undangan.html: dekorasi tidak menangkap klik (pointer-events:none)")
+    # 5) dekorasi tersimpan saat publish + ikut ekspor HTML mandiri
+    simpan = len(re.findall(r"dko:state\.dko,flt:state\.flt,dvd:state\.dvd", stu))
+    lapor("ok" if simpan >= 3 else "masalah",
+          "studio.html: pilihan dekorasi ikut snapshot publish/arsip/ekspor (%d tempat)" % simpan)
+    # 6) uji halaman dekorasi
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji dekorasi dilewati")
+    else:
+        uji = os.path.join(ROOT, "tools", "test-dekorasi-tema.cjs")
+        if not os.path.isfile(uji):
+            lapor("masalah", "tools/test-dekorasi-tema.cjs tidak ada")
+        else:
+            r = subprocess.run(["node", uji], capture_output=True, text=True, cwd=ROOT)
+            ringkas = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan:")]
+            lapor("ok" if r.returncode == 0 else "masalah",
+                  "uji dekorasi tema: " + (ringkas[0] if ringkas else (r.stdout or r.stderr).strip()[-200:]))
+    # 7) skrip sinkronisasi mesin harus bisa dipakai
+    sink = os.path.join(ROOT, "tools", "sinkron-studio-template.py")
+    if not os.path.isfile(sink):
+        lapor("masalah", "tools/sinkron-studio-template.py tidak ada — mesin Studio Template tidak bisa disinkronkan")
+    else:
+        r = subprocess.run([sys.executable, sink, "--kering"], capture_output=True, text=True, cwd=ROOT)
+        lapor("ok" if r.returncode == 0 else "masalah",
+              "mesin Studio Template sinkron dengan studio.html/undangan.html"
+              if r.returncode == 0 else "mesin Studio Template BEDA — jalankan python3 tools/sinkron-studio-template.py")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -913,7 +976,7 @@ def main():
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi,
-               cek_studio_template):
+               cek_studio_template, cek_dekorasi_tema):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

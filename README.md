@@ -113,6 +113,44 @@ berpindah tema. Draft lama yang temanya sudah tidak ada otomatis jatuh ke tema d
 `LEGACY_EV` di `undangan.html` menjaga jenis acara (pernikahan vs satu nama) tetap benar
 untuk draft tanpa snapshot `data`.
 
+## Dekorasi tema (bunga, batik, hiasan dinamis)
+
+Tema undangan kini punya tiga lapis dekorasi, semuanya opsional dan dipesan per tema
+(bukan per undangan — tapi pemilik undangan boleh menimpanya di Studio → Desain →
+**Dekorasi Dinamis**):
+
+| Lapis | Pilihan | Ditulis di tema sebagai |
+|---|---|---|
+| Hiasan sudut bingkai | Bunga, Batik, Sulur Daun, Emas, Renda, Pita | `dko:'floral'` |
+| Kelopak melayang | Kelopak Mawar, Sakura, Daun, Kilau Emas, Salju, Gelembung | `flt:'petal'` |
+| Pembatas nama | Garis Intan, Belah Ketupat, Bunga, Batik, Pita | `dvd:'flower'` |
+
+Nilai `'none'` berarti tema/undangan itu **sengaja** mematikannya. Bila `dko` diisi oleh
+tema, pengaturan pemilik di Studio selalu menang. Beberapa border baru membawa hiasan
+sudutnya sendiri lewat field `art` (mis. `floral-corner`, `batik-frame`, `gold-corner`),
+jadi memilih border itu sudah cukup — `dko:'none'` membereskannya.
+
+**Motif latar baru** (11 motif): Batik Parang & Mega Mendung, Mawar, Sakura, Daisy, dan
+Sulur Daun — digambar sebagai SVG/tile inline di `patCss()`, jadi tidak ada berkas gambar
+yang perlu diunggah. **Border baru** (total 40): Bunga Sudut, Bingkai Batik, Sulur Daun,
+Sudut Emas, Pita Sudut, Renda Tepi, Paku Intan, Tiga Garis.
+
+Catatan teknis:
+
+- Semua hiasan memakai `position:absolute` + `pointer-events:none` (tidak pernah menutupi
+  tombol) dan `z-index:0` untuk kelopak supaya berada di atas motif latar tetapi di bawah
+  kartu nama.
+- Kelopak **mati otomatis** saat tamu mengaktifkan "kurangi gerakan" (`prefers-reduced-motion`).
+- Warna hiasan mengikuti `--accent-cover`/`--accent`, jadi satu tema tetap satu nada.
+- `studio.html` menyimpan pilihan pemilik ke snapshot (`dko`/`flt`/`dvd`) saat publish,
+  arsip, dan ekspor HTML mandiri; undangan lama tanpa field itu tampil persis seperti sebelumnya.
+- Studio Template mengajarkannya lewat tab **🌸 Dekorasi** + tombol **Rekomendasi sesuai motif**
+  (bunga → hiasan bunga + kelopak; batik → hiasan batik + kilau).
+
+Uji: `node tools/test-dekorasi-tema.cjs` (50 uji) dan pemeriksa `[24]` di `tools/cek-kesehatan.py`.
+Bila daftar mesin berubah, sinkronkan mesin Studio Template dengan
+`python3 tools/sinkron-studio-template.py`.
+
 ## Studio Template (perancang tema baru)
 
 `template-studio.html` adalah meja kerja untuk **membuat tema undangan baru** —
@@ -122,8 +160,9 @@ salah satu dari 13 tema bawaan (atau mulai dari nol), lalu atur:
 - **Identitas** — nama, id (otomatis dari nama, bisa dikunci), kategori acara, karakter cover, deskripsi katalog.
 - **Palet & kontras** — gradasi `g0/g1/g2`, aksen, warna teks cover, palet siap pakai dari tema bawaan,
   palet acak, dan tombol **Hitung teks aman** yang menjaga ≥ 3:1 di cover **dan** ≥ 4.5:1 di kartu isi.
-- **Tipografi, motif & ornamen, border, animasi, bagian undangan** — semua daftarnya adalah salinan
-  persis mesin `studio.html`, jadi tema terlihat sama di undangan tamu.
+- **Tipografi, motif & ornamen, dekorasi, border, animasi, bagian undangan** — semua daftarnya adalah
+  salinan persis mesin `studio.html`, jadi tema terlihat sama di undangan tamu. Tab **Dekorasi**
+  menyediakan hiasan sudut, kelopak melayang, dan pembatas nama + tombol rekomendasi sesuai motif.
 - **Publikasi** — harga (menentukan tier basic/premium/eksklusif/vip), badge katalog, rating, artwork opsional.
 
 Pratinjau HP di kanan memakai **CSS cover yang sama dengan `undangan.html`** (ditandai

@@ -31,17 +31,41 @@ const baca = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 const ada = (rel) => fs.existsSync(path.join(ROOT, rel));
 
 /* ---------- util ---------- */
-function idObjek(teks, nama) {
+/* Daftar id dibaca dengan MENJALANKAN literal array/objeknya (aman: literal murni
+   dari berkas repo ini sendiri) — supaya array satu baris maupun bertingkat
+   (mis. FX_COVER = [['fade','Fade'], …]) sama-sama terbaca utuh. */
+function literalSumber(teks, nama) {
   const i = teks.indexOf('const ' + nama + '=');
   if (i < 0) return null;
-  const blok = teks.slice(i, akhirArray(teks, teks.indexOf('[', i)));
-  return (blok.match(/\{\s*id\s*:\s*'([^']+)'/g) || []).map((x) => x.replace(/^\{\s*id\s*:\s*'/, '').replace(/'$/, ''));
+  const sisa = teks.slice(teks.indexOf('=', i) + 1);
+  const buka = sisa.search(/[\[{]/);
+  if (buka < 0) return null;
+  const b = teks.indexOf('=', i) + 1 + buka;
+  const akhir = akhirArray(teks, b);
+  return akhir < 0 ? null : teks.slice(b, akhir + 1);
+}
+function isiDaftar(teks, nama) {
+  const src = literalSumber(teks, nama);
+  if (!src) return null;
+  try {
+    const nilai = new Function('return ' + src)();
+    if (Array.isArray(nilai)) return nilai;
+    if (nilai && typeof nilai === 'object') return Object.keys(nilai);
+    return null;
+  } catch (e) {
+    return null;                       /* literal tidak bisa dijalankan — periksa manual */
+  }
+}
+function idObjek(teks, nama) {
+  const nilai = isiDaftar(teks, nama);
+  if (!nilai) return null;
+  if (!Array.isArray(nilai[0] !== undefined ? nilai : null)) return nilai.map((x) => x.id || x).filter(Boolean);
+  return nilai.map((x) => (x && typeof x === 'object' ? x.id : x)).filter((x) => typeof x === 'string');
 }
 function idArray(teks, nama) {
-  const i = teks.indexOf('const ' + nama + '=');
-  if (i < 0) return null;
-  const blok = teks.slice(i, akhirArray(teks, teks.indexOf('[', i)));
-  return (blok.match(/\[\s*'([^']+)'/g) || []).map((x) => x.replace(/^\[\s*'/, '').replace(/'$/, ''));
+  const nilai = isiDaftar(teks, nama);
+  if (!nilai) return null;
+  return nilai.map((x) => (Array.isArray(x) ? x[0] : (x && typeof x === 'object' ? x.id : x))).filter((x) => typeof x === 'string');
 }
 /* Indeks penutup array/objek, tahan terhadap string & template literal. */
 function akhirArray(teks, buka) {
@@ -104,6 +128,11 @@ function periksaData(d, mesin) {
   if (rec.cover && !mesin.fxCover.includes(rec.cover)) keras('efek pembuka "' + rec.cover + '" tidak ada di FX_COVER.');
   if (rec.scroll && !mesin.fxScroll.includes(rec.scroll)) keras('efek gulir "' + rec.scroll + '" tidak ada di FX_SCROLL.');
   (Array.isArray(rec.slides) ? rec.slides : []).forEach((s) => { if (!mesin.slides.includes(s)) keras('bagian "' + s + '" tidak ada di SLIDES.'); });
+  [['dko', 'hiasan sudut', mesin.dko], ['flt', 'kelopak melayang', mesin.flt], ['dvd', 'pembatas nama', mesin.dvd]].forEach(([k, label, ids]) => {
+    const v = d[k];
+    if (!v || v === 'none') return;
+    if (!ids.includes(v)) keras(k + ' "' + v + '" bukan ' + label + ' yang dikenal (' + ids.join('/') + ') — pakai "none" untuk mematikan.');
+  });
   [['bg3d', d.bg3d], ['bgPaper', d.bgPaper]].forEach(([k, v]) => {
     if (!v) return;
     if (!/^assets\/.+\.(webp|png|jpg|jpeg|svg)$/i.test(v)) keras(k + ' harus path seperti assets/… .webp');
@@ -124,6 +153,7 @@ function periksaData(d, mesin) {
   }
   if (!['basic', 'premium', 'eksklusif', 'vip'].includes(tierDari(harga))) keras('tier tidak dikenal.');
   if (!Array.isArray(rec.slides) || !rec.slides.length) lunak('belum ada bagian undangan disarankan (rec.slides kosong).');
+  if (!d.dko && !d.flt && !d.dvd) lunak('belum ada dekorasi dipesan (dko/flt/dvd kosong) — hiasan hanya muncul bila border membawa `art`.');
   return { masalah, catatan };
 }
 
@@ -143,6 +173,8 @@ function ekor(d) {
   if (d.bgPaper) s += ",bgPaper:'" + q(d.bgPaper) + "'";
   if (tier !== 'basic') s += ",tier:'" + tier + "'";
   if (tier === 'vip') s += ",part:'" + (d.part || 'gold') + "',scene:'" + (d.scene || 'zoom') + "'";
+  /* dko/flt/dvd: '' = ikut border, 'none' = sengaja dimatikan, selain itu id hiasan. */
+  ['dko', 'flt', 'dvd'].forEach((k) => { if (d[k]) s += ',' + k + ":'" + d[k] + "'"; });
   return s;
 }
 function barisStudio(d) {
@@ -177,13 +209,21 @@ function ruleCss(d) {
 function bacaMesin() {
   const studio = baca('studio.html');
   const obj = (nama) => idObjek(studio, nama) || [], arr = (nama) => idArray(studio, nama) || [];
+  /* Daftar motif dibaca dari patCss() saja supaya cabang lain (mis. titik-titik pada
+     efek animasi) tidak ikut terbaca sebagai motif. */
+  const isiPat = studio.slice(studio.indexOf('function patCss(t){'));
+  const akhirPat = isiPat.indexOf('\n}', isiPat.indexOf('t.pat===', 10));
   return {
     fonts: obj('FONTS'),
     borders: obj('BORDERS'),
     fxCover: arr('FX_COVER'),
     fxScroll: arr('FX_SCROLL'),
     slides: obj('SLIDES'),
-    pat: (studio.match(/t\.pat==='([a-z]+)'/g) || []).map((x) => x.replace(/^t\.pat==='/, '').replace(/'$/, '')),
+    pat: (isiPat.slice(0, akhirPat < 0 ? undefined : akhirPat).match(/t\.pat==='([a-z]+)'/g) || [])
+      .map((x) => x.replace(/^t\.pat==='/, '').replace(/'$/, '')),
+    dko: arr('DKO_IDS'),
+    flt: arr('FLT_IDS'),
+    dvd: arr('DVD_IDS'),
   };
 }
 const tplSudahAda = (rel) => {
@@ -294,7 +334,9 @@ function main() {
   if (sudahKatalog) console.log('  ' + TXT.titik + ' index.html: id sudah ada di katalog, dilewati');
 
   console.log('\nTema "' + (d.nama || d.id) + '" (' + d.id + ') siap: tier ' + tierDari(parseInt(d.harga, 10)) + ', kategori ' + KATEGORI[d.ev] + '.');
-  console.log('  tema di katalog: ' + pnIds.length + ' → ' + (sudahKatalog ? pnIds.length : pnIds.length + 1));
+  const dekoAktif = ['dko', 'flt', 'dvd'].filter((k) => d[k]).map((k) => k + ":'" + d[k] + "'");
+  console.log('  tema di katalog: ' + pnIds.length + ' → ' + (sudahKatalog ? pnIds.length : pnIds.length + 1)
+    + (dekoAktif.length ? '  ·  dekorasi: ' + dekoAktif.join(', ') : '  ·  tanpa dekorasi tambahan'));
   console.log('\nBerkas diperbarui' + (kering ? ' (rencana)' : '') + ':');
   laporan.forEach(([rel, isi, cadangan]) => console.log('  ' + TXT.ok + ' ' + rel.padEnd(14) + ' — ' + isi + (kering ? '' : '  (cadangan: ' + cadangan + ')')));
   if (kering) console.log('\nMode --kering: tidak ada berkas yang diubah. Jalankan tanpa --kering untuk memasang.');
