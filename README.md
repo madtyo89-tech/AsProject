@@ -64,6 +64,33 @@ dan (setelah server lokal aktif di :8080) `node tools/test-mobile-browser.cjs`.
 Browser memerlukan library sistem Chromium; atur `LD_LIBRARY_PATH` bila memakai
 library bundled. Tes publish memakai fixture lokal, **bukan database produksi**.
 
+## Halaman Katalog Template & Arsip di Studio (perbaikan 2026-10-12)
+
+Menu **Katalog Template** (edit harga/promo) dan **Folder / Arsip** dibuka dari sidebar
+*Menu Studio*. Di HP sidebar itu tersembunyi, dan dulu kedua halaman tidak punya tombol
+apa pun untuk kembali — pengguna terjebak (halaman aktif ikut tersimpan, jadi *refresh*
+pun tidak menolong). Sekarang:
+
+- Kedua halaman punya toolbar lengket **← Kembali ke Editor** + **☰ Template & Menu**
+  (`pageActions()`); pindah halaman lewat `goPage(id)` menutup menu HP dan mulai dari atas.
+- Tiap baris katalog punya tombol **🗑 Hapus** (`delKat`, dengan konfirmasi). Baris buatan
+  sendiri (dari **+ Tambah Template**) langsung hilang. Tema bawaan yang dihapus dicatat di
+  `state.katalogDel` (tombstone) supaya **tidak ditambahkan lagi otomatis** saat halaman
+  dibuka ulang — migrasi boot hanya menambah tema TPL yang belum ada **dan** tidak ada di
+  daftar itu. Tombol **↺ Pulihkan Bawaan (n)** mengembalikannya; katalog kosong menampilkan
+  tombol pulihkan juga. Menghapus dari katalog **tidak** menyembunyikan tema dari pilihan
+  tema Studio — untuk itu tetap pakai tombol 👁️ (`katalogHide`).
+- **+ Tambah Template** kini menggulir ke baris baru, memfokuskan kolom nama, dan memberi
+  notifikasi (dulu tanpa umpan balik, sehingga mudah tertekan berkali-kali).
+- Baris katalog **bertumpuk** (nama → harga → promo/badge → aksi) sebagai bawaan, lalu jadi
+  satu baris hanya bila lebar daftarnya cukup (`@container kat (min-width:640px)` pada
+  `.kat-list`). Lebar layar bukan ukuran yang tepat: kolom tengah desktop ≥ 1200 px hanya
+  480 px, sementara di 1024 px justru ~730 px. Dulu di HP teksnya remuk per huruf.
+
+Uji: `node tools/test-katalog-admin.cjs` (42 pemeriksaan jsdom: navigasi, hapus, buka ulang
+dengan localStorage yang sama, pulihkan, katalog kosong, Undangan Baru) dan bagian `[23]`
+di `tools/cek-kesehatan.py`.
+
 ## Katalog tema (direset + diisi ulang 2026-10-10)
 
 Katalog lama berisi 72 tema lengkap dengan artwork-nya. Seluruhnya dihapus, lalu diisi
