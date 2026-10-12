@@ -231,6 +231,26 @@ input,textarea,select{outline:0}
 .fstep h5{font-size:12px;font-weight:600;margin:10px 0 4px}
 .fstep p{font-size:10.5px;color:var(--mut);margin:0;line-height:1.45}
 @media (max-width:520px){.flow-steps{grid-template-columns:1fr}}
+
+/* === Ornamen sudut preview (bunga 3D/4D) === */
+.orn-cp{position:absolute;width:56px;height:56px;opacity:.88;pointer-events:none;z-index:2}
+.orn-cp svg{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 3px rgba(60,40,10,.25))}
+.orn-cp.tl{top:8px;left:8px}
+.orn-cp.tr{top:8px;right:8px;transform:scaleX(-1)}
+.orn-cp.bl{bottom:8px;left:8px;transform:scaleY(-1)}
+.orn-cp.br{bottom:8px;right:8px;transform:scale(-1,-1)}
+.orn-cp .orn-l{transform-box:fill-box;transform-origin:50% 50%}
+.orn-cp.orn-bunga4d{animation:cpAyun 7s ease-in-out infinite}
+.orn-cp.orn-bunga4d.tr{animation-delay:-1.6s}
+.orn-cp.orn-bunga4d.bl{animation-delay:-3.2s}
+.orn-cp.orn-bunga4d.br{animation-delay:-4.8s}
+.orn-cp.orn-bunga4d .l-back{animation:cpLapis 8s ease-in-out infinite}
+.orn-cp.orn-bunga4d .l-mid{animation:cpLapis 8s ease-in-out infinite reverse}
+.orn-cp.orn-bunga4d .l-front{animation:cpLapis2 6.5s ease-in-out infinite}
+@keyframes cpAyun{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -4px;rotate:1.1deg}}
+@keyframes cpLapis{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(1px,-1.4px) scale(1.035)}}
+@keyframes cpLapis2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-1.1px,1px) scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.orn-cp.orn-bunga4d,.orn-cp.orn-bunga4d .orn-l{animation:none!important}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="assets/scroll-effects.css">
@@ -429,7 +449,7 @@ const DEMO_MUSIC=[
 /* ============ STATE ============ */
 const DEF={
  page:'editor',tab:'info',event:'pernikahan',tpl:'ivory-klasik',accent:'#8A6E4B',
- fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,darkMode:false,border:'double',katalogHide:[],
+ fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,darkMode:false,border:'double',ornSudut:'bunga4d',katalogHide:[],
  form:{namaPria:'',gelarPria:'',namaWanita:'',gelarWanita:'',
   putraPutri:'',putriDari:'',
   namaAnak:'',putraDari:'',umurAnak:'',
@@ -541,6 +561,48 @@ const FX_COVER=[
  ['shimmer','Shimmer Gold','kilau emas menyapu',1],['curtain','Tirai Royal','membuka mewah bagai tirai',1],
  ['vip-zoom','VIP Deep Zoom','zoom dalam sinematik 👑',1,'vip'],['vip-curtain','VIP Curtain','tirai terbuka megah 👑',1,'vip']];
 function fxScrollId(){const v=state.anim.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
+const ORN_STYLES=[
+ ['tanpa','Tanpa Ornamen','polos bersih tanpa hiasan sudut'],
+ ['ranting','Ranting Emas','klasik halus — cocok untuk semua tema'],
+ ['bunga3d','Bunga 3D','kelopak bertingkat dengan bayangan kedalaman'],
+ ['bunga4d','Bunga 4D','bunga 3D yang melayang halus']];
+function ornSudutId(v){return ORN_STYLES.some(o=>o[0]===v)?v:'ranting'}
+function ornBungaSvg(){
+ const P=(cx,cy,rx,ry,fill,n,off)=>{let s='';for(let i=0;i<n;i++){const a=off+i*(360/n);
+  s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="'+fill+'" transform="rotate('+a+' '+cx+' '+cy+')"/>'}return s};
+ return `<svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+<defs>
+<radialGradient id="ornPG" cx="36%" cy="28%" r="82%"><stop offset="0%" stop-color="#fff" stop-opacity=".75"/><stop offset="45%" stop-color="currentColor" stop-opacity=".92"/><stop offset="100%" stop-color="currentColor" stop-opacity=".48"/></radialGradient>
+<radialGradient id="ornPD" cx="36%" cy="28%" r="82%"><stop offset="0%" stop-color="currentColor" stop-opacity=".62"/><stop offset="100%" stop-color="currentColor" stop-opacity=".22"/></radialGradient>
+<radialGradient id="ornPC" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#fff" stop-opacity=".92"/><stop offset="55%" stop-color="currentColor" stop-opacity=".95"/><stop offset="100%" stop-color="currentColor" stop-opacity=".55"/></radialGradient>
+</defs>
+<g class="orn-l l-back">
+<path d="M6 94 C16 66 38 44 72 34 C60 58 42 78 24 98Z" fill="url(#ornPD)" opacity=".6"/>
+<path d="M94 42 C88 30 78 22 66 18" stroke="currentColor" stroke-width="1" opacity=".35"/>
+${P(30,32,8,15.5,'url(#ornPD)',6,0)}
+</g>
+<g class="orn-l l-mid">
+${P(33,36,6.8,12.5,'url(#ornPG)',6,30)}
+<path d="M14 62 C24 56 32 48 38 38" stroke="currentColor" stroke-width="1" opacity=".4"/>
+<circle cx="70" cy="22" r="4.4" fill="url(#ornPD)"/>
+<circle cx="78" cy="14" r="2.8" fill="url(#ornPD)" opacity=".85"/>
+<circle cx="60" cy="14" r="2.1" fill="url(#ornPD)" opacity=".7"/>
+</g>
+<g class="orn-l l-front">
+${P(35,39,4.4,8.4,'url(#ornPC)',5,14)}
+<circle cx="35" cy="39" r="4.6" fill="url(#ornPC)"/>
+<circle cx="33.6" cy="37.4" r="1.7" fill="#fff" opacity=".9"/>
+<circle cx="82" cy="24" r="1.4" fill="currentColor" opacity=".7"/>
+<circle cx="20" cy="74" r="1.2" fill="currentColor" opacity=".55"/>
+</g>
+</svg>`}
+function ornCorners(){
+ const id=ornSudutId(state.ornSudut);
+ if(id==='tanpa')return'';
+ const svg=(id==='bunga3d'||id==='bunga4d')?ornBungaSvg():`<svg viewBox="0 0 74 74" fill="none" aria-hidden="true"><path d="M8 66 C8 32 32 8 66 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 56 C21 44 28 34 38 26" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".8"/><path d="M13 41 C22 39 29 33 31 24 C22 26 14 33 13 41Z" fill="currentColor" opacity=".65"/><path d="M29 22 C38 20 45 13 47 5 C38 7 30 13 29 22Z" fill="currentColor" opacity=".65"/><path d="M42 31 C51 29 58 22 60 13 C51 15 43 22 42 31Z" fill="currentColor" opacity=".5"/><circle cx="63" cy="11" r="2.2" fill="currentColor"/><circle cx="11" cy="63" r="1.9" fill="currentColor"/></svg>`;
+ const col=borderColor();
+ return `<i class="orn-cp tl orn-${id}" style="color:${col}">${svg}</i><i class="orn-cp tr orn-${id}" style="color:${col}">${svg}</i><i class="orn-cp bl orn-${id}" style="color:${col}">${svg}</i><i class="orn-cp br orn-${id}" style="color:${col}">${svg}</i>`;
+}
 const FX_BUKA=[
  ['gilir','Gilir Kiri','cover berputar seperti halaman dibalik (default)'],
  ['geser','Geser Kiri','cover meluncur keluar ke kiri'],
@@ -831,7 +893,7 @@ async function publish(){
  /* Snapshot lengkap → kolom jsonb "data" agar undangan live persis seperti studio
     (nama orang tua, sesi akad/resepsi, amplop, galeri, dsb) */
  const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
-  accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,
+  accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,ornSudut:state.ornSudut,
   amplop:JSON.parse(JSON.stringify(state.amplop)),
   slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
@@ -872,7 +934,7 @@ async function dlUndangan(){
   const r=await fetch('undangan.html');if(!r.ok)throw new Error('HTTP '+r.status);
   let html=await r.text();
   const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
-   accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,
+   accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,ornSudut:state.ornSudut,
    amplop:JSON.parse(JSON.stringify(state.amplop)),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
@@ -1068,6 +1130,12 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
     </div>
     ${[['goldOrn','Ornamen Gold Foil'],['darkMode','Mode Gelap (Emerald)']].map(([k,l])=>`<label class="togglerow">${l}<input type="checkbox" ${state[k]?'checked':''} onchange="set('${k}',this.checked)"></label>`).join('')}
    </div>
+  </div>
+ </div>
+ <div class="card"><h4>🌸 Ornamen Sudut</h4>
+  <p style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.6">Hiasan di keempat sudut cover. Bunga 3D punya kelopak bertingkat; Bunga 4D melayang halus.</p>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+   ${ORN_STYLES.map(f=>`<button class="fxbtn ${ornSudutId(state.ornSudut)===f[0]?'on':''}" onclick="set('ornSudut','${f[0]}')"><b>${f[1]}</b><span>${f[2]}</span></button>`).join('')}
   </div>
  </div>
  <div class="card"><h4>✨ Animasi Undangan</h4>
@@ -1634,7 +1702,7 @@ function phoneHtml(){
   <div class="notch"></div>
    <div class="${dark?'emerald-bg ':''}${wedding?'wedding-cover theme-'+tp.id:''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg}">
    <div class="${(CV||TX||RV?'ap ':'')}${wedding?'wedding-preview-inner':''}" style="padding:${wedding?'12px 12px 18px':'20px'};text-align:center;font-family:${tF};${patStyle}">
-   <div class="${wedding?'wedding-invite-card':''}" style="position:relative;${weddingCardCss}${weddingPaperCard}${!wedding&&borderOf().id!=='none'?'padding:18px 12px;margin:0 0 14px;':''}${borderCss()}">${borderCorners()}
+   <div class="${wedding?'wedding-invite-card':''}" style="position:relative;${weddingCardCss}${weddingPaperCard}${!wedding&&borderOf().id!=='none'?'padding:18px 12px;margin:0 0 14px;':''}${borderCss()}">${borderCorners()}${ornCorners()}
     ${f.showBismillah?`<div class="${CV?'fx-c-'+CE:''}" style="margin-bottom:12px;${CV?'animation-delay:250ms':''}"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
      <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}
     ${tp.deco?`<div class="${CV?'a-deco':''}" style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px;${CV?'animation-delay:150ms':''}">${tp.deco}</div>`:''}

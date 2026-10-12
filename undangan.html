@@ -488,7 +488,23 @@ body:not(.opened) #aspAmbient{opacity:.42}
 .orn-c.bl{bottom:10px;left:10px;transform:scaleY(-1)}
 .orn-c.br{bottom:10px;right:10px;transform:scale(-1,-1)}
 #cover .bdfr,.card.guest{position:relative}
-@media (max-width:420px){.orn-c{width:54px;height:54px}}
+/* Bunga 3D/4D: tiga lapis kelopak + bayangan lembut → kesan kedalaman */
+.orn-c.orn-bunga3d,.orn-c.orn-bunga4d{width:106px;height:106px;opacity:.9}
+.orn-c.orn-bunga3d svg,.orn-c.orn-bunga4d svg{filter:drop-shadow(0 3px 5px rgba(60,40,10,.28)) drop-shadow(0 1px 0 rgba(255,255,255,.32))}
+.orn-c .orn-l{transform-box:fill-box;transform-origin:50% 50%}
+@media (max-width:420px){.orn-c{width:54px;height:54px}.orn-c.orn-bunga3d,.orn-c.orn-bunga4d{width:78px;height:78px}}
+/* 4D: tiap sudut berayun pelan berbeda fase, lapisan kelopak melayang berbeda arah */
+body.orn-bunga4d .orn-c{animation:ornAyun 7s ease-in-out infinite}
+body.orn-bunga4d .orn-c.tr{animation-delay:-1.6s}
+body.orn-bunga4d .orn-c.bl{animation-delay:-3.2s}
+body.orn-bunga4d .orn-c.br{animation-delay:-4.8s}
+body.orn-bunga4d .orn-c .l-back{animation:ornLapis 8s ease-in-out infinite}
+body.orn-bunga4d .orn-c .l-mid{animation:ornLapis 8s ease-in-out infinite reverse}
+body.orn-bunga4d .orn-c .l-front{animation:ornLapis2 6.5s ease-in-out infinite}
+@keyframes ornAyun{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -7px;rotate:1.3deg}}
+@keyframes ornLapis{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(1.2px,-1.8px) scale(1.035)}}
+@keyframes ornLapis2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-1.4px,1.2px) scale(1.05)}}
+@media (prefers-reduced-motion:reduce){body.orn-bunga4d .orn-c,body.orn-bunga4d .orn-c .orn-l{animation:none!important}}
 
 /* ==== Tombol "Buka Undangan" bentuk amplop kertas + segel lilin ==== */
 body.wedding-cover #cover .open,body.foto-full #cover .open,#cover .open{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:flex-end;
@@ -712,6 +728,38 @@ const FX_COVER=[
  ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal'],['vip-zoom','VIP Deep Zoom'],['vip-curtain','VIP Curtain']];
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade'].includes(v)?v:'gilir'}
+function ornSudutId(v){return ['tanpa','ranting','bunga3d','bunga4d'].includes(v)?v:'ranting'}
+/* Bunga ornamen sudut 3D/4D: tiga lapis kelopak (l-back / l-mid / l-front)
+   dengan gradasi + highlight → kesan kedalaman; mode 4D menambah gerak melayang. */
+function ornBungaSvg(){
+ const P=(cx,cy,rx,ry,fill,n,off)=>{let s='';for(let i=0;i<n;i++){const a=off+i*(360/n);
+  s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="'+fill+'" transform="rotate('+a+' '+cx+' '+cy+')"/>'}return s};
+ return `<svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+<defs>
+<radialGradient id="ornPG" cx="36%" cy="28%" r="82%"><stop offset="0%" stop-color="#fff" stop-opacity=".75"/><stop offset="45%" stop-color="currentColor" stop-opacity=".92"/><stop offset="100%" stop-color="currentColor" stop-opacity=".48"/></radialGradient>
+<radialGradient id="ornPD" cx="36%" cy="28%" r="82%"><stop offset="0%" stop-color="currentColor" stop-opacity=".62"/><stop offset="100%" stop-color="currentColor" stop-opacity=".22"/></radialGradient>
+<radialGradient id="ornPC" cx="34%" cy="28%" r="78%"><stop offset="0%" stop-color="#fff" stop-opacity=".92"/><stop offset="55%" stop-color="currentColor" stop-opacity=".95"/><stop offset="100%" stop-color="currentColor" stop-opacity=".55"/></radialGradient>
+</defs>
+<g class="orn-l l-back">
+<path d="M6 94 C16 66 38 44 72 34 C60 58 42 78 24 98Z" fill="url(#ornPD)" opacity=".6"/>
+<path d="M94 42 C88 30 78 22 66 18" stroke="currentColor" stroke-width="1" opacity=".35"/>
+${P(30,32,8,15.5,'url(#ornPD)',6,0)}
+</g>
+<g class="orn-l l-mid">
+${P(33,36,6.8,12.5,'url(#ornPG)',6,30)}
+<path d="M14 62 C24 56 32 48 38 38" stroke="currentColor" stroke-width="1" opacity=".4"/>
+<circle cx="70" cy="22" r="4.4" fill="url(#ornPD)"/>
+<circle cx="78" cy="14" r="2.8" fill="url(#ornPD)" opacity=".85"/>
+<circle cx="60" cy="14" r="2.1" fill="url(#ornPD)" opacity=".7"/>
+</g>
+<g class="orn-l l-front">
+${P(35,39,4.4,8.4,'url(#ornPC)',5,14)}
+<circle cx="35" cy="39" r="4.6" fill="url(#ornPC)"/>
+<circle cx="33.6" cy="37.4" r="1.7" fill="#fff" opacity=".9"/>
+<circle cx="82" cy="24" r="1.4" fill="currentColor" opacity=".7"/>
+<circle cx="20" cy="74" r="1.2" fill="currentColor" opacity=".55"/>
+</g>
+</svg>`}
 function fxCoverId(AN){const v=AN&&AN.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 
 /* ---------- util ---------- */
@@ -1084,7 +1132,7 @@ function boot(draft){
  const AN=(d&&d.anim)||{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'};
  const RM=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
  const covOn=!!AN.cover&&!RM,txOn=!!AN.text&&!RM,rvOn=!!AN.reveal&&!RM;
- const CE=fxCoverId(AN),SC=fxScrollId(AN);document.body.className=String(document.body.className||'').replace(/\bbuka-\S+/g,'').trim();document.body.classList.add('buka-'+fxBukaId(AN));
+ const CE=fxCoverId(AN),SC=fxScrollId(AN);document.body.className=String(document.body.className||'').replace(/\bbuka-\S+/g,'').replace(/\born-\S+/g,'').trim();document.body.classList.add('buka-'+fxBukaId(AN));document.body.classList.add('orn-'+ornSudutId(d&&d.ornSudut));
  const h1d=tplF.char?850:550,dtD=tplF.char?1500:1300,hoD=tplF.char?1650:1450,btD=tplF.char?1800:1600;
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
  const wspan=(txt,d0)=>{let k=0;return String(txt||'').split(' ').map(word=>{
@@ -1100,8 +1148,9 @@ function boot(draft){
  };
  const BD=BORDERS.find(b=>b.id===(d&&d.border))||null;let bdStyle='';
  if(BD){const A=tplF.accent;if(BD.s)bdStyle=BD.s(A);if(BD.extra)bdStyle+=(bdStyle?';':'')+BD.extra(A)}
- const ORN_SVG=`<svg viewBox="0 0 74 74" fill="none" aria-hidden="true"><path d="M8 66 C8 32 32 8 66 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 56 C21 44 28 34 38 26" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".8"/><path d="M13 41 C22 39 29 33 31 24 C22 26 14 33 13 41Z" fill="currentColor" opacity=".65"/><path d="M29 22 C38 20 45 13 47 5 C38 7 30 13 29 22Z" fill="currentColor" opacity=".65"/><path d="M42 31 C51 29 58 22 60 13 C51 15 43 22 42 31Z" fill="currentColor" opacity=".5"/><circle cx="63" cy="11" r="2.2" fill="currentColor"/><circle cx="11" cy="63" r="1.9" fill="currentColor"/></svg>`;
- const ORN=`<i class="orn-c tl">${ORN_SVG}</i><i class="orn-c tr">${ORN_SVG}</i><i class="orn-c bl">${ORN_SVG}</i><i class="orn-c br">${ORN_SVG}</i>`;
+ const ornId=ornSudutId(d&&d.ornSudut);
+ const ORN_SVG=(ornId==='bunga3d'||ornId==='bunga4d')?ornBungaSvg():`<svg viewBox="0 0 74 74" fill="none" aria-hidden="true"><path d="M8 66 C8 32 32 8 66 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 56 C21 44 28 34 38 26" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".8"/><path d="M13 41 C22 39 29 33 31 24 C22 26 14 33 13 41Z" fill="currentColor" opacity=".65"/><path d="M29 22 C38 20 45 13 47 5 C38 7 30 13 29 22Z" fill="currentColor" opacity=".65"/><path d="M42 31 C51 29 58 22 60 13 C51 15 43 22 42 31Z" fill="currentColor" opacity=".5"/><circle cx="63" cy="11" r="2.2" fill="currentColor"/><circle cx="11" cy="63" r="1.9" fill="currentColor"/></svg>`;
+ const ORN=ornId==='tanpa'?'':`<i class="orn-c tl orn-${ornId}">${ORN_SVG}</i><i class="orn-c tr orn-${ornId}">${ORN_SVG}</i><i class="orn-c bl orn-${ornId}">${ORN_SVG}</i><i class="orn-c br orn-${ornId}">${ORN_SVG}</i>`;
  const bdCorners=(()=>{if(!BD||!BD.corner)return'';const w=BD.corner,A=tplF.accent;
   const c=p=>`<i class="bdc" style="border:0 solid ${A};${p}"></i>`;
   return c('top:10px;left:10px;border-top-width:'+w+'px;border-left-width:'+w+'px')+c('top:10px;right:10px;border-top-width:'+w+'px;border-right-width:'+w+'px')+c('bottom:10px;left:10px;border-bottom-width:'+w+'px;border-left-width:'+w+'px')+c('bottom:10px;right:10px;border-bottom-width:'+w+'px;border-right-width:'+w+'px')})();
@@ -1498,7 +1547,7 @@ function ambientPasang(tplF){
 const DEMO_DRAFT={
  slug:'rangga-alya',name1:'Rangga Pratama',name2:'Alya Zahra',venue:'The Ballroom at Ritz Carlton',
  event_date:'2026-12-28',event_time:'08:00',music_url:'music/backsound-asproject.mp3',music_name:'Backsound AsProject — rtyo',theme:2,
- data:{event:'pernikahan',tpl:'ivory-klasik',doa:'pernikahan',accent:'#8A6E4B',fontTitle:'playfair',fontBody:'inter',border:'double',
+ data:{event:'pernikahan',tpl:'ivory-klasik',doa:'pernikahan',accent:'#8A6E4B',fontTitle:'playfair',fontBody:'inter',border:'double',ornSudut:'bunga4d',
   gallery:['assets/demo/wedding/01-jawa-elegan.jpg','assets/demo/wedding/02-minimalist-sage.jpg','assets/demo/wedding/03-luxury-gold.jpg'],
   cover:'assets/demo/wedding/02-minimalist-sage.jpg',coverStyle:'full',coverPos:{x:50,y:38,z:1},fotoPria:'assets/demo/wedding/05-mempelai-pria.jpg',fotoWanita:'assets/demo/wedding/04-mempelai-wanita.jpg',
   form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
