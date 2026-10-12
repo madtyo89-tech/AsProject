@@ -1082,6 +1082,21 @@ const DEMO_DRAFT={
   anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'},
   amplop:{bank:'BCA',noRek:'1234567890',pemilik:'Rangga Pratama',ewallet:'DANA',noEwallet:'081234567890',showAmplop:true,showCopy:true}}};
 
+/* Mode pratinjau: ?demo=1&pat=parang&border=batik-frame&dko=batik&flt=dust&dvd=batik
+   memudahkan melihat motif & dekorasi bunga/batik tanpa mengubah undangan sungguhan.
+   Hanya berlaku di mode demo (tidak menyentuh data tamu / database). */
+if(DEMO){
+ ['pat','border','dko','flt','dvd'].forEach(k=>{
+  const nilai=(Q.get(k)||'').trim();
+  if(!nilai)return;
+  const sah=k==='pat'?!!patCss({pat:nilai,accent:'#000000'})
+          :k==='border'?BORDERS.some(b=>b.id===nilai)
+          :k==='dko'?DKO_IDS.includes(nilai):k==='flt'?FLT_IDS.includes(nilai):DVD_IDS.includes(nilai);
+  if(sah)DEMO_DRAFT.data[k]=nilai;
+ });
+ if((Q.get('deko')||'')==='1'){DEMO_DRAFT.data.dko=DEMO_DRAFT.data.dko||'floral';DEMO_DRAFT.data.flt=DEMO_DRAFT.data.flt||'petal';DEMO_DRAFT.data.dvd=DEMO_DRAFT.data.dvd||'flower'}
+}
+
 /* ---------- mulai ---------- */
 if(typeof EMBEDDED_DATA!=='undefined'&&EMBEDDED_DATA){loading();setTimeout(()=>boot(EMBEDDED_DATA),350)}
 else if(DEMO){loading();setTimeout(()=>boot(DEMO_DRAFT),350)}

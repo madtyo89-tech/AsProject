@@ -135,6 +135,17 @@ Sulur Daun — digambar sebagai SVG/tile inline di `patCss()`, jadi tidak ada be
 yang perlu diunggah. **Border baru** (total 40): Bunga Sudut, Bingkai Batik, Sulur Daun,
 Sudut Emas, Pita Sudut, Renda Tepi, Paku Intan, Tiga Garis.
 
+Melihat hasilnya tanpa mengubah apa pun — mode demo menerima pratinjau dari URL (hanya
+berlaku di mode demo, tidak menyentuh data tamu):
+
+```
+undangan.html?demo=1&deko=1                                   # langsung berdekorasi
+undangan.html?demo=1&pat=parang&border=batik-frame&dko=batik&flt=dust&dvd=batik
+undangan.html?demo=1&pat=sakura&border=floral-corner           # hiasan sudut ikut border
+```
+
+Nilai yang tidak dikenal diabaikan begitu saja, jadi tautan salah tidak merusak tampilan.
+
 Catatan teknis:
 
 - Semua hiasan memakai `position:absolute` + `pointer-events:none` (tidak pernah menutupi
