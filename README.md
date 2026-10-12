@@ -113,6 +113,125 @@ berpindah tema. Draft lama yang temanya sudah tidak ada otomatis jatuh ke tema d
 `LEGACY_EV` di `undangan.html` menjaga jenis acara (pernikahan vs satu nama) tetap benar
 untuk draft tanpa snapshot `data`.
 
+## Kanvas Template (kanvas kosong gaya Canva)
+
+`kanvas.html` adalah meja gambar bebas: mulai dari kertas kosong, susun sendiri lewat
+drag & resize, lalu jadikan tema katalog.
+
+- **Elemen**: teks (7 gaya siap pakai), kotak, bulat, garis, gambar (unggah → data URL),
+  ornamen bunga/batik (6 bentuk), hiasan bingkai & pembatas (8 bentuk).
+- **Menggambar**: geser bebas dengan garis bantu snap (tepi/tengah kanvas & elemen lain),
+  8 pegangan ubah ukuran, pegangan putar (Shift = langkah 15°), dobel klik teks untuk
+  menulis langsung di kanvas.
+- **Latar**: 8 palet gradasi undangan atau 11 motif bunga/batik bawaan (memakai warna aksen
+  pilihan Anda) — motifnya persis sama dengan yang dipakai undangan tamu.
+- **Lapisan**: urutkan, kunci, sembunyikan, gandakan, hapus; undo/redo sampai 90 langkah.
+- **Pintasan**: `Ctrl+Z` / `Ctrl+Y`, `Ctrl+D` duplikat, `Del` hapus, tanda panah 1 px
+  (Shift 10 px), `Esc` batal pilih.
+- **Simpan**: otomatis di perangkat (localStorage) sebagai banyak kanvas; `Berkas` untuk
+  kanvas baru (3:4, 1:1, 9:16, A4), ganti nama, gandakan, impor/ekspor JSON.
+- **Ekspor**: HTML mandiri (paling setia — motif & font ikut), SVG vektor, JSON rancangan,
+  serta Cetak/PDF.
+- **Jadikan tema**: palet, font, motif, dan hiasan dipetakan otomatis ke tema katalog
+  (font/motif/border/hiasan divalidasi ke daftar mesin), lalu dibuka di Studio Template
+  lewat `?dari=kanvas` untuk dilengkapi dan dipasang.
+
+Uji: `node tools/test-kanvas.cjs` (74 uji) dan pemeriksa `[25]` di `tools/cek-kesehatan.py`.
+Mesin di halaman ini adalah salinan persis `studio.html` — sinkronkan dengan
+`python3 tools/sinkron-studio-template.py` bila mesin berubah (skrip itu sekaligus
+menjaga `template-studio.html`).
+
+## Dekorasi tema (bunga, batik, hiasan dinamis)
+
+Tema undangan kini punya tiga lapis dekorasi, semuanya opsional dan dipesan per tema
+(bukan per undangan — tapi pemilik undangan boleh menimpanya di Studio → Desain →
+**Dekorasi Dinamis**):
+
+| Lapis | Pilihan | Ditulis di tema sebagai |
+|---|---|---|
+| Hiasan sudut bingkai | Bunga, Batik, Sulur Daun, Emas, Renda, Pita | `dko:'floral'` |
+| Kelopak melayang | Kelopak Mawar, Sakura, Daun, Kilau Emas, Salju, Gelembung | `flt:'petal'` |
+| Pembatas nama | Garis Intan, Belah Ketupat, Bunga, Batik, Pita | `dvd:'flower'` |
+
+Nilai `'none'` berarti tema/undangan itu **sengaja** mematikannya. Bila `dko` diisi oleh
+tema, pengaturan pemilik di Studio selalu menang. Beberapa border baru membawa hiasan
+sudutnya sendiri lewat field `art` (mis. `floral-corner`, `batik-frame`, `gold-corner`),
+jadi memilih border itu sudah cukup — `dko:'none'` membereskannya.
+
+**Motif latar baru** (11 motif): Batik Parang & Mega Mendung, Mawar, Sakura, Daisy, dan
+Sulur Daun — digambar sebagai SVG/tile inline di `patCss()`, jadi tidak ada berkas gambar
+yang perlu diunggah. **Border baru** (total 40): Bunga Sudut, Bingkai Batik, Sulur Daun,
+Sudut Emas, Pita Sudut, Renda Tepi, Paku Intan, Tiga Garis.
+
+Melihat hasilnya tanpa mengubah apa pun — mode demo menerima pratinjau dari URL (hanya
+berlaku di mode demo, tidak menyentuh data tamu):
+
+```
+undangan.html?demo=1&deko=1                                   # langsung berdekorasi
+undangan.html?demo=1&pat=parang&border=batik-frame&dko=batik&flt=dust&dvd=batik
+undangan.html?demo=1&pat=sakura&border=floral-corner           # hiasan sudut ikut border
+```
+
+Nilai yang tidak dikenal diabaikan begitu saja, jadi tautan salah tidak merusak tampilan.
+
+Catatan teknis:
+
+- Semua hiasan memakai `position:absolute` + `pointer-events:none` (tidak pernah menutupi
+  tombol) dan `z-index:0` untuk kelopak supaya berada di atas motif latar tetapi di bawah
+  kartu nama.
+- Kelopak **mati otomatis** saat tamu mengaktifkan "kurangi gerakan" (`prefers-reduced-motion`).
+- Warna hiasan mengikuti `--accent-cover`/`--accent`, jadi satu tema tetap satu nada.
+- `studio.html` menyimpan pilihan pemilik ke snapshot (`dko`/`flt`/`dvd`) saat publish,
+  arsip, dan ekspor HTML mandiri; undangan lama tanpa field itu tampil persis seperti sebelumnya.
+- Studio Template mengajarkannya lewat tab **🌸 Dekorasi** + tombol **Rekomendasi sesuai motif**
+  (bunga → hiasan bunga + kelopak; batik → hiasan batik + kilau).
+
+Uji: `node tools/test-dekorasi-tema.cjs` (50 uji) dan pemeriksa `[24]` di `tools/cek-kesehatan.py`.
+Bila daftar mesin berubah, sinkronkan mesin Studio Template **dan** Kanvas Template dengan
+`python3 tools/sinkron-studio-template.py` (`--kering` melaporkan bila salah satu berbeda).
+
+## Studio Template (perancang tema baru)
+
+`template-studio.html` adalah meja kerja untuk **membuat tema undangan baru** —
+bukan mengedit satu undangan (itu tugas `studio.html`). Buka halaman ini, duplikat
+salah satu dari 13 tema bawaan (atau mulai dari nol), lalu atur:
+
+- **Identitas** — nama, id (otomatis dari nama, bisa dikunci), kategori acara, karakter cover, deskripsi katalog.
+- **Palet & kontras** — gradasi `g0/g1/g2`, aksen, warna teks cover, palet siap pakai dari tema bawaan,
+  palet acak, dan tombol **Hitung teks aman** yang menjaga ≥ 3:1 di cover **dan** ≥ 4.5:1 di kartu isi.
+- **Tipografi, motif & ornamen, dekorasi, border, animasi, bagian undangan** — semua daftarnya adalah
+  salinan persis mesin `studio.html`, jadi tema terlihat sama di undangan tamu. Tab **Dekorasi**
+  menyediakan hiasan sudut, kelopak melayang, dan pembatas nama + tombol rekomendasi sesuai motif.
+- **Publikasi** — harga (menentukan tier basic/premium/eksklusif/vip), badge katalog, rating, artwork opsional.
+
+Pratinjau HP di kanan memakai **CSS cover yang sama dengan `undangan.html`** (ditandai
+`<style data-cover-undangan>`), lengkap dengan mode **Isi** yang memakai kelas
+`scroll-reveal fx-s-*` milik repo. Panel **Pemeriksaan** menandai id bentrok, kontras
+kurang, konten terkunci tier, dan artwork yang belum ada.
+
+### Memasang tema hasil rancangan
+
+```bash
+node tools/pasang-template.cjs tema-saya.json        # pasang ke 3 berkas
+node tools/pasang-template.cjs tema-saya.json --kering   # uji dulu, tanpa menulis
+node tools/pasang-template.cjs --batalkan            # kembalikan dari cadangan
+```
+
+Skrip menambahkan baris di **akhir** `const TPL` (studio.html), `const TPL` (undangan.html),
+dan `var Pn` (index.html) + rule CSS gradasi katalog + angka "N template siap pakai".
+Berkas asli disalin ke `*.bak-template` sebelum diubah, dan menjalankan dua kali tidak
+menggandakan baris. Urutan array = kolom `theme` di Supabase, jadi tema baru **selalu**
+ditambahkan di akhir supaya undangan yang sudah terbit tidak bergeser. Selain lewat JSON,
+modal **Ekspor & pasang** bisa menampilkan 4 potongan kode untuk disalin manual.
+
+Tema juga boleh membawa **resep** (`rec:{body,border,cover,scroll,mix,slides}`): saat tema
+dipilih di `studio.html`, resep itu mengisi font isi, border, efek animasi, dan bagian yang
+disarankan — dan jadi cadangan saat snapshot undangan belum menyimpan pengaturan itu.
+Tema lama tanpa `rec` berjalan persis seperti sebelumnya.
+
+Uji: `node tools/test-template-studio.cjs` (paritas mesin, 13 tema, ekspor, dan pemasangan
+ke salinan repo di folder sementara) serta `python3 tools/cek-kesehatan.py` bagian `[23]`.
+
 ## Pembaruan template pernikahan
 
 Cover pernikahan memakai susunan editorial: judul undangan, nama pasangan, tanggal, jam,

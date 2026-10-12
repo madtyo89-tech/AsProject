@@ -1,0 +1,1164 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111">
+<meta name="description" content="Studio Template AsProject — rancang tema undangan digital (palet, tipografi, motif, border, animasi, bagian) lalu ekspor kodenya untuk studio.html, undangan.html, dan index.html.">
+<title>Studio Template — AsProject</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<link rel="stylesheet" href="assets/button-help.css">
+<link rel="stylesheet" href="assets/scroll-effects.css">
+<style data-cover-undangan>/* ===== CSS mesin undangan (disalin dari undangan.html: cover + animasi + dekorasi) =====
+   Dipakai apa adanya supaya pratinjau HP di halaman ini identik dengan halaman tamu.
+   Jalankan ulang: python3 tools/sinkron-studio-template.py ===== */
+/* ---------- COVER ---------- */
+#cover{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 26px;
+  background:linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));
+  transition:opacity .7s ease,visibility .7s;}
+#cover .pat{position:absolute;inset:0;pointer-events:none;opacity:.5}
+#cover .veil{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(255,255,255,.25)}
+#cover .inner{position:relative;max-width:400px;width:100%}
+#cover .bdfr{position:relative;width:100%;max-width:440px;padding:30px 18px}
+#cover .bdc{position:absolute;width:22px;height:22px;pointer-events:none;z-index:2;display:block}
+#cover .orn{font-size:20px;letter-spacing:14px;color:var(--accent-cover);opacity:.85}
+#cover .kicker{margin-top:26px;font-size:11px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--ink);opacity:.85}
+#cover .chara{font-size:52px;line-height:1;margin-top:18px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.15))}
+#cover h1{font-family:var(--ft);font-weight:700;color:var(--ink);font-size:clamp(40px,11vw,58px);line-height:1.04;margin-top:14px}
+#cover .amp{font-family:var(--ft);font-style:italic;font-size:24px;color:var(--accent-cover);margin:6px 0}
+#cover .date{margin-top:22px;display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border:1px solid rgba(255,255,255,.55);border-radius:99px;background:rgba(255,255,255,.35);backdrop-filter:blur(6px);font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--ink)}
+#cover .host{margin-top:14px;font-size:12px;color:var(--ink);opacity:.75;letter-spacing:.06em}
+#cover .open{position:relative;margin-top:44px;display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 34px;border:0;border-radius:99px;background:var(--ink);color:var(--ink-fg);font-size:14px;font-weight:600;letter-spacing:.04em;box-shadow:0 18px 40px rgba(0,0,0,.22);animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+#cover .open .env{font-size:18px}
+#cover .brand{position:absolute;bottom:22px;left:0;right:0;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);opacity:.55}
+/* ---------- DEKORASI TEMA (hiasan sudut, kelopak melayang, pembatas nama) ----------
+   Kelas generik supaya dipakai bersama oleh undangan live, pratinjau Studio, dan
+   Studio Template. Semua dekorasi bersifat hiasan: tidak menangkap klik. */
+.deko-sudut{position:absolute;width:50px;height:50px;pointer-events:none;z-index:2;color:var(--accent-cover,var(--accent,#8A6E4B));opacity:.92;animation:dekoAyun 7s ease-in-out infinite alternate}
+.deko-sudut svg{width:100%;height:100%;display:block}
+.deko-sudut.tl{top:4px;left:4px}
+.deko-sudut.tr{top:4px;right:4px;transform:scaleX(-1)}
+.deko-sudut.br{bottom:4px;right:4px;transform:scale(-1,-1);animation-delay:-2s}
+.deko-sudut.bl{bottom:4px;left:4px;transform:scaleY(-1);animation-delay:-4s}
+@keyframes dekoAyun{from{opacity:.72;transform:scale(.97)}to{opacity:1;transform:scale(1.03)}}
+.deko-sudut.tr{animation-name:dekoAyunX}.deko-sudut.br{animation-name:dekoAyunX2}.deko-sudut.bl{animation-name:dekoAyunX3}
+@keyframes dekoAyunX{from{opacity:.72;transform:scaleX(-1) scale(.97)}to{opacity:1;transform:scaleX(-1) scale(1.03)}}
+@keyframes dekoAyunX2{from{opacity:.72;transform:scale(-1) scale(.97)}to{opacity:1;transform:scale(-1) scale(1.03)}}
+@keyframes dekoAyunX3{from{opacity:.72;transform:scaleY(-1) scale(.97)}to{opacity:1;transform:scaleY(-1) scale(1.03)}}
+/* z-index 0: kelopak tampil di atas motif latar, tapi TIDAK menutupi kartu nama. */
+.deko-flt{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.deko-flt i{position:absolute;top:-6%;left:var(--x,50%);width:var(--w,15px);height:var(--w,15px);opacity:var(--o,.72);color:var(--accent-cover,var(--accent,#8A6E4B));
+ animation:dekoTurun var(--t,13s) linear var(--d,0s) infinite;will-change:transform}
+.deko-flt i svg{width:100%;height:100%;display:block}
+.deko-flt.g-dust i{background:radial-gradient(circle,var(--gold,#D4AF37) 0 28%,rgba(212,175,55,0) 72%);border-radius:50%}
+.deko-flt.g-bubble i{border:1px solid var(--accent-cover,var(--accent,#8A6E4B));border-radius:50%;background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.75),rgba(255,255,255,0) 62%)}
+@keyframes dekoTurun{
+ 0%{transform:translate3d(0,-8vh,0) rotate(0deg) scale(.9)}
+ 50%{transform:translate3d(var(--sw,16px),44vh,0) rotate(180deg) scale(1.04)}
+ 100%{transform:translate3d(0,98vh,0) rotate(360deg) scale(.94)}}
+.deko-dvd{margin:13px auto 0;display:flex;align-items:center;justify-content:center;color:var(--accent-cover,var(--accent,#8A6E4B));animation:dekoBinar 4.5s ease-in-out infinite alternate}
+.deko-dvd svg{width:132px;height:auto;display:block;max-width:64vw}
+.deko-dvd.d-flower svg,.deko-dvd.d-ribbon svg{width:124px}
+@keyframes dekoBinar{from{opacity:.62}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+ .deko-flt{display:none}
+ .deko-sudut,.deko-dvd{animation:none}
+}
+</style>
+<style>
+/* ---------- token tampilan (sama dengan studio.html supaya terasa satu keluarga) ---------- */
+:root{--bg:#fafaf8;--card:#fff;--line:#eee;--line2:#e9e9e9;--ink:#1a1a1a;--mut:#737373;--mut2:#a3a3a3;--gold:#D4AF37;--cream:#FFFBEB;--cream2:#FDE68A;--soft:#f5f5f4;--bad:#b91c1c;--ok:#15803d;--warn:#b45309}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:13px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:transparent}
+input,textarea,select{outline:0}
+::selection{background:rgba(212,175,55,.3)}
+.sb::-webkit-scrollbar{width:6px;height:6px}.sb::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:10px}
+.hidden{display:none!important}
+/* ---------- kerangka ---------- */
+.hdr{position:sticky;top:0;z-index:40;backdrop-filter:blur(24px);background:rgba(255,255,255,.86);border-bottom:1px solid var(--line);height:64px;display:flex;align-items:center;gap:12px;padding:0 16px}
+.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-weight:700;color:#5a4a12;font-size:12px;background:linear-gradient(135deg,#D4AF37,#F9E79F,#D4AF37);box-shadow:0 1px 2px rgba(0,0,0,.08);flex:none}
+.hdr h1{font-size:14px;font-weight:600;line-height:1.2}
+.hdr .sub{font-size:11px;color:var(--mut)}
+.sp{flex:1}
+.tb{height:34px;padding:0 13px;border-radius:99px;border:1px solid var(--line2);background:#fff;font-size:12px;font-weight:500;display:inline-flex;align-items:center;gap:7px}
+.tb:hover{background:#fbfaf8}
+.tb.dark{background:#111;color:#fff;border-color:#111;font-weight:600}
+.tb.dark:hover{background:#000}
+.layout{max-width:1720px;margin:auto;display:grid;grid-template-columns:300px 470px 1fr;min-height:calc(100dvh - 64px)}
+.aside{border-right:1px solid var(--line);background:#fff;padding:14px;position:sticky;top:64px;height:calc(100dvh - 64px);overflow-y:auto}
+.mainc{background:#fbfaf8;border-right:1px solid var(--line);overflow-y:auto;height:calc(100dvh - 64px);position:sticky;top:64px}
+.prevc{background:#f5f5f0;padding:14px;display:flex;flex-direction:column;align-items:center;gap:12px;min-height:calc(100dvh - 64px)}
+/* ---------- komponen ---------- */
+.lbl{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.card{border-radius:18px;background:#fff;border:1px solid var(--line);padding:14px;box-shadow:0 8px 30px rgba(0,0,0,.04)}
+.card h4{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.f{font-size:11px;font-weight:500;display:block;margin-bottom:10px}
+.f input,.f select,.f textarea{margin-top:4px;width:100%;border:1px solid var(--line2);border-radius:12px;padding:0 12px;height:40px;font-size:13px;background:#fff}
+.f textarea{height:auto;padding:9px 12px;resize:vertical;min-height:74px;line-height:1.6}
+.f input:focus,.f textarea:focus,.f select:focus{box-shadow:0 0 0 2px rgba(212,175,55,.3)}
+.f .note{display:block;margin-top:5px;font-size:10.5px;color:var(--mut);line-height:1.5}
+.rowbtns{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 12px;border-radius:99px;border:1px solid var(--line2);background:#fff;font-size:12px;font-weight:500}
+.chip:hover{background:#fbfaf8}
+.chip.on{background:#111;color:#fff;border-color:#111}
+.chip.mini{padding:5px 9px;font-size:11px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.tabbar{position:sticky;top:0;z-index:20;background:rgba(251,250,248,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--line);padding:8px;display:flex;gap:6px;overflow-x:auto}
+.tabbtn{white-space:nowrap;padding:8px 13px;border-radius:99px;font-size:12px;font-weight:500;border:1px solid var(--line2);background:#fff}
+.tabbtn.on{background:#111;color:#fff;border-color:#111}
+.panel{padding:14px;display:flex;flex-direction:column;gap:12px}
+.pilll{display:inline-flex;align-items:center;gap:6px;font-size:10px;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--mut);font-weight:600}
+.pilll.tk{background:#FFF6D6;color:#8a6d0f;border:1px solid #F3E5AB}
+.pilll.bad{background:#fee2e2;color:#991b1b}
+.pilll.ok{background:#dcfce7;color:#166534}
+/* pemilih tema/border */
+.pilih{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.pilih button{text-align:left;border:1px solid var(--line2);border-radius:14px;background:#fff;padding:9px;display:flex;gap:9px;align-items:center;font-size:12px}
+.pilih button.on{border-color:#111;box-shadow:0 0 0 2px rgba(17,17,17,.9) inset}
+.pilih .kt{width:30px;height:30px;border-radius:9px;flex:none;display:grid;place-items:center;font-size:13px}
+.bdprev{width:34px;height:34px;border-radius:8px;flex:none;background:linear-gradient(160deg,#fbf7ef,#f0e7d6);display:grid;place-items:center}
+.bdprev i{width:22px;height:22px;display:block;border-radius:4px}
+/* daftar koleksi */
+.librow{width:100%;display:flex;align-items:center;gap:10px;padding:9px;border-radius:14px;border:1px solid var(--line);background:#fbfaf8;text-align:left;margin-bottom:8px}
+.librow:hover{background:#fff}
+.librow.on{background:#111;color:#fff;border-color:#111}
+.librow.on .sub{color:rgba(255,255,255,.62)}
+.librow .sub{font-size:10px;color:var(--mut)}
+.swatch{width:30px;height:30px;border-radius:10px;flex:none;border:1px solid rgba(0,0,0,.08)}
+/* pratinjau HP */
+.hpbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center}
+.hp{width:352px;max-width:100%;border-radius:2.5rem;background:#000;padding:8px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.hp-scr{border-radius:2rem;background:#fff;overflow:hidden;position:relative;height:660px;display:flex;flex-direction:column;font-family:var(--fb,"Inter",sans-serif)}
+.hp-scr .gelut{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain}
+.hp-scr .gelut::-webkit-scrollbar{width:0}
+.hp-scr #cover{position:absolute;inset:0;padding:26px 20px}
+.hp-scr #cover .bdfr{padding:24px 14px;max-width:100%}
+.hp-scr #cover h1{font-size:clamp(30px,7.4vw,40px)}
+.hp-scr #cover .chara{font-size:40px}
+.hp-scr #cover .orn{font-size:17px;letter-spacing:11px}
+.hp-scr #cover .open{height:46px;padding:0 26px;font-size:13px;margin-top:30px}
+.hp-scr #cover .date{font-size:12px;padding:8px 16px;margin-top:18px}
+.hp-scr #cover .kicker{font-size:10px;letter-spacing:.28em;margin-top:20px}
+.hp-scr #cover .brand{font-size:9px}
+.hp-scr .isi{padding:20px 16px 40px;background:linear-gradient(180deg,var(--cream,#FAF6F1),#fff 40%)}
+.hp-scr .isi .kartu{border-radius:18px;background:#fffdf9;border:1px solid #efe7d8;padding:14px;margin-bottom:12px;box-shadow:0 8px 22px rgba(90,70,30,.06);color:#2b2b2b}
+.hp-scr .isi .kartu h3{font-family:var(--ft,"Cormorant Garamond",serif);font-size:19px;font-weight:700;color:var(--ink-body,#2b2b2b);text-align:center;margin-bottom:10px}
+.hp-scr .isi .kartu .nm{font-family:var(--ft,"Cormorant Garamond",serif);font-size:22px;font-weight:700;line-height:1.2;color:var(--ink-body,#2b2b2b)}
+.hp-scr .isi .baris{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:7px 0;border-bottom:1px dashed #eee2d0}
+.hp-scr .isi .baris:last-child{border-bottom:0}
+.hp-scr .isi .kutip{font-family:var(--ft,"Cormorant Garamond",serif);font-size:16px;font-style:italic;text-align:center;color:var(--accent-cover,var(--accent,#8A6E4B));line-height:1.6}
+.hp-scr .isi .tombol{display:block;width:100%;height:44px;border-radius:99px;background:var(--ink-body,#4B4237);color:#fff;font-weight:600;font-size:13px;margin-top:6px}
+.hp-scr .isi .acara{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.hp-scr .isi .acara div{background:#fffdf9;border:1px solid #efe7d8;border-radius:14px;padding:10px;text-align:center;font-size:11px}
+.hp-scr .isi .acara b{display:block;font-family:var(--ft,"Cormorant Garamond",serif);font-size:15px;color:var(--accent-cover,var(--accent,#8A6E4B))}
+.hp-scr.isi-mode .gelut{padding-top:0}
+/* pemeriksaan */
+.cekbox{width:100%;max-width:420px}
+.cekrow{display:flex;gap:9px;align-items:flex-start;font-size:12px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.cekrow:last-child{border-bottom:0}
+.cekrow .ic{flex:none;width:16px;text-align:center}
+.cekrow.bad .b{color:#991b1b;font-weight:600}
+.cekrow.warn .b{color:#92400e}
+/* kode */
+.code{width:100%;border:1px solid var(--line2);border-radius:12px;background:#0f1115;color:#e5e7eb;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;line-height:1.6;padding:11px;min-height:130px;resize:vertical;white-space:pre;overflow:auto}
+.segbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.segbar button{padding:7px 12px;border-radius:99px;border:1px solid var(--line2);background:#fff;font-size:12px}
+.segbar button.on{background:#111;color:#fff;border-color:#111}
+.step{display:flex;gap:10px;margin-bottom:9px;font-size:12px;line-height:1.6}
+.step .n{flex:none;width:20px;height:20px;border-radius:50%;background:#111;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:600}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.kv .k{color:var(--mut)}
+.kv .v{font-weight:600;text-align:right}
+/* modal & toast */
+#modal{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,15,15,.55);backdrop-filter:blur(4px)}
+#modal.on{display:flex}
+#modal .box{background:#fff;border-radius:22px;max-width:900px;width:100%;max-height:88dvh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.35)}
+#modal .top{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;gap:10px;z-index:2}
+#modal .top h3{font-size:14px;font-weight:600}
+#modal .isi{padding:16px}
+#modal .kaki{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120%);z-index:120;background:#111;color:#fff;border-radius:14px;padding:11px 18px;font-size:12.5px;font-weight:500;box-shadow:0 20px 40px rgba(0,0,0,.3);transition:.25s;max-width:min(560px,92vw)}
+#toast.on{transform:translate(-50%,0)}
+#toast.bad{background:#7f1d1d}
+#toast.ok{background:#14532d}
+.mini{font-size:10.5px;color:var(--mut);line-height:1.55}
+@media (max-width:1200px){
+ .layout{grid-template-columns:1fr}
+ .aside,.mainc{position:static;height:auto;border:0}
+ .prevc{padding-bottom:40px}
+}
+</style>
+</head>
+<body class="sb">
+<header class="hdr">
+ <div class="logo">TS</div>
+ <div><h1>Studio Template</h1><div class="sub">Rancang tema undangan → pratinjau HP → ekspor kode siap pasang</div></div>
+ <div class="sp"></div>
+ <span id="statusKoleksi" class="mini"></span>
+ <a class="tb" href="kanvas.html" data-help="Kanvas kosong gaya Canva — susun bebas, lalu jadikan tema di sini.">🎨 Kanvas</a><button class="tb" onclick="bukaPanduan()" data-help="Enam langkah memasang tema baru ke repo sampai tayang.">📘 Panduan</button>
+ <button class="tb" onclick="bukaImpor()" data-help="Muat tema dari berkas JSON atau tempelan teks.">📥 Impor</button>
+ <button class="tb" onclick="bukaCloud()" data-help="Simpan atau muat koleksi tema di Supabase (per kode pemilik).">☁️ Cloud</button>
+ <button class="tb" onclick="salinKoleksi()" data-help="Salin seluruh koleksi di perangkat ini sebagai JSON.">⤓ Koleksi</button>
+ <button class="tb dark" onclick="bukaEkspor()" data-help="Baris kode untuk studio.html, undangan.html, index.html, plus JSON untuk skrip pemasang.">⬆ Ekspor &amp; pasang</button>
+</header>
+
+<div class="layout">
+ <aside class="aside sb">
+  <div class="lbl" style="display:flex;justify-content:space-between;align-items:center;gap:8px">Koleksi tema <span class="pilll" id="jmlTema"></span></div>
+  <div style="display:flex;gap:6px;margin:10px 0 12px">
+   <input id="cari" placeholder="Cari nama / id…" style="flex:1;height:36px;border:1px solid var(--line2);border-radius:12px;padding:0 12px;font-size:12px;background:#fff" oninput="TS.ui.cari=this.value;renderLib()">
+   <button class="tb dark" style="height:36px" onclick="baru()" data-help="Mulai tema baru dari nol (boleh langsung diubah).">＋ Baru</button>
+  </div>
+  <div id="libList"></div>
+  <div class="card" style="margin-top:4px">
+   <h4>🧭 Alur singkat</h4>
+   <div class="mini">Pilih atau duplikat tema → atur di tab tengah → periksa daftar kuning/merah di kanan → <b>Ekspor &amp; pasang</b> → jalankan <code>node tools/pasang-template.cjs</code> → <code>python3 tools/cek-kesehatan.py</code>.</div>
+  </div>
+ </aside>
+
+ <main class="mainc sb">
+  <div class="tabbar" id="tabbar"></div>
+  <div class="panel" id="panel"></div>
+ </main>
+
+ <section class="prevc sb">
+  <div class="hpbar">
+   <button class="chip mini" id="btnCover" onclick="setMode('cover')">🖼 Cover</button>
+   <button class="chip mini" id="btnIsi" onclick="setMode('isi')">📜 Isi</button>
+   <button class="chip mini" onclick="putarAnim()" data-help="Mainkan ulang animasi masuk cover.">↻ Putar animasi</button>
+   <button class="chip mini" onclick="acakPalet()" data-help="Palet harmonis acak — kontras teks tetap dijaga.">🎲 Palet acak</button>
+  </div>
+  <div class="hp"><div class="hp-scr" id="scr"><div class="gelut" id="gelut"></div></div></div>
+  <div class="cekbox card"><h4>🔎 Pemeriksaan <span class="pilll" id="cekRingkas"></span></h4><div id="cek"></div></div>
+  <div class="rowbtns" style="justify-content:center">
+   <button class="tb dark" onclick="bukaEkspor()">⬆ Ekspor &amp; pasang</button>
+   <button class="tb" onclick="unduhJson()" data-help="Unduh berkas JSON tema — dipakai skrip tools/pasang-template.cjs.">⬇ JSON</button>
+   <button class="tb" onclick="unduhDemo()" data-help="Unduh halaman demo mandiri berisi cover + isi tema ini.">⤓ Demo HTML</button>
+  </div>
+ </section>
+</div>
+
+<div id="modal" onclick="if(event.target===this)tutupModal()"><div class="box" id="modalBox"></div></div>
+<div id="toast"></div>
+
+<script src="assets/theme-contrast.js"></script>
+<script src="assets/scroll-effects.js"></script>
+<script src="assets/button-help.js"></script>
+<script>
+/* ====================== MESIN (SALINAN PERSIS dari studio.html) ======================
+   Daftar font, border, motif, efek, bagian, tema bawaan, dan mesin dekorasi
+   disalin apa adanya supaya tema yang dirancang di sini tampil sama di undangan
+   tamu. Jalankan ulang: python3 tools/sinkron-studio-template.py
+   ============================================================================ */
+const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co'
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw'
+const FONTS=[
+ {id:'cormorant',name:'Cormorant Garamond',fam:'"Cormorant Garamond",serif'},
+ {id:'playfair',name:'Playfair Display',fam:'"Playfair Display",serif'},
+ {id:'poppins',name:'Poppins Bold',fam:'"Poppins",sans-serif'},
+ {id:'inter',name:'Inter',fam:'"Inter",sans-serif'},
+ {id:'lora',name:'Lora',fam:'"Lora",serif'},
+ /* 10 font baru */
+ {id:'montserrat',name:'Montserrat',fam:'"Montserrat",sans-serif'},
+ {id:'bebas',name:'Bebas Neue (display)',fam:'"Bebas Neue",sans-serif'},
+ {id:'oswald',name:'Oswald (condensed)',fam:'"Oswald",sans-serif'},
+ {id:'ebgaramond',name:'EB Garamond (klasik)',fam:'"EB Garamond",serif'},
+ {id:'merriweather',name:'Merriweather (serif)',fam:'"Merriweather",serif'},
+ {id:'work-sans',name:'Work Sans',fam:'"Work Sans",sans-serif'},
+ {id:'pacifico',name:'Pacifico (script)',fam:'"Pacifico",cursive'},
+ {id:'dancing',name:'Dancing Script',fam:'"Dancing Script",cursive'},
+ {id:'caveat',name:'Caveat (tulis tangan)',fam:'"Caveat",cursive'},
+ {id:'sacramento',name:'Sacramento (elegan)',fam:'"Sacramento",cursive'},
+ {id:'cinzel',name:'Cinzel Imperial 🔒',fam:'"Cinzel",serif',ex:1},
+ {id:'marcellus',name:'Marcellus Royal 🔒',fam:'"Marcellus",serif',ex:1}]
+const BORDERS=[
+ {id:'none',n:'Tanpa Border'},
+ {id:'thin',n:'Garis Halus',s:A=>`border:1px solid ${A}`},
+ {id:'solid',n:'Garis Teguh',s:A=>`border:4px solid ${A}`},
+ {id:'double',n:'Ganda Klasik',s:A=>`border:6px double ${A}`},
+ {id:'dashed',n:'Putih Putus',s:A=>`border:3px dashed ${A}`},
+ {id:'dotted',n:'Titik-titik',s:A=>`border:3px dotted ${A}`},
+ {id:'ridge',n:'Ridged',s:A=>`border:7px ridge ${A}`},
+ {id:'groove',n:'Gravir',s:A=>`border:7px groove ${A}`},
+ {id:'inset',n:'Cekung',s:A=>`border:7px inset ${A}`},
+ {id:'outset',n:'Cembung',s:A=>`border:7px outset ${A}`},
+ {id:'topbot',n:'Atas & Bawah',s:A=>`border-top:3px solid ${A};border-bottom:3px solid ${A}`},
+ {id:'topline',n:'Serat Atas',s:A=>`border-top:6px solid ${A}`},
+ {id:'frame',n:'Bingkai Dalam',s:A=>`box-shadow:inset 0 0 0 2px ${A}`},
+ {id:'frame2',n:'Bingkai Rangkap',s:A=>`box-shadow:inset 0 0 0 2px ${A},inset 0 0 0 6px ${A}33`},
+ {id:'gap',n:'Bingkai Jarak',s:A=>`outline:2px solid ${A};outline-offset:-12px`},
+ {id:'gapdash',n:'Bingkai Putus',s:A=>`outline:3px dashed ${A};outline-offset:-12px`},
+ {id:'halo',n:'Halo Lembut',s:A=>`box-shadow:inset 0 0 0 1px ${A}55,inset 0 0 26px ${A}22`},
+ {id:'corners',n:'Sudut Elegan',corner:3},
+ {id:'cornersthin',n:'Sudut Halus',corner:1,extra:A=>`border:1px solid ${A}33`},
+ {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`},
+ {id:'laurel',n:'Laurel Emas',ex:1,s:A=>`border:2px solid ${A};box-shadow:0 0 0 5px color-mix(in srgb,${A} 20%,transparent),inset 0 0 0 1px ${A}`},
+ {id:'artdeco',n:'Art Deco',ex:1,s:A=>`border:3px double ${A};box-shadow:inset 0 0 0 5px #fffdf9,inset 0 0 0 6px ${A}`},
+ {id:'pearl',n:'Untaian Mutiara',ex:1,s:A=>`border:2px dotted ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 4px ${A}`},
+ /* ==== 9 BORDER BER-TIER: PREMIUM ⭐ / EKSKLUSIF 🔒 / VIP 👑 ==== */
+ {id:'gold-leaf',n:'Daun Emas',tk:'premium',s:A=>`border:5px solid ${A};border-image:linear-gradient(135deg,${A} 15%,#fffdf9 50%,${A} 85%) 1`},
+ {id:'lace-ivory',n:'Renda Ivory',tk:'premium',s:A=>`border:2px dotted ${A};outline:2px dotted ${A};outline-offset:5px`},
+ {id:'ribbon-satin',n:'Pita Satin',tk:'premium',s:A=>`border:8px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9`},
+ {id:'filigree',n:'Filigree Emas',tk:'eks',s:A=>`border:3px double ${A};box-shadow:inset 0 0 12px ${A}44,inset 0 0 0 2px #fffdf9`},
+ {id:'pearl-crown',n:'Mahkota Mutiara',tk:'eks',s:A=>`border:4px double ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 5px ${A}55`},
+ {id:'onyx-inlay',n:'Inlay Onyx',tk:'eks',s:A=>`border:6px solid #17181a;box-shadow:inset 0 0 0 2px ${A}`},
+ {id:'vip-crown',n:'Crown VIP',tk:'vip',s:A=>`border:3px double ${A};outline:2px solid ${A};outline-offset:4px;box-shadow:inset 0 0 0 2px #fffdf9`},
+ {id:'vip-aurora',n:'Aurora VIP',tk:'vip',s:A=>`border:6px solid ${A};border-image:linear-gradient(160deg,${A},#8e4e92 35%,#0ea5e9 70%,${A}) 1`},
+ {id:'vip-diamond',n:'Diamond VIP',tk:'vip',s:A=>`border:7px ridge ${A};box-shadow:0 0 18px ${A}66,inset 0 0 0 2px #fffdf9`},
+{id:'floral-corner',n:'Bunga Sudut',tk:'premium',art:'floral',s:A=>`border:2px solid ${A};box-shadow:inset 0 0 0 1px ${A}55`},
+ {id:'batik-frame',n:'Bingkai Batik',tk:'premium',art:'batik',s:A=>`border:3px solid ${A};box-shadow:inset 0 0 0 7px ${A}22`},
+ {id:'vine-frame',n:'Sulur Daun',art:'vine',s:A=>`border:2px solid ${A}99;box-shadow:inset 0 0 16px ${A}22`},
+ {id:'gold-corner',n:'Sudut Emas',tk:'eks',art:'gold',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 8px ${A}1a`},
+ {id:'ribbon-corner',n:'Pita Sudut',tk:'premium',art:'ribbon',s:A=>`border:2px solid ${A};box-shadow:0 8px 22px ${A}22`},
+ {id:'lace-edge',n:'Renda Tepi',tk:'premium',art:'lace',s:A=>`border:1px solid ${A};outline:2px dotted ${A}99;outline-offset:-9px;box-shadow:inset 0 0 0 4px ${A}1f`},
+ {id:'diamond-stud',n:'Paku Intan',s:A=>`border:2px solid ${A};background-image:radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px);background-size:9px 9px;background-position:center 2px,center calc(100% - 2px),2px center,calc(100% - 2px) center;background-repeat:repeat-x,repeat-x,repeat-y,repeat-y`},
+ {id:'triple-frame',n:'Tiga Garis',s:A=>`border:1px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9,inset 0 0 0 4px ${A},inset 0 0 0 8px #fffdf9,inset 0 0 0 9px ${A}88`}
+]
+const FX_SCROLL=[
+ ['fade-up','Fade Up','naik pelan sambil muncul'],['fade-down','Fade Down','turun pelan sambil muncul'],
+ ['slide-left','Slide Kiri','geser dari kanan'],['slide-right','Slide Kanan','geser dari kiri'],
+ ['zoom-in','Zoom In','membesar ke depan'],['zoom-out','Zoom Out','mengecil dari jauh'],
+ ['rotate','Rotate','miring masuk lalu lurus'],['blur','Blur','kabur lalu fokus'],
+ ['pop','Pop','memantul naik'],['flip','Flip 3D','terbalik dari bawah'],
+ ['card', 'Kartu', 'kartu miring masuk lalu tegak'],
+ ['book', 'Membuka Buku', 'halaman terbuka dari sisi kiri'],
+ ['cube', 'Kotak 3D', 'sisi kotak berputar ke depan'],
+ ['card-stack', 'Tumpukan Kartu', 'kartu terangkat dari tumpukan'],
+ ['curtain', 'Tirai', 'terbuka dari tengah ke samping'],
+ ['iris', 'Iris Lingkaran', 'lingkaran membuka seluruh bagian'],
+ ['diagonal', 'Wipe Diagonal', 'terbuka menyilang dari sudut'],
+ ['fold', 'Lipat', 'lipatan terbuka dari atas'],
+ ['swing', 'Ayun', 'berayun dari sudut atas'],
+ ['spring', 'Pegas', 'melenting lalu kembali tenang'],
+ ['spiral', 'Putar Spiral', 'berputar membesar ke posisi akhir'],
+ ['float', 'Melayang', 'mengambang naik dengan lembut'],
+ ['wave', 'Gelombang', 'meliuk dari samping lalu lurus'],
+ ['cinematic', 'Fokus Sinematik', 'fokus tajam dari cahaya kabur'],
+ ['tilt-in', 'Tilt Masuk', 'kartu miring masuk lalu tegak'],
+ ['flip-y', 'Flip Samping', 'berputar pada sumbu vertikal'],
+ ['roll-in', 'Gulir Masuk', 'meluncur menyamping sambil berputar'],
+ ['bounce-in', 'Lenting', 'naik memantul lalu stabil'],
+ ['wipe-up', 'Wipe Vertikal', 'terbuka dari bawah ke atas'],
+ ['wipe-right', 'Wipe Horizontal', 'terbuka dari kiri ke kanan'],
+ ['unfold', 'Buka Lipatan', 'bidang membuka ke depan'],
+ ['squeeze', 'Lentur', 'melebar perlahan dari tengah'],
+ ['glow', 'Glow', 'cahaya lembut berubah menjadi fokus'],
+ ['blur-down', 'Blur Turun', 'turun sambil menjernih']]
+const FX_COVER=[
+ ['fade','Fade','muncul lembut'],['zoom','Zoom','membesar halus (default)'],
+ ['rise','Rise','terbang naik'],['drop','Drop','turun dari atas'],
+ ['blur','Blur','kabur lalu fokus'],['pop','Pop','memantul ke ukuran'],
+ ['flip','Flip 3D','terangkat dari bawah'],['slide','Slide','meluncur dari samping'],
+ ['swing','Swing','bergoyang dari atas'],['elastic','Elastic','pancingan kenur'],
+ ['shimmer','Shimmer Gold','kilau emas menyapu',1],['curtain','Tirai Royal','membuka mewah bagai tirai',1],
+ ['vip-zoom','VIP Deep Zoom','zoom dalam sinematik 👑',1,'vip'],['vip-curtain','VIP Curtain','tirai terbuka megah 👑',1,'vip']]
+const FX_SCROLL_MIX=['fade-up','slide-left','fade-down','slide-right','tilt-in','flip-y','bounce-in','roll-in','wipe-up','wipe-right','unfold','book','blur-down','cube','glow','wave']
+const SLIDES=[
+ {id:'timeline',ic:'⏱️',nm:'Timeline Acara',ds:'Urutan sesi acara (jam — judul)',type:'list',ph:'08:00 — Akad Nikah\n11:00 — Resepsi'},
+ {id:'story',ic:'💞',nm:'Cerita Kami',ds:'Kisah singkat di balik acara ini',type:'area',ph:'Kami bertemu di ...'},
+ {id:'quote',ic:'❝',nm:'Quote / Ayat',ds:'Kutipan atau ayat — bawaan per acara bila dikosongkan',type:'quote'},
+ {id:'menu',ic:'🍽️',nm:'Menu Acara',ds:'Daftar menu (nama — deskripsi)',type:'list',ph:'Sup Iga — Bawang Bakar\nAyam Panggang — Timun'},
+ {id:'party',ic:'🎩',nm:'Panitia / Bridal Party',ds:'Nama — peran',type:'list',ph:'Budi — Groomsman\nSari — Bridesmaid'},
+ {id:'dresscode',ic:'👗',nm:'Dress Code',ds:'Pemanduan busana + palet warna',type:'dress'},
+ {id:'gift',ic:'🎁',nm:'Alamat Kado',ds:'Informasi kado fisik / kartu ucapan',type:'area',ph:'Jl. Contoh No. 1 ...'},
+ {id:'map',ic:'🗺️',nm:'Peta Lokasi',ds:'Embed peta dari alamat/mapsLink di Info Acara',type:'none'},
+ {id:'rsvp',ic:'✉️',nm:'Form RSVP',ds:'Tamu konfirmasi kehadiran langsung ke WhatsApp',type:'none'},
+ {id:'closing',ic:'🤍',nm:'Pesan Penutup',ds:'Ucapan penutup dari penyelenggara',type:'area',ph:'Terima kasih ...'}]
+const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ultah Anak',aqiqah:'Aqiqah',all:'Semua Acara'}
+const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶',all:'✨'}
+const TPL_BAWAAN=[
+ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',harga:49000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'DASAR',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',desc:'Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu'},
+ {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',badge:'LARIS',deco:'❖ ✦ ❖',pat:'batik',ft:'marcellus',char:'JAWA',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},
+ {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',badge:'',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet'},
+ {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'PREMIUM',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'GOLD',desc:'Glam soft luxury, emboss gold & black tie vibe'},
+ {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',badge:'',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},
+ {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',badge:'',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},
+ {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',badge:'',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'ISLAMI',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},
+ {id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'LARIS',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Warna-warni happy, balon & confetti buat si kecil'},
+ {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',badge:'FAVORIT',deco:'✦ ❀ ✦',pat:'',ft:'dancing',char:'SWEET',desc:'Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya'},
+ {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',badge:'',deco:'❖ ─ ❖',pat:'',ft:'ebgaramond',char:'ELEGAN',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},
+ {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',badge:'',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},
+ {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',badge:'',deco:'✿ ✦ ✿',pat:'',ft:'caveat',char:'PUTRI',desc:'Pink blush super lembut buat si putri kecil kesayangan'},
+ {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',badge:'',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'ADAB',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'}]
+function patCss(t){
+ const tile=(svg,size)=>`background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${size};background-repeat:repeat;`;
+ if(t.pat==='batik'){
+  const c=t.accent||'#8b653d';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".24" stroke-width="1.5"><path d="M48 4C65 17 65 27 48 41 31 27 31 17 48 4ZM92 48C79 65 69 65 55 48 69 31 79 31 92 48ZM48 92C31 79 31 69 48 55 65 69 65 79 48 92ZM4 48C17 31 27 31 41 48 27 65 17 65 4 48Z"/><path d="M48 31 65 48 48 65 31 48Z"/><circle cx="48" cy="48" r="4"/></g></svg>`, '48px 48px');
+ }
+ if(t.pat==='botanical'){
+  const c=t.accent||'#66816a';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><g fill="none" stroke="${c}" stroke-opacity=".17" stroke-width="1.5" stroke-linecap="round"><path d="M14 108C42 87 65 56 106 13"/><path d="M34 92C17 89 15 73 16 67 31 65 42 75 34 92ZM52 73C36 71 34 57 35 51 51 49 60 59 52 73ZM72 51C57 48 56 34 58 28 73 28 81 39 72 51ZM39 89C42 73 56 69 63 70 64 85 53 95 39 89ZM59 66C62 51 76 47 83 49 83 64 73 73 59 66ZM81 42C84 29 96 24 102 26 103 39 94 48 81 42Z"/></g></svg>`, '120px 120px');
+ }
+ if(t.pat==='frost'){
+  const c=t.accent||'#38BDF8';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".2" stroke-width="1.35" stroke-linecap="round"><path d="M24 12v28M12 19l24 14M36 19 12 33M70 52v32M56 61l28 15M84 61 56 76M48 48l7 7-7 7-7-7Z"/><path d="m20 17 4 4 4-4m-16 12 5-1 1 5m16-5-5-1-1 5m28 30 4 5 4-5m-16 13 5-1 1 5m16-5-5-1-1 5"/></g></svg>`, '96px 96px');
+ }
+ if(t.pat==='rose'){
+  const c=t.accent||'#C2708A';
+  const mawar=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})" fill="none" stroke="${c}" stroke-opacity=".22" stroke-width="1.3" stroke-linecap="round"><path d="M2 3a6 6 0 1 0-6-6 12 12 0 1 0 12 12 18 18 0 1 0-18-18"/><path d="M13 17c6 3 12 1 14-4-6-2-12 0-14 4"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">${mawar(26,28,1)}${mawar(72,74,.8)}</svg>`, '96px 96px');
+ }
+ if(t.pat==='sakura'){
+  const c=t.accent||'#D98BAA';
+  const kelopak=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><g fill="none" stroke="${c}" stroke-opacity=".24" stroke-width="1.2">${[0,72,144,216,288].map(a=>`<path transform="rotate(${a})" d="M0-19c5 6 5 12 0 17-5-5-5-11 0-17Z"/>`).join('')}</g><circle r="2.6" fill="${c}" fill-opacity=".3"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 84">${kelopak(24,24,1)}${kelopak(62,64,.78)}</svg>`, '84px 84px');
+ }
+ if(t.pat==='daisy'){
+  const c=t.accent||'#C7A24A';
+  const bunga=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><g fill="none" stroke="${c}" stroke-opacity=".22" stroke-width="1.1">${[0,45,90,135,180,225,270,315].map(a=>`<ellipse transform="rotate(${a})" cx="0" cy="-12" rx="3.4" ry="6.2"/>`).join('')}<circle r="3"/></g></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">${bunga(20,20,1)}${bunga(52,54,.8)}</svg>`, '72px 72px');
+ }
+ if(t.pat==='vine'){
+  const c=t.accent||'#66816a';
+  const daun=(x,y,a)=>`<g transform="translate(${x} ${y}) rotate(${a})"><path d="M0 0q7-9 15 0-7 9-15 0Z" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-opacity=".28" stroke-width="1"/><path d="M1 0h12" stroke="${c}" stroke-opacity=".24" stroke-width=".8"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><g fill="none" stroke="${c}" stroke-opacity=".2" stroke-width="1.3" stroke-linecap="round"><path d="M6 122C40 104 74 74 122 6"/></g>${daun(30,94,-38)}${daun(52,74,-24)}${daun(76,50,-16)}${daun(98,26,-8)}${daun(44,86,142)}${daun(82,44,150)}</svg>`, '128px 128px');
+ }
+ if(t.pat==='parang'){
+  const c=t.accent||'#8b653d';
+  const bilah=(x,y)=>`<g transform="translate(${x} ${y})"><path d="M0 44C16 34 26 20 28 0 18 16 8 26 0 30Z" fill="${c}" fill-opacity=".13" stroke="${c}" stroke-opacity=".26" stroke-width="1.1"/><path d="M6 8c3 10 1 20-4 28" stroke="${c}" stroke-opacity=".2" stroke-width=".9" fill="none"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g opacity=".95">${bilah(6,26)}${bilah(50,26)}${bilah(6,74)}${bilah(50,74)}</g><path d="M0 20h96M0 68h96" stroke="${c}" stroke-opacity=".1" stroke-width="1"/></svg>`, '96px 96px');
+ }
+ if(t.pat==='mendung'){
+  const c=t.accent||'#7A93C4';
+  const awan=(y,w)=>{let d='M0 '+y+'q'+w/2+' -'+w/2+' '+w+' 0';for(let k=1;k<4;k++)d+='t'+w+' 0';return d};
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><g fill="none" stroke="${c}" stroke-linecap="round"><path d="${awan(20,30)}" stroke-opacity=".22" stroke-width="1.4"/><path d="${awan(34,30)}" stroke-opacity=".17" stroke-width="1.3"/><path d="${awan(48,30)}" stroke-opacity=".12" stroke-width="1.2"/><path d="${awan(76,30)}" stroke-opacity=".2" stroke-width="1.4"/><path d="${awan(90,30)}" stroke-opacity=".14" stroke-width="1.2"/></g></svg>`, '120px 120px');
+ }
+ if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}14 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0f 0 2px,transparent 2px 16px);`;
+ if(t.pat==='confetti')return `background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
+ return ''}
+function fxScrollAxis(id){return ['slide-left','slide-right','flip-y','roll-in','wipe-right','book','cube','wave'].includes(id)?'x':'y'}
+function fxScrollForSection(base,index,mix=true){
+ if(!mix||index===0)return base;
+ const start=FX_SCROLL_MIX.indexOf(base);
+ return FX_SCROLL_MIX[((start<0?0:start)+index)%FX_SCROLL_MIX.length];
+}
+function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
+const DKO_IDS=['floral','batik','vine','gold','lace','ribbon']
+const FLT_IDS=['petal','sakura','leaf','dust','snow','bubble']
+const DVD_IDS=['line','diamond','flower','batik','ribbon']
+const DKO_NAMA={floral:'Bunga',batik:'Batik',vine:'Sulur Daun',gold:'Emas',lace:'Renda',ribbon:'Pita'}
+const FLT_NAMA={petal:'Kelopak Mawar',sakura:'Sakura',leaf:'Daun',dust:'Kilau Emas',snow:'Salju',bubble:'Gelembung'}
+const DVD_NAMA={line:'Garis Intan',diamond:'Belah Ketupat',flower:'Bunga',batik:'Batik',ribbon:'Pita'}
+const DEKO_SEMUA={dko:DKO_IDS,flt:FLT_IDS,dvd:DVD_IDS}
+function dekoNilai(k,v){
+ if(v==='none'||v===''||v==null)return '';
+ return (DEKO_SEMUA[k]||[]).indexOf(v)>=0?v:''}
+function dekoPilih(d,tplF,BD){
+ const ambil=(k,bawaan)=>{
+  const a=d&&d[k];if(typeof a==='string'&&a!=='')return dekoNilai(k,a);
+  const b=tplF&&tplF[k];if(typeof b==='string'&&b!=='')return dekoNilai(k,b);
+  return dekoNilai(k,bawaan||'')};
+ return {art:ambil('dko',(BD&&BD.art)||''),flt:ambil('flt',''),dvd:ambil('dvd','')}}
+function artDekoSudut(kind){
+ if(kind==='floral')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M3 61C20 47 33 30 44 6"/><path d="M44 6c2 9 9 15 17 15-4 8-13 12-21 8"/><path d="M33 24c-8-2-14-8-15-16 9 0 16 5 18 13"/><path d="M18 43c-8 0-14-4-16-12 8-2 15 1 19 8"/><circle cx="47" cy="21" r="2.4" fill="currentColor" stroke="none"/></svg>';
+ if(kind==='batik')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 61C18 52 28 38 34 16"/><path d="M34 16c7 3 13 2 18-3-1 8-6 13-13 14"/><path d="M20 33c-8 1-14-3-16-10 8-1 14 3 17 10"/><path d="M34 16c-8-1-13-6-14-14 8 1 13 6 14 14Z"/><circle cx="46" cy="30" r="2"/><circle cx="17" cy="41" r="2"/><path d="M12 56h10M50 12h9"/></svg>';
+ if(kind==='vine')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2 62C20 50 34 32 46 8"/><path d="M46 8c-9 0-16-4-18-12 9-1 16 4 18 12Z" fill="currentColor" fill-opacity=".12"/><path d="M32 27c-9 1-16-1-19-8 8-2 15 1 19 8Z" fill="currentColor" fill-opacity=".12"/><path d="M17 46c-8 2-15 1-19-5 7-3 14-1 19 5Z" fill="currentColor" fill-opacity=".12"/><path d="M40 16c8-3 15-2 19 4-7 4-14 2-19-4Z" fill="currentColor" fill-opacity=".12"/></svg>';
+ if(kind==='gold')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 61C16 44 26 27 30 4"/><path d="M30 4c8 6 17 9 27 8-6 8-16 12-27 8"/><path d="M30 4c-4 8-11 14-20 15 3 8 12 12 20 8"/><path d="M8 44h14M44 16h14"/><circle cx="38" cy="34" r="3"/><circle cx="22" cy="52" r="2.2"/></svg>';
+ if(kind==='lace')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 60h20a10 10 0 0 1 10-10 10 10 0 0 0 10-10 10 10 0 0 0 6-9"/><path d="M4 60a9 9 0 0 0 9-9" stroke-dasharray="2 3"/><path d="M34 50a9 9 0 0 1 9-9M24 60a9 9 0 0 1 9-9" stroke-dasharray="2 3"/><circle cx="13" cy="51" r="2.4"/><circle cx="53" cy="11" r="2.4"/></svg>';
+ if(kind==='ribbon')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M4 60C18 50 30 36 40 16"/><path d="M40 16c-8-6-9-16-2-13 5 2 6 8 2 13Z"/><path d="M40 16c8-6 9-16 2-13-5 2-6 8-2 13Z"/><path d="M42 22c4 6 2 12-2 12s-6-6-2-12Z" fill="currentColor" fill-opacity=".18"/><path d="M24 40c-3 7-9 10-14 8 2-7 8-11 14-8Z"/></svg>';
+ return ''}
+function artDekoDiv(kind){
+ if(kind==='line')return '<svg viewBox="0 0 140 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 7h46M92 7h46"/><path d="M70 1.5 75 7l-5 5.5L65 7Z" fill="currentColor" stroke="none"/><circle cx="57" cy="7" r="2"/><circle cx="83" cy="7" r="2"/></svg>';
+ if(kind==='diamond')return '<svg viewBox="0 0 140 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 7h34M104 7h34"/><path d="M70 1 76 7l-6 6-6-6Z" fill="currentColor" stroke="none"/><path d="M52 3 58 7l-6 4-6-4Z" fill="currentColor" fill-opacity=".45" stroke="none"/><path d="M88 3 94 7l-6 4-6-4Z" fill="currentColor" fill-opacity=".45" stroke="none"/></svg>';
+ if(kind==='flower')return '<svg viewBox="0 0 140 22" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M2 11h40M98 11h40"/><path d="M52 11c4-4 8-4 10 0"/><circle cx="70" cy="8" r="3.4"/><path d="M70 11c0 4 0 7-1 10"/><path d="M69 17c-4-1-6-3-6-5 3-1 5 1 6 5Z" fill="currentColor" fill-opacity=".3"/><path d="M69 17c4-1 6-3 6-5-3-1-5 1-6 5Z" fill="currentColor" fill-opacity=".3"/><path d="M61 11c3-5 6-5 9 0-3 5-6 5-9 0Z" fill="currentColor" fill-opacity=".25"/><path d="M79 11c-3-5-6-5-9 0 3 5 6 5 9 0Z" fill="currentColor" fill-opacity=".25"/></svg>';
+ if(kind==='batik')return '<svg viewBox="0 0 140 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 9c6-6 12-6 18 0s12 6 18 0 12-6 18 0 12 6 18 0"/><path d="M66 9c6-6 12-6 18 0s12 6 18 0 12-6 18 0 12 6 18 0"/><circle cx="70" cy="4" r="1.8"/><circle cx="97" cy="4" r="1.8"/></svg>';
+ if(kind==='ribbon')return '<svg viewBox="0 0 140 20" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 10h44M94 10h44"/><path d="M70 4c-6-4-12-3-12 1s6 6 12 5Z" fill="currentColor" fill-opacity=".25"/><path d="M70 4c6-4 12-3 12 1s-6 6-12 5Z" fill="currentColor" fill-opacity=".25"/><circle cx="70" cy="4" r="2.6"/><path d="M70 12c-2 3-4 5-7 6M70 12c2 3 4 5 7 6"/></svg>';
+ return ''}
+function dekoSudutHtml(kind){
+ if(!kind||DKO_IDS.indexOf(kind)<0)return '';
+ const svg=artDekoSudut(kind);if(!svg)return '';
+ return ['tl','tr','br','bl'].map(s=>'<span class="deko-sudut '+s+'" aria-hidden="true">'+svg+'</span>').join('');
+}
+const DEKO_BENTUK={
+ petal:'<svg viewBox="0 0 24 24"><path d="M12 2c5 5 7 10 5 14-1 3-3 5-5 5s-4-2-5-5C5 12 7 7 12 2Z" fill="currentColor" opacity=".5"/></svg>',
+ sakura:'<svg viewBox="0 0 24 24">'+[0,72,144,216,288].map(a=>'<path transform="rotate('+a+' 12 12)" d="M12 2c2.4 2.8 2.4 5.6 0 8-2.4-2.4-2.4-5.2 0-8Z" fill="currentColor" opacity=".46"/>').join('')+'<circle cx="12" cy="12" r="1.6" fill="currentColor" opacity=".5"/></svg>',
+ leaf:'<svg viewBox="0 0 24 24"><path d="M3 21C4 9 12 3 21 3c0 9-6 17-18 18Z" fill="currentColor" opacity=".4"/><path d="M4 20 18 6" stroke="currentColor" stroke-width="1" opacity=".55"/></svg>',
+ snow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".55"><path d="M12 2v20M4 7l16 10M20 7 4 17"/><path d="m12 5 2 2-2 2-2-2ZM12 15l2 2-2 2-2-2Z"/></svg>',
+ dust:'',bubble:''}
+function dekoFltHtml(kind){
+ if(!kind||FLT_IDS.indexOf(kind)<0)return '';
+ const bentuk=DEKO_BENTUK[kind]||'';
+ let out='';
+ for(let i=0;i<12;i++){
+  const x=(i*8.1+3.5)%95,t=11+((i*5)%7),d=-((i*1.6)%12),w=(kind==='dust')?7:(kind==='bubble'?13:(kind==='snow'?12:15));
+  out+='<i style="--x:'+x.toFixed(1)+'%;--t:'+t+'s;--d:'+d+'s;--w:'+w+'px;--o:'+(kind==='dust'?.55:.72)+';--sw:'+(i%2?18:-16)+'px">'+bentuk+'</i>';
+ }
+ return '<div class="deko-flt g-'+kind+'" aria-hidden="true">'+out+'</div>';
+}
+function dekoDivHtml(kind){
+ if(!kind||DVD_IDS.indexOf(kind)<0)return '';
+ const svg=artDekoDiv(kind);if(!svg)return '';
+ return '<div class="deko-dvd d-'+kind+'" aria-hidden="true">'+svg+'</div>';
+}
+
+/* ============================================================================
+   STUDIO TEMPLATE AsProject — perancang tema undangan digital.
+
+   Halaman ini memakai MESIN tema yang sama dengan studio.html & undangan.html
+   (FONTS, BORDERS, FX_SCROLL, FX_COVER, FX_SCROLL_MIX, SLIDES, patCss) supaya
+   tema yang dirancang di sini tampil persis seperti di undangan tamu. Blok
+   "MESIN (SALINAN)" di atas disalin apa adanya dari studio.html. Bila mesin di
+   studio.html berubah (font/border/efek/bagian baru), salin ulang blok itu ke
+   sini — tools/test-template-studio.cjs & cek-kesehatan.py [23] menunjuk bagian
+   yang sudah tidak sama.
+
+   Alur: rancang → periksa → ekspor (JSON / 4 potongan kode) →
+   node tools/pasang-template.cjs <id>.json  →  python3 tools/cek-kesehatan.py
+   ========================================================================== */
+'use strict';
+
+const TS_KEY='asproject.templateStudio.v1';
+const KATEGORI={all:'Semua',pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ulang Tahun',aqiqah:'Aqiqah'};
+const PAT_IDS=['','batik','parang','mendung','botanical','vine','rose','sakura','daisy','frost','arab','confetti'];
+const PAT_NAMA={'':'Tanpa Motif','batik':'Batik Kawung','parang':'Batik Parang','mendung':'Batik Mega Mendung','botanical':'Botani',
+ 'vine':'Sulur Daun','rose':'Mawar','sakura':'Sakura','daisy':'Daisy','frost':'Kristal Salju','arab':'Arabesque','confetti':'Confetti'};
+/* Rekomendasi dekorasi menurut motif & border tema — satu klik di tab Dekorasi. */
+function dekoRekomendasi(t){
+ const pat=t.pat||'',art=(BORDERS.filter(b=>b.id===t.rec.border)[0]||{}).art||'';
+ const bunga=['rose','sakura','daisy','botanical','vine'].indexOf(pat)>=0;
+ const batik=['batik','parang','mendung'].indexOf(pat)>=0;
+ t.dko=bunga?'floral':(batik?'batik':(art||'gold'));
+ t.flt=bunga?(pat==='sakura'?'sakura':'petal'):(batik?'dust':(pat==='confetti'?'bubble':(pat==='frost'?'snow':'leaf')));
+ t.dvd=bunga?'flower':(batik?'batik':'diamond');
+ return t}
+const BADGE_IDS=['','DASAR','LARIS','PREMIUM','FAVORIT','TERLARIS','BEST'];
+const BADGE_BESTSELLER=/LARIS|BEST|TERLARIS/i;
+const VIP_PART=['gold','petal','snow','bubble'],VIP_SCENE=['zoom','rise','curtain'];
+/* Id lama yang tidak boleh dipakai lagi (sama dengan TEMA_LAMA di tools/cek-kesehatan.py). */
+const TEMA_LAMA=['ice-blue','royal-garden','galaxy-prestige','abyss-pearl','winter-prestige'];
+const CONTOH={pernikahan:{utama:'Raka',kedua:'Nadia',char:'JAWA'},khitanan:{utama:'Ahmad Zaki',kedua:'',char:'KHITAN'},
+ ultah:{utama:'Kirana',kedua:'',char:'PARTY'},aqiqah:{utama:'Aisyah',kedua:'',char:'AQIQAH'},all:{utama:'Keluarga AsProject',kedua:'',char:'ASPROJECT'}};
+const SLIDE_BAWAAN=['quote','timeline','map','rsvp'];
+
+/* ---------- util kecil ---------- */
+const $=s=>document.querySelector(s),$$=s=>Array.prototype.slice.call(document.querySelectorAll(s));
+function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function notify(pesan,jenis){const el=$('#toast');if(!el)return;el.textContent=pesan;el.className='on '+(jenis||'');clearTimeout(notify._t);notify._t=setTimeout(()=>{el.className=''},2800)}
+function statusKoleksi(teks){const el=$('#statusKoleksi');if(el)el.textContent=teks||''}
+function hexRgb(h){h=String(h||'').replace('#','');if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];const n=parseInt(h,16);return [(n>>16)&255,(n>>8)&255,n&255]}
+function rgbHex(r,g,b){const f=v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0');return '#'+f(r)+f(g)+f(b)}
+function hslKeHex(h,s,l){h=((h%360)+360)%360;s=s/100;l=l/100;const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;
+ let r=0,g=0,b=0;
+ if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}
+ return rgbHex((r+m)*255,(g+m)*255,(b+m)*255)}
+function unduh(nama,isi,jenis){const blob=new Blob([isi],{type:jenis||'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;a.download=nama;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000)}
+function salin(teks,pesan){const s=String(teks||'');
+ const done=()=>notify(pesan||'Disalin ke papan klip.');
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(done,()=>salinLama(s,done))}else salinLama(s,done)}
+function salinLama(teks,done){const t=document.createElement('textarea');t.value=teks;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();
+ try{document.execCommand('copy')}catch(e){}t.remove();done()}
+function slugify(x){return String(x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,28)}
+
+/* ---------- kontras (lapisan tipis di atas assets/theme-contrast.js) ---------- */
+const TC=window.AsThemeContrast||null;
+function kontras(a,b){if(TC&&TC.kontras)return TC.kontras(a,b);const L=h=>{const c=hexRgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+ const l1=L(a),l2=L(b);return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05)}
+function campur(a,b,t){const ca=hexRgb(a),cb=hexRgb(b);
+ return rgbHex(ca[0]+(cb[0]-ca[0])*t,ca[1]+(cb[1]-ca[1])*t,ca[2]+(cb[2]-ca[2])*t)}
+/* Cadangan bila assets/theme-contrast.js belum sempat dimuat: geser warna ke arah
+   gelap/terang (mana yang lebih cepat menaikkan kontras) sampai rasio minimal. */
+function perbaiki(hex,latar,minimal){if(TC&&TC.perbaiki)return TC.perbaiki(hex,latar,minimal);
+ const w=HEX6.test(String(hex||''))?String(hex):'#4B4237';minimal=minimal||3;
+ if(kontras(w,latar)>=minimal)return w;
+ const arah=kontras(campur(w,TC_GELAP,.2),latar)>=kontras(campur(w,'#FFFFFF',.2),latar)?TC_GELAP:'#FFFFFF';
+ for(let t=.08;t<1;t+=.08){const c=campur(w,arah,t);if(kontras(c,latar)>=minimal)return c}
+ return arah}
+const TC_KARTU=(TC&&TC.KARTU)||'#fffdf9',TC_GELAP=(TC&&TC.GELAP)||'#141210';
+const HEX6=/^#[0-9a-f]{6}$/i;
+/* Ink yang aman dua sisi: >=3:1 di kedua ujung gradasi cover (syarat mesin
+   undangan) DAN >=4.5:1 di kartu isi yang selalu terang (WCAG AA).
+   Kandidat pertama = nada gelap milik tema sendiri supaya ronanya tetap nyambung. */
+function inkAman(ink,g){
+ const calon=[];
+ if(TC&&TC.nadaGelapTema)calon.push(TC.nadaGelapTema(ink,g));
+ calon.push(ink,perbaiki(ink,g[0],3),perbaiki(perbaiki(ink,g[0],3),g[2],3),perbaiki(ink,TC_KARTU,4.5));
+ for(let i=0;i<calon.length;i++){const c=calon[i];
+  if(c&&HEX6.test(c)&&kontras(c,g[0])>=3&&kontras(c,g[2])>=3&&kontras(c,TC_KARTU)>=4.5)return c.toUpperCase()}
+ let k=perbaiki(perbaiki(ink,g[0],3),g[2],3);if(kontras(k,TC_KARTU)<4.5)k=perbaiki(k,TC_KARTU,4.5);return k.toUpperCase()}
+
+/* ====================== KOLEKSI & PENYIMPANAN ====================== */
+const TS={v:1,user:[],cur:'',ui:{tab:'identitas',cari:'',mode:'cover'},cloud:{rows:[],status:'',pesan:'',sql:false}};
+window.TS=TS;
+
+function tierDari(harga){harga=parseInt(harga,10)||0;return harga>=149000?'vip':harga>=119000?'eksklusif':harga>=89000?'premium':'basic'}
+function normTpl(t){t=t||{};const hex=v=>HEX6.test(String(v||''))?String(v).toUpperCase():null,r=t.rec||{};
+ const g=Array.isArray(t.g)?t.g.map(hex):[];
+ return {id:String(t.id||'').trim().slice(0,40),nama:String(t.nama||'').trim().slice(0,60),
+  ev:EV_LABEL[t.ev]?t.ev:(t.ev==='all'?'all':'pernikahan'),
+  harga:Math.max(0,Math.min(900000,parseInt(t.harga,10)||75000)),
+  g:[g[0]||'#F7F3EC',g[1]||'#EADFCB',g[2]||'#D9C6A5'],
+  accent:hex(t.accent)||'#8A6E4B',ink:hex(t.ink)||'#4B4237',
+  badge:BADGE_IDS.indexOf(String(t.badge||''))>=0?String(t.badge||''):'',
+  deco:String(t.deco==null?'✦ ❖ ✦':t.deco).slice(0,24),
+  pat:PAT_IDS.indexOf(t.pat)>=0?t.pat:'',
+  ft:FONTS.some(f=>f.id===t.ft)?t.ft:'cormorant',
+  body:FONTS.some(f=>f.id===t.body)?t.body:'inter',
+  char:String(t.char||'').slice(0,8),desc:String(t.desc||'').slice(0,200),
+  bg3d:String(t.bg3d||'').trim(),bgPaper:String(t.bgPaper||'').trim(),
+  part:VIP_PART.indexOf(t.part)>=0?t.part:'gold',scene:VIP_SCENE.indexOf(t.scene)>=0?t.scene:'zoom',
+  rating:Math.max(0,Math.min(5,Number(t.rating)||4.9)),reviews:Math.max(0,parseInt(t.reviews,10)||0),
+  dko:dekoNilai('dko',t.dko),flt:dekoNilai('flt',t.flt),dvd:dekoNilai('dvd',t.dvd),
+  rec:{border:BORDERS.some(b=>b.id===r.border)?r.border:'double',
+       cover:FX_COVER.some(f=>f[0]===r.cover)?r.cover:'zoom',
+       scroll:FX_SCROLL.some(f=>f[0]===r.scroll)?r.scroll:'fade-up',
+       mix:typeof r.mix==='boolean'?r.mix:true,
+       slides:Array.isArray(r.slides)?r.slides.filter(id=>SLIDES.some(s=>s.id===id)):[]},
+  meta:{dibuat:(t.meta&&t.meta.dibuat)||Date.now(),diubah:Date.now()},
+  sumber:String(t.sumber||'baru'),idManual:!!t.idManual}}
+function kosong(){return normTpl({nama:'',ev:'pernikahan',harga:75000,g:['#F7F3EC','#EADFCB','#D9C6A5'],accent:'#8A6E4B',ink:'#4B4237',
+ deco:'✦ ❖ ✦',ft:'cormorant',body:'inter',char:'',desc:'',dko:'',flt:'',dvd:'',rec:{border:'double',cover:'zoom',scroll:'fade-up',mix:true,slides:SLIDE_BAWAAN.slice()},sumber:'baru'})}
+function muatKoleksi(){try{const raw=localStorage.getItem(TS_KEY);if(!raw)return;const d=JSON.parse(raw);
+ if(!d||typeof d!=='object')return;TS.user=(Array.isArray(d.user)?d.user:[]).map(normTpl);
+ Object.assign(TS.ui,d.ui||{});TS.cur=d.cur||''}catch(e){/* data rusak — mulai dari koleksi bersih */}}
+function simpanKoleksi(){try{localStorage.setItem(TS_KEY,JSON.stringify({v:1,user:TS.user,cur:TS.cur,ui:TS.ui,andalan:Date.now()}));statusKoleksi('Tersimpan di perangkat ini')}
+ catch(e){notify('Gagal menyimpan di perangkat: '+(e&&e.message||e),'bad')}}
+function tpl(){return TS.user.filter(t=>t.id===TS.cur)[0]||TS.user[0]||null}
+function nilai(k){const t=tpl();return t?getJalur(t,k):''}
+function getJalur(o,jalur){return jalur.split('.').reduce((a,k)=>(a==null?a:a[k]),o)}
+function setJalur(o,jalur,v){const p=jalur.split('.');let x=o;for(let i=0;i<p.length-1;i++){if(!x[p[i]])x[p[i]]={};x=x[p[i]]}x[p[p.length-1]]=v}
+/* Id bebas bentrok: 13 tema bawaan + daftar TEMA_LAMA + koleksi di perangkat ini. */
+function idUnik(dasar,kecuali){dasar=slugify(dasar)||'tema-baru';const dipakai=id=>TPL_BAWAAN.some(t=>t.id===id)||TEMA_LAMA.indexOf(id)>=0||TS.user.some(t=>t.id===id&&t.id!==kecuali);
+ if(!dipakai(dasar))return dasar;for(let i=2;i<99;i++){const c=dasar+'-'+i;if(!dipakai(c))return c}return dasar+'-'+Date.now().toString(36)}
+function swatch(t){return 'linear-gradient(160deg,'+t.g[0]+','+t.g[1]+' 55%,'+t.g[2]+')'}
+function ubah(jalur,v,ringan){const t=tpl();if(!t)return;
+ if(jalur==='harga')v=Math.max(0,Math.min(900000,parseInt(v,10)||0));
+ if(jalur==='nama'&&!t.idManual){const lama=t.id;setJalur(t,'nama',v);t.id=idUnik(slugify(v),lama)}
+ else setJalur(t,jalur,v);
+ t.meta.diubah=Date.now();simpanKoleksi();
+ if(ringan){renderPreview();renderCek();renderLib();renderRingkas()}else renderSemua()}
+
+/* ---------- aksi koleksi ---------- */
+function baru(){const t=kosong();t.id=idUnik('tema-baru');TS.user.push(t);TS.cur=t.id;TS.ui.tab='identitas';simpanKoleksi();renderSemua();notify('Tema baru dibuat — isi nama & paletnya.')}
+function duplikat(id){const asal=TPL_BAWAAN.filter(t=>t.id===id)[0]||TS.user.filter(t=>t.id===id)[0];if(!asal)return;
+ const t=normTpl(JSON.parse(JSON.stringify(asal)));t.id=idUnik(asal.id,null);t.nama=(asal.nama||'Tema')+' (salinan)';t.idManual=true;
+ t.sumber=TPL_BAWAAN.some(x=>x.id===id)?'duplikat':'salinan';t.meta={dibuat:Date.now(),diubah:Date.now()};
+ if(!t.rec.slides.length)t.rec.slides=SLIDE_BAWAAN.slice();
+ TS.user.push(t);TS.cur=t.id;simpanKoleksi();renderSemua();notify('Salinan "'+asal.nama+'" siap diubah.')}
+function pilih(id){if(!TS.user.some(t=>t.id===id))return;TS.cur=id;simpanKoleksi();renderSemua()}
+function hapus(id){const t=TS.user.filter(x=>x.id===id)[0];if(!t)return;
+ if(!confirm('Hapus rancangan "'+(t.nama||t.id)+'" dari koleksi di perangkat ini?'))return;
+ TS.user=TS.user.filter(x=>x.id!==id);if(TS.cur===id)TS.cur=TS.user.length?TS.user[0].id:'';
+ simpanKoleksi();renderSemua();notify('Rancangan dihapus.')}
+function acakPalet(){const t=tpl();if(!t)return;const h=Math.floor(Math.random()*360),s=18+Math.floor(Math.random()*16),l=88+Math.floor(Math.random()*6);
+ t.g=[hslKeHex(h,s,l),hslKeHex(h,s+4,l-9),hslKeHex((h+12)%360,Math.min(62,s+26),Math.max(24,l-58))];
+ t.accent=hslKeHex((h+188)%360,30+Math.floor(Math.random()*22),30+Math.floor(Math.random()*12));
+ t.ink=inkAman(t.ink,t.g);simpanKoleksi();renderSemua();notify('Palet acak diterapkan (kontras dijaga).')}
+function pakaiPalet(id){const a=TPL_BAWAAN.filter(t=>t.id===id)[0];if(!a)return;const t=tpl();if(!t)return;
+ t.g=a.g.slice();t.accent=a.accent;t.ink=inkAman(a.ink,t.g);simpanKoleksi();renderSemua();notify('Palet "'+a.nama+'" dipakai.')}
+
+/* ---------- daftar koleksi ---------- */
+function renderLib(){const el=$('#libList');if(!el)return;const q=(TS.ui.cari||'').trim().toLowerCase();
+ const cocok=t=>!q||String(t.nama).toLowerCase().indexOf(q)>=0||String(t.id).indexOf(q)>=0;
+ const bawaan=TPL_BAWAAN.filter(cocok),milik=TS.user.filter(cocok);
+ el.innerHTML='<div class="lbl" style="margin:2px 0 7px">Bawaan ('+bawaan.length+')</div>'
+ +bawaan.map(t=>'<div class="librow"><span class="swatch" style="background:'+swatch(t)+'"></span>'
+   +'<span style="flex:1;min-width:0"><b style="font-weight:600">'+esc(t.nama)+'</b><br><span class="sub">'+esc(t.id)+' · '+esc(EV_LABEL[t.ev])+' · '+esc(tierDari(t.harga))+'</span></span>'
+   +'<button class="chip mini" onclick="duplikat(\''+esc(t.id)+'\')" data-help="Salin tema bawaan ini untuk diubah.">Duplikat</button></div>').join('')
+ +'<div class="lbl" style="margin:14px 0 7px">Rancangan saya ('+milik.length+')</div>'
+ +(milik.length?milik.map(t=>{const on=t.id===TS.cur;return '<div class="librow'+(on?' on':'')+'" onclick="pilih(\''+esc(t.id)+'\')" style="cursor:pointer">'
+   +'<span class="swatch" style="background:'+swatch(t)+'"></span>'
+   +'<span style="flex:1;min-width:0"><b style="font-weight:600">'+esc(t.nama||'(tanpa nama)')+'</b><br><span class="sub">'+esc(t.id||'—')+' · '+esc(KATEGORI[t.ev])+' · '+esc(tierDari(t.harga))+'</span></span>'
+   +'<button class="chip mini" onclick="event.stopPropagation();duplikat(\''+esc(t.id)+'\')" title="Duplikat">⧉</button>'
+   +'<button class="chip mini" onclick="event.stopPropagation();hapus(\''+esc(t.id)+'\')" title="Hapus">🗑</button></div>'}).join('')
+   :'<div class="mini" style="padding:2px 0 10px">Belum ada rancangan. Klik <b>＋ Baru</b> atau <b>Duplikat</b> salah satu tema bawaan.</div>');
+ const j=$('#jmlTema');if(j)j.textContent=TS.user.length+' rancangan'}
+
+/* ---------- tab & panel editor ---------- */
+const TAB=[['identitas','🎫 Identitas'],['warna','🎨 Palet & kontras'],['tipografi','🔤 Tipografi'],['motif','✿ Motif & ornamen'],
+ ['dekorasi','🌸 Dekorasi'],['border','🖼 Border'],['animasi','✨ Animasi'],['bagian','🧩 Bagian'],['publikasi','🚀 Publikasi']];
+function renderTabbar(){const el=$('#tabbar');if(!el)return;
+ el.innerHTML=TAB.map(x=>'<button class="tabbtn'+(TS.ui.tab===x[0]?' on':'')+'" onclick="tabKe(\''+x[0]+'\')">'+x[1]+'</button>').join('')}
+function tabKe(id){TS.ui.tab=id;simpanKoleksi();renderTabbar();renderPanel()}
+function fTeks(k,label,opt){opt=opt||{};return '<label class="f">'+esc(label)+(opt.pill||'')+'<input type="text" data-k="'+k+'" value="'+esc(nilai(k))+'" placeholder="'+esc(opt.ph||'')+'"'+(opt.max?' maxlength="'+opt.max+'"':'')+'>'+(opt.note?'<span class="note">'+opt.note+'</span>':'')+'</label>'}
+function fArea(k,label,opt){opt=opt||{};return '<label class="f">'+esc(label)+'<textarea data-k="'+k+'" placeholder="'+esc(opt.ph||'')+'"'+(opt.max?' maxlength="'+opt.max+'"':'')+'>'+esc(nilai(k))+'</textarea>'+(opt.note?'<span class="note">'+opt.note+'</span>':'')+'</label>'}
+function fAngka(k,label,opt){opt=opt||{};return '<label class="f">'+esc(label)+'<input type="number" data-k="'+k+'" value="'+esc(nilai(k))+'" min="'+(opt.min||0)+'" max="'+(opt.max||900000)+'" step="'+(opt.step||1000)+'">'+(opt.note?'<span class="note">'+opt.note+'</span>':'')+'</label>'}
+function fWarna(k,label,opt){opt=opt||{};const v=String(nilai(k)||'');return '<label class="f">'+esc(label)+'<span style="display:flex;gap:7px;align-items:center;margin-top:4px">'
+ +'<input type="color" data-k="'+k+'" value="'+esc(v)+'" style="width:48px;height:40px;padding:2px;border:1px solid var(--line2);border-radius:11px;background:#fff;margin:0">'
+ +'<input type="text" data-k="'+k+'" value="'+esc(v)+'" style="flex:1;border:1px solid var(--line2);border-radius:12px;height:40px;padding:0 12px;font-family:ui-monospace,monospace;font-size:12px;margin:0"></span>'
+ +(opt.note?'<span class="note">'+opt.note+'</span>':'')+'</label>'}
+function fPilih(k,label,daftar,opt){opt=opt||{};const v=String(nilai(k));
+ return '<label class="f">'+esc(label)+'<select data-k="'+k+'">'+daftar.map(o=>'<option value="'+esc(o[0])+'"'+(o[0]===v?' selected':'')+'>'+esc(o[1])+'</option>').join('')+'</select>'+(opt.note?'<span class="note">'+opt.note+'</span>':'')+'</label>'}
+function kartu(judul,isi){return '<div class="card"><h4>'+judul+'</h4>'+isi+'</div>'}
+function pilihGrid(items,aktif,aksi){return '<div class="pilih">'+items.map(it=>'<button class="'+(it.id===aktif?'on':'')+'" data-aksi="'+aksi+'" data-nilai="'+esc(it.id)+'"'+(it.help?' data-help="'+esc(it.help)+'"':'')+'>'
+ +(it.warna?'<span class="kt" style="'+it.warna+'">'+(it.ikon||'')+'</span>':'')
+ +'<span style="min-width:0"><b style="font-weight:600;font-size:12px">'+esc(it.nama)+'</b>'+(it.sub?'<br><span class="mini">'+esc(it.sub)+'</span>':'')+'</span>'+(it.pill||'')+'</button>').join('')+'</div>'}
+function bdPreview(b){const A=nilai('accent')||'#8A6E4B';const css=b.s?b.s(A):(b.corner?'border:2px solid '+A:'');
+ return '<span class="bdprev"><i style="'+css+'"></i></span>'}
+
+/* ====================== PANEL EDITOR ====================== */
+const DECO_PILIH=['✦ ❖ ✦','❖ ✦ ❖','✿ ❋ ✿','❀ ❁ ❀','★ ✦ ★','۞ ✦ ۞','✸ ★ ✸','❖ ─ ❖','✦ ☁ ✦','✿ ✦ ✿','۞ ❖ ۞','⋆ ⁘ ⋆'];
+const famJudul=id=>{const f=FONTS.filter(x=>x.id===id)[0];return (f||FONTS[0]).fam};
+function fontTerpakai(id){return FONTS.filter(f=>f.id===id)[0]||null}
+function infoId(){const t=tpl();if(!t)return'';
+ if(!t.id)return '<span style="color:var(--bad)">Id belum diisi — tema belum bisa diekspor.</span>';
+ if(!/^[a-z0-9-]{3,}$/.test(t.id))return '<span style="color:var(--bad)">Id harus huruf kecil/angka/minus, minimal 3 huruf.</span>';
+ if(TPL_BAWAAN.some(x=>x.id===t.id))return '<span style="color:var(--bad)">Id bentrok dengan tema bawaan.</span>';
+ if(TEMA_LAMA.indexOf(t.id)>=0)return '<span style="color:var(--bad)">Id ini termasuk daftar tema lama (TEMA_LAMA) — tidak boleh dipakai.</span>';
+ return 'Tersedia — ekspor akan memakai id <b>'+esc(t.id)+'</b>.'}
+function ukur(t){return [['Teks cover vs gradasi atas',kontras(t.ink,t.g[0]),3],['Teks cover vs gradasi bawah',kontras(t.ink,t.g[2]),3],
+ ['Teks kartu isi vs kertas',kontras(t.ink,TC_KARTU),4.5],['Aksen vs gradasi atas',kontras(t.accent,t.g[0]),3],['Aksen vs kertas isi',kontras(t.accent,TC_KARTU),3]]}
+function barisKontras(rows){return rows.map(r=>{const ok=r[1]>=r[2];
+ return '<div class="cekrow '+(ok?'':'warn')+'"><span class="ic">'+(ok?'✅':'⚠️')+'</span><span class="b">'+esc(r[0])+' — '+r[1].toFixed(2)+':1 <span class="mini">(min '+r[2]+':1)</span></span></div>'}).join('')}
+function renderPanel(){const el=$('#panel');if(!el)return;const t=tpl();
+ if(!t){el.innerHTML='<div class="card"><h4>Belum ada tema</h4><div class="mini">Klik <b>＋ Baru</b> atau <b>Duplikat</b> salah satu tema bawaan di kolom kiri untuk mulai merancang tema baru.</div>'
+  +'<div class="rowbtns" style="margin-top:10px"><button class="tb dark" onclick="baru()">＋ Template baru</button></div></div>';return}
+ const tab=TS.ui.tab,rec=t.rec,isi=[];
+ if(tab==='identitas'){
+  isi.push(kartu('🎫 Identitas tema',fTeks('nama','Nama tema',{ph:'Mis. Sage Modern',max:60,note:'Nama yang muncul di picker Studio & katalog.'})
+   +'<div class="grid2">'+fPilih('ev','Kategori acara',Object.keys(EV_LABEL).map(k=>[k,EV_ICON[k]+' '+EV_LABEL[k]]),{note:'Menentukan tema ini tampil untuk acara apa.'})
+   +fTeks('char','Karakter cover (opsional)',{ph:'Mis. SAGE',max:8,note:'Kata besar di cover. Boleh dikosongkan.'})+'</div>'
+   +fTeks('id','Id tema',{note:'Huruf kecil, angka, minus. Tidak boleh bentrok dengan tema bawaan.'})
+   +'<div class="rowbtns"><button class="chip" data-aksi="idAuto" data-help="Bikin id otomatis dari nama tema.">↻ Id dari nama</button>'
+   +'<button class="chip'+(t.idManual?' on':'')+'" data-aksi="idKunci" data-help="Bila terkunci, id tidak ikut berubah saat nama diubah.">'+(t.idManual?'🔒 Id terkunci':'🔓 Id ikut nama')+'</button></div>'
+   +'<div class="mini" style="margin-top:8px">'+infoId()+'</div>'));
+  isi.push(kartu('📝 Deskripsi katalog',fArea('desc','Kalimat penjelas',{max:200,ph:'Satu-dua kalimat: tema ini cocok untuk acara apa.',note:'Dipakai sebagai <code>description</code> di kartu katalog (maks 200 huruf).'})))}
+ else if(tab==='warna'){
+  isi.push(kartu('🎨 Palet gradasi','<div class="grid3">'+fWarna('g.0','Atas (g0)')+fWarna('g.1','Tengah (g1)')+fWarna('g.2','Bawah (g2)')+'</div>'
+   +'<div class="grid2">'+fWarna('accent','Warna aksen')+fWarna('ink','Warna teks cover')+'</div>'
+   +'<div class="rowbtns"><button class="chip on" data-aksi="inkAman" data-help="Cari warna teks yang aman di cover sekaligus di kartu isi.">🎯 Hitung teks aman</button>'
+   +'<button class="chip" data-aksi="acakPalet" data-help="Palet harmonis acak dalam satu keluarga warna.">🎲 Palet acak</button></div>'));
+  isi.push(kartu('🔎 Kontras warna',barisKontras(ukur(t))
+   +'<div class="mini" style="margin-top:8px">Mesin undangan memakai <code>assets/theme-contrast.js</code> untuk menyesuaikan otomatis, tapi tema yang lolos sejak awal tampil lebih rapi di semua perangkat.</div>'));
+  isi.push(kartu('📋 Palet dari tema bawaan','<div class="rowbtns">'+TPL_BAWAAN.map(x=>'<button class="chip mini" data-aksi="palet" data-nilai="'+esc(x.id)+'" data-help="Pakai palet tema ini.">'
+   +'<span style="display:inline-block;width:12px;height:12px;border-radius:4px;background:'+esc(x.g[2])+';margin-right:6px"></span>'+esc(x.nama)+'</button>').join('')+'</div>'))}
+ else if(tab==='tipografi'){const fJ=fontTerpakai(t.ft),c=CONTOH[t.ev]||CONTOH.all;
+  isi.push(kartu('🔤 Font judul & isi',fPilih('ft','Font judul (--ft)',FONTS.map(f=>[f.id,f.name+(f.ex?' — eksklusif':'')]),{note:'Dipakai untuk nama, heading, dan kutipan.'})
+   +fPilih('body','Font isi (--fb)',FONTS.map(f=>[f.id,f.name]),{note:'Disarankan sans-serif yang enak dibaca di HP.'})
+   +((fJ&&fJ.ex&&t.harga<119000)?'<div class="mini" style="color:var(--warn)">⚠️ '+esc(fJ.name)+' terkunci untuk tier Eksklusif ke atas — naikkan harga ke ≥ 119.000 atau pilih font lain.</div>':'')));
+  isi.push(kartu('👀 Pratinjau cepat','<div class="card" style="box-shadow:none;background:linear-gradient(160deg,'+esc(t.g[0])+','+esc(t.g[1])+' 55%,'+esc(t.g[2])+');border-color:rgba(0,0,0,.06)">'
+   +'<div class="orn" style="letter-spacing:11px;font-size:15px;color:'+esc(t.accent)+'">'+esc(t.deco||'')+'</div>'
+   +'<div style="font-family:'+famJudul(t.ft)+';font-weight:700;font-size:32px;line-height:1.1;color:'+esc(t.ink)+';margin-top:8px">'+esc(c.utama)+(c.kedua?' &amp; '+esc(c.kedua):'')+'</div>'
+   +'<div style="font-family:var(--fb,Inter,sans-serif);font-size:12px;color:'+esc(t.ink)+';opacity:.8;margin-top:8px">Contoh teks isi undangan — '+esc(EV_LABEL[t.ev])+'.</div></div>'))}
+ else if(tab==='motif'){
+  isi.push(kartu('✿ Motif latar',fPilih('pat','Motif latar',PAT_IDS.map(p=>[p,PAT_NAMA[p]]),{note:'Motif SVG halus memakai warna aksen tema.'})
+   +fTeks('deco','Ornamen cover',{ph:'✦ ❖ ✦',max:24,note:'Ikon kecil di atas nama pada cover.'})
+   +'<div class="rowbtns">'+DECO_PILIH.map(d=>'<button class="chip mini" data-aksi="deco" data-nilai="'+esc(d)+'">'+esc(d)+'</button>').join('')+'</div>'))}
+ else if(tab==='dekorasi'){
+  const bdT=BORDERS.filter(x=>x.id===t.rec.border)[0];
+  const DK=dekoPilih(null,t,bdT);
+  const baris=[[['dko','Hiasan sudut bingkai'],DKO_IDS,DKO_NAMA],[['flt','Kelopak melayang'],FLT_IDS,FLT_NAMA],[['dvd','Pembatas nama'],DVD_IDS,DVD_NAMA]];
+  const opsi=baris.map(function(x){
+   const k=x[0][0],label=x[0][1],ids=x[1],nama=x[2];
+   const pilihan=['<option value=""'+(t[k]===''?' selected':'')+'>Ikut border (bawaan)</option>',
+    '<option value="none"'+(t[k]==='none'?' selected':'')+'>Tanpa (matikan)</option>']
+    .concat(ids.map(id=>'<option value="'+id+'"'+(t[k]===id?' selected':'')+'>'+esc(nama[id])+'</option>')).join('');
+   return '<label class="f">'+esc(label)+'<select data-deko="'+k+'">'+pilihan+'</select></label>'});
+  const aktif=[DK.art?('sudut '+(DKO_NAMA[DK.art]||DK.art)):'', DK.flt?('kelopak '+(FLT_NAMA[DK.flt]||DK.flt)):'',
+   DK.dvd?('pembatas '+(DVD_NAMA[DK.dvd]||DK.dvd)):''].filter(Boolean).join(' \u00b7 ')||'belum ada';
+  isi.push(kartu('\uD83C\uDF38 Dekorasi dinamis',
+   '<div class="rowbtns" style="margin-bottom:12px">'
+   +'<button class="chip on" data-aksi="dekoRekomendasi" data-help="Pilih dekorasi yang serasi dengan motif & border tema ini.">\u2728 Rekomendasi sesuai motif</button>'
+   +'<button class="chip" data-aksi="dekoBersih" data-help="Matikan semua hiasan (tema tetap bersih).">Tanpa dekorasi</button></div>'
+   +opsi.join('')
+   +'<div class="mini" style="margin-top:4px">Hiasan sudut & kelopak memakai warna aksen tema. Semua hiasan bersifat latar (tidak menutupi tombol) dan otomatis mati bila tamu memilih "kurangi gerakan".</div>'));
+  isi.push(kartu('\uD83D\uDD0E Yang sedang dipakai',
+   '<div class="kv"><span class="k">Hiasan sudut</span><span class="v">'+esc(DK.art?(DKO_NAMA[DK.art]||DK.art):'\u2014')+'</span></div>'
+   +'<div class="kv"><span class="k">Kelopak melayang</span><span class="v">'+esc(DK.flt?(FLT_NAMA[DK.flt]||DK.flt):'\u2014')+'</span></div>'
+   +'<div class="kv"><span class="k">Pembatas nama</span><span class="v">'+esc(DK.dvd?(DVD_NAMA[DK.dvd]||DK.dvd):'\u2014')+'</span></div>'
+   +'<div class="kv"><span class="k">Aktif sekarang</span><span class="v">'+esc(aktif)+'</span></div>'
+   +(bdT&&bdT.art?'<div class="mini" style="margin-top:6px">Border "'+esc(bdT.n)+'" sudah membawa hiasan sudut sendiri \u2014 pilihan di atas menimpanya.</div>':'')))}
+ else if(tab==='border'){
+  isi.push(kartu('🖼 Border kartu','<div class="pilih">'+BORDERS.map(b=>'<button class="'+(b.id===rec.border?'on':'')+'" data-aksi="border" data-nilai="'+esc(b.id)+'" data-help="'+esc('Border '+b.n)+'">'
+   +bdPreview(b)+'<span style="min-width:0"><b style="font-weight:600;font-size:12px">'+esc(b.n)+'</b>'
+   +(b.tk?'<br><span class="pilll tk">'+esc(b.tk)+'</span>':'')+(b.corner?' <span class="pilll">sudut</span>':'')+'</span></button>').join('')+'</div>'
+   +'<div class="mini" style="margin-top:8px">Border berlabel <b>premium/eks/vip</b> hanya terbuka untuk tema dengan harga sesuai — mesin undangan melepasnya otomatis bila tidak memenuhi, jadi sebaiknya pilih border yang sesuai tier.</div>'))}
+ else if(tab==='animasi'){const c=FX_COVER.filter(f=>f[0]===rec.cover)[0];
+  isi.push(kartu('✨ Efek pembuka cover',pilihGrid(FX_COVER.map(f=>({id:f[0],nama:f[1],sub:f[2],ikon:'▶',
+   pill:(f[4]==='vip'?'<span class="pilll tk">vip</span>':(f[3]?'<span class="pilll">eksklusif</span>':''))})),rec.cover,'cover')
+   +'<div class="mini" style="margin-top:8px">Efek terpilih: <b>'+esc(c?c[1]:'')+'</b>. Animasi hanya jalan sekali saat cover dibuka, dan dimatikan otomatis bila tamu mengaktifkan "kurangi gerakan".</div>'));
+  isi.push(kartu('📜 Efek gulir bagian',fPilih('rec.scroll','Efek gulir bawaan',FX_SCROLL.map(f=>[f[0],f[1]+' — '+f[2]]),{note:'Dipakai setiap bagian saat tamu menggulir halaman.'})
+   +'<label class="f" style="display:flex;gap:9px;align-items:flex-start"><input type="checkbox" data-mix="1"'+(rec.mix?' checked':'')+' style="width:18px;height:18px;margin-top:2px">'
+   +'<span>Campur efek antar bagian (scrollMix)<br><span class="mini">Tiap bagian memakai efek berbeda dari daftar FX_SCROLL_MIX ('+FX_SCROLL_MIX.length+' efek), urut dari efek yang dipilih.</span></span></label>'
+   +'<div class="rowbtns"><button class="chip" data-aksi="putarAnim" data-help="Mainkan ulang animasi masuk di pratinjau HP.">↻ Putar animasi cover</button></div>'))}
+ else if(tab==='bagian'){
+  const on=rec.slides;
+  isi.push(kartu('🧩 Bagian undangan',SLIDES.map(s=>'<label class="kv" style="align-items:center;cursor:pointer"><span class="k" style="display:flex;gap:9px;align-items:flex-start;color:inherit">'
+   +'<input type="checkbox" data-slide="'+esc(s.id)+'"'+(on.indexOf(s.id)>=0?' checked':'')+' style="width:17px;height:17px;margin-top:2px">'
+   +'<span style="color:var(--ink)"><b>'+esc(s.ic+' '+s.nm)+'</b><br><span class="mini">'+esc(s.ds)+'</span></span></span><span class="v mini">'+(s.type==='list'?'daftar':(s.type==='area'?'paragraf':'khusus'))+'</span></label>').join('')
+   +'<div class="rowbtns" style="margin-top:10px"><button class="chip" data-aksi="bagianPaket" data-help="Paket bagian paling umum: quote, timeline, peta, RSVP.">Paket umum</button>'
+   +'<button class="chip" data-aksi="bagianSemua">Pilih semua</button><button class="chip" data-aksi="bagianKosong">Kosongkan</button></div>'
+   +'<div class="mini" style="margin-top:8px">Bagian yang dicentang jadi saran awal saat tema dipakai di Studio Undangan — bagian yang tidak dicentang otomatis dimatikan.</div>'))}
+ else if(tab==='publikasi'){const tier=tierDari(t.harga),kartuKatalog=KATEGORI[t.ev];
+  isi.push(kartu('🚀 Harga & label',fAngka('harga','Harga tema (Rp)',{step:1000,note:'Tier otomatis: ≥ 89.000 premium · ≥ 119.000 eksklusif · ≥ 149.000 vip.'})
+   +'<div class="kv"><span class="k">Tier tema</span><span class="v">'+esc(tier)+'</span></div>'
+   +fPilih('badge','Label katalog (badge)',BADGE_IDS.map(b=>[b,b||'(tanpa badge)']),{note:'Label LARIS/BEST/TERLARIS membuat kartu katalog ditandai bestseller.'})
+   +'<div class="grid2">'+fAngka('rating','Rating katalog',{step:'0.1',min:0,max:5,note:''})+fAngka('reviews','Jumlah ulasan',{step:1,min:0,max:9999})+'</div>'));
+  isi.push(kartu('🗂 Ringkasan kartu katalog','<div class="kv"><span class="k">category</span><span class="v">'+esc(kartuKatalog)+'</span></div>'
+   +'<div class="kv"><span class="k">gradient</span><span class="v" style="font-family:ui-monospace,monospace;font-size:11px">from-['+esc(t.g[0])+'] via-['+esc(t.g[1])+'] to-['+esc(t.g[2])+']</span></div>'
+   +'<div class="kv"><span class="k">bestseller</span><span class="v">'+(BADGE_BESTSELLER.test(t.badge)?'true':'—')+'</span></div>'
+   +'<div class="kv"><span class="k">price</span><span class="v">'+t.harga+'</span></div>'));
+  isi.push(kartu('🖼 Artwork (opsional)',fTeks('bg3d','Latar 3D (bg3d)',{ph:'assets/tema-3d/nama.webp',note:'Isi hanya bila berkasnya ada.'})
+   +fTeks('bgPaper','Tekstur kertas (bgPaper)',{ph:'assets/paper/nama.webp',note:'Isi hanya bila berkasnya ada.'})
+   +'<div class="mini" style="color:var(--warn)">⚠️ Jangan diisi sebelum berkasnya benar-benar ada: <code>tools/cek-kesehatan.py</code> [16] menghitung tema ber-<code>bg3d</code> dan jumlahnya harus sama dengan berkas <code>.webp</code> di <code>assets/tema-3d/</code>.</div>'));
+  isi.push(kartu('👑 VIP 4D (khusus tier vip)',fPilih('part','Partikel',VIP_PART.map(p=>[p,p]),{note:'Efek partikel parallax di cover (assets/vip-4d.js).'})
+   +fPilih('scene','Adegan masuk',VIP_SCENE.map(s=>[s,s]),{note:'Animasi masuk sinematik untuk tema VIP.'})
+   +(tier==='vip'?'':'<div class="mini">Tema ini bertier <b>'+esc(tier)+'</b> — pengaturan VIP baru aktif bila harga ≥ 149.000.</div>')))}
+ el.innerHTML=isi.join('')}
+
+/* ====================== AKSI PANEL ====================== */
+function aksi(nama,nilai){const t=tpl();if(!t)return;
+ if(nama==='border')ubah('rec.border',nilai,false);
+ else if(nama==='cover')ubah('rec.cover',nilai,false);
+ else if(nama==='deco')ubah('deco',nilai,false);
+ else if(nama==='palet')pakaiPalet(nilai);
+ else if(nama==='acakPalet')acakPalet();
+ else if(nama==='inkAman'){t.ink=inkAman(t.ink,t.g);simpanKoleksi();renderSemua();notify('Warna teks disesuaikan otomatis.')}
+ else if(nama==='idAuto'){t.id=idUnik(slugify(t.nama));t.idManual=true;simpanKoleksi();renderSemua()}
+ else if(nama==='idKunci'){t.idManual=!t.idManual;simpanKoleksi();renderSemua()}
+ else if(nama==='putarAnim')putarAnim();
+ else if(nama==='bagianPaket'){t.rec.slides=SLIDE_BAWAAN.slice();simpanKoleksi();renderSemua()}
+ else if(nama==='bagianSemua'){t.rec.slides=SLIDES.map(s=>s.id);simpanKoleksi();renderSemua()}
+ else if(nama==='bagianKosong'){t.rec.slides=[];simpanKoleksi();renderSemua()}
+ else if(nama==='dekoRekomendasi'){dekoRekomendasi(t);simpanKoleksi();renderSemua();notify('Dekorasi disesuaikan dengan motif tema.')}
+ else if(nama==='dekoBersih'){t.dko='none';t.flt='none';t.dvd='none';simpanKoleksi();renderSemua();notify('Dekorasi dimatikan.')}}
+function pasangPanel(){const panel=$('#panel');if(!panel||panel.dataset.siap)return;panel.dataset.siap='1';
+ panel.addEventListener('input',e=>{const el=e.target;
+  if(el.dataset.k){ubah(el.dataset.k,el.value,true);sinkronKembar(el);
+   if(el.dataset.gilir)renderPanel();return}
+  if(el.dataset.slide!==undefined&&el.type==='checkbox'){const t=tpl();if(!t)return;
+   const id=el.dataset.slide,s=t.rec.slides.indexOf(id);
+   if(el.checked&&s<0)t.rec.slides.push(id);if(!el.checked&&s>=0)t.rec.slides.splice(s,1);
+   simpanKoleksi();renderPreview();renderCek();renderRingkas()}});
+ panel.addEventListener('change',e=>{const el=e.target;
+  if(el.dataset.mix){const t=tpl();if(!t)return;t.rec.mix=!!el.checked;simpanKoleksi();renderPreview();renderCek();return}
+  if(el.dataset.k&&el.tagName==='SELECT'){ubah(el.dataset.k,el.value,false);return}
+  if(el.dataset.deko){ubah(el.dataset.deko,el.value,false);return}
+  if(el.type==='checkbox'&&el.dataset.slide!==undefined){const t=tpl();if(!t)return;
+   const id=el.dataset.slide,s=t.rec.slides.indexOf(id);
+   if(el.checked&&s<0)t.rec.slides.push(id);if(!el.checked&&s>=0)t.rec.slides.splice(s,1);
+   simpanKoleksi();renderPreview();renderCek();renderRingkas()}});
+ panel.addEventListener('click',e=>{const b=e.target.closest('[data-aksi]');if(!b)return;e.preventDefault();aksi(b.dataset.aksi,b.dataset.nilai||'')})}
+/* Dua input (color & teks) berbagi data-k — jaga nilainya tetap sinkron. */
+function sinkronKembar(el){$$('[data-k="'+el.dataset.k+'"]').forEach(x=>{if(x!==el&&x.type!==el.type&&x.value!==el.value)x.value=el.value})}
+
+/* ====================== PRATINJAU HP ====================== */
+function sudutHtml(A,w){const c=pos=>'<i style="position:absolute;width:22px;height:22px;border:0 solid '+A+';'+pos+';pointer-events:none;z-index:2"></i>';
+ return c('top:10px;left:10px;border-top-width:'+w+'px;border-left-width:'+w+'px')
+  +c('top:10px;right:10px;border-top-width:'+w+'px;border-right-width:'+w+'px')
+  +c('bottom:10px;left:10px;border-bottom-width:'+w+'px;border-left-width:'+w+'px')
+  +c('bottom:10px;right:10px;border-bottom-width:'+w+'px;border-right-width:'+w+'px')}
+function varsUntuk(t){const scr=$('#scr');if(!scr)return;
+ scr.style.setProperty('--g0',t.g[0]);scr.style.setProperty('--g1',t.g[1]);scr.style.setProperty('--g2',t.g[2]);
+ scr.style.setProperty('--accent',t.accent);scr.style.setProperty('--ink',t.ink);scr.style.setProperty('--cream',t.g[0]);
+ const K=window.AsThemeContrast;
+ scr.style.setProperty('--accent-cover',K&&K.untukCover?K.untukCover(t.accent,t.g[0],t.g[1]):t.accent);
+ const konten=K&&K.untukKonten?K.untukKonten(t.ink,t.accent,t.g):null;
+ scr.style.setProperty('--ink-body',konten?konten.ink:t.ink);
+ scr.style.setProperty('--accent-body',konten?konten.accent:t.accent);
+ scr.style.setProperty('--ft',famJudul(t.ft));scr.style.setProperty('--fb',famJudul(t.body))}
+function htmlCover(t,anim){const c=CONTOH[t.ev]||CONTOH.all,wed=t.ev==='pernikahan',CE=t.rec.cover;
+ const b=BORDERS.filter(x=>x.id===t.rec.border)[0]||BORDERS[0];
+ let bd=b.s?b.s(t.accent):'';if(b.extra)bd+=(bd?';':'')+b.extra(t.accent);
+ const a=anim?CE:'',d=(ms)=>anim?'animation-delay:'+ms+'ms':'',fx=anim?'fx-c-'+CE:'';
+ const DK=dekoPilih(null,t,b);
+ return '<div id="cover" class="'+(anim?'cov':'')+'">'
+ +'<div class="pat" style="'+patCss(t)+'"></div><div class="veil"></div>'+dekoFltHtml(DK.flt)
+ +'<div class="bdfr" style="'+bd+'">'+(b.corner?sudutHtml(t.accent,b.corner):'')+dekoSudutHtml(DK.art)
+ +'<div class="orn '+(anim?'anim-deco':'')+'" style="'+d(200)+'">'+esc(t.deco||'')+'</div>'
+ +'<div class="kicker '+fx+'" style="'+d(400)+'">'+(wed?"You're Invited":esc(EV_LABEL[t.ev]))+'</div>'
+ +(t.char?'<div class="chara '+fx+'" style="'+d(650)+'">'+esc(t.char)+'</div>':'')
+ +'<h1 class="'+fx+'" style="'+d(550)+'">'+esc(c.utama)+'</h1>'
+ +(c.kedua?'<div class="amp '+fx+'" style="'+d(700)+'">&amp;</div><h1 class="'+fx+'" style="'+d(850)+'">'+esc(c.kedua)+'</h1>':'')
+ +dekoDivHtml(DK.dvd)
+ +'<div class="date '+fx+'" style="'+d(1300)+'">🗓 Sabtu, 12 Desember 2026</div>'
+ +'<div class="host '+fx+'" style="'+d(1450)+'">Gedung Balai Kartini, Jakarta</div>'
+ +'<button class="open '+(anim?'anim-pop':'')+'" style="'+d(1800)+'"><span class="env">✉️</span> Buka Undangan</button>'
+ +'</div></div>'}
+function kelasGulir(t,i){const fx=fxScrollForSection(t.rec.scroll,i,t.rec.mix);
+ return 'scroll-reveal fx-s-'+fx+' sr-axis-'+fxScrollAxis(fx)}
+function htmlIsi(t){const c=CONTOH[t.ev]||CONTOH.all,on=t.rec.slides;
+ if(!on.length)return '<div class="isi"><div class="kartu"><h3>Belum ada bagian dipilih</h3><div class="mini">Buka tab <b>Bagian</b> untuk memilih isi undangan (timeline, peta, RSVP, …).</div></div></div>';
+ const isiBag=on.map((id,i)=>{const k=kelasGulir(t,i),s=SLIDES.filter(x=>x.id===id)[0]||{nm:id,ic:'•'};
+  if(id==='quote')return '<div class="kartu '+k+'"><div class="kutip">"Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan pasangan untukmu dari jenismu sendiri."</div></div>';
+  if(id==='timeline')return '<div class="kartu '+k+'"><h3>'+s.ic+' '+esc(s.nm)+'</h3><div class="baris"><b>08.00</b><span>Akad Nikah</span></div><div class="baris"><b>11.00</b><span>Resepsi</span></div><div class="baris"><b>13.00</b><span>Foto keluarga</span></div></div>';
+  if(id==='story')return '<div class="kartu '+k+'"><h3>'+s.ic+' '+esc(s.nm)+'</h3><div style="font-size:12.5px;line-height:1.7">Kami bertemu di bangku kuliah, tumbuh bersama, dan kini melangkah ke jenjang yang lebih serius.</div></div>';
+  if(id==='menu')return '<div class="kartu '+k+'"><h3>'+s.ic+' '+esc(s.nm)+'</h3><div class="baris"><b>Sup Iga</b><span>Bawang bakar</span></div><div class="baris"><b>Ayam Panggang</b><span>Sambal matah</span></div><div class="baris"><b>Es Buah</b><span>Segar</span></div></div>';
+  if(id==='party')return '<div class="kartu '+k+'"><h3>'+s.ic+' '+esc(s.nm)+'</h3><div class="baris"><b>Budi</b><span>Groomsman</span></div><div class="baris"><b>Sari</b><span>Bridesmaid</span></div></div>';
+  if(id==='dresscode')return '<div class="kartu '+k+'"><h3>'+s.ic+' '+esc(s.nm)+'</h3><div style="display:flex;gap:6px;justify-content:center;margin-top:4px">'+[t.g[1],t.g[2],t.accent].map(x=>'<span style="width:26px;height:26px;border-radius:50%;background:'+esc(x)+';border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.12)"></span>').join('')+'</div><div class="mini" style="text-align:center;margin-top:6px">Nuansa '+esc(t.nama||'tema ini')+'</div></div>';
+  if(id==='gift')return '<div class="kartu '+k+'"><h3>'+s.ic+' '+esc(s.nm)+'</h3><div style="font-size:12px;line-height:1.7;text-align:center">Kado dapat dikirim ke<br><b>Jl. Melati No. 12, Jakarta</b></div></div>';
+  if(id==='map')return '<div class="kartu '+k+'"><h3>'+s.ic+' '+esc(s.nm)+'</h3><div class="acara"><div><b>Ballroom</b>Balai Kartini</div><div><b>12 Des</b>11.00 WIB</div></div><div class="mini" style="text-align:center;margin-top:8px">🗺 Peta Google Maps tampil di sini</div></div>';
+  if(id==='rsvp')return '<div class="kartu '+k+'"><h3>'+s.ic+' '+esc(s.nm)+'</h3><div class="baris"><span>Bapak/Ibu/Saudara/i</span><span class="mini">Nama tamu</span></div><button class="tombol">Konfirmasi Kehadiran</button></div>';
+  if(id==='closing')return '<div class="kartu '+k+'"><div style="font-family:var(--ft);font-size:17px;text-align:center;line-height:1.6">Merupakan suatu kehormatan bagi kami apabila Bapak/Ibu berkenan hadir.</div><div class="mini" style="text-align:center;margin-top:8px">'+esc(c.utama)+(c.kedua?' &amp; '+esc(c.kedua):'')+'</div></div>';
+  return '<div class="kartu '+k+'"><h3>'+esc(s.ic+' '+s.nm)+'</h3><div class="mini">'+esc(s.ds)+'</div></div>'}).join('');
+ return '<div class="isi"><div class="kartu '+kelasGulir(t,0)+'"><div class="mini" style="text-align:center">Kepada YTH</div>'
+ +'<div style="text-align:center;font-size:13px;font-weight:600;margin-top:4px">Bapak/Ibu/Saudara/i</div>'
+ +'<div class="nm" style="text-align:center;margin-top:10px">'+esc(c.utama)+(c.kedua?' &amp; '+esc(c.kedua):'')+'</div>'
+ +'<div class="mini" style="text-align:center;margin-top:6px">'+esc(EV_LABEL[t.ev])+' · 12 Desember 2026</div></div>'+isiBag+'</div>'}
+function renderPreview(animBaru){const t=tpl();if(!t)return;const gelut=$('#gelut');if(!gelut)return;
+ varsUntuk(t);const mode=TS.ui.mode||'cover';
+ gelut.innerHTML=(mode==='isi')?htmlIsi(t):htmlCover(t,animBaru!==false);
+ $('#scr').classList[(mode==='isi'?'add':'remove')]('isi-mode');
+ if(window.clearScrollReveal)window.clearScrollReveal(gelut);
+ if(mode==='isi'&&window.setupScrollReveal)window.setupScrollReveal(gelut,gelut);
+ const bC=$('#btnCover'),bI=$('#btnIsi');if(bC)bC.classList[(mode==='cover'?'add':'remove')]('on');if(bI)bI.classList[(mode==='isi'?'add':'remove')]('on')}
+function setMode(m){TS.ui.mode=m;simpanKoleksi();renderPreview()}
+function putarAnim(){TS.ui.mode='cover';renderPreview(true);notify('Animasi cover dimainkan ulang.')}
+
+/* ====================== PEMERIKSAAN ====================== */
+function periksa(){const t=tpl(),rows=[];if(!t)return rows;
+ const bad=b=>rows.push({st:'bad',b:b}),warn=b=>rows.push({st:'warn',b:b}),ok=b=>rows.push({st:'ok',b:b});
+ const tier=tierDari(t.harga),rank={basic:0,premium:1,eksklusif:2,vip:3}[tier];
+ if(!t.id)bad('Id tema belum diisi.');
+ else if(!/^[a-z0-9-]{3,}$/.test(t.id))bad('Id harus huruf kecil/angka/minus, minimal 3 huruf.');
+ else if(TPL_BAWAAN.some(x=>x.id===t.id))bad('Id bentrok dengan tema bawaan.');
+ else if(TEMA_LAMA.indexOf(t.id)>=0)bad('Id termasuk daftar tema lama (TEMA_LAMA).');
+ else if(TS.user.filter(x=>x.id===t.id).length>1)bad('Id dipakai lebih dari satu rancangan.');
+ else ok('Id '+t.id+' aman dipakai (belum ada di 13 tema bawaan).');
+ if(!t.nama)bad('Nama tema belum diisi.');
+ else if(t.nama.length<3)warn('Nama tema terlalu pendek.');
+ else ok('Nama tema: '+t.nama);
+ if(/['"]/.test(t.nama+t.desc+t.deco+t.char))warn('Ada tanda kutip ( \' atau " ) pada nama/deskripsi/ornamen — ekspor menggantinya dengan tanda kutip tipografis agar kode tetap sah.');
+ if(!t.desc)warn('Deskripsi katalog masih kosong — kartu katalog jadi kurang menjelaskan.');
+ else if(t.desc.length>160)warn('Deskripsi '+t.desc.length+' huruf — sebaiknya ≤ 160 huruf agar rapi di kartu.');
+ else ok('Deskripsi katalog terisi.');
+ const kon=ukur(t),gagal=kon.filter(r=>r[1]<r[2]);
+ if(gagal.length>=2)bad('Kontras warna belum aman: '+gagal.map(r=>r[0].toLowerCase()+' '+r[1].toFixed(2)+':1').join(', ')+'. Pakai "Hitung teks aman".');
+ else if(gagal.length)warn('Kontras '+gagal[0][0].toLowerCase()+' hanya '+gagal[0][1].toFixed(2)+':1 (min '+gagal[0][2]+':1) — mesin akan menyesuaikan otomatis.');
+ else ok('Kontras cover & kartu isi aman di semua pasangan warna.');
+ const fj=fontTerpakai(t.ft);
+ if(fj&&fj.ex&&rank<2)warn('Font judul "'+fj.name+'" terkunci untuk tier Eksklusif ke atas (harga tema sekarang '+t.harga+').');
+ const b=BORDERS.filter(x=>x.id===t.rec.border)[0];
+ if(b&&b.tk){const butuh={premium:1,eks:2,vip:3}[b.tk]||0;
+  if(rank<butuh)warn('Border "'+b.n+'" butuh tier '+b.tk+' — mesin akan melepasnya otomatis untuk tema ini.');}
+ const cf=FX_COVER.filter(f=>f[0]===t.rec.cover)[0];
+ if(cf&&cf[3]&&rank<2)warn('Efek cover "'+cf[1]+'" eksklusif — otomatis dilepas untuk tier '+tier+'.');
+ if(cf&&cf[4]==='vip'&&rank<3)warn('Efek cover "'+cf[1]+'" hanya untuk VIP.');
+ if(!t.rec.slides.length)warn('Belum ada bagian undangan dipilih — tema tampil hanya dengan info dasar.');
+ else ok(t.rec.slides.length+' bagian undangan disarankan.');
+ if(t.bg3d&&!/^assets\/.+\.(webp|png|jpg)$/i.test(t.bg3d))bad('Path bg3d harus seperti assets/tema-3d/nama.webp.');
+ if(t.bgPaper&&!/^assets\/.+\.(webp|png|jpg)$/i.test(t.bgPaper))bad('Path bgPaper harus seperti assets/paper/nama.webp.');
+ if(t.bg3d||t.bgPaper)warn('Artwork diisi — pastikan berkasnya benar-benar ada. Checker [16] menghitung tema ber-bg3d dan harus sama dengan jumlah berkas .webp di assets/tema-3d/.');
+ const DK=dekoPilih(null,t,BORDERS.filter(x=>x.id===t.rec.border)[0]);
+ const dekoAktif=[DK.art?('sudut '+(DKO_NAMA[DK.art]||DK.art)):'',DK.flt?('kelopak '+(FLT_NAMA[DK.flt]||DK.flt)):'',DK.dvd?('pembatas '+(DVD_NAMA[DK.dvd]||DVD_NAMA[DK.dvd])):''].filter(Boolean);
+ if(dekoAktif.length)ok('Dekorasi aktif: '+dekoAktif.join(' · ')+'.');
+ else warn('Belum ada dekorasi — tab Dekorasi bisa menambah hiasan sudut/kelopak/pembatas.');
+ if(tier!=='basic')ok('Tier '+tier+' akan ditulis eksplisit (tier:\''+tier+'\') di baris tema.');
+ if(t.rec.border==='none')warn('Border "Tanpa Border" membuat kartu menyentuh tepi — banyak tema memakai border tipis.');
+ ok('Siap diekspor ke studio.html, undangan.html, index.html ('+tierDari(t.harga)+' · '+t.g[0]+'/'+t.g[1]+'/'+t.g[2]+').');
+ return rows}
+function renderCek(){const el=$('#cek');if(!el)return;const rows=periksa();
+ const bad=rows.filter(r=>r.st==='bad').length,warn=rows.filter(r=>r.st==='warn').length;
+ const pil=$('#cekRingkas');if(pil){pil.textContent=bad?bad+' masalah':(warn?warn+' catatan':'semua aman');
+  pil.className='pilll '+(bad?'bad':(warn?'tk':'ok'))}
+ el.innerHTML=rows.map(r=>'<div class="cekrow '+r.st+'"><span class="ic">'+(r.st==='bad'?'⛔':(r.st==='warn'?'⚠️':'✅'))+'</span><span class="b">'+r.b+'</span></div>').join('')}
+function renderRingkas(){renderCek()}
+function renderSemua(){renderLib();renderTabbar();renderPanel();renderPreview();renderCek();renderRingkas()}
+
+/* ====================== EKSPOR KODE ====================== */
+function q(x){return String(x==null?'':x).replace(/'/g,'\u2019')}
+function recKode(t){const r=t.rec,p=['body:\''+q(t.body)+'\'','border:\''+r.border+'\'','cover:\''+r.cover+'\'','scroll:\''+r.scroll+'\''];
+ if(!r.mix)p.push('mix:!1');
+ if(r.slides.length)p.push('slides:['+r.slides.map(s=>'\''+s+'\'').join(',')+']');
+ return ',rec:{'+p.join(',')+'}'}
+function ekorUmum(t){const tier=tierDari(t.harga);let s='';
+ if(t.char)s+=",char:'"+q(t.char)+"'";
+ if(t.bg3d)s+=",bg3d:'"+q(t.bg3d)+"'";
+ if(t.bgPaper)s+=",bgPaper:'"+q(t.bgPaper)+"'";
+ if(tier!=='basic')s+=",tier:'"+tier+"'";
+ if(tier==='vip')s+=",part:'"+t.part+"',scene:'"+t.scene+"'";
+ if(t.dko)s+=",dko:'"+t.dko+"'";
+ if(t.flt)s+=",flt:'"+t.flt+"'";
+ if(t.dvd)s+=",dvd:'"+t.dvd+"'";
+ return s}
+function rowStudio(t){return ' {id:\''+t.id+'\',nama:\''+q(t.nama)+'\',ev:\''+t.ev+'\',harga:'+t.harga+',g:[\''+t.g.join('\',\'')+'\'],accent:\''+t.accent+'\',ink:\''+t.ink+'\',badge:\''+q(t.badge)+'\',deco:\''+q(t.deco)+'\',pat:\''+t.pat+'\',ft:\''+t.ft+'\',desc:\''+q(t.desc)+'\''+ekorUmum(t)+recKode(t)+'},'}
+function rowUndangan(t){return ' {id:\''+t.id+'\',nama:\''+q(t.nama)+'\',ev:\''+t.ev+'\',g:[\''+t.g.join('\',\'')+'\'],accent:\''+t.accent+'\',ink:\''+t.ink+'\',deco:\''+q(t.deco)+'\',pat:\''+t.pat+'\',ft:\''+t.ft+'\''+ekorUmum(t)+recKode(t)+'},'}
+function rowIndex(t){return ' {id:"'+t.id+'",name:"'+q(t.nama).replace(/"/g,'\u201d')+'",category:"'+KATEGORI[t.ev]+'",price:'+t.harga+',rating:'+t.rating+',reviews:'+t.reviews
+ +(BADGE_BESTSELLER.test(t.badge)?',bestseller:!0':'')+',gradient:"from-['+t.g[0]+'] via-['+t.g[1]+'] to-['+t.g[2]+']",accent:"'+t.accent+'",description:"'+q(t.desc).replace(/"/g,'\u201d')+'"},'}
+function ruleCss(t){const k=c=>'.'+c+'-\\[\\#'+t.g[(c==='from'?0:c==='via'?1:2)].slice(1)+'\\]';
+ const rgb=c=>{const x=hexRgb(c);return 'rgba('+x[0]+','+x[1]+','+x[2]+',0)'};
+ return '/* AsProject — gradasi template kustom ('+t.id+') */\n'
+ +k('from')+'{--tw-gradient-from:'+t.g[0].toLowerCase()+' var(--tw-gradient-from-position);--tw-gradient-to:'+rgb(t.g[0])+' var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}\n'
+ +k('via')+'{--tw-gradient-to:'+rgb(t.g[1])+' var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),'+t.g[1].toLowerCase()+' var(--tw-gradient-to-position),var(--tw-gradient-to)}\n'
+ +k('to')+'{--tw-gradient-to:'+t.g[2].toLowerCase()+' var(--tw-gradient-to-position)}'}
+function semuaSnippet(t){return '/* ===== 1. studio.html → const TPL = [ … tambahkan di AKHIR ===== */\n'+rowStudio(t)
+ +'\n\n/* ===== 2. undangan.html → const TPL = [ … urutan id HARUS sama ===== */\n'+rowUndangan(t)
+ +'\n\n/* ===== 3. index.html → var Pn = [ … tambahkan di AKHIR ===== */\n'+rowIndex(t)
+ +'\n\n/* ===== 4. index.html → sebelum </style> ===== */\n'+ruleCss(t)}
+function teksJson(t){const o={v:1,id:t.id,nama:t.nama,ev:t.ev,harga:t.harga,g:t.g.slice(),accent:t.accent,ink:t.ink,badge:t.badge,deco:t.deco,
+ pat:t.pat,ft:t.ft,body:t.body,char:t.char,desc:t.desc,bg3d:t.bg3d,bgPaper:t.bgPaper,part:t.part,scene:t.scene,
+ dko:t.dko,flt:t.flt,dvd:t.dvd,
+ rating:t.rating,reviews:t.reviews,rec:{border:t.rec.border,cover:t.rec.cover,scroll:t.rec.scroll,mix:t.rec.mix,slides:t.rec.slides.slice()}};
+ return JSON.stringify(o,null,1)}
+
+/* ====================== MODAL ====================== */
+function bukaModal(judul,isiHtml,kakiHtml,lebar){const m=$('#modal'),box=$('#modalBox');if(!m||!box)return;
+ box.style.maxWidth=lebar||'900px';
+ box.innerHTML='<div class="top"><h3>'+judul+'</h3><span class="sp"></span><button class="tb" onclick="tutupModal()">✕</button></div>'
+  +'<div class="isi">'+isiHtml+'</div>'+(kakiHtml?'<div class="kaki">'+kakiHtml+'</div>':'');
+ m.classList.add('on');document.body.style.overflow='hidden'}
+function tutupModal(){const m=$('#modal');if(!m)return;m.classList.remove('on');document.body.style.overflow=''}
+
+/* ====================== UI EKSPOR ====================== */
+function tabEkspor(id){TS.ui.tabEkspor=id;bukaEkspor()}
+function bukaEkspor(){const t=tpl();if(!t){notify('Belum ada tema untuk diekspor.','bad');return}
+ const tab=TS.ui.tabEkspor||'json';
+ const isi={json:'<div class="rowbtns" style="margin-bottom:10px"><button class="chip on" onclick="unduhJson()" data-help="Unduh berkas JSON tema untuk skrip pemasang.">⬇ Unduh JSON</button>'
+   +'<button class="chip" onclick="salinTeks(\'kodeEkspor\',\'JSON tema disalin.\')">📋 Salin JSON</button></div>'
+   +'<textarea class="code" id="kodeEkspor-json" readonly>'+esc(teksJson(t))+'</textarea>'
+   +'<div class="mini" style="margin-top:8px">Simpan sebagai <code>'+esc((t.id||'template')+'.json')+'</code> di folder repo, lalu jalankan di terminal:<br>'
+   +'<code>node tools/pasang-template.cjs '+(t.id||'template')+'.json</code><br>Skrip itu menambahkan baris ke <b>studio.html</b>, <b>undangan.html</b>, <b>index.html</b>, plus rule CSS gradasi katalog — sekaligus membuat cadangan <code>.bak-template</code>.</div>',
+  studio:'<textarea class="code" id="kodeEkspor-studio" readonly>'+esc(rowStudio(t))+'</textarea><div class="mini" style="margin-top:8px">Tempel di <b>akhir</b> array <code>const TPL=[…]</code> pada studio.html (sebelum <code>];</code>).</div>',
+  undangan:'<textarea class="code" id="kodeEkspor-undangan" readonly>'+esc(rowUndangan(t))+'</textarea><div class="mini" style="margin-top:8px">Tempel di <b>akhir</b> array <code>const TPL=[…]</code> pada undangan.html — urutan id harus sama dengan studio.html.</div>',
+  index:'<textarea class="code" id="kodeEkspor-index" readonly>'+esc(rowIndex(t))+'</textarea><div class="mini" style="margin-top:8px">Tempel di <b>akhir</b> array <code>var Pn=[…]</code> pada index.html (sebelum <code>];</code>).</div>',
+  css:'<textarea class="code" id="kodeEkspor-css" readonly>'+esc(ruleCss(t))+'</textarea><div class="mini" style="margin-top:8px">Tempel <b>sebelum</b> <code>&lt;/style&gt;</code> pertama di index.html supaya kelas gradasi Tailwind baru punya aturan.</div>',
+  cepat:'<div class="step"><span class="n">1</span><span class="b">Klik <b>Salin semua kode</b> atau unduh <code>'+(t.id||'template')+'.json</code>.</span></div>'
+   +'<div class="step"><span class="n">2</span><span class="b">Bila memakai skrip: simpan JSON di folder repo lalu jalankan <code>node tools/pasang-template.cjs '+(t.id||'template')+'.json</code>.</span></div>'
+   +'<div class="step"><span class="n">3</span><span class="b">Skrip menulis cadangan <code>*.bak-template</code> dan menambahkan baris di akhir ketiga array. Bila sudah pernah dipasang, jalankan <code>--batalkan</code> dulu.</span></div>'
+   +'<div class="step"><span class="n">4</span><span class="b">Jalankan <code>python3 tools/cek-kesehatan.py</code> — harus 0 masalah. Periksa juga dengan <code>node tools/test-template-studio.cjs</code>.</span></div>'
+   +'<div class="step"><span class="n">5</span><span class="b">Uji di <code>python3 tools/serve.py</code> (buka Studio & katalog), lalu commit: <code>git add -A &amp;&amp; git commit -m "tambah template '+(t.id||'…')+'"</code>.</span></div>'
+   +'<div class="step"><span class="n">6</span><span class="b">Push → GitHub Pages menyegarkan situs. Tema langsung muncul di picker Studio dan katalog.</span></div>'
+   +'<div class="card" style="margin-top:12px"><h4>🔎 Yang perlu diingat</h4>'
+   +'<div class="kv"><span class="k">Urutan array</span><span class="v">tambah selalu di AKHIR — kolom <code>theme</code> di Supabase menyimpan indeks</span></div>'
+   +'<div class="kv"><span class="k">Tiga berkas</span><span class="v">studio.html &amp; undangan.html wajib punya id yang sama, urut sama</span></div>'
+   +'<div class="kv"><span class="k">Artwork</span><span class="v">isi bg3d/bgPaper hanya bila berkasnya ada</span></div>'
+   +'<div class="kv"><span class="k">Demo katalog</span><span class="v">opsional: tambah berkas di katalog-demo/ lalu daftarkan di DEMO_BY_NAME</span></div>'
+   +'<div class="kv"><span class="k">Cadangan</span><span class="v">skrip menulis *.bak-template; <code>--batalkan</code> mengembalikan</span></div></div>'};
+ bukaModal('⬆ Ekspor &amp; pasang — '+esc(t.nama||'(tanpa nama)')+' <span class="pilll">'+esc(tierDari(t.harga))+'</span>',
+  '<div class="segbar">'+[['json','JSON'],['studio','1 · studio.html'],['undangan','2 · undangan.html'],['index','3 · index.html'],['css','4 · CSS gradasi'],['cepat','Cara cepat']]
+   .map(x=>'<button class="'+(tab===x[0]?'on':'')+'" onclick="tabEkspor(\''+x[0]+'\')">'+x[1]+'</button>').join('')
+  +'<button class="'+(tab==='semua'?'on':'')+'" onclick="tabEkspor(\'semua\')">Semua (4 bagian)</button></div>'+(isi[tab]||isi.json),
+  '<button class="tb" onclick="salinTeks(\'kodeEkspor-\'+tab,\'Kode disalin.\')">📋 Salin tab ini</button>'
+  +'<button class="tb" onclick="salin(semuaSnippet(tplAktif()),\'Empat potongan kode disalin.\')">📋 Salin semua kode</button>'
+  +'<button class="tb" onclick="unduhJson()">⬇ JSON</button><button class="tb" onclick="unduhDemo()">⤓ Demo HTML</button>'
+  +'<button class="tb dark" onclick="tutupModal()">Tutup</button>')}
+function salinTeks(id,pesan){const el=document.getElementById(id);salin(el?el.value:'',pesan)}
+
+/* ====================== UNDUHAN ====================== */
+function unduhJson(){const t=tpl();if(!t)return;unduh((t.id||'template')+'.json',teksJson(t),'application/json');notify('JSON tema diunduh — jalankan tools/pasang-template.cjs.')}
+function cssDemo(){const el=document.querySelector('style[data-cover-undangan]');return el?el.textContent:''}
+function htmlDemo(t){const c=CONTOH[t.ev]||CONTOH.all;
+ return '<!doctype html>\n<html lang="id">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>'+esc(t.nama||'Demo tema')+' — AsProject</title>\n'
+ +'<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">\n'
+ +'<style>\n'+cssDemo()+'\n'
+ +'#cover{position:static;min-height:100dvh}\n'
+ +'body{background:#faf6f1}\n.wadah{max-width:520px;margin:auto;padding:22px 16px 60px}\n'
+ +'.isi .kartu{border-radius:18px;background:#fffdf9;border:1px solid #efe7d8;padding:16px;margin-bottom:14px;box-shadow:0 8px 22px rgba(90,70,30,.06)}\n'
+ +'.isi .kartu h3{font-family:var(--ft);font-size:20px;font-weight:700;text-align:center;margin-bottom:10px;color:var(--ink-body)}\n'
+ +'.isi .baris{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:7px 0;border-bottom:1px dashed #eee2d0}\n.isi .baris:last-child{border-bottom:0}\n'
+ +'.isi .kutip{font-family:var(--ft);font-size:17px;font-style:italic;text-align:center;color:var(--accent-cover);line-height:1.6}\n'
+ +'.isi .tombol{display:block;width:100%;height:46px;border:0;border-radius:99px;background:var(--ink-body);color:#fff;font-weight:600;font-size:13px;margin-top:8px}\n'
+ +'.isi .acara{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;font-size:11.5px}\n.isi .acara b{display:block;font-family:var(--ft);font-size:16px;color:var(--accent-cover)}\n'
+ +'.isi .nm{font-family:var(--ft);font-size:24px;font-weight:700}\n.isi .mini{font-size:11px;color:#8a7f72}\n.wadah .kaki{margin-top:26px;text-align:center;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#9a8f82}\n'
+ +'</style>\n</head>\n<body class="demo-tema">\n<div class="gelut" style="'+'--g0:'+t.g[0]+';--g1:'+t.g[1]+';--g2:'+t.g[2]+';--accent:'+t.accent+';--ink:'+t.ink+';--ink-body:'+t.ink+';--accent-body:'+t.accent+';--accent-cover:'+t.accent+';--ft:'+famJudul(t.ft)+';--fb:'+famJudul(t.body)+'">'
+ +htmlCover(t,true)+'<div class="wadah">'+htmlIsi(t)+'<div class="kaki">AsProject · demo tema '+esc(t.nama||'')+'</div></div></div>\n</body>\n</html>\n'}
+function unduhDemo(){const t=tpl();if(!t)return;unduh('demo-'+(t.id||'tema')+'.html',htmlDemo(t),'text/html;charset=utf-8');notify('Demo HTML diunduh — bisa dibuka langsung di HP.')}
+function salinKoleksi(){salin(JSON.stringify({v:1,user:TS.user},null,1),'Koleksi ('+TS.user.length+' tema) disalin sebagai JSON.')}
+
+/* ====================== IMPOR ====================== */
+function bukaImpor(){bukaModal('📥 Impor tema dari JSON',
+ '<span class="mini" style="display:block;margin-bottom:10px">Muat berkas hasil ekspor Studio Template. Bila id-nya sudah dipakai, id baru otomatis ditambahkan (contoh: <code>sage-modern-2</code>) supaya rancangan lama tidak tertimpa.</span>'
+ +'<input type="file" accept=".json,application/json" onchange="imporFile(this)" style="margin-bottom:12px">'
+ +'<label class="f">atau tempel JSON di sini<textarea id="imporTeks" style="min-height:150px;font-family:ui-monospace,monospace;font-size:11px" placeholder=\'{"id":"sage-modern","nama":"Sage Modern", …}\'></textarea></label>',
+ '<button class="tb" onclick="tutupModal()">Batal</button><button class="tb dark" onclick="imporTeksDari()">Muat dari teks</button>')}
+function imporFile(inp){const f=inp.files&&inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>terapkanImpor(String(r.result||''));r.readAsText(f)}
+function imporTeksDari(){const el=$('#imporTeks');if(el)terapkanImpor(el.value)}
+function terapkanImpor(teks){let d=null;try{d=JSON.parse(teks)}catch(e){notify('JSON tidak terbaca: '+e.message,'bad');return}
+ const daftar=Array.isArray(d)?d:(Array.isArray(d.user)?d.user:[d]);let n=0;
+ daftar.forEach(x=>{if(!x||typeof x!=='object')return;const t=normTpl(JSON.parse(JSON.stringify(x)));
+  t.id=idUnik(t.id||t.nama||'impor',null);t.idManual=true;t.sumber='impor';t.meta={dibuat:Date.now(),diubah:Date.now()};
+  TS.user.push(t);n++});
+ if(!n){notify('Tidak ada tema yang bisa dimuat dari JSON itu.','bad');return}
+ TS.cur=TS.user[TS.user.length-1].id;simpanKoleksi();tutupModal();renderSemua();notify(n+' tema dimuat ke koleksi.')}
+
+/* ====================== CLOUD (SUPABASE) ====================== */
+function cloudKode(){let k=localStorage.getItem('asproject.templateStudio.owner');
+ if(!k){k='ts'+Math.random().toString(36).slice(2,10);localStorage.setItem('asproject.templateStudio.owner',k)}return k}
+const SB_SQL='create table if not exists public.invitation_templates (\n'
+ +'  id bigserial primary key,\n  owner_key text not null,\n  slug text not null,\n  nama text,\n  kategori text,\n  harga int,\n  data jsonb not null,\n  updated_at timestamptz not null default now(),\n'
+ +'  unique (owner_key, slug)\n);\nalter table public.invitation_templates enable row level security;\n'
+ +'drop policy if exists "templates_all" on public.invitation_templates;\n'
+ +'create policy "templates_all" on public.invitation_templates for all using (true) with check (true);'
+function bukaCloud(){const kode=cloudKode();
+ bukaModal('☁️ Koleksi cloud','<span class="mini" style="display:block;margin-bottom:10px">Tema disimpan di tabel <code>invitation_templates</code> dengan <b>kode pemilik</b>. Kode ini tersimpan di perangkat ini — pakai kode yang sama di perangkat lain untuk membuka koleksimu. Koleksi lokal tetap sumber utama; cloud hanya cadangan &amp; pemindah perangkat.</span>'
+ +'<label class="f">Kode pemilik<input id="cloudKodeInp" value="'+esc(kode)+'" onchange="localStorage.setItem(\'asproject.templateStudio.owner\',this.value.trim());TS.cloud.rows=[];renderCloudIsi()"><span class="note">Huruf/angka sederhana. Kode baru = daftar baru.</span></label>'
+ +'<div class="rowbtns" style="margin-bottom:12px"><button class="chip on" onclick="cloudSimpan(false)" data-help="Simpan tema yang sedang dibuka ke tabel Supabase.">☁️ Simpan tema aktif</button>'
+ +'<button class="chip" onclick="cloudSimpan(true)" data-help="Simpan seluruh rancangan di perangkat ini.">☁️ Simpan semua ('+TS.user.length+')</button>'
+ +'<button class="chip" onclick="cloudMuat()" data-help="Ambil daftar tema milik kode ini dari cloud.">⬇ Muat dari cloud</button></div><div id="cloudIsi"></div>',
+ '<button class="tb dark" onclick="tutupModal()">Tutup</button>','780px');renderCloudIsi()}
+function renderCloudIsi(){const el=$('#cloudIsi');if(!el)return;const st=TS.cloud.status;
+ const pesan=st?'<div class="stat" style="margin-bottom:10px;font-size:12px;padding:8px 10px;border-radius:12px;background:'+(st==='ok'?'#dcfce7':(st==='bad'?'#fee2e2':'#FFF6D6'))+'">'+esc(TS.cloud.pesan||'')+'</div>':'';
+ const daftar=(TS.cloud.rows||[]).map(r=>'<div class="librow"><span class="swatch" style="background:'+(r.data&&r.data.g?('linear-gradient(160deg,'+r.data.g.join(',')+')'):'#eee')+'"></span>'
+  +'<span style="flex:1;min-width:0"><b style="font-weight:600">'+esc(r.nama||r.slug)+'</b><br><span class="sub">'+esc(r.kategori||'-')+' · '+esc((r.harga||0)+'')+' · '+esc(r.updated_at||'')+'</span></span>'
+  +'<button class="chip mini" onclick="cloudTerapkan(\''+esc(r.slug)+'\')" data-help="Muat tema ini ke koleksi di perangkat.">⬇ Muat</button></div>').join('');
+ const sql=TS.cloud.sql?'<div style="margin-top:10px"><div class="lbl" style="display:block;margin-bottom:6px">Tabel belum ada — jalankan SQL ini di Supabase SQL Editor</div>'
+  +'<textarea class="code" id="kodeSql" readonly style="min-height:180px">'+esc(SB_SQL)+'</textarea>'
+  +'<div class="rowbtns" style="margin-top:8px"><button class="chip on" onclick="salinTeks(\'kodeSql\',\'SQL tabel template disalin.\')">📋 Salin SQL</button></div></div>':'';
+ el.innerHTML=pesan+(daftar?'<div class="lbl" style="display:block;margin:6px 0 7px">Di cloud ('+TS.cloud.rows.length+')</div>'+daftar:'')+sql}
+function cloudSimpan(semua){const kode=cloudKode(),t=tpl();if(!t&&!semua)return;
+ const daftar=semua?TS.user:(t?[t]:[]);if(!daftar.length){notify('Belum ada tema untuk disimpan.','bad');return}
+ TS.cloud.status='warn';TS.cloud.pesan='Menyimpan '+daftar.length+' tema…';renderCloudIsi();
+ const url=SUPABASE_URL+'/rest/v1/invitation_templates?on_conflict=owner_key,slug';
+ const baris=daftar.map(x=>({owner_key:kode,slug:x.id,nama:x.nama||x.id,kategori:x.ev,harga:x.harga,data:x,updated_at:new Date().toISOString()}));
+ fetch(url,{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(baris)})
+ .then(r=>{if(r.ok){TS.cloud.status='ok';TS.cloud.pesan=daftar.length+' tema tersimpan di cloud (kode '+kode+').';notify('Tersimpan di cloud.');cloudMuat()}
+  else return r.text().then(x=>{const hilang=/42P01|PGRST205|PGRST204/.test(x);TS.cloud.status='bad';TS.cloud.sql=hilang;TS.cloud.pesan=hilang?'Tabel invitation_templates belum ada — jalankan SQL di bawah.':'Gagal menyimpan: '+x.slice(0,160);renderCloudIsi()})})
+ .catch(e=>{TS.cloud.status='bad';TS.cloud.pesan='Tidak bisa menghubungi Supabase: '+(e&&e.message||e);renderCloudIsi()})}
+function cloudMuat(){const kode=cloudKode();TS.cloud.status='warn';TS.cloud.pesan='Memuat koleksi cloud…';renderCloudIsi();
+ fetch(SUPABASE_URL+'/rest/v1/invitation_templates?owner_key=eq.'+encodeURIComponent(kode)+'&select=slug,nama,kategori,harga,updated_at,data&order=updated_at.desc',
+  {headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}})
+ .then(r=>r.ok?r.json():r.text().then(x=>{throw new Error(/42P01|PGRST205/.test(x)?'Tabel invitation_templates belum ada.':x.slice(0,160))}))
+ .then(rows=>{TS.cloud.rows=Array.isArray(rows)?rows:[];TS.cloud.status='ok';TS.cloud.sql=false;TS.cloud.pesan=TS.cloud.rows.length+' tema di cloud (kode '+kode+').';renderCloudIsi()})
+ .catch(e=>{TS.cloud.status='bad';TS.cloud.sql=/belum ada/.test(String(e&&e.message));TS.cloud.pesan='Gagal memuat: '+(e&&e.message||e);renderCloudIsi()})}
+function cloudTerapkan(slug){const r=(TS.cloud.rows||[]).filter(x=>x.slug===slug)[0];if(!r||!r.data){notify('Data tema tidak lengkap di cloud.','bad');return}
+ const t=normTpl(JSON.parse(JSON.stringify(r.data)));const ada=TS.user.filter(x=>x.id===t.id)[0];
+ if(ada){t.id=idUnik(t.id,null)}
+ TS.user.push(t);TS.cur=t.id;t.idManual=true;simpanKoleksi();tutupModal();renderSemua();notify('Tema "'+(t.nama||t.id)+'" dimuat dari cloud.')}
+
+/* ====================== PANDUAN ====================== */
+function bukaPanduan(){bukaModal('📘 Panduan membuat &amp; memasang tema',
+ '<span class="mini" style="display:block;margin-bottom:12px">Tema undangan hidup di tiga berkas: <code>studio.html</code> (editor pemilik), <code>undangan.html</code> (halaman tamu), dan <code>index.html</code> (katalog). Ketiganya memakai urutan id yang sama karena kolom <code>theme</code> di Supabase menyimpan <b>indeks</b> array.</span>'
+ +'<div class="step"><span class="n">1</span><span class="b">Pilih <b>Duplikat</b> salah satu tema bawaan sebagai titik awal, atau <b>＋ Baru</b> untuk mulai dari nol.</span></div>'
+ +'<div class="step"><span class="n">2</span><span class="b">Atur nama, id, kategori, palet, font, motif, border, animasi, dan bagian. Panel <b>Pemeriksaan</b> di kanan menandai masalah sebelum dipasang.</span></div>'
+ +'<div class="step"><span class="n">3</span><span class="b">Klik <b>Ekspor &amp; pasang → Unduh JSON</b>, lalu jalankan <code>node tools/pasang-template.cjs '+(tpl()&&tpl().id?tpl().id:'tema-baru')+'.json</code> dari folder repo.</span></div>'
+ +'<div class="step"><span class="n">4</span><span class="b">Verifikasi: <code>python3 tools/cek-kesehatan.py</code> (0 masalah) dan <code>node tools/test-template-studio.cjs</code>.</span></div>'
+ +'<div class="step"><span class="n">5</span><span class="b">Pratinjau di <code>python3 tools/serve.py</code> → buka <code>studio.html</code> &amp; <code>index.html</code>, pilih tema baru, lalu uji publikasi ke <code>/u/</code>.</span></div>'
+ +'<div class="step"><span class="n">6</span><span class="b">Commit &amp; push. GitHub Pages menyegarkan situs otomatis; tema langsung muncul di picker Studio dan katalog.</span></div>'
+ +'<div class="card" style="margin-top:12px"><h4>🔎 Yang perlu diingat</h4>'
+ +'<div class="kv"><span class="k">Urutan id</span><span class="v">selalu tambah di AKHIR array</span></div>'
+ +'<div class="kv"><span class="k">Konten terkunci</span><span class="v">font/border/efek ber-tier hanya aktif untuk harga yang sesuai</span></div>'
+ +'<div class="kv"><span class="k">Artwork</span><span class="v">bg3d/bgPaper hanya bila berkasnya ada</span></div>'
+ +'<div class="kv"><span class="k">Cadangan</span><span class="v">skrip menulis <code>*.bak-template</code>; <code>--batalkan</code> mengembalikan</span></div>'
+ +'<div class="kv"><span class="k">Koleksi</span><span class="v">rancangan tersimpan di perangkat ini (localStorage) + opsional ke cloud</span></div></div>',
+ '<button class="tb" onclick="salin(semuaSnippet(tplAktif()),\'Semua kode disalin.\')">📋 Salin semua kode</button><button class="tb dark" onclick="tutupModal()">Mengerti</button>','820px')}
+
+/* ---------- terima rancangan dari Kanvas Template (kanvas.html) ---------- */
+function dariKanvas() {
+  let h = null;
+  try { h = JSON.parse(localStorage.getItem('asproject.kanvas.handoff') || 'null') } catch (e) { return false }
+  if (!h || !h.tema) return false;
+  const t = normTpl(h.tema);
+  t.id = idUnik(t.id || t.nama || 'dari-kanvas');
+  t.sumber = 'kanvas';
+  TS.user.push(t); TS.cur = t.id; TS.ui.tab = 'dekorasi';
+  simpanKoleksi(); renderSemua();
+  try { localStorage.removeItem('asproject.kanvas.handoff') } catch (e) { }
+  try { history.replaceState(null, '', location.pathname) } catch (e) { }
+  notify('Rancangan dari Kanvas dimuat — lengkapi lalu ekspor.', 'ok');
+  return true;
+}
+
+/* ====================== INIT ====================== */
+function tplAktif(){return tpl()}
+function init(){
+ muatKoleksi();
+ const q=new URLSearchParams(location.search).get('dup');
+ pasangPanel();renderSemua();
+ if(q){const bawaan=TPL_BAWAAN.filter(t=>t.id===q)[0],milik=TS.user.filter(t=>t.id===q)[0];
+  if(bawaan||milik)duplikat(q);else notify('Tema "'+q+'" tidak ditemukan — mulai dari tema pilihanmu.',"bad")}
+ if(!TS.user.length)notify('Pilih "Duplikat" pada tema bawaan, atau klik ＋ Baru untuk mulai merancang.','ok');
+ if(/[?&]dari=kanvas/.test(location.search)&&!dariKanvas())notify('Belum ada rancangan dari Kanvas yang tersimpan.','warn');
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')tutupModal()});
+ const j=$('#jmlTema');if(j)j.textContent=TS.user.length+' rancangan'
+}
+if(typeof document!=='undefined'&&document.getElementById)init();
+
+</script>
+</body>
+</html>

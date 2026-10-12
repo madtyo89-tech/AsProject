@@ -48,3 +48,27 @@ drop policy if exists "public upload music" on storage.objects;
 drop policy if exists "public read music" on storage.objects;
 create policy "public upload music" on storage.objects for insert to anon, authenticated with check (bucket_id='music');
 create policy "public read music" on storage.objects for select to anon, authenticated using (bucket_id='music');
+
+-- ============================================================
+-- BAGIAN 3 — Koleksi template Studio Template (opsional)
+-- ============================================================
+-- Dipakai panel "Cloud" di template-studio.html untuk menyimpan/memindahkan
+-- rancangan tema antar perangkat memakai satu kode pemilik. Koleksi lokal
+-- (localStorage) tetap sumber utama: tabel ini hanya cadangan.
+-- Aman dijalankan ulang.
+create table if not exists public.invitation_templates (
+  id bigserial primary key,
+  owner_key text not null,
+  slug text not null,
+  nama text,
+  kategori text,
+  harga int,
+  data jsonb not null,
+  updated_at timestamptz not null default now(),
+  unique (owner_key, slug)
+);
+alter table public.invitation_templates enable row level security;
+
+drop policy if exists "templates_all" on public.invitation_templates;
+create policy "templates_all" on public.invitation_templates
+  for all using (true) with check (true);

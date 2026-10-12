@@ -27,7 +27,8 @@ import posixpath
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HALAMAN = ["index.html", "studio.html", "undangan.html", "404.html",
-           "checkin.html", "demo/ice-blue.html", "master.html", "scan.html"]
+           "checkin.html", "demo/ice-blue.html", "master.html", "scan.html",
+           "template-studio.html", "kanvas.html"]
 TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 
 hitung = {"ok": 0, "masalah": 0, "info": 0}
@@ -76,7 +77,10 @@ def cek_link():
             r = r.strip()
             if not r or r.startswith(("#", "mailto:", "tel:", "javascript:")):
                 continue
-            if "${" in r or r.startswith("{"):      # template literal JS, bukan link
+            # Lewati tujuan yang dirakit di JS (template literal, ' + esc(x) + ', dsb.)
+            # — bukan tautan statis, jadi tidak bisa diperiksa dari berkas.
+            if ("${" in r or r.startswith("{") or "esc(" in r or "'" in r or '"' in r or " + " in r
+                    or r.endswith("+")):
                 template += 1
                 continue
             if r.startswith(("http://", "https://", "//", "data:", "blob:")):
@@ -476,13 +480,16 @@ def cek_fitur_terbaru():
     lapor("ok" if not yatim else "masalah",
           "rujukan artwork tema utuh" if not yatim else "artwork tema hilang: " + ", ".join(yatim[:4]))
 
-    # 2) 23 border: array identik di studio & undangan, tersimpan saat publish, dipakai live
+    # 2) 40 border (32 lama + 8 baru berhiasan bunga/batik/renda): array identik di
+    #    studio & undangan, tersimpan saat publish, dan dipakai live.
     def _border_ids(s):
         m = re.search(r"const BORDERS=\[(.*?)\];", s, re.S)
         return re.findall(r"\{id:'([a-z0-9-]+)'", m.group(1)) if m else None
     bs, bu = _border_ids(studio), _border_ids(undangan)
-    lapor("ok" if bs and bu and len(bs) == 32 and len(set(bs)) == 32 and bs == bu else "masalah",
-          "BORDERS 32 id unik, identik di studio & undangan")
+    ekor = ("id:'diamond-stud'", "id:'triple-frame'", "id:'floral-corner'", "id:'batik-frame'")
+    lapor("ok" if (bs and bu and len(bs) == 40 and len(set(bs)) == 40 and bs == bu
+                   and all(i in studio and i in undangan for i in ekor)) else "masalah",
+          "BORDERS 40 id unik, identik di studio & undangan")
     # 2b) gating konten EKSKLUSIF: kunci tier di studio + konten baru sinkron di undangan
     eks_dipakai = any(r["tier"] == "eksklusif" for r in _tpl_rows("studio.html"))
     ok = ("bolehEks" in studio and "paksaTier" in studio and "kunciEks" in studio
@@ -801,6 +808,219 @@ def cek_simulasi():
           "uji simulasi pemakaian: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
 
 
+# ------------------------------------- 23. Studio Template (perancang tema baru)
+def _blok_array(teks, pembuka):
+    """Isi array/objek sumber mulai dari '[' pertama setelah `pembuka`."""
+    i = teks.find(pembuka)
+    if i < 0:
+        return ""
+    b = teks.find("[", i)
+    d, k = 0, b
+    while k < len(teks) and b >= 0:
+        c = teks[k]
+        if c in "'\"`":
+            k += 1
+            while k < len(teks):
+                if teks[k] == "\\":
+                    k += 2
+                    continue
+                if teks[k] == c:
+                    break
+                k += 1
+        elif c in "[{":
+            d += 1
+        elif c in "]}":
+            d -= 1
+            if d == 0:
+                break
+        k += 1
+    return teks[b + 1:k]
+
+
+def _id_objek(b):
+    return re.findall(r"\{\s*id\s*:\s*'([^']+)'", b)
+
+
+def _id_fx(b):
+    return re.findall(r"\[\s*'([^']+)'", b)
+
+
+def cek_studio_template():
+    print("\n[23] Studio Template (perancang tema undangan)")
+    rel = "template-studio.html"
+    if not os.path.isfile(os.path.join(ROOT, rel)):
+        lapor("info", "template-studio.html belum ada — Studio Template opsional")
+        return
+    hal, stu, und = baca(rel), baca("studio.html"), baca("undangan.html")
+    # 1) mesin tema harus sama persis (kalau tidak, tema rancangan ≠ tampilan undangan)
+    for nama, pola, label, jumlah in (("FONTS", _id_objek, "font", 17),
+                                      ("BORDERS", _id_objek, "border", 40),
+                                      ("SLIDES", _id_objek, "bagian undangan", 10),
+                                      ("FX_COVER", _id_fx, "efek pembuka", 14),
+                                      ("FX_SCROLL", _id_fx, "efek gulir", 34)):
+        a = pola(_blok_array(hal, "const %s=" % nama))
+        b = pola(_blok_array(stu, "const %s=" % nama))
+        sama = bool(a) and a == b and len(a) == jumlah
+        lapor("ok" if sama else "masalah",
+              "%s: %d %s sama & berurutan dengan studio.html" % (rel, len(a), label))
+    # 2) 13 tema bawaan harus urutan yang sama dengan mesin undangan & katalog
+    bawaan = _id_objek(_blok_array(hal, "const TPL_BAWAAN="))
+    mesin = _id_objek(_blok_array(stu, "const TPL="))
+    tamu = _id_objek(_blok_array(und, "const TPL="))
+    katalog = re.findall(r'\{id:"([^"]+)"', _blok_array(baca("index.html"), "var Pn=["))
+    lapor("ok" if bawaan and bawaan == mesin[:len(bawaan)] else "masalah",
+          "%s: %d tema bawaan sejalan dengan studio.html" % (rel, len(bawaan)))
+    lapor("ok" if bawaan == tamu[:len(bawaan)] else "masalah",
+          "%s: tema bawaan sejalan dengan undangan.html" % rel)
+    lapor("ok" if bawaan == katalog[:len(bawaan)] else "masalah",
+          "%s: tema bawaan sejalan dengan katalog index.html" % rel)
+    # 3) halaman memakai aset repo, bukan salinan liar
+    for berkas in ("assets/theme-contrast.js", "assets/scroll-effects.js", "assets/scroll-effects.css"):
+        lapor("ok" if berkas in hal else "masalah", "%s: memakai %s" % (rel, berkas))
+    lapor("ok" if "data-cover-undangan" in hal else "masalah",
+          "%s: CSS cover disalin dari undangan.html (pratinjau = halaman tamu)" % rel)
+    lapor("ok" if "function patCss(t)" in hal else "masalah",
+          "%s: patCss() ikut disalin supaya motif identik" % rel)
+    # 4) daftar id tema lama harus sama dengan daftar di berkas ini
+    app_lama = set(re.findall(r"'([a-z][a-z-]+)'", _blok_array(hal, "const TEMA_LAMA=[")))
+    lapor("ok" if app_lama == TEMA_LAMA else "masalah",
+          "%s: daftar TEMA_LAMA sama dengan pemeriksa ini (%d id)" % (rel, len(app_lama)))
+    # 5) skrip pemasang ada & mendukung uji kering + pembatalan
+    psg = os.path.join(ROOT, "tools", "pasang-template.cjs")
+    if not os.path.isfile(psg):
+        lapor("masalah", "tools/pasang-template.cjs tidak ada — alur ekspor tidak bisa otomatis")
+    else:
+        isi = baca("tools/pasang-template.cjs")
+        kurang = [t for t in ("--kering", "--batalkan", ".bak-template", "const TPL=[", "var Pn=[") if t not in isi]
+        lapor("ok" if not kurang else "masalah",
+              "tools/pasang-template.cjs siap dipakai (kering/batalkan/cadangan)" +
+              ("" if not kurang else " — kurang: " + ", ".join(kurang)))
+    # 6) uji halaman itu sendiri
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji Studio Template dilewati")
+    else:
+        uji = os.path.join(ROOT, "tools", "test-template-studio.cjs")
+        if not os.path.isfile(uji):
+            lapor("masalah", "tools/test-template-studio.cjs tidak ada")
+        else:
+            r = subprocess.run(["node", uji], capture_output=True, text=True, cwd=ROOT)
+            ringkas = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan:")]
+            pesan = ringkas[0] if ringkas else (r.stdout.strip() or r.stderr.strip())[-220:]
+            lapor("ok" if r.returncode == 0 else "masalah", "uji Studio Template: " + pesan)
+
+
+# --------------------------------- 24. Dekorasi tema (hiasan sudut/kelopak/pembatas)
+def cek_dekorasi_tema():
+    print("\n[24] Dekorasi tema (bunga/batik, hiasan sudut & kelopak)")
+    stu, und = baca("studio.html"), baca("undangan.html")
+    # 1) motif bunga & batik baru harus tersedia di mesin kedua halaman
+    pat = lambda s: re.findall(r"t\.pat==='([a-z]+)'", s[s.index("function patCss(t){"):s.index("function patCss(t){") + 9000])
+    motif = pat(stu)
+    baru = [m for m in ("rose", "sakura", "daisy", "vine", "parang", "mendung") if m not in motif]
+    lapor("ok" if not baru else "masalah",
+          "motif bunga & batik baru tersedia (%d motif: %s)" % (len(motif), ", ".join(motif[:6])) +
+          ("" if not baru else " — kurang: " + ", ".join(baru)))
+    lapor("ok" if motif == pat(und) else "masalah", "daftar motif studio.html & undangan.html sama")
+    # 2) border ber-art harus merujuk hiasan sudut yang ada
+    dko = re.findall(r"'([a-z]+)'", _blok_array(stu, "const DKO_IDS=["))
+    art = re.findall(r"art:'([a-z]+)'", stu)
+    asing = sorted({a for a in art if a not in dko})
+    lapor("ok" if art and not asing else "masalah",
+          "%d border memakai hiasan sudut yang terdaftar" % len(art) +
+          ("" if not asing else " — tidak dikenal: " + ", ".join(asing)))
+    # 3) mesin dekorasi sama di studio, undangan, dan Studio Template
+    wajib = ("function artDekoSudut(", "function dekoSudutHtml(", "function dekoFltHtml(",
+             "function dekoDivHtml(", "function dekoPilih(", "const DKO_IDS=", "const FLT_IDS=", "const DVD_IDS=")
+    for rel, isi in (("studio.html", stu), ("undangan.html", und), ("template-studio.html", baca("template-studio.html"))):
+        kurang = [w for w in wajib if w not in isi]
+        lapor("ok" if not kurang else "masalah",
+              "%s: mesin dekorasi lengkap" % rel + ("" if not kurang else " — kurang: " + ", ".join(kurang)))
+    # 4) CSS + aksesibilitas
+    for kelas in (".deko-sudut{", ".deko-flt{", ".deko-dvd{", "@keyframes dekoTurun", "@keyframes dekoBinar"):
+        lapor("ok" if kelas in und and kelas in stu else "masalah", "CSS %s ada di kedua halaman" % kelas)
+    lapor("ok" if ".deko-flt{display:none}" in und else "masalah",
+          "undangan.html: kelopak mati otomatis saat tamu memilih kurangi gerakan")
+    lapor("ok" if "pointer-events:none" in und[und.index(".deko-sudut{"):und.index(".deko-sudut{") + 400] else "masalah",
+          "undangan.html: dekorasi tidak menangkap klik (pointer-events:none)")
+    # 5) dekorasi tersimpan saat publish + ikut ekspor HTML mandiri
+    simpan = len(re.findall(r"dko:state\.dko,flt:state\.flt,dvd:state\.dvd", stu))
+    lapor("ok" if simpan >= 3 else "masalah",
+          "studio.html: pilihan dekorasi ikut snapshot publish/arsip/ekspor (%d tempat)" % simpan)
+    # 6) uji halaman dekorasi
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji dekorasi dilewati")
+    else:
+        uji = os.path.join(ROOT, "tools", "test-dekorasi-tema.cjs")
+        if not os.path.isfile(uji):
+            lapor("masalah", "tools/test-dekorasi-tema.cjs tidak ada")
+        else:
+            r = subprocess.run(["node", uji], capture_output=True, text=True, cwd=ROOT)
+            ringkas = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan:")]
+            lapor("ok" if r.returncode == 0 else "masalah",
+                  "uji dekorasi tema: " + (ringkas[0] if ringkas else (r.stdout or r.stderr).strip()[-200:]))
+    # 7) skrip sinkronisasi mesin harus bisa dipakai
+    sink = os.path.join(ROOT, "tools", "sinkron-studio-template.py")
+    if not os.path.isfile(sink):
+        lapor("masalah", "tools/sinkron-studio-template.py tidak ada — mesin Studio Template tidak bisa disinkronkan")
+    else:
+        r = subprocess.run([sys.executable, sink, "--kering"], capture_output=True, text=True, cwd=ROOT)
+        lapor("ok" if r.returncode == 0 else "masalah",
+              "mesin Studio Template sinkron dengan studio.html/undangan.html"
+              if r.returncode == 0 else "mesin Studio Template BEDA — jalankan python3 tools/sinkron-studio-template.py")
+
+
+# -------------------------------- 25. Kanvas Template (kanvas kosong gaya Canva)
+def cek_kanvas():
+    print("\n[25] Kanvas Template (kanvas kosong gaya Canva)")
+    rel = "kanvas.html"
+    if not os.path.isfile(os.path.join(ROOT, rel)):
+        lapor("info", "kanvas.html belum ada — Kanvas Template opsional")
+        return
+    hal, stu, ts = baca(rel), baca("studio.html"), baca("template-studio.html")
+    # 1) mesin (font & bagian undangan) harus sama dengan studio.html
+    for nama, pola, label, jumlah in (("FONTS", _id_objek, "font", 17),
+                                      ("SLIDES", _id_objek, "bagian undangan", 10)):
+        a = pola(_blok_array(hal, "const %s=" % nama))
+        b = pola(_blok_array(stu, "const %s=" % nama))
+        lapor("ok" if a and a == b and len(a) == jumlah else "masalah",
+              "%s: %d %s sama & berurutan dengan studio.html" % (rel, len(a), label))
+    # 2) blok mesin bertanda + motif/hiasan DITURUNKAN dari mesin (tidak ada daftar kedua)
+    lapor("ok" if "MESIN (SALINAN PERSIS dari studio.html" in hal and "KANVAS AsProject" in hal else "masalah",
+          "%s: blok mesin bertanda (bisa disinkronkan ulang)" % rel)
+    turunan = ("patCss.toString()" in hal and "function artHias(" in hal
+               and "artDekoSudut" in hal and "artDekoDiv" in hal and "Object.keys(DEKO_BENTUK)" in hal)
+    lapor("ok" if turunan else "masalah",
+          "%s: daftar motif & hiasan diturunkan dari mesin (tidak bisa basi)" % rel)
+    # 3) fungsi inti & kunci penyimpanan
+    wajib = ("asproject.kanvas.v1", "asproject.kanvas.handoff", "function htmlDok(",
+             "function svgDok(", "function jadikanTema(", "function kirimKeStudioTemplate(",
+             "function esc(", "function warnaAman(", "function srcAman(", "function bakuEl(")
+    kurang = [w for w in wajib if w not in hal]
+    lapor("ok" if not kurang else "masalah",
+          "%s: simpan/muat, ekspor, dan pengaman input lengkap" % rel
+          + ("" if not kurang else " — kurang: " + ", ".join(kurang)))
+    # 4) ekspor aman: semua tulisan pengguna lewat esc() sebelum masuk HTML/SVG
+    lolos = ("esc(e.isi)" in hal and "esc(t)" in hal and hal.count("esc(") >= 15)
+    lapor("ok" if lolos else "masalah", "%s: tulisan pengguna di-escape saat digambar & diekspor" % rel)
+    # 5) sambungan dua arah dengan Studio Template
+    lapor("ok" if "kanvas.html" in ts and "function dariKanvas" in ts and "dari=kanvas" in ts else "masalah",
+          "template-studio.html: tautan ke kanvas + impor rancangan (dariKanvas)")
+    lapor("ok" if "template-studio.html" in hal and "studio.html" in hal else "masalah",
+          "%s: menaut balik ke Studio Template & Studio undangan" % rel)
+    # 6) uji halaman kanvas
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji kanvas dilewati")
+        return
+    uji = os.path.join(ROOT, "tools", "test-kanvas.cjs")
+    if not os.path.isfile(uji):
+        lapor("masalah", "tools/test-kanvas.cjs tidak ada")
+        return
+    r = subprocess.run(["node", uji], capture_output=True, text=True, cwd=ROOT)
+    ringkas = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan:")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji kanvas: " + (ringkas[0] if ringkas else (r.stdout or r.stderr).strip()[-200:]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -810,7 +1030,8 @@ def main():
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
-               cek_template_pernikahan, cek_vip_4d, cek_simulasi):
+               cek_template_pernikahan, cek_vip_4d, cek_simulasi,
+               cek_studio_template, cek_dekorasi_tema, cek_kanvas):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
