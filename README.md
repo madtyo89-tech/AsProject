@@ -141,6 +141,51 @@ Mesin di halaman ini adalah salinan persis `studio.html` — sinkronkan dengan
 `python3 tools/sinkron-studio-template.py` bila mesin berubah (skrip itu sekaligus
 menjaga `template-studio.html`).
 
+## Animasi, border 2D/3D/4D, preferensi & galeri geser
+
+**Animasi.** 10 efek gulir baru (`Zoom Rotate`, `Stretch Up`, `Slide Diagonal`, `Flip X 3D`,
+`Mask Kiri`, `Blur Scale`, `Bounce Turun`, `Swirl`, `Ketik`, `Fokus`) → total **44 efek gulir**,
+dan 6 efek pembuka baru (`Unveil`, `Slide Diagonal`, `Zoom Rotasi`, `Sparkle`, `Wave In`,
+`Tilt 3D`) → total **20 efek pembuka**. Efek gulir tinggal di `assets/scroll-effects.css`
+(dipakai Studio, undangan tamu, dan berkas ekspor mandiri), efek pembuka di blok cover kedua
+berkas mesin sehingga pratinjau = halaman tamu.
+
+**Border sudut 2D/3D/4D.** 9 border baru (total **49**), masing-masing tiga per gaya:
+
+| Gaya | Border | Rasa |
+|---|---|---|
+| 2D | Garis Tegas · Blok Sudut · Lengkung | datar, tegas, tanpa bayangan |
+| 3D | Timbul · Berlapis · Kaca | ada bayangan & kilau permukaan |
+| 4D | Kilau · Mengalir · Denyut | bergerak halus (kilau menyapu, garis mengalir, denyut cahaya) |
+
+Warna 4D memakai variabel tema (`--bdA`/`--bdB`) dan **berhenti otomatis** saat tamu memilih
+"kurangi gerakan". Border baru selalu ditambahkan di akhir daftar — tema lama tidak bergeser.
+
+**Preferensi tambahan** (Studio → tab **Desain → ⚙️ Preferensi Tambahan**), tersimpan ikut
+snapshot publish/arsip/ekspor:
+
+| Pilihan | Isi | Perilaku di undangan tamu |
+|---|---|---|
+| Gerak & animasi | penuh / kurangi / matikan | `kurangi` menambah `kurangi-gerak` (animasi nyaris mati, kelopak disembunyikan) |
+| Musik | tombol / otomatis / mati | `mati` tidak memasang pemutar; `otomatis` mencoba memutar lalu mengulang pada sentuhan pertama |
+| Sapaan tamu | hidup/mati | menyembunyikan blok "Kepada YTH" |
+| Tanda AsProject | hidup/mati | menyembunyikan kredit `.brand` di bawah undangan |
+| Tombol kembali ke atas | hidup/mati | menambah tombol bulat di kanan bawah |
+| Hitungan hari | lengkap / ringkas | `ringkas` menyisakan kotak hari & jam saja |
+| Efek galeri + jeda | 7 gaya (grid + 6 slider), 2–12 detik | lihat di bawah |
+
+Preferensi divalidasi: nilai tak dikenal (mis. `slider:'ngawur'`, jeda `99`) jatuh kembali ke
+bawaan, dan undangan lama tanpa `pref` tampil **persis** seperti sebelumnya.
+
+**Galeri foto jadi slider.** Foto di tab **Musik & Galeri** (maksimal 12) bisa tampil sebagai
+susunan grid lama, atau slider dengan 6 efek: **geser, fade, zoom (ken burns), kubus 3D,
+coverflow, flip 3D**. Slider berjalan sendiri dan **murni CSS** (tiap foto memakai variabel
+`--i`/`--gal-J`/`--gal-T`), jadi tidak perlu skrip tambahan, bekerja di pratinjau Studio, di
+undangan tamu, maupun di berkas ekspor mandiri; saat "kurangi gerakan" aktif, foto pertama
+tetap tampil.
+
+Uji: `node tools/test-lengkap.cjs` (60 uji) dan pemeriksa `[26]` di `tools/cek-kesehatan.py`.
+
 ## Dekorasi tema (bunga, batik, hiasan dinamis)
 
 Tema undangan kini punya tiga lapis dekorasi, semuanya opsional dan dipesan per tema
@@ -187,6 +232,7 @@ Catatan teknis:
   (bunga → hiasan bunga + kelopak; batik → hiasan batik + kilau).
 
 Uji: `node tools/test-dekorasi-tema.cjs` (50 uji) dan pemeriksa `[24]` di `tools/cek-kesehatan.py`.
+Untuk animasi, preferensi, dan slider galeri: `node tools/test-lengkap.cjs` + pemeriksa `[26]`.
 Bila daftar mesin berubah, sinkronkan mesin Studio Template **dan** Kanvas Template dengan
 `python3 tools/sinkron-studio-template.py` (`--kering` melaporkan bila salah satu berbeda).
 

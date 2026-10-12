@@ -62,6 +62,26 @@
 .deko-dvd svg{width:132px;height:auto;display:block;max-width:64vw}
 .deko-dvd.d-flower svg,.deko-dvd.d-ribbon svg{width:124px}
 @keyframes dekoBinar{from{opacity:.62}to{opacity:1}}
+
+@keyframes uUnveil{0%{opacity:0;clip-path:inset(0 50% 0 50%)}100%{opacity:1;clip-path:inset(0 0 0 0)}}
+.cov .fx-c-unveil{animation:uUnveil 1s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uDiag{0%{opacity:0;transform:translate(-7%,9%)}100%{opacity:1;transform:none}}
+.cov .fx-c-slide-diagonal{animation:uDiag .95s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uZoomRot{0%{opacity:0;transform:scale(.9) rotate(-3deg)}100%{opacity:1;transform:none}}
+.cov .fx-c-zoom-rotasi{animation:uZoomRot .95s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uSparkle{0%{opacity:0;filter:brightness(1.9) blur(5px)}55%{opacity:1;filter:brightness(1.25)}100%{opacity:1;filter:none}}
+.cov .fx-c-sparkle{animation:uSparkle 1.15s ease both}
+@keyframes uWaveIn{0%{opacity:0;transform:translateY(6%) scaleY(1.04)}45%{opacity:1;transform:translateY(-2%) scaleY(.99)}100%{opacity:1;transform:none}}
+.cov .fx-c-wave-in{animation:uWaveIn 1.05s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uTiltIn{0%{opacity:0;transform:perspective(900px) rotateY(-24deg) translateX(-6%)}100%{opacity:1;transform:none}}
+.cov .fx-c-tilt-in{animation:uTiltIn 1s cubic-bezier(.22,.8,.36,1) both}
+
+/* ---------- border sudut 4D: kilau, mengalir, denyut ---------- */
+@keyframes bdKilau{0%{background-position:0% 0%}100%{background-position:280% 280%}}
+@keyframes bdAlir{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes bdDenjut{0%,100%{box-shadow:0 0 0 1px var(--bdA,#00000044),0 0 10px var(--bdA,#00000044)}50%{box-shadow:0 0 0 2px var(--bdB,#00000088),0 0 26px var(--bdB,#00000088)}}
+@media (prefers-reduced-motion:reduce){.bdfr{animation:none!important}}
+
 @media (prefers-reduced-motion:reduce){
  .deko-flt{display:none}
  .deko-sudut,.deko-dvd{animation:none}
@@ -317,8 +337,16 @@ const BORDERS=[
  {id:'ribbon-corner',n:'Pita Sudut',tk:'premium',art:'ribbon',s:A=>`border:2px solid ${A};box-shadow:0 8px 22px ${A}22`},
  {id:'lace-edge',n:'Renda Tepi',tk:'premium',art:'lace',s:A=>`border:1px solid ${A};outline:2px dotted ${A}99;outline-offset:-9px;box-shadow:inset 0 0 0 4px ${A}1f`},
  {id:'diamond-stud',n:'Paku Intan',s:A=>`border:2px solid ${A};background-image:radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px);background-size:9px 9px;background-position:center 2px,center calc(100% - 2px),2px center,calc(100% - 2px) center;background-repeat:repeat-x,repeat-x,repeat-y,repeat-y`},
- {id:'triple-frame',n:'Tiga Garis',s:A=>`border:1px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9,inset 0 0 0 4px ${A},inset 0 0 0 8px #fffdf9,inset 0 0 0 9px ${A}88`}
-]
+ {id:'triple-frame',n:'Tiga Garis',s:A=>`border:1px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9,inset 0 0 0 4px ${A},inset 0 0 0 8px #fffdf9,inset 0 0 0 9px ${A}88`},
+ {id:'sudut-2d-garis',n:'Sudut 2D \u00b7 Garis Tegas',s:A=>`border:2px solid ${A};border-radius:5px`},
+ {id:'sudut-2d-blok',n:'Sudut 2D \u00b7 Blok Sudut',s:A=>`border:1px solid ${A}55;background-image:linear-gradient(${A},${A}),linear-gradient(${A},${A}),linear-gradient(${A},${A}),linear-gradient(${A},${A});background-size:28px 3px,3px 28px,28px 3px,3px 28px;background-position:0 0,0 0,100% 100%,100% 100%;background-repeat:no-repeat`},
+ {id:'sudut-2d-lengkung',n:'Sudut 2D \u00b7 Lengkung',s:A=>`border:2px dashed ${A}aa;border-radius:26px`},
+ {id:'sudut-3d-timbul',n:'Sudut 3D \u00b7 Timbul',s:A=>`border:1px solid ${A}aa;border-radius:14px;--bdA:${A}44;--bdB:${A}88;box-shadow:inset 0 0 0 2px #ffffffcc,inset 0 2px 6px ${A}55,0 6px 18px ${A}33`},
+ {id:'sudut-3d-berlapis',n:'Sudut 3D \u00b7 Berlapis',s:A=>`border:3px solid ${A};border-radius:18px;box-shadow:inset 0 0 0 4px #fffdf9,inset 0 0 0 5px ${A}66,0 8px 22px ${A}44`},
+ {id:'sudut-3d-kaca',n:'Sudut 3D \u00b7 Kaca',s:A=>`border:1px solid ${A}88;border-radius:20px;background:linear-gradient(135deg,${A}22,transparent 45%,${A}1a);box-shadow:inset 0 1px 0 #ffffffaa,0 10px 26px ${A}2e`},
+ {id:'sudut-4d-kilau',n:'Sudut 4D \u00b7 Kilau',art:'gold',s:A=>`border:2px solid ${A}66;border-radius:16px;background-image:linear-gradient(115deg,transparent 30%,${A}55 45%,#ffffff88 50%,${A}55 55%,transparent 70%);background-size:280% 280%;animation:bdKilau 3.4s linear infinite`},
+ {id:'sudut-4d-mengalir',n:'Sudut 4D \u00b7 Mengalir',art:'lace',s:A=>`border:2px solid ${A}55;border-radius:18px;background-image:linear-gradient(140deg,${A}aa,transparent 45%,${A}66);background-size:200% 200%;animation:bdAlir 6s linear infinite`},
+ {id:'sudut-4d-denjut',n:'Sudut 4D \u00b7 Denyut',art:'vine',s:A=>`border:1px solid ${A}77;border-radius:20px;--bdA:${A}44;--bdB:${A}8c;animation:bdDenjut 2.8s ease-in-out infinite`}]
 const FX_SCROLL=[
  ['fade-up','Fade Up','naik pelan sambil muncul'],['fade-down','Fade Down','turun pelan sambil muncul'],
  ['slide-left','Slide Kiri','geser dari kanan'],['slide-right','Slide Kanan','geser dari kiri'],
@@ -348,7 +376,17 @@ const FX_SCROLL=[
  ['unfold', 'Buka Lipatan', 'bidang membuka ke depan'],
  ['squeeze', 'Lentur', 'melebar perlahan dari tengah'],
  ['glow', 'Glow', 'cahaya lembut berubah menjadi fokus'],
- ['blur-down', 'Blur Turun', 'turun sambil menjernih']]
+ ['blur-down', 'Blur Turun', 'turun sambil menjernih'],
+ ['zoom-rotate','Zoom Rotate','membesar lalu miring halus'],
+ ['stretch-up','Stretch Up','merenggang naik dari bawah'],
+ ['slide-diagonal','Slide Diagonal','masuk dari sudut kiri bawah'],
+ ['flip-x-3d','Flip X 3D','terbuka seperti tutup buku dari atas'],
+ ['mask-left','Mask Kiri','tersingkap dari sisi kiri'],
+ ['blur-scale','Blur Scale','kabur & besar lalu menajam'],
+ ['bounce-down','Bounce Turun','memantul turun dari atas'],
+ ['swirl','Swirl','berputar kecil lalu tegak'],
+ ['ketik','Ketik','muncul seperti sedang ditulis'],
+ ['fokus','Fokus','dari kelabu samar menjadi jelas']]
 const FX_COVER=[
  ['fade','Fade','muncul lembut'],['zoom','Zoom','membesar halus (default)'],
  ['rise','Rise','terbang naik'],['drop','Drop','turun dari atas'],
@@ -356,7 +394,13 @@ const FX_COVER=[
  ['flip','Flip 3D','terangkat dari bawah'],['slide','Slide','meluncur dari samping'],
  ['swing','Swing','bergoyang dari atas'],['elastic','Elastic','pancingan kenur'],
  ['shimmer','Shimmer Gold','kilau emas menyapu',1],['curtain','Tirai Royal','membuka mewah bagai tirai',1],
- ['vip-zoom','VIP Deep Zoom','zoom dalam sinematik 👑',1,'vip'],['vip-curtain','VIP Curtain','tirai terbuka megah 👑',1,'vip']]
+ ['vip-zoom','VIP Deep Zoom','zoom dalam sinematik 👑',1,'vip'],['vip-curtain','VIP Curtain','tirai terbuka megah 👑',1,'vip'],
+ ['unveil','Unveil','tersingkap dari tengah'],
+ ['slide-diagonal','Slide Diagonal','miring masuk dari bawah'],
+ ['zoom-rotasi','Zoom Rotasi','membesar sambil memutar halus'],
+ ['sparkle','Sparkle','berkilau lalu menenang'],
+ ['wave-in','Wave In','mengalun naik turun'],
+ ['tilt-in','Tilt 3D','miring dari samping']]
 const FX_SCROLL_MIX=['fade-up','slide-left','fade-down','slide-right','tilt-in','flip-y','bounce-in','roll-in','wipe-up','wipe-right','unfold','book','blur-down','cube','glow','wave']
 const SLIDES=[
  {id:'timeline',ic:'⏱️',nm:'Timeline Acara',ds:'Urutan sesi acara (jam — judul)',type:'list',ph:'08:00 — Akad Nikah\n11:00 — Resepsi'},

@@ -302,11 +302,12 @@ def _tpl_rows(rel):
 
 def _fx_ids(s, nama_arr):
     """Urutan id efek di array FX_COVER / FX_SCROLL sebuah file."""
-    m = re.search(r"const %s=\[(.*?)\];" % nama_arr, s, re.S)
+    m = re.search(r"(?:^|\n)const %s=\[" % nama_arr, s)
     if not m:
         return None
-    ids = re.findall(r"\['([a-z-]+)'", m.group(1))
-    return ids or re.findall(r"'([a-z-]+)'", m.group(1))
+    blok = _blok_array(s, "const %s=" % nama_arr)
+    ids = re.findall(r"\[\s*'([a-z0-9-]+)'", blok)
+    return ids or re.findall(r"'([a-z0-9-]+)'", blok)
 
 
 def _font_ids(s):
@@ -378,12 +379,12 @@ def cek_pipeline_undangan():
           and "add column if not exists data jsonb" in studio)
     lapor("ok" if ok else "masalah",
           "studio.html: Publish fallback tanpa snapshot + SQL perbaikan bila kolom 'data' belum ada")
-    # 11) 10 efek animasi cover & 34 efek scroll: daftar id identik di kedua file
+    # 11) 20 efek animasi cover & 44 efek scroll: daftar id identik di kedua file
     for nama_arr in ("FX_COVER", "FX_SCROLL"):
         a, b = _fx_ids(studio, nama_arr), _fx_ids(undangan, nama_arr)
         if a is None or b is None:
             lapor("masalah", f"array {nama_arr} tidak ditemukan di studio/undangan")
-        elif a == b and len(a) == (34 if nama_arr == "FX_SCROLL" else 14):
+        elif a == b and len(a) == (44 if nama_arr == "FX_SCROLL" else 20):
             lapor("ok", f"{nama_arr} identik di studio & undangan ({len(a)} efek)")
         else:
             lapor("masalah", f"{nama_arr} studio != undangan! studio={a} undangan={b}")
@@ -480,16 +481,16 @@ def cek_fitur_terbaru():
     lapor("ok" if not yatim else "masalah",
           "rujukan artwork tema utuh" if not yatim else "artwork tema hilang: " + ", ".join(yatim[:4]))
 
-    # 2) 40 border (32 lama + 8 baru berhiasan bunga/batik/renda): array identik di
+    # 2) 49 border (32 lama + 8 bunga/batik + 9 sudut 2D/3D/4D): array identik di
     #    studio & undangan, tersimpan saat publish, dan dipakai live.
     def _border_ids(s):
         m = re.search(r"const BORDERS=\[(.*?)\];", s, re.S)
         return re.findall(r"\{id:'([a-z0-9-]+)'", m.group(1)) if m else None
     bs, bu = _border_ids(studio), _border_ids(undangan)
     ekor = ("id:'diamond-stud'", "id:'triple-frame'", "id:'floral-corner'", "id:'batik-frame'")
-    lapor("ok" if (bs and bu and len(bs) == 40 and len(set(bs)) == 40 and bs == bu
+    lapor("ok" if (bs and bu and len(bs) == 49 and len(set(bs)) == 49 and bs == bu
                    and all(i in studio and i in undangan for i in ekor)) else "masalah",
-          "BORDERS 40 id unik, identik di studio & undangan")
+          "BORDERS 49 id unik, identik di studio & undangan")
     # 2b) gating konten EKSKLUSIF: kunci tier di studio + konten baru sinkron di undangan
     eks_dipakai = any(r["tier"] == "eksklusif" for r in _tpl_rows("studio.html"))
     ok = ("bolehEks" in studio and "paksaTier" in studio and "kunciEks" in studio
@@ -809,12 +810,20 @@ def cek_simulasi():
 
 
 # ------------------------------------- 23. Studio Template (perancang tema baru)
+def _blok_objek(teks, pembuka):
+    """Isi objek sumber mulai dari '{' pertama setelah `pembuka`."""
+    return _blok_array(teks, pembuka)
+
+
 def _blok_array(teks, pembuka):
     """Isi array/objek sumber mulai dari '[' pertama setelah `pembuka`."""
     i = teks.find(pembuka)
     if i < 0:
         return ""
     b = teks.find("[", i)
+    kb = teks.find("{", i)
+    if kb >= 0 and (b < 0 or kb < b):
+        b = kb
     d, k = 0, b
     while k < len(teks) and b >= 0:
         c = teks[k]
@@ -854,10 +863,10 @@ def cek_studio_template():
     hal, stu, und = baca(rel), baca("studio.html"), baca("undangan.html")
     # 1) mesin tema harus sama persis (kalau tidak, tema rancangan ≠ tampilan undangan)
     for nama, pola, label, jumlah in (("FONTS", _id_objek, "font", 17),
-                                      ("BORDERS", _id_objek, "border", 40),
+                                      ("BORDERS", _id_objek, "border", 49),
                                       ("SLIDES", _id_objek, "bagian undangan", 10),
-                                      ("FX_COVER", _id_fx, "efek pembuka", 14),
-                                      ("FX_SCROLL", _id_fx, "efek gulir", 34)):
+                                      ("FX_COVER", _id_fx, "efek pembuka", 20),
+                                      ("FX_SCROLL", _id_fx, "efek gulir", 44)):
         a = pola(_blok_array(hal, "const %s=" % nama))
         b = pola(_blok_array(stu, "const %s=" % nama))
         sama = bool(a) and a == b and len(a) == jumlah
@@ -1021,6 +1030,55 @@ def cek_kanvas():
           "uji kanvas: " + (ringkas[0] if ringkas else (r.stdout or r.stderr).strip()[-200:]))
 
 
+# -------------------- 26. Kelengkapan: animasi, border 2D/3D/4D, preferensi, slider
+def cek_kelengkapan():
+    print("\n[26] Kelengkapan tema (animasi baru, preferensi, galeri slider)")
+    stu, und = baca("studio.html"), baca("undangan.html")
+    # 1) jumlah pilihan animasi
+    def id_fx(teks, nama):
+        return _fx_ids(teks, nama) or []
+    for nama, jumlah, label in (("FX_SCROLL", 44, "efek gulir"), ("FX_COVER", 20, "efek pembuka")):
+        a, b = id_fx(stu, nama), id_fx(und, nama)
+        lapor("ok" if a and a == b and len(a) == jumlah else "masalah",
+              "%d %s (daftar sama di studio & undangan)" % (len(a), label))
+    # 2) border sudut 2D/3D/4D
+    bs = _id_objek(_blok_array(stu, "const BORDERS="))
+    baru = [b for b in ("sudut-2d-garis", "sudut-3d-timbul", "sudut-4d-kilau") if b in bs]
+    kf = all(("@keyframes " + k) in stu and ("@keyframes " + k) in und for k in ("bdKilau", "bdAlir", "bdDenjut"))
+    lapor("ok" if len(baru) == 3 and kf else "masalah",
+          "border sudut 2D/3D/4D tersedia (%d border, animasi 4D punya keyframes)" % len(bs))
+    lapor("ok" if "prefers-reduced-motion:reduce){.bdfr{animation:none" in und else "masalah",
+          "animasi border 4D berhenti saat tamu memilih kurangi gerakan")
+    # 3) preferensi: daftar lengkap + tiga jalur snapshot
+    kunci = re.findall(r"([a-zA-Z]+):", _blok_objek(stu, "const PREF_BAWAAN="))
+    simpan = len(re.findall(r"pref:Object\.assign\(\{\},state\.pref\)", stu))
+    lapor("ok" if len(kunci) >= 8 and simpan >= 3 else "masalah",
+          "preferensi: %d pilihan, ikut tersimpan di %d jalur (publish/arsip/ekspor)" % (len(kunci), simpan))
+    for cid in ("gerak", "musik", "sapaan", "tanda", "tombolAtas", "hitung", "slider", "sliderDetik"):
+        if ("setPref('" + cid + "'") not in stu:
+            lapor("masalah", "preferensi '%s' tidak punya pengatur di Studio" % cid)
+            break
+    else:
+        lapor("ok", "semua pilihan preferensi punya pengatur di tab Desain")
+    # 4) galeri slider
+    fx = re.findall(r"fx-gal-([a-z]+)[\s{,]", und)
+    lapor("ok" if sorted(set(fx)) == ["coverflow", "cube", "fade", "flip", "slide", "zoom"] else "masalah",
+          "galeri: 6 efek slider (+ susunan grid lama) tersedia")
+    lapor("ok" if "function galHtml(" in stu and "function galHtml(" in und and "prefOf(" in und else "masalah",
+          "galeri & preferensi dipakai di undangan tamu dan pratinjau Studio")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji kelengkapan dilewati")
+        return
+    uji = os.path.join(ROOT, "tools", "test-lengkap.cjs")
+    if not os.path.isfile(uji):
+        lapor("masalah", "tools/test-lengkap.cjs tidak ada")
+        return
+    r = subprocess.run(["node", uji], capture_output=True, text=True, cwd=ROOT)
+    ringkas = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan:")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji kelengkapan: " + (ringkas[0] if ringkas else (r.stdout or r.stderr).strip()[-200:]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -1031,7 +1089,7 @@ def main():
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi,
-               cek_studio_template, cek_dekorasi_tema, cek_kanvas):
+               cek_studio_template, cek_dekorasi_tema, cek_kanvas, cek_kelengkapan):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

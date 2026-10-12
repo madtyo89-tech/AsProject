@@ -184,6 +184,33 @@ input,textarea,select{outline:0}
 @media(max-width:360px){.grid2{grid-template-columns:minmax(0,1fr)}.span2{grid-column:auto}}
 
 /* Pratinjau wedding meniru layout stationery: kartu terang, aksen sesuai template, dan tipografi editorial. */
+
+/* ---------- galeri: gaya grid (lama) + slider dengan 6 efek ---------- */
+.gal.gal-slider{position:relative;display:block;aspect-ratio:4/3;overflow:hidden;border-radius:16px;border:1px solid #f0e6d6;background:#f7f2ea}
+.gal.gal-slider img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;border:0;border-radius:0;opacity:0;
+ animation:galTampil var(--galT,30s) linear infinite;animation-delay:calc(var(--i,0) * var(--gal-J,5s))}
+.gal.gal-slider .titik{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:6px;justify-content:center;z-index:2}
+.gal.gal-slider .titik i{width:6px;height:6px;border-radius:99px;background:#ffffff9e;box-shadow:0 0 0 1px #00000026}
+@keyframes galTampil{0%{opacity:0}3%{opacity:1}33%{opacity:1}36%{opacity:0}100%{opacity:0}}
+.gal-slider.fx-gal-slide img{animation-name:galSlide}
+@keyframes galSlide{0%{opacity:1;transform:translateX(100%)}3%{transform:translateX(0)}33%{transform:translateX(0)}36%{transform:translateX(-100%);opacity:1}37%,100%{opacity:0}}
+.gal-slider.fx-gal-fade img{animation-name:galFade}
+@keyframes galFade{0%{opacity:0;transform:scale(1.02)}4%{opacity:1;transform:scale(1)}33%{opacity:1}37%{opacity:0}100%{opacity:0}}
+.gal-slider.fx-gal-zoom img{animation-name:galZoom}
+@keyframes galZoom{0%{opacity:0;transform:scale(1.22)}4%{opacity:1}33%{opacity:1;transform:scale(1.16)}37%{opacity:0}100%{opacity:0;transform:scale(1.1)}}
+.gal-slider.fx-gal-cube img{animation-name:galCube}
+@keyframes galCube{0%{opacity:0;transform:perspective(900px) rotateY(-70deg) translateX(38%)}4%{opacity:1;transform:none}33%{opacity:1;transform:none}37%{opacity:0;transform:perspective(900px) rotateY(70deg) translateX(-38%)}100%{opacity:0}}
+.gal-slider.fx-gal-coverflow img{animation-name:galCover}
+@keyframes galCover{0%{opacity:0;transform:translateX(-42%) scale(.82) rotate(-3deg)}4%{opacity:1;transform:none}33%{opacity:1}37%{opacity:0;transform:translateX(42%) scale(.82) rotate(3deg)}100%{opacity:0}}
+.gal-slider.fx-gal-flip img{animation-name:galFlip}
+@keyframes galFlip{0%{opacity:0;transform:perspective(800px) rotateX(72deg) scale(.94)}4%{opacity:1;transform:none}33%{opacity:1}37%{opacity:0;transform:perspective(800px) rotateX(-72deg) scale(.94)}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.gal.gal-slider img{animation:none;opacity:0}.gal.gal-slider img:first-child{opacity:1}}
+
+/* ---------- preferensi pemilik undangan ---------- */
+.kurangi-gerak *,.kurangi-gerak *::before,.kurangi-gerak *::after{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}
+.kurangi-gerak .deko-flt,.kurangi-gerak .gal-slider img:not(:first-child){display:none}
+.ke-atas{position:fixed;right:14px;bottom:74px;z-index:40;width:42px;height:42px;border-radius:50%;border:1px solid #00000022;background:#ffffffdd;color:#3a3324;font-size:17px;line-height:1;display:grid;place-items:center;backdrop-filter:blur(6px);box-shadow:0 6px 18px #0000001f;cursor:pointer}
+
 /* ---------- DEKORASI TEMA (hiasan sudut, kelopak melayang, pembatas nama) ----------
    Kelas generik supaya dipakai bersama oleh undangan live, pratinjau Studio, dan
    Studio Template. Semua dekorasi bersifat hiasan: tidak menangkap klik. */
@@ -213,6 +240,26 @@ input,textarea,select{outline:0}
 .deko-dvd svg{width:132px;height:auto;display:block;max-width:64vw}
 .deko-dvd.d-flower svg,.deko-dvd.d-ribbon svg{width:124px}
 @keyframes dekoBinar{from{opacity:.62}to{opacity:1}}
+
+@keyframes uUnveil{0%{opacity:0;clip-path:inset(0 50% 0 50%)}100%{opacity:1;clip-path:inset(0 0 0 0)}}
+.cov .fx-c-unveil{animation:uUnveil 1s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uDiag{0%{opacity:0;transform:translate(-7%,9%)}100%{opacity:1;transform:none}}
+.cov .fx-c-slide-diagonal{animation:uDiag .95s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uZoomRot{0%{opacity:0;transform:scale(.9) rotate(-3deg)}100%{opacity:1;transform:none}}
+.cov .fx-c-zoom-rotasi{animation:uZoomRot .95s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uSparkle{0%{opacity:0;filter:brightness(1.9) blur(5px)}55%{opacity:1;filter:brightness(1.25)}100%{opacity:1;filter:none}}
+.cov .fx-c-sparkle{animation:uSparkle 1.15s ease both}
+@keyframes uWaveIn{0%{opacity:0;transform:translateY(6%) scaleY(1.04)}45%{opacity:1;transform:translateY(-2%) scaleY(.99)}100%{opacity:1;transform:none}}
+.cov .fx-c-wave-in{animation:uWaveIn 1.05s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uTiltIn{0%{opacity:0;transform:perspective(900px) rotateY(-24deg) translateX(-6%)}100%{opacity:1;transform:none}}
+.cov .fx-c-tilt-in{animation:uTiltIn 1s cubic-bezier(.22,.8,.36,1) both}
+
+/* ---------- border sudut 4D: kilau, mengalir, denyut ---------- */
+@keyframes bdKilau{0%{background-position:0% 0%}100%{background-position:280% 280%}}
+@keyframes bdAlir{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes bdDenjut{0%,100%{box-shadow:0 0 0 1px var(--bdA,#00000044),0 0 10px var(--bdA,#00000044)}50%{box-shadow:0 0 0 2px var(--bdB,#00000088),0 0 26px var(--bdB,#00000088)}}
+@media (prefers-reduced-motion:reduce){.bdfr{animation:none!important}}
+
 @media (prefers-reduced-motion:reduce){
  .deko-flt{display:none}
  .deko-sudut,.deko-dvd{animation:none}
@@ -490,8 +537,16 @@ const BORDERS=[
  {id:'ribbon-corner',n:'Pita Sudut',tk:'premium',art:'ribbon',s:A=>`border:2px solid ${A};box-shadow:0 8px 22px ${A}22`},
  {id:'lace-edge',n:'Renda Tepi',tk:'premium',art:'lace',s:A=>`border:1px solid ${A};outline:2px dotted ${A}99;outline-offset:-9px;box-shadow:inset 0 0 0 4px ${A}1f`},
  {id:'diamond-stud',n:'Paku Intan',s:A=>`border:2px solid ${A};background-image:radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px);background-size:9px 9px;background-position:center 2px,center calc(100% - 2px),2px center,calc(100% - 2px) center;background-repeat:repeat-x,repeat-x,repeat-y,repeat-y`},
- {id:'triple-frame',n:'Tiga Garis',s:A=>`border:1px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9,inset 0 0 0 4px ${A},inset 0 0 0 8px #fffdf9,inset 0 0 0 9px ${A}88`}
-];
+ {id:'triple-frame',n:'Tiga Garis',s:A=>`border:1px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9,inset 0 0 0 4px ${A},inset 0 0 0 8px #fffdf9,inset 0 0 0 9px ${A}88`},
+ {id:'sudut-2d-garis',n:'Sudut 2D \u00b7 Garis Tegas',s:A=>`border:2px solid ${A};border-radius:5px`},
+ {id:'sudut-2d-blok',n:'Sudut 2D \u00b7 Blok Sudut',s:A=>`border:1px solid ${A}55;background-image:linear-gradient(${A},${A}),linear-gradient(${A},${A}),linear-gradient(${A},${A}),linear-gradient(${A},${A});background-size:28px 3px,3px 28px,28px 3px,3px 28px;background-position:0 0,0 0,100% 100%,100% 100%;background-repeat:no-repeat`},
+ {id:'sudut-2d-lengkung',n:'Sudut 2D \u00b7 Lengkung',s:A=>`border:2px dashed ${A}aa;border-radius:26px`},
+ {id:'sudut-3d-timbul',n:'Sudut 3D \u00b7 Timbul',s:A=>`border:1px solid ${A}aa;border-radius:14px;--bdA:${A}44;--bdB:${A}88;box-shadow:inset 0 0 0 2px #ffffffcc,inset 0 2px 6px ${A}55,0 6px 18px ${A}33`},
+ {id:'sudut-3d-berlapis',n:'Sudut 3D \u00b7 Berlapis',s:A=>`border:3px solid ${A};border-radius:18px;box-shadow:inset 0 0 0 4px #fffdf9,inset 0 0 0 5px ${A}66,0 8px 22px ${A}44`},
+ {id:'sudut-3d-kaca',n:'Sudut 3D \u00b7 Kaca',s:A=>`border:1px solid ${A}88;border-radius:20px;background:linear-gradient(135deg,${A}22,transparent 45%,${A}1a);box-shadow:inset 0 1px 0 #ffffffaa,0 10px 26px ${A}2e`},
+ {id:'sudut-4d-kilau',n:'Sudut 4D \u00b7 Kilau',art:'gold',s:A=>`border:2px solid ${A}66;border-radius:16px;background-image:linear-gradient(115deg,transparent 30%,${A}55 45%,#ffffff88 50%,${A}55 55%,transparent 70%);background-size:280% 280%;animation:bdKilau 3.4s linear infinite`},
+ {id:'sudut-4d-mengalir',n:'Sudut 4D \u00b7 Mengalir',art:'lace',s:A=>`border:2px solid ${A}55;border-radius:18px;background-image:linear-gradient(140deg,${A}aa,transparent 45%,${A}66);background-size:200% 200%;animation:bdAlir 6s linear infinite`},
+ {id:'sudut-4d-denjut',n:'Sudut 4D \u00b7 Denyut',art:'vine',s:A=>`border:1px solid ${A}77;border-radius:20px;--bdA:${A}44;--bdB:${A}8c;animation:bdDenjut 2.8s ease-in-out infinite`}];
 function borderOf(){return BORDERS.find(b=>b.id===state.border)||BORDERS[0]}
 function borderColor(){return state.darkMode?'#FDE68A':state.accent}
 function borderCss(){const b=borderOf(),A=borderColor();let st='';if(b.s)st=b.s(A);if(b.extra)st+=(st?';':'')+b.extra(A);return st}
@@ -539,9 +594,37 @@ const DEMO_MUSIC=[
  {id:'demo-main',name:'Backsound AsProject — rtyo',url:'music/backsound-asproject.mp3',dur:'9:40',demo:true}];
 
 /* ============ STATE ============ */
+
+/* ---------- galeri: grid (lama) atau slider 6 efek, galHtml dipakai dua halaman ---------- */
+const GAL_FX=['grid','slide','fade','zoom','cube','coverflow','flip'];
+function galGaya(d){const g=String((d&&d.pref&&d.pref.slider)||'grid');return GAL_FX.indexOf(g)>=0?g:'grid'}
+function galJeda(d){const n=parseInt((d&&d.pref&&d.pref.sliderDetik)||5,10);return isFinite(n)?Math.min(12,Math.max(2,n)):5}
+function galHtml(foto,gaya,jeda){
+ const im=Array.isArray(foto)?foto.filter(Boolean).slice(0,12):[];
+ if(!im.length)return '';
+ const g=GAL_FX.indexOf(gaya)>=0?gaya:'grid', j=Math.min(12,Math.max(2,parseInt(jeda,10)||5));
+ if(g==='grid')return '<div class="gal">'+im.slice(0,8).map(u=>`<img src="${esc(u)}" alt="Galeri" loading="lazy" onerror="this.style.display='none'">`).join('')+'</div>';
+ const t=(j*im.length).toFixed(1);
+ return `<div class="gal gal-slider fx-gal-${g}" style="--gal-J:${j}s;--gal-T:${t}s">`+
+  im.map((u,i)=>`<img src="${esc(u)}" alt="Foto ${i+1}" style="--i:${i}" loading="lazy" onerror="this.style.display='none'">`).join('')+
+  `<div class="titik">${im.map(()=>'<i></i>').join('')}</div></div>`;
+}
+/* preferensi pemilik: peredam gerak, tombol kembali ke atas */
+const PREF_BAWAAN={gerak:'penuh',musik:'manual',sapaan:true,tombolAtas:false,tanda:true,hitung:'lengkap',slider:'grid',sliderDetik:5};
+function prefOf(d){const p=(d&&d.pref)||{},h={};Object.keys(PREF_BAWAAN).forEach(k=>{h[k]=(p[k]===undefined||p[k]===null||p[k]==='')?PREF_BAWAAN[k]:p[k]});
+ if(GAL_FX.indexOf(h.slider)<0)h.slider=PREF_BAWAAN.slider;
+ const n=parseInt(h.sliderDetik,10);h.sliderDetik=isFinite(n)?Math.min(12,Math.max(2,n)):PREF_BAWAAN.sliderDetik;
+ h.gerak=(h.gerak==='kurangi'||h.gerak==='matikan')?h.gerak:'penuh';
+ h.musik=(h.musik==='otomatis'||h.musik==='mati')?h.musik:'manual';
+ h.hitung=h.hitung==='ringkas'?'ringkas':'lengkap';
+ ['sapaan','tombolAtas','tanda'].forEach(k=>{h[k]=h[k]!==false});
+ return h}
+function prefTombolAtas(){const b=document.createElement('button');b.className='ke-atas';b.type='button';b.title='Kembali ke atas';b.setAttribute('aria-label','Kembali ke atas');b.innerHTML='\u2191';b.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));document.body.appendChild(b)}
+
+function setPref(k,v){state.pref[k]=v;if(k==='slider'||k==='sliderDetik')state.pref=prefOf({pref:state.pref});save();render()}
 const DEF={
  page:'editor',tab:'info',event:'pernikahan',tpl:'ivory-klasik',accent:'#8A6E4B',
- fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,darkMode:false,border:'double',dko:'',flt:'',dvd:'',katalogHide:[],
+ fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,darkMode:false,border:'double',dko:'',flt:'',dvd:'',katalogHide:[],pref:Object.assign({},PREF_BAWAAN),
  form:{namaPria:'',gelarPria:'',namaWanita:'',gelarWanita:'',
   putraPutri:'',putriDari:'',
   namaAnak:'',putraDari:'',umurAnak:'',
@@ -576,7 +659,7 @@ const DEF={
  arsip:[],
  search:''};
 let state;
-try{state=Object.assign({},JSON.parse(JSON.stringify(DEF)),JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});state.coverPos=Object.assign({x:50,y:50,z:1},state.coverPos||{});if(!state.coverStyle)state.coverStyle='kotak';state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
+try{state=Object.assign({},JSON.parse(JSON.stringify(DEF)),JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});state.coverPos=Object.assign({x:50,y:50,z:1},state.coverPos||{});if(!state.coverStyle)state.coverStyle='kotak';state.playing=false;state.pref=prefOf(state)}catch(e){state=JSON.parse(JSON.stringify(DEF))}
 if(state.started===false&&(state.form.namaPria||state.form.namaWanita||state.form.namaAnak||state.published))state.started=true;
 if(state.published&&!state.publishedLink)state.publishedLink=baseUrl();
 function mergeSlides(s){const out={};Object.keys(DEF.slides).forEach(k=>{out[k]=Object.assign({},DEF.slides[k],(s&&s[k])||{})});return out}
@@ -602,7 +685,7 @@ DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.pu
 function save(){try{const c=Object.assign({},state);localStorage.setItem('asproject_studio_v3',JSON.stringify(c))}catch(e){}}
 /* ===== Animasi pratinjau: diputar ulang HANYA saat struktur berubah
    (template / event / slide on-off), agar tidak berkedip tiap ketik ===== */
-/* 34 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan undangan.html */
+/* 44 efek scroll reveal + 20 efek animasi cover — HARUS identik dengan undangan.html */
 const FX_SCROLL=[
  ['fade-up','Fade Up','naik pelan sambil muncul'],['fade-down','Fade Down','turun pelan sambil muncul'],
  ['slide-left','Slide Kiri','geser dari kanan'],['slide-right','Slide Kanan','geser dari kiri'],
@@ -632,7 +715,17 @@ const FX_SCROLL=[
  ['unfold', 'Buka Lipatan', 'bidang membuka ke depan'],
  ['squeeze', 'Lentur', 'melebar perlahan dari tengah'],
  ['glow', 'Glow', 'cahaya lembut berubah menjadi fokus'],
- ['blur-down', 'Blur Turun', 'turun sambil menjernih']];
+ ['blur-down', 'Blur Turun', 'turun sambil menjernih'],
+ ['zoom-rotate','Zoom Rotate','membesar lalu miring halus'],
+ ['stretch-up','Stretch Up','merenggang naik dari bawah'],
+ ['slide-diagonal','Slide Diagonal','masuk dari sudut kiri bawah'],
+ ['flip-x-3d','Flip X 3D','terbuka seperti tutup buku dari atas'],
+ ['mask-left','Mask Kiri','tersingkap dari sisi kiri'],
+ ['blur-scale','Blur Scale','kabur & besar lalu menajam'],
+ ['bounce-down','Bounce Turun','memantul turun dari atas'],
+ ['swirl','Swirl','berputar kecil lalu tegak'],
+ ['ketik','Ketik','muncul seperti sedang ditulis'],
+ ['fokus','Fokus','dari kelabu samar menjadi jelas']];
 /* Campuran halus: satu efek utama, lalu variasi arah/gaya bergilir per bagian. */
 const FX_SCROLL_MIX=['fade-up','slide-left','fade-down','slide-right','tilt-in','flip-y','bounce-in','roll-in','wipe-up','wipe-right','unfold','book','blur-down','cube','glow','wave'];
 function fxScrollForSection(base,index,mix=true){
@@ -648,7 +741,13 @@ const FX_COVER=[
  ['flip','Flip 3D','terangkat dari bawah'],['slide','Slide','meluncur dari samping'],
  ['swing','Swing','bergoyang dari atas'],['elastic','Elastic','pancingan kenur'],
  ['shimmer','Shimmer Gold','kilau emas menyapu',1],['curtain','Tirai Royal','membuka mewah bagai tirai',1],
- ['vip-zoom','VIP Deep Zoom','zoom dalam sinematik 👑',1,'vip'],['vip-curtain','VIP Curtain','tirai terbuka megah 👑',1,'vip']];
+ ['vip-zoom','VIP Deep Zoom','zoom dalam sinematik 👑',1,'vip'],['vip-curtain','VIP Curtain','tirai terbuka megah 👑',1,'vip'],
+ ['unveil','Unveil','tersingkap dari tengah'],
+ ['slide-diagonal','Slide Diagonal','miring masuk dari bawah'],
+ ['zoom-rotasi','Zoom Rotasi','membesar sambil memutar halus'],
+ ['sparkle','Sparkle','berkilau lalu menenang'],
+ ['wave-in','Wave In','mengalun naik turun'],
+ ['tilt-in','Tilt 3D','miring dari samping']];
 function fxScrollId(){const v=state.anim.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxCoverId(){const v=state.anim.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 let animSig=null;
@@ -924,7 +1023,7 @@ async function publish(){
  /* Snapshot lengkap → kolom jsonb "data" agar undangan live persis seperti studio
     (nama orang tua, sesi akad/resepsi, amplop, galeri, dsb) */
  const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
-  accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,dko:state.dko,flt:state.flt,dvd:state.dvd,
+  accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,dko:state.dko,flt:state.flt,dvd:state.dvd,pref:Object.assign({},state.pref),
   amplop:JSON.parse(JSON.stringify(state.amplop)),
   slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
@@ -950,7 +1049,7 @@ async function publish(){
  state.published=true;state.publishedLink=baseUrl();
  const nama=displayName();
  const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
-  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,dko:state.dko,flt:state.flt,dvd:state.dvd,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos())}};
+  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,dko:state.dko,flt:state.flt,dvd:state.dvd,pref:Object.assign({},state.pref),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos())}};
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  state.stage='ready';save();render();window.scrollTo(0,0);document.querySelectorAll('.notice').forEach(n=>n.remove());
  if(snapshotSkipped)notifyWarn('<b>Publish berhasil tanpa snapshot.</b> Kolom <b>data</b> belum ada di Supabase — undangan live memakai kolom dasar + template (tampilan bisa berbeda dari studio, dashboard Master terbatas). Jalankan <b>supabase-schema.sql</b> di SQL Editor, atau <button onclick="copyFixSql()">salin SQL perbaikan</button>, lalu Publish ulang.',25000);
@@ -965,7 +1064,7 @@ async function dlUndangan(){
   const r=await fetch('undangan.html');if(!r.ok)throw new Error('HTTP '+r.status);
   let html=await r.text();
   const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
-   accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,dko:state.dko,flt:state.flt,dvd:state.dvd,
+   accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,dko:state.dko,flt:state.flt,dvd:state.dvd,pref:Object.assign({},state.pref),
    amplop:JSON.parse(JSON.stringify(state.amplop)),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
@@ -1154,6 +1253,35 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
     ${[['goldOrn','Ornamen Gold Foil'],['darkMode','Mode Gelap (Emerald)']].map(([k,l])=>`<label class="togglerow">${l}<input type="checkbox" ${state[k]?'checked':''} onchange="set('${k}',this.checked)"></label>`).join('')}
    </div>
   </div>
+ </div>
+ <div class="card"><h4>⚙️ Preferensi Tambahan</h4>
+  <p style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.6">Semua opsional. Undangan &amp; tema lama tanpa pengaturan ini tetap tampil seperti semula (galeri = susunan grid, animasi penuh).</p>
+  <label class="togglerow"><span>Gerak &amp; animasi</span>
+   <select onchange="setPref('gerak',this.value)" style="max-width:190px">
+    <option value="penuh"${state.pref.gerak==='penuh'?' selected':''}>Penuh (semua animasi)</option>
+    <option value="kurangi"${state.pref.gerak==='kurangi'?' selected':''}>Kurangi (aksesibilitas)</option>
+    <option value="matikan"${state.pref.gerak==='matikan'?' selected':''}>Matikan semua animasi</option>
+   </select></label>
+  <label class="togglerow"><span>Musik</span>
+   <select onchange="setPref('musik',this.value)" style="max-width:190px">
+    <option value="manual"${state.pref.musik==='manual'?' selected':''}>Hidupkan lewat tombol</option>
+    <option value="otomatis"${state.pref.musik==='otomatis'?' selected':''}>Coba putar sendiri</option>
+    <option value="mati"${state.pref.musik==='mati'?' selected':''}>Tanpa musik</option>
+   </select></label>
+  <label class="togglerow">Sapaan tamu (Kepada YTH)<input type="checkbox"${state.pref.sapaan!==false?' checked':''} onchange="setPref('sapaan',this.checked)"></label>
+  <label class="togglerow">Tanda AsProject di bawah undangan<input type="checkbox"${state.pref.tanda!==false?' checked':''} onchange="setPref('tanda',this.checked)"></label>
+  <label class="togglerow">Tombol kembali ke atas<input type="checkbox"${state.pref.tombolAtas===true?' checked':''} onchange="setPref('tombolAtas',this.checked)"></label>
+  <label class="togglerow"><span>Hitungan hari</span>
+   <select onchange="setPref('hitung',this.value)" style="max-width:190px">
+    <option value="lengkap"${state.pref.hitung==='lengkap'?' selected':''}>Lengkap (4 kotak)</option>
+    <option value="ringkas"${state.pref.hitung==='ringkas'?' selected':''}>Ringkas (hari &amp; jam)</option>
+   </select></label>
+  <label class="togglerow"><span>Efek galeri foto</span>
+   <select onchange="setPref('slider',this.value)" style="max-width:190px">
+    ${GAL_FX.map(g=>`<option value="${g}"${state.pref.slider===g?' selected':''}>${({grid:'Grid (susunan foto)',slide:'Slider geser',fade:'Slider fade',zoom:'Slider zoom (ken burns)',cube:'Slider kubus 3D',coverflow:'Slider coverflow',flip:'Slider flip 3D'})[g]}</option>`).join('')}
+   </select></label>
+  <label class="togglerow">Jeda antar foto (detik)<input type="number" min="2" max="12" value="${state.pref.sliderDetik}" onchange="setPref('sliderDetik',this.value)" style="width:74px"></label>
+  <p style="font-size:10px;color:var(--mut);line-height:1.6">Galeri memakai foto di tab <b>Musik &amp; Galeri</b> (maksimal 12). Slider berjalan sendiri tanpa perlu disentuh, dan otomatis menampilkan foto pertama saja bila tamu memilih "kurangi gerakan".</p>
  </div>
  <div class="card"><h4>🌸 Dekorasi Dinamis</h4>
   <p style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.6">Hiasan sudut bingkai, kelopak melayang, dan pembatas nama. "Ikut tema" memakai dekorasi bawaan template, "Tanpa" mematikannya. Semua hiasan bersifat latar: tidak pernah menutupi tombol.</p>
@@ -1729,7 +1857,7 @@ function phoneHtml(){
       <div style="font-size:11px"><div style="font-family:ui-monospace,monospace">${g.code}</div>
       <div style="font-size:10px;color:#737373;margin-top:4px">${single?'Link sama, QR beda — scan panitia':'Tunjukkan saat masuk venue'}</div></div>
      </div></div>`):''}
-    ${state.gallery.length?WR(1650,`<div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${state.gallery.slice(0,6).map(img=>`<img src="${img}" style="height:72px;width:100%;object-fit:cover;border-radius:12px;border:1px solid #ddd">`).join('')}</div>`):''}
+    ${state.gallery.length?WR(1650,`<div style="margin-top:20px">${galHtml(state.gallery,state.pref.slider,state.pref.sliderDetik)||''}</div>`):''}
     ${WR(1800,`<div style="margin-top:24px;display:flex;gap:8px;font-family:${bF}">
      ${f.showMapsBtn?`<a href="${esc(f.mapsLink)}" target="_blank" rel="noopener" style="flex:1;height:44px;border-radius:99px;background:#111;color:#fff;font-size:12px;font-weight:500;display:grid;place-items:center;text-decoration:none">Buka Maps 📍</a>`:''}
      <button style="flex:1;height:44px;border-radius:99px;background:#fff;border:1px solid #ddd;font-size:12px;font-weight:500;color:#111">RSVP Hadir</button>

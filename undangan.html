@@ -90,6 +90,26 @@ button{font-family:inherit;cursor:pointer}
 .deko-dvd svg{width:132px;height:auto;display:block;max-width:64vw}
 .deko-dvd.d-flower svg,.deko-dvd.d-ribbon svg{width:124px}
 @keyframes dekoBinar{from{opacity:.62}to{opacity:1}}
+
+@keyframes uUnveil{0%{opacity:0;clip-path:inset(0 50% 0 50%)}100%{opacity:1;clip-path:inset(0 0 0 0)}}
+.cov .fx-c-unveil{animation:uUnveil 1s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uDiag{0%{opacity:0;transform:translate(-7%,9%)}100%{opacity:1;transform:none}}
+.cov .fx-c-slide-diagonal{animation:uDiag .95s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uZoomRot{0%{opacity:0;transform:scale(.9) rotate(-3deg)}100%{opacity:1;transform:none}}
+.cov .fx-c-zoom-rotasi{animation:uZoomRot .95s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uSparkle{0%{opacity:0;filter:brightness(1.9) blur(5px)}55%{opacity:1;filter:brightness(1.25)}100%{opacity:1;filter:none}}
+.cov .fx-c-sparkle{animation:uSparkle 1.15s ease both}
+@keyframes uWaveIn{0%{opacity:0;transform:translateY(6%) scaleY(1.04)}45%{opacity:1;transform:translateY(-2%) scaleY(.99)}100%{opacity:1;transform:none}}
+.cov .fx-c-wave-in{animation:uWaveIn 1.05s cubic-bezier(.22,.8,.36,1) both}
+@keyframes uTiltIn{0%{opacity:0;transform:perspective(900px) rotateY(-24deg) translateX(-6%)}100%{opacity:1;transform:none}}
+.cov .fx-c-tilt-in{animation:uTiltIn 1s cubic-bezier(.22,.8,.36,1) both}
+
+/* ---------- border sudut 4D: kilau, mengalir, denyut ---------- */
+@keyframes bdKilau{0%{background-position:0% 0%}100%{background-position:280% 280%}}
+@keyframes bdAlir{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes bdDenjut{0%,100%{box-shadow:0 0 0 1px var(--bdA,#00000044),0 0 10px var(--bdA,#00000044)}50%{box-shadow:0 0 0 2px var(--bdB,#00000088),0 0 26px var(--bdB,#00000088)}}
+@media (prefers-reduced-motion:reduce){.bdfr{animation:none!important}}
+
 @media (prefers-reduced-motion:reduce){
  .deko-flt{display:none}
  .deko-sudut,.deko-dvd{animation:none}
@@ -247,6 +267,33 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 .cdw .u{background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d6;border-radius:14px;padding:12px 4px}
 .cdw .n{font-family:var(--ft);font-size:26px;font-weight:700;color:var(--ink-body);font-variant-numeric:tabular-nums}
 .cdw .l{margin-top:2px;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9a8f82}
+ body.hitung-ringkas #cd .u:nth-child(3),body.hitung-ringkas #cd .u:nth-child(4){display:none}
+ body.hitung-ringkas #cd{grid-template-columns:repeat(2,1fr)}
+
+.gal.gal-slider{position:relative;display:block;aspect-ratio:4/3;overflow:hidden;border-radius:16px;border:1px solid #f0e6d6;background:#f7f2ea}
+.gal.gal-slider img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;border:0;border-radius:0;opacity:0;
+ animation:galTampil var(--galT,30s) linear infinite;animation-delay:calc(var(--i,0) * var(--gal-J,5s))}
+.gal.gal-slider .titik{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:6px;justify-content:center;z-index:2}
+.gal.gal-slider .titik i{width:6px;height:6px;border-radius:99px;background:#ffffff9e;box-shadow:0 0 0 1px #00000026}
+@keyframes galTampil{0%{opacity:0}3%{opacity:1}33%{opacity:1}36%{opacity:0}100%{opacity:0}}
+.gal-slider.fx-gal-slide img{animation-name:galSlide}
+@keyframes galSlide{0%{opacity:1;transform:translateX(100%)}3%{transform:translateX(0)}33%{transform:translateX(0)}36%{transform:translateX(-100%);opacity:1}37%,100%{opacity:0}}
+.gal-slider.fx-gal-fade img{animation-name:galFade}
+@keyframes galFade{0%{opacity:0;transform:scale(1.02)}4%{opacity:1;transform:scale(1)}33%{opacity:1}37%{opacity:0}100%{opacity:0}}
+.gal-slider.fx-gal-zoom img{animation-name:galZoom}
+@keyframes galZoom{0%{opacity:0;transform:scale(1.22)}4%{opacity:1}33%{opacity:1;transform:scale(1.16)}37%{opacity:0}100%{opacity:0;transform:scale(1.1)}}
+.gal-slider.fx-gal-cube img{animation-name:galCube}
+@keyframes galCube{0%{opacity:0;transform:perspective(900px) rotateY(-70deg) translateX(38%)}4%{opacity:1;transform:none}33%{opacity:1;transform:none}37%{opacity:0;transform:perspective(900px) rotateY(70deg) translateX(-38%)}100%{opacity:0}}
+.gal-slider.fx-gal-coverflow img{animation-name:galCover}
+@keyframes galCover{0%{opacity:0;transform:translateX(-42%) scale(.82) rotate(-3deg)}4%{opacity:1;transform:none}33%{opacity:1}37%{opacity:0;transform:translateX(42%) scale(.82) rotate(3deg)}100%{opacity:0}}
+.gal-slider.fx-gal-flip img{animation-name:galFlip}
+@keyframes galFlip{0%{opacity:0;transform:perspective(800px) rotateX(72deg) scale(.94)}4%{opacity:1;transform:none}33%{opacity:1}37%{opacity:0;transform:perspective(800px) rotateX(-72deg) scale(.94)}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.gal.gal-slider img{animation:none;opacity:0}.gal.gal-slider img:first-child{opacity:1}}
+
+/* ---------- preferensi pemilik undangan ---------- */
+.kurangi-gerak *,.kurangi-gerak *::before,.kurangi-gerak *::after{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}
+.kurangi-gerak .deko-flt,.kurangi-gerak .gal-slider img:not(:first-child){display:none}
+.ke-atas{position:fixed;right:14px;bottom:74px;z-index:40;width:42px;height:42px;border-radius:50%;border:1px solid #00000022;background:#ffffffdd;color:#3a3324;font-size:17px;line-height:1;display:grid;place-items:center;backdrop-filter:blur(6px);box-shadow:0 6px 18px #0000001f;cursor:pointer}
 
 /* galeri */
 .gal{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
@@ -433,8 +480,16 @@ const BORDERS=[
  {id:'ribbon-corner',n:'Pita Sudut',tk:'premium',art:'ribbon',s:A=>`border:2px solid ${A};box-shadow:0 8px 22px ${A}22`},
  {id:'lace-edge',n:'Renda Tepi',tk:'premium',art:'lace',s:A=>`border:1px solid ${A};outline:2px dotted ${A}99;outline-offset:-9px;box-shadow:inset 0 0 0 4px ${A}1f`},
  {id:'diamond-stud',n:'Paku Intan',s:A=>`border:2px solid ${A};background-image:radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px),radial-gradient(${A}aa 2px,transparent 2.3px);background-size:9px 9px;background-position:center 2px,center calc(100% - 2px),2px center,calc(100% - 2px) center;background-repeat:repeat-x,repeat-x,repeat-y,repeat-y`},
- {id:'triple-frame',n:'Tiga Garis',s:A=>`border:1px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9,inset 0 0 0 4px ${A},inset 0 0 0 8px #fffdf9,inset 0 0 0 9px ${A}88`}
-];
+ {id:'triple-frame',n:'Tiga Garis',s:A=>`border:1px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9,inset 0 0 0 4px ${A},inset 0 0 0 8px #fffdf9,inset 0 0 0 9px ${A}88`},
+ {id:'sudut-2d-garis',n:'Sudut 2D \u00b7 Garis Tegas',s:A=>`border:2px solid ${A};border-radius:5px`},
+ {id:'sudut-2d-blok',n:'Sudut 2D \u00b7 Blok Sudut',s:A=>`border:1px solid ${A}55;background-image:linear-gradient(${A},${A}),linear-gradient(${A},${A}),linear-gradient(${A},${A}),linear-gradient(${A},${A});background-size:28px 3px,3px 28px,28px 3px,3px 28px;background-position:0 0,0 0,100% 100%,100% 100%;background-repeat:no-repeat`},
+ {id:'sudut-2d-lengkung',n:'Sudut 2D \u00b7 Lengkung',s:A=>`border:2px dashed ${A}aa;border-radius:26px`},
+ {id:'sudut-3d-timbul',n:'Sudut 3D \u00b7 Timbul',s:A=>`border:1px solid ${A}aa;border-radius:14px;--bdA:${A}44;--bdB:${A}88;box-shadow:inset 0 0 0 2px #ffffffcc,inset 0 2px 6px ${A}55,0 6px 18px ${A}33`},
+ {id:'sudut-3d-berlapis',n:'Sudut 3D \u00b7 Berlapis',s:A=>`border:3px solid ${A};border-radius:18px;box-shadow:inset 0 0 0 4px #fffdf9,inset 0 0 0 5px ${A}66,0 8px 22px ${A}44`},
+ {id:'sudut-3d-kaca',n:'Sudut 3D \u00b7 Kaca',s:A=>`border:1px solid ${A}88;border-radius:20px;background:linear-gradient(135deg,${A}22,transparent 45%,${A}1a);box-shadow:inset 0 1px 0 #ffffffaa,0 10px 26px ${A}2e`},
+ {id:'sudut-4d-kilau',n:'Sudut 4D \u00b7 Kilau',art:'gold',s:A=>`border:2px solid ${A}66;border-radius:16px;background-image:linear-gradient(115deg,transparent 30%,${A}55 45%,#ffffff88 50%,${A}55 55%,transparent 70%);background-size:280% 280%;animation:bdKilau 3.4s linear infinite`},
+ {id:'sudut-4d-mengalir',n:'Sudut 4D \u00b7 Mengalir',art:'lace',s:A=>`border:2px solid ${A}55;border-radius:18px;background-image:linear-gradient(140deg,${A}aa,transparent 45%,${A}66);background-size:200% 200%;animation:bdAlir 6s linear infinite`},
+ {id:'sudut-4d-denjut',n:'Sudut 4D \u00b7 Denyut',art:'vine',s:A=>`border:1px solid ${A}77;border-radius:20px;--bdA:${A}44;--bdB:${A}8c;animation:bdDenjut 2.8s ease-in-out infinite`}];
 
 const DOA={
  pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu, memberi keberkahan atasmu, dan mempertemukan kalian berdua dalam kebaikan.'},
@@ -450,7 +505,7 @@ const QUOTES={
  khitanan:{text:'Sebaik-baik kalian adalah orang yang paling baik kepada keluarganya.',author:'HR. Ahmad'},
  ultah:{text:'Semoga tahun yang baru ini membawa kebahagiaan yang lebih besar dari sebelumnya.',author:'Ucapan Terbaik'},
  aqiqah:{text:'Setiap anak tergadai dengan aqiqahnya, disembelikan untuknya pada hari ketujuhnya, dicukur kepalanya, dan diberi nama.',author:'HR. Al-Baihaqi'}};
-/* 34 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan studio.html */
+/* 44 efek scroll reveal + 20 efek animasi cover — HARUS identik dengan studio.html */
 const FX_SCROLL=[
  ['fade-up','Fade Up'],['fade-down','Fade Down'],['slide-left','Slide Kiri'],['slide-right','Slide Kanan'],
  ['zoom-in','Zoom In'],['zoom-out','Zoom Out'],['rotate','Rotate'],['blur','Blur'],['pop','Pop'],['flip','Flip 3D'],
@@ -477,7 +532,17 @@ const FX_SCROLL=[
  ['unfold', 'Buka Lipatan', 'bidang membuka ke depan'],
  ['squeeze', 'Lentur', 'melebar perlahan dari tengah'],
  ['glow', 'Glow', 'cahaya lembut berubah menjadi fokus'],
- ['blur-down', 'Blur Turun', 'turun sambil menjernih']];
+ ['blur-down', 'Blur Turun', 'turun sambil menjernih'],
+ ['zoom-rotate','Zoom Rotate','membesar lalu miring halus'],
+ ['stretch-up','Stretch Up','merenggang naik dari bawah'],
+ ['slide-diagonal','Slide Diagonal','masuk dari sudut kiri bawah'],
+ ['flip-x-3d','Flip X 3D','terbuka seperti tutup buku dari atas'],
+ ['mask-left','Mask Kiri','tersingkap dari sisi kiri'],
+ ['blur-scale','Blur Scale','kabur & besar lalu menajam'],
+ ['bounce-down','Bounce Turun','memantul turun dari atas'],
+ ['swirl','Swirl','berputar kecil lalu tegak'],
+ ['ketik','Ketik','muncul seperti sedang ditulis'],
+ ['fokus','Fokus','dari kelabu samar menjadi jelas']];
 /* Efek reveal bergantian antarbagian namun tetap menghormati pilihan efek dasar Studio. */
 const FX_SCROLL_MIX=['fade-up','slide-left','fade-down','slide-right','tilt-in','flip-y','bounce-in','roll-in','wipe-up','wipe-right','unfold','book','blur-down','cube','glow','wave'];
 function fxScrollForSection(base,index,mix=true){
@@ -488,7 +553,13 @@ function fxScrollForSection(base,index,mix=true){
 function fxScrollAxis(id){return ['slide-left','slide-right','flip-y','roll-in','wipe-right','book','cube','wave'].includes(id)?'x':'y'}
 const FX_COVER=[
  ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
- ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal'],['vip-zoom','VIP Deep Zoom'],['vip-curtain','VIP Curtain']];
+ ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal'],['vip-zoom','VIP Deep Zoom'],['vip-curtain','VIP Curtain'],
+ ['unveil','Unveil','tersingkap dari tengah'],
+ ['slide-diagonal','Slide Diagonal','miring masuk dari bawah'],
+ ['zoom-rotasi','Zoom Rotasi','membesar sambil memutar halus'],
+ ['sparkle','Sparkle','berkilau lalu menenang'],
+ ['wave-in','Wave In','mengalun naik turun'],
+ ['tilt-in','Tilt 3D','miring dari samping']];
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxCoverId(AN){const v=AN&&AN.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 
@@ -761,7 +832,34 @@ function boot(draft){
 
  /* tema */
  const rs=document.documentElement.style;
- const isWedding=ev==='pernikahan';
+ 
+/* ---------- galeri: grid (lama) atau slider 6 efek, galHtml dipakai dua halaman ---------- */
+const GAL_FX=['grid','slide','fade','zoom','cube','coverflow','flip'];
+function galGaya(d){const g=String((d&&d.pref&&d.pref.slider)||'grid');return GAL_FX.indexOf(g)>=0?g:'grid'}
+function galJeda(d){const n=parseInt((d&&d.pref&&d.pref.sliderDetik)||5,10);return isFinite(n)?Math.min(12,Math.max(2,n)):5}
+function galHtml(foto,gaya,jeda){
+ const im=Array.isArray(foto)?foto.filter(Boolean).slice(0,12):[];
+ if(!im.length)return '';
+ const g=GAL_FX.indexOf(gaya)>=0?gaya:'grid', j=Math.min(12,Math.max(2,parseInt(jeda,10)||5));
+ if(g==='grid')return '<div class="gal">'+im.slice(0,8).map(u=>`<img src="${esc(u)}" alt="Galeri" loading="lazy" onerror="this.style.display='none'">`).join('')+'</div>';
+ const t=(j*im.length).toFixed(1);
+ return `<div class="gal gal-slider fx-gal-${g}" style="--gal-J:${j}s;--gal-T:${t}s">`+
+  im.map((u,i)=>`<img src="${esc(u)}" alt="Foto ${i+1}" style="--i:${i}" loading="lazy" onerror="this.style.display='none'">`).join('')+
+  `<div class="titik">${im.map(()=>'<i></i>').join('')}</div></div>`;
+}
+/* preferensi pemilik: peredam gerak, tombol kembali ke atas */
+const PREF_BAWAAN={gerak:'penuh',musik:'manual',sapaan:true,tombolAtas:false,tanda:true,hitung:'lengkap',slider:'grid',sliderDetik:5};
+function prefOf(d){const p=(d&&d.pref)||{},h={};Object.keys(PREF_BAWAAN).forEach(k=>{h[k]=(p[k]===undefined||p[k]===null||p[k]==='')?PREF_BAWAAN[k]:p[k]});
+ if(GAL_FX.indexOf(h.slider)<0)h.slider=PREF_BAWAAN.slider;
+ const n=parseInt(h.sliderDetik,10);h.sliderDetik=isFinite(n)?Math.min(12,Math.max(2,n)):PREF_BAWAAN.sliderDetik;
+ h.gerak=(h.gerak==='kurangi'||h.gerak==='matikan')?h.gerak:'penuh';
+ h.musik=(h.musik==='otomatis'||h.musik==='mati')?h.musik:'manual';
+ h.hitung=h.hitung==='ringkas'?'ringkas':'lengkap';
+ ['sapaan','tombolAtas','tanda'].forEach(k=>{h[k]=h[k]!==false});
+ return h}
+function prefTombolAtas(){const b=document.createElement('button');b.className='ke-atas';b.type='button';b.title='Kembali ke atas';b.setAttribute('aria-label','Kembali ke atas');b.innerHTML='\u2191';b.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));document.body.appendChild(b)}
+
+const isWedding=ev==='pernikahan';
  const PAPER=isWedding?(tplF.bgPaper||''):'';
  if(isWedding){document.body.classList.add('wedding-cover','theme-'+tplF.id)}
  if(PAPER){document.body.classList.add('wedding-paper-art');rs.setProperty('--wedding-paper-art',"url('"+PAPER+"')")}
@@ -824,7 +922,13 @@ function boot(draft){
  const alamat=form.alamat||'';
  const mapsLink=form.mapsLink&&!/example/i.test(form.mapsLink)?form.mapsLink:'';
 
- const play=setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
+ const PM=prefOf(d);   /* preferensi dibaca sebelum musik: musik bisa dimatikan */
+ const play=(PM.musik==='mati')?null:setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
+ /* ---------- preferensi pemilik (gerak, musik, sapaan, tanda, hitung, tombol ke atas) ---------- */
+ const PREF=PM;   /* prefOf sudah dinormalkan di atas */
+ if(PREF.gerak!=='penuh')document.documentElement.classList.add('kurangi-gerak');
+ if(PREF.hitung==='ringkas')document.documentElement.classList.add('hitung-ringkas');
+ if(PREF.tombolAtas)prefTombolAtas();
 
  /* ---------- animasi (diatur dari Studio: cover / teks / scroll reveal + pilihan efek) ---------- */
  const AN=(d&&d.anim)||{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'};
@@ -877,7 +981,7 @@ function boot(draft){
  h+=`<div id="content"><div class="wrap">`;
 
  /* 1. Kepada YTH */
- h+=`<div class="${RV('card guest')}"><div class="ya">Kepada YTH</div>
+ if(PREF.sapaan)h+=`<div class="${RV('card guest')}"><div class="ya">Kepada YTH</div>
   <div class="to">${esc(GUEST||'Bapak / Ibu / Saudara/i')}</div>
   <div class="divider">${esc(tplF.deco)}</div>
   <p class="muted">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.</p></div>`;
@@ -924,7 +1028,7 @@ function boot(draft){
  /* countdown */
  const tt=targetTime(draft,form);
  if(tt){
-  h+=`<div class="cdw" id="cd">
+  h+=`<div class="cdw${PREF.hitung==='ringkas'?' cdw-ringkas':''}" id="cd">
    <div class="u"><div class="n" id="cdH">00</div><div class="l">Hari</div></div>
    <div class="u"><div class="n" id="cdM">00</div><div class="l">Jam</div></div>
    <div class="u"><div class="n" id="cdS">00</div><div class="l">Menit</div></div>
@@ -937,9 +1041,8 @@ function boot(draft){
 
  /* 5. Galeri */
  if(d&&Array.isArray(d.gallery)&&d.gallery.length){
-  h+=`<div class="${RV('card')}"><div class="kicker">Galeri</div><div class="gal">`+
-   d.gallery.slice(0,8).map(u=>`<img src="${esc(u)}" alt="Galeri" loading="lazy" onerror="this.style.display='none'">`).join('')+
-   `</div></div>`;
+  const galIsi=galHtml(d.gallery,PREF.slider,PREF.sliderDetik);
+  if(galIsi)h+=`<div class="${RV('card')}"><div class="kicker">Galeri</div>${galIsi}</div>`;
  }
 
  /* 6. Amplop */
@@ -977,6 +1080,14 @@ function boot(draft){
  h+=`</div></div>`;
 
  $('app').innerHTML=h;
+
+ /* preferensi yang perlu elemen jadi: tanda AsProject & musik otomatis */
+ if(!PREF.tanda)document.querySelectorAll('.brand').forEach(b=>{b.style.display='none'});
+ if(PREF.musik==='otomatis'&&play){
+  const coba=()=>{try{play()}catch(e){}};
+  coba();   /* peramban sering menolak sebelum ada sentuhan — dicoba lagi di bawah */
+  ['pointerdown','keydown','touchstart'].forEach(ev2=>document.addEventListener(ev2,coba,{once:true,passive:true}));
+ }
 
  /* interaksi */
  $('btnOpen').addEventListener('click',()=>{

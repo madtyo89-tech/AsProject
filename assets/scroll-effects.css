@@ -84,3 +84,26 @@
 @media(prefers-reduced-motion:reduce){
  .scroll-reveal.sr-ready,.scroll-reveal.sr-ready.sr-in{opacity:1;animation:none;transform:none;translate:none;filter:none;clip-path:none}
 }
+
+
+/* ---------- efek gulir tambahan ---------- */
+.scroll-reveal.fx-s-zoom-rotate{--scroll-fx:sr-zoom-rotate}
+@keyframes sr-zoom-rotate{from{opacity:0;transform:scale(.82) rotate(-6deg);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-stretch-up{--scroll-fx:sr-stretch-up}
+@keyframes sr-stretch-up{from{opacity:0;transform:translateY(46px) scaleY(.72);transform-origin:50% 100%;}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-slide-diagonal{--scroll-fx:sr-slide-diagonal}
+@keyframes sr-slide-diagonal{from{opacity:0;transform:translate(-44px,44px);}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-flip-x-3d{--scroll-fx:sr-flip-x-3d}
+@keyframes sr-flip-x-3d{from{opacity:0;transform:perspective(800px) rotateX(-72deg);transform-origin:50% 0;}to{opacity:1;transform:none;}}
+.scroll-reveal.fx-s-mask-left{--scroll-fx:sr-mask-left}
+@keyframes sr-mask-left{from{opacity:1;clip-path:inset(0 0 0 100%);}to{opacity:1;clip-path:inset(0 0 0 0);}}
+.scroll-reveal.fx-s-blur-scale{--scroll-fx:sr-blur-scale}
+@keyframes sr-blur-scale{from{opacity:0;transform:scale(1.14);filter:blur(11px);}to{opacity:1;transform:none;filter:none;}}
+.scroll-reveal.fx-s-bounce-down{--scroll-fx:sr-bounce-down}
+@keyframes sr-bounce-down{0%{opacity:0;transform:translateY(-46px)}62%{opacity:1;transform:translateY(9px)}82%{transform:translateY(-4px)}100%{opacity:1;transform:none}}
+.scroll-reveal.fx-s-swirl{--scroll-fx:sr-swirl}
+@keyframes sr-swirl{from{opacity:0;transform:rotate(-16deg) scale(.86)}55%{transform:rotate(3deg) scale(1.01)}to{opacity:1;transform:none}}
+.scroll-reveal.fx-s-ketik{--scroll-fx:sr-ketik}
+@keyframes sr-ketik{from{clip-path:inset(0 100% 0 0);opacity:0}1%{opacity:1}to{clip-path:inset(0 0 0 0);opacity:1}}
+.scroll-reveal.fx-s-fokus{--scroll-fx:sr-fokus}
+@keyframes sr-fokus{from{opacity:.15;filter:grayscale(1) blur(6px)}to{opacity:1;filter:none}}

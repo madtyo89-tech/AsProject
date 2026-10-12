@@ -7,7 +7,7 @@
  *
  * Yang diperiksa:
  *   1. (statis) template-studio.html memuat salinan mesin yang identik:
- *      FONTS 17, BORDERS 32, FX_COVER 14, FX_SCROLL 34, SLIDES 10, pola patCss
+ *      FONTS 17, BORDERS 49, FX_COVER 20, FX_SCROLL 44, SLIDES 10, pola patCss
  *   2. (statis) 13 tema bawaan identik & berurutan sama dengan studio.html,
  *      undangan.html, dan katalog index.html
  *   3. (statis) halaman bersih: tidak ada id ganda, tidak ada "</script" di dalam
@@ -71,7 +71,7 @@ const index = baca('index.html');
 const mesinHal = (pembuka) => blokArray(hal, pembuka);
 cek(idObjek(mesinHal('const FONTS=')).length === 17, 'FONTS 17 font disalin', String(idObjek(mesinHal('const FONTS=')).length));
 cek(JSON.stringify(idObjek(mesinHal('const FONTS='))) === JSON.stringify(idObjek(blokArray(studio, 'const FONTS='))), 'urutan id font sama dengan studio.html');
-cek(idObjek(mesinHal('const BORDERS=')).length === 40, 'BORDERS 40 border disalin (termasuk hiasan bunga/batik)', String(idObjek(mesinHal('const BORDERS=')).length));
+cek(idObjek(mesinHal('const BORDERS=')).length === 49, 'BORDERS 49 border disalin (bunga/batik + sudut 2D/3D/4D)', String(idObjek(mesinHal('const BORDERS=')).length));
 cek(JSON.stringify(idObjek(mesinHal('const BORDERS='))) === JSON.stringify(idObjek(blokArray(studio, 'const BORDERS='))), 'urutan id border sama dengan studio.html');
 cek(JSON.stringify(idFx(mesinHal('const FX_COVER='))) === JSON.stringify(idFx(blokArray(studio, 'const FX_COVER='))), 'FX_COVER sama dengan studio.html');
 cek(JSON.stringify(idFx(mesinHal('const FX_SCROLL='))) === JSON.stringify(idFx(blokArray(studio, 'const FX_SCROLL='))), 'FX_SCROLL sama dengan studio.html');

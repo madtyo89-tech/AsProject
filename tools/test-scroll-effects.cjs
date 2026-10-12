@@ -13,8 +13,10 @@ const css = read('assets/scroll-effects.css');
 const ids = html => [...html.match(/const FX_SCROLL=\[([\s\S]*?)\];/)[1].matchAll(/\[\s*'([^']+)'/g)].map(m => m[1]);
 const mixIds = html => [...html.match(/const FX_SCROLL_MIX=\[([\s\S]*?)\];/)[1].matchAll(/'([^']+)'/g)].map(m => m[1]);
 const all = ids(studio);
-assert.equal(all.length, 34);
-assert.equal(new Set(all).size, 34);
+assert.equal(all.length, 44);
+assert.equal(new Set(all).size, 44);
+// efek gulir baru wajib punya pasangan selektor & keyframes di aset bersama
+for (const baru of ['zoom-rotate','stretch-up','slide-diagonal','flip-x-3d','mask-left','blur-scale','bounce-down','swirl','ketik','fokus']) assert(all.includes(baru), 'efek baru ' + baru + ' terdaftar');
 assert.deepEqual(all, ids(live));
 assert.deepEqual(mixIds(studio),mixIds(live),'Studio and live section-mix sequence stays aligned');
 for (const id of all) {
@@ -128,10 +130,10 @@ assert.equal(w.document.querySelector('.scroll-reveal'), null, 'Reveal toggle di
  assert(exported,'standalone invitation HTML is generated');
  const html=await blobText(w,exported);
  assert(html.includes('<style data-asproject-scroll-effects>'),'standalone file embeds scroll effect CSS');
- assert(html.includes('.scroll-reveal.fx-s-tilt-in{')&&html.includes('@keyframes sr-blur-down{'),'new effect keyframes work offline');
+ assert(html.includes('.scroll-reveal.fx-s-tilt-in{')&&html.includes('@keyframes sr-fokus{'),'new effect keyframes work offline');
  assert(html.includes('function (container, root = null)')||html.includes('window.setupScrollReveal'),'standalone file embeds scroll observer code');
- assert(html.includes('"scroll":"blur-down"'),'selected scroll effect is saved in the standalone invitation');
+ assert(html.includes('"scroll":"'+all[all.length-1]+'"'),'selected scroll effect is saved in the standalone invitation');
  assert(html.includes('"scrollMix":true'),'per-section variety preference is saved in the standalone invitation');
  dom.window.close();
- console.log('34 scroll effects: mixed vertical/sideways reveals, up/down replay, reduced-motion and offline export passed.');
+ console.log('44 scroll effects: mixed vertical/sideways reveals, up/down replay, reduced-motion and offline export passed.');
 })().catch(error=>{console.error(error);dom.window.close();process.exitCode=1});

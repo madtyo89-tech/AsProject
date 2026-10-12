@@ -6,7 +6,7 @@
  *
  * Yang diperiksa:
  *   1. motif baru ada di patCss() dan daftar motif identik di studio.html & undangan.html
- *   2. BORDERS berisi 40 id yang sama & berurutan di kedua berkas
+ *   2. BORDERS berisi 49 id yang sama & berurutan di kedua berkas
  *   3. border ber-`art` hanya merujuk hiasan sudut yang ada di DKO_IDS
  *   4. daftar DKO/FLT/DVD + label identik di kedua berkas, dan CSS dekorasi lengkap
  *      (termasuk aturan prefers-reduced-motion)
@@ -79,7 +79,7 @@ cek(bodyPat(studio) === bodyPat(undangan), 'isi patCss() identik di kedua berkas
 console.log('\n2) Border baru (bunga/batik/renda)');
 const bStudio = idObjek(blok(studio, 'const BORDERS=['));
 const bUndangan = idObjek(blok(undangan, 'const BORDERS=['));
-cek(bStudio.length === 40, 'BORDERS berisi 40 id', String(bStudio.length));
+cek(bStudio.length === 49, 'BORDERS berisi 49 id', String(bStudio.length));
 cek(JSON.stringify(bStudio) === JSON.stringify(bUndangan), 'urutan id border sama di kedua berkas');
 const BORDER_BARU = ['floral-corner', 'batik-frame', 'vine-frame', 'gold-corner', 'ribbon-corner', 'lace-edge', 'diamond-stud', 'triple-frame'];
 cek(BORDER_BARU.every((b) => bStudio.includes(b)), '8 border baru terdaftar', BORDER_BARU.filter((b) => !bStudio.includes(b)).join(','));
