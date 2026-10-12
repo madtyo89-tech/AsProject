@@ -459,7 +459,7 @@ const DEF={
   map:{on:false},
   rsvp:{on:false},
   closing:{on:false,text:''}},
- anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up',scrollMix:true,navMode:'scroll'},
+ anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up',scrollMix:true,navMode:'scroll',buka:'gilir'},
  floatPrevOn:true,floatPos:null,
  slug:'',customDomain:'',published:false,publishedLink:'',started:false,stage:'editor',
  katalog:TPL.map((t,i)=>({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:340-i*23})),
@@ -541,6 +541,14 @@ const FX_COVER=[
  ['shimmer','Shimmer Gold','kilau emas menyapu',1],['curtain','Tirai Royal','membuka mewah bagai tirai',1],
  ['vip-zoom','VIP Deep Zoom','zoom dalam sinematik 👑',1,'vip'],['vip-curtain','VIP Curtain','tirai terbuka megah 👑',1,'vip']];
 function fxScrollId(){const v=state.anim.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
+const FX_BUKA=[
+ ['gilir','Gilir Kiri','cover berputar seperti halaman dibalik (default)'],
+ ['geser','Geser Kiri','cover meluncur keluar ke kiri'],
+ ['lipat','Lipat Atas','cover terlipat naik ke atas'],
+ ['turun','Turun','cover meluncur turun lalu memudar'],
+ ['zoom','Zoom','cover memudar sambil membesar'],
+ ['fade','Fade','memudar klasik tanpa gerak']];
+function fxBukaId(){const v=state.anim.buka;return FX_BUKA.some(f=>f[0]===v)?v:'gilir'}
 function fxCoverId(){const v=state.anim.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 let animSig=null;
 function animTrigger(){const cur=state.tpl+'|'+state.event+'|'+Object.keys(state.slides).filter(k=>state.slides[k].on).sort().join(',')+'|'+fxCoverId()+'|'+fxScrollId()+'|'+(state.anim.scrollMix===false?'single':'mix');const play=animSig!==cur;animSig=cur;return play}
@@ -1070,6 +1078,12 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Cara halaman pembuka masuk saat undangan dibuka.</div>
    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
    ${FX_COVER.map(f=>`<button class="fxbtn ${fxCoverId()===f[0]?'on':''}" onclick="setAnim('effect','${f[0]}')"><b>${f[1]}${f[3]?' 🔒':''}</b><span>${f[2]}</span></button>`).join('')}
+   </div></div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+   <div style="font-size:11px;font-weight:600;margin-bottom:2px">🚪 Efek Membuka Cover — pilih 1 dari ${FX_BUKA.length}</div>
+   <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Cara halaman pembuka berpindah ke isi undangan (setelah amplop dibuka).</div>
+   <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+   ${FX_BUKA.map(f=>`<button class="fxbtn ${fxBukaId()===f[0]?'on':''}" onclick="setAnim('buka','${f[0]}')"><b>${f[1]}</b><span>${f[2]}</span></button>`).join('')}
    </div></div>
   <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
    <div style="font-size:11px;font-weight:600;margin-bottom:2px">📜 Efek Scroll Reveal — pilih efek dasar dari ${FX_SCROLL.length}</div>

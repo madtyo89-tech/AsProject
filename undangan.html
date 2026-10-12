@@ -526,8 +526,13 @@ body.wedding-cover #cover .open:active,body.foto-full #cover .open:active,#cover
 #cover .open::before{transform-origin:50% 0;transition:transform .55s cubic-bezier(.34,0,.2,1)}
 #cover .open::after,#cover .open .env{transition:transform .45s ease .16s,opacity .38s ease .22s}
 body.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transform-origin:0% 50%;
-  transform:perspective(1300px) rotateY(-15deg) translateX(-38%);
   transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .6s ease .78s,visibility 0s linear 1.35s}
+body.buka-gilir.opened #cover{transform:perspective(1300px) rotateY(-15deg) translateX(-38%)}
+body.buka-geser.opened #cover{transform:translateX(-105%)}
+body.buka-lipat.opened #cover{transform-origin:50% 0;transform:perspective(1200px) rotateX(-24deg) translateY(-42%)}
+body.buka-turun.opened #cover{transform:translateY(36%) scale(.96)}
+body.buka-zoom.opened #cover{transform:scale(1.14)}
+body.buka-fade.opened #cover{transform:none}
 body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:perspective(720px) rotateX(-168deg)}
 body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after{transform:translate(-50%,8%) scale(.5);opacity:0}
 body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,4%) scale(.5);opacity:0}
@@ -706,6 +711,7 @@ const FX_COVER=[
  ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
  ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal'],['vip-zoom','VIP Deep Zoom'],['vip-curtain','VIP Curtain']];
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
+function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade'].includes(v)?v:'gilir'}
 function fxCoverId(AN){const v=AN&&AN.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 
 /* ---------- util ---------- */
@@ -1078,7 +1084,7 @@ function boot(draft){
  const AN=(d&&d.anim)||{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'};
  const RM=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
  const covOn=!!AN.cover&&!RM,txOn=!!AN.text&&!RM,rvOn=!!AN.reveal&&!RM;
- const CE=fxCoverId(AN),SC=fxScrollId(AN);
+ const CE=fxCoverId(AN),SC=fxScrollId(AN);document.body.className=String(document.body.className||'').replace(/\bbuka-\S+/g,'').trim();document.body.classList.add('buka-'+fxBukaId(AN));
  const h1d=tplF.char?850:550,dtD=tplF.char?1500:1300,hoD=tplF.char?1650:1450,btD=tplF.char?1800:1600;
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
  const wspan=(txt,d0)=>{let k=0;return String(txt||'').split(' ').map(word=>{
