@@ -536,6 +536,31 @@ body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .
   body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after,
   body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,-50%);opacity:0}
 }
+
+/* ==== Harapan mempelai + stiker ucapan + paginasi buku tamu ==== */
+.harapan-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.harapan-kartu{position:relative;padding:18px 14px 14px;border-radius:16px;background:linear-gradient(165deg,var(--g0),var(--g1));
+  border:1px solid color-mix(in srgb,var(--accent) 26%,transparent);text-align:center}
+.harapan-kartu .hq{position:absolute;top:2px;left:10px;font-family:var(--ft);font-size:44px;line-height:1;color:var(--accent);opacity:.35}
+.harapan-kartu .ht{font-family:var(--ft);font-style:italic;font-size:14.5px;line-height:1.65;color:var(--ink-body,#344238)}
+.harapan-kartu .hn{margin-top:10px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+@media (max-width:380px){.harapan-grid{grid-template-columns:1fr}}
+.stk-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.stk{width:38px;height:38px;border-radius:12px;border:1px solid #e5d9c4;background:#fffdf9;font-size:19px;line-height:1;
+  display:grid;place-items:center;cursor:pointer;transition:transform .18s ease,background .18s ease,border-color .18s ease}
+.stk:hover{transform:translateY(-2px) scale(1.08)}
+.stk.on{background:color-mix(in srgb,var(--accent) 18%,#fff);border-color:var(--accent);transform:scale(1.12)}
+.bt-stk{font-size:30px;line-height:1;margin-top:8px}
+.bt-more{display:block;width:100%;margin-top:12px;height:42px;border-radius:12px;border:1px solid color-mix(in srgb,var(--accent) 34%,transparent);
+  background:transparent;color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:background .2s ease}
+.bt-more:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.bt-item{animation:btIn .45s ease both}
+@keyframes btIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#btnCalG{background:linear-gradient(150deg,var(--accent),color-mix(in srgb,var(--accent) 62%,#000));color:#fff;border:0;
+  box-shadow:0 10px 22px color-mix(in srgb,var(--accent) 38%,transparent)}
+.couple-foto .cf::before{content:'';position:absolute;inset:6px;border:1px solid rgba(255,255,255,.55);border-radius:inherit;pointer-events:none;z-index:2}
+.couple-foto .cf{position:relative}
+@media (prefers-reduced-motion:reduce){.stk:hover,.stk.on{transform:none}.bt-item{animation:none}}
 </style>
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
@@ -808,6 +833,9 @@ function liveSlides(d,ev,tplF,fullNm,form,venue){
    <select id="rvpH" style="margin-top:10px;width:100%;height:46px;border:1px solid #e5d9c4;border-radius:14px;padding:0 12px;font-size:13px;background:#fffdf9">
     <option>Hadir 🙌</option><option>Hadir, bawa keluarga</option><option>Tidak hadir — maaf 🙏</option></select>
    <textarea id="rvpM" rows="2" placeholder="Ucapan untuk pasangan..." style="margin-top:10px;width:100%;border:1px solid #e5d9c4;border-radius:14px;padding:10px 14px;font-size:13px;background:#fffdf9;resize:none"></textarea>
+   <div class="stk-row" role="group" aria-label="Pilih stiker">
+    ${['\u{1F970}','\u{1F60D}','\u{1F62D}','\u{1F389}','\u2728','\u{1F490}','\u{1F64F}','\u2764\uFE0F','\u{1F979}','\u{1F44F}','\u{1F60A}','\u{1F90D}'].map(e=>`<button type="button" class="stk" onclick="pilihStiker('${e}',this)" aria-label="stiker">${e}</button>`).join('')}
+   </div>
    <button onclick="liveRsvp()" style="margin-top:12px;width:100%;height:46px;border:0;border-radius:99px;background:#25D366;color:#fff;font-size:13px;font-weight:600">Kirim RSVP via WA</button>
    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
     <button onclick="rsvpSave('hadir')" data-rsvpb data-r="hadir" style="height:44px;border:0;border-radius:99px;background:#8fa998;color:#fff;font-size:11px;font-weight:700">Hadir 🙌</button>
@@ -821,10 +849,13 @@ function liveSlides(d,ev,tplF,fullNm,form,venue){
   <p style="margin-top:14px;font-size:14px;font-style:italic;line-height:1.9;color:#57503f;font-family:Georgia,serif">${esc(S.closing.text)}</p>
   <div style="margin-top:14px;font-size:12px;font-weight:600;color:var(--accent-body)">${esc(fullNm)}</div></div>`);
  return h.join('')}
+window.__stkU='';
+function pilihStiker(e,el){window.__stkU=(window.__stkU===e?'':e);try{document.querySelectorAll('.stk').forEach(b=>b.classList.remove('on'));if(window.__stkU&&el)el.classList.add('on')}catch(_x){}}
 function liveRsvp(){
  const n=document.getElementById('rvpN')?document.getElementById('rvpN').value.trim():'';
  const hd=document.getElementById('rvpH')?document.getElementById('rvpH').value:'';
- const m=document.getElementById('rvpM')?document.getElementById('rvpM').value.trim():'';
+ const m0=document.getElementById('rvpM')?document.getElementById('rvpM').value.trim():'';
+ const m=(window.__stkU?window.__stkU+' ':'')+m0;
  const t='RSVP — '+(n||GUEST||'Tamu')+'\nKonfirmasi: '+hd+(m?'\nPesan: '+m:'')+'\nTautan undangan: '+location.href.split('#')[0];
  window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
 /* RSVP cepat → tabel rsvp (Supabase) agar visible realtime di Undangan Master.
@@ -839,7 +870,7 @@ let rsvpJalan=false;
 async function rsvpSave(st){
  if(rsvpJalan)return;rsvpJalan=true;
  const n=((document.getElementById('rvpN')?document.getElementById('rvpN').value:GUEST)||'Tamu').trim()||'Tamu';
- const pesan=(document.getElementById('rvpM')?document.getElementById('rvpM').value:'').trim();
+ const pesan=((window.__stkU?window.__stkU+' ':'')+(document.getElementById('rvpM')?document.getElementById('rvpM').value:'')).trim();
  document.querySelectorAll('[data-rsvpb]').forEach(b=>{b.disabled=true;b.style.opacity=.55});
  document.querySelectorAll('[data-r="'+st+'"]').forEach(b=>{b.classList.add('sent');setTimeout(()=>b.classList.remove('sent'),900)});
  /* Mode demo / file mandiri: simpan lokal saja — jangan menulis baris palsu
@@ -894,15 +925,22 @@ function waktuLalu(ts){let t=Number(ts);if(!Number.isFinite(t))t=Date.now();
  if(s<2592000)return Math.floor(s/86400)+' hari lalu';
  if(s<31536000)return Math.floor(s/2592000)+' bulan lalu';
  return Math.floor(s/31536000)+' tahun lalu'}
+let BT_SHOWN=4;
+function btLainnya(){BT_SHOWN+=6;muatBukuTamu(true)}
+function btPisahStiker(p){const S=['\u{1F970}','\u{1F60D}','\u{1F62D}','\u{1F389}','\u2728','\u{1F490}','\u{1F64F}','\u2764\uFE0F','\u{1F979}','\u{1F44F}','\u{1F60A}','\u{1F90D}'];
+  const s=String(p||'');for(let i=0;i<S.length;i++){if(s.indexOf(S[i])===0)return{e:S[i],p:s.slice(S[i].length).trim()}}return{e:'',p:s}}
 function tampilBukuTamu(rows){const el=document.getElementById('btList');if(!el)return;
  if(!rows||!rows.length){el.innerHTML='<div class="bt-memuat">Belum ada ucapan \u2014 jadilah yang pertama! \u2728</div>';return}
- el.innerHTML=rows.map(r=>{const st=String(r.status||'hadir');
+ el.innerHTML=rows.slice(0,BT_SHOWN).map(r=>{const st=String(r.status||'hadir');
   const lb=st==='hadir'?'Hadir':st==='ragu'?'Belum Pasti':'Tidak Hadir';
   const cls=st==='hadir'?'hadir':st==='ragu'?'ragu':'tidak';
+  const sk=btPisahStiker(r.pesan);
   return '<div class="bt-item"><div class="bt-top"><div class="bt-nm">'+esc(r.guest||'Tamu')+'</div>'+
    '<div class="bt-st '+cls+'">'+lb+'</div>'+
    '<div class="bt-wk">'+esc(waktuLalu(r.t||Date.now()))+'</div></div>'+
-   (r.pesan?'<div class="bt-msg">\u201C'+esc(r.pesan)+'\u201D</div>':'')+'</div>'}).join('')}
+   (sk.e?'<div class="bt-stk" aria-hidden="true">'+sk.e+'</div>':'')+
+   (sk.p?'<div class="bt-msg">\u201C'+esc(sk.p)+'\u201D</div>':'')+'</div>'}).join('')+
+  (rows.length>BT_SHOWN?'<button type="button" class="bt-more" onclick="btLainnya()">Tampilkan lainnya ('+(rows.length-BT_SHOWN)+')</button>':'')}
 function daftarUcapanDemo(){
  return [...BT_LOCAL,...DEMO_WISHES.map(w=>({guest:w.guest,status:w.status,pesan:w.pesan,t:Date.now()-w.ago}))]}
 async function muatBukuTamu(paksa){const el=document.getElementById('btList');if(!el)return;
@@ -1108,6 +1146,14 @@ function boot(draft){
    <div class="divider">${esc(tplF.deco)}</div></div>`;
  }
 
+ if(ev==='pernikahan'&&(form.harapanPria||form.harapanWanita)){
+  h+=`<div class="${RV('card')} harapan"><div class="kicker">Harapan Mempelai</div>
+   <div class="harapan-grid">
+    ${form.harapanPria?`<div class="harapan-kartu"><div class="hq">\u201C</div><div class="ht">${esc(form.harapanPria)}</div><div class="hn">Harapan Pengantin Pria</div></div>`:''}
+    ${form.harapanWanita?`<div class="harapan-kartu"><div class="hq">\u201C</div><div class="ht">${esc(form.harapanWanita)}</div><div class="hn">Harapan Pengantin Wanita</div></div>`:''}
+   </div></div>`;
+ }
+
  /* 4. Detail acara */
  const sesiKedua=d&&form.sesiKedua;
  h+=`<div class="${RV('card')}"><div class="kicker">Waktu & Tempat</div>
@@ -1139,7 +1185,7 @@ function boot(draft){
    <div class="u"><div class="n" id="cdS">00</div><div class="l">Menit</div></div>
    <div class="u"><div class="n tick" id="cdD">00</div><div class="l">Detik</div></div></div>`;
  }
- h+=`<div class="mini-acts">${tt?'<button type="button" id="btnCal">\u{1F4C5} Simpan ke Kalender</button>':''}
+ h+=`<div class="mini-acts">${tt?'<button type="button" id="btnCalG">\u23F0 Atur Pengingat</button>':''}${tt?'<button type="button" id="btnCal">\u{1F4C5} Simpan ke Kalender</button>':''}
   <button type="button" id="btnShare">\u{1F517} Bagikan</button></div>`;
  h+=`</div>`;
 
@@ -1235,6 +1281,21 @@ function boot(draft){
 
  /* — simpan ke kalender + bagikan — */
  const btnCal=$('btnCal'),btnShare=$('btnShare');
+ const btnCalG=$('btnCalG');
+ if(btnCalG&&tt){
+  btnCalG.addEventListener('click',()=>{
+   const p2=n=>String(n).padStart(2,'0');
+   const ymd=tt.getFullYear()+p2(tt.getMonth()+1)+p2(tt.getDate());
+   const d2=new Date(tt.getTime()+86400000);
+   const ymd2=d2.getFullYear()+p2(d2.getMonth()+1)+p2(d2.getDate());
+   const u='https://calendar.google.com/calendar/render?action=TEMPLATE'+
+    '&text='+encodeURIComponent(fullNm||'Undangan')+
+    '&dates='+ymd+'/'+ymd2+
+    '&details='+encodeURIComponent('Undangan '+fullNm+(dateStr?' \u2014 '+dateStr:'')+(form.jamAcara?' pukul '+form.jamAcara+' '+(form.zona||''):''))+
+    ((venue||'')?'&location='+encodeURIComponent(venue+(alamat?', '+alamat:'')):'');
+   window.open(u,'_blank','noopener');
+  });
+ }
  if(btnCal&&tt){
   btnCal.addEventListener('click',()=>{
    const p=n=>String(n).padStart(2,'0');
@@ -1409,6 +1470,7 @@ const DEMO_DRAFT={
   cover:'assets/demo/wedding/02-minimalist-sage.jpg',coverStyle:'full',coverPos:{x:50,y:38,z:1},fotoPria:'assets/demo/wedding/05-mempelai-pria.jpg',fotoWanita:'assets/demo/wedding/04-mempelai-wanita.jpg',
   form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
    putraPutri:'Bpk. Hartono & Ibu Sulastri',putriDari:'Bpk. Faisal & Ibu Dewi',
+   harapanPria:'Semoga dia menjadi istri dunia dan akhirat',harapanWanita:'Semoga dia menjadi imam yang baik',
    tanggalAcara:'2026-12-28',jamAcara:'08:00',zona:'WIB',venue:'The Ballroom at Ritz Carlton',
    alamat:'Jl. Jend. Sudirman No. 1, Jakarta Selatan',mapsLink:'https://maps.google.com/?q=Ritz-Carlton+Jakarta',
    sesiKedua:true,jamAkad:'08:00',jamResepsi:'11:00',
@@ -1463,6 +1525,7 @@ if(DEMO){const _t=(Q.get('tpl')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
     {tgl:'Hari Ini',judul:'Hari yang Ditunggu',teks:'Terima kasih sudah menjadi bagian dari kebahagiaan kami hari ini.',foto:(DEMO_DRAFT.data.gallery[1]||'')}];
    DEMO_DRAFT.name2='';DEMO_DRAFT.data.form.namaAnak=
     _ev==='khitanan'?'Muhammad Ali':_ev==='ultah'?'Nara Putri':'Baby Alif';
+   DEMO_DRAFT.data.form.harapanPria='';DEMO_DRAFT.data.form.harapanWanita='';
    DEMO_DRAFT.data.form.ucapanCustom='Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.';}}}
 
 /* ---------- mulai ---------- */

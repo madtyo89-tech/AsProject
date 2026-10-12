@@ -133,7 +133,10 @@ function draft(over) {
   });
   const wD = domD.window; const DD = wD.document;
   await sleep(450);
-  t('Demo: buku tamu contoh tampil tanpa jaringan', DD.querySelectorAll('.bt-item').length >= 5, 'bt=' + DD.querySelectorAll('.bt-item').length);
+  const btAwal = DD.querySelectorAll('.bt-item').length;
+  const btMore = DD.querySelector('.bt-more');
+  if (btMore) { btMore.click(); await sleep(150); }
+  t('Demo: buku tamu contoh tampil tanpa jaringan', btAwal >= 4 && DD.querySelectorAll('.bt-item').length >= 5, 'bt=' + btAwal + '+' + DD.querySelectorAll('.bt-item').length);
   const callsSebelum = wD.__calls.length;
   wD.eval('rsvpSave("ragu")');
   await sleep(150);

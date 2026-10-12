@@ -439,6 +439,7 @@ const DEF={
   showMapsBtn:true,sesiKedua:false,jamAkad:'',jamResepsi:'',showBismillah:true,
   salamBuka:'Assalamu\u2019alaikum wr. wb.',salamTutup:'Wassalamu\u2019alaikum wr. wb.',
   liveAkad:'',liveResepsi:'',
+  harapanPria:'',harapanWanita:'',
   ucapanCustom:''},
  musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverPos:{x:50,y:50,z:1},fotoPria:'',fotoWanita:'',gallery:[],videoLink:'',
  doa:'pernikahan',
@@ -1020,6 +1021,8 @@ function tabInfo(){const f=state.form,e=state.event;
   ${f.sesiKedua?`<label class="f span2">Link Live Resepsi (opsional)<input value="${esc(f.liveResepsi||'')}" placeholder="https://youtube.com/..." oninput="updF('liveResepsi',this.value)"></label>`:''}
   <label class="f">Salam Pembuka<input value="${esc(f.salamBuka||'')}" placeholder="Assalamu'alaikum wr. wb." oninput="updF('salamBuka',this.value)"></label>
   <label class="f">Salam Penutup<input value="${esc(f.salamTutup||'')}" placeholder="Wassalamu'alaikum wr. wb." oninput="updF('salamTutup',this.value)"></label>
+  <label class="f span2">Harapan Pengantin Pria (opsional)<input value="${esc(f.harapanPria||'')}" placeholder="Semoga dia menjadi istri dunia dan akhirat" oninput="updF('harapanPria',this.value)"></label>
+  <label class="f span2">Harapan Pengantin Wanita (opsional)<input value="${esc(f.harapanWanita||'')}" placeholder="Semoga dia menjadi imam yang baik" oninput="updF('harapanWanita',this.value)"></label>
   </div>
   <label class="togglerow" style="margin-top:16px">Tambah Sesi Kedua (Akad & Resepsi terpisah)<input type="checkbox" ${f.sesiKedua?'checked':''} onchange="setF('sesiKedua',this.checked)"></label>
   ${f.sesiKedua?`<div class="grid2" style="padding:12px;border-radius:12px;background:var(--cream);border:1px solid var(--cream2)">
