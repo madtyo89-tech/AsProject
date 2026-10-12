@@ -27,6 +27,8 @@
   addKat:'Tambahkan entri template baru pada katalog yang dikelola di Studio.',
   tglKatHide:'Ubah apakah template ini ditampilkan atau disembunyikan di katalog.',
   prevKat:'Lihat template katalog ini di preview undangan.',
+  delKat:'Hapus baris template ini dari katalog. Konfirmasi diminta dahulu; template bawaan bisa dikembalikan lewat Pulihkan Bawaan.',
+  pulihkanKat:'Kembalikan semua template bawaan yang pernah dihapus dari katalog. Baris buatan sendiri dan harga yang sudah diubah tidak disentuh.',
   loadArsip:'Buka data undangan dari arsip ke editor aktif.',
   rsvpWa:'Buka WhatsApp dengan nama, konfirmasi hadir, dan pesan RSVP yang diisi.',
   rsvpSave:'Simpan pilihan kehadiran tamu: hadir atau tidak hadir, sesuai tombol yang dipilih.',
@@ -63,7 +65,7 @@
   }
   const label=clean(el.getAttribute('aria-label')||el.title||el.textContent||el.value);
   if(/set\('tab'/.test(code))return 'Buka tab '+label+' untuk melihat dan mengubah pengaturan bagian ini.';
-  if(/set\('page'/.test(code))return 'Buka menu '+label+' di Studio.';
+  if(/set\('page'/.test(code)||/goPage\(/.test(code))return /goPage\('editor'/.test(code)?'Kembali ke editor undangan yang sedang dibuat.':'Buka menu '+label+' di Studio.';
   if(/set\('accent'/.test(code))return 'Terapkan warna aksen ini pada undangan. Lihat hasilnya di preview.';
   if(/set\('linkMode'/.test(code))return 'Pilih '+label+': link personal menampilkan nama tamu, sedangkan satu link digunakan bersama.';
   if(/set\('selGuest'/.test(code))return 'Pilih tamu ini untuk pratinjau nama dan link undangannya.';
