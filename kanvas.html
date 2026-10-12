@@ -1,0 +1,1357 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kanvas Template — AsProject</title>
+<meta name="description" content="Kanvas kosong untuk merancang template undangan digital: susun teks, bentuk, ornamen bunga/batik, lalu ekspor jadi tema AsProject.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/button-help.css">
+<style>
+:root{--bg:#fafaf8;--card:#fff;--line:#eee;--line2:#e9e9e9;--ink:#1a1a1a;--mut:#737373;--mut2:#a3a3a3;--gold:#D4AF37;--cream:#FFFBEB;--soft:#f5f5f4;--bad:#b91c1c;--ok:#15803d;--warn:#b45309;--pj:#ec4899}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:13px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:transparent}
+input,textarea,select{outline:0}
+::selection{background:rgba(212,175,55,.3)}
+.hidden{display:none!important}
+.sb::-webkit-scrollbar{width:8px;height:8px}.sb::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:10px}.sb::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- kepala ---------- */
+.hdr{position:sticky;top:0;z-index:60;backdrop-filter:blur(24px);background:rgba(255,255,255,.88);border-bottom:1px solid var(--line);height:62px;display:flex;align-items:center;gap:10px;padding:0 14px}
+.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-weight:700;color:#5a4a12;font-size:12px;background:linear-gradient(135deg,#D4AF37,#F9E79F,#D4AF37);box-shadow:0 1px 2px rgba(0,0,0,.08);flex:none}
+.hdr h1{font-size:14px;font-weight:600;line-height:1.2;white-space:nowrap}
+.hdr .sub{font-size:11px;color:var(--mut);white-space:nowrap}
+.sp{flex:1}
+.tb{height:34px;padding:0 12px;border-radius:99px;border:1px solid var(--line2);background:#fff;font-size:12px;font-weight:500;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;color:inherit}
+.tb:hover{background:#fbfaf8}
+.tb.dark{background:#111;color:#fff;border-color:#111;font-weight:600}
+.tb.dark:hover{background:#000}
+.tb.on{background:#111;color:#fff;border-color:#111}
+.tb[disabled]{opacity:.4;cursor:not-allowed}
+.zoom{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line2);background:#fff;border-radius:99px;height:34px;padding:0 4px}
+.zoom button{width:26px;height:26px;border-radius:50%;font-size:14px;color:var(--mut)}
+.zoom button:hover{background:var(--soft)}
+.zoom span{font-size:11px;min-width:42px;text-align:center;color:var(--mut);font-variant-numeric:tabular-nums}
+@media(max-width:1180px){.hdr .sub{display:none}.tb .lbl{display:none}}
+
+/* ---------- tata letak ---------- */
+.kvk{display:flex;height:calc(100dvh - 62px);min-height:520px}
+.rail{width:66px;flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:2px;padding:8px 0;align-items:center;z-index:5}
+.railb{width:56px;padding:8px 2px;border-radius:12px;font-size:10px;line-height:1.25;display:grid;justify-items:center;gap:3px;color:var(--mut);text-align:center}
+.railb i{font-style:normal;font-size:17px}
+.railb:hover{background:var(--soft)}
+.railb.on{background:#111;color:#fff}
+.lib{width:242px;flex:none;background:#fff;border-right:1px solid var(--line);overflow-y:auto;padding:12px 12px 40px}
+.stage{flex:1;position:relative;overflow:auto;background:#f1f1ec;padding:26px;display:flex;align-items:flex-start;justify-content:center;background-image:radial-gradient(#dcdcd4 1px,transparent 1px);background-size:18px 18px}
+.panel{width:272px;flex:none;background:#fff;border-left:1px solid var(--line);overflow-y:auto;padding:12px 12px 60px}
+@media(max-width:1080px){.lkecil .lib{display:none}.panel{width:250px}}
+@media(max-width:820px){.kvk{flex-direction:column;height:auto}.stage{min-height:56vh}.lib,.panel{width:100%;border:0;border-top:1px solid var(--line)}.rail{width:100%;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:6px 8px;gap:6px}.railb{width:auto;min-width:64px;padding:6px 10px}}
+
+/* ---------- komponen samping ---------- */
+h4.j{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut2);margin:14px 2px 7px}
+h4.j:first-child{margin-top:2px}
+button.aksi{width:100%;text-align:left;padding:9px 11px;border-radius:11px;border:1px solid var(--line2);background:#fff;font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:9px;margin-bottom:6px}
+button.aksi:hover{background:#fbfaf8;border-color:#ddd}
+button.aksi i{font-style:normal;font-size:15px;width:18px;text-align:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.u{aspect-ratio:1;border:1px solid var(--line2);border-radius:10px;background:#fff;display:grid;place-items:center;color:#8a6e4b;overflow:hidden;padding:6px}
+.u:hover{border-color:var(--gold);background:var(--cream)}
+.u.on{border-color:#111;background:#f7f7f5}
+.u svg{width:100%;height:100%;display:block}
+.u.pola{padding:0;background-repeat:repeat;background-size:34px;border-radius:9px}
+.lbl{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut2)}
+.f{display:block;margin-bottom:9px}
+.f>span.kt{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px}
+input[type=text],input[type=number],select,textarea{width:100%;height:32px;padding:0 9px;border:1px solid var(--line2);border-radius:9px;background:#fff;font-size:12.5px}
+textarea{height:auto;padding:8px 9px;resize:vertical;line-height:1.45}
+input[type=range]{width:100%;accent-color:#111}
+input[type=color]{width:34px;height:32px;padding:2px;border:1px solid var(--line2);border-radius:9px;background:#fff;flex:none}
+.baris{display:flex;gap:6px;align-items:center}
+.baris input[type=text]{flex:1;min-width:0}
+.btn-k{height:30px;padding:0 10px;border-radius:9px;border:1px solid var(--line2);background:#fff;font-size:11.5px}
+.btn-k:hover{background:var(--soft)}
+.btn-k.on{background:#111;color:#fff;border-color:#111}
+.btn-k.warn{color:var(--bad);border-color:#f3d6d6}
+.tile{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tile button{height:44px;border:1px solid var(--line2);border-radius:10px;font-size:11.5px;display:grid;place-items:center;gap:1px;background:#fff}
+.tile button:hover{background:#fbfaf8}
+.tile button i{font-style:normal;font-size:15px}
+.catatan{font-size:11px;color:var(--mut);line-height:1.5;background:var(--soft);border-radius:10px;padding:9px 10px;margin-top:8px}
+.catatan b{color:#444}
+
+/* ---------- panggung ---------- */
+.bungkus{position:relative;transform-origin:top left;flex:none}
+#kanvas{position:relative;overflow:hidden;background:#fff;box-shadow:0 14px 46px rgba(0,0,0,.17);border-radius:2px}
+#kanvas .el{position:absolute;cursor:move}
+#kanvas .el.tek{white-space:pre-wrap;word-break:break-word}
+#kanvas .el.kunci{cursor:not-allowed}
+#kanvas .el img{pointer-events:none}
+#lapis{position:absolute;inset:0;pointer-events:none;z-index:20}
+#lapis .bingkai{position:absolute;border:1.5px solid var(--pj);}
+#lapis .peg{position:absolute;width:11px;height:11px;background:#fff;border:1.5px solid var(--pj);border-radius:3px;pointer-events:auto;cursor:pointer}
+#lapis .peg.nw{left:-6px;top:-6px;cursor:nwse-resize}#lapis .peg.n{left:calc(50% - 5.5px);top:-6px;cursor:ns-resize}#lapis .peg.ne{right:-6px;top:-6px;cursor:nesw-resize}
+#lapis .peg.e{right:-6px;top:calc(50% - 5.5px);cursor:ew-resize}#lapis .peg.se{right:-6px;bottom:-6px;cursor:nwse-resize}#lapis .peg.s{left:calc(50% - 5.5px);bottom:-6px;cursor:ns-resize}
+#lapis .peg.sw{left:-6px;bottom:-6px;cursor:nesw-resize}#lapis .peg.w{left:-6px;top:calc(50% - 5.5px);cursor:ew-resize}
+#lapis .peg.putar{left:calc(50% - 6px);top:-30px;border-radius:50%;cursor:grab;font-size:9px;display:grid;place-items:center;color:var(--pj)}
+#pandu{position:absolute;inset:0;pointer-events:none;z-index:30}
+#pandu i{position:absolute;background:var(--pj)}
+#pandu i.v{top:-2000px;height:9000px;width:1px}
+#pandu i.h{left:-2000px;width:9000px;height:1px}
+#petunjuk{position:absolute;left:12px;top:12px;z-index:40;font-size:11px;color:var(--mut);background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:9px;padding:5px 9px;pointer-events:none}
+#petunjuk b{color:#333}
+
+/* ---------- lapisan ---------- */
+.lapis{border:1px solid var(--line2);border-radius:11px;overflow:hidden}
+.lapis .baris-l{display:flex;align-items:center;gap:6px;padding:6px 8px;border-bottom:1px solid var(--line);background:#fff;font-size:12px}
+.lapis .baris-l:last-child{border-bottom:0}
+.lapis .baris-l.on{background:var(--cream)}
+.lapis .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.lapis .ic{width:24px;height:24px;border-radius:7px;font-size:12px;color:var(--mut);display:grid;place-items:center}
+.lapis .ic:hover{background:var(--soft)}
+.lapis .ic.off{opacity:.35}
+
+/* ---------- modal ---------- */
+.tirai{position:fixed;inset:0;background:rgba(17,17,17,.5);backdrop-filter:blur(3px);z-index:80;display:grid;place-items:center;padding:20px}
+.lembar{background:#fff;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.3);width:100%;max-width:820px;max-height:88dvh;overflow:auto;padding:18px}
+.lembar h2{font-size:16px;font-weight:600;margin-bottom:3px}
+.lembar .ket{font-size:12px;color:var(--mut);margin-bottom:12px}
+.lembar .kaki{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.doc{display:flex;gap:11px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:9px;margin-bottom:8px}
+.doc.on{border-color:#111;background:#fcfcfa}
+.doc img{width:56px;height:74px;object-fit:cover;border-radius:7px;border:1px solid var(--line);background:#fff;flex:none}
+.doc .info{flex:1;min-width:0}
+.doc .info b{display:block;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.doc .info span{font-size:11px;color:var(--mut)}
+pre.kode{background:#0f172a;color:#e2e8f0;border-radius:11px;padding:12px;font:11.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;max-height:300px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,26px);background:#111;color:#fff;font-size:12.5px;padding:10px 16px;border-radius:99px;opacity:0;transition:.22s;z-index:90;pointer-events:none;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast.ok{background:#14532d}#toast.bad{background:#7f1d1d}#toast.warn{background:#78350f}
+#cetak{display:none}
+</style>
+</head>
+<body class="sb">
+
+<header class="hdr">
+  <div class="logo">KV</div>
+  <div><h1>Kanvas Template</h1><div class="sub">Kanvas kosong: susun teks, bentuk, bunga &amp; batik sesuka hati — lalu jadikan tema</div></div>
+  <div class="sp"></div>
+  <button class="tb" id="bUndo" onclick="undo()" title="Ctrl+Z" data-help="Kembalikan satu langkah.">↶<span class="lbl"> Undo</span></button>
+  <button class="tb" id="bRedo" onclick="redo()" title="Ctrl+Y" data-help="Ulangi langkah yang dibatalkan.">↷<span class="lbl"> Redo</span></button>
+  <span class="zoom">
+    <button onclick="zoomKe(-1)" data-help="Perkecil tampilan.">−</button>
+    <span id="zLabel">100%</span>
+    <button onclick="zoomKe(1)" data-help="Perbesar tampilan.">+</button>
+    <button onclick="pasHalaman()" title="Sesuaikan layar" data-help="Sesuaikan kanvas dengan ukuran layar.">⤢</button>
+  </span>
+  <button class="tb" id="bSnap" onclick="toggleSnap()" data-help="Tempelkan elemen ke tengah/tepi kanvas dan ke elemen lain.">🧲<span class="lbl"> Snap</span></button>
+  <button class="tb" onclick="bukaBerkas()" data-help="Daftar kanvas, kanvas baru, impor/ekspor JSON.">📄<span class="lbl"> Berkas</span></button>
+  <button class="tb dark" onclick="bukaEkspor()" data-help="HTML mandiri, SVG, JSON, cetak/PDF, atau jadikan tema katalog.">⤓<span class="lbl"> Ekspor</span></button>
+  <a class="tb" href="template-studio.html" data-help="Studio Template: tambah palet, kontras, animasi, lalu pasang ke katalog.">🎨<span class="lbl"> Studio Template</span></a>
+  <a class="tb" href="studio.html" data-help="Studio undangan: tempat tema ini dipakai untuk satu undangan.">✎<span class="lbl"> Studio Undangan</span></a>
+  <button class="tb" onclick="bukaPanduan()" data-help="Cara pakai kanvas dalam 6 langkah.">📘<span class="lbl"> Panduan</span></button>
+</header>
+
+<div class="kvk" id="kvk">
+  <nav class="rail" id="rail">
+    <button class="railb on" data-lib="elemen" onclick="pilihLib('elemen')"><i>＋</i>Elemen</button>
+    <button class="railb" data-lib="teks" onclick="pilihLib('teks')"><i>T</i>Teks</button>
+    <button class="railb" data-lib="latar" onclick="pilihLib('latar')"><i>❖</i>Latar</button>
+    <button class="railb" data-lib="ornamen" onclick="pilihLib('ornamen')"><i>✿</i>Ornamen</button>
+    <button class="railb" data-lib="unggah" onclick="pilihLib('unggah')"><i>⬆</i>Gambar</button>
+  </nav>
+
+  <aside class="lib sb" id="lib"></aside>
+
+  <main class="stage sb" id="stage">
+    <div class="sizer" id="sizer" style="width:900px;height:1200px">
+      <div class="bungkus" id="bungkus" style="width:900px">
+        <div id="kanvas" style="width:900px;height:1200px"></div>
+        <div id="lapis"></div>
+        <div id="pandu"></div>
+      </div>
+    </div>
+    <div id="petunjuk">Klik kanvas untuk mulai · <b>dobel klik</b> teks untuk menulis · <b>Ctrl+Z</b> undo · <b>Del</b> hapus</div>
+  </main>
+
+  <aside class="panel sb" id="panel"></aside>
+</div>
+
+<div id="toast" class=""></div>
+<div id="cetak"></div>
+
+<script src="assets/theme-contrast.js"></script>
+<script src="assets/button-help.js"></script>
+<script>
+/* ====================== MESIN (SALINAN PERSIS dari studio.html) ======================
+   Daftar font, bagian undangan, motif latar, bentuk ornamen, hiasan sudut, dan
+   pembatas disalin apa adanya supaya rancangan di kanvas ini bisa langsung
+   dijadikan tema katalog. Jangan ubah manual — sinkronkan dengan:
+   python3 tools/sinkron-studio-template.py
+   ============================================================================ */
+const FONTS=[
+ {id:'cormorant',name:'Cormorant Garamond',fam:'"Cormorant Garamond",serif'},
+ {id:'playfair',name:'Playfair Display',fam:'"Playfair Display",serif'},
+ {id:'poppins',name:'Poppins Bold',fam:'"Poppins",sans-serif'},
+ {id:'inter',name:'Inter',fam:'"Inter",sans-serif'},
+ {id:'lora',name:'Lora',fam:'"Lora",serif'},
+ /* 10 font baru */
+ {id:'montserrat',name:'Montserrat',fam:'"Montserrat",sans-serif'},
+ {id:'bebas',name:'Bebas Neue (display)',fam:'"Bebas Neue",sans-serif'},
+ {id:'oswald',name:'Oswald (condensed)',fam:'"Oswald",sans-serif'},
+ {id:'ebgaramond',name:'EB Garamond (klasik)',fam:'"EB Garamond",serif'},
+ {id:'merriweather',name:'Merriweather (serif)',fam:'"Merriweather",serif'},
+ {id:'work-sans',name:'Work Sans',fam:'"Work Sans",sans-serif'},
+ {id:'pacifico',name:'Pacifico (script)',fam:'"Pacifico",cursive'},
+ {id:'dancing',name:'Dancing Script',fam:'"Dancing Script",cursive'},
+ {id:'caveat',name:'Caveat (tulis tangan)',fam:'"Caveat",cursive'},
+ {id:'sacramento',name:'Sacramento (elegan)',fam:'"Sacramento",cursive'},
+ {id:'cinzel',name:'Cinzel Imperial 🔒',fam:'"Cinzel",serif',ex:1},
+ {id:'marcellus',name:'Marcellus Royal 🔒',fam:'"Marcellus",serif',ex:1}]
+const SLIDES=[
+ {id:'timeline',ic:'⏱️',nm:'Timeline Acara',ds:'Urutan sesi acara (jam — judul)',type:'list',ph:'08:00 — Akad Nikah\n11:00 — Resepsi'},
+ {id:'story',ic:'💞',nm:'Cerita Kami',ds:'Kisah singkat di balik acara ini',type:'area',ph:'Kami bertemu di ...'},
+ {id:'quote',ic:'❝',nm:'Quote / Ayat',ds:'Kutipan atau ayat — bawaan per acara bila dikosongkan',type:'quote'},
+ {id:'menu',ic:'🍽️',nm:'Menu Acara',ds:'Daftar menu (nama — deskripsi)',type:'list',ph:'Sup Iga — Bawang Bakar\nAyam Panggang — Timun'},
+ {id:'party',ic:'🎩',nm:'Panitia / Bridal Party',ds:'Nama — peran',type:'list',ph:'Budi — Groomsman\nSari — Bridesmaid'},
+ {id:'dresscode',ic:'👗',nm:'Dress Code',ds:'Pemanduan busana + palet warna',type:'dress'},
+ {id:'gift',ic:'🎁',nm:'Alamat Kado',ds:'Informasi kado fisik / kartu ucapan',type:'area',ph:'Jl. Contoh No. 1 ...'},
+ {id:'map',ic:'🗺️',nm:'Peta Lokasi',ds:'Embed peta dari alamat/mapsLink di Info Acara',type:'none'},
+ {id:'rsvp',ic:'✉️',nm:'Form RSVP',ds:'Tamu konfirmasi kehadiran langsung ke WhatsApp',type:'none'},
+ {id:'closing',ic:'🤍',nm:'Pesan Penutup',ds:'Ucapan penutup dari penyelenggara',type:'area',ph:'Terima kasih ...'}]
+function patCss(t){
+ const tile=(svg,size)=>`background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${size};background-repeat:repeat;`;
+ if(t.pat==='batik'){
+  const c=t.accent||'#8b653d';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".24" stroke-width="1.5"><path d="M48 4C65 17 65 27 48 41 31 27 31 17 48 4ZM92 48C79 65 69 65 55 48 69 31 79 31 92 48ZM48 92C31 79 31 69 48 55 65 69 65 79 48 92ZM4 48C17 31 27 31 41 48 27 65 17 65 4 48Z"/><path d="M48 31 65 48 48 65 31 48Z"/><circle cx="48" cy="48" r="4"/></g></svg>`, '48px 48px');
+ }
+ if(t.pat==='botanical'){
+  const c=t.accent||'#66816a';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><g fill="none" stroke="${c}" stroke-opacity=".17" stroke-width="1.5" stroke-linecap="round"><path d="M14 108C42 87 65 56 106 13"/><path d="M34 92C17 89 15 73 16 67 31 65 42 75 34 92ZM52 73C36 71 34 57 35 51 51 49 60 59 52 73ZM72 51C57 48 56 34 58 28 73 28 81 39 72 51ZM39 89C42 73 56 69 63 70 64 85 53 95 39 89ZM59 66C62 51 76 47 83 49 83 64 73 73 59 66ZM81 42C84 29 96 24 102 26 103 39 94 48 81 42Z"/></g></svg>`, '120px 120px');
+ }
+ if(t.pat==='frost'){
+  const c=t.accent||'#38BDF8';
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".2" stroke-width="1.35" stroke-linecap="round"><path d="M24 12v28M12 19l24 14M36 19 12 33M70 52v32M56 61l28 15M84 61 56 76M48 48l7 7-7 7-7-7Z"/><path d="m20 17 4 4 4-4m-16 12 5-1 1 5m16-5-5-1-1 5m28 30 4 5 4-5m-16 13 5-1 1 5m16-5-5-1-1 5"/></g></svg>`, '96px 96px');
+ }
+ if(t.pat==='rose'){
+  const c=t.accent||'#C2708A';
+  const mawar=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})" fill="none" stroke="${c}" stroke-opacity=".22" stroke-width="1.3" stroke-linecap="round"><path d="M2 3a6 6 0 1 0-6-6 12 12 0 1 0 12 12 18 18 0 1 0-18-18"/><path d="M13 17c6 3 12 1 14-4-6-2-12 0-14 4"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">${mawar(26,28,1)}${mawar(72,74,.8)}</svg>`, '96px 96px');
+ }
+ if(t.pat==='sakura'){
+  const c=t.accent||'#D98BAA';
+  const kelopak=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><g fill="none" stroke="${c}" stroke-opacity=".24" stroke-width="1.2">${[0,72,144,216,288].map(a=>`<path transform="rotate(${a})" d="M0-19c5 6 5 12 0 17-5-5-5-11 0-17Z"/>`).join('')}</g><circle r="2.6" fill="${c}" fill-opacity=".3"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 84">${kelopak(24,24,1)}${kelopak(62,64,.78)}</svg>`, '84px 84px');
+ }
+ if(t.pat==='daisy'){
+  const c=t.accent||'#C7A24A';
+  const bunga=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><g fill="none" stroke="${c}" stroke-opacity=".22" stroke-width="1.1">${[0,45,90,135,180,225,270,315].map(a=>`<ellipse transform="rotate(${a})" cx="0" cy="-12" rx="3.4" ry="6.2"/>`).join('')}<circle r="3"/></g></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">${bunga(20,20,1)}${bunga(52,54,.8)}</svg>`, '72px 72px');
+ }
+ if(t.pat==='vine'){
+  const c=t.accent||'#66816a';
+  const daun=(x,y,a)=>`<g transform="translate(${x} ${y}) rotate(${a})"><path d="M0 0q7-9 15 0-7 9-15 0Z" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-opacity=".28" stroke-width="1"/><path d="M1 0h12" stroke="${c}" stroke-opacity=".24" stroke-width=".8"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><g fill="none" stroke="${c}" stroke-opacity=".2" stroke-width="1.3" stroke-linecap="round"><path d="M6 122C40 104 74 74 122 6"/></g>${daun(30,94,-38)}${daun(52,74,-24)}${daun(76,50,-16)}${daun(98,26,-8)}${daun(44,86,142)}${daun(82,44,150)}</svg>`, '128px 128px');
+ }
+ if(t.pat==='parang'){
+  const c=t.accent||'#8b653d';
+  const bilah=(x,y)=>`<g transform="translate(${x} ${y})"><path d="M0 44C16 34 26 20 28 0 18 16 8 26 0 30Z" fill="${c}" fill-opacity=".13" stroke="${c}" stroke-opacity=".26" stroke-width="1.1"/><path d="M6 8c3 10 1 20-4 28" stroke="${c}" stroke-opacity=".2" stroke-width=".9" fill="none"/></g>`;
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g opacity=".95">${bilah(6,26)}${bilah(50,26)}${bilah(6,74)}${bilah(50,74)}</g><path d="M0 20h96M0 68h96" stroke="${c}" stroke-opacity=".1" stroke-width="1"/></svg>`, '96px 96px');
+ }
+ if(t.pat==='mendung'){
+  const c=t.accent||'#7A93C4';
+  const awan=(y,w)=>{let d='M0 '+y+'q'+w/2+' -'+w/2+' '+w+' 0';for(let k=1;k<4;k++)d+='t'+w+' 0';return d};
+  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><g fill="none" stroke="${c}" stroke-linecap="round"><path d="${awan(20,30)}" stroke-opacity=".22" stroke-width="1.4"/><path d="${awan(34,30)}" stroke-opacity=".17" stroke-width="1.3"/><path d="${awan(48,30)}" stroke-opacity=".12" stroke-width="1.2"/><path d="${awan(76,30)}" stroke-opacity=".2" stroke-width="1.4"/><path d="${awan(90,30)}" stroke-opacity=".14" stroke-width="1.2"/></g></svg>`, '120px 120px');
+ }
+ if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}14 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0f 0 2px,transparent 2px 16px);`;
+ if(t.pat==='confetti')return `background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
+ return ''}
+function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
+function artDekoSudut(kind){
+ if(kind==='floral')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M3 61C20 47 33 30 44 6"/><path d="M44 6c2 9 9 15 17 15-4 8-13 12-21 8"/><path d="M33 24c-8-2-14-8-15-16 9 0 16 5 18 13"/><path d="M18 43c-8 0-14-4-16-12 8-2 15 1 19 8"/><circle cx="47" cy="21" r="2.4" fill="currentColor" stroke="none"/></svg>';
+ if(kind==='batik')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 61C18 52 28 38 34 16"/><path d="M34 16c7 3 13 2 18-3-1 8-6 13-13 14"/><path d="M20 33c-8 1-14-3-16-10 8-1 14 3 17 10"/><path d="M34 16c-8-1-13-6-14-14 8 1 13 6 14 14Z"/><circle cx="46" cy="30" r="2"/><circle cx="17" cy="41" r="2"/><path d="M12 56h10M50 12h9"/></svg>';
+ if(kind==='vine')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2 62C20 50 34 32 46 8"/><path d="M46 8c-9 0-16-4-18-12 9-1 16 4 18 12Z" fill="currentColor" fill-opacity=".12"/><path d="M32 27c-9 1-16-1-19-8 8-2 15 1 19 8Z" fill="currentColor" fill-opacity=".12"/><path d="M17 46c-8 2-15 1-19-5 7-3 14-1 19 5Z" fill="currentColor" fill-opacity=".12"/><path d="M40 16c8-3 15-2 19 4-7 4-14 2-19-4Z" fill="currentColor" fill-opacity=".12"/></svg>';
+ if(kind==='gold')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 61C16 44 26 27 30 4"/><path d="M30 4c8 6 17 9 27 8-6 8-16 12-27 8"/><path d="M30 4c-4 8-11 14-20 15 3 8 12 12 20 8"/><path d="M8 44h14M44 16h14"/><circle cx="38" cy="34" r="3"/><circle cx="22" cy="52" r="2.2"/></svg>';
+ if(kind==='lace')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 60h20a10 10 0 0 1 10-10 10 10 0 0 0 10-10 10 10 0 0 0 6-9"/><path d="M4 60a9 9 0 0 0 9-9" stroke-dasharray="2 3"/><path d="M34 50a9 9 0 0 1 9-9M24 60a9 9 0 0 1 9-9" stroke-dasharray="2 3"/><circle cx="13" cy="51" r="2.4"/><circle cx="53" cy="11" r="2.4"/></svg>';
+ if(kind==='ribbon')return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M4 60C18 50 30 36 40 16"/><path d="M40 16c-8-6-9-16-2-13 5 2 6 8 2 13Z"/><path d="M40 16c8-6 9-16 2-13-5 2-6 8-2 13Z"/><path d="M42 22c4 6 2 12-2 12s-6-6-2-12Z" fill="currentColor" fill-opacity=".18"/><path d="M24 40c-3 7-9 10-14 8 2-7 8-11 14-8Z"/></svg>';
+ return ''}
+function artDekoDiv(kind){
+ if(kind==='line')return '<svg viewBox="0 0 140 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 7h46M92 7h46"/><path d="M70 1.5 75 7l-5 5.5L65 7Z" fill="currentColor" stroke="none"/><circle cx="57" cy="7" r="2"/><circle cx="83" cy="7" r="2"/></svg>';
+ if(kind==='diamond')return '<svg viewBox="0 0 140 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 7h34M104 7h34"/><path d="M70 1 76 7l-6 6-6-6Z" fill="currentColor" stroke="none"/><path d="M52 3 58 7l-6 4-6-4Z" fill="currentColor" fill-opacity=".45" stroke="none"/><path d="M88 3 94 7l-6 4-6-4Z" fill="currentColor" fill-opacity=".45" stroke="none"/></svg>';
+ if(kind==='flower')return '<svg viewBox="0 0 140 22" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M2 11h40M98 11h40"/><path d="M52 11c4-4 8-4 10 0"/><circle cx="70" cy="8" r="3.4"/><path d="M70 11c0 4 0 7-1 10"/><path d="M69 17c-4-1-6-3-6-5 3-1 5 1 6 5Z" fill="currentColor" fill-opacity=".3"/><path d="M69 17c4-1 6-3 6-5-3-1-5 1-6 5Z" fill="currentColor" fill-opacity=".3"/><path d="M61 11c3-5 6-5 9 0-3 5-6 5-9 0Z" fill="currentColor" fill-opacity=".25"/><path d="M79 11c-3-5-6-5-9 0 3 5 6 5 9 0Z" fill="currentColor" fill-opacity=".25"/></svg>';
+ if(kind==='batik')return '<svg viewBox="0 0 140 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 9c6-6 12-6 18 0s12 6 18 0 12-6 18 0 12 6 18 0"/><path d="M66 9c6-6 12-6 18 0s12 6 18 0 12-6 18 0 12 6 18 0"/><circle cx="70" cy="4" r="1.8"/><circle cx="97" cy="4" r="1.8"/></svg>';
+ if(kind==='ribbon')return '<svg viewBox="0 0 140 20" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M2 10h44M94 10h44"/><path d="M70 4c-6-4-12-3-12 1s6 6 12 5Z" fill="currentColor" fill-opacity=".25"/><path d="M70 4c6-4 12-3 12 1s-6 6-12 5Z" fill="currentColor" fill-opacity=".25"/><circle cx="70" cy="4" r="2.6"/><path d="M70 12c-2 3-4 5-7 6M70 12c2 3 4 5 7 6"/></svg>';
+ return ''}
+const DEKO_BENTUK={
+ petal:'<svg viewBox="0 0 24 24"><path d="M12 2c5 5 7 10 5 14-1 3-3 5-5 5s-4-2-5-5C5 12 7 7 12 2Z" fill="currentColor" opacity=".5"/></svg>',
+ sakura:'<svg viewBox="0 0 24 24">'+[0,72,144,216,288].map(a=>'<path transform="rotate('+a+' 12 12)" d="M12 2c2.4 2.8 2.4 5.6 0 8-2.4-2.4-2.4-5.2 0-8Z" fill="currentColor" opacity=".46"/>').join('')+'<circle cx="12" cy="12" r="1.6" fill="currentColor" opacity=".5"/></svg>',
+ leaf:'<svg viewBox="0 0 24 24"><path d="M3 21C4 9 12 3 21 3c0 9-6 17-18 18Z" fill="currentColor" opacity=".4"/><path d="M4 20 18 6" stroke="currentColor" stroke-width="1" opacity=".55"/></svg>',
+ snow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".55"><path d="M12 2v20M4 7l16 10M20 7 4 17"/><path d="m12 5 2 2-2 2-2-2ZM12 15l2 2-2 2-2-2Z"/></svg>',
+ dust:'',bubble:''}
+const DKO_IDS=['floral','batik','vine','gold','lace','ribbon']
+const FLT_IDS=['petal','sakura','leaf','dust','snow','bubble']
+const DVD_IDS=['line','diamond','flower','batik','ribbon']
+
+/* ============================================================================
+   KANVAS AsProject — kanvas kosong (gaya Canva) untuk merancang template.
+   Semua daftar mesin (font, motif, bentuk ornamen, hiasan sudut, bagian
+   undangan) adalah SALINAN PERSIS dari studio.html supaya rancangan di sini
+   bisa langsung dijadikan tema katalog. Jalankan ulang bila mesin berubah:
+   python3 tools/sinkron-studio-template.py
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- utilitas */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.prototype.slice.call(document.querySelectorAll(s));
+const KV_KEY = 'asproject.kanvas.v1';
+const HANDOFF = 'asproject.kanvas.handoff';
+const TIPE = ['teks', 'kotak', 'bulat', 'garis', 'gambar', 'ornamen', 'hias'];
+const RATA = ['left', 'center', 'right'];
+/* Hiasan = hiasan sudut (artDekoSudut) + pembatas (artDekoDiv); hanya yang benar-benar
+   menghasilkan gambar yang dipakai. Motif diturunkan dari patCss() supaya jumlah dan
+   urutannya selalu ikut mesin — tidak ada daftar kedua yang bisa basi. */
+function artHias(jenis) { const a = artDekoSudut(jenis); return /^<svg/.test(a) ? a : artDekoDiv(jenis); }
+const KANDIDAT_HIAS = ['floral', 'batik', 'vine', 'gold', 'lace', 'ribbon', 'line', 'diamond'];
+const JENIS_HIAS = KANDIDAT_HIAS.filter(k => /^<svg/.test(artHias(k)));
+const PAT_IDS = [''].concat(Array.from(new Set((patCss.toString().match(/t\.pat==='([a-z]+)'/g) || [])
+  .map(x => x.replace(/t\.pat==='|'/g, ''))))).filter(p => !p || patCss({ pat: p, accent: '#000000' }));
+const SLIDE_BAWAAN = ['quote', 'timeline', 'map', 'rsvp'];
+const BORDER_HIAS = { floral: 'floral-corner', batik: 'batik-frame', vine: 'vine-frame', gold: 'gold-corner', ribbon: 'ribbon-corner', lace: 'lace-edge', line: 'triple-frame', diamond: 'diamond-stud' };
+const DEKO_SAH = { dko: DKO_IDS, flt: FLT_IDS, dvd: DVD_IDS };
+
+function esc(x) { return String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function px(n) { return (Math.round(Number(n) * 10) / 10) + 'px'; }
+function angka(v, f) { const n = parseFloat(v); return isFinite(n) ? n : f; }
+const HEX6 = /^#[0-9a-f]{6}$/i, HEXA = /^#[0-9a-f]{3}([0-9a-f]{3})?([0-9a-f]{2})?$/i;
+function warnaAman(c, f) {
+  c = String(c == null ? '' : c).trim();
+  if (HEXA.test(c)) return c;
+  if (/^rgba?\(\s*[\d.]+%?\s*,\s*[\d.]+%?\s*,\s*[\d.]+%?\s*(,\s*[\d.]+\s*)?\)$/i.test(c)) return c;
+  if (c === 'transparent') return 'transparent';
+  return f;
+}
+function srcAman(s) {
+  s = String(s == null ? '' : s).trim();
+  if (/^data:image\/(png|jpe?g|gif|webp|avif);base64,[A-Za-z0-9+/=\s]+$/i.test(s)) return s.replace(/\s+/g, '');
+  if (/^data:image\/svg\+xml[;,]/.test(s) && !/[<>]|on\w+=/i.test(s.slice(0, 400))) return s;
+  if (/^(\.{0,2}\/)?[A-Za-z0-9._\-\/]+\.(png|jpe?g|gif|webp|svg)$/i.test(s)) return s;
+  if (/^https:\/\/[A-Za-z0-9._\-]+\/[A-Za-z0-9._\-\/%]+\.(png|jpe?g|gif|webp|svg)$/i.test(s)) return s;
+  return '';
+}
+function hexRgb(h) { h = String(h || '').replace('#', ''); if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2]; const n = parseInt(h.slice(0, 6), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function rgbHex(r, g, b) { const f = v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0'); return '#' + f(r) + f(g) + f(b); }
+function campur(a, b, t) { const x = hexRgb(a), y = hexRgb(b); return rgbHex(x[0] + (y[0] - x[0]) * t, x[1] + (y[1] - x[1]) * t, x[2] + (y[2] - x[2]) * t); }
+function terang(h, t) { return campur(h, '#ffffff', t); }
+function gelap(h, t) { return campur(h, '#000000', t); }
+function kontras(a, b) {
+  if (window.TC && TC.kontras) return TC.kontras(a, b);
+  const L = h => { const c = hexRgb(h).map(v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4) }); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2] };
+  const x = L(a), y = L(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05);
+}
+function inkAman(ink, g) {
+  if (window.TC && TC.perbaiki) { try { return TC.perbaiki(ink, g, 4.5) } catch (e) { } }
+  return ink;
+}
+function slugify(x) { return String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40); }
+function notify(pesan, jenis) { const t = $('#toast'); if (!t) return; t.textContent = pesan; t.className = 'on ' + (jenis || ''); clearTimeout(notify._t); notify._t = setTimeout(() => { t.className = ''; }, 2600); }
+function unduh(nama, isi, jenis) {
+  const blob = new Blob([isi], { type: jenis || 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = nama; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+function salin(teks, pesan) {
+  const s = String(teks || '');
+  const ja = () => notify(pesan || 'Disalin ke papan klip.', 'ok');
+  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(s).then(ja, () => salinLama(s, ja)); return; }
+  salinLama(s, ja);
+}
+function salinLama(s, ja) {
+  const t = document.createElement('textarea');
+  t.value = s; t.style.position = 'fixed'; t.style.left = '-9999px';
+  document.body.appendChild(t); t.select();
+  try { document.execCommand('copy'); ja(); } catch (e) { notify('Papan klip tidak tersedia — salin manual dari kotak kode.', 'warn'); }
+  t.remove();
+}
+function svgPecah(sv) {
+  const m = /viewBox="([^"]+)"/.exec(sv) || [];
+  const isi = String(sv).replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+  const vb = (m[1] || '0 0 24 24').split(/[\s,]+/).map(Number);
+  return { vb: m[1] || '0 0 24 24', w: vb[2] || 24, h: vb[3] || 24, isi };
+}
+function artHtml(art, warna) { const a = svgPecah(art); return '<svg viewBox="' + esc(a.vb) + '" width="100%" height="100%" style="display:block;overflow:visible">' + a.isi.replace(/currentColor/g, warna) + '</svg>'; }
+function artSvg(art, x, y, w, h, warna) {
+  const a = svgPecah(art);
+  return '<g transform="translate(' + angka(x, 0) + ' ' + angka(y, 0) + ') scale(' + (w / a.w).toFixed(4) + ' ' + (h / a.h).toFixed(4) + ')">' + a.isi.replace(/currentColor/g, warna) + '</g>';
+}
+
+/* ------------------------------------------------------------- preset tema */
+const TEKS_PRESET = [
+  { id: 'judul', nama: 'Judul besar', isi: 'RANGGA & ALYA', font: 'cormorant', ukuran: 64, bobot: 600, spasi: 2, tinggi: 1.15, rata: 'center', warna: '#2B2118', kapital: true },
+  { id: 'sub', nama: 'Subjudul', isi: 'The Wedding Of', font: 'inter', ukuran: 15, bobot: 500, spasi: 6, tinggi: 1.4, rata: 'center', warna: '#8A6E4B', kapital: true },
+  { id: 'nama', nama: 'Nama mempelai', isi: 'Rangga Pratama\n&\nAlya Zahra', font: 'playfair', ukuran: 42, bobot: 600, spasi: 1, tinggi: 1.3, rata: 'center', warna: '#2B2118' },
+  { id: 'tanggal', nama: 'Tanggal & tempat', isi: 'Sabtu, 28 Desember 2026\nThe Ballroom at Ritz Carlton', font: 'ebgaramond', ukuran: 20, bobot: 500, spasi: 1, tinggi: 1.5, rata: 'center', warna: '#2B2118' },
+  { id: 'isi', nama: 'Paragraf', isi: 'Dengan memohon rahmat Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami.', font: 'lora', ukuran: 15, bobot: 400, spasi: 0, tinggi: 1.65, rata: 'center', warna: '#3F3A34' },
+  { id: 'quote', nama: 'Kutipan', isi: '"Dan di antara tanda-tanda kekuasaan-Nya, Dia menciptakan pasangan untukmu dari jenismu sendiri."', font: 'lora', ukuran: 15, bobot: 400, spasi: 0, tinggi: 1.7, rata: 'center', warna: '#6B6257' },
+  { id: 'kredit', nama: 'Kredit kecil', isi: 'AsProject · asproject.id', font: 'inter', ukuran: 10, bobot: 500, spasi: 2, tinggi: 1.4, rata: 'center', warna: '#9A9088', kapital: true }
+];
+const UKURAN_KANVAS = [
+  { id: 'undangan', nama: 'Undangan 3:4', w: 900, h: 1200 },
+  { id: 'feed', nama: 'Feed 1:1', w: 1080, h: 1080 },
+  { id: 'story', nama: 'Story 9:16', w: 1080, h: 1920 },
+  { id: 'a4', nama: 'A4 cetak', w: 1240, h: 1754 }
+];
+const PALET = [
+  { id: 'ivory', nama: 'Ivory hangat', a: '#FBF7F0', b: '#EADFCB', aksen: '#8A6E4B' },
+  { id: 'sage', nama: 'Sage tenang', a: '#F4F7F2', b: '#D8E3D2', aksen: '#5F7A5A' },
+  { id: 'rose', nama: 'Rose lembut', a: '#FBE9E7', b: '#F3C9C4', aksen: '#A66A5E' },
+  { id: 'jawa', nama: 'Jawa klasik', a: '#F7EFE2', b: '#E0C79A', aksen: '#7A5C3E' },
+  { id: 'biru', nama: 'Biru navy', a: '#EEF3F9', b: '#C9D8EA', aksen: '#2F4A6D' },
+  { id: 'ungu', nama: 'Ungu dusk', a: '#F3EEF8', b: '#DCCFEC', aksen: '#6B4E8F' },
+  { id: 'gold', nama: 'Hitam emas', a: '#151515', b: '#3A3324', aksen: '#D4AF37' },
+  { id: 'hijau', nama: 'Emerald', a: '#0F2A24', b: '#1E4C40', aksen: '#C8A96A' }
+];
+
+/* --------------------------------------------------------- dokumen & layar */
+let dok = [], cur = null, pilih = '', riw = [], rpos = -1;
+let skalaTampil = 1, snapAktif = true, garisPandu = [], seret = null, libAktif = 'elemen', dokIdTerakhir = '';
+
+function dokBaru(nama, w, h) {
+  return {
+    id: 'kv' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+    nama: nama || 'Kanvas tanpa judul', w: w || 900, h: h || 1200,
+    bg: { mode: 'polos', warna: '#FFFFFF', warna2: '#F3EAD9', sudut: 160, motif: '', aksen: '#8A6E4B' },
+    els: [], meta: { dibuat: Date.now(), diubah: Date.now() }
+  };
+}
+function bakuBg(b) {
+  b = b || {};
+  const mode = ['polos', 'gradasi', 'motif'].indexOf(b.mode) >= 0 ? b.mode : 'polos';
+  return {
+    mode: mode, warna: warnaAman(b.warna, '#FFFFFF'), warna2: warnaAman(b.warna2, '#F3EAD9'),
+    sudut: angka(b.sudut, 160), motif: PAT_IDS.indexOf(String(b.motif || '')) >= 0 ? String(b.motif || '') : '',
+    aksen: warnaAman(b.aksen, '#8A6E4B')
+  };
+}
+function bakuEl(e) {
+  e = e || {};
+  const t = TIPE.indexOf(e.tipe) >= 0 ? e.tipe : 'teks';
+  const b = Object.assign({}, elBaru(t), e);
+  b.id = String(e.id || b.id).slice(0, 40); b.tipe = t;
+  b.x = angka(b.x, 0); b.y = angka(b.y, 0);
+  b.w = Math.max(6, angka(b.w, 100)); b.h = Math.max(2, angka(b.h, 40));
+  b.rot = Math.round(angka(b.rot, 0) * 10) / 10;
+  b.op = Math.min(1, Math.max(.05, angka(b.op, 1)));
+  b.kunci = !!b.kunci; b.sembunyi = !!b.sembunyi;
+  b.warna = warnaAman(b.warna, '#2B2118');
+  if (t === 'teks') {
+    b.isi = String(e.isi == null ? '' : e.isi).slice(0, 3000);
+    b.font = FONTS.some(f => f.id === b.font) ? b.font : 'cormorant';
+    b.ukuran = Math.min(400, Math.max(6, angka(b.ukuran, 32)));
+    b.bobot = [400, 500, 600, 700, 900].indexOf(Number(b.bobot)) >= 0 ? Number(b.bobot) : 600;
+    b.spasi = Math.max(-5, Math.min(40, angka(b.spasi, 0)));
+    b.tinggi = Math.max(.8, Math.min(3, angka(b.tinggi, 1.35)));
+    b.rata = RATA.indexOf(b.rata) >= 0 ? b.rata : 'center';
+    b.kapital = !!b.kapital;
+    b.bayangan = !!b.bayangan;
+  } else b.isi = String(e.isi == null ? '' : e.isi).slice(0, 800);
+  if (t === 'kotak' || t === 'bulat') {
+    b.isi = warnaAman(b.isi, '#FFFFFF'); b.garis = warnaAman(b.garis, 'transparent');
+    b.tebal = Math.max(0, Math.min(60, angka(b.tebal, 0)));
+    b.radius = Math.max(0, Math.min(600, angka(b.radius, 0)));
+  }
+  if (t === 'garis') b.putus = !!b.putus;
+  if (t === 'gambar') { b.src = srcAman(b.src); b.radius = Math.max(0, Math.min(600, angka(b.radius, 0))); }
+  if (t === 'ornamen') b.bentuk = DEKO_BENTUK[b.bentuk] ? b.bentuk : 'flower';
+  if (t === 'hias') b.jenis = JENIS_HIAS.indexOf(b.jenis) >= 0 ? b.jenis : 'floral';
+  return b;
+}
+function bakuDok(d) {
+  if (!d || typeof d !== 'object') return null;
+  const o = dokBaru(String(d.nama || 'Kanvas tanpa judul').slice(0, 80), Math.max(120, angka(d.w, 900)), Math.max(120, angka(d.h, 1200)));
+  o.id = String(d.id || o.id).slice(0, 40);
+  o.bg = bakuBg(d.bg);
+  o.els = (Array.isArray(d.els) ? d.els : []).slice(0, 300).map(bakuEl);
+  o.meta = { dibuat: angka(d.meta && d.meta.dibuat, Date.now()), diubah: angka(d.meta && d.meta.diubah, Date.now()) };
+  return o;
+}
+function elBaru(tipe, lebih) {
+  const dasar = {
+    id: 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+    tipe: tipe, x: 0, y: 0, w: 300, h: 120, rot: 0, op: 1, kunci: false, sembunyi: false, warna: '#2B2118'
+  };
+  const per = {
+    teks: { w: 600, h: 130, isi: 'Tulis di sini', font: 'cormorant', ukuran: 48, bobot: 600, spasi: 1, tinggi: 1.25, rata: 'center', kapital: false },
+    kotak: { w: 320, h: 200, isi: '#FFFFFF', garis: '#D9C6A5', tebal: 1, radius: 14 },
+    bulat: { w: 200, h: 200, isi: '#F3EAD9', garis: '#D9C6A5', tebal: 1, radius: 0 },
+    garis: { w: 320, h: 2, warna: '#8A6E4B', putus: false },
+    gambar: { w: 420, h: 300, src: '', radius: 12 },
+    ornamen: { w: 140, h: 140, bentuk: 'flower', warna: '#8A6E4B' },
+    hias: { w: 150, h: 150, jenis: 'floral', warna: '#8A6E4B' }
+  }[tipe] || {};
+  return Object.assign(dasar, per, lebih || {});
+}
+function elDari(id) { return cur ? cur.els.filter(e => e.id === id)[0] || null : null; }
+function elPilih() { return pilih ? elDari(pilih) : null; }
+
+function simpan() {
+  try {
+    localStorage.setItem(KV_KEY, JSON.stringify({ v: 1, dok: dok, aktif: cur ? cur.id : '', opts: { zoom: skalaTampil, snap: snapAktif } }));
+    return true;
+  } catch (e) {
+    notify('Penyimpanan perangkat penuh — ekspor JSON dulu supaya rancangan tidak hilang.', 'bad');
+    return false;
+  }
+}
+function muat() {
+  try {
+    const raw = localStorage.getItem(KV_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d && Array.isArray(d.dok)) dok = d.dok.map(bakuDok).filter(Boolean);
+    if (d && d.opts) { if (angka(d.opts.zoom, 0) > 0) skalaTampil = Math.min(2, Math.max(.1, angka(d.opts.zoom, 1))); snapAktif = d.opts.snap !== false; }
+    dokIdTerakhir = String(d && d.aktif || '');
+  } catch (e) { }
+}
+
+/* --------------------------------------------------------------- riwayat */
+function jepret() { return cur ? JSON.stringify({ nama: cur.nama, w: cur.w, h: cur.h, bg: cur.bg, els: cur.els }) : ''; }
+function catat() {
+  if (!cur) return;
+  const s = jepret();
+  if (riw[rpos] === s) return;
+  riw = riw.slice(0, rpos + 1); riw.push(s);
+  if (riw.length > 90) riw.shift();
+  rpos = riw.length - 1;
+  cur.meta.diubah = Date.now();
+  simpan(); tombolRiwayat();
+}
+function dariJepret(s) {
+  if (!cur || !s) return;
+  const o = JSON.parse(s);
+  cur.nama = String(o.nama || cur.nama); cur.w = o.w; cur.h = o.h; cur.bg = bakuBg(o.bg);
+  cur.els = o.els.map(bakuEl);
+  gambarPanggung(); renderPanel(); renderLapisan(); simpan();
+}
+function undo() { if (rpos <= 0) return notify('Tidak ada lagi yang bisa dibatalkan.', 'warn'); rpos--; dariJepret(riw[rpos]); tombolRiwayat(); }
+function redo() { if (rpos >= riw.length - 1) return notify('Tidak ada lagi yang bisa diulang.', 'warn'); rpos++; dariJepret(riw[rpos]); tombolRiwayat(); }
+function tombolRiwayat() {
+  const u = $('#bUndo'), r = $('#bRedo');
+  if (u) u.disabled = rpos <= 0;
+  if (r) r.disabled = rpos >= riw.length - 1;
+}
+
+/* -------------------------------------------------------------- tampilan */
+function bgStyle(d) {
+  const b = bakuBg(d.bg), w1 = b.warna;
+  if (b.mode === 'motif' && b.motif) {
+    const p = patCss({ pat: b.motif, accent: b.aksen });
+    if (p) return 'background-color:' + w1 + ';' + p;
+  }
+  if (b.mode === 'gradasi') return 'background:linear-gradient(' + angka(b.sudut, 160) + 'deg,' + w1 + ',' + b.warna2 + ')';
+  return 'background:' + w1 + '';
+}
+function elHtml(e) {
+  const st = ['left:' + px(e.x), 'top:' + px(e.y), 'width:' + px(e.w), 'height:' + px(e.h)];
+  if (e.rot) st.push('transform:rotate(' + angka(e.rot, 0) + 'deg)');
+  if (e.op < 1) st.push('opacity:' + angka(e.op, 1));
+  if (e.sembunyi) st.push('display:none');
+  const cls = 'el t-' + e.tipe + (e.kunci ? ' kunci' : '');
+  const at = ' class="' + cls + '" data-id="' + esc(e.id) + '" style="' + esc(st.join(';')) + '"';
+  if (e.tipe === 'teks') {
+    const st2 = st.concat(['font-family:' + fontFam(e.font), 'font-size:' + px(e.ukuran), 'font-weight:' + angka(e.bobot, 600),
+      'letter-spacing:' + angka(e.spasi, 0) + 'px', 'line-height:' + angka(e.tinggi, 1.35), 'text-align:' + e.rata, 'color:' + e.warna]);
+    if (e.kapital) st2.push('text-transform:uppercase');
+    if (e.bayangan) st2.push('text-shadow:0 2px 10px rgba(0,0,0,.35)');
+    return '<div class="' + cls + '" data-id="' + esc(e.id) + '" style="' + esc(st2.join(';')) + '">' + esc(e.isi) + '</div>';
+  }
+  if (e.tipe === 'kotak' || e.tipe === 'bulat') {
+    const st2 = st.concat(['background:' + e.isi, 'border:' + angka(e.tebal, 0) + 'px solid ' + e.garis, 'border-radius:' + (e.tipe === 'bulat' ? '50%' : px(e.radius))]);
+    return '<div' + at + ' style="' + esc(st2.join(';')) + '"></div>';
+  }
+  if (e.tipe === 'garis') {
+    const st2 = st.concat(['background:' + e.warna, 'border-radius:99px']);
+    if (e.putus) st2.push('background-image:repeating-linear-gradient(90deg,' + e.warna + ' 0 12px,transparent 12px 22px)');
+    return '<div' + at + ' style="' + esc(st2.join(';')) + '"></div>';
+  }
+  if (e.tipe === 'gambar') {
+    const st2 = st.concat(['border-radius:' + px(e.radius), 'overflow:hidden', 'background:#F1F1EC']);
+    const isi = e.src ? '<img src="' + esc(e.src) + '" alt="" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">' : '<div style="width:100%;height:100%;display:grid;place-items:center;color:#a3a3a3;font-size:11px">Belum ada gambar</div>';
+    return '<div' + at + ' style="' + esc(st2.join(';')) + '">' + isi + '</div>';
+  }
+  if (e.tipe === 'ornamen' || e.tipe === 'hias') {
+    const art = e.tipe === 'hias' ? artHias(e.jenis) : (DEKO_BENTUK[e.bentuk] || DEKO_BENTUK.petal);
+    return '<div' + at + ' style="' + esc(st.join(';')) + '">' + artHtml(art, e.warna) + '</div>';
+  }
+  return '';
+}
+function gambarPanggung() {
+  if (!cur) return;
+  const k = $('#kanvas');
+  k.style.cssText = 'width:' + px(cur.w) + ';height:' + px(cur.h) + ';' + bgStyle(cur);
+  $('#bungkus').style.width = px(cur.w);
+  k.innerHTML = cur.els.filter(e => !e.sembunyi).map(elHtml).join('');
+  terapkanZoom();
+  gambarPilih(); gambarPandu(); renderLapisan();
+  const p = $('#petunjuk');
+  if (p) p.innerHTML = cur.els.length ? 'Klik elemen untuk mengatur · <b>dobel klik</b> teks untuk menulis · <b>Ctrl+D</b> duplikat · <b>Del</b> hapus'
+    : 'Kanvas masih kosong — tambah <b>teks</b> atau <b>ornamen</b> dari panel kiri';
+}
+function gambarPilih() {
+  const lap = $('#lapis'); if (!lap) return;
+  const e = elPilih();
+  if (!e || e.sembunyi) { lap.innerHTML = ''; return; }
+  const st = ['left:' + px(e.x), 'top:' + px(e.y), 'width:' + px(e.w), 'height:' + px(e.h)];
+  if (e.rot) st.push('transform:rotate(' + angka(e.rot, 0) + 'deg)');
+  const peg = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map(h => '<i class="peg ' + h + '" data-peg="' + h + '"></i>').join('');
+  lap.innerHTML = '<div class="bingkai" style="' + esc(st.join(';')) + '">' + peg + '<i class="peg putar" data-peg="putar">⟳</i></div>';
+}
+function gambarPandu() {
+  const p = $('#pandu'); if (!p) return;
+  p.innerHTML = garisPandu.map(g => g.v != null
+    ? '<i class="v" style="left:' + px(g.v) + '"></i>'
+    : '<i class="h" style="top:' + px(g.h) + '"></i>').join('');
+}
+function terapkanZoom() {
+  const b = $('#bungkus'), s = $('#sizer');
+  b.style.transform = 'scale(' + skalaTampil + ')';
+  if (s && cur) { s.style.width = px(cur.w * skalaTampil); s.style.height = px(cur.h * skalaTampil); }
+  const z = $('#zLabel'); if (z) z.textContent = Math.round(skalaTampil * 100) + '%';
+  const b2 = $('#bSnap'); if (b2) b2.className = 'tb' + (snapAktif ? ' on' : '');
+}
+function zoomKe(arah) { const t = [.25, .5, .75, 1, 1.5, 2]; const i = t.findIndex(v => Math.abs(v - skalaTampil) < .03); skalaTampil = t[Math.max(0, Math.min(t.length - 1, (i < 0 ? 3 : i) + arah))]; terapkanZoom(); simpan(); }
+function pasHalaman() {
+  const st = $('#stage'); if (!cur) return;
+  const lw = (st && st.clientWidth) ? st.clientWidth - 60 : 900, lh = (st && st.clientHeight) ? st.clientHeight - 60 : 700;
+  skalaTampil = Math.max(.1, Math.min(2, Math.min(lw / cur.w, lh / cur.h)));
+  terapkanZoom(); simpan();
+}
+function toggleSnap() { snapAktif = !snapAktif; terapkanZoom(); simpan(); notify(snapAktif ? 'Snap aktif — elemen menempel ke tengah/tepi.' : 'Snap dimatikan.', 'ok'); }
+
+/* --------------------------------------------------------- pilih & tambah */
+function pilihEl(id) { pilih = id || ''; gambarPilih(); renderPanel(); renderLapisan(); }
+function tambah(tipe, lebih, pesan) {
+  if (!cur) return null;
+  const e = elBaru(tipe, Object.assign({ x: Math.round((cur.w - 300) / 2), y: Math.round((cur.h - 120) / 2) }, lebih || {}));
+  e.x = Math.round(Math.max(0, Math.min(cur.w - e.w, e.x)));
+  e.y = Math.round(Math.max(0, Math.min(cur.h - e.h, e.y)));
+  cur.els.push(e); pilih = e.id;
+  gambarPanggung(); renderPanel(); renderLapisan(); catat();
+  if (pesan) notify(pesan, 'ok');
+  return e;
+}
+function hapusEl(id) {
+  const e = elDari(id || pilih); if (!e) return;
+  cur.els = cur.els.filter(x => x.id !== e.id);
+  if (pilih === e.id) pilih = '';
+  gambarPanggung(); renderPanel(); renderLapisan(); catat(); notify('Elemen dihapus.', 'ok');
+}
+function duplikatEl(id) {
+  const e = elDari(id || pilih); if (!e) return;
+  const b = bakuEl(Object.assign({}, e, { id: elBaru(e.tipe).id, x: e.x + 24, y: e.y + 24, kunci: false }));
+  cur.els.push(b); pilih = b.id;
+  gambarPanggung(); renderPanel(); renderLapisan(); catat();
+}
+function geserLapisan(arah) {
+  const e = elPilih(); if (!e) return;
+  const i = cur.els.indexOf(e), j = i + arah;
+  if (j < 0 || j >= cur.els.length) return;
+  cur.els.splice(i, 1); cur.els.splice(j, 0, e);
+  gambarPanggung(); renderPanel(); renderLapisan(); catat();
+}
+function ketengah(sumbu) {
+  const e = elPilih(); if (!e) return;
+  if (sumbu === 'x' || sumbu === 'keduanya') e.x = Math.round((cur.w - e.w) / 2);
+  if (sumbu === 'y' || sumbu === 'keduanya') e.y = Math.round((cur.h - e.h) / 2);
+  gambarPanggung(); renderPanel(); catat();
+}
+function rapikan(ke) {
+  const e = elPilih(); if (!e) return;
+  if (ke === 'atas') e.y = 0; else if (ke === 'bawah') e.y = Math.round(cur.h - e.h);
+  else if (ke === 'kiri') e.x = 0; else if (ke === 'kanan') e.x = Math.round(cur.w - e.w);
+  gambarPanggung(); renderPanel(); catat();
+}
+
+/* ---------------------------------------------------- seret, ubah, putar */
+function koord(ev) { return ev.touches && ev.touches[0] ? { x: ev.touches[0].clientX, y: ev.touches[0].clientY } : { x: ev.clientX, y: ev.clientY }; }
+function kandidat(e) {
+  const x = [0, cur.w / 2, cur.w], y = [0, cur.h / 2, cur.h];
+  cur.els.forEach(o => { if (o.id === e.id || o.sembunyi) return; x.push(o.x, o.x + o.w / 2, o.x + o.w); y.push(o.y, o.y + o.h / 2, o.y + o.h); });
+  return { x: x, y: y };
+}
+function panduEl(e, x, y) {
+  garisPandu = [];
+  if (!snapAktif) return { x: x, y: y };
+  const amb = 6 / skalaTampil, k = kandidat(e);
+  let bx = null, bdx = amb, by = null, bdy = amb;
+  [['kiri', x], ['tengah', x + e.w / 2], ['kanan', x + e.w]].forEach(([t, v]) => k.x.forEach(g => { const d = g - v; if (Math.abs(d) <= bdx) { bdx = Math.abs(d); bx = { g: g, off: d }; } }));
+  [['atas', y], ['tengah', y + e.h / 2], ['bawah', y + e.h]].forEach(([t, v]) => k.y.forEach(g => { const d = g - v; if (Math.abs(d) <= bdy) { bdy = Math.abs(d); by = { g: g, off: d }; } }));
+  if (bx) { x += bx.off; garisPandu.push({ v: bx.g }); }
+  if (by) { y += by.off; garisPandu.push({ h: by.g }); }
+  return { x: x, y: y };
+}
+function ukuranBaru(e, h, dxs, dys) {
+  const th = angka(e.rot, 0) * Math.PI / 180, c = Math.cos(th), s = Math.sin(th);
+  const lx = dxs * c + dys * s, ly = -dxs * s + dys * c;
+  let w = e.w, hh = e.h;
+  if (h.indexOf('e') >= 0) w = e.w + lx;
+  if (h.indexOf('w') >= 0) w = e.w - lx;
+  if (h.indexOf('s') >= 0) hh = e.h + ly;
+  if (h.indexOf('n') >= 0) hh = e.h - ly;
+  w = Math.max(8, w); hh = Math.max(3, hh);
+  const aw = w - e.w, ah = hh - e.h;
+  let cx = 0, cy = 0;
+  if (h.indexOf('e') >= 0) cx = aw / 2;
+  if (h.indexOf('w') >= 0) cx = -aw / 2;
+  if (h.indexOf('s') >= 0) cy = ah / 2;
+  if (h.indexOf('n') >= 0) cy = -ah / 2;
+  const dx = c * cx - s * cy, dy = s * cx + c * cy;
+  return { x: e.x + dx, y: e.y + dy, w: w, h: hh };
+}
+function mulai(ev) {
+  if (!cur) return;
+  const t = ev.target && ev.target.closest ? ev.target.closest('[data-peg]') : null;
+  const tEl = ev.target && ev.target.closest ? ev.target.closest('.el') : null;
+  if (t) {
+    const e = elPilih(); if (!e || e.kunci) return;
+    seret = { jenis: t.getAttribute('data-peg') === 'putar' ? 'putar' : 'ubah', peg: t.getAttribute('data-peg'), id: e.id, x0: koord(ev).x, y0: koord(ev).y, awal: bakuEl(e), pindah: false };
+    ev.preventDefault(); return;
+  }
+  if (!tEl) { if (pilih) pilihEl(''); return; }
+  const e = elDari(tEl.getAttribute('data-id'));
+  if (!e) return;
+  if (tEl.getAttribute('contenteditable') === 'true') return;
+  if (pilih !== e.id) pilihEl(e.id);
+  if (e.kunci) { notify('Elemen terkunci — buka kuncinya di panel kanan.', 'warn'); return; }
+  seret = { jenis: 'geser', id: e.id, x0: koord(ev).x, y0: koord(ev).y, awal: bakuEl(e), pindah: false };
+  ev.preventDefault();
+}
+function gerak(ev) {
+  if (!seret || !cur) return;
+  const e = elDari(seret.id); if (!e) return;
+  const p = koord(ev), dxs = (p.x - seret.x0) / skalaTampil, dys = (p.y - seret.y0) / skalaTampil;
+  const a = seret.awal;
+  if (seret.jenis === 'geser') {
+    const s = panduEl(a, a.x + dxs, a.y + dys);
+    e.x = Math.round(s.x); e.y = Math.round(s.y);
+  } else if (seret.jenis === 'ubah') {
+    const s = ukuranBaru(a, seret.peg, dxs, dys);
+    e.x = Math.round(s.x); e.y = Math.round(s.y); e.w = Math.round(s.w); e.h = Math.round(s.h);
+  } else if (seret.jenis === 'putar') {
+    /* Sudut dihitung dari arah geser relatif titik awal — tidak perlu titik pusat di
+       layar, jadi tetap benar walau skala kanvas berbeda. Shift = langkah 15 derajat. */
+    const kini = Math.atan2(dys, dxs) * 180 / Math.PI;
+    if (seret.sudut0 == null) seret.sudut0 = kini;
+    let rot = angka(a.rot, 0) + (kini - seret.sudut0);
+    if (ev.shiftKey) rot = Math.round(rot / 15) * 15;
+    e.rot = Math.round(rot * 10) / 10;
+  }
+  seret.pindah = true;
+  tampilUlang(e); gambarPandu();
+}
+function tampilUlang(e) {
+  const lama = $$('#kanvas .el').filter(n => n.getAttribute('data-id') === e.id)[0];
+  if (lama) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = elHtml(e);
+    const baru = tmp.firstChild;
+    if (baru) lama.replaceWith(baru);
+  }
+  gambarPilih();
+}
+
+function lepas() {
+  if (!seret) return;
+  if (seret.pindah) { gambarPanggung(); renderPanel(); catat(); }
+  seret = null; garisPandu = []; gambarPandu();
+}
+
+/* ------------------------------------------------------------- panel kiri */
+function pilihLib(id) {
+  libAktif = id;
+  $$('#rail .railb').forEach(b => b.className = 'railb' + (b.getAttribute('data-lib') === id ? ' on' : ''));
+  renderLib();
+}
+function renderLib() {
+  const el = $('#lib'); if (!el) return;
+  let h = '';
+  if (libAktif === 'elemen') {
+    h += '<h4 class="j">Tambah elemen</h4>';
+    h += '<button class="aksi" onclick="tambah(\'teks\',{x:150,y:200,w:600,h:140})"><i>T</i>Teks</button>';
+    h += '<button class="aksi" onclick="tambah(\'kotak\')"><i>▭</i>Kotak</button>';
+    h += '<button class="aksi" onclick="tambah(\'bulat\')"><i>◯</i>Bulat</button>';
+    h += '<button class="aksi" onclick="tambah(\'garis\',{x:290,y:400})\"><i>—</i>Garis</button>';
+    h += '<button class="aksi" onclick="tambah(\'gambar\')"><i>🖼</i>Gambar</button>';
+    h += '<div class="catatan">Tip: <b>dobel klik</b> teks untuk langsung menulis di kanvas. Tahan <b>Shift</b> saat menggeser? tidak perlu — snap sudah otomatis.</div>';
+  }
+  if (libAktif === 'teks') {
+    h += '<h4 class="j">Gaya teks siap pakai</h4>';
+    TEKS_PRESET.forEach(t => {
+      h += '<button class="aksi" onclick="tambahTeks(\'' + t.id + '\')" style="flex-direction:column;align-items:flex-start;gap:0">'
+        + '<span style="font-family:' + esc(fontFam(t.font)) + ';font-size:15px">' + esc(t.isi.split('\n')[0].slice(0, 22)) + '</span>'
+        + '<span class="lbl">' + esc(t.nama) + '</span></button>';
+    });
+    h += '<div class="catatan">Font, ukuran, spasi, dan rata bisa diubah di panel kanan setelah teks ditambahkan.</div>';
+  }
+  if (libAktif === 'latar') {
+    h += '<h4 class="j">Ukuran kanvas</h4><div class="tile">';
+    UKURAN_KANVAS.forEach(u => { h += '<button onclick="ukurUlang(' + u.w + ',' + u.h + ')" data-help="' + esc(u.nama) + '"><i>▤</i>' + esc(u.nama) + '</button>'; });
+    h += '</div>';
+    h += '<h4 class="j">Palet gradasi</h4><div class="grid2">';
+    PALET.forEach(p => {
+      h += '<button class="u" style="aspect-ratio:1.6;background:linear-gradient(150deg,' + p.a + ',' + p.b + ')" title="' + esc(p.nama) + '" onclick="pakaiPalet(\'' + p.id + '\')"></button>';
+    });
+    h += '</div>';
+    h += '<h4 class="j">Motif latar</h4><div class="grid3">';
+    PAT_IDS.forEach(p => {
+      const gaya = p ? patCss({ pat: p, accent: '#8A6E4B' }) : 'background:#fff';
+      h += '<button class="u pola" data-p="' + esc(p) + '" style="' + esc(gaya) + '" title="' + esc(p || 'polos') + '" onclick="pakaiMotif(\'' + p + '\')"></button>';
+    });
+    h += '</div><div class="catatan">Motif memakai warna aksen latar — atur di panel kanan (Latar).</div>';
+  }
+  if (libAktif === 'ornamen') {
+    h += '<h4 class="j">Ornamen bunga &amp; batik</h4><div class="grid3">';
+    Object.keys(DEKO_BENTUK).forEach(k => {
+      h += '<button class="u" title="' + esc(k) + '" onclick="tambah(\'ornamen\',{bentuk:\'' + k + '\'})">' + artHtml(DEKO_BENTUK[k], '#8A6E4B') + '</button>';
+    });
+    h += '</div>';
+    h += '<h4 class="j">Hiasan bingkai &amp; pembatas</h4><div class="grid3">';
+    JENIS_HIAS.forEach(k => {
+      h += '<button class="u" title="' + esc(k) + '" onclick="tambah(\'hias\',{jenis:\'' + k + '\'})">' + artHtml(artHias(k), '#8A6E4B') + '</button>';
+    });
+    h += '</div><div class="catatan">Hiasan bingkai &amp; pembatas otomatis dipetakan ke border/dekorasi katalog saat <b>Jadikan tema</b>.</div>';
+  }
+  if (libAktif === 'unggah') {
+    h += '<h4 class="j">Unggah gambar</h4>';
+    h += '<button class="aksi" onclick="document.getElementById(\'fGambar\').click()"><i>⬆</i>Pilih gambar…</button>';
+    h += '<input type="file" id="fGambar" accept="image/*" class="hidden" onchange="unggah(this)">';
+    h += '<div class="catatan">Gambar disimpan di dalam rancangan (data URL), jadi tetap ada meski halaman ditutup. Untuk foto besar, kompres dulu — penyimpanan perangkat terbatas.</div>';
+    h += '<h4 class="j">Gambar contoh</h4><div class="grid3">';
+    ['assets/demo/wedding/01-jawa-elegan.jpg', 'assets/demo/ice-blue/01-prewedding-pantai.jpg', 'assets/demo/wedding/04-floral-rustic.jpg'].forEach(f => {
+      h += '<button class="u" title="' + esc(f) + '" onclick="pakaiContoh(\'' + f + '\')"><img src="' + esc(f) + '" alt="" style="width:100%;height:100%;object-fit:cover" onerror="this.replaceWith(document.createTextNode(\'—\'))"></button>';
+    });
+    h += '</div>';
+  }
+  el.innerHTML = h;
+}
+function tambahTeks(id) {
+  const t = TEKS_PRESET.filter(x => x.id === id)[0]; if (!t) return;
+  tambah('teks', { isi: t.isi, font: t.font, ukuran: t.ukuran, bobot: t.bobot, spasi: t.spasi, tinggi: t.tinggi, rata: t.rata, warna: t.warna, kapital: !!t.kapital, w: Math.min(cur.w - 80, 620), h: Math.round(t.ukuran * t.tinggi * (t.isi.split('\n').length) + 20), x: 60, y: 80 });
+}
+function ukurUlang(w, h) {
+  if (!cur) return;
+  cur.w = w; cur.h = h;
+  cur.els.forEach(e => { e.x = Math.min(e.x, Math.max(0, w - 40)); e.y = Math.min(e.y, Math.max(0, h - 30)); });
+  gambarPanggung(); renderPanel(); catat(); notify('Ukuran kanvas diubah ke ' + w + '×' + h + '.', 'ok');
+}
+function pakaiPalet(id) {
+  const p = PALET.filter(x => x.id === id)[0]; if (!p || !cur) return;
+  cur.bg = bakuBg({ mode: 'gradasi', warna: p.a, warna2: p.b, aksen: p.aksen });
+  gambarPanggung(); renderPanel(); catat();
+}
+function pakaiMotif(p) {
+  if (!cur) return;
+  cur.bg = bakuBg(Object.assign({}, cur.bg, { mode: p ? 'motif' : 'polos', motif: p, aksen: cur.bg.aksen }));
+  gambarPanggung(); renderPanel(); catat();
+}
+function pakaiContoh(f) { tambah('gambar', { src: f }); }
+function unggah(inp) {
+  const f = inp.files && inp.files[0]; if (!f) return;
+  if (f.size > 2.5 * 1024 * 1024) notify('Gambar lebih dari 2,5 MB — penyimpanan perangkat bisa penuh.', 'warn');
+  const r = new FileReader();
+  r.onload = () => { tambah('gambar', { src: srcAman(r.result) }); inp.value = ''; };
+  r.readAsDataURL(f);
+}
+
+/* ------------------------------------------------------------ panel kanan */
+function kartuF(judul, isi) { return '<h4 class="j">' + esc(judul) + '</h4>' + isi; }
+function fAngka(at, label, nilai, o) {
+  o = o || {};
+  return '<label class="f"><span class="kt"><span class="lbl">' + esc(label) + '</span></span><input type="number" data-at="' + at + '" value="' + esc(Math.round(nilai * 10) / 10) + '" step="' + (o.step || 1) + '"'
+    + (o.min != null ? ' min="' + o.min + '"' : '') + (o.max != null ? ' max="' + o.max + '"' : '') + '></label>';
+}
+function fTeks(at, label, nilai, o) {
+  o = o || {};
+  return '<label class="f"><span class="kt"><span class="lbl">' + esc(label) + '</span></span>'
+    + (o.area ? '<textarea data-at="' + at + '" rows="' + (o.rows || 4) + '">' + esc(nilai) + '</textarea>'
+      : '<input type="text" data-at="' + at + '" value="' + esc(nilai) + '"></label>');
+}
+function fWarna(at, label, nilai) {
+  const v = warnaAman(nilai, '#000000');
+  return '<label class="f"><span class="kt"><span class="lbl">' + esc(label) + '</span></span><span class="baris">'
+    + '<input type="color" data-at="' + at + '" value="' + esc(v.length === 4 ? '#' + v[1] + v[1] + v[2] + v[2] + v[3] + v[3] : v.slice(0, 7)) + '">'
+    + '<input type="text" data-at="' + at + '" value="' + esc(v) + '"></span></label>';
+}
+function fPilih(at, label, daftar, nilai) {
+  return '<label class="f"><span class="kt"><span class="lbl">' + esc(label) + '</span></span><select data-at="' + at + '">'
+    + daftar.map(d => '<option value="' + esc(d[0]) + '"' + (String(d[0]) === String(nilai) ? ' selected' : '') + '>' + esc(d[1]) + '</option>').join('')
+    + '</select></label>';
+}
+function fRange(at, label, nilai, min, max, step) {
+  return '<label class="f"><span class="kt"><span class="lbl">' + esc(label) + '</span><span style="font-size:11px;color:var(--mut)">' + esc(nilai) + '</span></span>'
+    + '<input type="range" data-at="' + at + '" value="' + esc(nilai) + '" min="' + min + '" max="' + max + '" step="' + (step || 1) + '"></label>';
+}
+function fCek(at, label, nilai) {
+  return '<label class="f baris" style="gap:8px"><input type="checkbox" data-at="' + at + '"' + (nilai ? ' checked' : '') + '><span style="font-size:12.5px">' + esc(label) + '</span></label>';
+}
+function renderPanel() {
+  const el = $('#panel'); if (!el) return;
+  const e = elPilih();
+  let h = '';
+  if (!e) {
+    h += '<h4 class="j">Kanvas</h4>';
+    h += fTeks('nama', 'Nama kanvas', cur ? cur.nama : '');
+    h += '<div class="baris" style="margin-bottom:9px">' + fAngka('w', 'Lebar', cur ? cur.w : 900).replace('<label class="f">', '<label class="f" style="flex:1;margin:0">').replace('</label>', '</label>') + fAngka('h', 'Tinggi', cur ? cur.h : 1200).replace('<label class="f">', '<label class="f" style="flex:1;margin:0">') + '</div>';
+    h += kartuF('Latar', fPilih('mode', 'Jenis latar', [['polos', 'Warna polos'], ['gradasi', 'Gradasi'], ['motif', 'Motif bunga/batik']], cur ? cur.bg.mode : 'polos')
+      + fWarna('warna', 'Warna dasar', cur ? cur.bg.warna : '#FFFFFF')
+      + (cur && cur.bg.mode === 'gradasi' ? fWarna('warna2', 'Warna kedua', cur.bg.warna2) + fAngka('sudut', 'Arah gradasi (°)', cur.bg.sudut, { min: 0, max: 360 }) : '')
+      + (cur && cur.bg.mode === 'motif' ? fPilih('motif', 'Motif', PAT_IDS.map(p => [p, p || 'polos']), cur.bg.motif) + fWarna('aksen', 'Warna motif', cur.bg.aksen) : ''));
+    h += kartuF('Berkas', '<button class="aksi" onclick="dokBaruUI()"><i>＋</i>Kanvas baru (kosong)</button>'
+      + '<button class="aksi" onclick="hapusSemua()"><i>⌫</i>Kosongkan kanvas ini</button>'
+      + '<button class="aksi" onclick="bukaBerkas()"><i>📄</i>Buka daftar kanvas</button>'
+      + '<button class="aksi" onclick="bukaEkspor()"><i>⤓</i>Ekspor &amp; jadikan tema</button>');
+    h += '<div class="catatan">Kosong melompong? Itu memang titik awalnya. Mulai dari panel kiri: <b>teks</b>, lalu <b>ornamen</b> atau <b>latar motif</b>.</div>';
+    h += '<h4 class="j">Lapisan</h4><div class="lapis" data-lapisan></div>';
+    el.innerHTML = h; renderLapisan(); return;
+  }
+  const namaTipe = { teks: 'Teks', kotak: 'Kotak', bulat: 'Bulat', garis: 'Garis', gambar: 'Gambar', ornamen: 'Ornamen', hias: 'Hiasan sudut' }[e.tipe] || e.tipe;
+  h += '<h4 class="j">' + esc(namaTipe) + '</h4>';
+  h += '<div class="baris" style="margin-bottom:8px"><button class="btn-k" onclick="geserLapisan(1)">↑ Naik</button><button class="btn-k" onclick="geserLapisan(-1)">↓ Turun</button>'
+    + '<button class="btn-k" onclick="duplikatEl()">⧉ Duplikat</button><button class="btn-k warn" onclick="hapusEl()">🗑 Hapus</button></div>';
+  if (e.tipe === 'teks') {
+    h += fTeks('isi', 'Tulisan', e.isi, { area: true, rows: 3 });
+    h += fPilih('font', 'Font', FONTS.map(f => [f.id, f.name]), e.font);
+    h += '<div class="baris" style="margin-bottom:9px">' + fAngka('ukuran', 'Ukuran', e.ukuran, { min: 6, max: 400, step: 1 }).replace('<label class="f">', '<label class="f" style="flex:1;margin:0">') + fPilih('bobot', 'Tebal', [[400, 'Regular'], [500, 'Medium'], [600, 'Semibold'], [700, 'Bold'], [900, 'Black']], e.bobot).replace('<label class="f">', '<label class="f" style="flex:1;margin:0">') + '</div>';
+    h += '<div class="baris" style="margin-bottom:9px">' + fAngka('spasi', 'Spasi huruf', e.spasi, { step: .5, min: -5, max: 40 }).replace('<label class="f">', '<label class="f" style="flex:1;margin:0">') + fAngka('tinggi', 'Spasi baris', e.tinggi, { step: .05, min: .8, max: 3 }).replace('<label class="f">', '<label class="f" style="flex:1;margin:0">') + '</div>';
+    h += '<div class="baris" style="margin-bottom:9px">'
+      + ['left', 'center', 'right'].map(r => '<button class="btn-k' + (e.rata === r ? ' on' : '') + '" data-at="rata" data-v="' + r + '" onclick="setAt(this)">' + ({ left: '⇤', center: '↔', right: '⇥' }[r]) + '</button>').join('')
+      + '<button class="btn-k' + (e.kapital ? ' on' : '') + '" data-at="kapital" data-v="' + (!e.kapital) + '" onclick="setAt(this)">AA</button></div>';
+    h += fWarna('warna', 'Warna teks', e.warna);
+    h += fCek('bayangan', 'Bayangan halus', !!e.bayangan);
+  }
+  if (e.tipe === 'kotak' || e.tipe === 'bulat') {
+    h += fWarna('isi', 'Warna isi', e.isi);
+    h += fWarna('garis', 'Warna garis', e.garis === 'transparent' ? '#000000' : e.garis);
+    h += fAngka('tebal', 'Tebal garis', e.tebal, { min: 0, max: 60 });
+    if (e.tipe === 'kotak') h += fAngka('radius', 'Sudut melengkung', e.radius, { min: 0, max: 600 });
+  }
+  if (e.tipe === 'garis') { h += fWarna('warna', 'Warna', e.warna); h += fCek('putus', 'Garis putus-putus', e.putus); }
+  if (e.tipe === 'gambar') {
+    h += fAngka('radius', 'Sudut melengkung', e.radius, { min: 0, max: 600 });
+    h += '<button class="aksi" onclick="document.getElementById(\'fGanti\').click()"><i>⬆</i>Ganti gambar…</button><input type="file" id="fGanti" accept="image/*" class="hidden" onchange="unggahGanti(this)">';
+    if (!e.src) h += '<div class="catatan">Belum ada gambar. Pakai tombol di atas atau tab <b>Gambar</b> di kiri.</div>';
+  }
+  if (e.tipe === 'ornamen') h += fPilih('bentuk', 'Bentuk', Object.keys(DEKO_BENTUK).map(k => [k, k]), e.bentuk) + fWarna('warna', 'Warna', e.warna);
+  if (e.tipe === 'hias') h += fPilih('jenis', 'Jenis hiasan', JENIS_HIAS.map(k => [k, k]), e.jenis) + fWarna('warna', 'Warna', e.warna);
+  h += kartuF('Posisi & ukuran', '<div class="baris" style="margin-bottom:9px">' + fAngka('x', 'X', e.x).replace('<label class="f">', '<label class="f" style="flex:1;margin:0">') + fAngka('y', 'Y', e.y).replace('<label class="f">', '<label class="f" style="flex:1;margin:0">') + '</div>'
+    + '<div class="baris" style="margin-bottom:9px">' + fAngka('w', 'Lebar', e.w, { min: 6 }).replace('<label class="f">', '<label class="f" style="flex:1;margin:0">') + fAngka('h', 'Tinggi', e.h, { min: 3 }).replace('<label class="f">', '<label class="f" style="flex:1;margin:0">') + '</div>'
+    + fAngka('rot', 'Putar (°)', e.rot, { step: 1, min: -360, max: 360 }) + fRange('op', 'Transparansi', e.op, .05, 1, .05));
+  h += '<div class="baris" style="margin-bottom:8px"><button class="btn-k" onclick="ketengah(\'x\')">↔ Tengah</button><button class="btn-k" onclick="ketengah(\'y\')">↕ Tengah</button>'
+    + '<button class="btn-k" onclick="rapikan(\'atas\')">⤒</button><button class="btn-k" onclick="rapikan(\'kiri\')">⇤</button></div>';
+  h += '<div class="baris"><button class="btn-k' + (e.kunci ? ' on' : '') + '" data-at="kunci" data-v="' + (!e.kunci) + '" onclick="setAt(this)">🔒 Kunci</button>'
+    + '<button class="btn-k' + (e.sembunyi ? ' on' : '') + '" data-at="sembunyi" data-v="' + (!e.sembunyi) + '" onclick="setAt(this)">👁 Sembunyikan</button></div>';
+  h += '<h4 class="j">Lapisan</h4><div class="lapis" data-lapisan></div>';
+  el.innerHTML = h; renderLapisan();
+}
+function setAt(t) {
+  const at = t.getAttribute('data-at'); let v = t.getAttribute('data-v');
+  if (v === 'true') v = true; else if (v === 'false') v = false;
+  terapkan(at, v, false);
+}
+function terapkan(at, v, ringan) {
+  const e = elPilih();
+  if (e) {
+    const b = bakuEl(Object.assign({}, e, { [at]: v }));
+    Object.assign(e, b);
+  } else if (cur) {
+    if (at === 'nama') cur.nama = String(v == null ? '' : v).slice(0, 80) || 'Kanvas tanpa judul';
+    else if (at === 'w' || at === 'h') cur[at] = Math.max(120, angka(v, cur[at]));
+    else cur.bg = bakuBg(Object.assign({}, cur.bg, { [at]: v }));
+  }
+  gambarPanggung();
+  if (!ringan) { renderLapisan(); catat(); }
+}
+function ubahPanel(ev) {
+  const t = ev.target;
+  if (!t || !t.getAttribute) return;
+  const at = t.getAttribute('data-at'); if (!at) return;
+  let v = t.type === 'checkbox' ? t.checked : t.value;
+  terapkan(at, v, t.tagName !== 'SELECT');
+  if (t.tagName === 'SELECT' || at === 'mode' || at === 'kunci' || at === 'sembunyikan') renderPanel();
+}
+function unggahGanti(inp) {
+  const f = inp.files && inp.files[0], e = elPilih(); if (!f || !e) return;
+  const r = new FileReader();
+  r.onload = () => { terapkan('src', srcAman(r.result), true); renderPanel(); catat(); inp.value = ''; };
+  r.readAsDataURL(f);
+}
+function renderLapisan() {
+  const el = $('[data-lapisan]'); if (!el || !cur) return;
+  if (!cur.els.length) { el.innerHTML = '<div style="padding:9px;font-size:11.5px;color:var(--mut2)">Belum ada elemen.</div>'; return; }
+  const nama = e => e.tipe === 'teks' ? (e.isi || 'Teks').split('\n')[0].slice(0, 26) : ({ kotak: 'Kotak', bulat: 'Bulat', garis: 'Garis', gambar: 'Gambar', ornamen: 'Ornamen ' + e.bentuk, hias: 'Hias ' + e.jenis }[e.tipe] || e.tipe);
+  el.innerHTML = cur.els.slice().reverse().map(e =>
+    '<div class="baris-l' + (e.id === pilih ? ' on' : '') + '"><button class="ic" title="Urutkan naik" onclick="pilihElOne(\'' + e.id + '\');geserLapisan(1)">↑</button>'
+    + '<span class="nm" onclick="pilihElOne(\'' + e.id + '\')" title="' + esc(nama(e)) + '">' + esc(nama(e)) + '</span>'
+    + '<button class="ic' + (e.kunci ? '' : ' off') + '" title="Kunci" onclick="pilihElOne(\'' + e.id + '\');setAt({getAttribute:()=>null});toggleKunci()">🔒</button>'
+    + '<button class="ic' + (e.sembunyi ? ' off' : '') + '" title="Sembunyikan" onclick="pilihElOne(\'' + e.id + '\');toggleSembunyi()">👁</button>'
+    + '<button class="ic" title="Hapus" onclick="hapusEl(\'' + e.id + '\')">🗑</button></div>').join('');
+}
+function pilihElOne(id) { pilihEl(id); }
+function toggleKunci() { const e = elPilih(); if (!e) return; terapkan('kunci', !e.kunci, true); renderPanel(); renderLapisan(); }
+function toggleSembunyi() { const e = elPilih(); if (!e) return; terapkan('sembunyi', !e.sembunyi, true); renderPanel(); renderLapisan(); }
+
+/* ------------------------------------------------------------- bersih-bersih */
+function hapusSemua() {
+  if (!cur) return;
+  if (!cur.els.length) return notify('Kanvas sudah kosong.', 'warn');
+  cur.els = []; pilih = '';
+  gambarPanggung(); renderPanel(); catat(); notify('Kanvas dikosongkan.', 'ok');
+}
+function dokBaruUI(nama, w, h) {
+  const d = dokBaru(nama, w || 900, h || 1200);
+  dok.push(d); bukaDok(d.id);
+  catat(); notify('Kanvas kosong baru dibuat.', 'ok');
+}
+function bukaDok(id) {
+  const d = dok.filter(x => x.id === id)[0]; if (!d) return;
+  cur = d; pilih = ''; riw = [jepret()]; rpos = 0; dokIdTerakhir = d.id;
+  $('#bungkus').style.width = px(d.w);
+  gambarPanggung(); renderPanel(); renderLapisan(); tombolRiwayat(); simpan();
+  const a = $('#aNama'); if (a) a.textContent = d.nama;
+}
+function hapusDok(id) {
+  const d = dok.filter(x => x.id === id)[0]; if (!d) return;
+  if (!window.confirm('Hapus kanvas "' + d.nama + '"? Tindakan ini tidak bisa dibatalkan.')) return;
+  dok = dok.filter(x => x.id !== id);
+  if (cur && cur.id === id) { if (!dok.length) dok.push(dokBaru()); bukaDok(dok[0].id); } else simpan();
+  renderBerkas(); notify('Kanvas dihapus.', 'ok');
+}
+function dublikatDok(id) {
+  const d = dok.filter(x => x.id === id)[0]; if (!d) return;
+  const b = bakuDok(JSON.parse(JSON.stringify(d)));
+  b.id = dokBaru().id; b.nama = d.nama + ' (salinan)';
+  dok.push(b); bukaDok(b.id); renderBerkas();
+}
+function gantiNamaUI(id) {
+  const d = dok.filter(x => x.id === id)[0]; if (!d) return;
+  const n = window.prompt('Nama kanvas:', d.nama);
+  if (n == null) return;
+  d.nama = String(n).slice(0, 80) || d.nama;
+  if (cur && cur.id === id) { renderPanel(); }
+  simpan(); renderBerkas();
+}
+
+/* ------------------------------------------------------------------ modal */
+function modal(judul, ket, isi, lebar) {
+  tutupModal();
+  const t = document.createElement('div');
+  t.className = 'tirai'; t.id = 'tirai';
+  t.innerHTML = '<div class="lembar" role="dialog" aria-modal="true"' + (lebar ? ' style="max-width:' + esc(lebar) + '"' : '') + '><h2>' + esc(judul) + '</h2><div class="ket">' + esc(ket) + '</div><div id="modalIsi">' + isi + '</div></div>';
+  t.addEventListener('click', ev => { if (ev.target === t) tutupModal(); });
+  document.body.appendChild(t);
+  return t;
+}
+function tutupModal() { const t = $('#tirai'); if (t) t.remove(); }
+
+/* ---------------------------------------------------------------- berkas */
+function renderBerkas() {
+  const el = $('#berkasIsi'); if (!el) return;
+  let h = '<h4 class="j">Kanvas baru</h4><div class="tile">';
+  UKURAN_KANVAS.forEach(u => { h += '<button onclick="tutupModal();dokBaruUI(\'Kanvas baru\', ' + u.w + ', ' + u.h + ')"><i>＋</i>' + esc(u.nama) + '</button>'; });
+  h += '</div><h4 class="j">Rancangan tersimpan (' + dok.length + ')</h4>';
+  h += dok.map(d => '<div class="doc' + (cur && cur.id === d.id ? ' on' : '') + '"><img src="' + esc(dataUrlSvg(svgDok(d, .06))) + '" alt="">'
+    + '<div class="info"><b>' + esc(d.nama) + '</b><span>' + d.w + '×' + d.h + ' · ' + d.els.length + ' elemen · ' + jam(d.meta.diubah) + '</span></div>'
+    + '<button class="btn-k" onclick="tutupModal();bukaDok(\'' + d.id + '\')">Buka</button>'
+    + '<button class="btn-k" onclick="gantiNamaUI(\'' + d.id + '\')">✎</button>'
+    + '<button class="btn-k" onclick="dublikatDok(\'' + d.id + '\')">⧉</button>'
+    + '<button class="btn-k warn" onclick="hapusDok(\'' + d.id + '\')">🗑</button></div>').join('');
+  h += '<h4 class="j">Pindah rancangan</h4><div class="baris" style="flex-wrap:wrap;gap:6px">'
+    + '<button class="btn-k" onclick="salin(JSON.stringify({v:1,dok:dok,aktif:cur?cur.id:\'\'}),\'Seluruh koleksi kanvas disalin.\')">⤓ Salin JSON</button>'
+    + '<button class="btn-k" onclick="unduh(\'kanvas-asproject.json\', JSON.stringify({v:1,dok:dok},null,1), \'application/json\')">⬇ Unduh JSON</button>'
+    + '<button class="btn-k" onclick="document.getElementById(\'fImpor\').click()">⬆ Impor JSON</button>'
+    + '<input type="file" id="fImpor" accept=".json,application/json" class="hidden" onchange="imporBerkas(this)"></div>'
+    + '<div class="catatan">Rancangan tersimpan di perangkat ini (localStorage) — tidak diunggah ke mana pun. Simpan JSON untuk cadangan atau memindah ke perangkat lain.</div>';
+  el.innerHTML = h;
+}
+function jam(ms) { const d = new Date(angka(ms, Date.now())); return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }); }
+function bukaBerkas() {
+  const isi = '<div id="berkasIsi"></div>';
+  modal('Berkas kanvas', 'Setiap kanvas berdiri sendiri; beralih bebas tanpa kehilangan apa pun.', isi, '760px');
+  renderBerkas();
+}
+function imporBerkas(inp) {
+  const f = inp.files && inp.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => { imporTeks(String(r.result)); inp.value = ''; };
+  r.readAsText(f);
+}
+function imporTeks(teks) {
+  let d = null;
+  try { d = JSON.parse(teks) } catch (e) { return notify('JSON tidak terbaca.', 'bad'); }
+  const daftar = Array.isArray(d) ? d : (d && Array.isArray(d.dok) ? d.dok : (d && d.els ? [d] : []));
+  if (!daftar.length) return notify('Tidak ada kanvas di dalam JSON itu.', 'bad');
+  const rapi = daftar.map(bakuDok).filter(Boolean);
+  if (!rapi.length) return notify('Isi JSON bukan rancangan kanvas.', 'bad');
+  rapi.forEach(x => { x.id = dokBaru().id + x.id.slice(-3); });
+  dok = dok.concat(rapi); simpan(); bukaDok(rapi[0].id); renderBerkas();
+  notify(rapi.length + ' kanvas dimasukkan dari JSON.', 'ok');
+}
+
+/* ---------------------------------------------------------------- ekspor */
+function dataUrlSvg(svg) { return 'data:image/svg+xml,' + encodeURIComponent(svg).replace(/'/g, '%27').replace(/"/g, '%22'); }
+function svgEl(e) {
+  const buka = '<g transform="translate(' + angka(e.x, 0) + ' ' + angka(e.y, 0) + ')' + (e.rot ? ' rotate(' + angka(e.rot, 0) + ' ' + angka(e.w / 2, 1) + ' ' + angka(e.h / 2, 1) + ')' : '') + '"' + (e.op < 1 ? ' opacity="' + angka(e.op, 1) + '"' : '') + '>';
+  const tutup = '</g>';
+  if (e.tipe === 'teks') {
+    const baris = String(e.isi).split('\n');
+    const lh = angka(e.ukuran, 32) * angka(e.tinggi, 1.35);
+    const total = lh * baris.length;
+    let y = (e.h - total) / 2 + lh * .78;
+    const xr = e.rata === 'left' ? 0 : e.rata === 'right' ? e.w : e.w / 2;
+    const jangkar = e.rata === 'left' ? 'start' : e.rata === 'right' ? 'end' : 'middle';
+    const isi = baris.map(b => {
+      const t = e.kapital ? b.toUpperCase() : b;
+      const el2 = '<text x="' + angka(xr, 1) + '" y="' + angka(y, 1) + '" font-family="' + esc(fontFam(e.font)) + '" font-size="' + angka(e.ukuran, 32) + '" font-weight="' + angka(e.bobot, 600) + '" letter-spacing="' + angka(e.spasi, 0) + '" text-anchor="' + jangkar + '" fill="' + esc(e.warna) + '"' + (e.bayangan ? ' filter="url(#byr)"' : '') + '>' + esc(t) + '</text>';
+      y += lh; return el2;
+    }).join('');
+    return buka + isi + tutup;
+  }
+  if (e.tipe === 'kotak') return buka + '<rect width="' + angka(e.w, 1) + '" height="' + angka(e.h, 1) + '" rx="' + angka(e.radius, 0) + '" fill="' + esc(e.isi) + '"' + (angka(e.tebal, 0) > 0 ? ' stroke="' + esc(e.garis) + '" stroke-width="' + angka(e.tebal, 0) + '"' : '') + '/>' + tutup;
+  if (e.tipe === 'bulat') return buka + '<ellipse cx="' + angka(e.w / 2, 1) + '" cy="' + angka(e.h / 2, 1) + '" rx="' + angka(e.w / 2, 1) + '" ry="' + angka(e.h / 2, 1) + '" fill="' + esc(e.isi) + '"' + (angka(e.tebal, 0) > 0 ? ' stroke="' + esc(e.garis) + '" stroke-width="' + angka(e.tebal, 0) + '"' : '') + '/>' + tutup;
+  if (e.tipe === 'garis') return buka + '<line x1="0" y1="' + angka(e.h / 2, 1) + '" x2="' + angka(e.w, 1) + '" y2="' + angka(e.h / 2, 1) + '" stroke="' + esc(e.warna) + '" stroke-width="' + Math.max(1, angka(e.h, 2)) + '" stroke-linecap="round"' + (e.putus ? ' stroke-dasharray="12 10"' : '') + '/>' + tutup;
+  if (e.tipe === 'gambar') return e.src ? buka + '<image href="' + esc(e.src) + '" width="' + angka(e.w, 1) + '" height="' + angka(e.h, 1) + '" preserveAspectRatio="xMidYMid slice"/>' + tutup : '';
+  if (e.tipe === 'ornamen' || e.tipe === 'hias') {
+    const art = e.tipe === 'hias' ? artHias(e.jenis) : (DEKO_BENTUK[e.bentuk] || DEKO_BENTUK.petal);
+    return buka + artSvg(art, 0, 0, angka(e.w, 10), angka(e.h, 10), e.warna).replace(/^<g transform="translate\(0 0\) scale\(([\d.]+) ([\d.]+)\)">/, '<g transform="translate(0 0) scale($1 $2)">') + tutup;
+  }
+  return '';
+}
+function svgDok(d, z) {
+  z = angka(z, 1);
+  const b = bakuBg(d.bg);
+  let defs = '', latar = '';
+  if (b.mode === 'gradasi') {
+    defs = '<linearGradient id="latar" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + esc(b.warna) + '"/><stop offset="1" stop-color="' + esc(b.warna2) + '"/></linearGradient>';
+    latar = '<rect width="' + d.w + '" height="' + d.h + '" fill="url(#latar)"/>';
+  } else {
+    latar = '<rect width="' + d.w + '" height="' + d.h + '" fill="' + esc(b.warna) + '"/>'
+      + (b.mode === 'motif' && b.motif ? '<!-- motif latar "' + esc(b.motif) + '" tampil penuh di berkas HTML mandiri -->' : '');
+  }
+  if (d.els.filter(e => !e.sembunyi && e.tipe === 'teks' && e.bayangan).length) {
+    defs += '<filter id="byr" x="-25%" y="-25%" width="150%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity=".35"/></filter>';
+  }
+  const isi = d.els.filter(e => !e.sembunyi).map(svgEl).join('');
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.round(d.w * z) + '" height="' + Math.round(d.h * z) + '" viewBox="0 0 ' + d.w + ' ' + d.h + '">'
+    + (defs ? '<defs>' + defs + '</defs>' : '') + latar + isi + '</svg>';
+}
+function linkFont() {
+  const l = document.querySelector('link[href*="fonts.googleapis.com/css2"]');
+  return l ? l.href : '';
+}
+function htmlDok(d) {
+  const css = 'html,body{margin:0;padding:0;background:#f4f4f0}'
+    + '.kv{position:relative;width:' + d.w + 'px;height:' + d.h + 'px;margin:0 auto;overflow:hidden;background:#fff;box-shadow:0 12px 44px rgba(0,0,0,.14)}'
+    + '.kv .el{position:absolute}.kv .el.tek{white-space:pre-wrap;word-break:break-word}.kv .el img{pointer-events:none}'
+    + '@media print{html,body{background:#fff}.kv{box-shadow:none;margin:0}}';
+  const isi = d.els.filter(e => !e.sembunyi).map(elHtml).join('\n');
+  const atas = '<!doctype html>\n<html lang="id">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>' + esc(d.nama || 'Kanvas') + ' — Kanvas AsProject</title>\n';
+  const font = linkFont();
+  return atas + (font ? '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="' + esc(font) + '" rel="stylesheet">\n' : '')
+    + '<style>' + css + '</style>\n</head>\n<body>\n<div class="kv" style="' + esc(bgStyle(d)) + '">\n' + isi + '\n</div>\n'
+    + '<!-- Dibuat dengan Kanvas AsProject — kanvas.html -- >\n</body>\n</html>\n'.replace('-- >', '-->');
+}
+function dekoPeta(motif, jenis) {
+  /* Motif lebih dulu (batik/bunga), lalu jenis hiasan; hasilnya SELALU id yang ada di
+     DKO_IDS/FLT_IDS/DVD_IDS supaya tema yang dikirim ke Studio Template tidak ditolak. */
+  const benang = ['rose', 'sakura', 'daisy', 'vine', 'botanical'].indexOf(motif) >= 0 || ['floral', 'vine'].indexOf(jenis) >= 0;
+  const batik = ['batik', 'parang', 'mendung'].indexOf(motif) >= 0 || jenis === 'batik';
+  let d;
+  if (batik) d = { dko: 'batik', flt: 'dust', dvd: 'batik' };
+  else if (benang) d = { dko: 'floral', flt: motif === 'sakura' ? 'sakura' : 'petal', dvd: 'flower' };
+  else if (jenis === 'line') d = { dko: 'gold', flt: 'leaf', dvd: 'line' };
+  else if (jenis === 'diamond') d = { dko: 'gold', flt: 'leaf', dvd: 'diamond' };
+  else if (motif === 'frost' || jenis === 'lace') d = { dko: 'lace', flt: 'snow', dvd: 'diamond' };
+  else if (motif === 'confetti') d = { dko: 'gold', flt: 'bubble', dvd: 'diamond' };
+  else if (jenis === 'gold' || jenis === 'ribbon') d = { dko: jenis, flt: 'dust', dvd: 'diamond' };
+  else d = { dko: 'gold', flt: 'leaf', dvd: 'diamond' };
+  ['dko', 'flt', 'dvd'].forEach(k => { if (DEKO_SAH[k].indexOf(d[k]) < 0) d[k] = DEKO_SAH[k][0]; });
+  return d;
+}
+function jadikanTema(d) {
+  d = d || cur; if (!d) return null;
+  const el = d.els.filter(e => !e.sembunyi);
+  const teks = el.filter(e => e.tipe === 'teks');
+  const judul = teks.slice().sort((a, b) => b.ukuran - a.ukuran)[0] || null;
+  const lain = {};
+  teks.forEach(e => { if (judul && e.id === judul.id) return; lain[e.font] = (lain[e.font] || 0) + 1 });
+  const body = Object.keys(lain).sort((a, b) => lain[b] - lain[a])[0] || 'inter';
+  const hias = el.filter(e => e.tipe === 'hias')[0] || null;
+  const orn = el.filter(e => e.tipe === 'ornamen')[0] || null;
+  const pakai = {};
+  el.forEach(e => { const c = warnaAman(e.warna, ''); if (!c || c === 'transparent') return; if (kontras(c, '#ffffff') < 1.6 || kontras(c, '#000000') < 1.4) return; pakai[c] = (pakai[c] || 0) + 1 });
+  const accent = Object.keys(pakai).sort((a, b) => pakai[b] - pakai[a])[0] || warnaAman(d.bg.aksen, '#8A6E4B');
+  const dasar = warnaAman(d.bg.warna, '#F7F3EC');
+  const kedua = bakuBg(d.bg).mode === 'gradasi' ? bakuBg(d.bg).warna2 : terang(dasar, .12);
+  const g = [dasar, kedua, campur(kedua, accent, .3)];
+  const ink = inkAman(kontras('#2B2118', dasar) >= 4.5 ? '#2B2118' : gelap(accent, .55), g);
+  const jenisHias = hias ? hias.jenis : (orn && ['flower', 'batik', 'vine', 'gold', 'lace', 'ribbon'].indexOf(orn.bentuk) >= 0 ? orn.bentuk : '');
+  const { dko, flt, dvd } = dekoPeta(bakuBg(d.bg).mode === 'motif' ? bakuBg(d.bg).motif : '', jenisHias);
+  return {
+    id: slugify(d.nama || 'kanvas-baru'), nama: String(d.nama || 'Kanvas tanpa judul').slice(0, 60), ev: 'pernikahan', harga: 75000,
+    g: g, accent: accent, ink: ink, badge: '', deco: '❀ ❁ ❀',
+    pat: bakuBg(d.bg).mode === 'motif' ? bakuBg(d.bg).motif : '', ft: judul ? judul.font : 'cormorant', body: body,
+    char: 'KANVAS', desc: 'Rancangan dari Kanvas AsProject.', dko: dko, flt: flt, dvd: dvd,
+    rec: { border: hias ? (BORDER_HIAS[hias.jenis] || 'double') : 'double', cover: 'zoom', scroll: 'fade-up', mix: true, slides: SLIDE_BAWAAN.filter(id => SLIDES.some(s => s.id === id)) },
+    sumber: 'kanvas', meta: { dibuat: Date.now(), diubah: Date.now() }
+  };
+}
+function kirimKeStudioTemplate() {
+  const t = jadikanTema(); if (!t) return notify('Tidak ada kanvas aktif.', 'bad');
+  try { localStorage.setItem(HANDOFF, JSON.stringify({ v: 1, dari: 'kanvas', waktu: Date.now(), tema: t })); }
+  catch (e) { return notify('Gagal menyiapkan tema (penyimpanan penuh).', 'bad'); }
+  notify('Tema dikirim ke Studio Template…', 'ok');
+  location.href = 'template-studio.html?dari=kanvas';
+}
+function bukaEkspor() {
+  const t = cur ? jadikanTema() : null;
+  const isi = '<div class="baris" style="flex-wrap:wrap;gap:6px;margin-bottom:12px">'
+    + '<button class="btn-k on" data-tab="html" onclick="tabEkspor(\'html\')">HTML mandiri</button>'
+    + '<button class="btn-k" data-tab="svg" onclick="tabEkspor(\'svg\')">SVG (vektor)</button>'
+    + '<button class="btn-k" data-tab="json" onclick="tabEkspor(\'json\')">JSON rancangan</button>'
+    + '<button class="btn-k" data-tab="tema" onclick="tabEkspor(\'tema\')">Tema katalog</button>'
+    + '<button class="btn-k" onclick="cetakPDF()">🖨 Cetak / PDF</button>'
+    + '<button class="btn-k" onclick="kirimKeStudioTemplate()">🎨 Jadikan tema di Studio Template</button></div><div id="eksporIsi"></div>';
+  modal('Ekspor & jadikan tema', 'HTML mandiri paling setia (motif & font ikut). SVG untuk vektor. Tema katalog untuk dipasang ke katalog AsProject.', isi, '860px');
+  tabEkspor('html');
+}
+function tabEkspor(tab) {
+  const el = $('#eksporIsi'); if (!el || !cur) return;
+  $$('#tirai [data-tab]').forEach(b => b.className = 'btn-k' + (b.getAttribute('data-tab') === tab ? ' on' : ''));
+  if (tab === 'html') {
+    const kode = htmlDok(cur);
+    el.innerHTML = '<div class="catatan" style="margin:0 0 8px">Berkas HTML ini bisa dibuka sendiri (tanpa internet kecuali font) — cocok untuk arsip atau dicetak jadi PDF.</div>'
+      + '<pre class="kode" data-kode>' + esc(kode) + '</pre>'
+      + '<div class="kaki"><button class="btn-k" onclick="salin(document.querySelector(\'[data-kode]\').textContent,\'HTML mandiri disalin.\')">📋 Salin</button>'
+      + '<button class="btn-k" onclick="unduh(slugify(cur.nama)+\'.html\', document.querySelector(\'[data-kode]\').textContent, \'text/html;charset=utf-8\')">⬇ Unduh .html</button></div>';
+  } else if (tab === 'svg') {
+    const kode = svgDok(cur, 1);
+    el.innerHTML = (bakuBg(cur.bg).mode === 'motif' ? '<div class="catatan" style="margin:0 0 8px">Catatan: motif latar tidak bisa dikirim ke SVG — di sini latar memakai warna dasarnya. Pakai <b>HTML mandiri</b> bila motif harus ikut.</div>' : '')
+      + '<pre class="kode" data-kode>' + esc(kode) + '</pre>'
+      + '<div class="kaki"><button class="btn-k" onclick="salin(document.querySelector(\'[data-kode]\').textContent,\'SVG disalin.\')">📋 Salin</button>'
+      + '<button class="btn-k" onclick="unduh(slugify(cur.nama)+\'.svg\', document.querySelector(\'[data-kode]\').textContent, \'image/svg+xml\')">⬇ Unduh .svg</button></div>';
+  } else if (tab === 'json') {
+    const kode = JSON.stringify({ v: 1, dok: [cur] }, null, 1);
+    el.innerHTML = '<div class="catatan" style="margin:0 0 8px">JSON rancangan: bisa diimpor kembali lewat <b>Berkas → Impor JSON</b>.</div><pre class="kode" data-kode>' + esc(kode) + '</pre>'
+      + '<div class="kaki"><button class="btn-k" onclick="salin(document.querySelector(\'[data-kode]\').textContent,\'JSON disalin.\')">📋 Salin</button>'
+      + '<button class="btn-k" onclick="unduh(slugify(cur.nama)+\'.kanvas.json\', document.querySelector(\'[data-kode]\').textContent, \'application/json\')">⬇ Unduh .json</button></div>';
+  } else {
+    const t = jadikanTema();
+    const kode = JSON.stringify(t, null, 1);
+    el.innerHTML = '<div class="catatan" style="margin:0 0 8px">Tema turunan dari kanvas ini: palet, font, motif, dan hiasan dipetakan ke mesin katalog. Tombol di bawah membukanya di <b>Studio Template</b> untuk dilengkapi (kontras, animasi, bagian) lalu dipasang.</div>'
+      + '<pre class="kode" id="kodeTema">' + esc(kode) + '</pre>'
+      + '<div class="kaki"><button class="btn-k" onclick="salin(document.getElementById(\'kodeTema\').textContent,\'JSON tema disalin.\')">📋 Salin JSON tema</button>'
+      + '<button class="btn-k dark" onclick="kirimKeStudioTemplate()">🎨 Buka di Studio Template</button></div>';
+  }
+}
+function cetakPDF() {
+  if (!cur) return;
+  const fr = document.createElement('iframe');
+  fr.style.cssText = 'position:fixed;right:0;bottom:0;width:900px;height:1200px;opacity:0;border:0;pointer-events:none';
+  document.body.appendChild(fr);
+  try {
+    fr.srcdoc = htmlDok(cur);
+    fr.onload = () => { try { fr.contentWindow.focus(); fr.contentWindow.print(); } catch (e) { notify('Cetak diblokir peramban — pakai "Unduh .html" lalu cetak dari berkas itu.', 'warn'); } setTimeout(() => fr.remove(), 15000); };
+  } catch (e) { fr.remove(); unduh(slugify(cur.nama) + '.html', htmlDok(cur), 'text/html;charset=utf-8'); }
+}
+function bukaPanduan() {
+  const isi = '<div style="font-size:12.5px;line-height:1.65">'
+    + '<p><b>1. Kanvas kosong.</b> Halaman ini sengaja mulai dari kertas putih. Tambah elemen dari panel kiri (teks, kotak, garis, ornamen bunga/batik, hiasan sudut, gambar).</p>'
+    + '<p><b>2. Susun.</b> Geser elemen bebas; tepi/tengahnya menempel (snap) ke kanvas dan ke elemen lain. Sudut putih = ubah ukuran, bulatan ⟳ di atas = putar. Dobel klik teks untuk menulis.</p>'
+    + '<p><b>3. Latar.</b> Tab <b>Latar</b>: gradasi palet undangan atau 11 motif bunga/batik bawaan (memakai warna aksen pilihanmu).</p>'
+    + '<p><b>4. Simpan.</b> Semua tersimpan otomatis di perangkat. <b>Berkas</b> untuk kanvas baru, ganti nama, gandakan, impor/ekspor JSON.</p>'
+    + '<p><b>5. Ekspor.</b> HTML mandiri (paling setia), SVG (vektor untuk percetakan lain), JSON, atau Cetak/PDF.</p>'
+    + '<p><b>6. Jadikan tema.</b> <b>Ekspor → Jadikan tema di Studio Template</b>: palet, font, motif, dan hiasan dipetakan otomatis ke tema katalog, lalu dipasang ke katalog seperti tema lain.</p>'
+    + '<p style="color:var(--mut)">Pintasan: <b>Ctrl+Z</b> undo, <b>Ctrl+Y</b> redo, <b>Ctrl+D</b> duplikat, <b>Del</b> hapus, tanda panah untuk menggeser halus (Shift = 10 px).</p></div>';
+  modal('Cara pakai Kanvas', 'Enam langkah dari kertas kosong sampai tema di katalog.', isi, '640px');
+}
+
+/* -------------------------------------------------------------- papan tik */
+function diKetik(e) {
+  const t = e.target;
+  return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable);
+}
+function tombolTik(e) {
+  if (diKetik(e)) { if (e.key === 'Escape' && e.target.isContentEditable) e.target.blur(); return; }
+  const ctrl = e.ctrlKey || e.metaKey;
+  if (ctrl && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+  if (ctrl && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
+  if (ctrl && e.key.toLowerCase() === 'd') { e.preventDefault(); duplikatEl(); return; }
+  if (e.key === 'Delete' || e.key === 'Backspace') { if (elPilih()) { e.preventDefault(); hapusEl(); } return; }
+  const e2 = elPilih();
+  if (e2 && e.key.indexOf('Arrow') === 0) {
+    e.preventDefault();
+    const lompat = e.shiftKey ? 10 : 1;
+    if (e.key === 'ArrowLeft') e2.x -= lompat;
+    if (e.key === 'ArrowRight') e2.x += lompat;
+    if (e.key === 'ArrowUp') e2.y -= lompat;
+    if (e.key === 'ArrowDown') e2.y += lompat;
+    gambarPanggung(); renderPanel(); catat();
+  }
+  if (e.key === 'Escape' && pilih) pilihEl('');
+}
+
+/* ------------------------------------------------------------------ awal */
+function pasangPeristiwa() {
+  /* Dipasang di pembungkus (#bungkus), bukan hanya #kanvas: pegangan ubah ukuran &
+     putar berada di lapisan #lapis yang menumpuk di atas kanvas. */
+  const k = $('#bungkus');
+  ['mousedown', 'touchstart'].forEach(n => k.addEventListener(n, mulai, { passive: false }));
+  ['mousemove', 'touchmove'].forEach(n => document.addEventListener(n, gerak, { passive: false }));
+  ['mouseup', 'touchend', 'touchcancel'].forEach(n => document.addEventListener(n, lepas));
+  $('#kanvas').addEventListener('dblclick', ev => {
+    const t = ev.target && ev.target.closest ? ev.target.closest('.el') : null; if (!t) return;
+    const e = elDari(t.getAttribute('data-id'));
+    if (!e || e.tipe !== 'teks' || e.kunci) return;
+    pilihEl(e.id);
+    t.setAttribute('contenteditable', 'true'); t.focus();
+    const selesai = () => {
+      t.removeAttribute('contenteditable');
+      const isi = String(t.innerText || t.textContent || '').replace(/\u00a0/g, ' ').replace(/\n{3,}/g, '\n\n');
+      e.isi = isi.slice(0, 3000);
+      catat(); renderPanel(); renderLapisan();
+    };
+    t.addEventListener('blur', selesai, { once: true });
+    t.addEventListener('keydown', ev2 => { if (ev2.key === 'Escape') t.blur(); });
+  });
+  const p = $('#panel');
+  p.addEventListener('input', ubahPanel);
+  p.addEventListener('change', ubahPanel);
+  document.addEventListener('keydown', tombolTik);
+  const st = $('#stage');
+  st.addEventListener('wheel', ev => { if (!(ev.ctrlKey || ev.metaKey)) return; ev.preventDefault(); zoomKe(ev.deltaY < 0 ? 1 : -1); }, { passive: false });
+  st.addEventListener('click', ev => { if (ev.target === st || ev.target === $('#bungkus') || ev.target === $('#sizer')) pilihEl(''); });
+  window.addEventListener('beforeunload', () => simpan());
+  window.addEventListener('resize', () => { if (cur) terapkanZoom(); });
+}
+function init() {
+  muat();
+  if (!dok.length) { const d = dokBaru('Kanvas tanpa judul', 900, 1200); dok.push(d); }
+  const awal = dok.filter(x => x.id === dokIdTerakhir)[0] || dok[dok.length - 1];
+  pasangPeristiwa();
+  bukaDok(awal.id);
+  gambarPanggung(); renderLib(); renderPanel(); renderLapisan();
+  const st = $('#stage');
+  if (st && st.clientWidth > 200 && cur && cur.w > st.clientWidth - 60) pasHalaman();
+  if (!awal.els.length) notify('Kanvas kosong siap — tambah teks dari panel kiri.', 'ok');
+  const j = $('#jmlKanvas'); if (j) j.textContent = dok.length;
+  simpan();
+}
+if (typeof document !== 'undefined' && document.getElementById) init();
+
+</script>
+</body>
+</html>

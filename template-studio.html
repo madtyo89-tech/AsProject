@@ -200,7 +200,7 @@ input,textarea,select{outline:0}
  <div><h1>Studio Template</h1><div class="sub">Rancang tema undangan → pratinjau HP → ekspor kode siap pasang</div></div>
  <div class="sp"></div>
  <span id="statusKoleksi" class="mini"></span>
- <button class="tb" onclick="bukaPanduan()" data-help="Enam langkah memasang tema baru ke repo sampai tayang.">📘 Panduan</button>
+ <a class="tb" href="kanvas.html" data-help="Kanvas kosong gaya Canva — susun bebas, lalu jadikan tema di sini.">🎨 Kanvas</a><button class="tb" onclick="bukaPanduan()" data-help="Enam langkah memasang tema baru ke repo sampai tayang.">📘 Panduan</button>
  <button class="tb" onclick="bukaImpor()" data-help="Muat tema dari berkas JSON atau tempelan teks.">📥 Impor</button>
  <button class="tb" onclick="bukaCloud()" data-help="Simpan atau muat koleksi tema di Supabase (per kode pemilik).">☁️ Cloud</button>
  <button class="tb" onclick="salinKoleksi()" data-help="Salin seluruh koleksi di perangkat ini sebagai JSON.">⤓ Koleksi</button>
@@ -255,8 +255,8 @@ input,textarea,select{outline:0}
    disalin apa adanya supaya tema yang dirancang di sini tampil sama di undangan
    tamu. Jalankan ulang: python3 tools/sinkron-studio-template.py
    ============================================================================ */
-const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
+const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co'
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw'
 const FONTS=[
  {id:'cormorant',name:'Cormorant Garamond',fam:'"Cormorant Garamond",serif'},
  {id:'playfair',name:'Playfair Display',fam:'"Playfair Display",serif'},
@@ -480,7 +480,7 @@ const DEKO_BENTUK={
  sakura:'<svg viewBox="0 0 24 24">'+[0,72,144,216,288].map(a=>'<path transform="rotate('+a+' 12 12)" d="M12 2c2.4 2.8 2.4 5.6 0 8-2.4-2.4-2.4-5.2 0-8Z" fill="currentColor" opacity=".46"/>').join('')+'<circle cx="12" cy="12" r="1.6" fill="currentColor" opacity=".5"/></svg>',
  leaf:'<svg viewBox="0 0 24 24"><path d="M3 21C4 9 12 3 21 3c0 9-6 17-18 18Z" fill="currentColor" opacity=".4"/><path d="M4 20 18 6" stroke="currentColor" stroke-width="1" opacity=".55"/></svg>',
  snow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".55"><path d="M12 2v20M4 7l16 10M20 7 4 17"/><path d="m12 5 2 2-2 2-2-2ZM12 15l2 2-2 2-2-2Z"/></svg>',
- dust:'',bubble:''};
+ dust:'',bubble:''}
 function dekoFltHtml(kind){
  if(!kind||FLT_IDS.indexOf(kind)<0)return '';
  const bentuk=DEKO_BENTUK[kind]||'';
@@ -1128,6 +1128,22 @@ function bukaPanduan(){bukaModal('📘 Panduan membuat &amp; memasang tema',
  +'<div class="kv"><span class="k">Koleksi</span><span class="v">rancangan tersimpan di perangkat ini (localStorage) + opsional ke cloud</span></div></div>',
  '<button class="tb" onclick="salin(semuaSnippet(tplAktif()),\'Semua kode disalin.\')">📋 Salin semua kode</button><button class="tb dark" onclick="tutupModal()">Mengerti</button>','820px')}
 
+/* ---------- terima rancangan dari Kanvas Template (kanvas.html) ---------- */
+function dariKanvas() {
+  let h = null;
+  try { h = JSON.parse(localStorage.getItem('asproject.kanvas.handoff') || 'null') } catch (e) { return false }
+  if (!h || !h.tema) return false;
+  const t = normTpl(h.tema);
+  t.id = idUnik(t.id || t.nama || 'dari-kanvas');
+  t.sumber = 'kanvas';
+  TS.user.push(t); TS.cur = t.id; TS.ui.tab = 'dekorasi';
+  simpanKoleksi(); renderSemua();
+  try { localStorage.removeItem('asproject.kanvas.handoff') } catch (e) { }
+  try { history.replaceState(null, '', location.pathname) } catch (e) { }
+  notify('Rancangan dari Kanvas dimuat — lengkapi lalu ekspor.', 'ok');
+  return true;
+}
+
 /* ====================== INIT ====================== */
 function tplAktif(){return tpl()}
 function init(){
@@ -1137,6 +1153,7 @@ function init(){
  if(q){const bawaan=TPL_BAWAAN.filter(t=>t.id===q)[0],milik=TS.user.filter(t=>t.id===q)[0];
   if(bawaan||milik)duplikat(q);else notify('Tema "'+q+'" tidak ditemukan — mulai dari tema pilihanmu.',"bad")}
  if(!TS.user.length)notify('Pilih "Duplikat" pada tema bawaan, atau klik ＋ Baru untuk mulai merancang.','ok');
+ if(/[?&]dari=kanvas/.test(location.search)&&!dariKanvas())notify('Belum ada rancangan dari Kanvas yang tersimpan.','warn');
  document.addEventListener('keydown',e=>{if(e.key==='Escape')tutupModal()});
  const j=$('#jmlTema');if(j)j.textContent=TS.user.length+' rancangan'
 }
