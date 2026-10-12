@@ -440,7 +440,7 @@ const DEF={
   salamBuka:'Assalamu\u2019alaikum wr. wb.',salamTutup:'Wassalamu\u2019alaikum wr. wb.',
   liveAkad:'',liveResepsi:'',
   ucapanCustom:''},
- musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverPos:{x:50,y:50,z:1},gallery:[],videoLink:'',
+ musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverPos:{x:50,y:50,z:1},fotoPria:'',fotoWanita:'',gallery:[],videoLink:'',
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'',
  guestCodes:{},masterKey:'',selGuest:null,showNameQr:true,
@@ -799,6 +799,8 @@ function kecilkanFoto(dataUrl,tipe){return new Promise(res=>{
 })}
 function uploadCover(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const asal=r.result;state.cover=asal;save();render();
  kecilkanFoto(asal,f.type).then(k=>{if(k!==asal&&state.cover===asal){state.cover=k;save();render()}})};r.readAsDataURL(f)}
+function uploadOrang(input,slot){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const asal=r.result;state[slot]=asal;save();render();
+ kecilkanFoto(asal,f.type).then(k=>{if(k!==asal&&state[slot]===asal){state[slot]=k;save();render()}})};r.readAsDataURL(f)}
 function uploadGallery(input){const fs=Array.from(input.files||[]);let left=fs.length;fs.forEach(f=>{const r=new FileReader();r.onload=()=>{const asal=r.result;const i=state.gallery.length;state.gallery.push(asal);if(--left===0){save();render()}
  kecilkanFoto(asal,f.type).then(k=>{if(k!==asal&&state.gallery[i]===asal){state.gallery[i]=k;save();render()}})};r.readAsDataURL(f)})}
 async function publish(){
@@ -824,7 +826,7 @@ async function publish(){
   amplop:JSON.parse(JSON.stringify(state.amplop)),
   slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-  cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos()),
+  cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos()),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
   gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
   /* alur Studio > Undangan Master > Undangan Tamu: dashboard master butuh daftar tamu + kunci privat */
   guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
@@ -865,7 +867,7 @@ async function dlUndangan(){
    amplop:JSON.parse(JSON.stringify(state.amplop)),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos()),
+   cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos()),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],publishedAt:new Date().toISOString()};
   if(JSON.stringify(data).length>1500000){data.gallery=[];
    if(JSON.stringify(data).length>1200000){data.cover='';
@@ -920,6 +922,8 @@ function loadArsip(id){const a=state.arsip.find(x=>x.id===id);if(!a)return;
   if(a.snap.cover!==undefined)state.cover=a.snap.cover;
   if(a.snap.coverStyle)state.coverStyle=a.snap.coverStyle;
   if(a.snap.coverPos)state.coverPos=Object.assign({x:50,y:50,z:1},a.snap.coverPos);
+   if(a.snap.fotoPria!==undefined)state.fotoPria=a.snap.fotoPria;
+   if(a.snap.fotoWanita!==undefined)state.fotoWanita=a.snap.fotoWanita;
   if(a.snap.slides)state.slides=mergeSlides(a.snap.slides);
   if(a.snap.anim)state.anim=Object.assign({},DEF.anim,a.snap.anim);animSig=null}
  else{state.event=a.jenis;animSig=null}
@@ -1154,6 +1158,14 @@ function tabMusik(){const d=DOA[state.doa]||DOA.pernikahan;return `<div style="d
     <div style="height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fbfaf8;overflow:hidden;cursor:pointer;position:relative">
     ${state.cover?`<img src="${state.cover}" style="width:100%;height:100%;object-fit:cover">`:'<span style="font-size:11px;color:var(--mut2)">Upload foto</span>'}
     <input type="file" accept="image/*" onchange="uploadCover(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div></label>
+   <label style="display:block"><div class="f" style="margin-bottom:4px">Foto Mempelai Pria (di dalam undangan)</div>
+    <div style="height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fbfaf8;overflow:hidden;cursor:pointer;position:relative">
+    ${state.fotoPria?`<img src="${state.fotoPria}" style="width:100%;height:100%;object-fit:cover">`:'<span style="font-size:11px;color:var(--mut2)">Upload foto</span>'}
+    <input type="file" accept="image/*" onchange="uploadOrang(this,'fotoPria')" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div></label>
+   <label style="display:block"><div class="f" style="margin-bottom:4px">Foto Mempelai Wanita (di dalam undangan)</div>
+    <div style="height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fbfaf8;overflow:hidden;cursor:pointer;position:relative">
+    ${state.fotoWanita?`<img src="${state.fotoWanita}" style="width:100%;height:100%;object-fit:cover">`:'<span style="font-size:11px;color:var(--mut2)">Upload foto</span>'}
+    <input type="file" accept="image/*" onchange="uploadOrang(this,'fotoWanita')" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div></label>
    <label style="display:block"><div class="f" style="margin-bottom:4px">Galeri Unlimited + Lightbox</div>
     <div style="height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fbfaf8;cursor:pointer;position:relative">
     <span style="font-size:11px;color:var(--mut)">+ ${state.gallery.length} foto</span>

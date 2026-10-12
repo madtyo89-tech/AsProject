@@ -114,6 +114,16 @@ body.foto-full #cover .wedding-subtitle,body.foto-full #cover .wedding-meta,body
 body.foto-full #cover .inner h1{margin-top:10px}
 body.foto-full #cover .date{margin-top:16px}
 body.foto-full #cover .open{margin-top:22px}
+/* Blok teks + amplop duduk lebih rendah (bawah-tengah), foto bagian atas lebih leluasa */
+body.wedding-cover.foto-full #cover,body.foto-full #cover{justify-content:flex-end;padding:0 0 8px}
+body.wedding-cover.foto-full #cover .bdfr,body.foto-full #cover .bdfr{margin:0 auto 88px}
+.couple-foto{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0 18px}
+.couple-foto.tunggal{margin-bottom:14px}
+.couple-foto .cf{width:min(112px,30vw);aspect-ratio:3/4;overflow:hidden;border-radius:999px 999px 16px 16px;
+  border:2px solid var(--accent);box-shadow:0 12px 26px rgba(60,40,15,.16);background:#f3ead9}
+.couple-foto .cf img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;display:block}
+.couple-foto .cf-amp{font-family:var(--ft);font-size:24px;color:var(--accent);flex:none;transform:translateY(8px)}
+@media (max-width:380px){.couple-foto .cf{width:min(96px,28vw)}.couple-foto{gap:12px}}
 body.foto-full #cover .brand{opacity:.9;text-shadow:0 1px 8px rgba(0,0,0,.65)}
 body.foto-full #cover .bdfr .bd-c,body.foto-full #cover .bdfr .orn-c{opacity:.92}
 /* Blur halus di keempat sudut foto penuh — sudut tampak lembut/dreamy,
@@ -483,13 +493,26 @@ body:not(.opened) #aspAmbient{opacity:.42}
 /* ==== Tombol "Buka Undangan" bentuk amplop kertas + segel lilin ==== */
 body.wedding-cover #cover .open,body.foto-full #cover .open,#cover .open{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:flex-end;
   width:min(300px,84%);height:auto;min-height:120px;padding:58px 18px 17px;border-radius:13px;border:1px solid rgba(168,130,63,.48);
-  background:linear-gradient(172deg,#FFFCF5 0%,#F7EBD2 100%);box-shadow:0 22px 42px rgba(20,12,4,.32),inset 0 1px 0 rgba(255,255,255,.85);
+  background:linear-gradient(172deg,#FFFCF5 0%,#F7EBD2 100%);
+  box-shadow:0 22px 42px rgba(20,12,4,.32),inset 0 1px 0 rgba(255,255,255,.85);
   color:#5C4222;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+/* kertas amplop menyesuaikan aksen tema masing-masing */
+body.wedding-cover #cover .open,body.foto-full #cover .open,#cover .open{
+  border-color:color-mix(in srgb,var(--accent-cover,#A8823F) 52%,transparent);
+  background:linear-gradient(172deg,color-mix(in srgb,var(--accent-cover,#C9A25B) 9%,#FFFCF5) 0%,color-mix(in srgb,var(--accent-cover,#C9A25B) 24%,#F4E6C8) 100%);
+  color:color-mix(in srgb,var(--ink-body,#4B4237) 88%,#2E2114)}
 body.wedding-cover #cover .open::before,body.foto-full #cover .open::before,#cover .open::before{content:'';position:absolute;left:0;right:0;top:0;height:56%;border-radius:12px 12px 0 0;
-  background:linear-gradient(180deg,#FDF5E3 0%,#F0E1BC 100%);clip-path:polygon(0 0,100% 0,50% 100%);pointer-events:none}
+  background:linear-gradient(180deg,#FDF5E3 0%,#F0E1BC 100%);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent-cover,#C9A25B) 7%,#FDF5E3) 0%,color-mix(in srgb,var(--accent-cover,#C9A25B) 28%,#EEDFBA) 100%);
+  clip-path:polygon(0 0,100% 0,50% 100%);pointer-events:none}
 body.wedding-cover #cover .open::after,body.foto-full #cover .open::after,#cover .open::after{content:'';position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;
-  background:radial-gradient(circle at 33% 28%,#EFCF88 0%,#C9A25B 55%,#A8823F 100%);border:1px solid rgba(255,255,255,.42);
-  box-shadow:0 7px 16px rgba(20,12,4,.32),inset 0 1px 2px rgba(255,255,255,.5);pointer-events:none}
+  background:radial-gradient(circle at 33% 28%,#EFCF88 0%,#C9A25B 55%,#A8823F 100%);
+  background:radial-gradient(circle at 33% 28%,color-mix(in srgb,var(--accent-cover,#EFCF88) 62%,#fff) 0%,var(--accent-cover,#C9A25B) 52%,color-mix(in srgb,var(--accent,#A8823F) 72%,#2A1E0C) 100%);
+  border:1px solid rgba(255,255,255,.42);
+  box-shadow:0 7px 16px rgba(20,12,4,.32),inset 0 1px 2px rgba(255,255,255,.5);pointer-events:none;
+  animation:sealNapas 2.9s ease-in-out infinite}
+@keyframes sealNapas{0%,100%{box-shadow:0 7px 16px rgba(20,12,4,.32),inset 0 1px 2px rgba(255,255,255,.5)}
+  55%{box-shadow:0 8px 26px color-mix(in srgb,var(--accent-cover,#C9A25B) 60%,transparent),inset 0 1px 2px rgba(255,255,255,.55)}}
 body.wedding-cover #cover .open .env,body.foto-full #cover .open .env,#cover .open .env{position:absolute;left:50%;top:56%;transform:translate(-50%,-54%);z-index:2;margin:0;font-size:15px;line-height:1;
   filter:drop-shadow(0 1px 2px rgba(60,40,10,.45))}
 body.wedding-cover #cover .open:active,body.foto-full #cover .open:active,#cover .open:active{transform:translateY(2px) scale(.98)}
@@ -507,6 +530,7 @@ body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .ope
 body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after{transform:translate(-50%,8%) scale(.5);opacity:0}
 body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,4%) scale(.5);opacity:0}
 @media (prefers-reduced-motion:reduce){
+  #cover .open::after{animation:none}
   #cover .open::before,#cover .open::after,#cover .open .env,body.opened #cover{transition:none!important}
   body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:none}
   body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after,
@@ -1066,8 +1090,11 @@ function boot(draft){
   <div class="doa-arti">${esc(doa.arti)}</div></div>`;
 
  /* 3. Profil (pasangan / anak) */
+ const fpOrang=String((d&&d.fotoPria)||'').trim(),fwOrang=String((d&&d.fotoWanita)||'').trim();
+ const cfImg=(src_,alt_)=>`<div class="cf"><img src="${esc(src_)}" alt="${esc(alt_)}" loading="lazy" onerror="this.closest('.cf').style.display='none'"></div>`;
  if(ev==='pernikahan'){
   h+=`<div class="${RV('card')}"><div class="kicker">Mempelai</div>
+   ${(fpOrang||fwOrang)?`<div class="couple-foto">${fpOrang?cfImg(fpOrang,'Foto '+names[0].nm):''}<div class="cf-amp">&amp;</div>${fwOrang?cfImg(fwOrang,'Foto '+names[1].nm):''}</div>`:''}
    <div class="couple">
     <div class="c"><div class="nm">${esc(names[0].nm)}</div><div class="rl">${names[0].rl}</div></div>
     <div class="heart">❦</div>
@@ -1075,6 +1102,7 @@ function boot(draft){
    </div></div>`;
  }else{
   h+=`<div class="${RV('card')}"><div class="kicker">${esc(EV_LABEL[ev]||'')}</div>
+   ${(fpOrang||fwOrang)?`<div class="couple-foto tunggal">${cfImg(fpOrang||fwOrang,names[0].nm)}</div>`:''}
    <div class="name-big">${esc(names[0].nm)}</div>
    ${names[0].rl?`<div class="role">${names[0].rl}</div>`:''}
    <div class="divider">${esc(tplF.deco)}</div></div>`;
@@ -1378,7 +1406,7 @@ const DEMO_DRAFT={
  event_date:'2026-12-28',event_time:'08:00',music_url:'music/backsound-asproject.mp3',music_name:'Backsound AsProject — rtyo',theme:2,
  data:{event:'pernikahan',tpl:'ivory-klasik',doa:'pernikahan',accent:'#8A6E4B',fontTitle:'playfair',fontBody:'inter',border:'double',
   gallery:['assets/demo/wedding/01-jawa-elegan.jpg','assets/demo/wedding/02-minimalist-sage.jpg','assets/demo/wedding/03-luxury-gold.jpg'],
-  cover:'assets/demo/wedding/02-minimalist-sage.jpg',coverStyle:'full',coverPos:{x:50,y:38,z:1},
+  cover:'assets/demo/wedding/02-minimalist-sage.jpg',coverStyle:'full',coverPos:{x:50,y:38,z:1},fotoPria:'assets/demo/wedding/05-mempelai-pria.jpg',fotoWanita:'assets/demo/wedding/04-mempelai-wanita.jpg',
   form:{namaPria:'Rangga Pratama',gelarPria:'S.T.',namaWanita:'Alya Zahra',gelarWanita:'S.Psi.',
    putraPutri:'Bpk. Hartono & Ibu Sulastri',putriDari:'Bpk. Faisal & Ibu Dewi',
    tanggalAcara:'2026-12-28',jamAcara:'08:00',zona:'WIB',venue:'The Ballroom at Ritz Carlton',
@@ -1423,6 +1451,8 @@ if(DEMO){const _t=(Q.get('tpl')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
    khitanan:'assets/demo/khitanan/01-islamic-elegant.jpg',
    ultah:'assets/demo/ultah/01-kids-party.jpg',
    aqiqah:'assets/demo/aqiqah/01-baby-boy.jpg'}[_ev]||'assets/demo/wedding/02-minimalist-sage.jpg');
+  DEMO_DRAFT.data.fotoPria=_ev==='pernikahan'?'assets/demo/wedding/05-mempelai-pria.jpg':'';
+  DEMO_DRAFT.data.fotoWanita=_ev==='pernikahan'?'assets/demo/wedding/04-mempelai-wanita.jpg':'';
   if(_ev!=='pernikahan'){
    DEMO_DRAFT.data.event=_ev;DEMO_DRAFT.data.doa=_ev;
    DEMO_DRAFT.data.slides.story.items=[
