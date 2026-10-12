@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 """
-Sinkronkan MESIN tema dari studio.html / undangan.html ke dua halaman turunan:
+Sinkronkan MESIN tema dari studio.html / undangan.html ke halaman turunan:
 
   1. template-studio.html — Studio Template (perancang tema katalog)
      · blok "MESIN (SALINAN PERSIS dari studio.html)"  (font, border, motif, efek,
        bagian, tema bawaan, mesin dekorasi)
      · blok <style data-cover-undangan> (CSS cover + animasi + dekorasi)
-  2. kanvas.html — Kanvas Template (kanvas kosong gaya Canva)
-     · blok "MESIN (SALINAN PERSIS dari studio.html)" (font, bagian undangan, motif,
-       bentuk ornamen, hiasan sudut & pembatas)
 
 Dipakai:
 
@@ -26,7 +23,6 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HAL = os.path.join(ROOT, 'template-studio.html')
-KANVAS = os.path.join(ROOT, 'kanvas.html')
 KERING = '--kering' in sys.argv
 
 
@@ -171,45 +167,6 @@ def sinkron_template_studio():
     return True
 
 
-# ----------------------------------------------------------------------- Kanvas
-
-def bangun_mesin_kanvas():
-    s = baca('studio.html')
-    potong = ['/* ====================== MESIN (SALINAN PERSIS dari studio.html) ======================\n'
-              '   Daftar font, bagian undangan, motif latar, bentuk ornamen, hiasan sudut, dan\n'
-              '   pembatas disalin apa adanya supaya rancangan di kanvas ini bisa langsung\n'
-              '   dijadikan tema katalog. Jangan ubah manual — sinkronkan dengan:\n'
-              '   python3 tools/sinkron-studio-template.py\n'
-              '   ============================================================================ */']
-    for nama, tipe in (('FONTS', 'array'), ('SLIDES', 'array')):
-        potong.append(ambil(s, nama, tipe))
-    for nama in ('patCss', 'fontFam', 'artDekoSudut', 'artDekoDiv'):
-        potong.append(ambil(s, nama, 'function'))
-    potong.append(ambil(s, 'DEKO_BENTUK', 'nilai'))
-    for nama in ('DKO_IDS', 'FLT_IDS', 'DVD_IDS'):
-        potong.append(ambil(s, nama, 'array'))
-    return '\n'.join(potong)
-
-
-def sinkron_kanvas():
-    hal = baca('kanvas.html')
-    mark_a = '/* ====================== MESIN (SALINAN PERSIS dari studio.html'
-    mark_b = '/* ============================================================================\n   KANVAS AsProject'
-    i = hal.index(mark_a)
-    j = hal.index(mark_b)
-    hal_baru = hal[:i] + bangun_mesin_kanvas() + '\n\n' + hal[j:]
-    if hal_baru == hal:
-        print('kanvas.html: mesin sudah sinkron — tidak ada yang berubah.')
-        return False
-    if KERING:
-        print('kanvas.html: mesin BERBEDA dengan studio.html.')
-        return True
-    with open(KANVAS, 'w', encoding='utf-8') as f:
-        f.write(hal_baru)
-    print('kanvas.html disinkronkan: %d byte, %d baris' % (len(hal_baru.encode('utf-8')), hal_baru.count('\n') + 1))
-    return True
-
-
 def cek_sintaks(berkas):
     blok = re.findall(r'<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>', baca(berkas))
     tmp = os.path.join(ROOT, 'tools', '_sinkron_cek.js')
@@ -223,17 +180,14 @@ def cek_sintaks(berkas):
 
 def main():
     beda_template = sinkron_template_studio()
-    beda_kanvas = sinkron_kanvas()
     if KERING:
-        if beda_template or beda_kanvas:
+        if beda_template:
             print('--kering: ada mesin yang berbeda — jalankan tanpa --kering untuk menyinkronkan.')
             return 1
         return 0
     ok = True
     if beda_template:
         ok = cek_sintaks('template-studio.html') and ok
-    if beda_kanvas:
-        ok = cek_sintaks('kanvas.html') and ok
     return 0 if ok else 1
 
 

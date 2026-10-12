@@ -28,7 +28,7 @@ import posixpath
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HALAMAN = ["index.html", "studio.html", "undangan.html", "404.html",
            "checkin.html", "demo/ice-blue.html", "master.html", "scan.html",
-           "template-studio.html", "kanvas.html"]
+           "template-studio.html"]
 TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 
 hitung = {"ok": 0, "masalah": 0, "info": 0}
@@ -978,61 +978,9 @@ def cek_dekorasi_tema():
               if r.returncode == 0 else "mesin Studio Template BEDA — jalankan python3 tools/sinkron-studio-template.py")
 
 
-# -------------------------------- 25. Kanvas Template (kanvas kosong gaya Canva)
-def cek_kanvas():
-    print("\n[25] Kanvas Template (kanvas kosong gaya Canva)")
-    rel = "kanvas.html"
-    if not os.path.isfile(os.path.join(ROOT, rel)):
-        lapor("info", "kanvas.html belum ada — Kanvas Template opsional")
-        return
-    hal, stu, ts = baca(rel), baca("studio.html"), baca("template-studio.html")
-    # 1) mesin (font & bagian undangan) harus sama dengan studio.html
-    for nama, pola, label, jumlah in (("FONTS", _id_objek, "font", 17),
-                                      ("SLIDES", _id_objek, "bagian undangan", 10)):
-        a = pola(_blok_array(hal, "const %s=" % nama))
-        b = pola(_blok_array(stu, "const %s=" % nama))
-        lapor("ok" if a and a == b and len(a) == jumlah else "masalah",
-              "%s: %d %s sama & berurutan dengan studio.html" % (rel, len(a), label))
-    # 2) blok mesin bertanda + motif/hiasan DITURUNKAN dari mesin (tidak ada daftar kedua)
-    lapor("ok" if "MESIN (SALINAN PERSIS dari studio.html" in hal and "KANVAS AsProject" in hal else "masalah",
-          "%s: blok mesin bertanda (bisa disinkronkan ulang)" % rel)
-    turunan = ("patCss.toString()" in hal and "function artHias(" in hal
-               and "artDekoSudut" in hal and "artDekoDiv" in hal and "Object.keys(DEKO_BENTUK)" in hal)
-    lapor("ok" if turunan else "masalah",
-          "%s: daftar motif & hiasan diturunkan dari mesin (tidak bisa basi)" % rel)
-    # 3) fungsi inti & kunci penyimpanan
-    wajib = ("asproject.kanvas.v1", "asproject.kanvas.handoff", "function htmlDok(",
-             "function svgDok(", "function jadikanTema(", "function kirimKeStudioTemplate(",
-             "function esc(", "function warnaAman(", "function srcAman(", "function bakuEl(")
-    kurang = [w for w in wajib if w not in hal]
-    lapor("ok" if not kurang else "masalah",
-          "%s: simpan/muat, ekspor, dan pengaman input lengkap" % rel
-          + ("" if not kurang else " — kurang: " + ", ".join(kurang)))
-    # 4) ekspor aman: semua tulisan pengguna lewat esc() sebelum masuk HTML/SVG
-    lolos = ("esc(e.isi)" in hal and "esc(t)" in hal and hal.count("esc(") >= 15)
-    lapor("ok" if lolos else "masalah", "%s: tulisan pengguna di-escape saat digambar & diekspor" % rel)
-    # 5) sambungan dua arah dengan Studio Template
-    lapor("ok" if "kanvas.html" in ts and "function dariKanvas" in ts and "dari=kanvas" in ts else "masalah",
-          "template-studio.html: tautan ke kanvas + impor rancangan (dariKanvas)")
-    lapor("ok" if "template-studio.html" in hal and "studio.html" in hal else "masalah",
-          "%s: menaut balik ke Studio Template & Studio undangan" % rel)
-    # 6) uji halaman kanvas
-    if not shutil.which("node"):
-        lapor("info", "node tidak tersedia — uji kanvas dilewati")
-        return
-    uji = os.path.join(ROOT, "tools", "test-kanvas.cjs")
-    if not os.path.isfile(uji):
-        lapor("masalah", "tools/test-kanvas.cjs tidak ada")
-        return
-    r = subprocess.run(["node", uji], capture_output=True, text=True, cwd=ROOT)
-    ringkas = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan:")]
-    lapor("ok" if r.returncode == 0 else "masalah",
-          "uji kanvas: " + (ringkas[0] if ringkas else (r.stdout or r.stderr).strip()[-200:]))
-
-
-# -------------------- 26. Kelengkapan: animasi, border 2D/3D/4D, preferensi, slider
+# -------------------- 25. Kelengkapan: animasi, border 2D/3D/4D, preferensi, slider
 def cek_kelengkapan():
-    print("\n[26] Kelengkapan tema (animasi baru, preferensi, galeri slider)")
+    print("\n[25] Kelengkapan tema (animasi baru, preferensi, galeri slider)")
     stu, und = baca("studio.html"), baca("undangan.html")
     # 1) jumlah pilihan animasi
     def id_fx(teks, nama):
@@ -1089,7 +1037,7 @@ def main():
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi,
-               cek_studio_template, cek_dekorasi_tema, cek_kanvas, cek_kelengkapan):
+               cek_studio_template, cek_dekorasi_tema, cek_kelengkapan):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

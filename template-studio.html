@@ -220,7 +220,7 @@ input,textarea,select{outline:0}
  <div><h1>Studio Template</h1><div class="sub">Rancang tema undangan → pratinjau HP → ekspor kode siap pasang</div></div>
  <div class="sp"></div>
  <span id="statusKoleksi" class="mini"></span>
- <a class="tb" href="kanvas.html" data-help="Kanvas kosong gaya Canva — susun bebas, lalu jadikan tema di sini.">🎨 Kanvas</a><button class="tb" onclick="bukaPanduan()" data-help="Enam langkah memasang tema baru ke repo sampai tayang.">📘 Panduan</button>
+ <button class="tb" onclick="bukaPanduan()" data-help="Enam langkah memasang tema baru ke repo sampai tayang.">📘 Panduan</button>
  <button class="tb" onclick="bukaImpor()" data-help="Muat tema dari berkas JSON atau tempelan teks.">📥 Impor</button>
  <button class="tb" onclick="bukaCloud()" data-help="Simpan atau muat koleksi tema di Supabase (per kode pemilik).">☁️ Cloud</button>
  <button class="tb" onclick="salinKoleksi()" data-help="Salin seluruh koleksi di perangkat ini sebagai JSON.">⤓ Koleksi</button>
@@ -1172,22 +1172,6 @@ function bukaPanduan(){bukaModal('📘 Panduan membuat &amp; memasang tema',
  +'<div class="kv"><span class="k">Koleksi</span><span class="v">rancangan tersimpan di perangkat ini (localStorage) + opsional ke cloud</span></div></div>',
  '<button class="tb" onclick="salin(semuaSnippet(tplAktif()),\'Semua kode disalin.\')">📋 Salin semua kode</button><button class="tb dark" onclick="tutupModal()">Mengerti</button>','820px')}
 
-/* ---------- terima rancangan dari Kanvas Template (kanvas.html) ---------- */
-function dariKanvas() {
-  let h = null;
-  try { h = JSON.parse(localStorage.getItem('asproject.kanvas.handoff') || 'null') } catch (e) { return false }
-  if (!h || !h.tema) return false;
-  const t = normTpl(h.tema);
-  t.id = idUnik(t.id || t.nama || 'dari-kanvas');
-  t.sumber = 'kanvas';
-  TS.user.push(t); TS.cur = t.id; TS.ui.tab = 'dekorasi';
-  simpanKoleksi(); renderSemua();
-  try { localStorage.removeItem('asproject.kanvas.handoff') } catch (e) { }
-  try { history.replaceState(null, '', location.pathname) } catch (e) { }
-  notify('Rancangan dari Kanvas dimuat — lengkapi lalu ekspor.', 'ok');
-  return true;
-}
-
 /* ====================== INIT ====================== */
 function tplAktif(){return tpl()}
 function init(){
@@ -1197,7 +1181,6 @@ function init(){
  if(q){const bawaan=TPL_BAWAAN.filter(t=>t.id===q)[0],milik=TS.user.filter(t=>t.id===q)[0];
   if(bawaan||milik)duplikat(q);else notify('Tema "'+q+'" tidak ditemukan — mulai dari tema pilihanmu.',"bad")}
  if(!TS.user.length)notify('Pilih "Duplikat" pada tema bawaan, atau klik ＋ Baru untuk mulai merancang.','ok');
- if(/[?&]dari=kanvas/.test(location.search)&&!dariKanvas())notify('Belum ada rancangan dari Kanvas yang tersimpan.','warn');
  document.addEventListener('keydown',e=>{if(e.key==='Escape')tutupModal()});
  const j=$('#jmlTema');if(j)j.textContent=TS.user.length+' rancangan'
 }

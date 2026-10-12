@@ -113,34 +113,6 @@ berpindah tema. Draft lama yang temanya sudah tidak ada otomatis jatuh ke tema d
 `LEGACY_EV` di `undangan.html` menjaga jenis acara (pernikahan vs satu nama) tetap benar
 untuk draft tanpa snapshot `data`.
 
-## Kanvas Template (kanvas kosong gaya Canva)
-
-`kanvas.html` adalah meja gambar bebas: mulai dari kertas kosong, susun sendiri lewat
-drag & resize, lalu jadikan tema katalog.
-
-- **Elemen**: teks (7 gaya siap pakai), kotak, bulat, garis, gambar (unggah → data URL),
-  ornamen bunga/batik (6 bentuk), hiasan bingkai & pembatas (8 bentuk).
-- **Menggambar**: geser bebas dengan garis bantu snap (tepi/tengah kanvas & elemen lain),
-  8 pegangan ubah ukuran, pegangan putar (Shift = langkah 15°), dobel klik teks untuk
-  menulis langsung di kanvas.
-- **Latar**: 8 palet gradasi undangan atau 11 motif bunga/batik bawaan (memakai warna aksen
-  pilihan Anda) — motifnya persis sama dengan yang dipakai undangan tamu.
-- **Lapisan**: urutkan, kunci, sembunyikan, gandakan, hapus; undo/redo sampai 90 langkah.
-- **Pintasan**: `Ctrl+Z` / `Ctrl+Y`, `Ctrl+D` duplikat, `Del` hapus, tanda panah 1 px
-  (Shift 10 px), `Esc` batal pilih.
-- **Simpan**: otomatis di perangkat (localStorage) sebagai banyak kanvas; `Berkas` untuk
-  kanvas baru (3:4, 1:1, 9:16, A4), ganti nama, gandakan, impor/ekspor JSON.
-- **Ekspor**: HTML mandiri (paling setia — motif & font ikut), SVG vektor, JSON rancangan,
-  serta Cetak/PDF.
-- **Jadikan tema**: palet, font, motif, dan hiasan dipetakan otomatis ke tema katalog
-  (font/motif/border/hiasan divalidasi ke daftar mesin), lalu dibuka di Studio Template
-  lewat `?dari=kanvas` untuk dilengkapi dan dipasang.
-
-Uji: `node tools/test-kanvas.cjs` (74 uji) dan pemeriksa `[25]` di `tools/cek-kesehatan.py`.
-Mesin di halaman ini adalah salinan persis `studio.html` — sinkronkan dengan
-`python3 tools/sinkron-studio-template.py` bila mesin berubah (skrip itu sekaligus
-menjaga `template-studio.html`).
-
 ## Animasi, border 2D/3D/4D, preferensi & galeri geser
 
 **Animasi.** 10 efek gulir baru (`Zoom Rotate`, `Stretch Up`, `Slide Diagonal`, `Flip X 3D`,
@@ -184,7 +156,7 @@ coverflow, flip 3D**. Slider berjalan sendiri dan **murni CSS** (tiap foto memak
 undangan tamu, maupun di berkas ekspor mandiri; saat "kurangi gerakan" aktif, foto pertama
 tetap tampil.
 
-Uji: `node tools/test-lengkap.cjs` (60 uji) dan pemeriksa `[26]` di `tools/cek-kesehatan.py`.
+Uji: `node tools/test-lengkap.cjs` (56 uji) dan pemeriksa `[25]` di `tools/cek-kesehatan.py`.
 
 ## Dekorasi tema (bunga, batik, hiasan dinamis)
 
@@ -232,9 +204,9 @@ Catatan teknis:
   (bunga → hiasan bunga + kelopak; batik → hiasan batik + kilau).
 
 Uji: `node tools/test-dekorasi-tema.cjs` (50 uji) dan pemeriksa `[24]` di `tools/cek-kesehatan.py`.
-Untuk animasi, preferensi, dan slider galeri: `node tools/test-lengkap.cjs` + pemeriksa `[26]`.
-Bila daftar mesin berubah, sinkronkan mesin Studio Template **dan** Kanvas Template dengan
-`python3 tools/sinkron-studio-template.py` (`--kering` melaporkan bila salah satu berbeda).
+Untuk animasi, preferensi, dan slider galeri: `node tools/test-lengkap.cjs` + pemeriksa `[25]`.
+Bila daftar mesin berubah, sinkronkan mesin Studio Template dengan
+`python3 tools/sinkron-studio-template.py` (`--kering` melaporkan bila berbeda).
 
 ## Studio Template (perancang tema baru)
 

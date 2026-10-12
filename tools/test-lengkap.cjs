@@ -32,7 +32,7 @@ const cek = (syarat, pesan, info) => {
   else { gagal++; console.log('  [FAIL] ' + pesan + (info ? ' → ' + info : '')); }
 };
 
-const STUDIO = baca('studio.html'), UNDANGAN = baca('undangan.html'), KANVAS = baca('kanvas.html');
+const STUDIO = baca('studio.html'), UNDANGAN = baca('undangan.html');
 const ASET = baca('assets/scroll-effects.css');
 
 const FX_SCROLL_BARU = ['zoom-rotate', 'stretch-up', 'slide-diagonal', 'flip-x-3d', 'mask-left',
@@ -209,7 +209,7 @@ function bukaUndangan(ubah) {
     tutup();
   }
 
-  console.log('\n7) Berkas turunan (Studio Template & Kanvas) tetap sinkron');
+  console.log('\n7) Berkas turunan (Studio Template) tetap sinkron');
   {
     const ts = baca('template-studio.html');
     cek(ts.includes('MESIN (SALINAN PERSIS dari studio.html'), 'template-studio.html: blok mesin bertanda');
@@ -217,29 +217,8 @@ function bukaUndangan(ubah) {
     for (const namaFx of ['FX_SCROLL', 'FX_COVER']) {
       cek(barisFx(ts, namaFx).length === barisFx(STUDIO, namaFx).length, 'template-studio.html: ' + namaFx + ' ikut tersalin (' + barisFx(ts, namaFx).length + ')');
     }
-    /* kanvas tidak memakai border katalog, tapi ia memakai ornamen & hiasan mesin */
-    cek(KANVAS.includes('MESIN (SALINAN PERSIS dari studio.html'), 'kanvas.html: blok mesin bertanda');
-    cek(idObjek(blokArr(KANVAS, 'FONTS')).length === 17 && idArr(blokArr(KANVAS, 'DKO_IDS')).length === 6 && idArr(blokArr(KANVAS, 'FLT_IDS')).length === 6,
-      'kanvas.html: font & hiasan ikut mesin');
-    const literal = (teks, nama) => {
-      const i = teks.search(new RegExp('(?:^|\\n)const ' + nama + '='));
-      const b = teks.indexOf('{', i);
-      let d = 0, k = b;
-      while (k < teks.length) {
-        const c = teks[k];
-        if (c === "'" || c === '"' || c === '`') { const q = c; k++; while (k < teks.length) { if (teks[k] === '\\') { k += 2; continue } if (teks[k] === q) break; k++ } }
-        else if (c === '{' || c === '[') d++;
-        else if (c === '}' || c === ']') { d--; if (!d) break }
-        k++;
-      }
-      return teks.slice(b, k + 1);
-    };
-    const orn = literal(KANVAS, 'DEKO_BENTUK');
-    cek(orn === literal(STUDIO, 'DEKO_BENTUK'), 'kanvas.html: bentuk ornamen identik dengan mesin',
-      (orn.match(/[a-z]+:'<svg/g) || []).length + ' vs ' + (literal(STUDIO, 'DEKO_BENTUK').match(/[a-z]+:'<svg/g) || []).length);
-    cek(KANVAS.includes("function artHias(") && KANVAS.includes('artDekoDiv'), 'kanvas.html: hiasan sudut & pembatas tersedia');
     const skrip = baca('tools/sinkron-studio-template.py');
-    cek(skrip.includes('def sinkron_kanvas') && skrip.includes('def sinkron_template_studio'), 'skrip sinkronisasi menjaga kedua halaman turunan');
+    cek(skrip.includes('def sinkron_template_studio') && !/kanvas/i.test(skrip), 'skrip sinkronisasi menjaga halaman turunan & bebas kanvas');
   }
 
   console.log(`\nRingkasan: ${lulus} lulus, ${gagal} gagal`);
