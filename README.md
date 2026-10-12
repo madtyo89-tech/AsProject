@@ -25,7 +25,8 @@ Catatan:
 - Urutan array `TPL` di `studio.html`, `undangan.html`, dan katalog `Pn` di `index.html`
   **harus identik** (kolom `theme` adalah index ke array itu) — dicek otomatis oleh
   `python3 tools/cek-kesehatan.py` (bagian [11], [12], [13]). Sejak 2026-10-10 katalog
-  berisi satu tema dasar + 12 tema warisan Google Drive; lihat **Katalog tema** di bawah.
+  berisi satu tema dasar + 12 tema warisan Google Drive + 5 tema elegan seri
+  *Golden Onyx*; lihat **Katalog tema** di bawah.
 - Kolom snapshot `data jsonb` ditambahkan idempoten di `supabase-schema.sql`;
   jalankan ulang di SQL Editor Supabase agar publish baru menyimpan snapshot
   lengkap. Draft lama (tanpa `data`) tetap bisa dibuka — renderer memakai
@@ -98,8 +99,20 @@ Menambah tema = menambah **satu baris di tiga tempat** yang urutannya wajib sama
 `node tools/test-kontras-tema.cjs`), `ev` dipetakan dari kategori (`Pernikahan` →
 `pernikahan`, `Ulang Tahun` → `ultah`), dan tiap nama tema didaftarkan di `DEMO_BY_NAME` /
 `DEMO_BY_CATEGORY` hanya kalau berkas demonya benar-benar ada. Teks jumlah di hero katalog
-(`"13 template"`) dan daftar kategori (`Xm`) ikut berubah — keduanya diperiksa oleh
+(`"18 template"`) dan daftar kategori (`Xm`) ikut berubah — keduanya diperiksa oleh
 `tools/cek-kesehatan.py` bagian [12].
+
+**Tambahan 2026-10-10 (seri Golden Onyx, +5 tema elegan campuran kategori)** —
+ditaruh di **akhir** array dengan urutan sama di ketiga file:
+`midnight-gold` (pernikahan, onyx + gold foil), `emerald-royal` (pernikahan,
+zamrud + emas), `navy-crest` (khitanan, navy + crest emas), `golden-jubilee`
+(ultah, champagne gold milestone), `pearl-ivory` (aqiqah, mutiara & ivory).
+Katalog publik `index.html` ikut dirancang ulang dengan tema visual *Golden Onyx*
+(palette onyx + emas + serif Cinzel/Cormorant; blok `AsProject · Katalog enhancement`
+di akhir berkas — bundle React tidak disentuh) dan kilau emas interaktif
+menggantikan kupu-kupu. Alur studio diperjelas dengan stepper 4 langkah
+(Data Acara → Desain & Slide → Konten → Tamu & Terbit), checklist kesiapan
+(Nama/Tanggal/Jam/Lokasi/Link), dan urutan tab mengikuti alur kerja.
 
 Daftar `TEMA_LAMA` di `tools/cek-kesehatan.py` dan `tools/test-wedding-templates.cjs` menjaga
 agar id tema lama tidak kembali. Empat id (`jawa-elegan`, `minimalist-sage`, `luxury-gold`,

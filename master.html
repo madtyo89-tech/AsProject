@@ -54,6 +54,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 .st-total{background:var(--bg-soft);color:var(--ink)}
 .st-rsvp{background:var(--sage-light);color:var(--sage-dark)}
 .st-hadir{background:#e6f4ea;color:#2e7d4f}
+.st-ragu{background:#fdf3d7;color:#9a6b00}
 .st-tidak{background:#fbeae7;color:var(--red)}
 /* guest list */
 .gsearch{margin-top:12px;height:40px;border:1px solid var(--line);border-radius:12px;padding:0 13px;font-size:12px;font-family:inherit;background:var(--bg-soft);width:100%}
@@ -72,6 +73,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 .badge{font-size:9px;font-weight:800;padding:4px 9px;border-radius:99px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em}
 .b-hadir{background:#e6f4ea;color:#2e7d4f}
 .b-tidak{background:#fbeae7;color:var(--red)}
+.b-ragu{background:#fdf3d7;color:#9a6b00}
 .b-belum{background:var(--bg-soft);color:var(--ink-faint)}
 .g-link{margin-top:10px;background:var(--bg-soft);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;font-family:ui-monospace,monospace;font-size:9.5px;color:var(--ink-light);display:flex;gap:8px;align-items:center;word-break:break-all}
 .g-link span{flex:1;min-width:0}
@@ -232,7 +234,7 @@ function masterLink(){return baseLink()+'/master.html?slug='+SLUG+'&k='+(DRAFT.d
 function norm(s){return String(s||'').trim().toLowerCase().replace(/\s+/g,' ')}
 function parseGuests(){const raw=(DRAFT.data&&DRAFT.data.guestsRaw)||'';GS=raw.split('\n').map(s=>s.trim()).filter(Boolean);if(!selGuest&&GS.length)selGuest=GS[0]}
 function rsvpOf(g){return RMAP[norm(g)]||null}
-function stats(){let a=0,b=0;RSROWS.forEach(r=>{if(r.status==='hadir')a++;else b++});return{total:GS.length,rs:RSROWS.length,a,b,pct:GS.length?Math.round(RSROWS.length/GS.length*100):0}}
+function stats(){let a=0,b=0,c=0;RSROWS.forEach(r=>{if(r.status==='hadir')a++;else if(r.status==='ragu')c++;else b++});return{total:GS.length,rs:RSROWS.length,a,b,c,pct:GS.length?Math.round(RSROWS.length/GS.length*100):0}}
 function headName(){const d=DRAFT.data||{};const f=d.form||{};
  if(d.event==='pernikahan')return (DRAFT.name1||'')+' & '+(DRAFT.name2||'');
  return f.name||DRAFT.name1||'Undangan';}
@@ -266,7 +268,7 @@ function afterLoad(){
 }
 
 async function loadRsvp(){muatScanStat();
- if(DEMO){RSROWS=[{guest:'Pak Andi Wijaya & Keluarga',status:'hadir'},{guest:'Kak Dina & Family',status:'hadir'},{guest:'Bu Rina Marlina',status:'tidak'}];rebuildMap();return}
+ if(DEMO){RSROWS=[{guest:'Pak Andi Wijaya & Keluarga',status:'hadir'},{guest:'Kak Dina & Family',status:'ragu'},{guest:'Bu Rina Marlina',status:'tidak'}];rebuildMap();return}
  try{
   const r=await fetch(SUPABASE_URL+'/rest/v1/rsvp?slug=eq.'+SLUG+'&select=guest,status,updated_at&updated_at=desc',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}});
   if(!r.ok){RSROWS=[];rebuildMap();return}
@@ -308,6 +310,7 @@ function renderAll(){
   if(search&&!g.toLowerCase().includes(search.toLowerCase()))return false;
   const r=rsvpOf(g);
   if(filter==='hadir')return r&&r.status==='hadir';
+  if(filter==='ragu')return r&&r.status==='ragu';
   if(filter==='tidak')return r&&r.status==='tidak';
   if(filter==='belum')return !r;
   return true;
@@ -353,6 +356,7 @@ function renderAll(){
     <div class="stat st-total"><b>${st.total}</b><span>Total Tamu</span></div>
     <div class="stat st-rsvp"><b>${st.rs}</b><span>RSVP Terkirim</span><i>${st.pct}% respon</i></div>
     <div class="stat st-hadir"><b>${st.a}</b><span>Hadir</span></div>
+    <div class="stat st-ragu"><b>${st.c}</b><span>Belum Pasti</span></div>
     <div class="stat st-tidak"><b>${st.b}</b><span>Tidak Hadir</span></div>
    </div>
    <!-- guest list -->
@@ -360,12 +364,12 @@ function renderAll(){
     <div class="card-t">Daftar Tamu & Konfirmasi</div>
     <input class="gsearch" placeholder="Cari nama tamu…" value="${esc(search)}" oninput="onSearch(this.value)">
     <div class="chips">
-     ${[['all','Semua'],['hadir','Hadir'],['tidak','Tidak Hadir'],['belum','Belum RSVP']].map(c=>`<span class="chip ${filter===c[0]?'on':''}" onclick="onFilter('${c[0]}')">${c[1]}</span>`).join('')}
+     ${[['all','Semua'],['hadir','Hadir'],['ragu','Belum Pasti'],['tidak','Tidak Hadir'],['belum','Belum RSVP']].map(c=>`<span class="chip ${filter===c[0]?'on':''}" onclick="onFilter('${c[0]}')">${c[1]}</span>`).join('')}
     </div>
     ${shown.length?`<div class="glist">${shown.map(gm=>{
       const gi=GS.indexOf(gm);
       const r=rsvpOf(gm);
-      const badge=r?(r.status==='hadir'?'<span class="badge b-hadir">✓ Hadir</span>':'<span class="badge b-tidak">✕ Tidak Hadir</span>'):'<span class="badge b-belum">Belum</span>';
+      const badge=r?(r.status==='hadir'?'<span class="badge b-hadir">✓ Hadir</span>':r.status==='ragu'?'<span class="badge b-ragu">? Belum Pasti</span>':'<span class="badge b-tidak">✕ Tidak Hadir</span>'):'<span class="badge b-belum">Belum</span>';
       const sub=r?('RSVP '+r.status+(r.updated_at?' • '+String(r.updated_at).slice(0,10):'')):'Belum konfirmasi';
       return `<div class="guest ${gm===g?'sel':''}" onclick="onSelectIdx(${gi})">
        <div class="g-top"><span class="g-av">${esc(initials(gm))}</span><span class="g-name"><b>${esc(gm)}</b><i>${esc(sub)}</i></span>${badge}</div>
@@ -457,7 +461,7 @@ function unduhDaftarHadir(){
   const r=rsvpOf(gm);
   const c=CHECKIN_ROWS.filter(x=>norm(x.guest)===norm(gm))[0];
   baris.push([String(i+1),gm,c&&c.code||kodex[gm]||'',guestLink(gm),
-   r?(r.status==='hadir'?'Hadir':'Tidak Hadir'):'Belum konfirmasi',
+   r?(r.status==='hadir'?'Hadir':r.status==='ragu'?'Belum Pasti':'Tidak Hadir'):'Belum konfirmasi',
    c?new Date(c.checked_in_at).toLocaleString('id-ID'):'',
    c?'Sudah check-in':'Belum check-in']);
  });
