@@ -525,13 +525,16 @@ body.wedding-cover #cover .open:active,body.foto-full #cover .open:active,#cover
 /* ==== Animasi buka amplop: flap terangkat, segel jatuh, cover fade perlahan ==== */
 #cover .open::before{transform-origin:50% 0;transition:transform .55s cubic-bezier(.34,0,.2,1)}
 #cover .open::after,#cover .open .env{transition:transform .45s ease .16s,opacity .38s ease .22s}
-body.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .55s ease .62s,visibility 0s linear 1.2s}
+body.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transform-origin:0% 50%;
+  transform:perspective(1300px) rotateY(-15deg) translateX(-38%);
+  transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .6s ease .78s,visibility 0s linear 1.35s}
 body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:perspective(720px) rotateX(-168deg)}
 body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after{transform:translate(-50%,8%) scale(.5);opacity:0}
 body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,4%) scale(.5);opacity:0}
 @media (prefers-reduced-motion:reduce){
   #cover .open::after{animation:none}
   #cover .open::before,#cover .open::after,#cover .open .env,body.opened #cover{transition:none!important}
+  body.opened #cover{transform:none}
   body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:none}
   body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after,
   body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,-50%);opacity:0}
@@ -561,6 +564,18 @@ body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .
 .couple-foto .cf::before{content:'';position:absolute;inset:6px;border:1px solid rgba(255,255,255,.55);border-radius:inherit;pointer-events:none;z-index:2}
 .couple-foto .cf{position:relative}
 @media (prefers-reduced-motion:reduce){.stk:hover,.stk.on{transform:none}.bt-item{animation:none}}
+
+/* ==== Gerbang pembuka ala referensi: Save The Date + countdown + hint geser ==== */
+.std-label{font-family:var(--ft);font-style:italic;font-size:15px;letter-spacing:.12em;color:var(--accent-cover,#C9A25B);margin-top:12px}
+.cdw-mini{display:flex;justify-content:center;gap:7px;margin-top:12px}
+.cdw-mini .u{min-width:54px;padding:7px 6px 6px;border-radius:12px;background:rgba(18,14,10,.46);border:1px solid rgba(255,255,255,.22);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.cdw-mini .n{font-family:var(--ft);font-weight:700;font-size:18px;line-height:1;color:#fff}
+.cdw-mini .l{margin-top:3px;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.geser-hint{margin-top:12px;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-cover,#C9A25B);opacity:.9;
+  animation:geserGo 2.2s ease-in-out infinite}
+@keyframes geserGo{0%,100%{transform:translateX(0)}50%{transform:translateX(-8px)}}
+@media (prefers-reduced-motion:reduce){.geser-hint{animation:none}}
 </style>
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
@@ -1102,12 +1117,15 @@ function boot(draft){
  }else{
   h+=txOn?`<h1>${wspan(titleMain,h1d)}</h1>`:`<h1 class="${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+h1d+'ms':''}">${esc(titleMain)}</h1>`;
  }
- h+=`<div class="date ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+dtD+'ms':''}">🗓 ${esc(dateStr||'—')}${!isWedding&&timeStr?' • '+esc(timeStr):''}</div>`;
+ h+=`<div class="std-label ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(dtD-60)+'ms':''}">Save The Date</div>
+   <div class="date ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+dtD+'ms':''}">🗓 ${esc(dateStr||'—')}${!isWedding&&timeStr?' • '+esc(timeStr):''}</div>`;
  if(isWedding)h+=`<div class="wedding-subtitle ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(dtD+80)+'ms':''}">akan melangsungkan pernikahan</div>`;
  if(isWedding&&timeStr)h+=`<div class="wedding-meta ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(hoD-100)+'ms':''}"><span class="wi-icon" aria-hidden="true">◷</span><span>${esc(timeStr)} ${esc(form.zona||'WIB')}</span></div>`;
  if(venue)h+=`<div class="host ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+hoD+'ms':''}">${isWedding?'<span class="wi-icon" aria-hidden="true">⌖</span>':''}${esc(venue)}</div>`;
  if(isWedding)h+=`<p class="wedding-note ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(hoD+100)+'ms':''}">Bersama keluarga, dengan penuh kebahagiaan, kami mengundang Anda untuk merayakan hari istimewa kami.</p>`;
+ if((()=>{const _tt=targetTime(draft,form);return _tt&&_tt>Date.now()})())h+=`<div class="cdw-mini ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(btD-120)+'ms':''}"><div class="u"><div class="n" id="cdH0">00</div><div class="l">Hari</div></div><div class="u"><div class="n" id="cdM0">00</div><div class="l">Jam</div></div><div class="u"><div class="n" id="cdS0">00</div><div class="l">Menit</div></div><div class="u"><div class="n" id="cdD0">00</div><div class="l">Detik</div></div></div>`;
  h+=`<button class="open ${covOn?'anim-pop':''}" id="btnOpen" style="${covOn?'animation-delay:'+btD+'ms':''}"><span class="env">✉️</span> Buka Undangan</button>
+ <div class="geser-hint">‹ Geser kiri / ketuk amplop untuk membuka</div>
  ${isWedding?'<div class="wedding-hint">DETAIL ACARA · RSVP</div>':''}
  </div></div><div class="brand">AsProject • Undangan Digital</div>
  <div class="cvcue" aria-hidden="true"><i></i><span>Gulir</span></div></div>`;
@@ -1244,10 +1262,18 @@ function boot(draft){
  muatBukuTamu();
 
  /* interaksi */
- $('btnOpen').addEventListener('click',()=>{
-  document.body.classList.add('opened');
-  if(play)play();
- });
+ function bukaCover(){if(document.body.classList.contains('opened'))return;document.body.classList.add('opened');if(play)play()}
+ $('btnOpen').addEventListener('click',bukaCover);
+ (function(){const cv=document.getElementById('cover');if(!cv)return;
+  let sx=0,sy=0,aktif=false;
+  const mulai=e=>{const t=(e.touches&&e.touches[0])||e;sx=t.clientX;sy=t.clientY;aktif=true};
+  const akhir=e=>{if(!aktif)return;aktif=false;const t=(e.changedTouches&&e.changedTouches[0])||e;
+   const dx=t.clientX-sx,dy=t.clientY-sy;if(dx<=-42&&Math.abs(dy)<=90)bukaCover();};
+  cv.addEventListener('touchstart',mulai,{passive:true});
+  cv.addEventListener('touchend',akhir,{passive:true});
+  cv.addEventListener('mousedown',mulai);
+  cv.addEventListener('mouseup',akhir);
+ })();
  $('app').querySelectorAll('button[data-copy]').forEach(b=>{
   b.addEventListener('click',()=>{
    try{navigator.clipboard.writeText(b.dataset.copy)}catch(e){}
@@ -1399,10 +1425,11 @@ function startCountdown(tt){
   let ms=tt-Date.now();if(ms<0)ms=0;
   const s=Math.floor(ms/1000);
   const pad=n=>String(n).padStart(2,'0');
-  if(el('cdH'))el('cdH').textContent=pad(Math.floor(s/86400));
-  if(el('cdM'))el('cdM').textContent=pad(Math.floor(s%86400/3600));
-  if(el('cdS'))el('cdS').textContent=pad(Math.floor(s%3600/60));
-  if(el('cdD'))el('cdD').textContent=pad(s%60);
+  const setCd=(id,v)=>{if(el(id))el(id).textContent=v;if(el(id+'0'))el(id+'0').textContent=v};
+  setCd('cdH',pad(Math.floor(s/86400)));
+  setCd('cdM',pad(Math.floor(s%86400/3600)));
+  setCd('cdS',pad(Math.floor(s%3600/60)));
+  setCd('cdD',pad(s%60));
  };
  tick();setInterval(tick,1000);
 }
