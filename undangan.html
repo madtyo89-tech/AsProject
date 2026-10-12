@@ -1102,7 +1102,7 @@ function boot(draft){
    </div></div>`;
  }else{
   h+=`<div class="${RV('card')}"><div class="kicker">${esc(EV_LABEL[ev]||'')}</div>
-   ${(fpOrang||fwOrang)?`<div class="couple-foto tunggal">${cfImg(fpOrang||fwOrang,names[0].nm)}</div>`:''}
+   ${(fpOrang||fwOrang)?`<div class="couple-foto${(fpOrang&&fwOrang)?'':' tunggal'}">${fpOrang?cfImg(fpOrang,names[0].nm):''}${(fpOrang&&fwOrang)?'<div class="cf-amp">❦</div>':''}${fwOrang?cfImg(fwOrang,names[0].nm):''}</div>`:''}
    <div class="name-big">${esc(names[0].nm)}</div>
    ${names[0].rl?`<div class="role">${names[0].rl}</div>`:''}
    <div class="divider">${esc(tplF.deco)}</div></div>`;
@@ -1451,7 +1451,10 @@ if(DEMO){const _t=(Q.get('tpl')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
    khitanan:'assets/demo/khitanan/01-islamic-elegant.jpg',
    ultah:'assets/demo/ultah/01-kids-party.jpg',
    aqiqah:'assets/demo/aqiqah/01-baby-boy.jpg'}[_ev]||'assets/demo/wedding/02-minimalist-sage.jpg');
-  DEMO_DRAFT.data.fotoPria=_ev==='pernikahan'?'assets/demo/wedding/05-mempelai-pria.jpg':'';
+  DEMO_DRAFT.data.fotoPria=({pernikahan:'assets/demo/wedding/05-mempelai-pria.jpg',
+   khitanan:'assets/demo/khitanan/03-anak-khitan.jpg',
+   ultah:'assets/demo/ultah/04-anak-ultah.jpg',
+   aqiqah:'assets/demo/aqiqah/04-anak-aqiqah.jpg'}[_ev]||'');
   DEMO_DRAFT.data.fotoWanita=_ev==='pernikahan'?'assets/demo/wedding/04-mempelai-wanita.jpg':'';
   if(_ev!=='pernikahan'){
    DEMO_DRAFT.data.event=_ev;DEMO_DRAFT.data.doa=_ev;
