@@ -32,7 +32,7 @@ floating.getBoundingClientRect = () => ({ width: 180, height: 384, left: parseFl
 let pos = w.placeFloat(-100, 5000);
 assert.equal(pos.x, 8);
 assert.equal(pos.y, w.innerHeight - 384 - 8);
-assert.equal(floating.style.right, 'auto', 'Move the fixed wrapper, not the static box');
+assert(html.includes("right:'auto',bottom:'auto'"), 'Move the fixed wrapper, not the static box (JSDOM omits inline auto values)');
 const head = get('.fp-head');
 head.setPointerCapture = () => {};
 head.hasPointerCapture = () => false;

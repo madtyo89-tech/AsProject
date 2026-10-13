@@ -27,7 +27,11 @@ import posixpath
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HALAMAN = ["index.html", "studio.html", "undangan.html", "404.html",
-           "checkin.html", "demo/ice-blue.html", "master.html", "scan.html"]
+           "checkin.html", "demo/ice-blue.html", "katalog-demo/undangan-luxury-gold.html",
+           "katalog-demo/undangan-wedding-rosewood.html", "katalog-demo/undangan-wedding-sage-pearl.html",
+           "katalog-demo/undangan-wedding-midnight-navy.html", "katalog-demo/undangan-khitanan-emerald.html",
+           "katalog-demo/undangan-aqiqah-natural.html", "katalog-demo/undangan-ulang-tahun-ceria.html",
+           "master.html", "scan.html"]
 TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 
 hitung = {"ok": 0, "masalah": 0, "info": 0}
@@ -279,7 +283,7 @@ def _tpl_ids(rel):
 
 
 def _tpl_rows(rel):
-    """Baris array TPL sebagai dict (id, nama, ev, tier, char, bg3d, bgPaper, harga)."""
+    """Baris TPL termasuk kategori, harga, dan penanda Studio-only/Arch."""
     s = baca(rel)
     m = re.search(r"const TPL=\[(.*?)\];", s, re.S)
     if not m:
@@ -290,6 +294,8 @@ def _tpl_rows(rel):
         for key in ("ev", "tier", "char", "bg3d", "bgPaper", "nama", "accent"):
             g = re.search(r"%s:'([^']*)'" % key, chunk)
             row[key] = g.group(1) if g else ''
+        row["studioOnly"] = bool(re.search(r"studioOnly:true", chunk))
+        row["arch"] = bool(re.search(r"arch:true", chunk))
         g = re.search(r"harga:(\d+)", chunk)
         row["harga"] = int(g.group(1)) if g else 0
         rows.append(row)
@@ -421,11 +427,14 @@ def cek_katalog_publik():
         return
     pn = index[i:jp]
     pub_ids = re.findall(r'id:"([a-z0-9-]+)"', pn)
-    hilang = [t for t in studio_ids if t not in pub_ids]
-    lapor("ok" if not hilang else "masalah",
-          "index.html: katalog memuat %d template; %d id studio %s" % (
-              len(pub_ids), len(studio_ids),
-              "semua ada" if not hilang else "TIDAK ADA: " + ", ".join(hilang)))
+    rows = _tpl_rows("studio.html")
+    studio_public_ids = [r["id"] for r in rows if not r["studioOnly"]]
+    studio_only_ids = [r["id"] for r in rows if r["studioOnly"]]
+    mismatch = pub_ids != studio_public_ids
+    lapor("ok" if not mismatch else "masalah",
+          "index.html: %d tema publik sinkron; %d tema Studio-only tidak dipublikasikan%s" % (
+              len(pub_ids), len(studio_only_ids),
+              "" if not mismatch else " — daftar publik harus sama dengan subset TPL non-Studio-only"))
     # setiap kelas gradient katalog punya rule CSS Tailwind
     kurang = []
     for g in re.findall(r'gradient:"([^"]+)"', pn):
@@ -443,9 +452,9 @@ def cek_katalog_publik():
     ok = "location.replace('/AsProject/undangan.html'+q)" not in index
     lapor("ok" if ok else "masalah",
           "index.html: root github.io tetap menampilkan katalog (tombol Katalog \u2197 tidak mati)")
-    ok = "%d template" % len(studio_ids) in index
+    ok = "%d template" % len(pub_ids) in index
     lapor("ok" if ok else "masalah",
-          "index.html: teks jumlah template sinkron (%d template)" % len(studio_ids))
+          "index.html: teks jumlah template sinkron (%d tema publik)" % len(pub_ids))
 
 
 def cek_fitur_terbaru():
@@ -462,6 +471,19 @@ def cek_fitur_terbaru():
     rows = _tpl_rows("studio.html")
     ev_ok = bool(rows) and all(r["ev"] in ("pernikahan", "khitanan", "ultah", "aqiqah", "all") for r in rows)
     lapor("ok" if ev_ok else "masalah", "setiap tema punya kategori acara (ev) yang sah")
+    arch_rows = [r for r in rows if r["arch"]]
+    arch_categories = {r["ev"] for r in arch_rows}
+    arch_ok = (len(arch_rows) == 6 and all(r["studioOnly"] for r in arch_rows)
+               and arch_categories == {"pernikahan", "khitanan", "aqiqah", "ultah"}
+               and "body.gerbang-arch" in undangan and "gerbang-arch" in studio)
+    lapor("ok" if arch_ok else "masalah",
+          f"Gerbang Arch: {len(arch_rows)} varian Studio tersambung ke skin live lintas 4 kategori")
+    katalog_arch_ok = (all(r["harga"] == 0 for r in arch_rows)
+                       and "katalog:TPL.filter(t=>!t.studioOnly).map" in studio
+                       and "if(!t.studioOnly&&!state.katalog.some" in studio
+                       and "state.katalogHide.filter(id=>TPL.some(t=>t.id===id&&!t.studioOnly))" in studio)
+    lapor("ok" if katalog_arch_ok else "masalah",
+          "Studio-only Arch: tetap bisa dipilih tanpa harga, promo, atau baris katalog pemasaran")
     kategori = ("pernikahan", "khitanan", "ultah", "aqiqah")
     kurang = [ev for ev in kategori if not any(r["ev"] in (ev, "all") for r in rows)]
     lapor("ok" if not kurang else "masalah",
@@ -653,8 +675,10 @@ def cek_foto_cover():
           "studio.html: daftar 9 gaya tersedia")
     for fn in ("function cvMulai", "function cvJalan", "function cvLepas", "function cvZoom", "function cvReset"):
         lapor("ok" if fn in stu else "masalah", f"studio.html: {fn.split()[1]} tersedia (geser/zoom)")
-    lapor("ok" if stu.count("coverStyle:cvGayaAktif()") >= 3 else "masalah",
-          f"studio.html: gaya & posisi foto tersimpan (3 titik simpan: {stu.count('coverStyle:cvGayaAktif()')})")
+    cover_live = stu.count("coverStyle:cvGayaAktif()") >= 2
+    cover_arsip = "coverStyle:state.coverStyle||'kotak'" in stu and "coverStyleExplicit:!!state.coverStyleExplicit" in stu
+    lapor("ok" if cover_live and cover_arsip else "masalah",
+          "studio.html: gaya foto tersimpan di publish/export + arsip (manual/default)")
     lapor("ok" if "if(a.snap.coverStyle)state.coverStyle" in stu else "masalah",
           "studio.html: membuka arsip memulihkan gaya foto")
     mas = baca("master.html")

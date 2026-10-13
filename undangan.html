@@ -176,6 +176,23 @@ body.wedding-cover .amp-row .nm,body.wedding-cover .footer .orn{color:var(--acce
 body.wedding-cover .copy{border-color:color-mix(in srgb,var(--accent-body) 35%,#fff);background:color-mix(in srgb,var(--g1) 24%,#fff);color:var(--accent-body)}
 body.wedding-cover .gal img{border-color:color-mix(in srgb,var(--accent) 25%,#fff)}
 
+/* Gerbang Arch Studio-only variants: keep category copy and live controls, add layered arch stationery. */
+body.gerbang-arch #cover .bdfr{isolation:isolate}
+body.gerbang-arch #cover .bdfr::before{
+ content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ border:1px solid color-mix(in srgb,var(--accent-cover) 58%,#fff);
+ border-radius:220px 220px 14px 14px;
+ background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.045) 42%,transparent 100%);
+ box-shadow:inset 0 0 0 8px rgba(255,255,255,.055),0 18px 48px rgba(30,28,22,.09)
+}
+body.gerbang-arch #cover .cvf-arch{width:min(52vw,180px);border:1px solid color-mix(in srgb,var(--accent-cover) 62%,#fff);box-shadow:0 0 0 4px rgba(255,253,247,.82),0 0 0 5px var(--accent-cover),0 16px 36px rgba(20,20,16,.18)}
+body.gerbang-arch #cover .cvf-arch img{border-radius:999px 999px 12px 12px}
+body.gerbang-arch .wrap{background-color:color-mix(in srgb,var(--g0) 7%,#fff);background-image:radial-gradient(color-mix(in srgb,var(--accent) 12%,transparent) 1px,transparent 1.5px);background-size:26px 26px}
+body.gerbang-arch .card{border-radius:12px;border-color:color-mix(in srgb,var(--accent) 22%,#fff);box-shadow:0 12px 30px color-mix(in srgb,var(--g1) 22%,transparent)}
+body.gerbang-arch .gal img{border-radius:999px 999px 12px 12px / 42% 42% 12px 12px;border-color:color-mix(in srgb,var(--accent) 58%,#fff)}
+body.gerbang-arch .gal img:first-child{border-radius:220px 220px 14px 14px / 40% 40% 14px 14px}
+body.gerbang-arch .acara{border-radius:12px}
+
 body.opened #cover{opacity:0;visibility:hidden}
 
 /* ---------- CONTENT ---------- */
@@ -332,8 +349,17 @@ body:not(.opened) .nv-bar{display:none}
 <div id="app"></div>
 
 <script>
+/* Urutan TPL identik dengan Studio untuk menjaga kolom theme; studioOnly:true
+   menandai varian internal yang dapat dipublish tanpa listing/harga baru. */
 const TPL=[
- {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',deco:'✦ ❖ ✦',pat:'',ft:'cormorant'},{id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',deco:'❖ ✦ ❖',pat:'batik',ft:'marcellus',char:'JAWA'},{id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE'},{id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'GOLD'},{id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC'},{id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA'},{id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'ISLAMI'},{id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY'},{id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',deco:'✦ ❀ ✦',pat:'',ft:'dancing',char:'SWEET'},{id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',deco:'❖ ─ ❖',pat:'',ft:'ebgaramond',char:'ELEGAN'},{id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY'},{id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',deco:'✿ ✦ ✿',pat:'',ft:'caveat',char:'PUTRI'},{id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'ADAB'}];
+ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',deco:'✦ ❖ ✦',pat:'',ft:'cormorant'},{id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',deco:'❖ ✦ ❖',pat:'batik',ft:'marcellus',char:'JAWA'},{id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE'},{id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'GOLD'},{id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC'},{id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA'},{id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'ISLAMI'},{id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY'},{id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',deco:'✦ ❀ ✦',pat:'',ft:'dancing',char:'SWEET'},{id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',deco:'❖ ─ ❖',pat:'',ft:'ebgaramond',char:'ELEGAN'},{id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY'},{id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',deco:'✿ ✦ ✿',pat:'',ft:'caveat',char:'PUTRI'},{id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'ADAB'},
+ {id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'botanical',ft:'cormorant',char:'ROSEWOOD',arch:true,studioOnly:true,desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood'},
+ {id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#E8EDD9','#C8D4BE'],accent:'#526A55',ink:'#435348',badge:'GERBANG',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',arch:true,studioOnly:true,desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch'},
+ {id:'gerbang-midnight-navy',nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'NAVY',arch:true,studioOnly:true,desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis'},
+ {id:'gerbang-khitanan-emerald',nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',badge:'GERBANG',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'EMERALD',arch:true,studioOnly:true,desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut'},
+ {id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'GERBANG',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'NATURAL',arch:true,studioOnly:true,desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung'},
+ {id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'GERBANG',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',arch:true,studioOnly:true,desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch'},
+];
 /* Peta migrasi katalog LAMA (72 tema, urutan ev per index) — dipakai hanya untuk menebak
    jenis acara draft lama yang tidak punya snapshot 'data', supaya struktur cover-nya tidak
    berubah. Temanya sendiri sudah dihapus: semua index jatuh ke tema dasar. */
@@ -628,6 +654,7 @@ function boot(draft){
  const isWedding=ev==='pernikahan';
  const PAPER=isWedding?(tplF.bgPaper||''):'';
  if(isWedding){document.body.classList.add('wedding-cover','theme-'+tplF.id)}
+ if(tplF.arch)document.body.classList.add('gerbang-arch');
  if(PAPER){document.body.classList.add('wedding-paper-art');rs.setProperty('--wedding-paper-art',"url('"+PAPER+"')")}
  rs.setProperty('--g0',tplF.g[0]);rs.setProperty('--g1',tplF.g[1]);rs.setProperty('--g2',tplF.g[2]);
  rs.setProperty('--accent',tplF.accent);rs.setProperty('--ink',tplF.ink);
@@ -644,7 +671,7 @@ function boot(draft){
     Tanpa foto, tidak ada bingkai (perilaku lama tetap sama). */
  const fotoUtama=String((d&&d.cover)||'').trim();
  const CV_GAYA=['kotak','oval','lingkaran','arch','polaroid','emas','kapsul'];
- const cvDiminta=String((d&&d.coverStyle)||'');
+ const cvDiminta=String((d&&d.coverStyle)||(tplF.arch?'arch':''));
  const cvStyle=!fotoUtama?'none'
   :(CV_GAYA.indexOf(cvDiminta)>=0?cvDiminta
    :(cvDiminta==='full'?'full':(cvDiminta==='none'?'none':'kotak')));

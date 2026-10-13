@@ -197,6 +197,10 @@ input,textarea,select{outline:0}
 .phone .screen .wedding-cover .wedding-meta{margin-top:8px;font-size:10px;color:#37433a}
 .phone .screen .wedding-cover .wedding-note{font-size:9px;line-height:1.5;color:#59645a}
 .phone .screen .wedding-cover .wedding-open{height:38px;margin-top:10px;padding:0 18px;border-radius:99px;background:#526b55;color:#fff;font-size:10px;font-weight:600}
+
+.phone .screen .gerbang-arch{isolation:isolate;overflow:hidden}
+.phone .screen .gerbang-arch::before{content:"";position:absolute;z-index:-1;top:10px;left:50%;transform:translateX(-50%);width:min(90%,300px);height:350px;border:1px solid color-mix(in srgb,var(--accent) 55%,#fff);border-radius:160px 160px 10px 10px;box-shadow:inset 0 0 0 8px rgba(255,255,255,.08);pointer-events:none}
+.phone .screen .gerbang-arch .wedding-invite-card{border-radius:12px 12px 18px 18px;border-color:color-mix(in srgb,var(--accent) 24%,#fff);box-shadow:0 14px 32px rgba(35,35,30,.14)}
 .flow-page{max-width:620px;margin:0 auto;padding:clamp(24px,8vh,80px) 16px 40px;min-height:100dvh;display:grid;align-content:center;gap:20px}
 .flow-page h1{font-size:28px;line-height:1.25;margin-bottom:12px}
 .flow-page p{color:var(--mut);line-height:1.8}
@@ -292,15 +296,23 @@ const DOA={
 const EV_LABEL={pernikahan:'Pernikahan',khitanan:'Khitanan',ultah:'Ultah Anak',aqiqah:'Aqiqah',all:'Semua Acara'};
 const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶',all:'✨'};
 
-/* ===== KATALOG TEMA — DIRESET 2026-10-10: 1 tema dasar. Koleksi lama (72 tema)
-   beserta artwork-nya dihapus. Urutan & id array ini WAJIB identik dengan
-   TPL di undangan.html dan katalog Pn di index.html (kolom 'theme' di Supabase
-   adalah index ke array ini) — dicek tools/cek-kesehatan.py [11]/[12]/[13].
-   Tambah tema baru: tambah di AKHIR array, salin barisnya ke kedua file lain. ===== */
+/* ===== KATALOG TEMA — 13 tema publik + varian Studio-only.
+   Urutan & id TPL WAJIB identik dengan undangan.html (kolom 'theme' di Supabase
+   adalah index ke array ini). Entri studioOnly:true tetap tersedia di pemilih tema
+   dan renderer live, tetapi tidak masuk index.html atau Katalog Harga & Promo. Tema baru
+   ditambahkan di AKHIR array dan disinkronkan ke undangan.html. ===== */
 const TPL=[
- {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',harga:49000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'DASAR',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',desc:'Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu'},{id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',badge:'LARIS',deco:'❖ ✦ ❖',pat:'batik',ft:'marcellus',char:'JAWA',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},{id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',badge:'',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet'},{id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'PREMIUM',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'GOLD',desc:'Glam soft luxury, emboss gold & black tie vibe'},{id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',badge:'',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},{id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',badge:'',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},{id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',badge:'',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'ISLAMI',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},{id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'LARIS',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Warna-warni happy, balon & confetti buat si kecil'},{id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',badge:'FAVORIT',deco:'✦ ❀ ✦',pat:'',ft:'dancing',char:'SWEET',desc:'Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya'},{id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',badge:'',deco:'❖ ─ ❖',pat:'',ft:'ebgaramond',char:'ELEGAN',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},{id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',badge:'',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},{id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',badge:'',deco:'✿ ✦ ✿',pat:'',ft:'caveat',char:'PUTRI',desc:'Pink blush super lembut buat si putri kecil kesayangan'},{id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',badge:'',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'ADAB',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'}];
+ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',harga:49000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'DASAR',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',desc:'Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu'},{id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',badge:'LARIS',deco:'❖ ✦ ❖',pat:'batik',ft:'marcellus',char:'JAWA',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil'},{id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',badge:'',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet'},{id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'PREMIUM',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'GOLD',desc:'Glam soft luxury, emboss gold & black tie vibe'},{id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',badge:'',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party'},{id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',badge:'',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan'},{id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',badge:'',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'ISLAMI',desc:'Islami elegan dengan ornamen arabesque gold yang halus'},{id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'LARIS',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Warna-warni happy, balon & confetti buat si kecil'},{id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',badge:'FAVORIT',deco:'✦ ❀ ✦',pat:'',ft:'dancing',char:'SWEET',desc:'Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya'},{id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',badge:'',deco:'❖ ─ ❖',pat:'',ft:'ebgaramond',char:'ELEGAN',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy'},{id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',badge:'',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',desc:'Lembut biru langit, ilustrasi baby boy yang gemes'},{id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',badge:'',deco:'✿ ✦ ✿',pat:'',ft:'caveat',char:'PUTRI',desc:'Pink blush super lembut buat si putri kecil kesayangan'},{id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',badge:'',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'ADAB',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat'},
+ {id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'botanical',ft:'cormorant',char:'ROSEWOOD',arch:true,studioOnly:true,desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood'},
+ {id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#E8EDD9','#C8D4BE'],accent:'#526A55',ink:'#435348',badge:'GERBANG',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',arch:true,studioOnly:true,desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch'},
+ {id:'gerbang-midnight-navy',nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'NAVY',arch:true,studioOnly:true,desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis'},
+ {id:'gerbang-khitanan-emerald',nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',badge:'GERBANG',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'EMERALD',arch:true,studioOnly:true,desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut'},
+ {id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'GERBANG',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'NATURAL',arch:true,studioOnly:true,desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung'},
+ {id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'GERBANG',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',arch:true,studioOnly:true,desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch'},
+];
 
 function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
+function syncDefaultCoverStyle(t){if(!state.coverStyleExplicit)state.coverStyle=t&&t.arch?'arch':'kotak'}
 function tplsFor(ev){return TPL.filter(t=>(t.ev===ev||t.ev==='all')&&!state.katalogHide.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
 function patCss(t){
@@ -388,7 +400,7 @@ function paksaTier(){let ch=false;
   notify(lockIcon(bl)+'Border '+LOCK_LABEL[bl]+' dilepas otomatis — butuh tema tier '+LOCK_LABEL[bl]+' ke atas.')}}
  if(bolehEks())return ch||cb;
  let ce=false;
- if(isEksF(state.fontTitle)){state.fontTitle=tplOf().ft||'playfair';ce=true}
+ if(isEksF(state.fontTitle)&&state.fontTitle!==(tplOf().ft||'playfair')){state.fontTitle=tplOf().ft||'playfair';ce=true}
  if(isEksF(state.fontBody)){state.fontBody='inter';ce=true}
  if(isEksFx('effect',state.anim.effect)){state.anim.effect='zoom';ce=true}
  if(isEksFx('scroll',state.anim.scroll)){state.anim.scroll='fade-up';ce=true}
@@ -414,7 +426,7 @@ const DEF={
   alamat:'',mapsLink:'',
   showMapsBtn:true,sesiKedua:false,jamAkad:'',jamResepsi:'',showBismillah:true,
   ucapanCustom:''},
- musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverPos:{x:50,y:50,z:1},gallery:[],videoLink:'',
+ musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverStyleExplicit:false,coverPos:{x:50,y:50,z:1},gallery:[],videoLink:'',
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'',
  guestCodes:{},masterKey:'',selGuest:null,showNameQr:true,
@@ -435,22 +447,42 @@ const DEF={
  anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up',scrollMix:true,navMode:'scroll'},
  floatPrevOn:true,floatPos:null,
  slug:'',customDomain:'',published:false,publishedLink:'',started:false,stage:'editor',
- katalog:TPL.map((t,i)=>({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:340-i*23})),
+ katalog:TPL.filter(t=>!t.studioOnly).map((t,i)=>({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:340-i*23})),
  promo:{diskon:50,tglMulai:'2026-10-01',tglSelesai:'2026-12-31',badgeText:'FLASH SALE 50%'},
  arsip:[],
  search:''};
 let state;
-try{state=Object.assign({},JSON.parse(JSON.stringify(DEF)),JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}'));state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});state.coverPos=Object.assign({x:50,y:50,z:1},state.coverPos||{});if(!state.coverStyle)state.coverStyle='kotak';state.playing=false}catch(e){state=JSON.parse(JSON.stringify(DEF))}
+try{
+ const stored=JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}')||{};
+ state=Object.assign({},JSON.parse(JSON.stringify(DEF)),stored);
+ state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});
+ state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});
+ state.coverPos=Object.assign({x:50,y:50,z:1},state.coverPos||{});
+ if(!state.coverStyle)state.coverStyle='kotak';
+ /* Migrasi: gaya non-default dari proyek lama dianggap pilihan manual. */
+ if(typeof stored.coverStyleExplicit==='boolean')state.coverStyleExplicit=stored.coverStyleExplicit;
+ else state.coverStyleExplicit=!!stored.coverStyle&&!['kotak','arch'].includes(stored.coverStyle);
+ if(!state.coverStyleExplicit){const aktif=TPL.find(t=>t.id===state.tpl);state.coverStyle=aktif&&aktif.arch?'arch':'kotak'}
+ state.playing=false
+}catch(e){state=JSON.parse(JSON.stringify(DEF))}
 if(state.started===false&&(state.form.namaPria||state.form.namaWanita||state.form.namaAnak||state.published))state.started=true;
 if(state.published&&!state.publishedLink)state.publishedLink=baseUrl();
 function mergeSlides(s){const out={};Object.keys(DEF.slides).forEach(k=>{out[k]=Object.assign({},DEF.slides[k],(s&&s[k])||{})});return out}
 /* migrasi ringan: pastikan template valid, katalog pakai struktur TPL, & musik demo selalu tersedia */
 if(!state.tpl||!TPL.some(t=>t.id===state.tpl))state.tpl=TPL[0].id;
 if(!Array.isArray(state.katalog)||!state.katalog.length||!state.katalog[0].tpl)state.katalog=JSON.parse(JSON.stringify(DEF.katalog));
-/* katalog tersimpan dari tema lama dibuang saat katalog di-reset (baris tanpa padanan di TPL) */
-else{state.katalog=state.katalog.filter(k=>k&&TPL.some(t=>t.id===(k.tpl||k.id)));if(!state.katalog.length)state.katalog=JSON.parse(JSON.stringify(DEF.katalog))}
-/* template baru di TPL otomatis ikut masuk ke katalog yang sudah tersimpan di localStorage */
-TPL.forEach((t,i)=>{if(!state.katalog.some(k=>k.tpl===t.id))state.katalog.push({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:Math.max(0,340-(state.katalog.length+i)*23)})});
+/* Katalog harga hanya memuat tema yang memang dipasarkan; varian studioOnly
+   tetap tersedia di pemilih tema tetapi tidak diberi harga/promosi. */
+else{
+ state.katalog=state.katalog.filter(k=>{
+  if(!k)return false;
+  const t=TPL.find(x=>x.id===(k.tpl||k.id));
+  return !!t&&!t.studioOnly;
+ });
+ if(!state.katalog.length)state.katalog=JSON.parse(JSON.stringify(DEF.katalog));
+}
+/* Tema publik baru ikut ke katalog harga; varian Studio-only tidak dimasukkan. */
+TPL.forEach((t,i)=>{if(!t.studioOnly&&!state.katalog.some(k=>k.tpl===t.id))state.katalog.push({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:Math.max(0,340-(state.katalog.length+i)*23)})});
 /* migrasi border (dulu: toggle dblBorder) & daftar katalog tersembunyi */
 if(state.dblBorder===false)state.border='none';else if(state.dblBorder===true)state.border='double';delete state.dblBorder
 /* kunci master (akses dashboard privat) — dibuat sekali, dipakai di link master */
@@ -458,7 +490,7 @@ function mkRand(){const c='abcdefghjkmnpqrstuvwxyz23456789';let s='';for(let i=0
 if(!state.masterKey){state.masterKey=mkRand();save()}
 if(!BORDERS.some(b=>b.id===state.border))state.border='double';
 if(!Array.isArray(state.katalogHide))state.katalogHide=[];
-state.katalogHide=state.katalogHide.filter(id=>TPL.some(t=>t.id===id));
+state.katalogHide=state.katalogHide.filter(id=>TPL.some(t=>t.id===id&&!t.studioOnly));
 if(!Array.isArray(state.musicDb))state.musicDb=[];
 state.musicDb=state.musicDb.filter(m=>!m.demo||DEMO_MUSIC.some(d=>d.url===m.url));
 if(state.music&&state.music.demo&&!DEMO_MUSIC.some(d=>d.url===state.music.url)){state.music=null;state.playing=false}
@@ -597,9 +629,9 @@ function qrDataUndangan(g){return qrTeks(g.link,state.showNameQr?`${g.nama.slice
 
 /* state setters */
 function set(k,v){state[k]=v;save();render()}
-function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;paksaTier();save();render();notify('Template: '+t.nama)}
-function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle}paksaTier();save();render()}
-function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;paksaTier();save();render();notify('Preview: '+t.nama)}
+function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;syncDefaultCoverStyle(t);paksaTier();save();render();notify('Template: '+t.nama)}
+function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle;syncDefaultCoverStyle(ft)}paksaTier();save();render()}
+function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;syncDefaultCoverStyle(t);paksaTier();save();render();notify('Preview: '+t.nama)}
 function upd(k,v){state[k]=v;save();renderPreview()}
 function updF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();renderPreview()}
 function setF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();render()}
@@ -718,7 +750,7 @@ function cvPos(){if(!state.coverPos||typeof state.coverPos!=='object')state.cove
 function cvGayaAktif(){const d=String(state.coverStyle||'');if(!state.cover)return 'none';
  if(d==='full'||d==='none')return d;return CV_BENTUK[d]?d:'kotak'}
 function cvNama(){return (CV_BENTUK[cvGayaAktif()]||{}).nama||'-'}
-function setCvStyle(id){if(!CV_BENTUK[id])return;state.coverStyle=id;save();render();notify('Gaya foto cover: '+cvNama())}
+function setCvStyle(id){if(!CV_BENTUK[id])return;state.coverStyle=id;state.coverStyleExplicit=true;save();render();notify('Gaya foto cover: '+cvNama())}
 function cvGambar(){const p=cvPos();
  document.querySelectorAll('.cvprev').forEach(im=>{im.style.objectPosition=p.x+'% '+p.y+'%';im.style.transform='scale('+p.z+')'});
  const lab=document.getElementById('cvZoom');if(lab)lab.textContent=p.z.toFixed(2)+'×';
@@ -814,7 +846,7 @@ async function publish(){
  state.published=true;state.publishedLink=baseUrl();
  const nama=displayName();
  const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
-  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos())}};
+  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos())}};
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  state.stage='ready';save();render();window.scrollTo(0,0);document.querySelectorAll('.notice').forEach(n=>n.remove());
  if(snapshotSkipped)notifyWarn('<b>Publish berhasil tanpa snapshot.</b> Kolom <b>data</b> belum ada di Supabase — undangan live memakai kolom dasar + template (tampilan bisa berbeda dari studio, dashboard Master terbatas). Jalankan <b>supabase-schema.sql</b> di SQL Editor, atau <button onclick="copyFixSql()">salin SQL perbaikan</button>, lalu Publish ulang.',25000);
@@ -887,6 +919,9 @@ function loadArsip(id){const a=state.arsip.find(x=>x.id===id);if(!a)return;
   if(a.snap.border)state.border=a.snap.border;
   if(a.snap.cover!==undefined)state.cover=a.snap.cover;
   if(a.snap.coverStyle)state.coverStyle=a.snap.coverStyle;
+  if(typeof a.snap.coverStyleExplicit==='boolean')state.coverStyleExplicit=a.snap.coverStyleExplicit;
+  else state.coverStyleExplicit=!!a.snap.cover&&!!a.snap.coverStyle&&!['kotak','arch'].includes(a.snap.coverStyle);
+  if(!state.coverStyleExplicit)syncDefaultCoverStyle(tplOf());
   if(a.snap.coverPos)state.coverPos=Object.assign({x:50,y:50,z:1},a.snap.coverPos);
   if(a.snap.slides)state.slides=mergeSlides(a.snap.slides);
   if(a.snap.anim)state.anim=Object.assign({},DEF.anim,a.snap.anim);animSig=null}
@@ -1477,7 +1512,7 @@ function slideBlocks(){
 
 function phoneHtml(){
  const f=state.form,tp=tplOf(),g=selGuest(),single=state.linkMode==='single';
- const dark=state.darkMode,wedding=state.event==='pernikahan';
+ const dark=state.darkMode,wedding=state.event==='pernikahan',gerbangArch=!!tp.arch;
  const play=animTrigger(),AN=state.anim,CV=play&&AN.cover,TX=play&&AN.text,RV=AN.reveal;
  const CE=fxCoverId(),SC=fxScrollId(),h1d=tp.char?520:350;
  let scrollSectionIndex=0;
@@ -1505,6 +1540,9 @@ function phoneHtml(){
  const nameColor=dark?'#FDE68A':(cvGaya==='full'?'#FFFFFF':(wedding?'#344238':(art3d?'#F7F2E9':state.accent)));
  /* Bingkai foto cover di pratinjau — cermin gaya yang dipakai undangan tamu. */
  const cvB=CV_BENTUK[cvGaya]||CV_BENTUK.kotak,cvp=cvPos();
+ const archPhotoCss=gerbangArch?`border-radius:999px 999px 12px 12px / 42% 42% 12px 12px;border:1px solid ${tp.accent};box-shadow:0 0 0 4px rgba(255,253,247,.9),0 0 0 5px ${tp.accent};`:'border-radius:20px;border:1px solid #ddd;';
+ const archPlaceholderCss=gerbangArch?`border-radius:999px 999px 12px 12px / 42% 42% 12px 12px;border:1px dashed ${tp.accent};box-shadow:inset 0 0 0 8px rgba(255,255,255,.35);`:'border-radius:20px;border:1px dashed #ccc;';
+ const archGalleryRadius=gerbangArch?'999px 999px 10px 10px / 42% 42% 10px 10px':'12px';
  const blokFotoPrev=(cvGaya==='none'||cvGaya==='full')?''
   :`<div style="margin:12px auto 0;width:${cvB.w}%;aspect-ratio:${cvB.as};border-radius:${cvB.r};padding:${cvB.p};background:${cvB.bg};box-shadow:${cvB.sh};box-sizing:border-box;overflow:hidden;position:relative;${cvB.rot?'transform:rotate('+cvB.rot+');':''}"><img src="${state.cover}" alt="Foto cover" style="width:100%;height:100%;object-fit:cover;object-position:${cvp.x}% ${cvp.y}%;transform:scale(${cvp.z});border-radius:${cvB.ir};display:block"></div>`;
  const dt=new Date(f.tanggalAcara);
@@ -1522,7 +1560,7 @@ function phoneHtml(){
   :(TX?`<span style="display:block">${wordSpan(f.namaAnak,h1d)}</span>`:`<span style="display:block">${esc(f.namaAnak)}</span>`);
  return `
  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;width:340px">
-  <span class="lbl">Live Preview • ${esc(tp.nama)}${art3d?' • 3D':''}${cvGaya!=='none'?' • '+cvNama():''}</span>
+  <span class="lbl">Live Preview • ${esc(tp.nama)}${art3d?' • 3D':''}${gerbangArch?' • Gerbang Arch':''}${cvGaya!=='none'?' • '+cvNama():''}</span>
   <span class="pill" style="background:#fff;border:1px solid var(--line);font-size:10px"><span class="dot pulse" style="width:6px;height:6px;background:#10b981"></span>Live update</span>
  </div>
  <div class="phone"><div class="screen">
@@ -1532,7 +1570,7 @@ function phoneHtml(){
    <div style="width:12px;height:12px;border-radius:99px;background:#ddd"></div>
   </div>
   <div class="notch"></div>
-   <div class="${dark?'emerald-bg ':''}${wedding?'wedding-cover theme-'+tp.id:''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg}">
+   <div class="${dark?'emerald-bg ':''}${wedding?'wedding-cover theme-'+tp.id:''}${gerbangArch?' gerbang-arch':''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg}">
    <div class="${(CV||TX||RV?'ap ':'')}${wedding?'wedding-preview-inner':''}" style="padding:${wedding?'12px 12px 18px':'20px'};text-align:center;font-family:${tF};${patStyle}">
    <div class="${wedding?'wedding-invite-card':''}" style="position:relative;${weddingCardCss}${weddingPaperCard}${!wedding&&borderOf().id!=='none'?'padding:18px 12px;margin:0 0 14px;':''}${borderCss()}">${borderCorners()}
     ${f.showBismillah?`<div class="${CV?'fx-c-'+CE:''}" style="margin-bottom:12px;${CV?'animation-delay:250ms':''}"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
@@ -1563,8 +1601,8 @@ function phoneHtml(){
      <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:18px;font-weight:700">${esc(f.jamAcara)}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">${esc(f.zona)}</div></div>
      <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:14px;font-weight:700;line-height:1.2">${isNaN(dt)?'—':dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short'})}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">${isNaN(dt)?'':dt.getFullYear()}</div></div>
     </div>`)}
-    ${WR(600,state.cover?`<img src="${state.cover}" style="margin-top:24px;width:100%;height:200px;object-fit:cover;border-radius:20px;border:1px solid #ddd">`
-     :`<div style="margin-top:24px;height:160px;border-radius:20px;border:1px dashed #ccc;background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:11px;color:#a3a3a3;font-family:${bF}">Foto Utama</div>`)}
+    ${WR(600,state.cover?`<img src="${state.cover}" style="margin-top:24px;width:100%;height:200px;object-fit:cover;${archPhotoCss}">`
+     :`<div style="margin-top:24px;height:160px;${archPlaceholderCss}background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:11px;color:#a3a3a3;font-family:${bF}">Foto Utama</div>`)}
    </div>
    ${WR(750,`<div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${bF}">
      <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Waktu & Tempat</div>
@@ -1583,7 +1621,7 @@ function phoneHtml(){
       <div style="font-size:11px"><div style="font-family:ui-monospace,monospace">${g.code}</div>
       <div style="font-size:10px;color:#737373;margin-top:4px">${single?'Link sama, QR beda — scan panitia':'Tunjukkan saat masuk venue'}</div></div>
      </div></div>`):''}
-    ${state.gallery.length?WR(1650,`<div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${state.gallery.slice(0,6).map(img=>`<img src="${img}" style="height:72px;width:100%;object-fit:cover;border-radius:12px;border:1px solid #ddd">`).join('')}</div>`):''}
+    ${state.gallery.length?WR(1650,`<div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${state.gallery.slice(0,6).map(img=>`<img src="${img}" style="height:72px;width:100%;object-fit:cover;border-radius:${archGalleryRadius};border:1px solid ${gerbangArch?tp.accent:'#ddd'}">`).join('')}</div>`):''}
     ${WR(1800,`<div style="margin-top:24px;display:flex;gap:8px;font-family:${bF}">
      ${f.showMapsBtn?`<a href="${esc(f.mapsLink)}" target="_blank" rel="noopener" style="flex:1;height:44px;border-radius:99px;background:#111;color:#fff;font-size:12px;font-weight:500;display:grid;place-items:center;text-decoration:none">Buka Maps 📍</a>`:''}
      <button style="flex:1;height:44px;border-radius:99px;background:#fff;border:1px solid #ddd;font-size:12px;font-weight:500;color:#111">RSVP Hadir</button>
