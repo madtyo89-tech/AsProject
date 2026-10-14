@@ -194,6 +194,8 @@ a.sm-btn{display:inline-flex;align-items:center;justify-content:center;text-deco
 .editor-actions .mobile-menu{width:auto;flex:1 1 180px}
 .editor-actions .back-links{display:flex;gap:8px;flex-wrap:wrap;width:100%}
 .editor-actions a.sm-btn{min-height:44px}
+.tabnav{display:flex;justify-content:space-between;gap:8px;margin-top:20px;padding-top:16px;border-top:1px dashed var(--line);flex-wrap:wrap}
+.tabnav button{min-height:44px}
 .flow-status{font-size:11px;color:var(--mut);flex:1 1 140px}
 /* ===== Halaman Katalog & Arsip: toolbar kembali + baris katalog responsif ===== */
 .page-actions{position:sticky;top:0;z-index:21;background:rgba(251,250,248,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
@@ -519,7 +521,7 @@ const DEF={
   liveAkad:'',liveResepsi:'',
   harapanPria:'',harapanWanita:'',
   ucapanCustom:''},
- musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverStyleExplicit:false,coverPos:{x:50,y:50,z:1},fotoPria:'',fotoWanita:'',gallery:[],videoLink:'',
+ musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverLayout:'amplop',coverStyleExplicit:false,coverPos:{x:50,y:50,z:1},fotoPria:'',fotoWanita:'',gallery:[],videoLink:'',
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'',
  guestCodes:{},masterKey:'',selGuest:null,showNameQr:true,
@@ -547,6 +549,7 @@ const DEF={
 let state;
 try{
  const stored=JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}')||{};
+if(stored.tab==='master'||stored.tab==='domain')stored.tab='terbit'; /* susunan tab baru */
  state=Object.assign({},JSON.parse(JSON.stringify(DEF)),stored);
  state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});
  state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});
@@ -592,7 +595,7 @@ DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.pu
 /* Signature murah untuk mendeteksi "ada perubahan sejak publish terakhir" tanpa
    ikut menyalin foto base64 (cukup panjangnya saja). */
 function sigHash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h+str.charCodeAt(i))|0;return h.toString(36)+'.'+str.length}
-function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,!!state.coverStyleExplicit,state.coverPos,(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug]))}
+function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,state.coverLayout||'amplop',!!state.coverStyleExplicit,state.coverPos,(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug]))}
 function draftDirty(){return !!(state.published&&state.pubSig&&state.pubSig!==draftSig())}
 /* Ketik isian tidak me-render ulang seluruh editor (agar fokus tidak hilang),
    jadi status "perubahan belum dipublikasikan" & tombol Publish Ulang
@@ -876,6 +879,17 @@ function publishErrorHtml(e){
   help='Browser tidak dapat menghubungi Supabase. Periksa koneksi, lalu pastikan proyek Supabase masih aktif.';
  return '<b>Publish gagal:</b> '+esc(detail)+(code?' ('+esc(code)+')':'')+'<br>'+help;
 }
+/* ----- Musik lokal di IndexedDB: file audio terlalu besar untuk localStorage,
+   jadi disimpan di IndexedDB (kuota besar) dan diputar ulang lewat blob URL.
+   Ini yang membuat musik upload "dipakai lagi" tetap bersuara setelah refresh. ----- */
+let _idbP=null;
+function idb(){if(_idbP)return _idbP;_idbP=new Promise((ok,no)=>{try{const rq=indexedDB.open('asproject-musik',1);
+ rq.onupgradeneeded=()=>{if(!rq.result.objectStoreNames.contains('musik'))rq.result.createObjectStore('musik',{keyPath:'id'})};
+ rq.onsuccess=()=>ok(rq.result);rq.onerror=()=>no(rq.error||new Error('idb'))}catch(e){no(e)}});return _idbP}
+async function idbPut(id,blob){const db=await idb();return new Promise((ok,no)=>{const tx=db.transaction('musik','readwrite');
+ tx.objectStore('musik').put({id,blob});tx.oncomplete=()=>ok();tx.onerror=()=>no(tx.error)})}
+async function idbGetUrl(id){const db=await idb();return new Promise((ok,no)=>{const rq=db.transaction('musik').objectStore('musik').get(id);
+ rq.onsuccess=()=>{const r=rq.result;ok(r&&r.blob?URL.createObjectURL(r.blob):'')};rq.onerror=()=>no(rq.error)})}
 async function uploadMusic(input){
  const file=input.files&&input.files[0];if(!file)return;
  const okType=file.type.startsWith('audio/')||/\.(mp3|m4a|aac|ogg|wav|flac)$/i.test(file.name)||!/\./.test(file.name);
@@ -884,9 +898,14 @@ async function uploadMusic(input){
  const ext=audioExt(file);
  const base=String(file.name||'musik').replace(/\.[a-z0-9]{2,5}$/i,'').replace(/[^a-zA-Z0-9._-]/g,'-').replace(/-+/g,'-').replace(/^[-.]+|[-.]+$/g,'')||'musik';
  const displayNm=base.replace(/-/g,' ');
- const addLocal=showNotif=>{const rd=new FileReader();rd.onload=()=>{const item={id:'m'+Date.now(),name:displayNm,url:rd.result,dur:'—',local:true};
-  state.musicDb=[item,...state.musicDb];state.music=item;state.playing=false;syncAudio();render();if(showNotif)notify('Musik siap diputar (lokal)')};
-  rd.readAsDataURL(file)};
+ const addLocal=showNotif=>{const id='m'+Date.now();
+  idbPut(id,file).then(()=>{const item={id,name:displayNm,dur:'—',local:true,idb:1,url:''};
+   state.musicDb=[item,...state.musicDb];state.music=item;state.playing=false;save();syncAudio();render();
+   if(showNotif)notify('Musik tersimpan di perangkat ini — bisa dipakai lagi kapan pun ✓')}).catch(()=>{
+   const rd=new FileReader();rd.onload=()=>{const item={id,name:displayNm,url:rd.result,dur:'—',local:true};
+    state.musicDb=[item,...state.musicDb];state.music=item;state.playing=false;syncAudio();render();
+    if(showNotif)notifyWarn('Musik dipakai sementara di sesi ini (penyimpanan perangkat tidak tersedia).')};
+   rd.readAsDataURL(file)})};
  if(db){notify('Mengupload musik ke Supabase...');
   try{
    const path=`${state.slug||'demo'}/${Date.now()}-${base}.${ext}`;
@@ -909,7 +928,12 @@ async function uploadMusic(input){
  addLocal(true)}
 function pickMusic(id){const m=state.musicDb.find(x=>x.id===id);if(!m)return;state.music=m;state.playing=true;save();syncAudio();render();notify('Memutar: '+m.name)}
 function togglePlay(){if(!state.music){notify('Belum ada musik — upload dulu di tab Musik');return}state.playing=!state.playing;syncAudio();render()}
-function syncAudio(){const p=$('player');if(!p)return;if(state.music){const abs=new URL(state.music.url,location.href).href;if(p.src!==abs)p.src=abs}if(state.playing&&state.music){p.play().catch(()=>{})}else{p.pause()}}
+function syncAudio(){const p=$('player');if(!p)return;const m=state.music;if(!m){p.pause();return}
+ if(m.idb){if(m._blob){if(p.src!==m._blob)p.src=m._blob}
+  else idbGetUrl(m.id).then(u=>{if(!u){notifyWarn('File musik lokal tidak ditemukan di perangkat ini — upload ulang atau pilih musik lain.');return}
+   m._blob=u;if(state.music===m&&p.src!==u)p.src=u;if(state.playing)p.play().catch(()=>{})}).catch(()=>{})}
+ else{const abs=new URL(m.url,location.href).href;if(p.src!==abs)p.src=abs}
+ if(state.playing&&m){p.play().catch(()=>{})}else{p.pause()}}
 /* ---------- Foto cover: 9 gaya + penyesuai geser/zoom (dipakai juga di undangan) ----------
    Bentuk bingkai di sini adalah cermin dari CSS #cover .cvf-* di undangan.html;
    bila bentuk di sana diubah, ubah juga di sini supaya pratinjau tetap sama. */
@@ -932,6 +956,12 @@ function cvPos(){if(!state.coverPos||typeof state.coverPos!=='object')state.cove
 function cvGayaAktif(){const d=String(state.coverStyle||'');if(!state.cover)return 'none';
  if(d==='full'||d==='none')return d;return CV_BENTUK[d]?d:'kotak'}
 function cvNama(){return (CV_BENTUK[cvGayaAktif()]||{}).nama||'-'}
+const CV_LAYOUTS=[['amplop','Amplop Klasik','✉️','Amplop kertas dengan segel — tampilan bawaan.'],
+ ['kartu','Kartu Stationery','💌','Kartu kertas tegas dengan tombol pil, tanpa gambar amplop.'],
+ ['foto','Foto Penuh','🖼️','Foto cover memenuhi layar, nama terbaca di atas lapisan gelap.'],
+ ['gerbang','Gerbang Lengkung','','Foto dibingkai lengkung di tengah seperti gerbang.'],
+ ['minimal','Minimalis','✦','Tanpa foto: monogram & tipografi saja di atas latar tema.']];
+function setCvLayout(id){if(!CV_LAYOUTS.some(c=>c[0]===id))return;state.coverLayout=id;save();render();renderPreview()}
 function setCvStyle(id){if(!CV_BENTUK[id])return;state.coverStyle=id;state.coverStyleExplicit=true;save();render();notify('Gaya foto cover: '+cvNama())}
 function cvGambar(){const p=cvPos();
  document.querySelectorAll('.cvprev').forEach(im=>{im.style.objectPosition=p.x+'% '+p.y+'%';im.style.transform='scale('+p.z+')'});
@@ -1022,11 +1052,12 @@ async function publish(){
    slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    amplop:JSON.parse(JSON.stringify(state.amplop)),videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href,local:false}:{name:'',url:'',local:false},
-   cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),
+   cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),linkMode:state.linkMode||'personal',
    masterKey:state.masterKey||'',savedAt:new Date().toISOString()}};
  state.pubSig=draftSig();
+ if(state.music&&state.music.local)setTimeout(()=>notifyWarn('Musik <b>'+esc(state.music.name||'lokal')+'</b> tersimpan di perangkat ini saja — tamu tidak mendengarnya. Upload musik ke Supabase (tombol di tab Musik & Galeri) agar ikut di undangan live.',15000),600);
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  state.stage='ready';save();render();window.scrollTo(0,0);document.querySelectorAll('.notice').forEach(n=>n.remove());
  if(snapshotSkipped)notifyWarn('<b>Publish berhasil tanpa snapshot.</b> Kolom <b>data</b> belum ada di Supabase — undangan live memakai kolom dasar + template (tampilan bisa berbeda dari studio, dashboard Master terbatas). Jalankan <b>supabase-schema.sql</b> di SQL Editor, atau <button onclick="copyFixSql()">salin SQL perbaikan</button>, lalu Publish ulang.',25000);
@@ -1106,6 +1137,7 @@ function applyDraftData(d,extra){
  if(d.border)state.border=d.border;if(d.ornSudut)state.ornSudut=d.ornSudut;
  if(d.cover!==undefined)state.cover=d.cover||'';
  if(d.coverStyle)state.coverStyle=d.coverStyle;
+ if(d.coverLayout)state.coverLayout=d.coverLayout;else state.coverLayout='amplop';
  if(typeof d.coverStyleExplicit==='boolean')state.coverStyleExplicit=d.coverStyleExplicit;
  else state.coverStyleExplicit=!!d.cover&&!!d.coverStyle&&!['kotak','arch'].includes(d.coverStyle);
  if(!state.coverStyleExplicit)syncDefaultCoverStyle(tplOf());
@@ -1291,6 +1323,14 @@ function tabInfo(){const f=state.form,e=state.event;
  </div></div>`}
 
 function tabDesain(){return `<div style="display:grid;gap:16px">
+ <div class="card"><h4>💌 Model Cover Pembuka</h4>
+  <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-top:-4px">Pilih tampilan layar pembuka undangan — langsung terlihat di pratinjau kanan.</div>
+  <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px">
+   ${CV_LAYOUTS.map(([id,nama,ic,desc])=>{const on=(state.coverLayout||'amplop')===id;
+    return `<button onclick="setCvLayout('${id}')" data-help="${esc(desc)}" style="border-radius:14px;border:2px solid ${on?'#111':'var(--line)'};background:${on?'#111':'#fbfaf8'};color:${on?'#fff':'inherit'};padding:10px 6px;display:grid;gap:4px;justify-items:center;cursor:pointer">
+     <span style="font-size:16px">${ic||'⌒'}</span><span style="font-size:10px;font-weight:${on?'700':'500'};line-height:1.3">${nama}</span></button>`}).join('')}
+  </div>
+ </div>
  <div class="card"><h4>🎨 Warna & Font</h4>
   <div style="display:grid;gap:16px">
    <div><div class="f" style="margin-bottom:8px">Warna Aksen Custom</div>
@@ -1594,7 +1634,7 @@ function tabAmplop(){const a=state.amplop;return `<div style="display:grid;gap:1
  </div></div>`}
 
 function toggleStudioMenu(button){const open=document.body.classList.toggle('studio-nav-open');button.setAttribute('aria-expanded',String(open))}
-function openMasterMenu(){state.stage='editor';state.page='editor';state.tab='master';document.body.classList.remove('studio-nav-open');save();render();document.querySelector('.mainc')?.scrollIntoView({block:'start',behavior:'smooth'})}
+function openMasterMenu(){state.stage='editor';state.page='editor';state.tab='terbit';document.body.classList.remove('studio-nav-open');save();render();document.querySelector('.mainc')?.scrollIntoView({block:'start',behavior:'smooth'})}
 function masterShareLink(){return 'https://wa.me/?text='+encodeURIComponent('Halo, berikut dashboard Undangan Master untuk '+displayName()+'.\n\n'+masterUrl()+'\n\nLink ini PRIVAT untuk pemilik acara. Jangan bagikan kepada tamu atau grup umum. Gunakan dashboard untuk mengirim link undangan tamu dan memantau RSVP.')}
 function masterAction(action){
  if(!linkReady()){notify('Publish undangan dahulu agar link master aktif.');return}
@@ -1689,8 +1729,7 @@ function checklistSiap(){const f=state.form;const items=[
  ['Nama',state.event==='pernikahan'?!!(f.namaPria.trim()&&f.namaWanita.trim()):!!f.namaAnak.trim()],
  ['Tanggal',!!f.tanggalAcara],['Jam',!!f.jamAcara],['Lokasi',!!f.venue.trim()],['Link',!!state.slug]];
  return `<div class="checkbar" role="status" aria-label="Kesiapan undangan">${items.map(([n,ok])=>`<span class="chk ${ok?'ok':''}"><span class="cd"></span>${n}${ok?' ✓':''}</span>`).join('')}</div>`}
-function stepbar(){const L=[['1','Data Acara',['info']],['2','Desain & Slide',['desain','slide']],['3','Konten',['musik','amplop']],['4','Tamu & Terbit',['tamu','master','domain']]];
- const aktif=L.findIndex(([,,tabs])=>tabs.includes(state.tab));
+function stepbar(){const L=[['1','Isi Acara',['info','amplop']],['2','Tampilan',['desain','slide','musik']],['3','Tamu',['tamu']],['4','Terbit',['terbit','master','domain']]]; const aktif=L.findIndex(([,,tabs])=>tabs.includes(state.tab));
  return `<div class="stepbar sb" role="navigation" aria-label="Langkah pembuatan undangan">${L.map(([n,nama,tabs],i)=>`${i?'<span class="step-sep"></span>':''}<button class="step ${i===aktif?'on':''} ${i<aktif?'done':''}" onclick="set('tab','${tabs[0]}')" aria-current="${i===aktif?'step':'false'}"><span class="num">${i<aktif?'✓':n}</span><span class="stxt">${nama}</span></button>`).join('')}</div>`}
 function editorActions(){
  const dirty=draftDirty();
@@ -1708,10 +1747,16 @@ function editorActions(){
  <button class="sm-btn" onclick="startInvitation()">+ Undangan Baru</button>${state.published?'<button class="sm-btn" onclick="showReady()">Link Siap Dibagikan</button>':''}</div>`}
 
 function editor(){
- const tabs=[['info','Info Acara'],['desain','Desain'],['slide','Slide & Animasi'],['musik','Musik & Galeri'],['amplop','Amplop'],['tamu','Tamu & QR'],['master','Kirim Master'],['domain','Domain']];
- const body={info:tabInfo,master:tabMaster,desain:tabDesain,slide:tabSlide,musik:tabMusik,tamu:tabTamu,amplop:tabAmplop,domain:tabDomain}[state.tab]();
+ const tabs=[['info','Info Acara'],['desain','Desain & Cover'],['slide','Slide & Animasi'],['musik','Musik & Galeri'],['amplop','Amplop & Ucapan'],['tamu','Tamu & QR'],['terbit','Terbit & Bagikan']];
+ const bodyMap={info:tabInfo,desain:tabDesain,slide:tabSlide,musik:tabMusik,amplop:tabAmplop,tamu:tabTamu,terbit:tabDomain,master:tabMaster,domain:tabDomain};
+ const idxTab=tabs.findIndex(([id])=>id===state.tab);
+ const body=(bodyMap[state.tab]||tabInfo)();
+ const navPrev=idxTab>0?tabs[idxTab-1][0]:null,navNext=idxTab>=0&&idxTab<tabs.length-1?tabs[idxTab+1][0]:null;
  return `${editorActions()}${stepbar()}<div class="tabbar sb">${tabs.map(([id,l])=>`<button class="tabbtn ${state.tab===id?'on':''}" onclick="set('tab','${id}')">${l}</button>`).join('')}</div>
- <div style="padding:16px">${body}</div>`}
+ <div style="padding:16px">${body}
+  <div class="tabnav">${navPrev?`<button class="sm-btn" onclick="set('tab','${navPrev}')" data-help="Kembali ke langkah sebelumnya.">← ${tabs.find(([id])=>id===navPrev)[1]}</button>`:'<span></span>'}
+   ${navNext?`<button class="sm-btn dark" onclick="set('tab','${navNext}')" data-help="Lanjut ke langkah berikutnya sesuai urutan pengisian.">Lanjut: ${tabs.find(([id])=>id===navNext)[1]} →</button>`:''}</div>
+ </div>`}
 
 /* ============ VIEW: KATALOG ============ */
 function katalog(){return `${pageActions('Katalog Template • '+state.katalog.length+' baris')}<div style="padding:16px;display:grid;gap:16px">
@@ -1915,7 +1960,7 @@ function barisUndangan(){
    amplop:JSON.parse(JSON.stringify(state.amplop)),
    slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos()),
+   cover:state.cover||'',coverStyle:cvGayaAktif(),coverLayout:state.coverLayout||'amplop',coverPos:Object.assign({},cvPos()),
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
@@ -2003,6 +2048,9 @@ function fpDragStart(e){if(e.button!==0||e.target.closest('button'))return;
  head.addEventListener('pointermove',mv);head.addEventListener('pointerup',up);head.addEventListener('pointercancel',up);head.addEventListener('lostpointercapture',up);e.preventDefault();
 }
 window.addEventListener('resize',function(){fitFloat();syncPreview()});
+/* Musik gagal dimuat (link privat/rusak) → beri tahu, jangan diam saja. */
+document.addEventListener('error',e=>{const t=e.target;if(t&&t.id==='player'&&state.music&&!state.music.local)
+ notifyErr('Musik <b>'+esc(state.music.name||'')+'</b> gagal dimuat dari penyimpanan — file mungkin privat/terhapus. Upload ulang atau pilih musik lain.',10000)},true);
 
 if(paksaTier())save();
 /* pratinjau ringan 4D: geser latar pratinjau mengikuti mouse saat tier VIP */

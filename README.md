@@ -93,6 +93,32 @@ dan `node tools/test-floating-preview.cjs`.
   `?to=NamaTamu` sehingga rawan ikut terbagikan.
 - Dicek otomatis oleh `tools/cek-kesehatan.py` (bagian link untuk semua tamu).
 
+## Ronde 4: tata letak rapat, galeri grid, 5 model cover, musik lokal awet, urutan Studio (2026-10-15)
+
+Masukan pengguna ronde ini: bagian bawah template jangan kosong memanjang, musik upload harus tetap
+bersuara saat dipakai lagi, sediakan pilihan jenis cover (5 dulu), susun ulang urutan pengisian Studio,
+dan galeri undangan jangan digeser — tampilkan beberapa foto sekaligus.
+
+- **Galeri grid di undangan live** (`undangan.html`): carousel geser `.galx` diganti grid dua kolom
+  (`.gal-grid`/`.gal-cell`) — foto pertama lebar penuh, maksimal enam foto tampil, sisanya ditandai
+  overlay "+N foto"; ketuk foto tetap membuka lightbox. Petunjuk berubah jadi "Ketuk foto untuk memperbesar".
+- **Slide tanpa ruang kosong**: `setupNavPager()` mengukur tinggi tiap bagian saat aliran normal lalu
+  menggabung bagian pendek (greedy, maks `innerHeight-150`) ke satu slide (`.pslide-multi`); isi slide
+  ditengahkan vertikal (`justify-content:safe center`) supaya slide pendek tidak menyisakan bawah kosong.
+- **5 model cover pembuka** (`coverLayout`): amplop klasik (bawaan), kartu stationery, foto penuh,
+  gerbang lengkung, minimalis. Pilihan ada di tab *Desain & Cover* Studio (`CV_LAYOUTS`/`setCvLayout`),
+  tersimpan di draft & payload publish, dirender undangan live lewat class `body.cvl-*` (+ monogram untuk
+  model minimalis). Pratinjau Studio = iframe `undangan.html?preview=1` sehingga selalu sama dengan hasil publish.
+- **Musik upload awet**: blob musik lokal disimpan ke IndexedDB (`asproject-musik`), bukan data URL di
+  localStorage (penyebab kuota jebol & musik bisu saat dipakai lagi). `syncAudio()` mengambil blob URL dari
+  IndexedDB; jika blob hilang muncul peringatan, dan publish mengingatkan bahwa musik lokal tidak ikut ke tamu.
+- **Urutan Studio dirapikan**: 7 tab — Info Acara, Desain & Cover, Slide & Animasi, Musik & Galeri,
+  Amplop & Ucapan, Tamu & QR, **Terbit & Bagikan** (gabungan Kirim Master + Domain) — plus tombol
+  Lanjut/Mundur antar langkah di bawah isi tab; stepbar dan menu navigasi mengikuti susunan baru.
+- Bukti tampilan: `.preview-shots/20-studio-picker-cover.png` s.d. `28-slide-2.png`.
+- Dicek otomatis: `tools/cek-kesehatan.py` bagian 20–23 (galeri grid, packing slide, model cover, musik IDB,
+  susunan tab) serta seluruh suite `tools/test-*.cjs`.
+
 ## Perbaikan alur Studio: publish ulang, riwayat, tombol kembali, pratinjau = hasil akhir (2026-10-14)
 
 Empat keluhan alur kerja diperbaiki sekaligus:

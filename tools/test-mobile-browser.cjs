@@ -17,7 +17,7 @@ const assert = require('node:assert/strict');
    await page.setViewportSize({ width, height: 844 });
    await page.goto('http://localhost:8080/studio.html');
    await page.evaluate(()=>{if(!state.started)startInvitation()});
-   for (const tab of ['info','master','desain','slide','musik','tamu','amplop','domain']) {
+   for (const tab of ['info','desain','slide','musik','amplop','tamu','terbit']) {
     await page.evaluate(tab => set('tab',tab), tab);
     const overflow = await page.evaluate(() => ({ width: innerWidth, doc: document.documentElement.scrollWidth }));
 
@@ -27,7 +27,7 @@ const assert = require('node:assert/strict');
    const box = await page.locator('#floatPrev').boundingBox();
    assert(box.x >= 0 && box.x + box.width <= width + 1, `${width}px: expanded preview fits`);
    assert(box.y >= 0 && box.y + box.height <= 845, `${width}px: expanded preview height fits`);
-   console.log(`PASS: ${width}px, eight tabs and expanded preview`);
+   console.log(`PASS: ${width}px, seven tabs and expanded preview`);
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => { setFloat(false); openMasterMenu(); });

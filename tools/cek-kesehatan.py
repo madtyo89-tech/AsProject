@@ -443,7 +443,31 @@ def cek_pipeline_undangan():
           and "Link untuk semua tamu (tanpa nama)" in studio)
     lapor("ok" if ok else "masalah",
           "master.html & studio: link undangan untuk semua tamu (tanpa ?to=) tersedia beserta salin/WA/buka")
-    # 20) tombol kembali ke cover di undangan live
+    # 20) galeri grid (bukan geser) + slide rapat tanpa ruang kosong + 5 model cover
+    ok = ("gal-grid" in undangan and "gal-cell" in undangan and "galx-slide" not in undangan
+          and "Ketuk foto untuk memperbesar" in undangan)
+    lapor("ok" if ok else "masalah",
+          "undangan.html: galeri tampil sebagai grid rapi (maks 6 foto + penanda sisa), bukan carousel geser")
+    ok = ("pslide-multi" in undangan and "groups.push(gr)" in undangan
+          and "target=Math.max(430,(window.innerHeight||700)-150)" in undangan)
+    lapor("ok" if ok else "masalah",
+          "undangan.html: mode slide menggabung bagian pendek per layar supaya tidak kosong memanjang")
+    ok = (all(x in undangan for x in ("cvl-kartu", "cvl-foto", "cvl-minimal", "monogramOf", "d.coverLayout"))
+          and "CV_LAYOUTS" in studio and studio.count("setCvLayout") >= 2
+          and "coverLayout:state.coverLayout||'amplop'" in studio)
+    lapor("ok" if ok else "masalah",
+          "5 model cover pembuka (amplop/kartu/foto/gerbang/minimal) tersedia di Studio & renderer live")
+    # 21) musik upload tersimpan di IndexedDB agar dipakai lagi tetap bersuara
+    ok = ("idbPut" in studio and "idbGetUrl" in studio and "indexedDB.open('asproject-musik'" in studio
+          and "local:true,idb:1,url:''" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: musik upload disimpan di IndexedDB (blob) sehingga dipakai lagi tetap bersuara")
+    # 22) susunan tab studio: master+domain dilebur jadi Terbit & ada lanjut/mundur
+    ok = ("['terbit','Terbit & Bagikan']" in studio and 'class="tabnav"' in studio
+          and "state.tab='terbit'" in studio and "if(stored.tab==='master'||stored.tab==='domain')stored.tab='terbit'" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: urutan pengisian dirapikan (7 tab + tombol Lanjut/Mundur, master+domain dilebur)")
+    # 23) tombol kembali ke cover di undangan live
     ok = ('id="coverBack"' in undangan and "function kembaliKeCover" in undangan
           and "body.opened #coverBack{display:inline-flex}" in undangan
           and "body.embed-buka #coverBack" in undangan)
