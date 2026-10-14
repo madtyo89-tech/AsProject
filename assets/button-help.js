@@ -52,6 +52,7 @@
   const code=el.getAttribute('onclick')||'';
   if(el.matches('[data-copy]'))return 'Salin nomor rekening atau dompet digital pada kartu ini ke clipboard perangkat.';
   if(el.id==='musikBtn')return 'Putar atau jeda musik latar undangan. Browser mungkin meminta interaksi terlebih dahulu.';
+  if(el.id==='coverBack')return 'Balik ke cover pembuka undangan. Ketuk Buka Undangan untuk masuk lagi; musik tetap diputar.';
   const action=code.match(/(?:masterAction|shareReadyLink)\('([^']+)'/);
   if(action){
    const master=code.includes('masterAction'),what=master?'link master privat':'link undangan tamu yang sudah selesai';

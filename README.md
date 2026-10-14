@@ -80,6 +80,27 @@ berubah setiap isian/tema disunting. Kontrol di bilah judulnya:
 Dicek otomatis oleh `python3 tools/cek-kesehatan.py` (bagian floating preview)
 dan `node tools/test-floating-preview.cjs`.
 
+## Tombol kembali ke cover di undangan live (2026-10-14)
+
+Selain tombol di Studio, undangan live (`undangan.html`) sekarang punya tombol
+**⤒ Cover** di kanan bawah. Perilakunya:
+
+- **Muncul hanya setelah undangan dibuka** (`body.opened`) — di layar cover
+  pembuka tombol disembunyikan, jadi tamu tidak melihat kontrol sebelum masuk.
+- Menekannya menghapus keadaan `opened`: undangan kembali ke cover pembuka dan
+  tamu bisa menekan **Buka Undangan** lagi. Musik latar sengaja **tidak**
+  dihentikan (sama seperti perilaku tombol musik).
+- Otomatis **naik ke atas bar navigasi slide** saat undangan memakai mode
+  `navpager`, dan **disembunyikan di hero katalog** (`index.html` memuat
+  `undangan.html?demo=1&buka=1` dan menandai `body.embed-buka`) supaya iframe
+  pratinjau tidak menampilkan kontrol yang tidak perlu.
+- Bantuan tombol (tekan-tahan / F1) tersedia lewat `assets/button-help.js`.
+
+Dicek otomatis oleh `python3 tools/cek-kesehatan.py` (bagian tombol kembali ke
+cover), `node tools/test-ketahanan.cjs` (membalik `opened`, aman dipanggil
+berulang), dan `node tools/test-mobile-browser.cjs` (muncul/sembunyi, ukuran
+sentuh ≥44px, tanpa tumpang tindih dengan tombol musik atau bar slide).
+
 ## Halaman Katalog Template & Arsip di Studio (perbaikan 2026-10-12)
 
 Menu **Katalog Template** (edit harga/promo) dan **Folder / Arsip** dibuka dari sidebar

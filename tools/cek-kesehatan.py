@@ -411,6 +411,12 @@ def cek_pipeline_undangan():
           and "syncAudio();syncFloat()}" in studio)
     lapor("ok" if ok else "masalah",
           "studio.html: floating preview (widget melayang + toggle + kembali ke cover + sync di render)")
+    # 15) tombol kembali ke cover di undangan live
+    ok = ('id="coverBack"' in undangan and "function kembaliKeCover" in undangan
+          and "body.opened #coverBack{display:inline-flex}" in undangan
+          and "body.embed-buka #coverBack" in undangan)
+    lapor("ok" if ok else "masalah",
+          "undangan.html: tombol kembali ke cover (tampil setelah dibuka, disembunyikan di hero embed)")
 
 
 def cek_katalog_publik():

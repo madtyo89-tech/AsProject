@@ -295,6 +295,16 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 #musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
 #musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* ==== Tombol kembali ke cover: muncul hanya setelah undangan dibuka ==== */
+#coverBack{position:fixed;right:14px;bottom:16px;z-index:120;display:none;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-radius:99px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(90,70,30,.18);color:var(--ink-body);font-size:11px;font-weight:600;cursor:pointer}
+body.opened #coverBack{display:inline-flex}
+#coverBack .arw{font-size:15px;line-height:1}
+/* Bar navigasi slide (mode navpager) duduk di tengah bawah — naikkan tombol agar tidak bertumpuk. */
+body.navpager #coverBack{bottom:66px}
+/* Hero katalog menampilkan undangan yang sudah terbuka: tombol ini tidak perlu ikut tampil. */
+body.embed-buka #coverBack{display:none}
+@media (max-width:380px){#coverBack{right:10px;gap:6px;padding:0 13px}}
+
 /* ---------- ANIMASI ---------- */
 @keyframes uUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes uZoom{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
@@ -625,6 +635,7 @@ body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .
 <body>
 <audio id="musik" loop preload="none"></audio>
 <button id="musikBtn" aria-label="Putar/jeda musik"><span class="disc"></span><span class="t" id="musikNama">Musik</span></button>
+<button id="coverBack" aria-label="Kembali ke cover undangan" title="Kembali ke cover undangan"><span class="arw" aria-hidden="true">⤒</span><span>Cover</span></button>
 <div id="app"></div>
 
 <script>
@@ -827,7 +838,16 @@ const GUEST=(Q.get('to')||'').trim();
 const DEMO=Q.get('demo')==='1';
 /* demo auto-buka (dipakai hero dinamis index): tampilkan isi undangan langsung,
    tanpa memutar musik — tombol Buka Undangan tidak dipicu */
-if(DEMO&&Q.get('buka')==='1')document.body.classList.add('opened');
+if(DEMO&&Q.get('buka')==='1'){document.body.classList.add('opened','embed-buka');}
+
+/* ---------- tombol kembali ke cover (tampil setelah undangan dibuka) ---------- */
+/* Membalik keadaan "opened": cover pembuka tampil lagi dan tamu bisa menekan
+   "Buka Undangan" sekali lagi. Musik latar sengaja tidak dihentikan. */
+function kembaliKeCover(){
+ if(!document.body.classList.contains('opened'))return;
+ document.body.classList.remove('opened');
+}
+(function(){const b=document.getElementById('coverBack');if(b)b.addEventListener('click',kembaliKeCover)})();
 let SLUG=(Q.get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
 if(!SLUG){const h=location.hostname.toLowerCase();
  if(h.slice(-16)==='.asproject.my.id'&&h.length>16)SLUG=h.split('.')[0]}
