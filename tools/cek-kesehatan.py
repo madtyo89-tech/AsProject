@@ -407,9 +407,10 @@ def cek_pipeline_undangan():
           f"karakter maskot sinkron studio & undangan ({len(ch_st)} tema ber-char)")
     # 14) floating preview undangan di studio
     ok = ('id="floatPrev"' in studio and "function syncFloat" in studio
-          and "function setFloat" in studio and "syncAudio();syncFloat()}" in studio)
+          and "function setFloat" in studio and "function fpCover" in studio
+          and "syncAudio();syncFloat()}" in studio)
     lapor("ok" if ok else "masalah",
-          "studio.html: floating preview (widget melayang + toggle + sync di render)")
+          "studio.html: floating preview (widget melayang + toggle + kembali ke cover + sync di render)")
 
 
 def cek_katalog_publik():

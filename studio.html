@@ -131,7 +131,10 @@ input,textarea,select{outline:0}
 #floatPrev.fp-expanded .fp-screen{height:min(680px,calc(100dvh - 100px))}
 #floatPrev .fp-head{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;background:#111;color:#fff;font-size:10px;font-weight:600;cursor:grab;user-select:none;touch-action:none}
 #floatPrev .fp-head:active{cursor:grabbing}
-#floatPrev .fp-actions{display:flex;gap:4px}
+#floatPrev .fp-head>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Saat mini, judul dipendekkan jadi "📱 Live" supaya tombol tetap muat & satu baris. */
+#floatPrev:not(.fp-expanded) .fp-t-full{display:none}
+#floatPrev .fp-actions{display:flex;gap:4px;flex:none;margin-left:auto}
 #floatPrev .fp-actions button{width:22px;height:22px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font-size:10px;cursor:pointer;display:grid;place-items:center;line-height:1}
 #floatPrev .fp-actions button:hover{background:rgba(255,255,255,.15)}
 #floatPrev .fp-screen{width:100%;height:min(318px,calc(100dvh - 100px));overflow-y:auto;overflow-x:hidden;scrollbar-width:none;overscroll-behavior:contain;background:#fff}
@@ -1918,13 +1921,14 @@ function syncFloat(){const w=$('floatPrev');if(!w)return;
  if(copy){copy.querySelectorAll('.ap').forEach(el=>el.classList.remove('ap'));
   [copy,...copy.querySelectorAll('*')].forEach(el=>{el.removeAttribute('id');el.removeAttribute('autofocus');Array.from(el.attributes).filter(a=>a.name.startsWith('on')).forEach(a=>el.removeAttribute(a.name))})}
  w.innerHTML=`<div class="fp-box">
-  <div class="fp-head" onpointerdown="fpDragStart(event)"><span>📱 Live Preview</span>
+  <div class="fp-head" onpointerdown="fpDragStart(event)"><span>📱 Live<span class="fp-t-full"> Preview</span></span>
    <span class="fp-actions">
+    <button title="Kembali ke cover" aria-label="Kembali ke cover awal undangan" onclick="fpCover()">⤒</button>
     <button title="${_fpExpanded?'Perkecil preview':'Perbesar preview'}" aria-label="${_fpExpanded?'Perkecil preview':'Perbesar preview'}" aria-expanded="${_fpExpanded}" onclick="floatGo()">${_fpExpanded?'⤡':'⤢'}</button>
     <button title="Sembunyikan preview" aria-label="Sembunyikan preview" onclick="setFloat(false)">–</button>
    </span></div>
   <div class="fp-screen" tabindex="0" role="region" aria-label="Pratinjau undangan, gulir untuk melihat isi"><div class="fp-scale" inert></div></div>
-  <div class="fp-hint">geser judul • gulir layar • ⤢ perbesar</div>
+  <div class="fp-hint">geser judul • gulir layar • ⤒ cover • ⤢ perbesar</div>
  </div>`;
  if(copy)w.querySelector('.fp-scale').appendChild(copy);
  fitFloat();
@@ -1933,6 +1937,9 @@ function syncFloat(){const w=$('floatPrev');if(!w)return;
 }
 function setFloat(v){state.floatPrevOn=v;save();syncFloat()}
 function floatGo(){_fpExpanded=!_fpExpanded;syncFloat()}
+/* Tombol ⤒: bawa isi preview kembali ke cover undangan (bagian paling atas). */
+function fpCover(){const w=$('floatPrev'),s=w&&w.querySelector('.fp-screen');if(!s)return;
+ if(typeof s.scrollTo==='function')s.scrollTo({top:0,behavior:'smooth'});else s.scrollTop=0;}
 function placeFloat(x,y){const w=$('floatPrev'),r=w.getBoundingClientRect(),gap=8;
  const pos={x:Math.max(gap,Math.min(Number.isFinite(x)?x:gap,window.innerWidth-r.width-gap)),y:Math.max(gap,Math.min(Number.isFinite(y)?y:gap,window.innerHeight-r.height-gap))};
  Object.assign(w.style,{left:pos.x+'px',top:pos.y+'px',right:'auto',bottom:'auto'});return pos;

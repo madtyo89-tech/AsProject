@@ -35,6 +35,7 @@
   liveRsvp:'Buka bagian konfirmasi kehadiran atau kirim RSVP sesuai pengaturan undangan.',
   setFloat:'Tampilkan atau perkecil floating preview tanpa mengubah isi undangan.',
   floatGo:'Perbesar atau perkecil floating preview. Gulir di dalam layar untuk melihat seluruh isinya.',
+  fpCover:'Bawa tampilan floating preview kembali ke cover undangan di bagian paling atas.',
   copyMaster:'Salin link dashboard master privat. Bagikan hanya kepada pemilik acara.',
   copyAll:'Salin seluruh link undangan tamu dari dashboard.',
   onFilter:'Saring daftar tamu berdasarkan status yang dipilih.',

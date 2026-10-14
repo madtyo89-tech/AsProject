@@ -64,6 +64,22 @@ dan (setelah server lokal aktif di :8080) `node tools/test-mobile-browser.cjs`.
 Browser memerlukan library sistem Chromium; atur `LD_LIBRARY_PATH` bila memakai
 library bundled. Tes publish memakai fixture lokal, **bukan database produksi**.
 
+## Floating preview undangan di Studio (tombol kembali ke cover, 2026-10-14)
+
+Mini HP melayang (`#floatPrev`) menampilkan undangan yang sedang dibuat dan ikut
+berubah setiap isian/tema disunting. Kontrol di bilah judulnya:
+
+- **⤒ Kembali ke cover** — menggulir isi preview kembali ke cover undangan di
+  bagian paling atas (halus bila browser mendukung; tetap bekerja di jsdom).
+- **⤢ / ⤡** perbesar/perkecil, dan **–** menyembunyikan preview (jadi pil
+  📱 Preview). Judul bisa digeser untuk memindahkan widget.
+- Posisi, ukuran, dan pilihan sembunyikan bertahan setelah refresh; posisi
+  dijepit ke dalam layar saat jendela diperkecil. Di layar **Undangan sudah
+  jadi!** widget disembunyikan karena fokus pada link.
+
+Dicek otomatis oleh `python3 tools/cek-kesehatan.py` (bagian floating preview)
+dan `node tools/test-floating-preview.cjs`.
+
 ## Halaman Katalog Template & Arsip di Studio (perbaikan 2026-10-12)
 
 Menu **Katalog Template** (edit harga/promo) dan **Folder / Arsip** dibuka dari sidebar
