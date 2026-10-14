@@ -194,7 +194,7 @@ const SUPABASE_URL='https://aalrhvirqwjtbbxmteeg.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbHJodmlycXdqdGJieG10ZWVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMjg4NTUsImV4cCI6MjEwNjgwNDg1NX0.fQA5_bIQbuvHTS3f9AJy4k2SO4kycgG_SQIdbmo-EBw';
 
 const Q=new URLSearchParams(location.search);
-const SLUG=(Q.get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
+let SLUG=(Q.get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
 const MK=(Q.get('k')||'').trim();
 const DEMO=Q.get('demo')==='1';
 
@@ -218,6 +218,7 @@ const DEMO_DRAFT={slug:'demo-master',name1:'Dina',name2:'Bagas',theme:'sage',dat
  slides:{cover:{on:true},akad:{on:true},resepsi:{on:true},doa:{on:true},countdown:{on:true},video:{on:true},story:{on:true},mapp:{on:true},gift:{on:true},rsvp:{on:true},closing:{on:true}},
  guestsRaw:'Pak Andi Wijaya & Keluarga\nBu Rina Marlina\nKak Dina & Family\nTim Kantor Bandung',
  guestCodes:{},masterKey:'demo-1234'}};
+if(DEMO&&!SLUG)SLUG=DEMO_DRAFT.slug; /* demo: pakai slug bawaan supaya contoh link utuh */
 
 /* ---------- util ---------- */
 function baseLink(){
