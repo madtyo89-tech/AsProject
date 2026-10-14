@@ -480,7 +480,7 @@ def cek_fitur_terbaru():
           f"Gerbang Arch: {len(arch_rows)} varian Studio tersambung ke skin live lintas 4 kategori")
     katalog_arch_ok = (all(r["harga"] == 0 for r in arch_rows)
                        and "katalog:TPL.filter(t=>!t.studioOnly).map" in studio
-                       and "if(!t.studioOnly&&!state.katalog.some" in studio
+                       and "if(!t.studioOnly&&!state.katalogDel.includes(t.id)&&!state.katalog.some" in studio
                        and "state.katalogHide.filter(id=>TPL.some(t=>t.id===id&&!t.studioOnly))" in studio)
     lapor("ok" if katalog_arch_ok else "masalah",
           "Studio-only Arch: tetap bisa dipilih tanpa harga, promo, atau baris katalog pemasaran")
@@ -825,6 +825,42 @@ def cek_simulasi():
           "uji simulasi pemakaian: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
 
 
+def cek_katalog_admin():
+    """Halaman Katalog Template & Arsip di Studio: tombol kembali, hapus baris, pulihkan bawaan,
+    dan baris yang tidak remuk di layar HP (regresi laporan 2026-10-12)."""
+    print("\n[23] Katalog Template & Arsip di Studio (kembali / hapus / pulihkan / baris HP)")
+    studio = baca("studio.html")
+    ok = "function pageActions(" in studio and "function goPage(" in studio \
+        and studio.count("${pageActions(") >= 2 and "Kembali ke Editor" in studio
+    lapor("ok" if ok else "masalah",
+          "studio.html: Katalog & Arsip punya toolbar ← Kembali ke Editor + ☰ Template & Menu (goPage/pageActions)")
+    ok = "goPage('${id}')" in studio and "set('page','${id}')" not in studio
+    lapor("ok" if ok else "masalah", "studio.html: menu sidebar memakai goPage() (menu HP tertutup saat pindah halaman)")
+    ok = "function delKat(id)" in studio and "delKat('${k.id}')" in studio and "sm-btn del" in studio
+    lapor("ok" if ok else "masalah", "studio.html: tiap baris katalog punya tombol 🗑 Hapus (delKat + konfirmasi)")
+    ok = ("katalogDel:[]" in studio and "function pulihkanKat()" in studio
+          and "!state.katalogDel.includes(t.id)&&!state.katalog.some(k=>k.id===t.id)" in studio
+          and "katalogDel:state.katalogDel" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: tema bawaan yang dihapus tidak kembali saat dibuka ulang (tombstone katalogDel) + Pulihkan Bawaan")
+    ok = ('class="kat-row' in studio and ".kat-list{container-type:inline-size" in studio
+          and "@container kat (min-width:" in studio and ".kat-row{padding:12px 16px;display:flex;flex-wrap:wrap" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: baris katalog bertumpuk di layar sempit (container query .kat-list), tidak remuk per huruf")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji jsdom katalog dilewati")
+        return
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    if probe.returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji jsdom katalog dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-katalog-admin.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji katalog admin: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -834,7 +870,7 @@ def main():
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
-               cek_template_pernikahan, cek_vip_4d, cek_simulasi):
+               cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

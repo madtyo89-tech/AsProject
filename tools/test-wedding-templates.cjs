@@ -126,6 +126,7 @@ async function renderLive(id, event = 'pernikahan', coverStyle) {
   const w = dom.window;
   w.HTMLMediaElement.prototype.pause = () => {}; w.HTMLMediaElement.prototype.play = () => Promise.resolve();
   w.scrollTo = () => {}; w.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
+  w.HTMLCanvasElement.prototype.getContext = () => null;
   w.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} };
   w.fetch = () => Promise.reject(new Error('fixture: no network'));
   for (const asset of ['assets/scroll-effects.js', 'assets/theme-contrast.js', 'assets/button-help.js']) w.eval(read(asset));
@@ -179,7 +180,7 @@ async function testStudioPreview() {
     } });
   const w = dom.window;
   w.eval(`state.started=true;state.event='pernikahan';state.stage='editor';state.tab='desain';render()`);
-  assert.deepEqual([...w.eval('state.katalog.map(k=>k.tpl)')], expectedPublic, 'Studio price catalog migrates back to the 13 marketed themes');
+  assert.deepEqual([...w.eval('state.katalog.map(k=>k.tpl)')], expectedPublic, 'Studio price catalog migrates back to the public themes only');
   assert.deepEqual([...w.eval('state.katalogHide')], [], 'Studio-only themes are not left hidden by old catalog settings');
   assert(archOnly.every(t => w.eval(`tplsFor('${t.ev}').some(x=>x.id==='${t.id}')`)), 'all six unpriced Studio-only themes remain selectable by event');
   assert(archOnly.every(t => w.eval(`!Object.prototype.hasOwnProperty.call(TPL.find(x=>x.id==='${t.id}'),'harga')`)), 'Studio-only themes carry no assumed price');

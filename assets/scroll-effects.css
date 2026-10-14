@@ -1,5 +1,10 @@
 /* Shared scroll animation geometry: Studio and published invitations stay identical.
    Visible by default: missing JS/observer must never hide invitation content. */
+/* Efek gulir samping (slide/wave/…) menerjemahkan elemen ±48px selama animasi
+   reveal — jepit area gulir horizontal dokumen supaya tidak ada scrollbar
+   geser sesaat di HP (dan overflow lebar dokumen saat animasi berjalan). */
+html{overflow-x:clip}
+@supports not (overflow:clip){html{overflow-x:hidden}}
 .scroll-reveal.sr-ready:not(.sr-in){opacity:0}
 .scroll-reveal.sr-dir-down{--sr-entry-x:0px;--sr-entry-y:22px}
 .scroll-reveal.sr-dir-up{--sr-entry-x:0px;--sr-entry-y:-22px}
