@@ -138,7 +138,8 @@ function tema(rel) {
   cek(undHtml.includes("classList.add('art3d')"), 'undangan.html: kelas art3d dipasang saat tema ber-artwork');
   cek(undHtml.includes("'--cover-art'"), 'undangan.html: --cover-art dipasang dari bg3d tema');
   cek(undHtml.includes("'#F7F2E9'"), 'undangan.html: teks cover jadi terang di atas artwork');
-  cek(stuHtml.includes('const art3d='), 'studio.html: pratinjau HP mengikuti latar artwork');
+  cek(stuHtml.includes('undangan.html?preview=1') && stuHtml.includes('--cover-art:url('),
+      'studio.html: pratinjau memakai renderer live (latar artwork ikut) & export menyemat artwork');
   cek(stuHtml.includes('bg3d'), 'studio.html: field bg3d masih dikenal (siap dipakai tema baru)');
 
   /* ------------------------------------------- 3. halaman undangan (jsdom) */

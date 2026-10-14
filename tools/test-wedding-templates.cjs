@@ -90,7 +90,9 @@ for (const t of archOnly) {
   assert.equal(t.accent.toLowerCase(), deep[1].toLowerCase(), `${t.id}: aksen sama dengan demo mandiri`);
   assert(demo.includes('.invite-photo{width:min(100%,270px);height:auto;aspect-ratio:4/5;margin:0 auto 20px}'), `${t.id}: foto undangan memakai frame portrait lebih besar`);
 }
-assert(liveHtml.includes('body.gerbang-arch #cover .cvf-arch{width:min(52vw,180px)') && studioHtml.includes('gerbang-arch'), 'foto cover Arch dibesarkan dan skin tersedia di Studio/live');
+assert(liveHtml.includes('body.gerbang-arch #cover .cvf-arch{width:min(52vw,180px)') && liveHtml.includes('gerbang-arch')
+  && studioHtml.includes("state.coverStyle=t&&t.arch?'arch':'kotak'"),
+  'foto cover Arch dibesarkan di renderer live dan Studio mengirim gaya arch ke pratinjau');
 for (const g of [...pn.matchAll(/gradient:"from-\[#(\w+)\] via-\[#(\w+)\] to-\[#(\w+)\]"/g)]) {
   for (const [kind, col] of [['from', g[1]], ['via', g[2]], ['to', g[3]]])
     assert(indexHtml.includes(`.${kind}-\\[\\#${col}\\]{`), `index.html: rule CSS ${kind}#${col} ada`);
@@ -102,8 +104,8 @@ for (const rel of ['studio.html', 'undangan.html', 'index.html']) {
 }
 for (const token of ['wedding-cover', 'wedding-invite-card', 'wedding-meta', 'wedding-note', 'wedding-paper-art'])
   assert(liveHtml.includes(token), `live renderer menyertakan ${token}`);
-assert(studioHtml.includes('wedding-preview-inner') && studioHtml.includes('weddingDateLabel'),
-  'pratinjau Studio memakai isi cover editorial yang sama');
+assert(studioHtml.includes('undangan.html?preview=1') && !studioHtml.includes('function phoneHtml('),
+  'pratinjau Studio memuat renderer live yang sama (tidak ada renderer kedua di studio.html)');
 assert(/--cover-art:url\(/.test(studioHtml) && /--wedding-paper-art:url\(/.test(studioHtml),
   'export HTML mandiri punya jalur sematan artwork');
 
@@ -121,6 +123,7 @@ function undangan(tpl, event = 'pernikahan', coverStyle) {
       slides: {}, anim: { cover: false, text: false, reveal: false, effect: 'fade', scroll: 'fade-up' }, border: 'none', music: { url: '', name: '' } }
   };
 }
+function tplOfCheck(w, t){ return w.eval(`(state.tpl='${t.id}', tplOf().accent)`); }
 async function renderLive(id, event = 'pernikahan', coverStyle) {
   const dom = new JSDOM(liveHtml, { url: 'https://asproject.my.id/undangan.html?slug=theme-test', runScripts: 'outside-only', pretendToBeVisual: true });
   const w = dom.window;
@@ -186,29 +189,26 @@ async function testStudioPreview() {
   assert(archOnly.every(t => w.eval(`!Object.prototype.hasOwnProperty.call(TPL.find(x=>x.id==='${t.id}'),'harga')`)), 'Studio-only themes carry no assumed price');
   const catalogMarkup = w.eval('katalog()');
   assert(archOnly.every(t => !catalogMarkup.includes(t.nama)), 'Studio-only themes do not appear in the price/promo management catalog');
+  /* Pratinjau Studio kini menampilkan berkas undangan.html asli di dalam iframe,
+     jadi skin tema diuji lewat renderer live (testLiveExamples/testArchLive) dan
+     lewat payload yang dikirim Studio ke iframe (barisUndangan). */
+  assert(w.document.querySelector('#phoneWrap iframe.pv-frame'), 'pratinjau Studio memuat undangan.html asli di iframe');
   for (const t of wedding) {
     w.eval(`state.event='pernikahan';state.tpl='${t.id}';state.accent=tplOf().accent;state.fontTitle=tplOf().ft||state.fontTitle;renderPreview()`);
-    const cover = w.document.querySelector('.phone .screen .wedding-cover');
-    assert(cover, `${t.id}: pratinjau Studio memasang skin wedding`);
-    assert(cover.classList.contains('theme-' + t.id), `${t.id}: pratinjau menandai tema aktif`);
-    if (t.arch) assert(cover.classList.contains('gerbang-arch'), `${t.id}: pratinjau Studio memakai skin arch`);
-    assert(cover.querySelector('.wedding-invite-card'), `${t.id}: pratinjau menampilkan kartu`);
-    assert(cover.querySelector('.wedding-kicker').textContent.includes('Invited'), `${t.id}: pratinjau punya kicker undangan`);
+    const row = w.eval('barisUndangan()');
+    assert.equal(row.data.tpl, t.id, `${t.id}: payload pratinjau memakai tema aktif`);
+    assert.equal(row.data.accent, tplOfCheck(w, t), `${t.id}: payload membawa aksen tema`);
   }
 
   for (const t of archOnly) {
     w.eval(`state.event='${t.ev}';state.cover='assets/demo/wedding/01-jawa-elegan.jpg';state.coverStyle='kotak';state.coverStyleExplicit=false;pickTpl('${t.id}')`);
     assert.equal(w.eval('state.coverStyle'), 'arch', `${t.id}: Studio memberi frame arch sebagai default`);
-    const cover = w.document.querySelector('.phone .screen .gerbang-arch');
-    assert(cover, `${t.id}: Studio preview memakai skin arch`);
-    const photo = cover.querySelector('img[alt="Foto cover"]');
-    assert(photo, `${t.id}: Studio preview menampilkan foto cover`);
-    assert(photo.parentElement.style.borderRadius.includes('999px'), `${t.id}: Studio preview memberi bingkai lengkung arch`);
+    assert.equal(w.eval('barisUndangan().data.coverStyle'), 'arch', `${t.id}: payload pratinjau mengirim gaya arch`);
+    assert.equal(w.eval('barisUndangan().data.cover'), 'assets/demo/wedding/01-jawa-elegan.jpg', `${t.id}: payload membawa foto cover`);
   }
   w.eval(`state.event='pernikahan';state.cover='assets/demo/wedding/01-jawa-elegan.jpg';setCvStyle('polaroid');pickTpl('gerbang-rosewood')`);
   assert.equal(w.eval('state.coverStyle'), 'polaroid', 'pilihan cover manual tidak ditimpa saat memilih Arch');
-  const manualPhoto = w.document.querySelector('.phone .screen .gerbang-arch img[alt="Foto cover"]');
-  assert(manualPhoto && manualPhoto.parentElement.style.borderRadius === '6px', 'Studio mempertahankan frame manual pada tema Arch');
+  assert.equal(w.eval('barisUndangan().data.coverStyle'), 'polaroid', 'payload mempertahankan frame manual pada tema Arch');
   w.eval(`state.coverStyle='arch';state.coverStyleExplicit=false;pickTpl('luxury-gold')`);
   assert.equal(w.eval('state.coverStyle'), 'kotak', 'default arch tidak terbawa saat berpindah ke tema non-Arch');
   w.eval(`state.event='khitanan';pickTpl('gerbang-khitanan-emerald')`);

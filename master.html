@@ -333,10 +333,21 @@ function renderAll(){
     <div class="card-s">Link khusus kamu. Buka di HP/laptop — daftar tamu, RSVP realtime, dan edit data tanpa login.</div>
     <div class="linkbox"><span>${esc(masterLink())}</span><button class="btn btn-copy" onclick="copyMaster()">Salin</button></div>
    </div>
+   <!-- link untuk semua tamu -->
+   <div class="card">
+    <div class="card-t">🌐 Link Undangan untuk Semua</div>
+    <div class="card-s">Satu link tanpa nama tamu — undangan terbuka dengan sapaan umum <b>Bapak/Ibu/Saudara/i</b>. Cocok dibagikan ke grup WA, status, atau media sosial. RSVP & buku tamu tetap tercatat.</div>
+    <div class="linkbox"><span>${esc(allLink())}</span><button class="btn btn-copy" onclick="copyAllLink()">Salin</button></div>
+    <div class="g-acts" style="margin-top:10px">
+     <button class="btn btn-wa" onclick="shareAllWa()">💬 Share via WhatsApp</button>
+     <button class="btn btn-ghost" onclick="openAllLink()">↗ Buka Undangan</button>
+    </div>
+    ${(d.linkMode||'personal')==='single'?'<div class="card-s" style="margin-top:8px">Mode <b>1 LINK</b> aktif — link inilah yang dipakai semua tamu.</div>':''}
+   </div>
    <!-- link tamu -->
    <div class="card">
     <div class="card-t">👥 Link Personal Tamu</div>
-    <div class="card-s">Setiap tamu dapat tautan miliknya sendiri. Sapaan <b>Kepada Yth.</b> otomatis sesuai nama di link.</div>
+    <div class="card-s">Setiap tamu dapat tautan miliknya sendiri. Sapaan <b>Kepada Yth.</b> otomatis sesuai nama di link. Untuk tautan tanpa nama, pakai <b>Link Undangan untuk Semua</b> di atas.</div>
     <div class="linkbox"><span>${esc(baseLink())}/u/${esc(SLUG)}${(d.linkMode||'personal')==='single'?'':'?to=NamaTamu'}</span><button class="btn btn-ghost" onclick="copyAll()">Salin Semua</button></div>
    </div>
    <!-- link scan QR panitia -->
@@ -436,6 +447,16 @@ function onBankTgl(){bankOn=!bankOn;const t=$('#bankTgl');if(t)t.classList.toggl
  ['bankName','bankAcc','bankHolder'].forEach(id=>{const el=document.getElementById(id);if(el)el.className=bankOn?'':'dis'});
  renderAll()}
 function copyMaster(){copyText(masterLink(),'Link master tersalin ✓','ok')}
+/* ---- Link undangan untuk semua tamu (tanpa nama) ---- */
+/* Satu tautan yang bisa dibagikan ke grup/media sosial: undangan terbuka dengan
+   sapaan umum, RSVP & buku tamu tetap tercatat seperti biasa. */
+function allLink(){return baseLink()+'/u/'+SLUG}
+function copyAllLink(){copyText(allLink(),'Link untuk semua tamu tersalin ✓','ok')}
+function openAllLink(){window.open(allLink(),'_blank','noopener,noreferrer')}
+function shareAllWa(){
+ const teks='Halo! Berikut undangan digital '+headName()+'.\nBuka link ini untuk melihat detail acara, lokasi, dan mengisi konfirmasi kehadiran:\n\n'+allLink()+'\n\nTerima kasih atas doa dan kehadiran 🤍';
+ window.open('https://wa.me/?text='+encodeURIComponent(teks),'_blank');
+}
 /* ---- Link scan QR panitia (check-in tamu) ---- */
 function scanUrl(){return baseLink()+'/scan.html?s='+encodeURIComponent(SLUG)+'&k='+encodeURIComponent(DRAFT.data.masterKey||'')}
 function copyScan(){copyText(scanUrl(),'Link scan panitia tersalin ✓','ok')}
