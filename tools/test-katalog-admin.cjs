@@ -87,8 +87,15 @@ function boot() {
   console.log('— Baris katalog —');
   w.eval("goPage('katalog')");
   const n0 = w.eval('state.katalog.length');
-  const nTPL = w.eval('TPL.length');
-  t('katalog: semua tema TPL punya baris bawaan', n0 === nTPL, n0 + ' vs ' + nTPL);
+  const nTPL = w.eval('TPL.filter(t=>!t.studioOnly).length');
+  t('katalog: semua tema publik punya baris bawaan; Arch Studio-only dikecualikan', n0 === nTPL, n0 + ' vs ' + nTPL);
+  t('katalog: enam Arch tanpa harga tidak masuk daftar pemasaran', w.eval('TPL.filter(t=>t.studioOnly).length') === 6 && w.eval('TPL.filter(t=>t.studioOnly).every(t=>!Object.prototype.hasOwnProperty.call(t,"harga"))') && w.eval('state.katalog.every(k=>!TPL.find(t=>t.id===k.tpl)?.studioOnly)'));
+  const activeTpl = w.eval('state.tpl');
+  w.eval("state.tpl='gerbang-rosewood';save()");
+  const countBeforeStudioOnlyAdd = w.eval('state.katalog.length');
+  w.eval('addKat()');
+  t('addKat: menolak varian Studio-only dari Katalog Harga & Promo', w.eval('state.katalog.length') === countBeforeStudioOnlyAdd);
+  w.eval('state.tpl=' + JSON.stringify(activeTpl) + ';save()');
   const rows = $$('.kat-row');
   t('katalog: baris memakai kelas .kat-row', rows.length > 0);
   t('katalog: tiap baris punya thumb, nama, harga, promo, badge, aksi',
@@ -126,11 +133,11 @@ function boot() {
 
   /* ---------- 4) Hapus tema bawaan + buka ulang halaman ---------- */
   console.log('— Hapus tema bawaan & buka ulang —');
-  const bawaan = w.eval('TPL[TPL.length-1].id');          // tema bawaan terakhir
+  const bawaan = w.eval('TPL.filter(t=>!t.studioOnly).slice(-1)[0].id'); // tema publik bawaan terakhir
   w.eval(`delKat('${bawaan}')`);
   t('delKat (bawaan): baris hilang', !w.eval(`state.katalog.some(k=>k.id==='${bawaan}')`));
   t('delKat (bawaan): dicatat di katalogDel', w.eval(`state.katalogDel.includes('${bawaan}')`));
-  t('delKat (bawaan): tema masih bisa dipilih di Studio (katalogHide tidak disentuh)', w.eval(`tplsFor(TPL[TPL.length-1].ev==='all'?'pernikahan':TPL[TPL.length-1].ev).some(x=>x.id==='${bawaan}')`));
+  t('delKat (bawaan): tema masih bisa dipilih di Studio (katalogHide tidak disentuh)', w.eval(`tplsFor(TPL.find(t=>t.id==='${bawaan}').ev==='all'?'pernikahan':TPL.find(t=>t.id==='${bawaan}').ev).some(x=>x.id==='${bawaan}')`));
   t('katalog: tombol Pulihkan Bawaan muncul dengan hitungan', $$('.kat-head-acts button').some(b => /Pulihkan Bawaan \(1\)/.test(b.textContent)));
   const sidebarCount = $$('.menubtn').find(b => /Katalog Template/.test(b.textContent)).querySelector('.chip').textContent.trim();
   t('sidebar: hitungan katalog ikut berkurang', Number(sidebarCount) === n0 - 1, sidebarCount);

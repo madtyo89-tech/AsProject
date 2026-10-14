@@ -227,8 +227,11 @@ async function render(d) {
   }
   cek(/touch-action:none/.test(stu), 'kotak geser memakai touch-action (tidak ikut ter-scroll saat digeser)');
   cek(/naturalWidth/.test(stu), 'perpindahan dihitung dari ukuran gambar asli (gerakan pas 1:1)');
-  cek((stu.match(/coverStyle:cvGayaAktif\(\)/g) || []).length >= 3,
-      'gaya foto disimpan ke publish(), file HTML mandiri, dan arsip');
+  cek((stu.match(/coverStyle:cvGayaAktif\(\)/g) || []).length >= 2,
+      'gaya foto aktif disimpan ke publish() dan file HTML mandiri');
+  cek(/coverStyle:state\.coverStyle\|\|'kotak'/.test(stu) && /coverStyleExplicit:!!state\.coverStyleExplicit/.test(stu),
+      'arsip menyimpan gaya cover pilihan dan penanda manual/default');
+  cek(/state\.coverStyleExplicit=true/.test(stu), 'pilihan gaya cover manual dipertahankan saat mengganti tema');
   cek((stu.match(/coverPos:Object\.assign/g) || []).length >= 3, 'posisi/zoom foto ikut tersimpan');
   cek(stu.includes('if(a.snap.coverStyle)state.coverStyle=a.snap.coverStyle'),
       'membuka arsip memulihkan gaya foto');

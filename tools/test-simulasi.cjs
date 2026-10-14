@@ -1,9 +1,9 @@
 const blobText=(win,b)=>typeof b.text==='function'?b.text():new Promise((ok,no)=>{const r=new win.FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsText(b)});
 /* Simulasi pemakaian nyata AsProject (jsdom, offline):
-   1) studio.html  : boot, evPick 4 event, render 71 tema, 32 border ber-tier,
+   1) studio.html  : boot, evPick 4 event, render 19 tema (termasuk enam Studio-only), 32 border ber-tier,
                      17 font, semua fx cover/scroll, render 8 tab, publish offline,
                      dlUndangan (export HTML mandiri)
-   2) undangan.html: boot() live untuk 71 tema (per event), demo draft, RSVP offline
+   2) undangan.html: boot() live untuk semua 19 tema, demo draft, RSVP offline
    3) hasil export : dibuka sebagai HTML mandiri (EMBEDDED_DATA) dan harus render
    Jalankan: node tools/test-simulasi.cjs   (butuh: npm i jsdom) */
 'use strict';

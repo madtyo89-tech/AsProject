@@ -1,9 +1,11 @@
 # Katalog Demo — templat jadi dari Google Drive
 
-Folder ini berisi **templat undangan satu berkas** yang selama ini dibagikan lewat Google
-Drive (koleksi "Katalog demo"). Sudah dibersihkan dari jejak deploy pihak ketiga dan
-**di-rebrand jadi AsProject**. Isinya berdiri sendiri: tidak dibaca `studio.html` maupun
-`undangan.html`, hanya dibuka lewat tautan *Demo Live* di katalog publik.
+Folder ini menampung **templat undangan satu berkas** dari koleksi Google Drive
+"Katalog demo" dan demo mandiri baru yang dibuat native untuk AsProject. Templat lama
+sudah dibersihkan dari jejak deploy pihak ketiga dan seluruh koleksi di-brand sebagai
+**AsProject**. File demo tetap halaman mandiri—Studio dan renderer live memakai versi
+tema native, bukan mengimpor halaman demo. Sebagian demo ditautkan lewat tombol *Demo
+Live* katalog publik; enam demo tambahan di bawah dibuka lewat URL langsung.
 
 ## Isi folder
 
@@ -14,13 +16,59 @@ Drive (koleksi "Katalog demo"). Sudah dibersihkan dari jejak deploy pihak ketiga
 | `undangan-sky-blue.html` | *Ice Blue* (React) | Biru Ceria |
 | `undangan-khitanan-basic.html` | *Khitanan Basic* (React) | demo cadang kategori Khitanan |
 | `undangan-khitanan-premium.html` | *Khitanan Premium* (React) | Islamic Elegant |
-| `undangan-wedding-gold.html` | *Premium Wedding* (React) | Luxury Gold, Floral Rustic |
+| `undangan-wedding-gold.html` | *Premium Wedding* (React) | Floral Rustic |
+| `undangan-luxury-gold.html` | *Luxury Invitation* (implementasi ulang native dari referensi React) | Luxury Gold |
+| `undangan-wedding-rosewood.html` | Rosewood · blush & champagne | demo tambahan; tidak mengubah routing katalog |
+| `undangan-wedding-sage-pearl.html` | Sage Pearl · sage & ivory | demo tambahan; tidak mengubah routing katalog |
+| `undangan-wedding-midnight-navy.html` | Midnight Navy · navy & champagne | demo tambahan; tidak mengubah routing katalog |
+| `undangan-khitanan-emerald.html` | Khitanan Emerald · emerald & gold | demo tambahan; tidak mengubah routing katalog |
+| `undangan-aqiqah-natural.html` | Aqiqah Natural · ivory & sand | demo tambahan; tidak mengubah routing katalog |
+| `undangan-ulang-tahun-ceria.html` | Pesta Ceria · plum & coral | demo tambahan; tidak mengubah routing katalog |
 | `index.html` | halaman pengantar Drive | daftar 12 tema + tautan ke demo di atas |
 | `foto-cover.jpg`, `foto-rahma-cover.jpg` | foto contoh | latar cover halaman-halaman di atas |
 
-Tema ulang tahun (Kids Party, Sweet 17, Adult Elegant) dan seluruh tema aqiqah **belum**
-punya berkas demo sendiri — tidak ada tombol *Demo Live* untuk tema itu, sesuai cara
-`index.html` menyembunyikan tombol kalau berkasnya tidak ada.
+Enam demo tambahan di tabel tetap menjadi halaman mandiri untuk pratinjau langsung lewat
+URL. Lapisan visual Gerbang Arch juga tersedia sebagai **enam pilihan Studio-only** yang
+bisa dipilih per kategori dan dipakai saat publish ke renderer live. Tema-tema ini belum
+ditambahkan sebagai listing atau harga baru di katalog publik. Floral Rustic tetap
+menggunakan `undangan-wedding-gold.html`.
+
+### Foto lokal untuk enam demo tambahan
+
+Semua foto galeri memakai path lokal relatif dari folder `katalog-demo/`; foto tetap
+tersedia offline dan tidak perlu diunduh dari URL eksternal.
+
+- Rosewood: `../assets/demo/wedding/01-jawa-elegan.jpg`, `02-minimalist-sage.jpg`,
+  `04-floral-rustic.jpg`; foto latar sampul: `foto-cover.jpg`.
+- Sage Pearl: `../assets/demo/wedding/01-jawa-elegan.jpg`, `02-minimalist-sage.jpg`,
+  `04-floral-rustic.jpg`; foto latar sampul: `foto-rahma-cover.jpg`.
+- Midnight Navy: `../assets/demo/wedding/01-jawa-elegan.jpg`, `02-minimalist-sage.jpg`,
+  `03-luxury-gold.jpg`; foto latar sampul: `foto-cover.jpg`.
+- Khitanan Emerald: `../assets/demo/khitanan/01-islamic-elegant.jpg` dan
+  `02-biru-ceria.jpg`.
+- Aqiqah Natural: `../assets/demo/aqiqah/01-baby-boy.jpg`, `02-baby-girl.jpg`,
+  `03-islamic-neutral.jpg`.
+- Pesta Ceria: `../assets/demo/ultah/01-kids-party.jpg`, `02-sweet-17.jpg`,
+  `03-adult-elegant.jpg`.
+
+### Lapisan visual Gerbang Arch dari Drive
+
+Referensi Drive `undangan_x5f_premium_x5f_gerbang_x5f_arch.html` memberi arah visual
+untuk keenam demo mandiri dan varian Studio-only. Pembaruan menambahkan frame arch
+berlapis pada foto sampul, foto utama, dan galeri; permukaan ivory; kontras charcoal;
+serta aksen lembut dari palet tiap kategori. Pada halaman demo, amplop tetap menjadi
+pintu masuk, sementara kartu lipat QR/peta, personalisasi, countdown, RSVP lokal, musik
+opsional, dan konten kategori tetap dipertahankan.
+
+- Tiga varian Pernikahan: Rosewood, Sage Pearl, dan Midnight Navy.
+- Khitanan Emerald, Aqiqah Natural, dan Pesta Ceria.
+- Keenamnya tersedia di pemilih tema Studio sesuai event. Hasil publish memakai skin
+  arch pada renderer live, tanpa mengganti fitur RSVP, QR check-in, musik, atau editor.
+- Varian bertanda `studioOnly`: tidak menambah baris harga/promosi di Studio maupun listing
+  atau harga baru di katalog publik. Array Studio dan live tetap seirama; route Floral Rustic tidak berubah.
+
+Foto pada demo mandiri tetap menggunakan aset lokal yang tercantum di bagian **Foto lokal
+untuk enam demo tambahan** di atas.
 
 ## Yang diubah saat templat masuk repo
 
@@ -34,12 +82,19 @@ punya berkas demo sendiri — tidak ada tombol *Demo Live* untuk tema itu, sesua
   halaman hasil simpanan Cloudflare **tidak menjalankan apa pun** di GitHub Pages;
 - `<title>React Artifact</title>` diganti judul yang benar.
 
-Yang sengaja dibiarkan: `https://cdn.tailwindcss.com` dan Google Fonts — empat berkas
-React memang butuh Tailwind runtime. Keduanya HTTPS; kalau mau lepas total dari CDN,
-bundelnya harus dibangun ulang (di luar lingkup folder ini).
+Empat berkas React lama tetap memakai `https://cdn.tailwindcss.com` dan Google Fonts.
+Demo `undangan-luxury-gold.html` untuk tema Luxury Gold tidak memakai React atau Tailwind; tampilannya dibuat ulang dengan HTML/CSS/JavaScript biasa, palet dan tipografi katalog, serta identitas AsProject.My.Id. QR RSVP-nya memakai `assets/qrcode.js` lokal. Tema Floral Rustic tetap menggunakan demo `undangan-wedding-gold.html`.
 
 ## Pakai untuk klien
 
 Salin satu berkas, lalu cari dan ganti string nama/tempat/tanggal di dalamnya (berkas
 statis punya komentar "Cara ubah isi" di bagian atas). Ganti `foto-cover.jpg` dengan foto
 klien — nama berkas ditahan supaya tidak perlu menyunting HTML-nya.
+
+`undangan-luxury-gold.html` punya panel **Personalisasi** untuk pratinjau langsung; nilai
+awal yang akan disalin ada di `DEFAULT_INVITATION` pada skrip bagian bawah. Pastikan
+`assets/qrcode.js` ikut disalin bersama halaman. Foto cover dan galeri demo memakai gambar
+lokal di `assets/demo/wedding/` serta `katalog-demo/foto-cover.jpg`; sertakan gambar-gambar
+itu atau ganti URL-nya saat menyalin halaman. RSVP contoh disimpan di `localStorage`
+browser, bukan dikirim ke server. Untuk produksi, sambungkan formulir ke penyimpanan RSVP
+sebelum mengirimkan tautan kepada tamu.
