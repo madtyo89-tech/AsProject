@@ -60,14 +60,12 @@ input,textarea,select{outline:0}
 .span2{grid-column:span 2}
 .chip{font-size:10px;padding:4px 8px;border-radius:99px;background:var(--soft)}
 .sm-btn{font-size:11px;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:#fbfaf8}
+a.sm-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:inherit}
+.sm-btn.dirty{background:#fff7e6;border-color:#e6c68a;color:#8a6d0f}
+.sm-btn:disabled{opacity:.55;cursor:default}
 .sm-btn.dark{background:#111;color:#fff;border-color:#111}
 .sm-btn.wa{background:#25D366;color:#fff;border-color:#25D366}
 .togglerow{display:flex;align-items:center;justify-content:space-between;background:#fbfaf8;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:12px;font-weight:500;cursor:pointer;margin-bottom:8px}
-.phone{width:340px;border-radius:2.5rem;background:#000;padding:8px;box-shadow:0 20px 60px rgba(0,0,0,.25);margin:auto}
-.screen{border-radius:2rem;background:#fff;overflow:hidden;position:relative;min-height:680px;display:flex;flex-direction:column}
-.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:90px;height:22px;background:#111;border-radius:0 0 14px 14px;z-index:5}
-.urlbar{height:36px;background:var(--soft);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 12px;gap:8px}
-.urlpill{flex:1;min-width:0;font-family:ui-monospace,monospace;font-size:10px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .notice{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:99px;z-index:99;font-size:12px;font-weight:500;box-shadow:0 12px 40px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px}
 .notice button{background:#fff;color:#111;border:0;border-radius:99px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;margin-top:6px}
 .guestrow{border-radius:12px;border:1px solid var(--line);padding:10px;display:flex;align-items:center;gap:8px;background:#fbfaf8;margin-bottom:8px}
@@ -131,12 +129,14 @@ input,textarea,select{outline:0}
 #floatPrev.fp-expanded .fp-screen{height:min(680px,calc(100dvh - 100px))}
 #floatPrev .fp-head{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;background:#111;color:#fff;font-size:10px;font-weight:600;cursor:grab;user-select:none;touch-action:none}
 #floatPrev .fp-head:active{cursor:grabbing}
-#floatPrev .fp-actions{display:flex;gap:4px}
+#floatPrev .fp-head>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Saat mini, judul dipendekkan jadi "📱 Live" supaya tombol tetap muat & satu baris. */
+#floatPrev:not(.fp-expanded) .fp-t-full{display:none}
+#floatPrev .fp-actions{display:flex;gap:4px;flex:none;margin-left:auto}
 #floatPrev .fp-actions button{width:22px;height:22px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font-size:10px;cursor:pointer;display:grid;place-items:center;line-height:1}
 #floatPrev .fp-actions button:hover{background:rgba(255,255,255,.15)}
 #floatPrev .fp-screen{width:100%;height:min(318px,calc(100dvh - 100px));overflow-y:auto;overflow-x:hidden;scrollbar-width:none;overscroll-behavior:contain;background:#fff}
 #floatPrev .fp-screen::-webkit-scrollbar{display:none}
-#floatPrev .fp-scale{width:340px;zoom:0.5235294118;pointer-events:none}
 #floatPrev .fp-hint{padding:6px 10px;background:var(--soft);border-top:1px solid var(--line);font-size:9px;color:var(--mut);text-align:center}
 @media (max-width:760px){#floatPrev{right:8px;bottom:8px}}
 .modebtn{text-align:left;border-radius:12px;padding:12px;display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid transparent;transition:.15s;width:100%}
@@ -183,24 +183,6 @@ input,textarea,select{outline:0}
 }
 @media(max-width:360px){.grid2{grid-template-columns:minmax(0,1fr)}.span2{grid-column:auto}}
 
-/* Pratinjau wedding meniru layout stationery: kartu terang, aksen sesuai template, dan tipografi editorial. */
-.phone .screen .wedding-cover{--preview-paper:#fffdf7;color:#344238}
-.phone .screen .wedding-cover .wedding-preview-inner{padding:12px 12px 18px!important}
-.phone .screen .wedding-cover .wedding-invite-card{
- padding:16px 12px!important;margin:0 0 14px!important;border-radius:18px;
- background:rgba(255,253,247,.92);border:1px solid rgba(255,255,255,.72);
- box-shadow:0 10px 28px rgba(25,35,27,.15)
-}
-.phone .screen .wedding-cover .wedding-kicker{font-family:'Sacramento','Dancing Script',cursive!important;font-size:24px!important;letter-spacing:0!important;text-transform:none!important;color:var(--accent)!important;opacity:1!important}
-.phone .screen .wedding-cover .wedding-subtitle{margin:5px 0;color:#5d685d;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
-.phone .screen .wedding-cover .wedding-date{margin:10px auto 0;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.72);font-size:10px;color:#37433a}
-.phone .screen .wedding-cover .wedding-meta{margin-top:8px;font-size:10px;color:#37433a}
-.phone .screen .wedding-cover .wedding-note{font-size:9px;line-height:1.5;color:#59645a}
-.phone .screen .wedding-cover .wedding-open{height:38px;margin-top:10px;padding:0 18px;border-radius:99px;background:#526b55;color:#fff;font-size:10px;font-weight:600}
-
-.phone .screen .gerbang-arch{isolation:isolate;overflow:hidden}
-.phone .screen .gerbang-arch::before{content:"";position:absolute;z-index:-1;top:10px;left:50%;transform:translateX(-50%);width:min(90%,300px);height:350px;border:1px solid color-mix(in srgb,var(--accent) 55%,#fff);border-radius:160px 160px 10px 10px;box-shadow:inset 0 0 0 8px rgba(255,255,255,.08);pointer-events:none}
-.phone .screen .gerbang-arch .wedding-invite-card{border-radius:12px 12px 18px 18px;border-color:color-mix(in srgb,var(--accent) 24%,#fff);box-shadow:0 14px 32px rgba(35,35,30,.14)}
 .flow-page{max-width:620px;margin:0 auto;padding:clamp(24px,8vh,80px) 16px 40px;min-height:100dvh;display:grid;align-content:center;gap:20px}
 .flow-page h1{font-size:28px;line-height:1.25;margin-bottom:12px}
 .flow-page p{color:var(--mut);line-height:1.8}
@@ -210,6 +192,8 @@ input,textarea,select{outline:0}
 .editor-actions{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .editor-actions button{min-height:44px}
 .editor-actions .mobile-menu{width:auto;flex:1 1 180px}
+.editor-actions .back-links{display:flex;gap:8px;flex-wrap:wrap;width:100%}
+.editor-actions a.sm-btn{min-height:44px}
 .flow-status{font-size:11px;color:var(--mut);flex:1 1 140px}
 /* ===== Halaman Katalog & Arsip: toolbar kembali + baris katalog responsif ===== */
 .page-actions{position:sticky;top:0;z-index:21;background:rgba(251,250,248,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
@@ -301,6 +285,23 @@ input,textarea,select{outline:0}
 @keyframes cpLapis{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(1px,-1.4px) scale(1.035)}}
 @keyframes cpLapis2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-1.1px,1px) scale(1.05)}}
 @media (prefers-reduced-motion:reduce){.orn-cp.orn-bunga4d,.orn-cp.orn-bunga4d .orn-l{animation:none!important}}
+
+/* ===== Tambahan alur 2026-10-14: tombol kembali, riwayat, pratinjau iframe ===== */
+a.sm-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:inherit}
+.sm-btn.dirty{background:#fff7e6;border-color:#e6c68a;color:#8a6d0f}
+.sm-btn:disabled{opacity:.55;cursor:default}
+.editor-actions .back-links{display:flex;gap:8px;flex-wrap:wrap;width:100%;min-width:0}
+.editor-actions .back-links a,.editor-actions .back-links button{flex:0 1 auto;min-width:0}
+.editor-actions a.sm-btn{min-height:44px}
+.riwayat-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fbfaf8}
+.riwayat-row .meta{min-width:0}
+.riwayat-row .meta b{display:block;font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.riwayat-row>button{flex:none;white-space:nowrap}
+/* Pratinjau = undangan asli di dalam iframe (satu renderer untuk Studio & tamu). */
+.pv-phone{position:relative;overflow:hidden;border-radius:22px;background:#fff;
+ border:1px solid rgba(0,0,0,.10);box-shadow:0 18px 48px rgba(0,0,0,.20);margin:auto}
+.pv-phone iframe.pv-frame{width:390px;height:780px;border:0;display:block;background:#fff;transform-origin:top left}
+.fp-screen .pv-phone{border:0;border-radius:0;box-shadow:none}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="assets/scroll-effects.css">
@@ -588,7 +589,39 @@ if(!Array.isArray(state.musicDb))state.musicDb=[];
 state.musicDb=state.musicDb.filter(m=>!m.demo||DEMO_MUSIC.some(d=>d.url===m.url));
 if(state.music&&state.music.demo&&!DEMO_MUSIC.some(d=>d.url===state.music.url)){state.music=null;state.playing=false}
 DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.push(Object.assign({},d))});
-function save(){try{const c=Object.assign({},state);localStorage.setItem('asproject_studio_v3',JSON.stringify(c))}catch(e){}}
+/* Signature murah untuk mendeteksi "ada perubahan sejak publish terakhir" tanpa
+   ikut menyalin foto base64 (cukup panjangnya saja). */
+function sigHash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h+str.charCodeAt(i))|0;return h.toString(36)+'.'+str.length}
+function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,!!state.coverStyleExplicit,state.coverPos,(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug]))}
+function draftDirty(){return !!(state.published&&state.pubSig&&state.pubSig!==draftSig())}
+/* Ketik isian tidak me-render ulang seluruh editor (agar fokus tidak hilang),
+   jadi status "perubahan belum dipublikasikan" & tombol Publish Ulang
+   diperbarui langsung di tempat. */
+function refreshEditorStatus(){
+ const bar=document.querySelector('.editor-actions');if(!bar)return;
+ const dirty=draftDirty(),pub=!!state.published;
+ const st=bar.querySelector('.flow-status');
+ if(st)st.innerHTML=!pub?'Draft • tersimpan di perangkat ini':dirty?'<b style="color:#8a6d0f">● Ada perubahan belum dipublikasikan</b>':'Sudah dipublikasikan • undangan live sudah sinkron';
+ const btn=[...bar.querySelectorAll('button')].find(b=>/Publish Ulang|Selesaikan Undangan/.test(b.textContent));
+ if(btn){btn.textContent=pub?'🔁 Publish Ulang':'Selesaikan Undangan';
+  btn.classList.toggle('dirty',pub&&dirty);btn.classList.toggle('dark',!pub||!dirty)}
+}
+/* Foto base64 (dataURL) berat — jangan disimpan ke arsip lokal; bisa diambil
+   ulang dari server saat undangan dibuka lagi. */
+function fotoRingan(v){const s=String(v||'');return s.indexOf('data:')===0?'':s}
+function ringankanArsip(){state.arsip.forEach(a=>{if(!a.snap)return;
+ a.snap.cover=fotoRingan(a.snap.cover);a.snap.fotoPria=fotoRingan(a.snap.fotoPria);a.snap.fotoWanita=fotoRingan(a.snap.fotoWanita);
+ if(Array.isArray(a.snap.gallery))a.snap.gallery=a.snap.gallery.map(fotoRingan)})}
+let _quotaWarnAt=0;
+/* Simpan draft. Kuota localStorage bisa penuh (foto) → ringankan arsip, lalu
+   beri tahu pemilik dengan langkah perbaikan; draft aktif tidak pernah gagal diam-diam. */
+function save(){const write=c=>localStorage.setItem('asproject_studio_v3',JSON.stringify(c));
+ try{write(state);refreshEditorStatus();return}catch(e){}
+ try{ringankanArsip();write(state);if(Date.now()-_quotaWarnAt>8000){_quotaWarnAt=Date.now();notifyWarn('Penyimpanan browser hampir penuh — foto besar di arsip dipindah ke server (bisa dimuat lagi saat dibuka).')}refreshEditorStatus();return}catch(e){}
+ try{state.arsip=state.arsip.map((a,i)=>i<3?a:Object.assign({},a,{snap:null}));write(state);if(Date.now()-_quotaWarnAt>8000){_quotaWarnAt=Date.now();notifyWarn('Penyimpanan browser penuh — arsip lama diringkas (nama & tanggal tetap ada).')}refreshEditorStatus();return}catch(e){}
+ if(Date.now()-_quotaWarnAt>8000){_quotaWarnAt=Date.now();
+  notifyErr('<b>Penyimpanan browser penuh.</b> Draft terakhir belum tersimpan di perangkat ini — kecilkan atau kurangi foto (cover/galeri), lalu ubah isian apa pun agar tersimpan lagi.')}
+ refreshEditorStatus()}
 /* ===== Animasi pratinjau: diputar ulang HANYA saat struktur berubah
    (template / event / slide on-off), agar tidak berkedip tiap ketik ===== */
 /* 34 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan undangan.html */
@@ -963,26 +996,11 @@ async function publish(){
  const publishButtons=Array.from(document.querySelectorAll('[onclick="publish()"]')).map(button=>({button,label:button.textContent}));
  publishButtons.forEach(({button})=>{button.textContent='Menyiapkan link…'});notify('Sedang menyiapkan link undangan…');
  try{
- const payload={slug:state.slug,name1:state.event==='pernikahan'?state.form.namaPria:state.form.namaAnak,
-  name2:state.event==='pernikahan'?state.form.namaWanita:'',venue:state.form.venue,
-  event_date:state.form.tanggalAcara,event_time:state.form.jamAcara,
-  music_url:state.music&&!state.music.local?new URL(state.music.url,location.href).href:'',music_name:state.music?state.music.name:'',
-  theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl)),updated_at:new Date().toISOString()};
- /* Snapshot lengkap → kolom jsonb "data" agar undangan live persis seperti studio
-    (nama orang tua, sesi akad/resepsi, amplop, galeri, dsb) */
- const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
-  accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,ornSudut:state.ornSudut,
-  amplop:JSON.parse(JSON.stringify(state.amplop)),
-  slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
-  music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-  cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos()),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
-  gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
-  /* alur Studio > Undangan Master > Undangan Tamu: dashboard master butuh daftar tamu + kunci privat */
-  guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
-  masterKey:state.masterKey||'',linkMode:state.linkMode||'personal',
-  publishedAt:new Date().toISOString()};
- if(JSON.stringify(data).length>1500000){notify('Data terlalu besar. Kurangi ukuran foto sebelum menyelesaikan undangan.');return}
- payload.data=data;
+ /* Payload Publish & pratinjau memakai baris yang sama (barisUndangan()), jadi
+    yang diuji pemilik di Studio persis data yang dibaca undangan live. */
+ const payload=barisUndangan();
+ payload.updated_at=new Date().toISOString();
+ if(JSON.stringify(payload.data).length>1500000){notify('Data terlalu besar. Kurangi ukuran foto sebelum menyelesaikan undangan.');return}
  let snapshotSkipped=false;
  try{await upsertInvitationDraft(payload)}
  catch(e){
@@ -996,8 +1014,19 @@ async function publish(){
  }
  state.published=true;state.publishedLink=baseUrl();
  const nama=displayName();
- const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',
-  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,accent:state.accent,slug:state.slug,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos())}};
+ /* Snapshot arsip = semua isian yang bisa diedit, supaya "Edit lagi" dari Folder /
+    Arsip mengembalikan undangan apa adanya (amplop, galeri, foto, tamu, link mode). */
+ const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',slug:state.slug,
+  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,accent:state.accent,slug:state.slug,
+   fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,ornSudut:state.ornSudut,
+   slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
+   amplop:JSON.parse(JSON.stringify(state.amplop)),videoLink:state.videoLink||'',
+   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href,local:false}:{name:'',url:'',local:false},
+   cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),
+   fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
+   guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),linkMode:state.linkMode||'personal',
+   masterKey:state.masterKey||'',savedAt:new Date().toISOString()}};
+ state.pubSig=draftSig();
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  state.stage='ready';save();render();window.scrollTo(0,0);document.querySelectorAll('.notice').forEach(n=>n.remove());
  if(snapshotSkipped)notifyWarn('<b>Publish berhasil tanpa snapshot.</b> Kolom <b>data</b> belum ada di Supabase — undangan live memakai kolom dasar + template (tampilan bisa berbeda dari studio, dashboard Master terbatas). Jalankan <b>supabase-schema.sql</b> di SQL Editor, atau <button onclick="copyFixSql()">salin SQL perbaikan</button>, lalu Publish ulang.',25000);
@@ -1062,24 +1091,93 @@ async function dlUndangan(){
   notify('File HTML tersimpan! Bisa dibuka offline di browser mana pun (data & foto ikut; font web butuh internet)')
  }catch(e){notifyErr('Gagal simpan file: '+(e&&e.message||e))}
 }
+/* Terapkan snapshot (arsip lokal atau kolom jsonb "data" dari server) ke editor.
+   Dipakai oleh Folder / Arsip dan Riwayat dari server supaya hasil "edit lagi" sama. */
+function applyDraftData(d,extra){
+ d=d||{};extra=extra||{};
+ const kept={katalog:state.katalog,katalogHide:state.katalogHide,katalogDel:state.katalogDel,promo:state.promo,arsip:state.arsip,musicDb:state.musicDb};
+ state=Object.assign(JSON.parse(JSON.stringify(DEF)),kept,{started:true,masterKey:d.masterKey||extra.masterKey||mkRand()});
+ state.event=d.event||extra.event||state.event;
+ if(d.tpl&&TPL.some(t=>t.id===d.tpl))state.tpl=d.tpl;else{const ft=tplsFor(state.event)[0];if(ft)state.tpl=ft.id}
+ state.form=Object.assign({},DEF.form,d.form||{});
+ state.doa=d.doa||state.event;state.accent=d.accent||tplOf().accent;
+ state.slug=extra.slug||d.slug||'';
+ if(d.fontTitle)state.fontTitle=d.fontTitle;if(d.fontBody)state.fontBody=d.fontBody;
+ if(d.border)state.border=d.border;if(d.ornSudut)state.ornSudut=d.ornSudut;
+ if(d.cover!==undefined)state.cover=d.cover||'';
+ if(d.coverStyle)state.coverStyle=d.coverStyle;
+ if(typeof d.coverStyleExplicit==='boolean')state.coverStyleExplicit=d.coverStyleExplicit;
+ else state.coverStyleExplicit=!!d.cover&&!!d.coverStyle&&!['kotak','arch'].includes(d.coverStyle);
+ if(!state.coverStyleExplicit)syncDefaultCoverStyle(tplOf());
+ if(d.coverPos)state.coverPos=Object.assign({x:50,y:50,z:1},d.coverPos);
+ if(d.fotoPria!==undefined)state.fotoPria=d.fotoPria||'';
+ if(d.fotoWanita!==undefined)state.fotoWanita=d.fotoWanita||'';
+ if(Array.isArray(d.gallery))state.gallery=d.gallery.filter(Boolean).slice(0,12);
+ if(d.amplop)state.amplop=Object.assign({},DEF.amplop,d.amplop);
+ if(d.slides)state.slides=mergeSlides(d.slides);
+ if(d.anim)state.anim=Object.assign({},DEF.anim,d.anim);
+ if(d.videoLink!==undefined)state.videoLink=d.videoLink||'';
+ if(d.music&&d.music.url)state.music={name:d.music.name||'Musik Acara',url:d.music.url,local:false};
+ if(d.linkMode)state.linkMode=d.linkMode;
+ if(d.guestsRaw!==undefined)state.guestsRaw=d.guestsRaw||'';
+ if(d.guestCodes&&typeof d.guestCodes==='object')state.guestCodes=Object.assign({},d.guestCodes);
+ animSig=null;_welcome=false;state.page='editor';state.tab='info';
+}
+/* Baris database skema lama (belum ada kolom data) → bentuk snapshot dasar. */
+function baseRowToSnap(row,theme){
+ const tpl=(Number.isFinite(+theme)&&TPL[+theme])?TPL[+theme].id:'';
+ return {tpl,event:null,slug:row.slug,
+  form:{namaPria:row.name1||'',namaWanita:row.name2||'',namaAnak:row.name1||'',
+   tanggalAcara:String(row.event_date||'').slice(0,10),jamAcara:String(row.event_time||'').slice(0,5),venue:row.venue||''}};
+}
+async function fetchDraftRow(slug){
+ const r=await fetch(SUPABASE_URL+'/rest/v1/invitation_drafts?slug=eq.'+encodeURIComponent(slug)+'&select=*',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}});
+ if(!r.ok)throw new Error('HTTP '+r.status);
+ const rows=await r.json();
+ if(!Array.isArray(rows)||!rows.length)throw new Error('tidak ditemukan');
+ return rows[0];
+}
+/* Buka entri Folder / Arsip. Isi dasar langsung tampil (offline), lalu foto &
+   bagian yang tidak ikut tersimpan di perangkat dilengkapi dari server. */
 function loadArsip(id){const a=state.arsip.find(x=>x.id===id);if(!a)return;
- if(a.snap){state.form=Object.assign({},DEF.form,a.snap.form);state.event=a.snap.event;
-  if(a.snap.tpl&&TPL.some(t=>t.id===a.snap.tpl))state.tpl=a.snap.tpl;else{const ft=tplsFor(a.snap.event)[0];if(ft)state.tpl=ft.id}
-  state.doa=a.snap.doa||a.snap.event;state.accent=a.snap.accent||tplOf().accent;state.slug=a.snap.slug;
-  if(a.snap.fontTitle)state.fontTitle=a.snap.fontTitle;if(a.snap.fontBody)state.fontBody=a.snap.fontBody;
-  if(a.snap.border)state.border=a.snap.border;
-  if(a.snap.cover!==undefined)state.cover=a.snap.cover;
-  if(a.snap.coverStyle)state.coverStyle=a.snap.coverStyle;
-  if(typeof a.snap.coverStyleExplicit==='boolean')state.coverStyleExplicit=a.snap.coverStyleExplicit;
-  else state.coverStyleExplicit=!!a.snap.cover&&!!a.snap.coverStyle&&!['kotak','arch'].includes(a.snap.coverStyle);
-  if(!state.coverStyleExplicit)syncDefaultCoverStyle(tplOf());
-  if(a.snap.coverPos)state.coverPos=Object.assign({x:50,y:50,z:1},a.snap.coverPos);
-   if(a.snap.fotoPria!==undefined)state.fotoPria=a.snap.fotoPria;
-   if(a.snap.fotoWanita!==undefined)state.fotoWanita=a.snap.fotoWanita;
-  if(a.snap.slides)state.slides=mergeSlides(a.snap.slides);
-  if(a.snap.anim)state.anim=Object.assign({},DEF.anim,a.snap.anim);animSig=null}
- else{state.event=a.jenis;animSig=null}
- state.page='editor';state.tab='info';save();render();window.scrollTo(0,0);notify('Membuka: '+a.nama)}
+ const slug=(a.snap&&a.snap.slug)||a.slug||'';
+ if(a.snap)applyDraftData(Object.assign({},a.snap,{slug}));
+ else applyDraftData({event:a.jenis,slug});
+ state.published=true;state.publishedLink=baseUrl();state.pubSig=draftSig();
+ save();render();window.scrollTo(0,0);
+ if(!slug){notifyWarn('Entri arsip lama tanpa link undangan — hanya data dasar yang bisa dipulihkan.');return}
+ notify('Membuka: '+a.nama+'…');
+ fetchDraftRow(slug).then(row=>{
+  const d=(row.data&&typeof row.data==='object')?Object.assign({slug:row.slug},row.data):baseRowToSnap(row,row.theme);
+  applyDraftData(d,{slug:row.slug,masterKey:row.data&&row.data.masterKey});
+  state.published=true;state.publishedLink=baseUrl();state.pubSig=draftSig();
+  save();render();notify('Dibuka lengkap dari server: '+(row.name1||a.nama)+' ✓');
+ }).catch(()=>notifyWarn('Isi dasar sudah dibuka. Foto & bagian lain dilengkapi otomatis saat perangkat kembali online.'));
+}
+/* ---------- Riwayat undangan dari server (semua yang pernah di-publish) ---------- */
+let _riwayat=null,_riwayatErr='',_riwayatMemuat=false;
+async function muatRiwayat(){
+ if(_riwayatMemuat)return;_riwayatMemuat=true;_riwayatErr='';render();
+ try{
+  const r=await fetch(SUPABASE_URL+'/rest/v1/invitation_drafts?select=slug,name1,name2,event_date,updated_at,theme&order=updated_at.desc&limit=60',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const rows=await r.json();
+  _riwayat=Array.isArray(rows)?rows:[];
+ }catch(e){_riwayatErr=String((e&&e.message)||e||'gagal memuat')}
+ _riwayatMemuat=false;render();
+}
+async function bukaRiwayatServer(slug){
+ notify('Membuka '+slug+'…');
+ try{
+  const row=await fetchDraftRow(slug);
+  const d=(row.data&&typeof row.data==='object')?Object.assign({slug:row.slug},row.data):baseRowToSnap(row,row.theme);
+  applyDraftData(d,{slug:row.slug,masterKey:row.data&&row.data.masterKey});
+  state.published=true;state.publishedLink=baseUrl();state.pubSig=draftSig();
+  save();render();window.scrollTo(0,0);
+  if(!(row.data&&typeof row.data==='object'))notifyWarn('Undangan ini dipublish sebelum kolom snapshot ada — tampil dari data dasar. Publish ulang untuk menyimpan lengkap.');
+  else notify('Dibuka: '+(row.name1||slug)+' ✓');
+ }catch(e){notifyErr('Gagal membuka dari server: '+String((e&&e.message)||e))}
+}
 function dlQr(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrData(g);a.download=`QR-Checkin-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
 function dlQrUndangan(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrDataUndangan(g);a.download=`QR-Undangan-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
 async function copyTxt(t,msg){try{if(!navigator.clipboard)throw new Error('clipboard');await navigator.clipboard.writeText(t);notify(msg||'Disalin ✓')}catch(e){notify('Belum bisa menyalin otomatis. Pilih teks link lalu salin manual.')}}
@@ -1095,8 +1193,8 @@ function delKat(id){const i=state.katalog.findIndex(k=>k.id===id);if(i<0)return;
 /* kembalikan semua tema bawaan yang pernah dihapus (baris buatan sendiri & harga yang sudah diubah tidak disentuh) */
 function pulihkanKat(){const n=state.katalogDel.length;state.katalogDel=[];TPL.forEach((t,i)=>{if(!t.studioOnly&&!state.katalog.some(k=>k.id===t.id))state.katalog.push(barisKat(t,i))});save();render();notify(n?n+' template bawaan dipulihkan':'Semua template bawaan sudah ada di katalog')}
 /* pindah halaman studio (Editor / Katalog / Arsip): tutup menu HP & mulai dari atas supaya halaman tujuan langsung terlihat */
-function goPage(id){state.page=id;document.body.classList.remove('studio-nav-open');save();render();window.scrollTo(0,0)}
-function pageActions(judul){return `<div class="editor-actions page-actions"><button class="sm-btn dark" onclick="goPage('editor')" data-help="Kembali ke editor undangan yang sedang dibuat">← Kembali ke Editor</button><button class="mobile-menu" aria-expanded="${document.body.classList.contains('studio-nav-open')}" onclick="toggleStudioMenu(this)">☰ Template & Menu</button><span class="flow-status">${judul}</span></div>`}
+function goPage(id){_welcome=false;state.page=id;document.body.classList.remove('studio-nav-open');save();render();window.scrollTo(0,0)}
+function pageActions(judul){return `<div class="editor-actions page-actions"><button class="sm-btn dark" onclick="goPage('editor')" data-help="Kembali ke editor undangan yang sedang dibuat">← Kembali ke Editor</button><a class="sm-btn" href="./" data-help="Keluar dari Studio dan buka halaman utama situs.">← Halaman Utama</a><button class="mobile-menu" aria-expanded="${document.body.classList.contains('studio-nav-open')}" onclick="toggleStudioMenu(this)">☰ Template & Menu</button><span class="flow-status">${judul}</span></div>`}
 function tglKatHide(id){if(!TPL.some(t=>t.id===id))return;const i=state.katalogHide.indexOf(id);i>=0?state.katalogHide.splice(i,1):state.katalogHide.push(id);save();render()}
 function importCsv(){const i=document.createElement('input');i.type='file';i.accept='.csv,.txt';i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.guestsRaw=String(r.result||'');save();render()};r.readAsText(f)};i.click()}
 function exportCsv(){const blob=new Blob([guests().map(g=>`${g.nama},${g.link}`).join('\n')],{type:'text/csv'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=`tamu-${state.slug}.csv`;a.click()}
@@ -1562,9 +1660,18 @@ function startInvitation(){
  if(state.started&&!confirm('Mulai undangan baru dengan isian kosong? Draft aktif akan diganti. Undangan yang sudah dipublish tetap tersedia melalui link lamanya.'))return;
  const kept={katalog:state.katalog,katalogHide:state.katalogHide,katalogDel:state.katalogDel,promo:state.promo,arsip:state.arsip,musicDb:state.musicDb};
  state=Object.assign(JSON.parse(JSON.stringify(DEF)),kept,{started:true,masterKey:mkRand()});
- animSig=null;_fpExpanded=false;document.body.classList.remove('studio-nav-open');save();render();window.scrollTo(0,0);
+ animSig=null;_fpExpanded=false;_welcome=false;document.body.classList.remove('studio-nav-open');save();render();window.scrollTo(0,0);
 }
-function welcomeView(){return `<main class="flow-page"><div class="card"><h1>Buat undanganmu</h1><p>Mulai dari isian kosong, lengkapi detail acara, lalu selesaikan untuk mendapatkan link undangan.</p><div class="flow-steps"><div class="fstep"><div class="n">1</div><h5>Isi Detail Acara</h5><p>Nama, tanggal, lokasi — cukup sekali isi, sisanya otomatis.</p></div><div class="fstep"><div class="n">2</div><h5>Desain & Konten</h5><p>Pilih tema, atur slide, galeri, musik, dan amplop digital.</p></div><div class="fstep"><div class="n">3</div><h5>Terbitkan & Bagikan</h5><p>Dapatkan link + QR check-in, bagikan ke tamu via WhatsApp.</p></div></div><div class="flow-actions"><button class="btn-pub" onclick="startInvitation()">Membuat Undangan</button></div><p style="font-size:11px;margin-top:16px">1. Membuat undangan → 2. Editor → 3. Undangan jadi → 4. Bagikan link</p></div></main>`}
+function welcomeView(){
+ const adaDraft=!!(state.started&&(((state.form.namaPria||'').trim())||((state.form.namaAnak||'').trim())||state.slug||state.published));
+ const aksi=adaDraft
+  ?`<button class="btn-pub" onclick="balikKeEditor()" data-help="Kembali ke editor dengan draft yang tadi (tidak ada yang terhapus).">▶ Lanjutkan Undangan</button><button class="sm-btn" style="min-height:44px" onclick="startInvitation()">+ Undangan Baru</button><a class="sm-btn" style="min-height:44px" href="./" data-help="Keluar dari Studio dan buka halaman utama situs.">← Halaman Utama</a>`
+  :`<button class="btn-pub" onclick="startInvitation()">Membuat Undangan</button><a class="sm-btn" style="min-height:44px" href="./" data-help="Keluar dari Studio dan buka halaman utama situs.">← Halaman Utama</a>`;
+ return `<main class="flow-page"><div class="card"><h1>${adaDraft?'Lanjutkan undanganmu':'Buat undanganmu'}</h1><p>${adaDraft?'Draft terakhir masih tersimpan di perangkat ini. Lanjutkan mengedit, atau mulai undangan baru.':'Mulai dari isian kosong, lengkapi detail acara, lalu selesaikan untuk mendapatkan link undangan.'}</p><div class="flow-steps"><div class="fstep"><div class="n">1</div><h5>Isi Detail Acara</h5><p>Nama, tanggal, lokasi — cukup sekali isi, sisanya otomatis.</p></div><div class="fstep"><div class="n">2</div><h5>Desain & Konten</h5><p>Pilih tema, atur slide, galeri, musik, dan amplop digital.</p></div><div class="fstep"><div class="n">3</div><h5>Terbitkan & Bagikan</h5><p>Dapatkan link + QR check-in, bagikan ke tamu via WhatsApp.</p></div></div><div class="flow-actions">${aksi}</div><p style="font-size:11px;margin-top:16px">1. Membuat undangan → 2. Editor → 3. Undangan jadi → 4. Bagikan link</p></div></main>`}
+/* Layar awal Studio bisa dibuka lagi tanpa menghapus draft (tombol "← Layar Awal"). */
+let _welcome=false;
+function showWelcome(){_welcome=true;document.body.classList.remove('studio-nav-open');render();window.scrollTo(0,0)}
+function balikKeEditor(){_welcome=false;state.page='editor';save();render();window.scrollTo(0,0)}
 function editInvitation(){state.stage='editor';state.page='editor';state.tab='info';save();render()}
 function linkReady(){return state.published&&state.publishedLink===baseUrl()}
 function showReady(){if(!linkReady()){notify('Selesaikan undangan untuk menyiapkan link ini.');return}state.stage='ready';save();render()}
@@ -1581,7 +1688,20 @@ function checklistSiap(){const f=state.form;const items=[
 function stepbar(){const L=[['1','Data Acara',['info']],['2','Desain & Slide',['desain','slide']],['3','Konten',['musik','amplop']],['4','Tamu & Terbit',['tamu','master','domain']]];
  const aktif=L.findIndex(([,,tabs])=>tabs.includes(state.tab));
  return `<div class="stepbar sb" role="navigation" aria-label="Langkah pembuatan undangan">${L.map(([n,nama,tabs],i)=>`${i?'<span class="step-sep"></span>':''}<button class="step ${i===aktif?'on':''} ${i<aktif?'done':''}" onclick="set('tab','${tabs[0]}')" aria-current="${i===aktif?'step':'false'}"><span class="num">${i<aktif?'✓':n}</span><span class="stxt">${nama}</span></button>`).join('')}</div>`}
-function editorActions(){return `<div class="editor-actions"><span style="width:100%;font-size:11px;color:var(--mut)">ⓘ Tahan tombol 1 detik untuk keterangan. Di desktop: fokuskan tombol, lalu tekan F1.</span>${checklistSiap()}<span class="flow-status">${state.published?'Sudah dipublish • selesaikan lagi untuk menyimpan perubahan':'Draft • tersimpan di perangkat ini'}</span><button class="mobile-menu" aria-expanded="${document.body.classList.contains('studio-nav-open')}" onclick="toggleStudioMenu(this)">☰ Template & Menu</button><button class="sm-btn dark" onclick="publish()">Selesaikan Undangan</button><button class="sm-btn" onclick="startInvitation()">+ Undangan Baru</button>${state.published?'<button class="sm-btn" onclick="showReady()">Link Siap Dibagikan</button>':''}</div>`}
+function editorActions(){
+ const dirty=draftDirty();
+ const status=!state.published?'Draft • tersimpan di perangkat ini'
+  :dirty?'<b style="color:#8a6d0f">● Ada perubahan belum dipublikasikan</b>'
+  :'Sudah dipublikasikan • undangan live sudah sinkron';
+ return `<div class="editor-actions">
+ <span style="width:100%;font-size:11px;color:var(--mut)">ⓘ Tahan tombol 1 detik untuk keterangan. Di desktop: fokuskan tombol, lalu tekan F1.</span>
+ <div class="back-links"><button class="sm-btn" onclick="showWelcome()" data-help="Kembali ke layar awal Studio. Draft aktif tetap tersimpan dan bisa dilanjutkan.">← Layar Awal</button><a class="sm-btn" href="./" data-help="Keluar dari Studio dan buka halaman utama situs.">← Halaman Utama</a></div>
+ ${checklistSiap()}<span class="flow-status">${status}</span>
+ <button class="mobile-menu" aria-expanded="${document.body.classList.contains('studio-nav-open')}" onclick="toggleStudioMenu(this)">☰ Template & Menu</button>
+ ${state.published
+   ?`<button class="sm-btn ${dirty?'dirty':'dark'}" onclick="publish()" data-help="Simpan perubahan terbaru ke undangan live. Link tamu tetap sama, isi undangan diperbarui.">🔁 Publish Ulang</button>`
+   :'<button class="sm-btn dark" onclick="publish()">Selesaikan Undangan</button>'}
+ <button class="sm-btn" onclick="startInvitation()">+ Undangan Baru</button>${state.published?'<button class="sm-btn" onclick="showReady()">Link Siap Dibagikan</button>':''}</div>`}
 
 function editor(){
  const tabs=[['info','Info Acara'],['desain','Desain'],['slide','Slide & Animasi'],['musik','Musik & Galeri'],['amplop','Amplop'],['tamu','Tamu & QR'],['master','Kirim Master'],['domain','Domain']];
@@ -1651,6 +1771,25 @@ function arsip(){
    <div style="font-size:18px;font-weight:700;margin-top:4px">${groups[k].length}</div>
    <div style="font-size:10px;color:var(--mut)">undangan</div></div>`).join('')}
   </div>
+ </div>
+ <div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+   <div style="flex:1 1 220px;min-width:0"><div style="font-size:13px;font-weight:600">Riwayat dari server</div>
+   <div style="font-size:11px;color:var(--mut)">Semua undangan yang pernah di-publish bisa dibuka lagi dari perangkat mana pun.</div></div>
+   <button class="sm-btn dark" style="min-height:44px" onclick="muatRiwayat()" data-help="Muat daftar undangan yang tersimpan di server Supabase.">${_riwayatMemuat?'Memuat…':'⟳ Muat riwayat dari server'}</button>
+  </div>
+  ${_riwayatErr?`<div style="margin-top:12px;font-size:11px;color:#b91c1c">Gagal memuat: ${esc(_riwayatErr)} — periksa koneksi, lalu coba lagi.</div>`:''}
+  ${_riwayat?(_riwayat.length?`<div style="margin-top:12px;display:grid;gap:8px">${_riwayat.filter(r=>!state.search||((r.name1||'')+' '+(r.name2||'')).toLowerCase().includes(state.search.toLowerCase())).map(r=>{
+    const iniPunya=state.arsip.some(a=>((a.snap&&a.snap.slug)||a.slug)===r.slug);
+    let tgl='';try{tgl=new Date(r.updated_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}catch(e){tgl=''}
+    return `<div class="riwayat-row"><div class="meta">
+     <b>${esc((r.name1||'')+(r.name2?' & '+r.name2:''))}</b>
+     <span style="font-size:10px;color:var(--mut)">${esc(r.slug)} • ${esc(String(r.event_date||'').slice(0,10)||'tanpa tanggal')} • diperbarui ${esc(tgl)}</span>
+     ${iniPunya?'<span class="pill" style="font-size:9px;margin-left:6px;background:var(--soft);border:1px solid var(--line)">perangkat ini</span>':''}
+    </div><button class="sm-btn dark" style="min-height:44px" onclick="bukaRiwayatServer('${esc(r.slug)}')" data-help="Buka undangan ini ke editor untuk dilihat atau diedit lagi.">Buka</button></div>`}).join('')}</div>
+   <div style="margin-top:10px;font-size:10.5px;color:var(--mut);line-height:1.6"><b>Catatan:</b> dengan policy database saat ini, daftar ini bisa dibaca siapa pun yang tahu alamat API — jangan pakai slug yang bersifat rahasia untuk undangan privat.</div>`
+   :'<div style="margin-top:12px;font-size:11px;color:var(--mut)">Belum ada undangan di server.</div>')
+  :''}
  </div>
  ${Object.keys(groups).map(k=>`<div class="card">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
@@ -1739,207 +1878,111 @@ function slideBlocks(){
  return out
 }
 
-function phoneHtml(){
- const f=state.form,tp=tplOf(),g=selGuest(),single=state.linkMode==='single';
- const dark=state.darkMode,wedding=state.event==='pernikahan',gerbangArch=!!tp.arch;
- const play=animTrigger(),AN=state.anim,CV=play&&AN.cover,TX=play&&AN.text,RV=AN.reveal;
- const CE=fxCoverId(),SC=fxScrollId(),h1d=tp.char?520:350;
- let scrollSectionIndex=0;
- const WR=(d,html)=>{
-  if(!RV)return html;
-  const effect=fxScrollForSection(SC,scrollSectionIndex++,AN.scrollMix!==false);
-  return `<div class="scroll-reveal fx-s-${effect} sr-axis-${fxScrollAxis(effect)}">${html}</div>`
- };
- /* Artwork 3D tema (bila ada & latar masih "gradient" bawaan): dipakai sebagai
-    latar layar supaya yang dilihat pemilik sama dengan yang dilihat tamu. */
- const cvGaya=cvGayaAktif();
- const art3d=(!dark&&tp.bg3d&&state.bgType==='gradient'&&cvGaya!=='full')?tp.bg3d:'';
- const paperArt=(!dark&&wedding&&tp.bgPaper&&state.bgType==='gradient'&&cvGaya!=='full')?tp.bgPaper:'';
- let bg='';
- if(!dark){
-  if(cvGaya==='full')bg=`background:linear-gradient(180deg,rgba(8,6,5,.5),rgba(8,6,5,.14) 26%,rgba(8,6,5,.42) 50%,rgba(8,6,5,.9) 76%,rgba(8,6,5,.95)),url(${state.cover}) center/cover;color:#fff`;
-  else if(art3d)bg=`background:linear-gradient(180deg,rgba(12,10,8,.5),rgba(12,10,8,.22) 30%,rgba(12,10,8,.34) 62%,rgba(12,10,8,.7)),url(${art3d}) center/cover;color:#F7F2E9`;
-  else if(paperArt)bg=`background:url(${paperArt}) center/100% 100%;color:${tp.ink}`;
-  else if(state.bgType==='polos')bg=`background:${tp.g[0]};color:${tp.ink}`;
-  else if(state.bgType==='foto'&&state.cover)bg=`background:linear-gradient(rgba(255,255,255,.82),rgba(255,255,255,.88)),url(${state.cover}) center/cover;color:${tp.ink}`;
-  else bg=`background:${tplGrad(tp)};color:${tp.ink}`;
- }
- const patStyle=(dark||art3d||paperArt||cvGaya==='full')?'':(state.bgType==='pattern'?(patCss(tp)||`background-image:radial-gradient(${tp.accent}26 1.5px,transparent 1.8px);background-size:22px 22px;`):state.bgType==='foto'?'':patCss(tp));
- const tF=fontAttr(state.fontTitle),bF=fontAttr(state.fontBody);
- const nameColor=dark?'#FDE68A':(cvGaya==='full'?'#FFFFFF':(wedding?'#344238':(art3d?'#F7F2E9':state.accent)));
- /* Bingkai foto cover di pratinjau — cermin gaya yang dipakai undangan tamu. */
- const cvB=CV_BENTUK[cvGaya]||CV_BENTUK.kotak,cvp=cvPos();
- const archPhotoCss=gerbangArch?`border-radius:999px 999px 12px 12px / 42% 42% 12px 12px;border:1px solid ${tp.accent};box-shadow:0 0 0 4px rgba(255,253,247,.9),0 0 0 5px ${tp.accent};`:'border-radius:20px;border:1px solid #ddd;';
- const archPlaceholderCss=gerbangArch?`border-radius:999px 999px 12px 12px / 42% 42% 12px 12px;border:1px dashed ${tp.accent};box-shadow:inset 0 0 0 8px rgba(255,255,255,.35);`:'border-radius:20px;border:1px dashed #ccc;';
- const archGalleryRadius=gerbangArch?'999px 999px 10px 10px / 42% 42% 10px 10px':'12px';
- const blokFotoPrev=(cvGaya==='none'||cvGaya==='full')?''
-  :`<div style="margin:12px auto 0;width:${cvB.w}%;aspect-ratio:${cvB.as};border-radius:${cvB.r};padding:${cvB.p};background:${cvB.bg};box-shadow:${cvB.sh};box-sizing:border-box;overflow:hidden;position:relative;${cvB.rot?'transform:rotate('+cvB.rot+');':''}"><img src="${state.cover}" alt="Foto cover" style="width:100%;height:100%;object-fit:cover;object-position:${cvp.x}% ${cvp.y}%;transform:scale(${cvp.z});border-radius:${cvB.ir};display:block"></div>`;
- const dt=new Date(f.tanggalAcara);
- const MONTH_NAMES=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
- const dateParts=String(f.tanggalAcara||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
- const weddingDateLabel=dateParts?`${Number(dateParts[3])} ${MONTH_NAMES[Number(dateParts[2])-1]} ${dateParts[1]}`:'Tanggal acara';
- const weddingPaperCard=paperArt?`background-image:url(${paperArt});background-size:100% 100%;background-position:center;background-repeat:no-repeat;`:'';
- const weddingCardCss=wedding?'padding:16px 12px;margin:0 0 14px;border-radius:18px;background:rgba(255,253,247,.92);box-shadow:0 10px 28px rgba(25,35,27,.15);':'';
- const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
- const wordSpan=(txt,d0)=>String(txt||'').split(/\s+/).filter(Boolean).map((w,i)=>`<span class="a-word" style="animation-delay:${d0+i*80}ms">${esc(w)}</span>`).join(' ');
- const h1Inner=state.event==='pernikahan'
-  ?(TX
-   ?`${(()=>{const a=(f.namaPria||'')+(f.gelarPria?' '+f.gelarPria:''),b=(f.namaWanita||'')+(f.gelarWanita?' '+f.gelarWanita:'');return `<span style="display:block">${wordSpan(a,h1d)}</span><span class="a-word" style="font-size:18px;font-weight:400;animation-delay:${h1d+nW(a)*80}ms">&</span><span style="display:block">${wordSpan(b,h1d+nW(a)*80+160)}</span>`})()}`
-   :`<span style="display:block">${esc(f.namaPria)} ${f.gelarPria?`<span style="font-size:14px">${esc(f.gelarPria)}</span>`:''}</span><span style="font-size:18px;font-weight:400">&</span><span style="display:block">${esc(f.namaWanita)} ${f.gelarWanita?`<span style="font-size:14px">${esc(f.gelarWanita)}</span>`:''}</span>`)
-  :(TX?`<span style="display:block">${wordSpan(f.namaAnak,h1d)}</span>`:`<span style="display:block">${esc(f.namaAnak)}</span>`);
- return `
- <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;width:340px">
-  <span class="lbl">Live Preview • ${esc(tp.nama)}${art3d?' • 3D':''}${gerbangArch?' • Gerbang Arch':''}${cvGaya!=='none'?' • '+cvNama():''}</span>
-  <span class="pill" style="background:#fff;border:1px solid var(--line);font-size:10px"><span class="dot pulse" style="width:6px;height:6px;background:#10b981"></span>Live update</span>
- </div>
- <div class="phone"><div class="screen">
-  <div class="urlbar">
-   <div style="width:20px;height:20px;border-radius:99px;background:#e5e5e5;display:grid;place-items:center;font-size:10px">🔒</div>
-   <div class="urlpill"><span style="overflow:hidden;text-overflow:ellipsis">${previewUrl()}</span>${single?'<span style="margin-left:auto;font-size:8px;padding:2px 6px;border-radius:99px;background:#111;color:#fff;font-weight:700;flex:none">1 LINK</span>':''}</div>
-   <div style="width:12px;height:12px;border-radius:99px;background:#ddd"></div>
-  </div>
-  <div class="notch"></div>
-   <div class="${dark?'emerald-bg ':''}${wedding?'wedding-cover theme-'+tp.id:''}${gerbangArch?' gerbang-arch':''}" style="flex:1;position:relative;${dark?'color:#FDE68A':bg}">
-   <div class="${(CV||TX||RV?'ap ':'')}${wedding?'wedding-preview-inner':''}" style="padding:${wedding?'12px 12px 18px':'20px'};text-align:center;font-family:${tF};${patStyle}">
-   <div class="${wedding?'wedding-invite-card':''}" style="position:relative;${weddingCardCss}${weddingPaperCard}${!wedding&&borderOf().id!=='none'?'padding:18px 12px;margin:0 0 14px;':''}${borderCss()}">${borderCorners()}${ornCorners()}
-    ${f.showBismillah?`<div class="${CV?'fx-c-'+CE:''}" style="margin-bottom:12px;${CV?'animation-delay:250ms':''}"><div style="font-size:13px;letter-spacing:.02em;font-family:'Lora',serif">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-     <div style="font-size:10px;opacity:.6;margin-top:4px;font-family:${bF}">Bismillahirrahmanirrahim</div></div>`:''}
-    ${tp.deco?`<div class="${CV?'a-deco':''}" style="font-size:15px;letter-spacing:6px;opacity:.9;margin-bottom:10px;${CV?'animation-delay:150ms':''}">${tp.deco}</div>`:''}
-    ${state.goldOrn?`<div class="${CV?'a-deco':''}" style="margin:0 auto 16px;width:48px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,${state.accent},transparent);${CV?'animation-delay:250ms':''}"></div>`:''}
-    ${blokFotoPrev}
-    <div class="${wedding?'wedding-kicker ':''}${CV?'fx-c-'+CE:''}" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;font-family:${bF};${CV?'animation-delay:300ms':''}">${wedding?'You’re Invited':titleOf()}</div>
-    ${tp.char&&!wedding?`<div class="${CV?'fx-c-'+CE:''}" title="Karakter tema" style="font-size:${tp.char.length>2?(tp.char.length>6?19:tp.char.length>4?23:28):42}px;line-height:1.05;margin-top:${tp.char.length>2?12:14}px;${tp.char.length>2?'letter-spacing:.06em;font-weight:800;text-transform:uppercase;color:'+state.accent+';':''}${CV?'animation-delay:420ms':''}">${tp.char}</div>`:''}
-    <h1 class="${CV&&!TX?'fx-c-'+CE:''}" style="margin-top:${tp.char&&!wedding?6:12}px;font-size:${wedding?32:28}px;line-height:${wedding?1.02:.95};font-weight:700;color:${nameColor};${CV&&!TX?'animation-delay:'+h1d+'ms':''}">${h1Inner}</h1>
-    ${wedding?`<div class="wedding-subtitle">akan melangsungkan pernikahan</div>`:''}
-    <div class="${CV?'fx-c-'+CE:''}" style="margin-top:12px;font-size:11px;line-height:1.7;opacity:.8;font-family:${bF};${CV?'animation-delay:'+(tp.char?980:800)+'ms':''}">
-    ${state.event==='pernikahan'?`<div>${esc(f.putraPutri)}</div><div style="margin-top:4px">${esc(f.putriDari)}</div>`
-     :`<div>${esc(f.putraDari)} ${f.umurAnak||f.usia?`• ${esc(f.umurAnak||f.usia+' Tahun')}`:''} ${f.temaUltah||f.temaAqiqah?`• ${esc(state.event==='ultah'?f.temaUltah:f.temaAqiqah)}`:''}</div>`}</div>
-    ${wedding?`<div class="wedding-date">${esc(weddingDateLabel)}</div>${f.jamAcara?`<div class="wedding-meta">◷ ${esc(f.jamAcara)} ${esc(f.zona||'WIB')}</div>`:''}${f.venue?`<div class="wedding-meta">⌖ ${esc(f.venue)}</div>`:''}<p class="wedding-note">Bersama keluarga, kami mengundang Anda untuk merayakan hari bahagia kami.</p><button class="wedding-open">✉ Buka Undangan</button>`:''}
-    ${g?`<div style="margin:20px auto 0;max-width:260px;border-radius:16px;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border:1px solid #ddd;padding:12px;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.05);font-family:${bF}">
-     <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;display:flex;align-items:center;justify-content:center;gap:4px">Kepada YTH ${single?'<span style="padding:2px 6px;border-radius:99px;background:#111;color:#fff;font-size:8px">1 LINK MODE</span>':''}</div>
-     <div style="font-size:14px;font-weight:600;margin-top:4px">${single?'Tamu Undangan':esc(g.nama)}</div>
-     ${single?`<div style="font-size:10px;margin-top:4px;color:#737373;line-height:1.4">${esc(g.nama)} <span style="padding:2px 4px;border-radius:99px;background:#FFFBEB;border:1px solid #FDE68A;color:#8a6d0f;font-size:9px">(link sama untuk semua)</span><div style="margin-top:4px;font-family:ui-monospace,monospace">QR: ${g.code} • unik</div></div>`
-     :`<div style="font-size:10px;margin-top:4px;color:#737373">QR Check-in: ${g.code}</div>`}</div>`:''}
-    ${single&&!g?`<div style="margin:20px auto 0;max-width:260px;border-radius:16px;background:rgba(255,255,255,.9);border:1px solid #ddd;padding:12px;color:#000;font-family:${bF}">
-     <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Kepada YTH</div>
-     <div style="font-size:14px;font-weight:600;margin-top:4px">Tamu Undangan</div>
-     <div style="font-size:10px;margin-top:4px;color:#737373">Mode 1 Link • QR tetap unik per tamu</div></div>`:''}
-    ${single?`<div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:10px;padding:6px 12px;border-radius:99px;background:#111;color:#fff"><span class="dot pulse" style="width:6px;height:6px;background:#D4AF37"></span>Mode: 1 Link Untuk Semua • QR Random Panitia</div>`:''}
-    ${WR(450,`<div style="margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-family:${bF}">
-     <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:18px;font-weight:700">${daysLeft()}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">Hari</div></div>
-     <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:18px;font-weight:700">${esc(f.jamAcara)}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">${esc(f.zona)}</div></div>
-     <div style="border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;padding:10px;color:#111"><div style="font-size:14px;font-weight:700;line-height:1.2">${isNaN(dt)?'—':dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short'})}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em">${isNaN(dt)?'':dt.getFullYear()}</div></div>
-    </div>`)}
-    ${WR(600,state.cover?`<img src="${state.cover}" style="margin-top:24px;width:100%;height:200px;object-fit:cover;${archPhotoCss}">`
-     :`<div style="margin-top:24px;height:160px;${archPlaceholderCss}background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:11px;color:#a3a3a3;font-family:${bF}">Foto Utama</div>`)}
-   </div>
-   ${WR(750,`<div style="margin-top:24px;text-align:left;border-radius:20px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid #ddd;padding:16px;color:#111;font-family:${bF}">
-     <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Waktu & Tempat</div>
-     <div style="margin-top:8px;font-size:13px;font-weight:600">${esc(f.venue)}</div>
-     <div style="font-size:11px;color:#525252;margin-top:4px;line-height:1.6">${esc(f.alamat)}</div>
-     ${f.sesiKedua?`<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px">
-      <div style="border-radius:12px;background:#FFFBEB;border:1px solid #FDE68A;padding:8px"><b>Akad</b><div>${esc(f.jamAkad)} ${esc(f.zona)}</div></div>
-      <div style="border-radius:12px;background:#f0f9ff;border:1px solid #dbeafe;padding:8px"><b>Resepsi</b><div>${esc(f.jamResepsi)} ${esc(f.zona)}</div></div></div>`:''}
-     <div style="margin-top:12px;font-size:11px;line-height:1.7;font-style:italic">"${esc(f.ucapanCustom)}"</div>
-    </div>`)}
-    ${slideBlocks().map((b,i)=>WR(900+i*140,b)).join('')}
-    ${g?WR(1500,`<div style="margin-top:16px;border-radius:20px;background:#fff;border:1px solid #ddd;padding:12px;text-align:left;color:#111;font-family:${bF}">
-     <div style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px">QR Check-in ${single?'<span style="font-size:9px;padding:2px 8px;border-radius:99px;background:#111;color:#fff">UNIK PER TAMU</span>':''}</div>
-     <div style="display:flex;gap:12px;margin-top:8px;align-items:center">
-      <img src="${qrData(g)}" style="width:72px;height:72px;border-radius:12px;border:1px solid #ddd;background:#fff;padding:4px">
-      <div style="font-size:11px"><div style="font-family:ui-monospace,monospace">${g.code}</div>
-      <div style="font-size:10px;color:#737373;margin-top:4px">${single?'Link sama, QR beda — scan panitia':'Tunjukkan saat masuk venue'}</div></div>
-     </div></div>`):''}
-    ${state.gallery.length?WR(1650,`<div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${state.gallery.slice(0,6).map(img=>`<img src="${img}" style="height:72px;width:100%;object-fit:cover;border-radius:${archGalleryRadius};border:1px solid ${gerbangArch?tp.accent:'#ddd'}">`).join('')}</div>`):''}
-    ${WR(1800,`<div style="margin-top:24px;display:flex;gap:8px;font-family:${bF}">
-     ${f.showMapsBtn?`<a href="${esc(f.mapsLink)}" target="_blank" rel="noopener" style="flex:1;height:44px;border-radius:99px;background:#111;color:#fff;font-size:12px;font-weight:500;display:grid;place-items:center;text-decoration:none">Buka Maps 📍</a>`:''}
-     <button style="flex:1;height:44px;border-radius:99px;background:#fff;border:1px solid #ddd;font-size:12px;font-weight:500;color:#111">RSVP Hadir</button>
-    </div>`)}
-    ${WR(1950,`<div style="margin-top:24px;padding:12px;border-radius:16px;background:rgba(255,255,255,.8);border:1px solid #ddd;text-align:left;color:#111;font-family:${bF}">
-     <div style="font-size:11px;font-weight:600">Doa ${state.doa}</div>
-     <div style="font-size:11px;margin-top:4px;line-height:1.8;text-align:right;font-family:'Lora',serif">${(DOA[state.doa]||DOA.pernikahan).ar}</div>
-     <div style="font-size:10px;margin-top:8px;color:#525252">${(DOA[state.doa]||DOA.pernikahan).latin}</div>
-    </div>`)}
-    ${state.amplop.showAmplop?WR(2100,`<div style="margin-top:24px;border-radius:20px;background:#111;color:#fff;padding:16px;text-align:left;font-family:${bF}">
-     <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)">Amplop Digital</div>
-     <div style="margin-top:8px;font-size:12px">${esc(state.amplop.bank)} • ${esc(state.amplop.noRek)}</div>
-     <div style="font-size:11px;color:rgba(255,255,255,.7)">a.n ${esc(state.amplop.pemilik)} • ${esc(state.amplop.ewallet)} ${esc(state.amplop.noEwallet)}</div>
-     ${state.amplop.showCopy?`<button onclick="copyTxt('${esc(state.amplop.noRek)}','No rekening disalin ✓')" style="margin-top:12px;width:100%;height:36px;border-radius:99px;background:#fff;color:#000;font-size:11px;font-weight:500">Copy No Rekening</button>`:''}
-    </div>`):''}
-    ${WR(2250,`<div style="margin:32px 0;font-family:${bF}"><p style="font-size:11px;opacity:.7">Terima kasih atas doa dan kasihnya 🤍</p><footer class="as-contact" aria-label="Contact Us AsProject" style="margin-top:24px;padding:24px 16px;border:1px solid #e8e4dc;border-radius:20px;background:#faf9f6;color:#262626;text-align:center;font-family:Inter,system-ui,sans-serif;overflow-wrap:anywhere">
-   <img class="as-contact-logo" src="assets/logo-asproject.svg" alt="Logo AsProject" width="72" height="72" style="display:block;width:72px;height:72px;max-width:100%;margin:0 auto 16px;padding:6px;border-radius:18px;background:#111;object-fit:contain">
-   <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#737373">Contact Us</div>
-   <a href="https://asproject.my.id/" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:8px;font-size:23px;font-weight:700;letter-spacing:-.04em;color:#262626;text-decoration:none">AsProject<span style="color:#9a7b32">.</span></a>
-   <p style="margin:8px 0 0;font-size:11px;line-height:1.7;color:#737373">Jasa pembuatan undangan digital.<br>Ingin membuat undangan? Hubungi kami.</p>
-   <a class="as-contact-wa" href="https://wa.me/6285196755675?text=Halo%20AsProject%2C%20saya%20ingin%20bertanya%20tentang%20pembuatan%20undangan%20digital." target="_blank" rel="noopener noreferrer" aria-label="Hubungi AsProject melalui WhatsApp 0851-9675-5675" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;width:100%;max-width:260px;margin:18px auto 0;padding:10px 12px;border-radius:14px;background:#176b43;color:#fff;text-decoration:none;font-size:12px;font-weight:600;line-height:1.5">
-    <span>Chat via WhatsApp</span><span style="font-size:14px;letter-spacing:.03em">0851-9675-5675</span>
-   </a>
-   <div style="margin-top:12px;font-size:10px;color:#737373">Kontak layanan AsProject · bukan kontak RSVP</div>
-  </footer></div>`)}
-   </div>
-  </div>
-  <button onclick="togglePlay()" style="position:absolute;bottom:88px;right:12px;width:44px;height:44px;border-radius:99px;background:#111;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.3);display:grid;place-items:center;font-size:16px;border:1px solid rgba(255,255,255,.2);z-index:4">${state.playing?'❚❚':'♪'}</button>
-  <div style="height:72px;border-top:1px solid var(--line);background:rgba(255,255,255,.9);backdrop-filter:blur(24px);display:flex;align-items:center;gap:8px;padding:0 12px">
-   <a target="_blank" href="${waShareLink()}" style="flex:1;height:40px;border-radius:99px;background:#25D366;color:#fff;font-size:12px;font-weight:500;display:grid;place-items:center;text-decoration:none">Kirim via WA</a>
-   <button onclick="copyTxt(previewUrl(),'Link disalin ✓')" style="flex:1;height:40px;border-radius:99px;background:#111;color:#fff;font-size:12px;font-weight:500">Copy Link</button>
-  </div>
- </div></div>
- <div style="margin-top:16px;width:340px;border-radius:16px;background:#fff;border:1px solid var(--line);padding:12px;display:flex;align-items:center;gap:8px">
-  <div style="width:32px;height:32px;border-radius:99px;background:var(--soft);display:grid;place-items:center;font-size:12px">✦</div>
-  <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500">Slug auto dari nama mempelai</div>
-  <div style="font-size:10px;color:var(--mut);font-family:ui-monospace,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${baseUrl().replace('https://','')} ${state.linkMode==='single'?'• 1 link':'• ?to=Nama'}</div></div>
-  <span class="pill" style="font-size:10px;${state.linkMode==='single'?'background:#111;color:#fff':'background:var(--cream);border:1px solid var(--cream2)'}">${state.linkMode==='single'?'1 LINK':'auto'}</span>
- </div>`}
-
-/* ============ RENDER ============ */
 function render(){
- if(!state.started||(state.stage==='ready'&&linkReady())){
-  clearScrollReveal($('floatPrev'));clearScrollReveal($('phoneWrap'));$('floatPrev').innerHTML='';
-  $('root').innerHTML=!state.started?welcomeView():readyView();syncAudio();return;
+ if(!state.started||_welcome||(state.stage==='ready'&&linkReady())){
+  clearScrollReveal($('floatPrev'));$('floatPrev').innerHTML='';
+  $('root').innerHTML=(!state.started||_welcome)?welcomeView():readyView();syncAudio();return;
  }
  $('root').innerHTML=header()+`<div class="layout">${sidebar()}
   <main class="mainc sb">${state.page==='editor'?editor():state.page==='katalog'?katalog():arsip()}</main>
-  <aside class="prevc sb"><div id="phoneWrap" style="width:100%;max-width:360px;margin:auto">${phoneHtml()}</div></aside>
+  <aside class="prevc sb"><div id="phoneWrap" class="pv-stage"></div></aside>
  </div>`;
- syncAudio();syncFloat()}
-function renderPreview(){const w=$('phoneWrap');if(w)w.innerHTML=phoneHtml();syncFloat()}
+ syncAudio();syncFloat();
+}
+
+/* ===== Pratinjau = undangan asli di dalam iframe =====
+   Studio tidak menggambar ulang undangan lagi: berkas undangan.html yang sama
+   dijalankan di iframe (mode ?preview=1) dan menerima isian draft lewat pesan.
+   Hasilnya selalu sama dengan undangan yang dibuka tamu — termasuk pembaruan
+   tampilan berikutnya, karena hanya ada satu renderer. */
+const PV_LEBAR=390,PV_TINGGI=780;
+/* Baris undangan = bentuk yang sama dengan yang dikirim ke Supabase saat
+   Publish, jadi pratinjau memakai data persis seperti data undangan live. */
+function barisUndangan(){
+ const f=state.form;
+ return {slug:state.slug,name1:state.event==='pernikahan'?f.namaPria:f.namaAnak,
+  name2:state.event==='pernikahan'?f.namaWanita:'',venue:f.venue,
+  event_date:f.tanggalAcara,event_time:f.jamAcara,
+  music_url:state.music&&!state.music.local?new URL(state.music.url,location.href).href:'',
+  music_name:state.music?state.music.name:'',
+  theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl)),
+  data:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
+   accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,ornSudut:state.ornSudut,
+   amplop:JSON.parse(JSON.stringify(state.amplop)),
+   slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
+   music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
+   cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos()),
+   fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
+   gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
+   guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
+   masterKey:state.masterKey||'',linkMode:state.linkMode||'personal'}};
+}
+function pvHtml(){return '<div class="pv-phone"><iframe class="pv-frame" src="undangan.html?preview=1" title="Pratinjau undangan (tampilan asli)" loading="eager" referrerpolicy="no-referrer"></iframe></div>'}
+/* Ukuran iframe: undangan selalu digambar pada lebar HP (390 px), lalu
+   diperkecil dengan transform supaya pas di panel atau di kotak melayang. */
+function pvUkur(ifr){
+ const box=ifr.parentElement;if(!box)return;
+ const layar=box.closest('.fp-screen');
+ const lebar=Math.max(160,(layar?layar.clientWidth:box.clientWidth)||360);
+ const tinggi=Math.max(260,(layar?layar.clientHeight:window.innerHeight-32)||680);
+ const k=Math.min(lebar/PV_LEBAR,tinggi/PV_TINGGI);
+ ifr.style.transform='scale('+k+')';
+ box.style.width=Math.round(PV_LEBAR*k)+'px';box.style.height=Math.round(PV_TINGGI*k)+'px';
+ box.style.margin='0 auto';
+}
+function pvKirim(ifr){try{const t=ifr.contentWindow;if(t)t.postMessage({type:'asproject:preview',row:barisUndangan()},'*')}catch(e){}}
+const _pvPantau=new WeakSet();
+function pvPasang(ifr){
+ if(!ifr)return;
+ if(!_pvPantau.has(ifr)){_pvPantau.add(ifr);ifr.addEventListener('load',()=>{pvUkur(ifr);pvKirim(ifr)})}
+ pvUkur(ifr);pvKirim(ifr);
+}
+/* Semua pratinjau (panel kanan & kotak melayang) memakai berkas undangan yang sama. */
+function syncPreview(){
+ const panel=$('phoneWrap');
+ if(panel&&!panel.querySelector('iframe.pv-frame'))panel.innerHTML=pvHtml();
+ const fl=$('floatPrev');
+ if(fl&&state.floatPrevOn){const layar=fl.querySelector('.fp-screen');
+  if(layar&&!layar.querySelector('iframe.pv-frame'))layar.innerHTML=pvHtml()}
+ document.querySelectorAll('.pv-stage iframe.pv-frame, #floatPrev .fp-screen iframe.pv-frame').forEach(pvPasang);
+}
+let _pvTimer=null;
+/* Ketikan pemilik tidak me-render ulang seluruh editor, jadi pratinjau
+   diperbarui dengan jeda pendek supaya tidak membebani browser. */
+function renderPreview(){if(_pvTimer)clearTimeout(_pvTimer);_pvTimer=setTimeout(syncPreview,140)}
+function pvPerbaruiSekarang(){if(_pvTimer)clearTimeout(_pvTimer);syncPreview()}
+
 /* ===== Floating preview — mini HP melayang berisi undangan yang sedang dibuat ===== */
 let _fpExpanded=false,_fpDrag=null;
 function syncFloat(){const w=$('floatPrev');if(!w)return;
- setupScrollReveal($('phoneWrap'),document.querySelector('.prevc'));
- clearScrollReveal(w); // Disconnect before replacing the floating DOM.
- const oldScreen=w.querySelector('.fp-screen');
- const scrollRatio=oldScreen&&oldScreen.scrollHeight?oldScreen.scrollTop/oldScreen.scrollHeight:0;
  w.classList.toggle('fp-expanded',_fpExpanded);
  if(!state.floatPrevOn){w.style.left='';w.style.top='';w.style.right='';w.style.bottom='';w.innerHTML=`<button class="fp-pill" onclick="setFloat(true)" title="Tampilkan floating preview">📱 Preview</button>`;return}
- const ph=document.querySelector('#phoneWrap .phone');
- // A non-interactive copy: no duplicate IDs, form focus, or source event handlers.
- const copy=ph?ph.cloneNode(true):null;
- if(copy){copy.querySelectorAll('.ap').forEach(el=>el.classList.remove('ap'));
-  [copy,...copy.querySelectorAll('*')].forEach(el=>{el.removeAttribute('id');el.removeAttribute('autofocus');Array.from(el.attributes).filter(a=>a.name.startsWith('on')).forEach(a=>el.removeAttribute(a.name))})}
- w.innerHTML=`<div class="fp-box">
-  <div class="fp-head" onpointerdown="fpDragStart(event)"><span>📱 Live Preview</span>
+ if(!w.querySelector('iframe.pv-frame')){
+  w.innerHTML=`<div class="fp-box">
+  <div class="fp-head" onpointerdown="fpDragStart(event)"><span>📱 Live<span class="fp-t-full"> Preview</span></span>
    <span class="fp-actions">
+    <button title="Kembali ke cover" aria-label="Kembali ke cover awal undangan" onclick="fpCover()">⤒</button>
     <button title="${_fpExpanded?'Perkecil preview':'Perbesar preview'}" aria-label="${_fpExpanded?'Perkecil preview':'Perbesar preview'}" aria-expanded="${_fpExpanded}" onclick="floatGo()">${_fpExpanded?'⤡':'⤢'}</button>
     <button title="Sembunyikan preview" aria-label="Sembunyikan preview" onclick="setFloat(false)">–</button>
    </span></div>
-  <div class="fp-screen" tabindex="0" role="region" aria-label="Pratinjau undangan, gulir untuk melihat isi"><div class="fp-scale" inert></div></div>
-  <div class="fp-hint">geser judul • gulir layar • ⤢ perbesar</div>
+  <div class="fp-screen" tabindex="0" role="region" aria-label="Pratinjau undangan, gulir di dalam layar untuk melihat isi">${pvHtml()}</div>
+  <div class="fp-hint">geser judul • gulir di dalam layar • ⤒ cover • ⤢ perbesar</div>
  </div>`;
- if(copy)w.querySelector('.fp-scale').appendChild(copy);
- fitFloat();
- const screen=w.querySelector('.fp-screen');screen.scrollTop=scrollRatio*screen.scrollHeight;
- setupScrollReveal(w,screen);
+  fitFloat();
+ }
+ syncPreview();
 }
 function setFloat(v){state.floatPrevOn=v;save();syncFloat()}
 function floatGo(){_fpExpanded=!_fpExpanded;syncFloat()}
+/* Tombol ⤒: bawa isi preview kembali ke cover undangan (bagian paling atas). */
+function fpCover(){const w=$('floatPrev'),f=w&&w.querySelector('iframe.pv-frame');if(!f)return;
+ try{const t=f.contentWindow;if(t){t.postMessage({type:'asproject:cover'},'*');if(typeof t.scrollTo==='function')t.scrollTo(0,0)}}catch(e){}}
 function placeFloat(x,y){const w=$('floatPrev'),r=w.getBoundingClientRect(),gap=8;
  const pos={x:Math.max(gap,Math.min(Number.isFinite(x)?x:gap,window.innerWidth-r.width-gap)),y:Math.max(gap,Math.min(Number.isFinite(y)?y:gap,window.innerHeight-r.height-gap))};
  Object.assign(w.style,{left:pos.x+'px',top:pos.y+'px',right:'auto',bottom:'auto'});return pos;
 }
 function fitFloat(){const w=$('floatPrev');if(!w||!state.floatPrevOn)return;
- const screen=w.querySelector('.fp-screen'),scale=w.querySelector('.fp-scale');
- if(screen&&scale)scale.style.zoom=screen.clientWidth/340;
+ w.querySelectorAll('iframe.pv-frame').forEach(pvUkur);
  if(state.floatPos){placeFloat(state.floatPos.x,state.floatPos.y)}
  else{w.style.left='';w.style.top='';w.style.right='';w.style.bottom=''}
 }
@@ -1955,7 +1998,7 @@ function fpDragStart(e){if(e.button!==0||e.target.closest('button'))return;
  };
  head.addEventListener('pointermove',mv);head.addEventListener('pointerup',up);head.addEventListener('pointercancel',up);head.addEventListener('lostpointercapture',up);e.preventDefault();
 }
-window.addEventListener('resize',fitFloat);
+window.addEventListener('resize',function(){fitFloat();syncPreview()});
 
 if(paksaTier())save();
 /* pratinjau ringan 4D: geser latar pratinjau mengikuti mouse saat tier VIP */

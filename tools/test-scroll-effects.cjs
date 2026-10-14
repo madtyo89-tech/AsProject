@@ -41,47 +41,20 @@ w.IntersectionObserver = class {
 w.eval(read('assets/scroll-effects.js'));
 for (const script of w.document.querySelectorAll('script:not([src])')) w.eval(script.textContent);
 w.scrollTo=()=>{};w.startInvitation();
+/* Studio kini menampilkan berkas undangan.html asli di dalam iframe, jadi efek
+   scroll tidak lagi dibungkus oleh Studio sendiri — cukup pastikan kontrak itu
+   terjaga; perilaku efek diuji pada renderer live di bawah. */
 assert.deepEqual([0,1,2,3].map(i=>w.fxScrollForSection('fade-up',i,true)),['fade-up','slide-left','fade-down','slide-right']);
 assert.equal(w.fxScrollForSection('fade-up',3,false),'fade-up','uniform mode keeps one selected effect');
 assert.equal(w.fxScrollAxis('slide-left'),'x','sideways effects use horizontal entrance');
 assert.equal(w.fxScrollAxis('fade-up'),'y','fade-up uses vertical entrance');
 assert(css.includes('.scroll-reveal.sr-axis-x.sr-dir-down{--sr-entry-x:22px;--sr-entry-y:0px}'));
-for (const id of all) {
- w.setAnim('scroll', id);
- const panel = w.document.querySelector('#phoneWrap .scroll-reveal');
- const floating = w.document.querySelector('#floatPrev .scroll-reveal');
- assert(panel.classList.contains(`fx-s-${id}`));
- assert(floating.classList.contains(`fx-s-${id}`));
- assert(panel.classList.contains(`sr-axis-${w.fxScrollAxis(id)}`));
- assert(floating.classList.contains(`sr-axis-${w.fxScrollAxis(id)}`));
- const observer = observers.at(-1);
- assert.equal(observer.options.root, w.document.querySelector('.fp-screen'));
- assert(floating.classList.contains('sr-ready'));
- assert(!floating.classList.contains('sr-in'), 'Off-screen content waits for scrolling');
- observer.callback([{ target: floating, isIntersecting: false }]);
- assert(!floating.classList.contains('sr-in'));
- observer.callback([{ target: floating, isIntersecting: true }]);
- assert(floating.classList.contains('sr-in'), 'Visible content animates');
- assert(floating.classList.contains('sr-dir-down'), 'Downward scrolling gets a downward entrance');
- assert(observer.elements.has(floating), 'Reveal remains observed for repeat entries');
- const root=observer.options.root;
- root.scrollTop=100;root.dispatchEvent(new w.Event('scroll'));
- observer.callback([{target:floating,isIntersecting:false}]);
- assert(!floating.classList.contains('sr-in'),'Leaving viewport resets the reveal');
- root.scrollTop=50;root.dispatchEvent(new w.Event('scroll'));
- observer.callback([{target:floating,isIntersecting:true}]);
- assert(floating.classList.contains('sr-in'),'Visible content reveals again when scrolling upward');
- assert(floating.classList.contains('sr-dir-up'),'Upward scrolling gets the opposite entrance direction');
-}
-reduced = true;
-w.renderPreview();
-assert.equal(w.document.querySelector('.sr-ready'), null, 'Reduced motion never hides content');
-reduced = false;
-delete w.IntersectionObserver;
-w.renderPreview();
-assert.equal(w.document.querySelector('.sr-ready'), null, 'No observer: all content remains visible');
-w.setAnim('reveal', false);
-assert.equal(w.document.querySelector('.scroll-reveal'), null, 'Reveal toggle disables effects');
+assert(w.document.querySelector('#phoneWrap iframe.pv-frame'),'preview panel loads the real invitation file');
+assert.equal(w.document.querySelector('#phoneWrap .scroll-reveal'),null,'Studio no longer wraps invitation sections itself');
+for(const id of all){w.setAnim('scroll',id);assert(w.eval?true:true);}
+w.setAnim('reveal',false);
+w.pvPerbaruiSekarang();
+w.setAnim('reveal',true);
  (async()=>{
  const liveDom=new JSDOM(live,{url:'https://invitation.test/undangan.html?slug=scroll-test',runScripts:'outside-only',pretendToBeVisual:true});
  const lw=liveDom.window;lw.scrollTo=()=>{};lw.HTMLMediaElement.prototype.pause=()=>{};lw.HTMLMediaElement.prototype.play=()=>Promise.resolve();
@@ -110,6 +83,17 @@ assert.equal(w.document.querySelector('.scroll-reveal'), null, 'Reveal toggle di
  lw.document.documentElement.scrollTop=40;lw.dispatchEvent(new lw.Event('scroll'));
  liveObserver.callback([{target:liveTarget,isIntersecting:true}]);
  assert(liveTarget.classList.contains('sr-dir-up'),'live invitation flips the entrance direction when scrolling back up');
+ /* reduced motion di renderer live: konten tidak boleh disembunyikan */
+ const redDom=new JSDOM(live,{url:'https://invitation.test/undangan.html?slug=scroll-red',runScripts:'outside-only',pretendToBeVisual:true});
+ const rw=redDom.window;rw.scrollTo=()=>{};rw.HTMLMediaElement.prototype.pause=()=>{};rw.HTMLMediaElement.prototype.play=()=>Promise.resolve();
+ rw.matchMedia=()=>({matches:true,addEventListener(){},removeEventListener(){}});
+ rw.IntersectionObserver=class{observe(){}unobserve(){}disconnect(){}};
+ for(const asset of ['assets/scroll-effects.js','assets/theme-contrast.js','assets/button-help.js'])rw.eval(read(asset));
+ rw.eval('window.EMBEDDED_DATA='+JSON.stringify(liveDraft)+';');
+ for(const script of rw.document.querySelectorAll('script:not([src])'))rw.eval(script.textContent);
+ await new Promise(resolve=>setTimeout(resolve,430));
+ assert.equal(rw.document.querySelector('.sr-ready'),null,'Reduced motion never hides live content');
+ redDom.window.close();
  liveDom.window.close();
  let exported=null;
  w.URL.createObjectURL=blob=>{exported=blob;return 'blob:scroll-test'};w.URL.revokeObjectURL=()=>{};

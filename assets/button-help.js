@@ -35,6 +35,12 @@
   liveRsvp:'Buka bagian konfirmasi kehadiran atau kirim RSVP sesuai pengaturan undangan.',
   setFloat:'Tampilkan atau perkecil floating preview tanpa mengubah isi undangan.',
   floatGo:'Perbesar atau perkecil floating preview. Gulir di dalam layar untuk melihat seluruh isinya.',
+  fpCover:'Bawa tampilan floating preview kembali ke cover undangan di bagian paling atas.',
+  showWelcome:'Kembali ke layar awal Studio. Draft aktif tetap aman dan bisa dilanjutkan.',
+  balikKeEditor:'Lanjutkan mengedit draft yang masih tersimpan di perangkat ini.',
+  muatRiwayat:'Muat daftar undangan yang pernah di-publish dari server Supabase.',
+  bukaRiwayatServer:'Buka undangan ini ke editor untuk dilihat atau diedit lagi. Data lengkap diambil dari server.',
+  loadArsip:'Buka undangan ini ke editor: isi dasar langsung tampil, lalu foto dan bagian lain dilengkapi dari server.',
   copyMaster:'Salin link dashboard master privat. Bagikan hanya kepada pemilik acara.',
   copyAll:'Salin seluruh link undangan tamu dari dashboard.',
   onFilter:'Saring daftar tamu berdasarkan status yang dipilih.',
@@ -51,6 +57,7 @@
   const code=el.getAttribute('onclick')||'';
   if(el.matches('[data-copy]'))return 'Salin nomor rekening atau dompet digital pada kartu ini ke clipboard perangkat.';
   if(el.id==='musikBtn')return 'Putar atau jeda musik latar undangan. Browser mungkin meminta interaksi terlebih dahulu.';
+  if(el.id==='coverBack')return 'Balik ke cover pembuka undangan. Ketuk Buka Undangan untuk masuk lagi; musik tetap diputar.';
   const action=code.match(/(?:masterAction|shareReadyLink)\('([^']+)'/);
   if(action){
    const master=code.includes('masterAction'),what=master?'link master privat':'link undangan tamu yang sudah selesai';

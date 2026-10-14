@@ -295,6 +295,21 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 #musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
 #musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* ==== Mode pratinjau (iframe Studio): tanpa tombol kontrol Studio ==== */
+body.preview-mode #coverBack{display:none}
+/* Saat data diperbarui dari Studio, jangan ulang animasi masuk supaya tidak berkedip. */
+body.pv-soft *,body.pv-soft *::before,body.pv-soft *::after{animation:none!important;transition:none!important}
+
+/* ==== Tombol kembali ke cover: muncul hanya setelah undangan dibuka ==== */
+#coverBack{position:fixed;right:14px;bottom:16px;z-index:120;display:none;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-radius:99px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(90,70,30,.18);color:var(--ink-body);font-size:11px;font-weight:600;cursor:pointer}
+body.opened #coverBack{display:inline-flex}
+#coverBack .arw{font-size:15px;line-height:1}
+/* Bar navigasi slide (mode navpager) duduk di tengah bawah — naikkan tombol agar tidak bertumpuk. */
+body.navpager #coverBack{bottom:66px}
+/* Hero katalog menampilkan undangan yang sudah terbuka: tombol ini tidak perlu ikut tampil. */
+body.embed-buka #coverBack{display:none}
+@media (max-width:380px){#coverBack{right:10px;gap:6px;padding:0 13px}}
+
 /* ---------- ANIMASI ---------- */
 @keyframes uUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes uZoom{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
@@ -625,6 +640,7 @@ body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .
 <body>
 <audio id="musik" loop preload="none"></audio>
 <button id="musikBtn" aria-label="Putar/jeda musik"><span class="disc"></span><span class="t" id="musikNama">Musik</span></button>
+<button id="coverBack" aria-label="Kembali ke cover undangan" title="Kembali ke cover undangan"><span class="arw" aria-hidden="true">⤒</span><span>Cover</span></button>
 <div id="app"></div>
 
 <script>
@@ -825,9 +841,42 @@ const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 const Q=new URLSearchParams(location.search);
 const GUEST=(Q.get('to')||'').trim();
 const DEMO=Q.get('demo')==='1';
+/* Mode pratinjau: halaman ini dipasang di iframe Studio (studio.html?preview=1).
+   Semua interaksi tetap seperti tamu, tetapi tanpa jaringan (tanpa tulis RSVP,
+   tanpa ambil buku tamu dari server) dan tanpa tombol kontrol milik Studio. */
+const PREVIEW=Q.get('preview')==='1';
+if(PREVIEW)document.body.classList.add('preview-mode');
 /* demo auto-buka (dipakai hero dinamis index): tampilkan isi undangan langsung,
    tanpa memutar musik — tombol Buka Undangan tidak dipicu */
-if(DEMO&&Q.get('buka')==='1')document.body.classList.add('opened');
+if(DEMO&&Q.get('buka')==='1'){document.body.classList.add('opened','embed-buka');}
+
+/* ---------- tombol kembali ke cover (tampil setelah undangan dibuka) ---------- */
+/* Membalik keadaan "opened": cover pembuka tampil lagi dan tamu bisa menekan
+   "Buka Undangan" sekali lagi. Musik latar sengaja tidak dihentikan. */
+function kembaliKeCover(){
+ if(!document.body.classList.contains('opened'))return;
+ document.body.classList.remove('opened');
+ kabariInduk();
+}
+(function(){const b=document.getElementById('coverBack');if(b)b.addEventListener('click',kembaliKeCover)})();
+
+/* ---------- pipa pratinjau dari Studio ---------- */
+/* Studio mengirim baris draft (bentuk yang sama dengan publish) ke iframe ini,
+   jadi yang dilihat pemilik di Studio = yang dilihat tamu di undangan live. */
+function kabariInduk(){if(!PREVIEW)return;try{if(window.parent&&window.parent!==window)
+ window.parent.postMessage({type:'asproject:preview-state',opened:document.body.classList.contains('opened')},'*')}catch(e){}}
+let _pvSudah=false;
+function pvTerapkan(row){
+ if(!row||typeof row!=='object')return;
+ const opened=document.body.classList.contains('opened'),y=window.scrollY||0;
+ try{boot(row)}catch(e){return}
+ if(_pvSudah){document.body.classList.add('pv-soft');document.body.classList.toggle('opened',opened);try{window.scrollTo(0,y)}catch(e2){}}
+ _pvSudah=true;kabariInduk();
+}
+window.addEventListener('asproject:preview',()=>{pvTerapkan(window.__asPreview)});
+window.addEventListener('message',e=>{const m=e.data;if(!m||typeof m!=='object')return;
+ if(m.type==='asproject:preview')pvTerapkan(m.row);
+ else if(m.type==='asproject:cover'){if(document.body.classList.contains('opened'))kembaliKeCover();else{try{window.scrollTo(0,0)}catch(e2){}}}});
 let SLUG=(Q.get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
 if(!SLUG){const h=location.hostname.toLowerCase();
  if(h.slice(-16)==='.asproject.my.id'&&h.length>16)SLUG=h.split('.')[0]}
@@ -970,7 +1019,7 @@ async function rsvpSave(st){
  document.querySelectorAll('[data-r="'+st+'"]').forEach(b=>{b.classList.add('sent');setTimeout(()=>b.classList.remove('sent'),900)});
  /* Mode demo / file mandiri: simpan lokal saja — jangan menulis baris palsu
     ke database produksi. */
- if(DEMO||!SLUG){
+ if(DEMO||PREVIEW||!SLUG){
   BT_LOCAL.unshift(ucapanBaru(n,st,pesan));
   tampilBukuTamu(daftarUcapanDemo());
   ivToast(toastRsvp(st,n));
@@ -1039,7 +1088,7 @@ function tampilBukuTamu(rows){const el=document.getElementById('btList');if(!el)
 function daftarUcapanDemo(){
  return [...BT_LOCAL,...DEMO_WISHES.map(w=>({guest:w.guest,status:w.status,pesan:w.pesan,t:Date.now()-w.ago}))]}
 async function muatBukuTamu(paksa){const el=document.getElementById('btList');if(!el)return;
- if(DEMO||!SLUG){tampilBukuTamu(daftarUcapanDemo());return}
+ if(DEMO||PREVIEW||!SLUG){tampilBukuTamu(daftarUcapanDemo());return}
  if(!paksa)el.innerHTML='<div class="bt-memuat">Memuat ucapan…</div>';
  const H={headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}};
  const ctl=(typeof AbortController!=='undefined')?new AbortController():null;
@@ -1344,7 +1393,7 @@ function boot(draft){
  muatBukuTamu();
 
  /* interaksi */
- function bukaCover(){if(document.body.classList.contains('opened'))return;document.body.classList.add('opened');if(play)play()}
+ function bukaCover(){if(document.body.classList.contains('opened'))return;document.body.classList.add('opened');if(play)play();kabariInduk()}
  $('btnOpen').addEventListener('click',bukaCover);
  (function(){const cv=document.getElementById('cover');if(!cv)return;
   let sx=0,sy=0,aktif=false;
@@ -1638,7 +1687,8 @@ if(DEMO){const _t=(Q.get('tpl')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
    DEMO_DRAFT.data.form.ucapanCustom='Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.';}}}
 
 /* ---------- mulai ---------- */
-if(typeof EMBEDDED_DATA!=='undefined'&&EMBEDDED_DATA){loading();setTimeout(()=>boot(EMBEDDED_DATA),350)}
+if(PREVIEW){loading()}
+else if(typeof EMBEDDED_DATA!=='undefined'&&EMBEDDED_DATA){loading();setTimeout(()=>boot(EMBEDDED_DATA),350)}
 else if(DEMO){loading();setTimeout(()=>boot(DEMO_DRAFT),350)}
 else if(!SLUG){notFound()}
 else{

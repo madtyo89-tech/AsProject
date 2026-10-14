@@ -407,9 +407,41 @@ def cek_pipeline_undangan():
           f"karakter maskot sinkron studio & undangan ({len(ch_st)} tema ber-char)")
     # 14) floating preview undangan di studio
     ok = ('id="floatPrev"' in studio and "function syncFloat" in studio
-          and "function setFloat" in studio and "syncAudio();syncFloat()}" in studio)
+          and "function setFloat" in studio and "function fpCover" in studio
+          and "syncAudio();syncFloat()" in studio
+          and "undangan.html?preview=1" in studio and "function barisUndangan" in studio)
     lapor("ok" if ok else "masalah",
-          "studio.html: floating preview (widget melayang + toggle + sync di render)")
+          "studio.html: floating preview (widget melayang + toggle + kembali ke cover + sync di render)")
+    # 15) tombol publish ulang + penanda perubahan sejak publish
+    ok = ("function draftDirty" in studio and "🔁 Publish Ulang" in studio
+          and "state.pubSig=draftSig()" in studio and "function refreshEditorStatus" in studio
+          and "● Ada perubahan belum dipublikasikan" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: publish ulang tersedia & perubahan sejak publish ditandai jelas")
+    # 16) riwayat undangan dari server + pemulihan isi lengkap
+    ok = ("function muatRiwayat" in studio and "function bukaRiwayatServer" in studio
+          and "function applyDraftData" in studio and "function fetchDraftRow" in studio
+          and "Riwayat dari server" in studio and "guestsRaw" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: riwayat dari server (muat/buka) + snapshot arsip lengkap (amplop, galeri, tamu)")
+    # 17) tombol kembali di studio (layar awal, halaman utama, antar-halaman)
+    ok = ("function showWelcome" in studio and "function balikKeEditor" in studio
+          and studio.count('href="./"') >= 2 and "← Kembali ke Editor" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: tombol kembali (layar awal tanpa hapus draft, halaman utama, antar-halaman)")
+    # 18) pratinjau studio = berkas undangan asli (iframe) dengan payload yang sama dgn publish
+    ok = ("undangan.html?preview=1" in studio and "function barisUndangan" in studio
+          and "payload=barisUndangan()" in studio and "asproject:preview" in studio
+          and "const PREVIEW=Q.get('preview')==='1'" in undangan and "function pvTerapkan" in undangan
+          and "body.preview-mode #coverBack{display:none}" in undangan)
+    lapor("ok" if ok else "masalah",
+          "pratinjau studio memakai renderer live (iframe) & payload identik dengan publish")
+    # 19) tombol kembali ke cover di undangan live
+    ok = ('id="coverBack"' in undangan and "function kembaliKeCover" in undangan
+          and "body.opened #coverBack{display:inline-flex}" in undangan
+          and "body.embed-buka #coverBack" in undangan)
+    lapor("ok" if ok else "masalah",
+          "undangan.html: tombol kembali ke cover (tampil setelah dibuka, disembunyikan di hero embed)")
 
 
 def cek_katalog_publik():
@@ -475,7 +507,8 @@ def cek_fitur_terbaru():
     arch_categories = {r["ev"] for r in arch_rows}
     arch_ok = (len(arch_rows) == 6 and all(r["studioOnly"] for r in arch_rows)
                and arch_categories == {"pernikahan", "khitanan", "aqiqah", "ultah"}
-               and "body.gerbang-arch" in undangan and "gerbang-arch" in studio)
+               and "body.gerbang-arch" in undangan
+               and "state.coverStyle=t&&t.arch?'arch':'kotak'" in studio)
     lapor("ok" if arch_ok else "masalah",
           f"Gerbang Arch: {len(arch_rows)} varian Studio tersambung ke skin live lintas 4 kategori")
     katalog_arch_ok = (all(r["harga"] == 0 for r in arch_rows)
@@ -510,7 +543,7 @@ def cek_fitur_terbaru():
     ok = ("bolehEks" in studio and "paksaTier" in studio and "kunciEks" in studio
           and all(i in studio and i in undangan for i in
                   ("id:'laurel'", "id:'artdeco'", "id:'pearl'", "id:'cinzel'", "id:'marcellus'"))
-          and "fx-c-shimmer" in studio and "fx-c-shimmer" in undangan
+          and "fx-c-shimmer" in undangan
           and (not eks_dipakai or "tier:'eksklusif'" in studio))
     lapor("ok" if ok else "masalah",
           "studio: gating konten EKSKLUSIF per tier; border/font/fx baru sinkron di undangan"
@@ -535,9 +568,9 @@ def cek_fitur_terbaru():
     lapor("ok" if ok else "masalah",
           "studio.html: teks WA berisi nama tamu terpilih & link tanpa placeholder ?to=NamaTamu")
     # 5) Regresi: border preview hanya di zona cover (persis live) & migrasi dblBorder lama
-    ok = "borderOf().id!=='none'?'padding:18px 12px" in studio
+    ok = "border:state.border" in studio and ".bdfr" in undangan
     lapor("ok" if ok else "masalah",
-          "studio.html: border preview terpasang di zona cover (konsisten dgn live, bukan layar penuh)")
+          "studio.html: gaya border dikirim ke renderer live yang memasangnya di zona cover")
     ok = "if(state.dblBorder===false)state.border='none'" in studio
     lapor("ok" if ok else "masalah",
           "studio.html: migrasi dblBorder lama — proyek yang menonaktifkan border tetap tanpa border")
@@ -641,8 +674,8 @@ def cek_tema_3d():
     lapor("ok" if "body.foto-full #cover" in und else "masalah",
           "undangan.html: gaya foto penuh + panel gelap tersedia")
     stu = baca("studio.html")
-    lapor("ok" if "const art3d=" in stu else "masalah",
-          "studio.html: pratinjau HP mengikuti latar 3D")
+    lapor("ok" if "--cover-art:url(" in stu and "undangan.html?preview=1" in stu else "masalah",
+          "studio.html: pratinjau memakai renderer live (latar 3D ikut); export menyemat artwork")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji tema 3D dilewati")
         return
@@ -675,11 +708,11 @@ def cek_foto_cover():
           "studio.html: daftar 9 gaya tersedia")
     for fn in ("function cvMulai", "function cvJalan", "function cvLepas", "function cvZoom", "function cvReset"):
         lapor("ok" if fn in stu else "masalah", f"studio.html: {fn.split()[1]} tersedia (geser/zoom)")
-    cover_live = stu.count("coverStyle:cvGayaAktif()") >= 2
+    cover_live = stu.count("coverStyle:cvGayaAktif()") >= 1 and "payload=barisUndangan()" in stu
     cover_arsip = "coverStyle:state.coverStyle||'kotak'" in stu and "coverStyleExplicit:!!state.coverStyleExplicit" in stu
     lapor("ok" if cover_live and cover_arsip else "masalah",
           "studio.html: gaya foto tersimpan di publish/export + arsip (manual/default)")
-    lapor("ok" if "if(a.snap.coverStyle)state.coverStyle" in stu else "masalah",
+    lapor("ok" if "if(d.coverStyle)state.coverStyle=d.coverStyle" in stu else "masalah",
           "studio.html: membuka arsip memulihkan gaya foto")
     mas = baca("master.html")
     lapor("ok" if "function cvCoverMini(" in mas else "masalah",
