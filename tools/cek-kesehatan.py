@@ -443,7 +443,7 @@ def cek_pipeline_undangan():
           and "Link untuk semua tamu (tanpa nama)" in studio)
     lapor("ok" if ok else "masalah",
           "master.html & studio: link undangan untuk semua tamu (tanpa ?to=) tersedia beserta salin/WA/buka")
-    # 20) galeri grid (bukan geser) + slide rapat tanpa ruang kosong + 5 model cover
+    # 20) galeri grid (bukan geser) + slide rapat tanpa ruang kosong + 15 model cover
     ok = ("gal-grid" in undangan and "gal-cell" in undangan and "galx-slide" not in undangan
           and "Ketuk foto untuk memperbesar" in undangan)
     lapor("ok" if ok else "masalah",
@@ -452,11 +452,18 @@ def cek_pipeline_undangan():
           and "target=Math.max(430,(window.innerHeight||700)-150)" in undangan)
     lapor("ok" if ok else "masalah",
           "undangan.html: mode slide menggabung bagian pendek per layar supaya tidak kosong memanjang")
-    ok = (all(x in undangan for x in ("cvl-kartu", "cvl-foto", "cvl-minimal", "monogramOf", "d.coverLayout"))
+    cover_ids = ["amplop", "kartu", "foto", "gerbang", "minimal", "batik", "sakura", "night", "ticket", "editorial", "polaroid", "glass", "royal", "archive", "neon"]
+    start = studio.find("const CV_LAYOUTS=[")
+    end = studio.find("];", start)
+    layout_block = studio[start:end] if start >= 0 and end > start else ""
+    ids_ui = re.findall(r"\['([a-z]+)'", layout_block)
+    ok = (ids_ui == cover_ids and all(("'" + x + "'") in undangan for x in cover_ids)
+          and all(("body.cvl-" + x + " #cover") in undangan for x in cover_ids[5:])
+          and "monogramOf" in undangan and "d.coverLayout" in undangan
           and "CV_LAYOUTS" in studio and studio.count("setCvLayout") >= 2
           and "coverLayout:state.coverLayout||'amplop'" in studio)
     lapor("ok" if ok else "masalah",
-          "5 model cover pembuka (amplop/kartu/foto/gerbang/minimal) tersedia di Studio & renderer live")
+          "15 model cover pembuka (5 dasar + 10 unik) tersedia di Studio & renderer live")
     # 21) musik upload tersimpan di IndexedDB agar dipakai lagi tetap bersuara
     ok = ("idbPut" in studio and "idbGetUrl" in studio and "indexedDB.open('asproject-musik'" in studio
           and "local:true,idb:1,url:''" in studio)
@@ -545,7 +552,7 @@ def cek_fitur_terbaru():
     katalog_arch_ok = (all(r["harga"] == 0 for r in arch_rows)
                        and "katalog:TPL.filter(t=>!t.studioOnly).map" in studio
                        and "if(!t.studioOnly&&!state.katalogDel.includes(t.id)&&!state.katalog.some" in studio
-                       and "state.katalogHide.filter(id=>TPL.some(t=>t.id===id&&!t.studioOnly))" in studio)
+                       and "state.katalogHide=state.katalogHide.filter(id=>{const t=tplById(id);return !!t&&!t.studioOnly});" in studio)
     lapor("ok" if katalog_arch_ok else "masalah",
           "Studio-only Arch: tetap bisa dipilih tanpa harga, promo, atau baris katalog pemasaran")
     kategori = ("pernikahan", "khitanan", "ultah", "aqiqah")
@@ -729,8 +736,10 @@ def cek_foto_cover():
           f"undangan.html: CSS 7 bingkai lengkap (kurang: {', '.join(hilang) or '-'})")
     lapor("ok" if und.count('class="cvf cvf-') >= 1 else "masalah",
           "undangan.html: markup bingkai memakai gaya dari data.coverStyle")
-    lapor("ok" if "object-position:${cvP.x}%" in und else "masalah",
-          "undangan.html: posisi foto dari data.coverPos dipakai")
+    lapor("ok" if "object-position:${cvP.x}%" in und and "function fitCoverPhoto(" in und else "masalah",
+          "undangan.html: posisi foto dari data.coverPos + crop setelah zoom dipakai")
+    lapor("ok" if "height:100vh;height:100dvh" in und and "@media(max-width:480px)" in und and "safe-area-inset-bottom" in und else "masalah",
+          "undangan.html: tinggi viewport dinamis + safe area + tata letak cover mobile")
     lapor("ok" if "untukLatarGelap" in und and "untukLatarGelap" in baca("assets/theme-contrast.js") else "masalah",
           "aksen di atas foto gelap dicerahkan (untukLatarGelap)")
     lapor("ok" if "#cover{overflow-y:auto" in und else "masalah",
@@ -739,8 +748,8 @@ def cek_foto_cover():
           "studio.html: daftar 9 gaya tersedia")
     for fn in ("function cvMulai", "function cvJalan", "function cvLepas", "function cvZoom", "function cvReset"):
         lapor("ok" if fn in stu else "masalah", f"studio.html: {fn.split()[1]} tersedia (geser/zoom)")
-    cover_live = stu.count("coverStyle:cvGayaAktif()") >= 1 and "payload=barisUndangan()" in stu
-    cover_arsip = "coverStyle:state.coverStyle||'kotak'" in stu and "coverStyleExplicit:!!state.coverStyleExplicit" in stu
+    cover_live = "coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak'" in stu and "payload=barisUndangan()" in stu
+    cover_arsip = stu.count("coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak'") >= 2 and "coverStyleExplicit:!!state.coverStyleExplicit" in stu
     lapor("ok" if cover_live and cover_arsip else "masalah",
           "studio.html: gaya foto tersimpan di publish/export + arsip (manual/default)")
     lapor("ok" if "if(d.coverStyle)state.coverStyle=d.coverStyle" in stu else "masalah",
@@ -903,7 +912,7 @@ def cek_katalog_admin():
     ok = "function delKat(id)" in studio and "delKat('${k.id}')" in studio and "sm-btn del" in studio
     lapor("ok" if ok else "masalah", "studio.html: tiap baris katalog punya tombol 🗑 Hapus (delKat + konfirmasi)")
     ok = ("katalogDel:[]" in studio and "function pulihkanKat()" in studio
-          and "!state.katalogDel.includes(t.id)&&!state.katalog.some(k=>k.id===t.id)" in studio
+          and "!state.katalogDel.includes(t.id)&&!state.katalog.some(k=>(k.tpl||k.id)===t.id)" in studio
           and "katalogDel:state.katalogDel" in studio)
     lapor("ok" if ok else "masalah",
           "studio.html: tema bawaan yang dihapus tidak kembali saat dibuka ulang (tombstone katalogDel) + Pulihkan Bawaan")
@@ -925,6 +934,49 @@ def cek_katalog_admin():
           "uji katalog admin: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
 
 
+def cek_template_custom():
+    """RONDE 5: tema kustom tersimpan terpisah dari TPL publik, ikut payload, dan bisa dikelola."""
+    print("\n[24] Template kustom Studio (simpan / kelola / publish / migrasi)")
+    studio = baca("studio.html")
+    live = baca("undangan.html")
+    ids_st, ids_live = _tpl_ids("studio.html"), _tpl_ids("undangan.html")
+    ok = ("tplCustom:[]" in studio and "function normalizeTplCustom(items)" in studio
+          and "state.tplCustom=normalizeTplCustom(state.tplCustom)" in studio
+          and "function tplById(id)" in studio and "[...TPL,...(Array.isArray(state.tplCustom)?state.tplCustom:[])]" in studio)
+    lapor("ok" if ok else "masalah", "Studio: tplCustom punya migrasi aman dan tplOf/tplsFor memakai daftar terpisah")
+    ok = ids_st == ids_live and "Math.max(0,TPL.findIndex(t=>t.id===state.tpl))" in studio
+    lapor("ok" if ok else "masalah", "TPL publik tetap identik/berurutan; tema custom memakai indeks fallback tanpa menggeser TPL")
+    ok = all(x in studio for x in ("function saveCustomTemplate()", "function renameCustomTpl(id)",
+                                    "function duplicateCustomTpl(id)", "function deleteCustomTpl(id)",
+                                    'class="tpl-custom-entry"', "Tambahkan ke Katalog Publik",
+                                    "addKat(saved.id,{silent:true,nama:saved.nama})"))
+    lapor("ok" if ok else "masalah", "Studio: kartu simpan, badge CUSTOM, kelola tema, fallback hapus, dan opsi katalog publik tersedia")
+    baris_at = studio.find("function barisUndangan()")
+    pv_at = studio.find("function pvHtml()", baris_at)
+    baris = studio[baris_at:pv_at] if baris_at >= 0 and pv_at > baris_at else ""
+    ok = ("state.tplCustom||[]" in studio and studio.count("tplCustom:JSON.parse(JSON.stringify(state.tplCustom||[]))") >= 2
+          and "tplCustom:normalizeTplCustom(state.tplCustom)" in studio and "state.tplCustom||[]" in studio[studio.find("function draftSig") : studio.find("function draftDirty")]
+          and "coverStyleExplicit:!!state.coverStyleExplicit" in baris
+          and studio.count("state.tplCustom.forEach((t,i)=>{if(!t.studioOnly&&!state.katalog.some") >= 2)
+    lapor("ok" if ok else "masalah", "draftSig, preview/publish/export, arsip, cover eksplisit, dan katalog pulih bersama tplCustom")
+    custom_at = live.find("const customTpl=d&&tplId?customThemeFromDraft(tplId,d.tplCustom):null;")
+    index_at = live.find("const tplF=tpl||TPL[Math.max(0,Math.min(TPL.length-1")
+    ok = custom_at >= 0 and index_at > custom_at and "TPL publik tidak pernah ditambah/diurut ulang" in live
+    lapor("ok" if ok else "masalah", "undangan.html: d.tplCustom diselesaikan sebelum fallback indeks tema publik")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji interaksi template kustom dilewati")
+        return
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    if probe.returncode != 0:
+        lapor("info", "jsdom belum terpasang — uji interaksi template kustom dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-template-custom.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji template kustom: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -934,12 +986,12 @@ def main():
                cek_resolusi_demo, cek_anchor, cek_pipeline_undangan, cek_katalog_publik,
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
-               cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin):
+               cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
+               cek_template_custom):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
-    print("Yang tetap butuh mata manusia di preview: tampilan, animasi, autoplay")
-    print("musik, dan rasa keseluruhan — sandbox ini tidak punya browser.")
+    print("Penilaian visual, animasi, autoplay musik, dan kesesuaian terhadap spek lengkap tetap perlu ditinjau.")
     print("=" * 74)
     return 1 if hitung["masalah"] else 0
 

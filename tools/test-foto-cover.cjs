@@ -7,8 +7,8 @@
  *
  * Yang diperiksa:
  *   1. kedua berkas (undangan.html & studio.html) mengenal 9 gaya yang sama;
- *   2. undangan.html memakai data.coverStyle & data.coverPos (object-position +
- *      zoom) saat menggambar bingkai foto;
+ *   2. undangan.html memakai data.coverStyle & data.coverPos saat menggambar
+ *      bingkai foto, dengan seluruh bidang crop tetap bisa digeser setelah zoom;
  *   3. gaya "Foto Penuh" memakai latar foto + panel kaca gelap dengan teks putih;
  *      kontrasnya diukur untuk kasus terburuk (foto serba putih) — harus ≥ 4.5:1;
  *   4. tema/gaya lama tetap sama saat undangan tidak punya foto;
@@ -127,8 +127,11 @@ async function render(d) {
   /* ------------------------------------------------- 2. bingkai bisa digulir aman */
   console.log('\n2) Keamanan tata letak cover');
   cek(/#cover\{[^}]*overflow-y:auto/.test(und), 'cover bisa digulir → tombol "Buka Undangan" tidak terpotong');
+  cek(/height:100vh;height:100dvh/.test(und), 'cover mengikuti tinggi viewport dinamis di ponsel');
   cek(/#cover \.bdfr\{margin-top:auto/.test(und), 'isi cover memakai margin auto (tetap di tengah bila cukup)');
   cek(/@media \(max-height:700px\)/.test(und), 'ukuran bingkai mengecil di layar pendek');
+  cek(/@media\(max-width:480px\)/.test(und) && /safe-area-inset-bottom/.test(und) && /overflow-wrap:anywhere/.test(und),
+      'layout cover mobile menghormati safe area dan nama panjang');
 
   /* ------------------------------------------------- 3. kontras gaya "Foto Penuh" */
   console.log('\n3) Kontras gaya "Foto Penuh" (kasus terburuk: foto serba putih)');
@@ -174,6 +177,14 @@ async function render(d) {
           'posisi geser dari data.coverPos dipakai (20% 80%)');
       cek(!!img && /scale\(1\.4\)/.test(img.getAttribute('style') || ''), 'zoom dari data.coverPos dipakai (1.4×)');
       cek(!w.document.body.classList.contains('foto-full'), 'gaya bingkai tidak mengaktifkan mode foto penuh');
+      const frame=img.parentElement;
+      Object.defineProperty(img,'naturalWidth',{configurable:true,value:200});
+      Object.defineProperty(img,'naturalHeight',{configurable:true,value:300});
+      Object.defineProperty(frame,'clientWidth',{configurable:true,value:100});
+      Object.defineProperty(frame,'clientHeight',{configurable:true,value:150});
+      cek(w.fitCoverPhoto(img,frame,{x:50,y:50,z:4}), 'renderer menghitung ulang ukuran foto setelah zoom');
+      cek(img.style.width==='400px'&&img.style.height==='600px'&&img.style.left==='-150px'&&img.style.top==='-225px',
+          'foto dengan rasio sama tetap bisa digeser ke semua arah setelah zoom 4×');
       dom.window.close();
     }
     {
@@ -227,8 +238,12 @@ async function render(d) {
   }
   cek(/touch-action:none/.test(stu), 'kotak geser memakai touch-action (tidak ikut ter-scroll saat digeser)');
   cek(/naturalWidth/.test(stu), 'perpindahan dihitung dari ukuran gambar asli (gerakan pas 1:1)');
-  cek((stu.match(/coverStyle:cvGayaAktif\(\)/g) || []).length >= 2,
-      'gaya foto aktif disimpan ke publish() dan file HTML mandiri');
+  cek(/const lx=Math.max\(0,d\.iw\*fit\*p\.z-d\.w\)/.test(stu), 'geser dihitung dari luas crop sesudah zoom (rentang gerak penuh)');
+  cek(/Math\.min\(4,Math\.max\(1/.test(stu) && /max="4"/.test(stu), 'zoom cover dapat diatur sampai 4×');
+  cek(['function hapusFoto','function hapusFotoGaleri','function hapusFotoCerita'].every(fn=>stu.includes(fn)) && /aria-label="Hapus foto cover"/.test(stu),
+      'Studio menyediakan tombol hapus untuk cover, foto pasangan, galeri, dan cerita');
+  cek((stu.match(/coverStyle:CV_URUT\.includes\(state\.coverStyle\)\?state\.coverStyle:'kotak'/g) || []).length >= 2,
+      'gaya foto terpilih tetap tersimpan di publish() dan file HTML mandiri meski cover belum diunggah');
   cek(/coverStyle:state\.coverStyle\|\|'kotak'/.test(stu) && /coverStyleExplicit:!!state\.coverStyleExplicit/.test(stu),
       'arsip menyimpan gaya cover pilihan dan penanda manual/default');
   cek(/state\.coverStyleExplicit=true/.test(stu), 'pilihan gaya cover manual dipertahankan saat mengganti tema');
@@ -281,6 +296,24 @@ async function render(d) {
 
     w.setCvStyle('none');
     cekAsli('payload gaya \"tanpa\" mengirim style none ke renderer live', w.eval('barisUndangan().data.coverStyle') === 'none');
+    w.cvZoom(10);
+    cekAsli('zoom editor dibatasi aman pada 4×', Math.abs(w.eval('barisUndangan().data.coverPos.z')-4)<1e-6);
+    w.upd('fotoPria','data:image/png;base64,AA');w.upd('fotoWanita','data:image/png;base64,BB');w.upd('gallery',['foto-a','foto-b']);
+    w.storyAdd();w.upStory(0,'foto','data:image/png;base64,CC');w.setSlide('story',true);
+    w.set('tab','slide');
+    cekAsli('tombol hapus tersedia pada foto cerita',!!w.document.querySelector('button[aria-label="Hapus foto cerita"]'));
+    w.set('tab','musik');
+    const cropBox=w.document.querySelector('#cvAtur'),cropImg=cropBox&&cropBox.querySelector('img');
+    if(cropBox&&cropImg){
+      Object.defineProperty(cropImg,'naturalWidth',{configurable:true,value:200});Object.defineProperty(cropImg,'naturalHeight',{configurable:true,value:300});
+      Object.defineProperty(cropBox,'clientWidth',{configurable:true,value:100});Object.defineProperty(cropBox,'clientHeight',{configurable:true,value:150});
+      w.cvMulai({currentTarget:cropBox,clientX:0,clientY:0,pointerId:1,preventDefault(){}});w.cvJalan({clientX:75,clientY:0});w.cvLepas();
+      cekAsli('tarikan pointer 75px menggeser foto 75px pada zoom 4×',Math.abs(w.eval('barisUndangan().data.coverPos.x')-25)<1e-6);
+    }else cekAsli('kotak crop tampil setelah foto diunggah',false);
+    cekAsli('tombol hapus muncul pada foto yang sudah diunggah',w.document.querySelectorAll('button.photo-remove').length>=3);
+    w.hapusFoto('fotoPria');w.hapusFoto('fotoWanita');w.hapusFotoGaleri(0);w.hapusFotoCerita(0);w.hapusFoto('cover');
+    cekAsli('cover, dua foto, foto galeri, dan foto cerita dapat dihapus',w.eval('!barisUndangan().data.cover&&!barisUndangan().data.fotoPria&&!barisUndangan().data.fotoWanita&&barisUndangan().data.gallery.length===1&&!barisUndangan().data.slides.story.items[0].foto'));
+    cekAsli('hapus cover mengembalikan posisi crop ke tengah',w.eval('barisUndangan().data.coverPos.x===50&&barisUndangan().data.coverPos.y===50&&barisUndangan().data.coverPos.z===1'));
     dom.window.close();
   } else {
     console.log('  (pratinjau studio dilewati: jsdom belum terpasang)');
@@ -288,8 +321,8 @@ async function render(d) {
 
   cek(/function kecilkanFoto\(/.test(baca('studio.html')), 'studio.html: kecilkanFoto() (kompres ≤1200 px) tersedia');
   cek(/kecilkanFoto\(asal,f\.type\)/.test(baca('studio.html')), 'studio.html: upload cover & galeri dikompres');
-  cek(/state\.cover=asal;save\(\)\.render|state\.cover=asal;save\(\);render\(\)/.test(baca('studio.html')),
-      'studio.html: foto langsung tersimpan dulu, kompres menyusul (tidak memblokir)');
+  cek(/state\.cover=asal;state\.coverPos=\{x:50,y:50,z:1\};save\(\);render\(\)/.test(baca('studio.html')),
+      'studio.html: foto langsung disimpan dengan posisi crop netral, kompres menyusul');
 
   /* ------------------------------------- 6. master.html: foto cover di preview */
   console.log('\n6) Dashboard master: foto cover di kartu "Preview Undangan"');
@@ -307,8 +340,8 @@ async function render(d) {
   cek(/esc\(foto\)/.test(mas), 'master.html: alamat foto di-escape sebelum ditulis');
   cek(/replace\(\/\[\\r\\n"'\\\\\]\/g,''\).trim\(\)/.test(mas),
       'master.html: alamat foto dibersihkan dari kutip/newline (aman di CSS)');
-  cek(/Math\.min\(100,Math\.max\(0,n\)\)/.test(mas) && /Math\.min\(2\.2,Math\.max\(1,n\)\)/.test(mas),
-      'master.html: posisi & zoom dibatasi di rentang yang sama dengan Studio (0-100, 1-2,2)');
+  cek(/Math\.min\(100,Math\.max\(0,n\)\)/.test(mas) && /Math\.min\(4,Math\.max\(1,n\)\)/.test(mas),
+      'master.html: posisi & zoom dibatasi di rentang yang sama dengan Studio (0-100, 1-4)');
   cek(/b-cvnote/.test(mas), 'master.html: ada keterangan "belum ada foto cover" bila kosong');
   cek(/\.b-screen\.b-full::after/.test(mas) && /\.bc-bg img/.test(mas),
       'master.html: veil gelap + lapisan img untuk foto penuh ada di CSS');
@@ -333,7 +366,9 @@ async function render(d) {
       const oval = uji({ cover: 'f.jpg', coverStyle: 'oval', coverPos: { x: 120, y: -5, z: 3 } });
       cek(/bc-oval/.test(oval.blok), 'gaya oval dipakai di kartu master');
       cek(/object-position:100% 0%/.test(oval.blok), 'posisi dibatasi ke 0-100%');
-      cek(/scale\(2\.2\)/.test(oval.blok), 'zoom dibatasi ke maksimum 2,2x');
+      cek(/scale\(3\)/.test(oval.blok) && /data-z="3"/.test(oval.blok), 'zoom 3× ikut ke preview Master');
+      const zoomBatas = uji({ cover: 'f.jpg', coverStyle: 'oval', coverPos: { x: 50, y: 50, z: 9 } });
+      cek(/data-z="4"/.test(zoomBatas.blok), 'zoom preview Master dibatasi aman pada 4×');
 
       const penuh = uji({ cover: 'f.jpg', coverStyle: 'full' });
       cek(penuh.full && /<img[^>]*src="f\.jpg"/.test(penuh.blok) && /bc-bg/.test(penuh.blok),

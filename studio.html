@@ -40,6 +40,16 @@ input,textarea,select{outline:0}
 .thbtn.on{background:#111;color:#fff;border-color:#111}
 .thbtn.on .sub{color:rgba(255,255,255,.6)}
 .thbtn .sub{font-size:10px;color:var(--mut)}
+.tpl-custom-entry{display:grid;gap:2px;margin-bottom:8px}
+.tpl-custom-entry .thbtn{margin-bottom:0;min-width:0}
+.tpl-custom-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:0 4px}
+.tpl-custom-actions .sm-btn{min-width:0;min-height:32px;justify-content:center;padding:5px 3px;font-size:10px}
+.cv-layout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin-top:12px}
+.cv-layout-btn{min-width:0;min-height:76px;display:grid;align-content:center;justify-items:center;gap:5px;padding:8px 6px;border:2px solid var(--line);border-radius:14px;background:#fbfaf8;color:inherit;cursor:pointer;transition:transform .15s,border-color .15s,background .15s,box-shadow .15s}
+.cv-layout-btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.08)}
+.cv-layout-btn.on{border-color:#111;background:#111;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.13)}
+.cv-layout-btn .cv-layout-icon{font-size:20px;line-height:1}
+.cv-layout-btn .cv-layout-name{font-size:10px;font-weight:600;line-height:1.3;text-align:center}
 .menubtn{width:100%;display:flex;align-items:center;gap:12px;border-radius:16px;border:1px solid var(--line);padding:12px;text-align:left;background:#fff;transition:.15s;margin-bottom:6px}
 .menubtn:hover{background:#fbfaf8}
 .menubtn.on{background:#111;color:#fff;border-color:#111}
@@ -72,6 +82,17 @@ a.sm-btn{display:inline-flex;align-items:center;justify-content:center;text-deco
 .guestrow.sel{border-color:var(--gold);background:var(--cream)}
 .upload-dash{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:12px;border:2px dashed rgba(212,175,55,.4);background:rgba(255,251,235,.5);cursor:pointer;font-size:13px;transition:.15s}
 .upload-dash:hover{background:var(--cream)}
+.photo-field{min-width:0}
+.photo-upload-slot{position:relative;min-width:0}
+.photo-upload-tile{height:112px;display:grid;place-items:center;position:relative;overflow:hidden;border:1px dashed var(--line2);border-radius:12px;background:#fbfaf8;cursor:pointer}
+.photo-upload-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-upload-tile input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.photo-remove{position:absolute;z-index:3;top:6px;right:6px;width:32px;height:32px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.85);border-radius:50%;background:rgba(153,27,27,.94);color:#fff;font-size:15px;font-weight:700;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.22)}
+.photo-remove:hover{background:#991b1b}
+.gallery-thumb{position:relative;min-width:0;height:64px}
+.gallery-thumb img{width:100%;height:100%;object-fit:cover;border-radius:12px;border:1px solid var(--line);display:block}
+.gallery-thumb .photo-remove{top:4px;right:4px;width:24px;height:24px;font-size:12px}
+.cvprev{position:absolute;left:0;top:0;max-width:none;max-height:none}
 .dot{width:8px;height:8px;border-radius:99px}
 @keyframes pulse{50%{opacity:.5}}.pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
 /* ===== Animasi pratinjau undangan — diputar ulang hanya saat struktur
@@ -403,9 +424,53 @@ const TPL=[
 {id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'GERBANG',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'NATURAL',arch:true,studioOnly:true,desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung'},
 {id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'GERBANG',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',arch:true,studioOnly:true,desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch'}
 ];
-function tplOf(){return TPL.find(t=>t.id===state.tpl)||TPL[0]}
+const CUSTOM_TPL_PATTERNS=['','batik','botanical','frost','arab','confetti'];
+const CUSTOM_TPL_EVENTS=['pernikahan','khitanan','ultah','aqiqah','all'];
+const CUSTOM_TPL_COVER_STYLES=['kotak','oval','lingkaran','arch','polaroid','emas','kapsul','full','none'];
+const CUSTOM_TPL_COVER_LAYOUTS=['amplop','kartu','foto','gerbang','minimal','batik','sakura','night','ticket','editorial','polaroid','glass','royal','archive','neon'];
+function customColor(v,fallback){const s=String(v||'').trim();return /^#[0-9a-f]{6}$/i.test(s)?s.toUpperCase():fallback}
+function customAsset(v){const s=String(v||''),parts=s.split('/');return parts[0]==='assets'&&parts.length>1&&parts.slice(1).every(p=>/^[a-z0-9._-]+$/i.test(p))&&!parts.includes('..')?s:''}
+function normalizeTplCustom(items){
+ if(!Array.isArray(items))return[];
+ const used=new Set(TPL.map(t=>t.id)),out=[];
+ items.slice(0,80).forEach(raw=>{
+  if(!raw||typeof raw!=='object')return;
+  const id=String(raw.id||'').toLowerCase();
+  if(!/^custom-[a-z0-9][a-z0-9-]{2,80}$/.test(id)||used.has(id))return;
+  const base=TPL.find(t=>t.id===raw.baseTpl)||TPL[0];
+  const nama=String(raw.nama||'Template Kustom').replace(/[<>]/g,'').trim().slice(0,60);
+  if(!nama)return;
+  const ev=CUSTOM_TPL_EVENTS.includes(raw.ev)?raw.ev:(CUSTOM_TPL_EVENTS.includes(base.ev)?base.ev:'all');
+  const colors=Array.isArray(raw.g)?raw.g:base.g;
+  const fonts=FONTS.map(f=>f.id);
+  const source=raw.design&&typeof raw.design==='object'?raw.design:{};
+  const design={};
+  if(fonts.includes(source.fontBody))design.fontBody=source.fontBody;
+  if(BORDERS.some(b=>b.id===source.border))design.border=source.border;
+  if(['tanpa','ranting','bunga3d','bunga4d'].includes(source.ornSudut))design.ornSudut=source.ornSudut;
+  if(CUSTOM_TPL_COVER_LAYOUTS.includes(source.coverLayout))design.coverLayout=source.coverLayout;
+  if(CUSTOM_TPL_COVER_STYLES.includes(source.coverStyle))design.coverStyle=source.coverStyle;
+  if(typeof source.coverStyleExplicit==='boolean')design.coverStyleExplicit=source.coverStyleExplicit;
+  if(typeof source.darkMode==='boolean')design.darkMode=source.darkMode;
+  if(typeof source.goldOrn==='boolean')design.goldOrn=source.goldOrn;
+  const row={id,nama,ev,baseTpl:base.id,
+   g:[0,1,2].map(i=>customColor(colors[i],base.g[i])),
+   accent:customColor(raw.accent,base.accent),ink:customColor(raw.ink,base.ink),
+   badge:'CUSTOM',deco:String(raw.deco||base.deco||'✦ ❖ ✦').replace(/[<>]/g,'').replace(/\s+/g,' ').slice(0,60),
+   pat:CUSTOM_TPL_PATTERNS.includes(raw.pat)?raw.pat:(base.pat||''),
+   ft:fonts.includes(raw.ft)?raw.ft:base.ft,char:String(raw.char||base.char||'').replace(/[<>]/g,'').slice(0,24),
+   desc:String(raw.desc||'Tema undangan kustom').replace(/[<>]/g,'').replace(/\s+/g,' ').slice(0,180),
+   arch:!!raw.arch,bg3d:customAsset(raw.bg3d),bgPaper:customAsset(raw.bgPaper),
+   studioOnly:raw.studioOnly!==false,custom:true,design};
+  used.add(id);out.push(row)
+ });
+ return out
+}
+function tplById(id){const key=String(id||'');return TPL.find(t=>t.id===key)||(Array.isArray(state.tplCustom)?state.tplCustom.find(t=>t.id===key):null)||null}
+function tplOf(){return tplById(state.tpl)||TPL[0]}
 function syncDefaultCoverStyle(t){if(!state.coverStyleExplicit)state.coverStyle=t&&t.arch?'arch':'kotak'}
-function tplsFor(ev){return TPL.filter(t=>(t.ev===ev||t.ev==='all')&&!state.katalogHide.includes(t.id))}
+function tplsFor(ev){const hidden=Array.isArray(state.katalogHide)?state.katalogHide:[];
+ return [...TPL,...(Array.isArray(state.tplCustom)?state.tplCustom:[])].filter(t=>(t.ev===ev||t.ev==='all')&&!hidden.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
 function patCss(t){
  const tile=(svg,size)=>`background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${size};background-repeat:repeat;`;
@@ -508,7 +573,7 @@ const DEMO_MUSIC=[
 
 /* ============ STATE ============ */
 const DEF={
- page:'editor',tab:'info',event:'pernikahan',tpl:'ivory-klasik',accent:'#8A6E4B',
+ page:'editor',tab:'info',event:'pernikahan',tpl:'ivory-klasik',accent:'#8A6E4B',tplCustom:[],tplDraftName:'',tplDraftPublic:false,
  fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,darkMode:false,border:'double',ornSudut:'bunga4d',katalogHide:[],katalogDel:[],
  form:{namaPria:'',gelarPria:'',namaWanita:'',gelarWanita:'',
   putraPutri:'',putriDari:'',
@@ -551,23 +616,25 @@ try{
  const stored=JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}')||{};
 if(stored.tab==='master'||stored.tab==='domain')stored.tab='terbit'; /* susunan tab baru */
  state=Object.assign({},JSON.parse(JSON.stringify(DEF)),stored);
+ state.tplCustom=normalizeTplCustom(state.tplCustom);
  state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});
  state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});
  state.coverPos=Object.assign({x:50,y:50,z:1},state.coverPos||{});
+ if(!CUSTOM_TPL_COVER_LAYOUTS.includes(state.coverLayout))state.coverLayout='amplop';
  if(!state.coverStyle)state.coverStyle='kotak';
  /* Migrasi: gaya non-default dari proyek lama dianggap pilihan manual. */
  if(typeof stored.coverStyleExplicit==='boolean')state.coverStyleExplicit=stored.coverStyleExplicit;
  else state.coverStyleExplicit=!!stored.coverStyle&&!['kotak','arch'].includes(stored.coverStyle);
- if(!state.coverStyleExplicit){const aktif=TPL.find(t=>t.id===state.tpl);state.coverStyle=aktif&&aktif.arch?'arch':'kotak'}
+ if(!state.coverStyleExplicit){const aktif=tplById(state.tpl);state.coverStyle=aktif&&aktif.arch?'arch':'kotak'}
  state.playing=false
 }catch(e){state=JSON.parse(JSON.stringify(DEF))}
 if(state.started===false&&(state.form.namaPria||state.form.namaWanita||state.form.namaAnak||state.published))state.started=true;
 if(state.published&&!state.publishedLink)state.publishedLink=baseUrl();
 function mergeSlides(s){const out={};Object.keys(DEF.slides).forEach(k=>{out[k]=Object.assign({},DEF.slides[k],(s&&s[k])||{})});return out}
 /* migrasi ringan: pastikan template valid, katalog pakai struktur TPL, & musik demo selalu tersedia */
-if(!state.tpl||!TPL.some(t=>t.id===state.tpl))state.tpl=TPL[0].id;
+ if(!state.tpl||!tplById(state.tpl))state.tpl=TPL[0].id;
 /* baris katalog bawaan untuk satu tema publik TPL (dipakai saat boot, migrasi, dan Pulihkan Bawaan) */
-function barisKat(t,i){return{id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:Math.max(0,340-(state.katalog.length+i)*23)}}
+function barisKat(t,i){const harga=Number(t.harga)||75000;return{id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:harga+75000,hargaPromo:harga,promoActive:true,badge:t.custom?'CUSTOM':(t.badge||''),terjual:Math.max(0,340-(state.katalog.length+i)*23)}}
 /* katalogDel = tema bawaan yang sengaja dihapus pemilik dari katalog (tombstone) */
 if(!Array.isArray(state.katalogDel))state.katalogDel=[];
 state.katalogDel=state.katalogDel.filter(id=>TPL.some(t=>t.id===id&&!t.studioOnly));
@@ -575,11 +642,13 @@ if(!Array.isArray(state.katalog)||(state.katalog.length&&!state.katalog[0].tpl))
 /* Bersihkan baris lama yang tidak lagi cocok dan semua baris harga Studio-only. */
 else state.katalog=state.katalog.filter(k=>{
  if(!k)return false;
- const t=TPL.find(t=>t.id===(k.tpl||k.id));
+ const t=tplById(k.tpl||k.id);
  return !!t&&!t.studioOnly;
 });
-/* Tema publik baru otomatis masuk kecuali pernah dihapus; Arch Studio-only tidak pernah diberi harga. */
-TPL.forEach((t,i)=>{if(!t.studioOnly&&!state.katalogDel.includes(t.id)&&!state.katalog.some(k=>k.id===t.id))state.katalog.push(barisKat(t,i))});
+/* Tema publik bawaan otomatis masuk kecuali pernah dihapus. */
+TPL.forEach((t,i)=>{if(!t.studioOnly&&!state.katalogDel.includes(t.id)&&!state.katalog.some(k=>(k.tpl||k.id)===t.id))state.katalog.push(barisKat(t,i))});
+/* Tema custom baru hanya masuk katalog bila checkbox publik dipilih saat disimpan. */
+state.tplCustom.forEach((t,i)=>{if(!t.studioOnly&&!state.katalog.some(k=>(k.tpl||k.id)===t.id))state.katalog.push(barisKat(t,i))});
 /* migrasi border (dulu: toggle dblBorder) & daftar katalog tersembunyi */
 if(state.dblBorder===false)state.border='none';else if(state.dblBorder===true)state.border='double';delete state.dblBorder
 /* kunci master (akses dashboard privat) — dibuat sekali, dipakai di link master */
@@ -587,7 +656,7 @@ function mkRand(){const c='abcdefghjkmnpqrstuvwxyz23456789';let s='';for(let i=0
 if(!state.masterKey){state.masterKey=mkRand();save()}
 if(!BORDERS.some(b=>b.id===state.border))state.border='double';
 if(!Array.isArray(state.katalogHide))state.katalogHide=[];
-state.katalogHide=state.katalogHide.filter(id=>TPL.some(t=>t.id===id&&!t.studioOnly));
+state.katalogHide=state.katalogHide.filter(id=>{const t=tplById(id);return !!t&&!t.studioOnly});
 if(!Array.isArray(state.musicDb))state.musicDb=[];
 state.musicDb=state.musicDb.filter(m=>!m.demo||DEMO_MUSIC.some(d=>d.url===m.url));
 if(state.music&&state.music.demo&&!DEMO_MUSIC.some(d=>d.url===state.music.url)){state.music=null;state.playing=false}
@@ -595,7 +664,7 @@ DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.pu
 /* Signature murah untuk mendeteksi "ada perubahan sejak publish terakhir" tanpa
    ikut menyalin foto base64 (cukup panjangnya saja). */
 function sigHash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h+str.charCodeAt(i))|0;return h.toString(36)+'.'+str.length}
-function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,state.coverLayout||'amplop',!!state.coverStyleExplicit,state.coverPos,(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug]))}
+function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.tplCustom||[],state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,state.coverLayout||'amplop',!!state.coverStyleExplicit,state.coverPos,(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug]))}
 function draftDirty(){return !!(state.published&&state.pubSig&&state.pubSig!==draftSig())}
 /* Ketik isian tidak me-render ulang seluruh editor (agar fokus tidak hilang),
    jadi status "perubahan belum dipublikasikan" & tombol Publish Ulang
@@ -814,9 +883,61 @@ function qrDataUndangan(g){return qrTeks(g.link,state.showNameQr?`${g.nama.slice
 
 /* state setters */
 function set(k,v){state[k]=v;save();render()}
-function pickTpl(id){const t=TPL.find(x=>x.id===id);if(!t)return;state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;syncDefaultCoverStyle(t);paksaTier();save();render();notify('Template: '+t.nama)}
-function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft){state.tpl=ft.id;state.accent=ft.accent;state.fontTitle=ft.ft||state.fontTitle;syncDefaultCoverStyle(ft)}paksaTier();save();render()}
-function prevKat(id){const t=TPL.find(x=>x.id===(state.katalog.find(k=>k.id===id)?.tpl||id));if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}state.tpl=t.id;state.accent=t.accent;state.fontTitle=t.ft||state.fontTitle;syncDefaultCoverStyle(t);paksaTier();save();render();notify('Preview: '+t.nama)}
+function applyTplToState(t){if(!t)return false;
+ state.tpl=t.id;state.accent=t.accent||state.accent;state.fontTitle=t.ft||state.fontTitle;
+ const d=t.design||{};
+ if(d.fontBody)state.fontBody=d.fontBody;
+ if(d.border)state.border=d.border;
+ if(d.ornSudut)state.ornSudut=d.ornSudut;
+ if(d.coverLayout)state.coverLayout=d.coverLayout;
+ if(d.coverStyle)state.coverStyle=d.coverStyle;
+ if(typeof d.coverStyleExplicit==='boolean')state.coverStyleExplicit=d.coverStyleExplicit;
+ if(typeof d.darkMode==='boolean')state.darkMode=d.darkMode;
+ if(typeof d.goldOrn==='boolean')state.goldOrn=d.goldOrn;
+ syncDefaultCoverStyle(t);paksaTier();return true
+}
+function newCustomTplId(){let id;do{id='custom-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7)}while(tplById(id));return id}
+function pickTpl(id){const t=tplById(id);if(!t)return;applyTplToState(t);save();render();notify('Template: '+t.nama)}
+function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft)applyTplToState(ft);save();render()}
+function prevKat(id){const row=state.katalog.find(k=>k.id===id),t=tplById(row&&(row.tpl||row.id)||id);if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}applyTplToState(t);save();render();notify('Preview: '+t.nama)}
+function makeCustomTemplate(name,isPublic){
+ const source=tplOf(),id=newCustomTplId();
+ return normalizeTplCustom([...state.tplCustom,{id,nama:name,ev:state.event,g:source.g,accent:state.accent,ink:source.ink,
+  deco:source.deco,pat:source.pat,ft:state.fontTitle,char:source.char,arch:source.arch,baseTpl:source.custom?(source.baseTpl||TPL[0].id):source.id,
+  bg3d:source.bg3d,bgPaper:source.bgPaper,studioOnly:!isPublic,
+  desc:'Tema kustom berdasarkan '+source.nama,
+  design:{fontBody:state.fontBody,border:state.border,ornSudut:state.ornSudut,coverLayout:state.coverLayout||'amplop',
+   coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,darkMode:!!state.darkMode,goldOrn:!!state.goldOrn}}]).slice(-80).find(t=>t.id===id)
+}
+function saveCustomTemplate(){
+ const nama=String(state.tplDraftName||'').trim().slice(0,60);
+ if(!nama){notify('Tulis nama untuk template baru terlebih dahulu.');document.getElementById('tplCustomName')?.focus();return}
+ if(state.tplCustom.length>=80){notifyWarn('Maksimal 80 template kustom. Hapus template lama sebelum menyimpan yang baru.');return}
+ const publik=!!state.tplDraftPublic,template=makeCustomTemplate(nama,publik);
+ if(!template){notifyErr('Template tidak dapat disimpan. Coba nama lain.');return}
+ state.tplCustom=normalizeTplCustom([...state.tplCustom,template]);
+ const saved=state.tplCustom.find(t=>t.id===template.id);if(!saved){notifyErr('Template gagal divalidasi dan tidak disimpan.');return}
+ applyTplToState(saved);state.tplDraftName='';state.tplDraftPublic=false;
+ if(publik)addKat(saved.id,{silent:true,nama:saved.nama});
+ save();render();renderPreview();notify(publik?'Template kustom disimpan dan ditambahkan ke Katalog Harga & Promo.':'Template kustom disimpan khusus di Studio.')
+}
+function renameCustomTpl(id){const t=state.tplCustom.find(x=>x.id===id);if(!t)return;
+ const lama=t.nama,nama=window.prompt('Nama baru untuk template kustom:',lama);if(nama===null)return;
+ const bersih=String(nama).replace(/[<>]/g,'').trim().slice(0,60);if(!bersih){notify('Nama template tidak boleh kosong.');return}
+ t.nama=bersih;state.katalog.filter(k=>k.tpl===id&&k.nama===lama).forEach(k=>k.nama=bersih);save();render();notify('Nama template diperbarui.')
+}
+function duplicateCustomTpl(id){const t=state.tplCustom.find(x=>x.id===id);if(!t)return;
+ if(state.tplCustom.length>=80){notifyWarn('Maksimal 80 template kustom. Hapus template lama sebelum menggandakan.');return}
+ const copy=JSON.parse(JSON.stringify(t));copy.id=newCustomTplId();copy.nama=(t.nama+' — Salinan').slice(0,60);copy.studioOnly=true;copy.badge='CUSTOM';
+ state.tplCustom=normalizeTplCustom([...state.tplCustom,copy]);const created=state.tplCustom.find(x=>x.id===copy.id);
+ if(created)applyTplToState(created);save();render();notify('Salinan template dibuat khusus di Studio.')
+}
+function deleteCustomTpl(id){const t=state.tplCustom.find(x=>x.id===id);if(!t)return;
+ if(!window.confirm('Hapus template kustom “'+t.nama+'”?'))return;
+ state.tplCustom=state.tplCustom.filter(x=>x.id!==id);state.katalog=state.katalog.filter(k=>(k.tpl||k.id)!==id);state.katalogHide=state.katalogHide.filter(x=>x!==id);
+ if(state.tpl===id){const fallback=([...TPL,...state.tplCustom].find(x=>(x.ev===state.event||x.ev==='all')))||TPL[0];applyTplToState(fallback)}
+ save();render();renderPreview();notify('Template kustom dihapus. Undangan memakai template aman: '+tplOf().nama+'.')
+}
 function upd(k,v){state[k]=v;save();renderPreview()}
 function updF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();renderPreview()}
 function setF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();render()}
@@ -952,41 +1073,69 @@ const CV_URUT=['kotak','oval','lingkaran','arch','polaroid','emas','kapsul','ful
 function cvPos(){if(!state.coverPos||typeof state.coverPos!=='object')state.coverPos={x:50,y:50,z:1};
  state.coverPos.x=Math.min(100,Math.max(0,Number(state.coverPos.x)||0));
  state.coverPos.y=Math.min(100,Math.max(0,Number(state.coverPos.y)||0));
- state.coverPos.z=Math.min(2.2,Math.max(1,Number(state.coverPos.z)||1));return state.coverPos}
+ state.coverPos.z=Math.min(4,Math.max(1,Number(state.coverPos.z)||1));return state.coverPos}
 function cvGayaAktif(){const d=String(state.coverStyle||'');if(!state.cover)return 'none';
  if(d==='full'||d==='none')return d;return CV_BENTUK[d]?d:'kotak'}
 function cvNama(){return (CV_BENTUK[cvGayaAktif()]||{}).nama||'-'}
-const CV_LAYOUTS=[['amplop','Amplop Klasik','✉️','Amplop kertas dengan segel — tampilan bawaan.'],
+const CV_LAYOUTS=[
+ ['amplop','Amplop Klasik','✉️','Amplop kertas dengan segel — tampilan bawaan.'],
  ['kartu','Kartu Stationery','💌','Kartu kertas tegas dengan tombol pil, tanpa gambar amplop.'],
  ['foto','Foto Penuh','🖼️','Foto cover memenuhi layar, nama terbaca di atas lapisan gelap.'],
- ['gerbang','Gerbang Lengkung','','Foto dibingkai lengkung di tengah seperti gerbang.'],
- ['minimal','Minimalis','✦','Tanpa foto: monogram & tipografi saja di atas latar tema.']];
+ ['gerbang','Gerbang Lengkung','🏛️','Foto dibingkai lengkung di tengah seperti gerbang.'],
+ ['minimal','Minimalis','✦','Tanpa foto: monogram & tipografi saja di atas latar tema.'],
+ ['batik','Batik Nusantara','🧵','Bingkai motif geometris terinspirasi batik, dengan lapisan warna hangat.'],
+ ['sakura','Taman Sakura','🌸','Kelopak merah muda, sudut lembut, dan nuansa taman musim semi.'],
+ ['night','Langit Malam','🌙','Latar malam bertabur bintang dengan tipografi terang yang tenang.'],
+ ['ticket','Tiket Kenangan','🎟️','Bentuk tiket acara berlekuk dan garis perforasi di sisi kartu.'],
+ ['editorial','Editorial Majalah','📰','Tata letak asimetris seperti sampul majalah, bersih dan berkarakter.'],
+ ['polaroid','Tumpukan Polaroid','📸','Kartu foto miring dengan bingkai putih ala album kenangan.'],
+ ['glass','Kaca Embun','🫧','Kartu kaca buram transparan dengan kilau lembut di atas palet tema.'],
+ ['royal','Royal Nusantara','👑','Bingkai kerajaan bernuansa zamrud dan emas dengan garis berlapis.'],
+ ['archive','Surat Arsip','📜','Kertas surat bertekstur lawas, garis tinta, dan cap klasik.'],
+ ['neon','Neon Kota','🌃','Gaya malam urban dengan cahaya neon kontras dan tombol bercahaya.']
+];
 function setCvLayout(id){if(!CV_LAYOUTS.some(c=>c[0]===id))return;state.coverLayout=id;save();render();renderPreview()}
 function setCvStyle(id){if(!CV_BENTUK[id])return;state.coverStyle=id;state.coverStyleExplicit=true;save();render();notify('Gaya foto cover: '+cvNama())}
+function cvTerapkanCrop(im,frame,p){
+ const b=frame.getBoundingClientRect(),w=frame.clientWidth||b.width,h=frame.clientHeight||b.height;
+ const iw=im.naturalWidth||0,ih=im.naturalHeight||0;
+ if(!w||!h||!iw||!ih)return false;
+ const fit=Math.max(w/iw,h/ih),fw=iw*fit*p.z,fh=ih*fit*p.z;
+ im.style.position='absolute';im.style.maxWidth='none';im.style.maxHeight='none';
+ im.style.width=fw+'px';im.style.height=fh+'px';
+ im.style.left=(-Math.max(0,fw-w)*p.x/100)+'px';im.style.top=(-Math.max(0,fh-h)*p.y/100)+'px';
+ im.style.objectFit='fill';im.style.objectPosition='50% 50%';im.style.transform='none';return true
+}
 function cvGambar(){const p=cvPos();
- document.querySelectorAll('.cvprev').forEach(im=>{im.style.objectPosition=p.x+'% '+p.y+'%';im.style.transform='scale('+p.z+')'});
+ document.querySelectorAll('.cvprev').forEach(im=>{
+  if(!cvTerapkanCrop(im,im.parentElement,p)){
+   im.style.objectFit='cover';im.style.objectPosition=p.x+'% '+p.y+'%';im.style.transform='scale('+p.z+')'
+  }
+ });
  const lab=document.getElementById('cvZoom');if(lab)lab.textContent=p.z.toFixed(2)+'×';
  const rng=document.getElementById('cvRange');if(rng&&Number(rng.value)!==p.z)rng.value=p.z}
-function cvZoom(v){cvPos().z=Math.min(2.2,Math.max(1,parseFloat(v)||1));cvGambar();save()}
+function cvZoom(v){cvPos().z=Math.min(4,Math.max(1,parseFloat(v)||1));cvGambar();save()}
 function cvTengah(){const p=cvPos();p.x=50;p.y=50;cvGambar();save()}
 function cvReset(){state.coverPos={x:50,y:50,z:1};save();render();notify('Posisi foto direset')}
-/* Geser foto: perpindahan dihitung dari ukuran gambar asli supaya gerakannya
-   pas 1:1 dengan yang terlihat (bukan kira-kira). */
+/* Geser foto: posisi x/y memilih seluruh rentang crop yang masih tersedia.
+   Ukuran dihitung sesudah zoom, jadi foto tetap bisa digeser sampai tepi bingkai. */
 let _cvDrag=null;
 function cvMulai(e){const el=e.currentTarget,im=el.querySelector('img');if(!im)return;
- e.preventDefault();const p=cvPos();
- _cvDrag={el:el,im:im,x0:e.clientX,y0:e.clientY,x:p.x,y:p.y,r:el.getBoundingClientRect(),
+ e.preventDefault();const p=cvPos(),b=el.getBoundingClientRect();
+ _cvDrag={el:el,im:im,x0:e.clientX,y0:e.clientY,x:p.x,y:p.y,
+  w:el.clientWidth||b.width,h:el.clientHeight||b.height,
   iw:im.naturalWidth||im.width||1,ih:im.naturalHeight||im.height||1};
  el.style.cursor='grabbing';if(el.setPointerCapture)el.setPointerCapture(e.pointerId);
- window.addEventListener('pointermove',cvJalan);window.addEventListener('pointerup',cvLepas)}
+ window.addEventListener('pointermove',cvJalan);window.addEventListener('pointerup',cvLepas);window.addEventListener('pointercancel',cvLepas)}
 function cvJalan(e){if(!_cvDrag)return;const d=_cvDrag,p=cvPos();
- const skala=Math.max(d.r.width/d.iw,d.r.height/d.ih)*p.z;
- const lx=Math.max(0,d.iw*skala-d.r.width),ly=Math.max(0,d.ih*skala-d.r.height);
+ const fit=Math.max(d.w/d.iw,d.h/d.ih);
+ const lx=Math.max(0,d.iw*fit*p.z-d.w),ly=Math.max(0,d.ih*fit*p.z-d.h);
  p.x=Math.max(0,Math.min(100,d.x-(lx?(e.clientX-d.x0)*100/lx:0)));
  p.y=Math.max(0,Math.min(100,d.y-(ly?(e.clientY-d.y0)*100/ly:0)));
  cvGambar()}
 function cvLepas(){if(!_cvDrag)return;_cvDrag.el.style.cursor='grab';_cvDrag=null;
- window.removeEventListener('pointermove',cvJalan);save()}
+ window.removeEventListener('pointermove',cvJalan);window.removeEventListener('pointerup',cvLepas);window.removeEventListener('pointercancel',cvLepas);save()}
+window.addEventListener('resize',()=>{if(typeof requestAnimationFrame==='function')requestAnimationFrame(cvGambar);else cvGambar()},{passive:true});
 /* Kecilkan foto sampai maks 1200 px (JPEG 0.82 / PNG). Data URL asli langsung
    dipakai dulu agar tidak pernah menunggu; versi kecil menyusul menggantikan.
    Bila berkas bukan gambar / gagal didekode, alamat asli dibiarkan apa adanya. */
@@ -1009,12 +1158,19 @@ function kecilkanFoto(dataUrl,tipe){return new Promise(res=>{
   im.src=dataUrl;
  }catch(e){akhiri(dataUrl)}
 })}
-function uploadCover(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const asal=r.result;state.cover=asal;save();render();
+function uploadCover(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const asal=r.result;state.cover=asal;state.coverPos={x:50,y:50,z:1};save();render();
  kecilkanFoto(asal,f.type).then(k=>{if(k!==asal&&state.cover===asal){state.cover=k;save();render()}})};r.readAsDataURL(f)}
 function uploadOrang(input,slot){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const asal=r.result;state[slot]=asal;save();render();
  kecilkanFoto(asal,f.type).then(k=>{if(k!==asal&&state[slot]===asal){state[slot]=k;save();render()}})};r.readAsDataURL(f)}
 function uploadGallery(input){const fs=Array.from(input.files||[]);let left=fs.length;fs.forEach(f=>{const r=new FileReader();r.onload=()=>{const asal=r.result;const i=state.gallery.length;state.gallery.push(asal);if(--left===0){save();render()}
  kecilkanFoto(asal,f.type).then(k=>{if(k!==asal&&state.gallery[i]===asal){state.gallery[i]=k;save();render()}})};r.readAsDataURL(f)})}
+function hapusFoto(slot){if(!['cover','fotoPria','fotoWanita'].includes(slot)||!state[slot])return;
+ const nama=slot==='cover'?'foto cover':slot==='fotoPria'?'foto utama':'foto kedua';state[slot]='';
+ if(slot==='cover')state.coverPos={x:50,y:50,z:1};save();render();renderPreview();notify(nama+' dihapus')}
+function hapusFotoGaleri(i){if(!Array.isArray(state.gallery)||!state.gallery[i])return;
+ state.gallery.splice(i,1);save();render();renderPreview();notify('Foto galeri dihapus')}
+function hapusFotoCerita(i){const s=state.slides.story;if(!s||!Array.isArray(s.items)||!s.items[i]||!s.items[i].foto)return;
+ s.items[i].foto='';save();render();renderPreview();notify('Foto cerita dihapus')}
 async function publish(){
  if(_publishing)return;
  const f=state.form,missing=[];
@@ -1047,7 +1203,7 @@ async function publish(){
  /* Snapshot arsip = semua isian yang bisa diedit, supaya "Edit lagi" dari Folder /
     Arsip mengembalikan undangan apa adanya (amplop, galeri, foto, tamu, link mode). */
  const entry={id:'f'+Date.now(),jenis:state.event,nama,tanggal:state.form.tanggalAcara,status:'Published',slug:state.slug,
-  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,accent:state.accent,slug:state.slug,
+  snap:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,tplCustom:JSON.parse(JSON.stringify(state.tplCustom||[])),doa:state.doa,accent:state.accent,slug:state.slug,
    fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,ornSudut:state.ornSudut,
    slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    amplop:JSON.parse(JSON.stringify(state.amplop)),videoLink:state.videoLink||'',
@@ -1071,12 +1227,12 @@ async function dlUndangan(){
  try{
   const r=await fetch('undangan.html');if(!r.ok)throw new Error('HTTP '+r.status);
   let html=await r.text();
-  const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
+  const data={form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,tplCustom:JSON.parse(JSON.stringify(state.tplCustom||[])),doa:state.doa,
    accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,ornSudut:state.ornSudut,
    amplop:JSON.parse(JSON.stringify(state.amplop)),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',coverStyle:cvGayaAktif(),coverPos:Object.assign({},cvPos()),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
+   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],publishedAt:new Date().toISOString()};
   if(JSON.stringify(data).length>1500000){data.gallery=[];
    if(JSON.stringify(data).length>1200000){data.cover='';
@@ -1096,7 +1252,7 @@ async function dlUndangan(){
  try{const vj=await fetch('assets/vip-4d.js');if(vj.ok)vipJs=await vj.text()}catch(e){}
   /* Artwork tema (termasuk kertas Batik & watercolor Sage) ikut disematkan bila ringan,
      supaya file HTML mandiri tetap mempertahankan tampilan tanpa folder assets/. */
-  const tpUndang=TPL.find(t=>t.id===state.tpl)||null;
+  const tpUndang=tplById(state.tpl)||null;
   const embedVisual=async path=>{if(!path)return'';try{const r=await fetch(path);if(!r.ok)return'';
    const bl=await r.blob();if(!bl.size||bl.size>=300000)return'';
    return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result||''));fr.onerror=()=>res('');fr.readAsDataURL(bl)})
@@ -1126,10 +1282,13 @@ async function dlUndangan(){
    Dipakai oleh Folder / Arsip dan Riwayat dari server supaya hasil "edit lagi" sama. */
 function applyDraftData(d,extra){
  d=d||{};extra=extra||{};
- const kept={katalog:state.katalog,katalogHide:state.katalogHide,katalogDel:state.katalogDel,promo:state.promo,arsip:state.arsip,musicDb:state.musicDb};
+ const kept={katalog:state.katalog,katalogHide:state.katalogHide,katalogDel:state.katalogDel,promo:state.promo,arsip:state.arsip,musicDb:state.musicDb,tplCustom:normalizeTplCustom(state.tplCustom)};
  state=Object.assign(JSON.parse(JSON.stringify(DEF)),kept,{started:true,masterKey:d.masterKey||extra.masterKey||mkRand()});
+ if(Array.isArray(d.tplCustom))state.tplCustom=normalizeTplCustom(d.tplCustom);
+ state.tplCustom.forEach((t,i)=>{if(!t.studioOnly&&!state.katalog.some(k=>(k.tpl||k.id)===t.id))state.katalog.push(barisKat(t,i))});
  state.event=d.event||extra.event||state.event;
- if(d.tpl&&TPL.some(t=>t.id===d.tpl))state.tpl=d.tpl;else{const ft=tplsFor(state.event)[0];if(ft)state.tpl=ft.id}
+ if(d.tpl&&tplById(d.tpl))state.tpl=d.tpl;else{const ft=tplsFor(state.event)[0];if(ft)state.tpl=ft.id}
+ applyTplToState(tplOf());
  state.form=Object.assign({},DEF.form,d.form||{});
  state.doa=d.doa||state.event;state.accent=d.accent||tplOf().accent;
  state.slug=extra.slug||d.slug||'';
@@ -1137,7 +1296,7 @@ function applyDraftData(d,extra){
  if(d.border)state.border=d.border;if(d.ornSudut)state.ornSudut=d.ornSudut;
  if(d.cover!==undefined)state.cover=d.cover||'';
  if(d.coverStyle)state.coverStyle=d.coverStyle;
- if(d.coverLayout)state.coverLayout=d.coverLayout;else state.coverLayout='amplop';
+ state.coverLayout=CUSTOM_TPL_COVER_LAYOUTS.includes(d.coverLayout)?d.coverLayout:'amplop';
  if(typeof d.coverStyleExplicit==='boolean')state.coverStyleExplicit=d.coverStyleExplicit;
  else state.coverStyleExplicit=!!d.cover&&!!d.coverStyle&&!['kotak','arch'].includes(d.coverStyle);
  if(!state.coverStyleExplicit)syncDefaultCoverStyle(tplOf());
@@ -1215,24 +1374,45 @@ function dlQrUndangan(nama){const g=guests().find(x=>x.nama===nama);if(!g)return
 async function copyTxt(t,msg){try{if(!navigator.clipboard)throw new Error('clipboard');await navigator.clipboard.writeText(t);notify(msg||'Disalin ✓')}catch(e){notify('Belum bisa menyalin otomatis. Pilih teks link lalu salin manual.')}}
 function waLink(g){const txt=state.waTemplate.replace('{nama_tamu}',g.nama).replace('{link_undangan}',g.link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf());return 'https://wa.me/?text='+encodeURIComponent(txt)}
 function updKat(id,k,v){const it=state.katalog.find(x=>x.id===id);if(!it)return;it[k]=(k==='hargaNormal'||k==='hargaPromo')?Number(v):k==='promoActive'?v:v;save()}
-function addKat(){if(tplOf().studioOnly){notify('Varian Studio-only tidak dimasukkan ke Katalog Harga & Promo.');return}const id='k'+Date.now();state.katalog=[{id,nama:'Template Baru',tpl:state.tpl,ev:state.event,hargaNormal:120000,hargaPromo:75000,promoActive:true,badge:'NEW',terjual:0},...state.katalog];save();render();
+function addKat(tplId,options){options=options||{};const t=tplById(tplId||state.tpl);if(!t){if(!options.silent)notify('Pilih template yang valid terlebih dahulu.');return null}
+ if(t.studioOnly){if(!options.silent)notify('Template Studio-only tidak dimasukkan ke Katalog Harga & Promo.');return null}
+ if(t.custom&&state.katalog.some(k=>(k.tpl||k.id)===t.id)){if(!options.silent)notify('Template ini sudah ada di Katalog Harga & Promo.');return null}
+ const id='k'+Date.now(),rowData={id,nama:options.nama||(t.custom?t.nama:'Template Baru'),tpl:t.id,ev:t.ev==='all'?state.event:t.ev,
+  hargaNormal:t.custom?150000:120000,hargaPromo:75000,promoActive:true,badge:t.custom?'CUSTOM':'NEW',terjual:0};
+ state.katalog=[rowData,...state.katalog];if(options.silent)return rowData;save();render();
  const row=document.querySelector(`.kat-row[data-kid="${id}"]`);if(row){row.scrollIntoView({block:'center',behavior:'smooth'});const inp=row.querySelector('.kat-main input');if(inp){inp.focus();inp.select&&inp.select()}}
- notify('Template baru ditambahkan — ubah nama & harganya')}
+ notify('Template baru ditambahkan — ubah nama & harganya');return rowData}
 /* hapus satu baris katalog; tema bawaan dicatat di katalogDel supaya tidak muncul lagi saat dibuka ulang */
 function delKat(id){const i=state.katalog.findIndex(k=>k.id===id);if(i<0)return;const it=state.katalog[i];const bawaan=TPL.some(t=>t.id===it.id);
  if(!confirm(`Hapus "${it.nama}" dari katalog?`+(bawaan?'\nTemplate bawaan ini bisa dikembalikan lewat tombol "Pulihkan Bawaan".':'')))return;
- state.katalog.splice(i,1);if(bawaan&&!state.katalogDel.includes(it.id))state.katalogDel.push(it.id);save();render();notify('Dihapus dari katalog: '+it.nama)}
+ state.katalog.splice(i,1);if(bawaan&&!state.katalogDel.includes(it.id))state.katalogDel.push(it.id);
+ const custom=state.tplCustom.find(t=>t.id===(it.tpl||it.id));if(custom){custom.studioOnly=true;state.katalogHide=state.katalogHide.filter(x=>x!==custom.id)}
+ save();render();notify('Dihapus dari katalog: '+it.nama)}
 /* kembalikan semua tema bawaan yang pernah dihapus (baris buatan sendiri & harga yang sudah diubah tidak disentuh) */
 function pulihkanKat(){const n=state.katalogDel.length;state.katalogDel=[];TPL.forEach((t,i)=>{if(!t.studioOnly&&!state.katalog.some(k=>k.id===t.id))state.katalog.push(barisKat(t,i))});save();render();notify(n?n+' template bawaan dipulihkan':'Semua template bawaan sudah ada di katalog')}
 /* pindah halaman studio (Editor / Katalog / Arsip): tutup menu HP & mulai dari atas supaya halaman tujuan langsung terlihat */
 function goPage(id){_welcome=false;state.page=id;document.body.classList.remove('studio-nav-open');save();render();window.scrollTo(0,0)}
 function pageActions(judul){return `<div class="editor-actions page-actions"><button class="sm-btn dark" onclick="goPage('editor')" data-help="Kembali ke editor undangan yang sedang dibuat">← Kembali ke Editor</button><a class="sm-btn" href="./" data-help="Keluar dari Studio dan buka halaman utama situs.">← Halaman Utama</a><button class="mobile-menu" aria-expanded="${document.body.classList.contains('studio-nav-open')}" onclick="toggleStudioMenu(this)">☰ Template & Menu</button><span class="flow-status">${judul}</span></div>`}
-function tglKatHide(id){if(!TPL.some(t=>t.id===id))return;const i=state.katalogHide.indexOf(id);i>=0?state.katalogHide.splice(i,1):state.katalogHide.push(id);save();render()}
+function tglKatHide(id){const t=tplById(id);if(!t||t.studioOnly)return;const i=state.katalogHide.indexOf(id);i>=0?state.katalogHide.splice(i,1):state.katalogHide.push(id);save();render()}
 function importCsv(){const i=document.createElement('input');i.type='file';i.accept='.csv,.txt';i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.guestsRaw=String(r.result||'');save();render()};r.readAsText(f)};i.click()}
 function exportCsv(){const blob=new Blob([guests().map(g=>`${g.nama},${g.link}`).join('\n')],{type:'text/csv'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=`tamu-${state.slug}.csv`;a.click()}
 
 /* ============ VIEW: HEADER ============ */
 function header(){return ''}
+function barisPilihanTpl(t){
+ const id=esc(t.id),nama=esc(t.nama),badge=t.custom?'CUSTOM':(t.badge||''),ikon=esc(t.char||String(t.deco||'✦').split(' ')[0]);
+ const utama=`<button class="thbtn ${state.tpl===t.id?'on':''}" onclick="pickTpl('${id}')" data-help="${t.custom?'Terapkan tema kustom ini pada undangan.':`Terapkan template ${nama} beserta warna dan font bawaannya.`}">
+  <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?(t.char.length>2?10:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.02em':'normal'}">${ikon}</div>
+  <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">${nama}${badge?`<span style="font-size:8px;padding:2px 6px;border-radius:99px;background:${t.custom?'#111':'var(--gold)'};color:${t.custom?'#fff':'#000'};font-weight:700">${esc(badge)}</span>`:''}</div>
+  <div class="sub">${esc(t.desc||'')}</div></div>
+  <div style="width:20px;height:20px;border-radius:99px;display:grid;place-items:center;border:1px solid ${state.tpl===t.id?'#fff':'#ddd'};background:#fff;color:#000;font-size:11px;flex:none">${state.tpl===t.id?'✓':''}</div></button>`;
+ if(!t.custom)return utama;
+ return `<div class="tpl-custom-entry">${utama}<div class="tpl-custom-actions">
+  <button class="sm-btn" type="button" aria-label="Ganti nama template ${nama}" title="Ganti nama" data-help="Ganti nama template kustom ini; desain dan undangan tidak berubah." onclick="renameCustomTpl('${id}')">✎ Nama</button>
+  <button class="sm-btn" type="button" aria-label="Duplikat template ${nama}" title="Duplikat" data-help="Buat salinan pribadi dari template kustom ini." onclick="duplicateCustomTpl('${id}')">⧉ Salin</button>
+  <button class="sm-btn del" type="button" aria-label="Hapus template ${nama}" title="Hapus" data-help="Hapus template kustom ini. Bila sedang dipakai, undangan beralih ke template yang aman." onclick="deleteCustomTpl('${id}')">🗑 Hapus</button>
+ </div></div>`
+}
 
 /* ============ VIEW: SIDEBAR ============ */
 function sidebar(){
@@ -1251,11 +1431,7 @@ function sidebar(){
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
    <span class="lbl">Template ${EV_LABEL[state.event]}</span><span class="chip">${tplsFor(state.event).length} desain</span>
   </div>
-  ${tplsFor(state.event).map(t=>`<button class="thbtn ${state.tpl===t.id?'on':''}" onclick="pickTpl('${t.id}')">
-   <div style="width:40px;height:40px;border-radius:12px;border:1px solid ${state.tpl===t.id?'#333':'#eee'};box-shadow:inset 0 2px 4px rgba(0,0,0,.05);background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});display:grid;place-items:center;font-size:${t.char?(t.char.length>2?10:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.02em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
-   <div style="flex:1"><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">${t.nama}${t.badge?`<span style="font-size:8px;padding:2px 6px;border-radius:99px;background:var(--gold);color:#000;font-weight:700">${t.badge}</span>`:''}</div>
-   <div class="sub">${t.desc}</div></div>
-   <div style="width:20px;height:20px;border-radius:99px;display:grid;place-items:center;border:1px solid ${state.tpl===t.id?'#fff':'#ddd'};background:#fff;color:#000;font-size:11px">${state.tpl===t.id?'✓':''}</div></button>`).join('')}
+  ${tplsFor(state.event).map(barisPilihanTpl).join('')}
  </div>
  <div>
   <div class="lbl" style="display:block;margin-bottom:12px">Menu Studio</div>
@@ -1323,12 +1499,12 @@ function tabInfo(){const f=state.form,e=state.event;
  </div></div>`}
 
 function tabDesain(){return `<div style="display:grid;gap:16px">
- <div class="card"><h4>💌 Model Cover Pembuka</h4>
-  <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-top:-4px">Pilih tampilan layar pembuka undangan — langsung terlihat di pratinjau kanan.</div>
-  <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px">
+ <div class="card"><h4>💌 Model Cover Pembuka <span class="chip" style="margin-left:auto">15 model</span></h4>
+  <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-top:-4px">Pilih satu dari 15 tampilan pembuka; pratinjau di kanan langsung mengikuti pilihan.</div>
+  <div class="cv-layout-grid" role="group" aria-label="Pilih model cover pembuka">
    ${CV_LAYOUTS.map(([id,nama,ic,desc])=>{const on=(state.coverLayout||'amplop')===id;
-    return `<button onclick="setCvLayout('${id}')" data-help="${esc(desc)}" style="border-radius:14px;border:2px solid ${on?'#111':'var(--line)'};background:${on?'#111':'#fbfaf8'};color:${on?'#fff':'inherit'};padding:10px 6px;display:grid;gap:4px;justify-items:center;cursor:pointer">
-     <span style="font-size:16px">${ic||'⌒'}</span><span style="font-size:10px;font-weight:${on?'700':'500'};line-height:1.3">${nama}</span></button>`}).join('')}
+    return `<button type="button" class="cv-layout-btn ${on?'on':''}" data-layout="${id}" aria-label="Pilih model cover ${nama}" aria-pressed="${on}" onclick="setCvLayout('${id}')" data-help="${esc(desc)}">
+     <span class="cv-layout-icon" aria-hidden="true">${ic||'⌒'}</span><span class="cv-layout-name">${nama}</span></button>`}).join('')}
   </div>
  </div>
  <div class="card"><h4>🎨 Warna & Font</h4>
@@ -1391,6 +1567,14 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    </div>
    <label class="togglerow" style="margin-top:10px"><span><span style="font-size:12px;font-weight:500">Variasikan efek tiap bagian</span><span style="display:block;font-size:10px;color:var(--mut)">ON: gerak atas/bawah dan kiri/kanan bergantian. OFF: pakai satu efek sama di semua bagian.</span></span><input type="checkbox" ${state.anim.scrollMix!==false?'checked':''} onchange="setAnim('scrollMix',this.checked)"></label>
   </div></div>
+ <div class="card tpl-save-card">
+  <h4>💾 Simpan sebagai Template Baru</h4>
+  <p style="font-size:11px;color:var(--mut);line-height:1.6;margin:-4px 0 10px">Simpan warna, font, border, ornamen, dan model cover saat ini sebagai pilihan tema yang bisa dipakai lagi. Template tersimpan di perangkat ini dan ikut dibawa pada publish.</p>
+  <label class="f">Nama template baru<input id="tplCustomName" maxlength="60" value="${esc(state.tplDraftName||'')}" placeholder="Contoh: Kebun Sage Buatan Saya" oninput="state.tplDraftName=this.value;save()"></label>
+  <label class="togglerow" style="margin-top:10px"><span><span style="font-size:12px;font-weight:500">Tambahkan ke Katalog Publik</span><span style="display:block;font-size:10px;color:var(--mut);line-height:1.5">Tidak dicentang = khusus Studio. Jika dicentang, baris harga & promo dibuat otomatis.</span></span><input id="tplCustomPublic" type="checkbox" ${state.tplDraftPublic?'checked':''} onchange="state.tplDraftPublic=this.checked;save()"></label>
+  <button type="button" class="sm-btn dark" style="width:100%;justify-content:center;min-height:42px;margin-top:12px" onclick="saveCustomTemplate()" data-help="Simpan salinan desain aktif ke daftar tema kustom. Tanpa pilihan katalog, tema tetap khusus di Studio.">💾 Simpan sebagai Template Baru</button>
+  <div style="font-size:10px;color:var(--mut);margin-top:8px">${state.tplCustom.length} template kustom tersimpan • maksimal 80</div>
+ </div>
  </div></div>`}
 
 /* ============ VIEW: SLIDE (10 slide konten baru) ============ */
@@ -1409,6 +1593,7 @@ function slideEditor(s,d){
     <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
      ${x.foto?`<img src="${esc(x.foto)}" alt="" style="width:56px;height:42px;object-fit:cover;border-radius:8px;border:1px solid var(--line);flex:none">`:''}
      <label class="upload-dash" style="position:relative;flex:1;min-height:38px;display:flex;align-items:center;justify-content:center;font-size:10px">📷 ${x.foto?'Ganti Foto Cerita':'Upload Foto Cerita'}<input type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="upStoryFoto(this,${i})"></label>
+     ${x.foto?`<button class="sm-btn del" type="button" onclick="hapusFotoCerita(${i})" style="flex:none;width:36px;height:36px;padding:0;display:grid;place-items:center" aria-label="Hapus foto cerita" title="Hapus foto cerita">🗑️</button>`:''}
      <button class="modebtn" type="button" onclick="storyDel(${i})" style="flex:none;padding:6px 10px" aria-label="Hapus cerita">✕</button>
     </div></div>`).join('')}
    <button class="modebtn" type="button" onclick="storyAdd()" style="width:100%;justify-content:center">+ Tambah Cerita</button>
@@ -1469,22 +1654,28 @@ function tabMusik(){const d=DOA[state.doa]||DOA.pernikahan;return `<div style="d
  </div>
  <div class="card"><h4>🖼️ Foto & Galeri</h4>
   <div class="grid2">
-   <label style="display:block"><div class="f" style="margin-bottom:4px">Foto Utama / Cover</div>
-    <div style="height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fbfaf8;overflow:hidden;cursor:pointer;position:relative">
-    ${state.cover?`<img src="${state.cover}" style="width:100%;height:100%;object-fit:cover">`:'<span style="font-size:11px;color:var(--mut2)">Upload foto</span>'}
-    <input type="file" accept="image/*" onchange="uploadCover(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div></label>
-   <label style="display:block"><div class="f" style="margin-bottom:4px">${state.doa==='pernikahan'?'Foto Mempelai Pria (di dalam undangan)':'Foto Anak / Tokoh Acara (di dalam undangan)'}</div>
-    <div style="height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fbfaf8;overflow:hidden;cursor:pointer;position:relative">
-    ${state.fotoPria?`<img src="${state.fotoPria}" style="width:100%;height:100%;object-fit:cover">`:'<span style="font-size:11px;color:var(--mut2)">Upload foto</span>'}
-    <input type="file" accept="image/*" onchange="uploadOrang(this,'fotoPria')" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div></label>
-   <label style="display:block"><div class="f" style="margin-bottom:4px">${state.doa==='pernikahan'?'Foto Mempelai Wanita (di dalam undangan)':'Foto Kedua (opsional)'}</div>
-    <div style="height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fbfaf8;overflow:hidden;cursor:pointer;position:relative">
-    ${state.fotoWanita?`<img src="${state.fotoWanita}" style="width:100%;height:100%;object-fit:cover">`:'<span style="font-size:11px;color:var(--mut2)">Upload foto</span>'}
-    <input type="file" accept="image/*" onchange="uploadOrang(this,'fotoWanita')" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div></label>
-   <label style="display:block"><div class="f" style="margin-bottom:4px">Galeri Unlimited + Lightbox</div>
-    <div style="height:112px;border-radius:12px;border:1px dashed var(--line2);display:grid;place-items:center;background:#fbfaf8;cursor:pointer;position:relative">
-    <span style="font-size:11px;color:var(--mut)">+ ${state.gallery.length} foto</span>
-    <input type="file" accept="image/*" multiple onchange="uploadGallery(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div></label>
+   <div class="photo-field"><div class="f" style="margin-bottom:4px">Foto Utama / Cover</div>
+    <div class="photo-upload-slot"><label class="photo-upload-tile">
+     ${state.cover?`<img src="${state.cover}" alt="Foto cover saat ini">`:'<span style="font-size:11px;color:var(--mut2)">Upload foto</span>'}
+     <input type="file" accept="image/*" onchange="uploadCover(this)"></label>
+     ${state.cover?`<button type="button" class="photo-remove" aria-label="Hapus foto cover" title="Hapus foto cover" onclick="hapusFoto('cover')">×</button>`:''}
+    </div></div>
+   <div class="photo-field"><div class="f" style="margin-bottom:4px">${state.doa==='pernikahan'?'Foto Mempelai Pria (di dalam undangan)':'Foto Anak / Tokoh Acara (di dalam undangan)'}</div>
+    <div class="photo-upload-slot"><label class="photo-upload-tile">
+     ${state.fotoPria?`<img src="${state.fotoPria}" alt="Foto utama di dalam undangan">`:'<span style="font-size:11px;color:var(--mut2)">Upload foto</span>'}
+     <input type="file" accept="image/*" onchange="uploadOrang(this,'fotoPria')"></label>
+     ${state.fotoPria?`<button type="button" class="photo-remove" aria-label="Hapus foto utama" title="Hapus foto utama" onclick="hapusFoto('fotoPria')">×</button>`:''}
+    </div></div>
+   <div class="photo-field"><div class="f" style="margin-bottom:4px">${state.doa==='pernikahan'?'Foto Mempelai Wanita (di dalam undangan)':'Foto Kedua (opsional)'}</div>
+    <div class="photo-upload-slot"><label class="photo-upload-tile">
+     ${state.fotoWanita?`<img src="${state.fotoWanita}" alt="Foto kedua di dalam undangan">`:'<span style="font-size:11px;color:var(--mut2)">Upload foto</span>'}
+     <input type="file" accept="image/*" onchange="uploadOrang(this,'fotoWanita')"></label>
+     ${state.fotoWanita?`<button type="button" class="photo-remove" aria-label="Hapus foto kedua" title="Hapus foto kedua" onclick="hapusFoto('fotoWanita')">×</button>`:''}
+    </div></div>
+   <div class="photo-field"><div class="f" style="margin-bottom:4px">Galeri Unlimited + Lightbox</div>
+    <label class="photo-upload-tile"><span style="font-size:11px;color:var(--mut)">+ ${state.gallery.length} foto</span>
+     <input type="file" accept="image/*" multiple onchange="uploadGallery(this)"></label>
+   </div>
   </div>
   ${state.cover?`<div style="margin-top:14px;border-top:1px dashed var(--line);padding-top:12px">
    <div class="f" style="margin-bottom:6px">Gaya foto di cover — 9 pilihan ${cvGayaAktif()==='none'?'<span style="color:var(--mut)">(sekarang: tanpa foto di cover)</span>':''}</div>
@@ -1492,29 +1683,29 @@ function tabMusik(){const d=DOA[state.doa]||DOA.pernikahan;return `<div style="d
     ${CV_URUT.map(id=>{const b=CV_BENTUK[id],on=cvGayaAktif()===id,p=cvPos();
      return `<button onclick="setCvStyle('${id}')" title="${b.nama}" style="border:0;background:transparent;padding:0;cursor:pointer">
      <span style="display:block;width:100%;aspect-ratio:3/4;border-radius:6px;overflow:hidden;border:2px solid ${on?'#111':'var(--line)'};background:#f4f1ea;position:relative">
-      <img class="cvprev" src="${state.cover}" style="width:100%;height:100%;object-fit:cover;object-position:${p.x}% ${p.y}%;transform:scale(${p.z});border-radius:${b.r};opacity:${id==='none'?.3:1}">
+      <img class="cvprev" src="${state.cover}" onload="cvGambar()" style="width:100%;height:100%;object-fit:cover;object-position:${p.x}% ${p.y}%;transform:scale(${p.z});border-radius:${b.r};opacity:${id==='none'?.3:1}">
       ${id==='full'?`<span style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,6,5,.35),rgba(8,6,5,.85))"></span>`:''}
       ${id==='none'?`<span style="position:absolute;inset:0;display:grid;place-items:center;font-size:16px">🚫</span>`:''}
      </span>
      <span style="display:block;font-size:9px;margin-top:3px;font-weight:${on?'700':'400'};color:${on?'#111':'var(--mut)'}">${b.nama}</span></button>`}).join('')}
    </div>
    <div style="margin-top:12px;display:flex;gap:12px;align-items:flex-start">
-    <div id="cvAtur" onpointerdown="cvMulai(event)" style="width:132px;aspect-ratio:3/4;border-radius:12px;overflow:hidden;position:relative;background:#111;touch-action:none;cursor:grab;flex:none;border:1px solid var(--line)">
-     <img class="cvprev" src="${state.cover}" style="width:100%;height:100%;object-fit:cover;object-position:${cvPos().x}% ${cvPos().y}%;transform:scale(${cvPos().z})">
+    <div id="cvAtur" onpointerdown="cvMulai(event)" style="width:min(160px,40vw);aspect-ratio:3/4;border-radius:12px;overflow:hidden;position:relative;background:#111;touch-action:none;cursor:grab;flex:none;border:1px solid var(--line)">
+     <img class="cvprev" src="${state.cover}" onload="cvGambar()" style="width:100%;height:100%;object-fit:cover;object-position:${cvPos().x}% ${cvPos().y}%;transform:scale(${cvPos().z})">
      <span style="position:absolute;left:6px;bottom:6px;font-size:9px;color:#fff;background:rgba(0,0,0,.55);padding:2px 7px;border-radius:99px">geser foto</span>
     </div>
     <div style="flex:1;min-width:0">
-     <div class="f">Zoom: <span id="cvZoom">${cvPos().z.toFixed(2)}×</span></div>
-     <input id="cvRange" type="range" min="1" max="2.2" step="0.05" value="${cvPos().z}" oninput="cvZoom(this.value)" style="width:100%">
+     <div class="f">Zoom: <span id="cvZoom">${cvPos().z.toFixed(2)}×</span> <span style="font-size:9px;color:var(--mut)">(maks. 4×)</span></div>
+     <input id="cvRange" type="range" min="1" max="4" step="0.05" value="${cvPos().z}" oninput="cvZoom(this.value)" style="width:100%">
      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
       <button class="sm-btn dark" onclick="cvTengah()">Tengahkan</button>
       <button class="sm-btn" onclick="cvReset()">Reset</button>
      </div>
-     <div style="font-size:10px;color:var(--mut);margin-top:8px;line-height:1.5">Geser fotonya di kotak sebelah (jari/mouse) dan atur zoom sampai bagian penting pas di bingkai. Hasilnya sama dengan yang dilihat tamu.</div>
+     <div style="font-size:10px;color:var(--mut);margin-top:8px;line-height:1.5">Perbesar sesuai kebutuhan, lalu geser foto di kotak (jari/mouse) sampai bagian penting pas di bingkai. Gerak geser kini mengikuti seluruh area crop yang tersedia.</div>
     </div>
    </div>
   </div>`:''}
-  ${state.gallery.length?`<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px">${state.gallery.map(g=>`<img src="${g}" style="height:64px;width:100%;object-fit:cover;border-radius:12px;border:1px solid var(--line)">`).join('')}</div>`:''}
+  ${state.gallery.length?`<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px">${state.gallery.map((g,i)=>`<div class="gallery-thumb"><img src="${g}" alt="Foto galeri ${i+1}"><button type="button" class="photo-remove" aria-label="Hapus foto galeri ${i+1}" title="Hapus foto ini" onclick="hapusFotoGaleri(${i})">×</button></div>`).join('')}</div>`:''}
   <label class="f" style="margin-top:16px">Link Video (YouTube/TikTok/IG)<input value="${esc(state.videoLink)}" placeholder="https://..." oninput="upd('videoLink',this.value)"></label>
  </div>
  <div class="card"><h4>🤲 Doa & Bismillah</h4>
@@ -1702,7 +1893,7 @@ function tabDomain(){return `<div style="display:grid;gap:16px">
 let _publishing=false;
 function startInvitation(){
  if(state.started&&!confirm('Mulai undangan baru dengan isian kosong? Draft aktif akan diganti. Undangan yang sudah dipublish tetap tersedia melalui link lamanya.'))return;
- const kept={katalog:state.katalog,katalogHide:state.katalogHide,katalogDel:state.katalogDel,promo:state.promo,arsip:state.arsip,musicDb:state.musicDb};
+ const kept={katalog:state.katalog,katalogHide:state.katalogHide,katalogDel:state.katalogDel,promo:state.promo,arsip:state.arsip,musicDb:state.musicDb,tplCustom:normalizeTplCustom(state.tplCustom)};
  state=Object.assign(JSON.parse(JSON.stringify(DEF)),kept,{started:true,masterKey:mkRand()});
  animSig=null;_fpExpanded=false;_welcome=false;document.body.classList.remove('studio-nav-open');save();render();window.scrollTo(0,0);
 }
@@ -1779,8 +1970,8 @@ function katalog(){return `${pageActions('Katalog Template • '+state.katalog.l
    <div style="font-size:11px;color:var(--mut)">Klik Preview untuk lihat di phone kanan • Edit inline harga & promo • 🗑 untuk menghapus baris</div>
   </div>
   ${state.katalog.length?'':`<div class="kat-empty">Katalog kosong.<br><button class="sm-btn dark" style="margin-top:10px" onclick="pulihkanKat()">↺ Pulihkan Template Bawaan</button></div>`}
-  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const rows=state.katalog.filter(k=>{const te=(TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0]).ev;return te===ev||te==='all'});if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template</div>
- ${rows.map(k=>{const t=TPL.find(x=>x.id===(k.tpl||k.id))||TPL[0];const hid=state.katalogHide.includes(t.id);return `<div class="kat-row ${hid?'hid':''}" data-kid="${esc(k.id)}">
+  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const rows=state.katalog.filter(k=>{const te=(tplById(k.tpl||k.id)||TPL[0]).ev;return te===ev||te==='all'});if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template</div>
+ ${rows.map(k=>{const t=tplById(k.tpl||k.id)||TPL[0];const hid=state.katalogHide.includes(t.id);return `<div class="kat-row ${hid?'hid':''}" data-kid="${esc(k.id)}">
    <div class="kat-thumb" style="background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});font-size:${t.char?(t.char.length>2?10:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.02em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
    <div class="kat-main">
     <input value="${esc(k.nama)}" aria-label="Nama template" oninput="updKat('${k.id}','nama',this.value)">
@@ -1936,7 +2127,7 @@ function render(){
   <main class="mainc sb">${state.page==='editor'?editor():state.page==='katalog'?katalog():arsip()}</main>
   <aside class="prevc sb"><div id="phoneWrap" class="pv-stage"></div></aside>
  </div>`;
- syncAudio();syncFloat();
+ cvGambar();syncAudio();syncFloat();
 }
 
 /* ===== Pratinjau = undangan asli di dalam iframe =====
@@ -1955,12 +2146,12 @@ function barisUndangan(){
   music_url:state.music&&!state.music.local?new URL(state.music.url,location.href).href:'',
   music_name:state.music?state.music.name:'',
   theme:Math.max(0,TPL.findIndex(t=>t.id===state.tpl)),
-  data:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,doa:state.doa,
+  data:{form:JSON.parse(JSON.stringify(state.form)),event:state.event,tpl:state.tpl,tplCustom:JSON.parse(JSON.stringify(state.tplCustom||[])),doa:state.doa,
    accent:state.accent,fontTitle:state.fontTitle,fontBody:state.fontBody,border:state.border,ornSudut:state.ornSudut,
    amplop:JSON.parse(JSON.stringify(state.amplop)),
    slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',coverStyle:cvGayaAktif(),coverLayout:state.coverLayout||'amplop',coverPos:Object.assign({},cvPos()),
+   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
