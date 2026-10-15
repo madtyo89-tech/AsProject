@@ -263,10 +263,12 @@ t('registry LAYOUTS bisa dibaca dari undangan.html', !!L && typeof L === 'object
     const pre = L[lay], r = hasil[idx];
     if (!pre) { t(`${id}: preset '${lay}' terdaftar di LAYOUTS`, false); continue; }
     const x = pre.ekstra || [];
-    t(`${id}: navDot ${x.includes('navDot') ? 'ada' : 'tidak ada'} sesuai preset`,
-      r.navDot === x.includes('navDot'));
-    t(`${id}: babAngka ${x.includes('babAngka') ? 'ada' : 'tidak ada'} sesuai preset`,
-      r.babAngka === x.includes('babAngka'));
+    /* Keenam bagian eksklusif diperiksa semua — sebelumnya hanya navDot, babAngka,
+       dan vip4d yang ditegaskan, jadi kutipBesar/heroFoto/galeriStrip/jamFlip bisa
+       saja mati tanpa ketahuan. */
+    const EKSTRA = ['navDot', 'babAngka', 'kutipBesar', 'heroFoto', 'galeriStrip', 'jamFlip'];
+    for (const e of EKSTRA)
+      t(`${id}: ${e} ${x.includes(e) ? 'ada' : 'tidak ada'} sesuai preset`, r[e] === x.includes(e));
     t(`${id}: mesin 4D ${pre.vip ? 'nyala' : 'mati'} sesuai preset`, r.vip4d === !!pre.vip);
   }
 
