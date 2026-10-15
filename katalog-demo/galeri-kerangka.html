@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pratinjau Nyata Semua Tema — AsProject</title>
+<style>
+:root{--fw:390px;--fh:640px;--ink:#2b2620;--mut:#7d7365;--garis:#e6ddd0;--bg:#f6f2ea}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:20;background:rgba(246,242,234,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--garis);padding:14px 20px}
+header h1{margin:0 0 4px;font-size:19px}
+header p{margin:0;color:var(--mut);font-size:13.5px;max-width:78ch}
+.alat{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.alat b{font-size:12.5px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.alat button{border:1px solid var(--garis);background:#fff;color:var(--ink);border-radius:999px;padding:5px 13px;font:inherit;font-size:13px;cursor:pointer}
+.alat button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+nav.shell{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+nav.shell a{font-size:12.5px;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--garis);border-radius:999px;padding:4px 11px}
+nav.shell a i{font-style:normal;color:var(--mut)}
+nav.shell a:hover{border-color:var(--ink)}
+main{padding:8px 20px 60px;max-width:1680px;margin:0 auto}
+.kelompok{margin-top:34px;scroll-margin-top:130px}
+.kelompok h2{margin:0;font-size:17px;display:flex;align-items:center;gap:9px}
+.kelompok h2 code{font-size:12px;background:#fff;border:1px solid var(--garis);border-radius:6px;padding:2px 7px;color:var(--mut);font-weight:500}
+.ciri{margin:5px 0 14px;color:var(--mut);font-size:13.5px;max-width:90ch}
+.gal{display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(var(--fw),1fr))}
+.kartu{margin:0;min-width:0}
+.bingkai{width:var(--fw);max-width:100%;height:var(--fh);background:#fff;border:1px solid var(--garis);border-radius:14px;overflow:hidden;box-shadow:0 8px 26px rgba(70,58,40,.10)}
+.bingkai iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+figcaption{padding:10px 2px 0;max-width:var(--fw)}
+.baris1{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.baris1 b{font-size:14.5px}
+.vip,.studio{font-size:10.5px;font-weight:700;letter-spacing:.05em;border-radius:5px;padding:2px 6px}
+.vip{background:#2b2620;color:#f0d68a}
+.studio{background:#e8e0d2;color:#6b6053}
+.baris2{color:var(--mut);font-size:12.5px;margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.chip{font-size:11.5px;background:#fff;border:1px solid var(--garis);border-radius:999px;padding:2px 8px;color:var(--ink)}
+.chip.kosong{color:#a99e8d;border-style:dashed}
+footer{border-top:1px solid var(--garis);padding:22px 20px 50px;color:var(--mut);font-size:13px}
+footer code{background:#fff;border:1px solid var(--garis);border-radius:5px;padding:1px 5px}
+@media(max-width:600px){:root{--fw:100%;--fh:560px}.gal{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>Pratinjau nyata 24 tema</h1>
+<p>Setiap bingkai di bawah adalah <b>iframe ke renderer produksi sungguhan</b> (<code>undangan.html?demo=1&amp;tpl=…&amp;buka=1</code>), bukan gambar tiruan. Yang kamu lihat adalah hasil nyata kerangka, urutan bagian, bagian eksklusif, dan mesin 4D yang diterima tamu. <b>Gulir di dalam bingkai</b> untuk melihat susunan bagiannya.</p>
+<div class="alat"><b>Lebar layar</b><button data-w="390" aria-pressed="true">Ponsel 390</button><button data-w="768" aria-pressed="false">Tablet 768</button><button data-w="1100" aria-pressed="false">Desktop 1100</button><span class="baris2" id="ket">Shell <code>split</code> baru jadi dua kolom di 900px ke atas — coba Desktop.</span></div>
+<nav class="shell"><a href="#shell-klasik">Klasik <i>1</i></a><a href="#shell-arsip">Arsip / Berkas <i>1</i></a><a href="#shell-editorial">Editorial <i>3</i></a><a href="#shell-panggung">Panggung Sinematik <i>2</i></a><a href="#shell-zigzag">Zigzag Miring <i>2</i></a><a href="#shell-poster">Poster Setinggi Layar <i>3</i></a><a href="#shell-bab">Bab Bernomor <i>4</i></a><a href="#shell-kaca">Kaca Melayang <i>2</i></a><a href="#shell-lembut">Lembut Berserak <i>3</i></a><a href="#shell-split">Split Dua Kolom <i>3</i></a></nav>
+</header>
+<main>
+<section class="kelompok" id="shell-klasik"><h2>Klasik <code>lay-klasik</code></h2><p class="ciri">kerangka lama, tanpa aturan CSS tambahan — pembanding dasar — <b>1 tema</b> (1 publik)</p><div class="gal">
+  <figure class="kartu" data-shell="klasik"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=ivory-klasik&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Ivory Klasik" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Ivory Klasik</b></div><div class="baris2">klasik · urutan A · 19 bagian</div><div class="chips"><span class="chip kosong">tanpa bagian eksklusif</span></div></figcaption></figure>
+</div></section>
+<section class="kelompok" id="shell-arsip"><h2>Arsip / Berkas <code>lay-arsip</code></h2><p class="ciri">kertas bergaris, cap miring, metadata monospace — <b>1 tema</b> (1 publik)</p><div class="gal">
+  <figure class="kartu" data-shell="arsip"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=jawa-elegan&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Adat Jawa Elegan" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Adat Jawa Elegan</b></div><div class="baris2">arsip · urutan A · 19 bagian</div><div class="chips"><span class="chip">navigasi titik</span></div></figcaption></figure>
+</div></section>
+<section class="kelompok" id="shell-editorial"><h2>Editorial <code>lay-editorial</code></h2><p class="ciri">kotak kartu dihapus, rata kiri, garis rambut, nomor pasal — <b>3 tema</b> (2 publik, 1 Studio-only)</p><div class="gal">
+  <figure class="kartu" data-shell="editorial"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=minimalist-sage&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Minimalist Sage" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Minimalist Sage</b></div><div class="baris2">editorial-sage · urutan B · 19 bagian</div><div class="chips"><span class="chip">kutipan besar</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="editorial"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=pearl-ivory&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Pearl Ivory" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Pearl Ivory</b></div><div class="baris2">editorial-mutiara · urutan E · 19 bagian</div><div class="chips"><span class="chip">kutipan besar</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="editorial"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=gerbang-sage-pearl&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Gerbang Arch · Sage Pearl" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Gerbang Arch · Sage Pearl</b><span class="studio">Studio</span></div><div class="baris2">editorial-mutiara · urutan E · 19 bagian</div><div class="chips"><span class="chip">kutipan besar</span></div></figcaption></figure>
+</div></section>
+<section class="kelompok" id="shell-panggung"><h2>Panggung Sinematik <code>lay-panggung</code></h2><p class="ciri">latar gelap, pita foto full-bleed, sorot cahaya — <b>2 tema</b> (1 publik, 1 Studio-only)</p><div class="gal">
+  <figure class="kartu" data-shell="panggung"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=luxury-gold&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Luxury Gold" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Luxury Gold</b><span class="vip">4D</span></div><div class="baris2">panggung-emas · urutan C · 19 bagian</div><div class="chips"><span class="chip">pita foto</span><span class="chip">strip galeri</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="panggung"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=gerbang-rosewood&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Gerbang Arch · Rosewood" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Gerbang Arch · Rosewood</b><span class="vip">4D</span><span class="studio">Studio</span></div><div class="baris2">panggung-gerbang · urutan C · 19 bagian</div><div class="chips"><span class="chip">pita foto</span></div></figcaption></figure>
+</div></section>
+<section class="kelompok" id="shell-zigzag"><h2>Zigzag Miring <code>lay-zigzag</code></h2><p class="ciri">panel selang-seling miring dan saling tumpang — <b>2 tema</b> (2 publik)</p><div class="gal">
+  <figure class="kartu" data-shell="zigzag"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=floral-rustic&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Floral Rustic" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Floral Rustic</b></div><div class="baris2">zigzag-rustic · urutan A · 19 bagian</div><div class="chips"><span class="chip kosong">tanpa bagian eksklusif</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="zigzag"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=golden-jubilee&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Golden Jubilee" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Golden Jubilee</b></div><div class="baris2">zigzag-jubile · urutan C · 19 bagian</div><div class="chips"><span class="chip">strip galeri</span></div></figcaption></figure>
+</div></section>
+<section class="kelompok" id="shell-poster"><h2>Poster Setinggi Layar <code>lay-poster</code></h2><p class="ciri">tiap bagian setinggi layar dengan scroll-snap — <b>3 tema</b> (2 publik, 1 Studio-only)</p><div class="gal">
+  <figure class="kartu" data-shell="poster"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=biru-ceria&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Biru Ceria" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Biru Ceria</b></div><div class="baris2">poster-ceria · urutan D · 19 bagian</div><div class="chips"><span class="chip">jam flip</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="poster"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=kids-party&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Kids Party" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Kids Party</b></div><div class="baris2">poster-anak · urutan D · 19 bagian</div><div class="chips"><span class="chip">jam flip</span><span class="chip">strip galeri</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="poster"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=gerbang-pesta-ceria&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Gerbang Arch · Ulang Tahun Ceria" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Gerbang Arch · Ulang Tahun Ceria</b><span class="studio">Studio</span></div><div class="baris2">poster-anak · urutan D · 19 bagian</div><div class="chips"><span class="chip">jam flip</span><span class="chip">strip galeri</span></div></figcaption></figure>
+</div></section>
+<section class="kelompok" id="shell-bab"><h2>Bab Bernomor <code>lay-bab</code></h2><p class="ciri">pembatas antar bagian plus angka romawi — <b>4 tema</b> (3 publik, 1 Studio-only)</p><div class="gal">
+  <figure class="kartu" data-shell="bab"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=islamic-elegant&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Islamic Elegant" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Islamic Elegant</b></div><div class="baris2">bab-islami · urutan A · 19 bagian</div><div class="chips"><span class="chip">angka bab romawi</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="bab"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=islamic-neutral&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Islamic Neutral" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Islamic Neutral</b></div><div class="baris2">bab-netral · urutan B · 19 bagian</div><div class="chips"><span class="chip">angka bab romawi</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="bab"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=emerald-royal&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Emerald Royal" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Emerald Royal</b></div><div class="baris2">bab-royal · urutan C · 19 bagian</div><div class="chips"><span class="chip">angka bab romawi</span><span class="chip">kutipan besar</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="bab"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=gerbang-khitanan-emerald&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Gerbang Arch · Khitanan Emerald" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Gerbang Arch · Khitanan Emerald</b><span class="studio">Studio</span></div><div class="baris2">bab-islami · urutan A · 19 bagian</div><div class="chips"><span class="chip">angka bab romawi</span></div></figcaption></figure>
+</div></section>
+<section class="kelompok" id="shell-kaca"><h2>Kaca Melayang <code>lay-kaca</code></h2><p class="ciri">panel blur melayang dengan lebar beragam — <b>2 tema</b> (2 publik)</p><div class="gal">
+  <figure class="kartu" data-shell="kaca"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=sweet-17&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Sweet 17" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Sweet 17</b></div><div class="baris2">kaca-manis · urutan E · 19 bagian</div><div class="chips"><span class="chip">navigasi titik</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="kaca"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=adult-elegant&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Adult Elegant" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Adult Elegant</b></div><div class="baris2">kaca-dewasa · urutan B · 19 bagian</div><div class="chips"><span class="chip">navigasi titik</span></div></figcaption></figure>
+</div></section>
+<section class="kelompok" id="shell-lembut"><h2>Lembut Berserak <code>lay-lembut</code></h2><p class="ciri">kartu miring berserak, garis putus-putus — <b>3 tema</b> (2 publik, 1 Studio-only)</p><div class="gal">
+  <figure class="kartu" data-shell="lembut"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=baby-boy&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Baby Boy" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Baby Boy</b></div><div class="baris2">lembut-biru · urutan A · 19 bagian</div><div class="chips"><span class="chip kosong">tanpa bagian eksklusif</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="lembut"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=baby-girl&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Baby Girl" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Baby Girl</b></div><div class="baris2">lembut-merah · urutan E · 19 bagian</div><div class="chips"><span class="chip kosong">tanpa bagian eksklusif</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="lembut"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=gerbang-aqiqah-natural&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Gerbang Arch · Aqiqah Natural" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Gerbang Arch · Aqiqah Natural</b><span class="studio">Studio</span></div><div class="baris2">lembut-biru · urutan A · 19 bagian</div><div class="chips"><span class="chip kosong">tanpa bagian eksklusif</span></div></figcaption></figure>
+</div></section>
+<section class="kelompok" id="shell-split"><h2>Split Dua Kolom <code>lay-split</code></h2><p class="ciri">rail lengket dua kolom di layar lebar — <b>3 tema</b> (2 publik, 1 Studio-only)</p><div class="gal">
+  <figure class="kartu" data-shell="split"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=midnight-gold&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Midnight Gold" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Midnight Gold</b><span class="vip">4D</span></div><div class="baris2">split-midnight · urutan B · 19 bagian</div><div class="chips"><span class="chip">navigasi titik</span><span class="chip">pita foto</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="split"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=navy-crest&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Navy Crest" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Navy Crest</b></div><div class="baris2">split-navy · urutan A · 19 bagian</div><div class="chips"><span class="chip">navigasi titik</span></div></figcaption></figure>
+  <figure class="kartu" data-shell="split"><div class="bingkai"><iframe src="../undangan.html?demo=1&amp;tpl=gerbang-midnight-navy&amp;buka=1" loading="lazy" title="Pratinjau nyata tema Gerbang Arch · Midnight Navy" referrerpolicy="no-referrer"></iframe></div><figcaption><div class="baris1"><b>Gerbang Arch · Midnight Navy</b><span class="vip">4D</span><span class="studio">Studio</span></div><div class="baris2">split-midnight · urutan B · 19 bagian</div><div class="chips"><span class="chip">navigasi titik</span><span class="chip">pita foto</span></div></figcaption></figure>
+</div></section>
+</main>
+<footer>
+Dibangun oleh <code>tools/bikin-galeri-kerangka.cjs</code> dari <code>TPL</code>, <code>LAYOUTS</code>, dan <code>URUTAN</code> di <code>undangan.html</code>. Isi demo (nama, tanggal, foto) sama untuk semua tema supaya perbedaan yang terlihat murni berasal dari kerangka, bukan dari datanya. Tema bertanda <b>Studio</b> hanya bisa dibuat lewat Studio, tidak tampil di katalog publik.
+</footer>
+<script>
+document.querySelectorAll(".alat button").forEach(function(b){
+  b.addEventListener("click",function(){
+    document.querySelectorAll(".alat button").forEach(function(x){x.setAttribute("aria-pressed","false")});
+    b.setAttribute("aria-pressed","true");
+    document.documentElement.style.setProperty("--fw",b.dataset.w+"px");
+  });
+});
+</script>
+</body>
+</html>

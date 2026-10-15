@@ -157,6 +157,35 @@ Nomor `#` di tiap kartu adalah **indeks array TPL**, yaitu nilai kolom `theme` d
 Supabase — berguna saat menelusuri undangan lama. Halaman ini tidak ditautkan dari
 katalog publik dan tidak mengubah `DEMO_BY_NAME` / `DEMO_BY_CATEGORY`.
 
+### Galeri pratinjau nyata (`galeri-kerangka.html`)
+
+```bash
+node tools/bikin-galeri-kerangka.cjs
+python3 tools/serve.py            # buka /katalog-demo/galeri-kerangka.html
+```
+
+Melengkapi halaman perbandingan di atas. Bedanya mendasar:
+
+| | `perbandingan-tema.html` | `galeri-kerangka.html` |
+|---|---|---|
+| Isi kartu | mockup HTML buatan tangan | **iframe ke renderer produksi** |
+| Sumber | `TPL` + `CV_LAYOUTS` + `LAYOUTS` | `../undangan.html?demo=1&tpl=<id>&buka=1` |
+| Guna | membandingkan spesifikasi & diagram kerangka | melihat hasil nyata yang diterima tamu |
+
+24 tema dikelompokkan menurut **shell** (10 kelompok), tiap bingkai diberi label preset,
+urutan, jumlah bagian, dan chip bagian eksklusifnya. Tiga tombol di kepala mengatur lebar
+bingkai — **390 / 768 / 1100 px** — karena shell `split` baru berubah jadi dua kolom dengan
+rail lengket pada 900 px ke atas, dan `poster` mengandalkan scroll-snap setinggi layar.
+
+Parameter `demo=1&tpl=<id>&buka=1` bukan hal baru: pola yang sama sudah dipakai kartu
+katalog di `index.html`. Mode demo sengaja **tidak memutar musik**, jadi memuat 24 iframe
+sekaligus tidak menimbulkan suara bertumpuk. Semua iframe memakai `loading="lazy"` supaya
+hanya yang terlihat yang benar-benar diambil.
+
+Isi demo (nama, tanggal, foto) identik untuk semua tema, jadi perbedaan yang terlihat murni
+berasal dari kerangka — bukan dari datanya. Berkas hasilnya jangan disunting tangan;
+jalankan ulang generatornya.
+
 ## Yang diubah saat templat masuk repo
 
 - identitas merek `Kartu Digital` / `KartuDigital` → **AsProject** (termasuk
