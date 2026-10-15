@@ -597,6 +597,26 @@ function miniBorder(b){const A='#8b7358';if(b.corner)return `border:1px dashed $
 const DEMO_MUSIC=[
  {id:'demo-main',name:'Backsound AsProject — rtyo',url:'music/backsound-asproject.mp3',dur:'9:40',demo:true}];
 
+/* ==== PESAN WA UNDANGAN — blok bersama, WAJIB identik di studio.html, master.html & undangan.html ====
+   Satu format pesan untuk SEMUA tombol kirim/bagikan link undangan: Studio (WA per tamu, Kirim Link
+   via WhatsApp, Bagikan via WhatsApp di layar "Undangan sudah jadi!"), Undangan Master (Share via
+   WhatsApp untuk semua & per tamu), dan tombol Bagikan di undangan live. Template milik pemilik
+   ikut snapshot publish (data.waTemplate); bila kosong dipakai teks bawaan. Tanpa {link_undangan},
+   link tetap ditambahkan di akhir supaya pesan tidak pernah terkirim tanpa link.
+   Dicek otomatis oleh tools/cek-kesehatan.py dan tools/test-pesan-wa.cjs. */
+const WA_TEMPLATE_DEFAULT='Assalamualaikum {nama_tamu} 🙏\n\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara {acara} kami:\n\n{link_undangan}\n\nMerupakan kebahagiaan bagi kami atas kehadiran & doanya.\n\nTerima kasih 🤍\n{nama_pengantin}';
+const WA_SAPA_UMUM='Bapak/Ibu/Saudara/i';
+const WA_ACARA={pernikahan:'Pernikahan',khitanan:'Tasyakuran Khitanan',ultah:'Sweet Birthday Party',aqiqah:'Tasyakuran Aqiqah'};
+function acaraWa(ev){return WA_ACARA[ev]||'Syukuran'}
+function isiPesanWa(tpl,v){
+ let t=String(tpl==null?'':tpl);
+ if(!t.trim())t=WA_TEMPLATE_DEFAULT;
+ if(t.indexOf('{link_undangan}')<0)t=t.replace(/\s+$/,'')+'\n\n{link_undangan}';
+ return t.replace(/\{(nama_tamu|link_undangan|nama_pengantin|acara)\}/g,(m,k)=>v&&v[k]!=null?String(v[k]):'');
+}
+function waUrl(teks){return 'https://wa.me/?text='+encodeURIComponent(teks)}
+/* ==== /PESAN WA UNDANGAN ==== */
+
 /* ============ STATE ============ */
 const DEF={
  page:'editor',tab:'info',event:'pernikahan',tpl:'ivory-klasik',accent:'#8A6E4B',tplCustom:[],tplDraftName:'',tplDraftPublic:false,
@@ -616,7 +636,7 @@ const DEF={
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'',
  guestCodes:{},masterKey:'',selGuest:null,showNameQr:true,
- waTemplate:'Assalamualaikum {nama_tamu} 🙏\n\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara {acara} kami:\n\n{link_undangan}\n\nMerupakan kebahagiaan bagi kami atas kehadiran & doanya.\n\nTerima kasih 🤍\n{nama_pengantin}',
+ waTemplate:WA_TEMPLATE_DEFAULT,
  amplop:{bank:'',noRek:'',pemilik:'',ewallet:'',noEwallet:'',showAmplop:false,showCopy:true},
  /* 10 slide konten baru — tiap slide: on + isi */
  slides:{
@@ -692,7 +712,10 @@ DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.pu
 /* Signature murah untuk mendeteksi "ada perubahan sejak publish terakhir" tanpa
    ikut menyalin foto base64 (cukup panjangnya saja). */
 function sigHash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h+str.charCodeAt(i))|0;return h.toString(36)+'.'+str.length}
-function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.tplCustom||[],state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,state.coverLayout||'amplop',!!state.coverStyleExplicit,state.coverPos,state.coverSize||'sedang',state.coverBtn||'amplop',(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug]))}
+function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.tplCustom||[],state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,state.coverLayout||'amplop',!!state.coverStyleExplicit,state.coverPos,state.coverSize||'sedang',state.coverBtn||'amplop',(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug].concat(
+ /* Teks WA ikut snapshot publish (dibaca Master & undangan live). Hanya teks yang diubah
+    pemilik yang dihitung, supaya undangan lama bertemplate bawaan tidak mendadak "berubah". */
+ state.waTemplate===WA_TEMPLATE_DEFAULT?[]:[String(state.waTemplate||'')])))}
 function draftDirty(){return !!(state.published&&state.pubSig&&state.pubSig!==draftSig())}
 /* Ketik isian tidak me-render ulang seluruh editor (agar fokus tidak hilang),
    jadi status "perubahan belum dipublikasikan" & tombol Publish Ulang
@@ -859,12 +882,16 @@ function upStoryFoto(input,i){const f=input.files&&input.files[0];if(!f)return;c
  kecilkanFoto(asal,f.type).then(k=>{const it=state.slides.story.items[i];if(k!==asal&&it&&it.foto===asal){it.foto=k;save();render()}})};r.readAsDataURL(f)}
 function setAnim(k,v){if((k==='effect'||k==='scroll')&&isVipFx(k,v)&&!bolehVip()){notify('👑 Efek VIP hanya untuk tema tier VIP (Rp149.000).');render();return}if((k==='effect'||k==='scroll')&&isEksFx(k,v)&&!bolehEks()){kunciEks();return}state.anim[k]=v;animSig=null;save();render()}
 function rsvpWa(){const n=document.getElementById('rvpN')?document.getElementById('rvpN').value:'Tamu',h=document.getElementById('rvpH')?document.getElementById('rvpH').value:'Hadir',m=document.getElementById('rvpM')?document.getElementById('rvpM').value:'';const t='RSVP — '+titleOf()+' '+displayName()+'\nNama: '+n+'\nKonfirmasi: '+h+(m?'\nPesan: '+m:'')+'\nTautan: '+previewUrl();window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
-/* Tulisan undangan yang dikirim lewat WA — pakai template (bisa diatur di tab Tamu) */
-function waShareText(){const g=selGuest();
- const link=state.linkMode==='single'?baseUrl():g?baseUrl()+'?to='+encodeURIComponent(g.nama):baseUrl();
- return state.waTemplate.replace('{nama_tamu}',g?g.nama:'Bapak/Ibu/Saudara/i').replace('{link_undangan}',link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf())}
-function waShareLink(){return 'https://wa.me/?text='+encodeURIComponent(waShareText())}
+/* Tulisan undangan yang dikirim lewat WA — SATU template (diatur di tab Tamu & QR) untuk semua
+   tombol kirim/bagikan. g = tamu dari guests() → sapaan nama + link personal; tanpa g → sapaan
+   umum Bapak/Ibu/Saudara/i + link untuk semua tamu (tanpa ?to=). */
+function pesanWa(g){return isiPesanWa(state.waTemplate,{nama_tamu:g?g.nama:WA_SAPA_UMUM,link_undangan:g?g.link:baseUrl(),nama_pengantin:displayName(),acara:acaraWa(state.event)})}
+function waShareText(){return pesanWa(selGuest())}
+function waShareLink(){return waUrl(waShareText())}
 function waSend(){window.open(waShareLink(),'_blank')}
+/* Ubah template di tab Tamu: pratinjau pesan ikut berubah saat mengetik (tanpa render ulang). */
+function updWaTemplate(v){state.waTemplate=v;save();renderPreview();const p=$('waPesanPrev');if(p)p.textContent=waShareText();const r=$('waResetBtn');if(r)r.style.display=v===WA_TEMPLATE_DEFAULT?'none':'inline-flex'}
+function resetWaTemplate(){state.waTemplate=WA_TEMPLATE_DEFAULT;save();render();notify('Teks WA kembali ke bawaan ✓')}
 
 /* ============ HELPERS ============ */
 const $=id=>document.getElementById(id);
@@ -1280,7 +1307,7 @@ async function publish(){
    cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),coverBtn:coverBtnId(),
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),linkMode:state.linkMode||'personal',
-   masterKey:state.masterKey||'',savedAt:new Date().toISOString()}};
+   waTemplate:String(state.waTemplate||''),masterKey:state.masterKey||'',savedAt:new Date().toISOString()}};
  state.pubSig=draftSig();
  if(state.music&&state.music.local)setTimeout(()=>notifyWarn('Musik <b>'+esc(state.music.name||'lokal')+'</b> tersimpan di perangkat ini saja — tamu tidak mendengarnya. Upload musik ke Supabase (tombol di tab Musik & Galeri) agar ikut di undangan live.',15000),600);
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
@@ -1302,7 +1329,7 @@ async function dlUndangan(){
    videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
    cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),coverBtn:coverBtnId(),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
-   gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],publishedAt:new Date().toISOString()};
+   gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],waTemplate:String(state.waTemplate||''),publishedAt:new Date().toISOString()};
   if(JSON.stringify(data).length>1500000){data.gallery=[];
    if(JSON.stringify(data).length>1200000){data.cover='';
     if(JSON.stringify(data).length>900000){notifyErr('Data terlalu besar utk 1 file — kurangi/kompres foto dulu');return}}}
@@ -1383,6 +1410,7 @@ function applyDraftData(d,extra){
  if(d.linkMode)state.linkMode=d.linkMode;
  if(d.guestsRaw!==undefined)state.guestsRaw=d.guestsRaw||'';
  if(d.guestCodes&&typeof d.guestCodes==='object')state.guestCodes=Object.assign({},d.guestCodes);
+ if(typeof d.waTemplate==='string'&&d.waTemplate.trim())state.waTemplate=d.waTemplate;
  animSig=null;_welcome=false;state.page='editor';state.tab='info';
 }
 /* Baris database skema lama (belum ada kolom data) → bentuk snapshot dasar. */
@@ -1443,7 +1471,7 @@ async function bukaRiwayatServer(slug){
 function dlQr(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrData(g);a.download=`QR-Checkin-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
 function dlQrUndangan(nama){const g=guests().find(x=>x.nama===nama);if(!g)return;const a=document.createElement('a');a.href=qrDataUndangan(g);a.download=`QR-Undangan-${state.linkMode}-${slugify(g.nama)}-${g.code}.png`;a.click()}
 async function copyTxt(t,msg){try{if(!navigator.clipboard)throw new Error('clipboard');await navigator.clipboard.writeText(t);notify(msg||'Disalin ✓')}catch(e){notify('Belum bisa menyalin otomatis. Pilih teks link lalu salin manual.')}}
-function waLink(g){const txt=state.waTemplate.replace('{nama_tamu}',g.nama).replace('{link_undangan}',g.link).replace('{nama_pengantin}',displayName()).replace('{acara}',titleOf());return 'https://wa.me/?text='+encodeURIComponent(txt)}
+function waLink(g){return waUrl(pesanWa(g))}
 function updKat(id,k,v){const it=state.katalog.find(x=>x.id===id);if(!it)return;it[k]=(k==='hargaNormal'||k==='hargaPromo')?Number(v):k==='promoActive'?v:v;save()}
 function addKat(tplId,options){options=options||{};const t=tplById(tplId||state.tpl);if(!t){if(!options.silent)notify('Pilih template yang valid terlebih dahulu.');return null}
  if(t.studioOnly){if(!options.silent)notify('Template Studio-only tidak dimasukkan ke Katalog Harga & Promo.');return null}
@@ -1879,11 +1907,12 @@ function tabTamu(){const gs=guests(),g=selGuest(),single=state.linkMode==='singl
   </div>
   <div style="margin-top:16px">
    <div style="font-size:11px;font-weight:500;margin-bottom:4px">💬 Tulisan Undangan untuk WA (variabel: {nama_tamu}, {link_undangan}, {nama_pengantin}, {acara})</div>
-   <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:6px">Teks ini otomatis terpasang di tombol <b>Kirim via WA</b> (header & pratinjau HP). Variabel terisi otomatis sesuai tamu yang dipilih.</div>
-   <textarea rows="6" style="width:100%;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);padding:8px 12px;font-size:11px;font-family:ui-monospace,monospace;color:#fff" oninput="upd('waTemplate',this.value)">${esc(state.waTemplate)}</textarea>
+   <div style="font-size:10px;line-height:1.6;color:rgba(255,255,255,.5);margin-bottom:6px">Satu teks untuk <b>semua tombol kirim/bagikan link undangan</b>: WA per tamu, Kirim Link via WhatsApp, Bagikan via WhatsApp (layar Undangan sudah jadi), Share via WhatsApp di Undangan Master, dan tombol Bagikan di undangan. Untuk link tanpa nama, {nama_tamu} menjadi <b>${WA_SAPA_UMUM}</b>. Setelah mengubah teks, <b>Publish Ulang</b> agar Master &amp; undangan live ikut memakainya.</div>
+   <textarea rows="6" aria-label="Tulisan undangan untuk WhatsApp" style="width:100%;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);padding:8px 12px;font-size:11px;font-family:ui-monospace,monospace;color:#fff" oninput="updWaTemplate(this.value)">${esc(state.waTemplate)}</textarea>
+   <button id="waResetBtn" class="sm-btn" style="margin-top:6px;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff;display:${state.waTemplate===WA_TEMPLATE_DEFAULT?'none':'inline-flex'}" onclick="resetWaTemplate()" data-help="Kembalikan tulisan WA ke teks bawaan AsProject.">↺ Kembalikan teks bawaan</button>
    <div style="margin-top:10px;border-radius:12px;background:rgba(37,211,102,.08);border:1px solid rgba(37,211,102,.35);padding:10px 12px">
-    <div style="font-size:10px;color:rgba(255,255,255,.55);margin-bottom:6px">📱 Pratinjau pesan WA:</div>
-    <div style="font-size:11px;line-height:1.7;color:#fff;white-space:pre-wrap">${esc(waShareText())}</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.55);margin-bottom:6px">📱 Pratinjau pesan WA — ${g?'untuk '+esc(g.nama):'untuk semua tamu (tanpa nama)'}:</div>
+    <div id="waPesanPrev" style="font-size:11px;line-height:1.7;color:#fff;white-space:pre-wrap">${esc(waShareText())}</div>
    </div>
    <button onclick="waSend()" style="margin-top:10px;width:100%;height:42px;border-radius:99px;background:#25D366;color:#fff;font-size:12px;font-weight:600;border:0;cursor:pointer">📤 Kirim Link via WhatsApp</button>
   </div>
@@ -1999,7 +2028,8 @@ function linkReady(){return state.published&&state.publishedLink===baseUrl()}
 function showReady(){if(!linkReady()){notify('Selesaikan undangan untuk menyiapkan link ini.');return}state.stage='ready';save();render()}
 function shareReadyLink(action){if(!linkReady())return;
  if(action==='copy')copyTxt(baseUrl(),'Link undangan disalin ✓');
- if(action==='wa')window.open('https://wa.me/?text='+encodeURIComponent('Dengan hormat, kami mengundang Anda ke acara '+displayName()+'.\n\n'+baseUrl()),'_blank','noopener,noreferrer');
+ /* Pesan lengkap yang sama dengan tombol WA lain (template tab Tamu, sapaan umum + link semua tamu). */
+ if(action==='wa')window.open(waUrl(pesanWa(null)),'_blank','noopener,noreferrer');
  if(action==='open')window.open(baseUrl(),'_blank','noopener,noreferrer');
 }
 function readyView(){return `<main class="flow-page"><section class="card" aria-labelledby="ready-title"><div role="status" aria-live="polite"><div style="font-size:36px;margin-bottom:12px">✓</div><h1 id="ready-title">Undangan sudah jadi!</h1><p>Link siap dibagikan. Undangan berhasil dipublish dan tersimpan di arsip.</p></div><label class="f" style="margin-top:20px">Link undangan tamu<input class="flow-link" readonly value="${esc(baseUrl())}" onclick="this.select()"></label><div class="flow-actions"><button class="sm-btn dark" onclick="shareReadyLink('copy')">Salin Link Undangan</button><button class="sm-btn wa" onclick="shareReadyLink('wa')">Bagikan via WhatsApp</button><button class="sm-btn" onclick="shareReadyLink('open')">Lihat Undangan ↗</button></div><div class="flow-actions"><button class="sm-btn" onclick="openMasterMenu()">Kirim Master ke Pemilik</button><button class="sm-btn" onclick="editInvitation()">Edit Undangan</button></div><p style="font-size:11px;margin-top:12px">Link master terpisah dan privat. Untuk tamu, gunakan link undangan di atas.</p></section><button class="sm-btn" style="min-height:44px" onclick="startInvitation()">Membuat Undangan Baru</button></main>`}
@@ -2246,7 +2276,9 @@ function barisUndangan(){
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
-   masterKey:state.masterKey||'',linkMode:state.linkMode||'personal'}};
+   masterKey:state.masterKey||'',linkMode:state.linkMode||'personal',
+   /* Teks WA milik pemilik → dipakai Undangan Master & tombol Bagikan di undangan live. */
+   waTemplate:String(state.waTemplate||'')}};
 }
 function pvHtml(){return '<div class="pv-phone"><iframe class="pv-frame" src="undangan.html?preview=1" title="Pratinjau undangan (tampilan asli)" loading="eager" referrerpolicy="no-referrer"></iframe></div>'}
 /* Ukuran iframe: undangan selalu digambar pada lebar HP (390 px), lalu

@@ -1071,6 +1071,36 @@ function fxCoverId(AN){const v=AN&&AN.effect;return FX_COVER.some(f=>f[0]===v)?v
 /* ---------- util ---------- */
 const $=id=>document.getElementById(id);
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+/* ==== PESAN WA UNDANGAN — blok bersama, WAJIB identik di studio.html, master.html & undangan.html ====
+   Satu format pesan untuk SEMUA tombol kirim/bagikan link undangan: Studio (WA per tamu, Kirim Link
+   via WhatsApp, Bagikan via WhatsApp di layar "Undangan sudah jadi!"), Undangan Master (Share via
+   WhatsApp untuk semua & per tamu), dan tombol Bagikan di undangan live. Template milik pemilik
+   ikut snapshot publish (data.waTemplate); bila kosong dipakai teks bawaan. Tanpa {link_undangan},
+   link tetap ditambahkan di akhir supaya pesan tidak pernah terkirim tanpa link.
+   Dicek otomatis oleh tools/cek-kesehatan.py dan tools/test-pesan-wa.cjs. */
+const WA_TEMPLATE_DEFAULT='Assalamualaikum {nama_tamu} 🙏\n\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara {acara} kami:\n\n{link_undangan}\n\nMerupakan kebahagiaan bagi kami atas kehadiran & doanya.\n\nTerima kasih 🤍\n{nama_pengantin}';
+const WA_SAPA_UMUM='Bapak/Ibu/Saudara/i';
+const WA_ACARA={pernikahan:'Pernikahan',khitanan:'Tasyakuran Khitanan',ultah:'Sweet Birthday Party',aqiqah:'Tasyakuran Aqiqah'};
+function acaraWa(ev){return WA_ACARA[ev]||'Syukuran'}
+function isiPesanWa(tpl,v){
+ let t=String(tpl==null?'':tpl);
+ if(!t.trim())t=WA_TEMPLATE_DEFAULT;
+ if(t.indexOf('{link_undangan}')<0)t=t.replace(/\s+$/,'')+'\n\n{link_undangan}';
+ return t.replace(/\{(nama_tamu|link_undangan|nama_pengantin|acara)\}/g,(m,k)=>v&&v[k]!=null?String(v[k]):'');
+}
+function waUrl(teks){return 'https://wa.me/?text='+encodeURIComponent(teks)}
+/* ==== /PESAN WA UNDANGAN ==== */
+/* Link yang ikut tombol 🔗 Bagikan = link untuk semua tamu (/u/{slug}, tanpa ?to=) — sama dengan
+   Studio & Master, jadi penerima pesan terusan tidak melihat nama tamu lain di sapaan. Halaman
+   offline (file://) / subdomain wildcard memakai domain utama; mode demo membagikan URL demo. */
+function linkUndanganUmum(slug){
+ const s=String(slug||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
+ const h=String(location.hostname||'').toLowerCase();
+ const web=/^https?:$/.test(location.protocol)&&!!h&&h.slice(-16)!=='.asproject.my.id';
+ if(DEMO||!s)return web?location.href.split('#')[0]:'https://asproject.my.id/';
+ if(!web)return 'https://asproject.my.id/u/'+s;
+ return location.origin+location.pathname.replace(/[^/]*$/,'')+'u/'+s;
+}
 let _coverCrop={x:50,y:50,z:1};
 function fitCoverPhoto(im,frame,p){
  const b=frame.getBoundingClientRect(),w=frame.clientWidth||b.width,h=frame.clientHeight||b.height;
@@ -1902,10 +1932,12 @@ function boot(draft){
  }
  if(btnShare){
   btnShare.addEventListener('click',async()=>{
-   const txt='Undangan '+fullNm+' — '+esc(dateStr||'');
-   if(navigator.share){try{await navigator.share({title:document.title,text:txt,url:location.href});return}catch(e){}}
-   try{await navigator.clipboard.writeText(location.href);ivToast('Tautan undangan tersalin — bagikan ke tamu ✨')}
-   catch(e){location.href='https://wa.me/?text='+encodeURIComponent(txt+'\n'+location.href)}
+   /* Pesan lengkap yang SAMA dengan tombol WA di Studio & Master (template pemilik, sapaan umum,
+      link untuk semua tamu) — link sudah ada di dalam teks, jadi tidak dikirim lagi lewat url. */
+   const txt=isiPesanWa(d&&d.waTemplate,{nama_tamu:WA_SAPA_UMUM,link_undangan:linkUndanganUmum(draft.slug||SLUG),nama_pengantin:fullNm,acara:acaraWa(ev)});
+   if(navigator.share){try{await navigator.share({title:document.title,text:txt});return}catch(e){if(e&&e.name==='AbortError')return}}
+   try{await navigator.clipboard.writeText(txt);ivToast('Pesan undangan tersalin — tinggal tempel & kirim ✨')}
+   catch(e){location.href=waUrl(txt)}
   });
  }
 
