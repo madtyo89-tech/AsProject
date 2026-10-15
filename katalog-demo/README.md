@@ -24,6 +24,7 @@ Live* katalog publik; enam demo tambahan di bawah dibuka lewat URL langsung.
 | `undangan-khitanan-emerald.html` | Khitanan Emerald · emerald & gold | demo tambahan; tidak mengubah routing katalog |
 | `undangan-aqiqah-natural.html` | Aqiqah Natural · ivory & sand | demo tambahan; tidak mengubah routing katalog |
 | `undangan-ulang-tahun-ceria.html` | Pesta Ceria · plum & coral | demo tambahan; tidak mengubah routing katalog |
+| `perbandingan-tema.html` | dibangun `tools/bikin-perbandingan-tema.cjs` | 24 tema berdampingan + 15 model cover |
 | `index.html` | halaman pengantar Drive | daftar 12 tema + tautan ke demo di atas |
 | `foto-cover.jpg`, `foto-rahma-cover.jpg` | foto contoh | latar cover halaman-halaman di atas |
 
@@ -69,6 +70,28 @@ opsional, dan konten kategori tetap dipertahankan.
 
 Foto pada demo mandiri tetap menggunakan aset lokal yang tercantum di bagian **Foto lokal
 untuk enam demo tambahan** di atas.
+
+### Halaman perbandingan tema (`perbandingan-tema.html`)
+
+Menampilkan **24 tema berdampingan** (18 publik + 6 varian Gerbang Arch khusus Studio)
+beserta **15 model cover** dalam satu layar, supaya perbedaan antar tema bisa dinilai
+tanpa membuka Studio satu per satu. Tiap kartu merender gradasi `g[0]→g[2]`, warna
+aksen, warna tinta, font judul, pola latar, ornamen, dan monogram `char` — nilai yang
+sama persis dengan yang dipakai renderer `undangan.html`.
+
+Halaman ini **dibangun, bukan disunting manual**. Datanya dipanen dari `const TPL` /
+`const CV_LAYOUTS` di `studio.html` dan `const FONTS` / `function patCss()` di
+`undangan.html`, lalu tekstur polanya di-inline saat build. Setelah menambah tema baru
+di akhir array, jalankan ulang:
+
+```bash
+node tools/bikin-perbandingan-tema.cjs
+python3 tools/serve.py            # buka /katalog-demo/perbandingan-tema.html
+```
+
+Nomor `#` di tiap kartu adalah **indeks array TPL**, yaitu nilai kolom `theme` di
+Supabase — berguna saat menelusuri undangan lama. Halaman ini tidak ditautkan dari
+katalog publik dan tidak mengubah `DEMO_BY_NAME` / `DEMO_BY_CATEGORY`.
 
 ## Yang diubah saat templat masuk repo
 

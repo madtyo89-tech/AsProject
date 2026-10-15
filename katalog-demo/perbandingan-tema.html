@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Perbandingan Tema Undangan · AsProject</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#22201c;--muted:#6c665c;--line:#e6e0d6;--bg:#faf8f4;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif}
+header{padding:40px 22px 18px;max-width:1400px;margin:0 auto}
+h1{font:600 30px/1.15 "Cormorant Garamond",serif;margin:0 0 8px}
+header p{color:var(--muted);margin:0;max-width:70ch}
+.bilahan{position:sticky;top:0;z-index:9;background:rgba(250,248,244,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 22px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bilahan .dalam{max-width:1400px;margin:0 auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%}
+.bilahan button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font:inherit;font-size:13px;cursor:pointer}
+.bilahan button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.hitung{margin-left:auto;color:var(--muted);font-size:12px}
+main{max-width:1400px;margin:0 auto;padding:22px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+section.judul{margin:30px 0 14px;font:600 20px/1.2 "Cormorant Garamond",serif;border-bottom:1px solid var(--line);padding-bottom:8px}
+.kartu{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.panggung{position:relative;aspect-ratio:3/3.4;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.panggung .pola{position:absolute;inset:0}
+.panggung .isi{position:relative;text-align:center;padding:20px}
+.deco{font-size:12px;letter-spacing:.4em;opacity:.85}
+.panggung .judul{font-size:clamp(21px,5.4vw,28px);line-height:1.1;margin:12px 0 8px;font-weight:600}
+.panggung .garis{width:44px;height:1px;margin:0 auto 9px;opacity:.55}
+.panggung .tanggal{font-size:12.5px;letter-spacing:.09em;opacity:.8}
+.monogram{position:absolute;left:14px;top:14px;width:44px;height:44px;border:1px solid;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 9px/1 Inter,sans-serif;letter-spacing:.08em;opacity:.9}
+.meta{padding:14px 15px 16px;display:flex;flex-direction:column;gap:9px;flex:1}
+.baris1{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.baris1 h3{margin:0;font:600 15px/1.2 Inter,sans-serif}
+.idx{font-size:10.5px;color:var(--muted);background:#f2eee7;border-radius:5px;padding:2px 5px}
+.badge{font-size:9.5px;letter-spacing:.1em;padding:3px 7px;border-radius:999px;background:#efe7d6;color:#7a5d12;font-weight:600}
+.badge.studio{background:#e6ecf5;color:#3d5a80}
+.baris2{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--muted)}
+.harga{font-weight:600;color:var(--ink)}
+.desc{margin:0;font-size:12.8px;color:var(--muted);line-height:1.5}
+.swatch{display:flex;gap:5px}
+.swatch i{width:22px;height:22px;border-radius:6px;border:1px solid rgba(0,0,0,.12)}
+.swatch i.aksen,.swatch i.tinta{border-radius:50%}
+dl{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;margin:auto 0 0;font-size:11.5px}
+dl div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted var(--line);padding-bottom:3px}
+dt{color:var(--muted)}
+dd{margin:0;font-weight:500;text-align:right;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+dd.mono{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+.cvgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));margin-bottom:40px}
+.cv{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 13px;position:relative}
+.cv b{display:block;font-size:13.5px;margin-bottom:2px}
+.cv code{font-size:10.5px;color:#7a6a52;background:#f5f1e9;padding:1px 5px;border-radius:4px}
+.cv p{margin:7px 0 0;font-size:12.3px;color:var(--muted);line-height:1.45}
+.cvn{position:absolute;right:12px;top:10px;font-size:10px;color:#bdb5a7}
+footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);font-size:12.3px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Perbandingan Tema Undangan AsProject</h1>
+  <p>Dipanen otomatis dari <code>const TPL</code> di <code>studio.html</code> / <code>undangan.html</code>
+  oleh <code>tools/bikin-perbandingan-tema.cjs</code> — jangan disunting manual.
+  Nomor <span class="idx" style="padding:1px 5px">#</span> adalah indeks array = nilai kolom
+  <code>theme</code> di Supabase. Kartu di bawah memakai gradasi (<code>g[0]→g[2]</code>), aksen, tinta,
+  font, pola SVG, dan ornamen persis seperti renderer <code>undangan.html</code>.</p>
+</header>
+<div class="bilahan"><div class="dalam">
+  <span style="font-size:12.5px;color:var(--muted)">Saring:</span>
+  <button data-f="all" aria-pressed="true">Semua (24)</button>
+  <button data-f="pernikahan" aria-pressed="false">💍 Pernikahan (10)</button><button data-f="khitanan" aria-pressed="false">🕌 Khitanan (5)</button><button data-f="ultah" aria-pressed="false">🎂 Ultah Anak (6)</button><button data-f="aqiqah" aria-pressed="false">👶 Aqiqah (6)</button>
+  <button data-f="studio" aria-pressed="false">Studio-only (6)</button>
+  <span class="hitung"></span>
+</div></div>
+<main>
+  <section class="judul">Tema publik — masuk katalog &amp; daftar harga (18)</section>
+  <div class="grid" id="gPublik">
+<article class="kartu" data-ev="all" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FBFAF7 0%,#F0ECE3 52%,#DCD3C3 100%)">
+    <div class="pola" style=""></div>
+    <div class="isi" style="color:#4B4237">
+      <div class="deco" style="color:#8A6E4B">✦ ❖ ✦</div>
+      <div class="judul" style="font-family:&quot;Cormorant Garamond&quot;,serif;color:#8A6E4B">Ivory Klasik</div>
+      <div class="garis" style="background:#8A6E4B"></div>
+      <div class="tanggal" style="font-family:&quot;Cormorant Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+      
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#0</span>
+      <h3>Ivory Klasik</h3>
+      <span class="badge">DASAR</span>
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">✨ Semua Acara</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu</p>
+    <div class="swatch">
+      <i title="#FBFAF7" style="background:#FBFAF7"></i><i title="#F0ECE3" style="background:#F0ECE3"></i><i title="#DCD3C3" style="background:#DCD3C3"></i>
+      <i class="aksen" title="aksen #8A6E4B" style="background:#8A6E4B"></i>
+      <i class="tinta" title="tinta #4B4237" style="background:#4B4237"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cormorant Garamond&quot;,serif">cormorant</dd></div>
+      <div><dt>Pola</dt><dd>polos</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✦ ❖ ✦</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">ivory-klasik</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#E8DCCA 0%,#D8C7B0 52%,#C2A88B 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%237A5C3E%22%20stroke-opacity%3D%22.24%22%20stroke-width%3D%221.5%22%3E%3Cpath%20d%3D%22M48%204C65%2017%2065%2027%2048%2041%2031%2027%2031%2017%2048%204ZM92%2048C79%2065%2069%2065%2055%2048%2069%2031%2079%2031%2092%2048ZM48%2092C31%2079%2031%2069%2048%2055%2065%2069%2065%2079%2048%2092ZM4%2048C17%2031%2027%2031%2041%2048%2027%2065%2017%2065%204%2048Z%22%2F%3E%3Cpath%20d%3D%22M48%2031%2065%2048%2048%2065%2031%2048Z%22%2F%3E%3Ccircle%20cx%3D%2248%22%20cy%3D%2248%22%20r%3D%224%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:48px 48px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#6C5237">
+      <div class="deco" style="color:#7A5C3E">❖ ✦ ❖</div>
+      <div class="judul" style="font-family:&quot;Marcellus&quot;,serif;color:#7A5C3E">Adat Jawa Elegan</div>
+      <div class="garis" style="background:#7A5C3E"></div>
+      <div class="tanggal" style="font-family:&quot;Marcellus&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#7A5C3E;color:#7A5C3E">JAWA</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#1</span>
+      <h3>Adat Jawa Elegan</h3>
+      <span class="badge">LARIS</span>
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 75.000</span>
+    </div>
+    <p class="desc">Nuansa pranakan jawa yang anggun, motif batik halus &amp; gold foil</p>
+    <div class="swatch">
+      <i title="#E8DCCA" style="background:#E8DCCA"></i><i title="#D8C7B0" style="background:#D8C7B0"></i><i title="#C2A88B" style="background:#C2A88B"></i>
+      <i class="aksen" title="aksen #7A5C3E" style="background:#7A5C3E"></i>
+      <i class="tinta" title="tinta #6C5237" style="background:#6C5237"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Marcellus&quot;,serif">marcellus</dd></div>
+      <div><dt>Pola</dt><dd>batik</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">❖ ✦ ❖</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">jawa-elegan</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#D9E4D7 0%,#C2D4BE 52%,#A8BEA3 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%235F7A5C%22%20stroke-opacity%3D%22.17%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M14%20108C42%2087%2065%2056%20106%2013%22%2F%3E%3Cpath%20d%3D%22M34%2092C17%2089%2015%2073%2016%2067%2031%2065%2042%2075%2034%2092ZM52%2073C36%2071%2034%2057%2035%2051%2051%2049%2060%2059%2052%2073ZM72%2051C57%2048%2056%2034%2058%2028%2073%2028%2081%2039%2072%2051ZM39%2089C42%2073%2056%2069%2063%2070%2064%2085%2053%2095%2039%2089ZM59%2066C62%2051%2076%2047%2083%2049%2083%2064%2073%2073%2059%2066ZM81%2042C84%2029%2096%2024%20102%2026%20103%2039%2094%2048%2081%2042Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:120px 120px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#4A6647">
+      <div class="deco" style="color:#5F7A5C">✿ ❋ ✿</div>
+      <div class="judul" style="font-family:&quot;Cormorant Garamond&quot;,serif;color:#5F7A5C">Minimalist Sage</div>
+      <div class="garis" style="background:#5F7A5C"></div>
+      <div class="tanggal" style="font-family:&quot;Cormorant Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#5F7A5C;color:#5F7A5C">SAGE</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#2</span>
+      <h3>Minimalist Sage</h3>
+      
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 75.000</span>
+    </div>
+    <p class="desc">Bersih, modern, sage green aesthetic buat couple anti ribet</p>
+    <div class="swatch">
+      <i title="#D9E4D7" style="background:#D9E4D7"></i><i title="#C2D4BE" style="background:#C2D4BE"></i><i title="#A8BEA3" style="background:#A8BEA3"></i>
+      <i class="aksen" title="aksen #5F7A5C" style="background:#5F7A5C"></i>
+      <i class="tinta" title="tinta #4A6647" style="background:#4A6647"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cormorant Garamond&quot;,serif">cormorant</dd></div>
+      <div><dt>Pola</dt><dd>botanical</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✿ ❋ ✿</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">minimalist-sage</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FFF8E1 0%,#F7E8B0 52%,#D4AF37 100%)">
+    <div class="pola" style=""></div>
+    <div class="isi" style="color:#6B5724">
+      <div class="deco" style="color:#8C6D1F">✦ ❖ ✦</div>
+      <div class="judul" style="font-family:&quot;Playfair Display&quot;,serif;color:#8C6D1F">Luxury Gold</div>
+      <div class="garis" style="background:#8C6D1F"></div>
+      <div class="tanggal" style="font-family:&quot;Playfair Display&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#8C6D1F;color:#8C6D1F">GOLD</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#3</span>
+      <h3>Luxury Gold</h3>
+      <span class="badge">PREMIUM</span>
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 89.000</span>
+    </div>
+    <p class="desc">Glam soft luxury, emboss gold &amp; black tie vibe</p>
+    <div class="swatch">
+      <i title="#FFF8E1" style="background:#FFF8E1"></i><i title="#F7E8B0" style="background:#F7E8B0"></i><i title="#D4AF37" style="background:#D4AF37"></i>
+      <i class="aksen" title="aksen #8C6D1F" style="background:#8C6D1F"></i>
+      <i class="tinta" title="tinta #6B5724" style="background:#6B5724"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Playfair Display&quot;,serif">playfair</dd></div>
+      <div><dt>Pola</dt><dd>polos</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✦ ❖ ✦</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">luxury-gold</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FBE9E7 0%,#F8CFC8 52%,#E8AFA4 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23A66A5E%22%20stroke-opacity%3D%22.17%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M14%20108C42%2087%2065%2056%20106%2013%22%2F%3E%3Cpath%20d%3D%22M34%2092C17%2089%2015%2073%2016%2067%2031%2065%2042%2075%2034%2092ZM52%2073C36%2071%2034%2057%2035%2051%2051%2049%2060%2059%2052%2073ZM72%2051C57%2048%2056%2034%2058%2028%2073%2028%2081%2039%2072%2051ZM39%2089C42%2073%2056%2069%2063%2070%2064%2085%2053%2095%2039%2089ZM59%2066C62%2051%2076%2047%2083%2049%2083%2064%2073%2073%2059%2066ZM81%2042C84%2029%2096%2024%20102%2026%20103%2039%2094%2048%2081%2042Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:120px 120px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#70463E">
+      <div class="deco" style="color:#A66A5E">❀ ❁ ❀</div>
+      <div class="judul" style="font-family:&quot;Lora&quot;,serif;color:#A66A5E">Floral Rustic</div>
+      <div class="garis" style="background:#A66A5E"></div>
+      <div class="tanggal" style="font-family:&quot;Lora&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#A66A5E;color:#A66A5E">RUSTIC</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#4</span>
+      <h3>Floral Rustic</h3>
+      
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 75.000</span>
+    </div>
+    <p class="desc">Bunga-bunga rustic yang manis, cocok outdoor garden party</p>
+    <div class="swatch">
+      <i title="#FBE9E7" style="background:#FBE9E7"></i><i title="#F8CFC8" style="background:#F8CFC8"></i><i title="#E8AFA4" style="background:#E8AFA4"></i>
+      <i class="aksen" title="aksen #A66A5E" style="background:#A66A5E"></i>
+      <i class="tinta" title="tinta #70463E" style="background:#70463E"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Lora&quot;,serif">lora</dd></div>
+      <div><dt>Pola</dt><dd>botanical</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">❀ ❁ ❀</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">floral-rustic</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="khitanan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#E0F2FF 0%,#B8DAFF 52%,#7FB8F0 100%)">
+    <div class="pola" style="background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;"></div>
+    <div class="isi" style="color:#2D5680">
+      <div class="deco" style="color:#3A6EA5">★ ✦ ★</div>
+      <div class="judul" style="font-family:&quot;Poppins&quot;,sans-serif;color:#3A6EA5">Biru Ceria</div>
+      <div class="garis" style="background:#3A6EA5"></div>
+      <div class="tanggal" style="font-family:&quot;Poppins&quot;,sans-serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#3A6EA5;color:#3A6EA5">CERIA</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#5</span>
+      <h3>Biru Ceria</h3>
+      
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">🕌 Khitanan</span>
+      <span class="harga">Rp 75.000</span>
+    </div>
+    <p class="desc">Ceria &amp; playful buat jagoan yang lagi disunat, tetap sopan</p>
+    <div class="swatch">
+      <i title="#E0F2FF" style="background:#E0F2FF"></i><i title="#B8DAFF" style="background:#B8DAFF"></i><i title="#7FB8F0" style="background:#7FB8F0"></i>
+      <i class="aksen" title="aksen #3A6EA5" style="background:#3A6EA5"></i>
+      <i class="tinta" title="tinta #2D5680" style="background:#2D5680"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Poppins&quot;,sans-serif">poppins</dd></div>
+      <div><dt>Pola</dt><dd>confetti</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">★ ✦ ★</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">biru-ceria</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="khitanan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#E6F0E6 0%,#C9DCC9 52%,#A3C4A3 100%)">
+    <div class="pola" style="background-image:repeating-linear-gradient(45deg,#4A674114 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,#4A67410f 0 2px,transparent 2px 16px);"></div>
+    <div class="isi" style="color:#4C6A43">
+      <div class="deco" style="color:#4A6741">۞ ✦ ۞</div>
+      <div class="judul" style="font-family:&quot;Cinzel&quot;,serif;color:#4A6741">Islamic Elegant</div>
+      <div class="garis" style="background:#4A6741"></div>
+      <div class="tanggal" style="font-family:&quot;Cinzel&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#4A6741;color:#4A6741">ISLAMI</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#6</span>
+      <h3>Islamic Elegant</h3>
+      
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">🕌 Khitanan</span>
+      <span class="harga">Rp 79.000</span>
+    </div>
+    <p class="desc">Islami elegan dengan ornamen arabesque gold yang halus</p>
+    <div class="swatch">
+      <i title="#E6F0E6" style="background:#E6F0E6"></i><i title="#C9DCC9" style="background:#C9DCC9"></i><i title="#A3C4A3" style="background:#A3C4A3"></i>
+      <i class="aksen" title="aksen #4A6741" style="background:#4A6741"></i>
+      <i class="tinta" title="tinta #4C6A43" style="background:#4C6A43"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cinzel&quot;,serif">cinzel</dd></div>
+      <div><dt>Pola</dt><dd>arabesque</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">۞ ✦ ۞</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">islamic-elegant</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="ultah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FFF1C1 0%,#FFE082 52%,#FFB74D 100%)">
+    <div class="pola" style="background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;"></div>
+    <div class="isi" style="color:#82602B">
+      <div class="deco" style="color:#B87A1A">✸ ★ ✸</div>
+      <div class="judul" style="font-family:&quot;Pacifico&quot;,cursive;color:#B87A1A">Kids Party</div>
+      <div class="garis" style="background:#B87A1A"></div>
+      <div class="tanggal" style="font-family:&quot;Pacifico&quot;,cursive">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#B87A1A;color:#B87A1A">PARTY</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#7</span>
+      <h3>Kids Party</h3>
+      <span class="badge">LARIS</span>
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">🎂 Ultah Anak</span>
+      <span class="harga">Rp 75.000</span>
+    </div>
+    <p class="desc">Warna-warni happy, balon &amp; confetti buat si kecil</p>
+    <div class="swatch">
+      <i title="#FFF1C1" style="background:#FFF1C1"></i><i title="#FFE082" style="background:#FFE082"></i><i title="#FFB74D" style="background:#FFB74D"></i>
+      <i class="aksen" title="aksen #B87A1A" style="background:#B87A1A"></i>
+      <i class="tinta" title="tinta #82602B" style="background:#82602B"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Pacifico&quot;,cursive">pacifico</dd></div>
+      <div><dt>Pola</dt><dd>confetti</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✸ ★ ✸</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">kids-party</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="ultah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#F9D5E5 0%,#F4A9C4 52%,#E57AA0 100%)">
+    <div class="pola" style=""></div>
+    <div class="isi" style="color:#76374C">
+      <div class="deco" style="color:#9E4A66">✦ ❀ ✦</div>
+      <div class="judul" style="font-family:&quot;Dancing Script&quot;,cursive;color:#9E4A66">Sweet 17</div>
+      <div class="garis" style="background:#9E4A66"></div>
+      <div class="tanggal" style="font-family:&quot;Dancing Script&quot;,cursive">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#9E4A66;color:#9E4A66">SWEET</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#8</span>
+      <h3>Sweet 17</h3>
+      <span class="badge">FAVORIT</span>
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">🎂 Ultah Anak</span>
+      <span class="harga">Rp 85.000</span>
+    </div>
+    <p class="desc">Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya</p>
+    <div class="swatch">
+      <i title="#F9D5E5" style="background:#F9D5E5"></i><i title="#F4A9C4" style="background:#F4A9C4"></i><i title="#E57AA0" style="background:#E57AA0"></i>
+      <i class="aksen" title="aksen #9E4A66" style="background:#9E4A66"></i>
+      <i class="tinta" title="tinta #76374C" style="background:#76374C"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Dancing Script&quot;,cursive">dancing</dd></div>
+      <div><dt>Pola</dt><dd>polos</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✦ ❀ ✦</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">sweet-17</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="ultah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#E8E6E1 0%,#D5D0C9 52%,#B8B2A8 100%)">
+    <div class="pola" style=""></div>
+    <div class="isi" style="color:#665947">
+      <div class="deco" style="color:#5A5753">❖ ─ ❖</div>
+      <div class="judul" style="font-family:&quot;EB Garamond&quot;,serif;color:#5A5753">Adult Elegant</div>
+      <div class="garis" style="background:#5A5753"></div>
+      <div class="tanggal" style="font-family:&quot;EB Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#5A5753;color:#5A5753">ELEGAN</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#9</span>
+      <h3>Adult Elegant</h3>
+      
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">🎂 Ultah Anak</span>
+      <span class="harga">Rp 79.000</span>
+    </div>
+    <p class="desc">Mature, minimal, buat ultah ke-30, 40, 50 yang classy</p>
+    <div class="swatch">
+      <i title="#E8E6E1" style="background:#E8E6E1"></i><i title="#D5D0C9" style="background:#D5D0C9"></i><i title="#B8B2A8" style="background:#B8B2A8"></i>
+      <i class="aksen" title="aksen #5A5753" style="background:#5A5753"></i>
+      <i class="tinta" title="tinta #665947" style="background:#665947"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;EB Garamond&quot;,serif">ebgaramond</dd></div>
+      <div><dt>Pola</dt><dd>polos</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">❖ ─ ❖</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">adult-elegant</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="aqiqah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#E3F2FD 0%,#BBDEFB 52%,#90CAF9 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%234A7FB5%22%20stroke-opacity%3D%22.2%22%20stroke-width%3D%221.35%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M24%2012v28M12%2019l24%2014M36%2019%2012%2033M70%2052v32M56%2061l28%2015M84%2061%2056%2076M48%2048l7%207-7%207-7-7Z%22%2F%3E%3Cpath%20d%3D%22m20%2017%204%204%204-4m-16%2012%205-1%201%205m16-5-5-1-1%205m28%2030%204%205%204-5m-16%2013%205-1%201%205m16-5-5-1-1%205%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:96px 96px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#32567B">
+      <div class="deco" style="color:#4A7FB5">✦ ☁ ✦</div>
+      <div class="judul" style="font-family:&quot;Caveat&quot;,cursive;color:#4A7FB5">Baby Boy</div>
+      <div class="garis" style="background:#4A7FB5"></div>
+      <div class="tanggal" style="font-family:&quot;Caveat&quot;,cursive">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#4A7FB5;color:#4A7FB5">BABY</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#10</span>
+      <h3>Baby Boy</h3>
+      
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">👶 Aqiqah</span>
+      <span class="harga">Rp 75.000</span>
+    </div>
+    <p class="desc">Lembut biru langit, ilustrasi baby boy yang gemes</p>
+    <div class="swatch">
+      <i title="#E3F2FD" style="background:#E3F2FD"></i><i title="#BBDEFB" style="background:#BBDEFB"></i><i title="#90CAF9" style="background:#90CAF9"></i>
+      <i class="aksen" title="aksen #4A7FB5" style="background:#4A7FB5"></i>
+      <i class="tinta" title="tinta #32567B" style="background:#32567B"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Caveat&quot;,cursive">caveat</dd></div>
+      <div><dt>Pola</dt><dd>frost (es)</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✦ ☁ ✦</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">baby-boy</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="aqiqah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FCE4EC 0%,#F8BBD0 52%,#F48FB1 100%)">
+    <div class="pola" style=""></div>
+    <div class="isi" style="color:#78364D">
+      <div class="deco" style="color:#B55A7A">✿ ✦ ✿</div>
+      <div class="judul" style="font-family:&quot;Caveat&quot;,cursive;color:#B55A7A">Baby Girl</div>
+      <div class="garis" style="background:#B55A7A"></div>
+      <div class="tanggal" style="font-family:&quot;Caveat&quot;,cursive">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#B55A7A;color:#B55A7A">PUTRI</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#11</span>
+      <h3>Baby Girl</h3>
+      
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">👶 Aqiqah</span>
+      <span class="harga">Rp 75.000</span>
+    </div>
+    <p class="desc">Pink blush super lembut buat si putri kecil kesayangan</p>
+    <div class="swatch">
+      <i title="#FCE4EC" style="background:#FCE4EC"></i><i title="#F8BBD0" style="background:#F8BBD0"></i><i title="#F48FB1" style="background:#F48FB1"></i>
+      <i class="aksen" title="aksen #B55A7A" style="background:#B55A7A"></i>
+      <i class="tinta" title="tinta #78364D" style="background:#78364D"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Caveat&quot;,cursive">caveat</dd></div>
+      <div><dt>Pola</dt><dd>polos</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✿ ✦ ✿</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">baby-girl</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="aqiqah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#F5F0E6 0%,#E8DFC8 52%,#D4C4A0 100%)">
+    <div class="pola" style="background-image:repeating-linear-gradient(45deg,#7A6D4E14 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,#7A6D4E0f 0 2px,transparent 2px 16px);"></div>
+    <div class="isi" style="color:#6A5F44">
+      <div class="deco" style="color:#7A6D4E">۞ ❖ ۞</div>
+      <div class="judul" style="font-family:&quot;Marcellus&quot;,serif;color:#7A6D4E">Islamic Neutral</div>
+      <div class="garis" style="background:#7A6D4E"></div>
+      <div class="tanggal" style="font-family:&quot;Marcellus&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#7A6D4E;color:#7A6D4E">ADAB</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#12</span>
+      <h3>Islamic Neutral</h3>
+      
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">👶 Aqiqah</span>
+      <span class="harga">Rp 75.000</span>
+    </div>
+    <p class="desc">Gender neutral, kaligrafi doa &amp; nuansa cream hangat</p>
+    <div class="swatch">
+      <i title="#F5F0E6" style="background:#F5F0E6"></i><i title="#E8DFC8" style="background:#E8DFC8"></i><i title="#D4C4A0" style="background:#D4C4A0"></i>
+      <i class="aksen" title="aksen #7A6D4E" style="background:#7A6D4E"></i>
+      <i class="tinta" title="tinta #6A5F44" style="background:#6A5F44"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Marcellus&quot;,serif">marcellus</dd></div>
+      <div><dt>Pola</dt><dd>arabesque</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">۞ ❖ ۞</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">islamic-neutral</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#1E1A15 0%,#2E2419 52%,#4A3A22 100%)">
+    <div class="pola" style=""></div>
+    <div class="isi" style="color:#F2E8D5">
+      <div class="deco" style="color:#D4AF37">✦ ❖ ✦</div>
+      <div class="judul" style="font-family:&quot;Cinzel&quot;,serif;color:#D4AF37">Midnight Gold</div>
+      <div class="garis" style="background:#D4AF37"></div>
+      <div class="tanggal" style="font-family:&quot;Cinzel&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#D4AF37;color:#D4AF37">ONYX</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#13</span>
+      <h3>Midnight Gold</h3>
+      <span class="badge">BARU</span>
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 99.000</span>
+    </div>
+    <p class="desc">Kemewahan onyx &amp; gold foil — drama elegan untuk malam sakral</p>
+    <div class="swatch">
+      <i title="#1E1A15" style="background:#1E1A15"></i><i title="#2E2419" style="background:#2E2419"></i><i title="#4A3A22" style="background:#4A3A22"></i>
+      <i class="aksen" title="aksen #D4AF37" style="background:#D4AF37"></i>
+      <i class="tinta" title="tinta #F2E8D5" style="background:#F2E8D5"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cinzel&quot;,serif">cinzel</dd></div>
+      <div><dt>Pola</dt><dd>polos</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✦ ❖ ✦</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">midnight-gold</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#14342B 0%,#1F4D3E 52%,#356B55 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23D9B86C%22%20stroke-opacity%3D%22.17%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M14%20108C42%2087%2065%2056%20106%2013%22%2F%3E%3Cpath%20d%3D%22M34%2092C17%2089%2015%2073%2016%2067%2031%2065%2042%2075%2034%2092ZM52%2073C36%2071%2034%2057%2035%2051%2051%2049%2060%2059%2052%2073ZM72%2051C57%2048%2056%2034%2058%2028%2073%2028%2081%2039%2072%2051ZM39%2089C42%2073%2056%2069%2063%2070%2064%2085%2053%2095%2039%2089ZM59%2066C62%2051%2076%2047%2083%2049%2083%2064%2073%2073%2059%2066ZM81%2042C84%2029%2096%2024%20102%2026%20103%2039%2094%2048%2081%2042Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:120px 120px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#F0EAD6">
+      <div class="deco" style="color:#D9B86C">❖ ✦ ❖</div>
+      <div class="judul" style="font-family:&quot;Marcellus&quot;,serif;color:#D9B86C">Emerald Royal</div>
+      <div class="garis" style="background:#D9B86C"></div>
+      <div class="tanggal" style="font-family:&quot;Marcellus&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#D9B86C;color:#D9B86C">ZAMRUD</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#14</span>
+      <h3>Emerald Royal</h3>
+      <span class="badge">BARU</span>
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 95.000</span>
+    </div>
+    <p class="desc">Zamrud pekat beraksen emas kerajaan, anggun &amp; berwibawa</p>
+    <div class="swatch">
+      <i title="#14342B" style="background:#14342B"></i><i title="#1F4D3E" style="background:#1F4D3E"></i><i title="#356B55" style="background:#356B55"></i>
+      <i class="aksen" title="aksen #D9B86C" style="background:#D9B86C"></i>
+      <i class="tinta" title="tinta #F0EAD6" style="background:#F0EAD6"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Marcellus&quot;,serif">marcellus</dd></div>
+      <div><dt>Pola</dt><dd>botanical</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">❖ ✦ ❖</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">emerald-royal</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="khitanan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#16233F 0%,#223457 52%,#334B76 100%)">
+    <div class="pola" style=""></div>
+    <div class="isi" style="color:#F2ECDC">
+      <div class="deco" style="color:#E7C27D">★ ✦ ★</div>
+      <div class="judul" style="font-family:&quot;EB Garamond&quot;,serif;color:#E7C27D">Navy Crest</div>
+      <div class="garis" style="background:#E7C27D"></div>
+      <div class="tanggal" style="font-family:&quot;EB Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#E7C27D;color:#E7C27D">BINTANG</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#15</span>
+      <h3>Navy Crest</h3>
+      <span class="badge">BARU</span>
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">🕌 Khitanan</span>
+      <span class="harga">Rp 85.000</span>
+    </div>
+    <p class="desc">Navy klasik bercrest emas — gagah, sopan, tetap mewah</p>
+    <div class="swatch">
+      <i title="#16233F" style="background:#16233F"></i><i title="#223457" style="background:#223457"></i><i title="#334B76" style="background:#334B76"></i>
+      <i class="aksen" title="aksen #E7C27D" style="background:#E7C27D"></i>
+      <i class="tinta" title="tinta #F2ECDC" style="background:#F2ECDC"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;EB Garamond&quot;,serif">ebgaramond</dd></div>
+      <div><dt>Pola</dt><dd>polos</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">★ ✦ ★</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">navy-crest</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="ultah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#F5E7C8 0%,#E8CF96 52%,#D4AF37 100%)">
+    <div class="pola" style=""></div>
+    <div class="isi" style="color:#5C4714">
+      <div class="deco" style="color:#8C6D1F">✦ ✸ ✦</div>
+      <div class="judul" style="font-family:&quot;Playfair Display&quot;,serif;color:#8C6D1F">Golden Jubilee</div>
+      <div class="garis" style="background:#8C6D1F"></div>
+      <div class="tanggal" style="font-family:&quot;Playfair Display&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#8C6D1F;color:#8C6D1F">JUBILE</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#16</span>
+      <h3>Golden Jubilee</h3>
+      <span class="badge">BARU</span>
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">🎂 Ultah Anak</span>
+      <span class="harga">Rp 89.000</span>
+    </div>
+    <p class="desc">Pesta emas champagne buat milestone istimewa — 30, 40, 50 tahun</p>
+    <div class="swatch">
+      <i title="#F5E7C8" style="background:#F5E7C8"></i><i title="#E8CF96" style="background:#E8CF96"></i><i title="#D4AF37" style="background:#D4AF37"></i>
+      <i class="aksen" title="aksen #8C6D1F" style="background:#8C6D1F"></i>
+      <i class="tinta" title="tinta #5C4714" style="background:#5C4714"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Playfair Display&quot;,serif">playfair</dd></div>
+      <div><dt>Pola</dt><dd>polos</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✦ ✸ ✦</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">golden-jubilee</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="aqiqah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#F8F4EE 0%,#EFE6D8 52%,#E0D2BC 100%)">
+    <div class="pola" style=""></div>
+    <div class="isi" style="color:#5E4E36">
+      <div class="deco" style="color:#A88B5C">✦ ❖ ✦</div>
+      <div class="judul" style="font-family:&quot;Cormorant Garamond&quot;,serif;color:#A88B5C">Pearl Ivory</div>
+      <div class="garis" style="background:#A88B5C"></div>
+      <div class="tanggal" style="font-family:&quot;Cormorant Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#A88B5C;color:#A88B5C">MUTIARA</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#17</span>
+      <h3>Pearl Ivory</h3>
+      <span class="badge">BARU</span>
+      
+    </div>
+    <div class="baris2">
+      <span class="ev">👶 Aqiqah</span>
+      <span class="harga">Rp 85.000</span>
+    </div>
+    <p class="desc">Lembut mutiara &amp; ivory hangat, elegan menyambut si kecil</p>
+    <div class="swatch">
+      <i title="#F8F4EE" style="background:#F8F4EE"></i><i title="#EFE6D8" style="background:#EFE6D8"></i><i title="#E0D2BC" style="background:#E0D2BC"></i>
+      <i class="aksen" title="aksen #A88B5C" style="background:#A88B5C"></i>
+      <i class="tinta" title="tinta #5E4E36" style="background:#5E4E36"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cormorant Garamond&quot;,serif">cormorant</dd></div>
+      <div><dt>Pola</dt><dd>polos</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✦ ❖ ✦</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">pearl-ivory</dd></div>
+    </dl>
+  </div>
+</article></div>
+  <section class="judul">Varian Gerbang Arch — khusus Studio, tanpa listing harga (6)</section>
+  <div class="grid" id="gInternal">
+<article class="kartu" data-ev="pernikahan" data-studio="1">
+  <div class="panggung" style="background:linear-gradient(160deg,#FFF8F3 0%,#F3E5DC 52%,#E8CFC4 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%238A4B56%22%20stroke-opacity%3D%22.17%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M14%20108C42%2087%2065%2056%20106%2013%22%2F%3E%3Cpath%20d%3D%22M34%2092C17%2089%2015%2073%2016%2067%2031%2065%2042%2075%2034%2092ZM52%2073C36%2071%2034%2057%2035%2051%2051%2049%2060%2059%2052%2073ZM72%2051C57%2048%2056%2034%2058%2028%2073%2028%2081%2039%2072%2051ZM39%2089C42%2073%2056%2069%2063%2070%2064%2085%2053%2095%2039%2089ZM59%2066C62%2051%2076%2047%2083%2049%2083%2064%2073%2073%2059%2066ZM81%2042C84%2029%2096%2024%20102%2026%20103%2039%2094%2048%2081%2042Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:120px 120px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#5B3540">
+      <div class="deco" style="color:#8A4B56">✦ ❖ ✦</div>
+      <div class="judul" style="font-family:&quot;Cormorant Garamond&quot;,serif;color:#8A4B56">Gerbang Arch · Rosewood</div>
+      <div class="garis" style="background:#8A4B56"></div>
+      <div class="tanggal" style="font-family:&quot;Cormorant Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#8A4B56;color:#8A4B56">ROSEWOOD</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#18</span>
+      <h3>Gerbang Arch · Rosewood</h3>
+      <span class="badge">GERBANG</span>
+      <span class="badge studio">STUDIO</span>
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">—</span>
+    </div>
+    <p class="desc">Bingkai arch berlapis dengan ivory hangat dan aksen rosewood</p>
+    <div class="swatch">
+      <i title="#FFF8F3" style="background:#FFF8F3"></i><i title="#F3E5DC" style="background:#F3E5DC"></i><i title="#E8CFC4" style="background:#E8CFC4"></i>
+      <i class="aksen" title="aksen #8A4B56" style="background:#8A4B56"></i>
+      <i class="tinta" title="tinta #5B3540" style="background:#5B3540"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cormorant Garamond&quot;,serif">cormorant</dd></div>
+      <div><dt>Pola</dt><dd>botanical</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✦ ❖ ✦</dd></div>
+      <div><dt>Cover</dt><dd>arch (lengkung)</dd></div>
+      <div><dt>id</dt><dd class="mono">gerbang-rosewood</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="1">
+  <div class="panggung" style="background:linear-gradient(160deg,#FBFAF5 0%,#E8EDD9 52%,#C8D4BE 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23526A55%22%20stroke-opacity%3D%22.17%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M14%20108C42%2087%2065%2056%20106%2013%22%2F%3E%3Cpath%20d%3D%22M34%2092C17%2089%2015%2073%2016%2067%2031%2065%2042%2075%2034%2092ZM52%2073C36%2071%2034%2057%2035%2051%2051%2049%2060%2059%2052%2073ZM72%2051C57%2048%2056%2034%2058%2028%2073%2028%2081%2039%2072%2051ZM39%2089C42%2073%2056%2069%2063%2070%2064%2085%2053%2095%2039%2089ZM59%2066C62%2051%2076%2047%2083%2049%2083%2064%2073%2073%2059%2066ZM81%2042C84%2029%2096%2024%20102%2026%20103%2039%2094%2048%2081%2042Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:120px 120px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#435348">
+      <div class="deco" style="color:#526A55">✿ ❋ ✿</div>
+      <div class="judul" style="font-family:&quot;Cormorant Garamond&quot;,serif;color:#526A55">Gerbang Arch · Sage Pearl</div>
+      <div class="garis" style="background:#526A55"></div>
+      <div class="tanggal" style="font-family:&quot;Cormorant Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#526A55;color:#526A55">SAGE</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#19</span>
+      <h3>Gerbang Arch · Sage Pearl</h3>
+      <span class="badge">GERBANG</span>
+      <span class="badge studio">STUDIO</span>
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">—</span>
+    </div>
+    <p class="desc">Sage lembut, kartu editorial ivory, dan foto berbingkai arch</p>
+    <div class="swatch">
+      <i title="#FBFAF5" style="background:#FBFAF5"></i><i title="#E8EDD9" style="background:#E8EDD9"></i><i title="#C8D4BE" style="background:#C8D4BE"></i>
+      <i class="aksen" title="aksen #526A55" style="background:#526A55"></i>
+      <i class="tinta" title="tinta #435348" style="background:#435348"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cormorant Garamond&quot;,serif">cormorant</dd></div>
+      <div><dt>Pola</dt><dd>botanical</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✿ ❋ ✿</dd></div>
+      <div><dt>Cover</dt><dd>arch (lengkung)</dd></div>
+      <div><dt>id</dt><dd class="mono">gerbang-sage-pearl</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="1">
+  <div class="panggung" style="background:linear-gradient(160deg,#FBF8F0 0%,#F1E3C2 52%,#D8C7A3 100%)">
+    <div class="pola" style=""></div>
+    <div class="isi" style="color:#26364D">
+      <div class="deco" style="color:#80653D">✦ ❖ ✦</div>
+      <div class="judul" style="font-family:&quot;Playfair Display&quot;,serif;color:#80653D">Gerbang Arch · Midnight Navy</div>
+      <div class="garis" style="background:#80653D"></div>
+      <div class="tanggal" style="font-family:&quot;Playfair Display&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#80653D;color:#80653D">NAVY</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#20</span>
+      <h3>Gerbang Arch · Midnight Navy</h3>
+      <span class="badge">GERBANG</span>
+      <span class="badge studio">STUDIO</span>
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">—</span>
+    </div>
+    <p class="desc">Kontras midnight navy dengan champagne dan bingkai arch berlapis</p>
+    <div class="swatch">
+      <i title="#FBF8F0" style="background:#FBF8F0"></i><i title="#F1E3C2" style="background:#F1E3C2"></i><i title="#D8C7A3" style="background:#D8C7A3"></i>
+      <i class="aksen" title="aksen #80653D" style="background:#80653D"></i>
+      <i class="tinta" title="tinta #26364D" style="background:#26364D"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Playfair Display&quot;,serif">playfair</dd></div>
+      <div><dt>Pola</dt><dd>polos</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✦ ❖ ✦</dd></div>
+      <div><dt>Cover</dt><dd>arch (lengkung)</dd></div>
+      <div><dt>id</dt><dd class="mono">gerbang-midnight-navy</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="khitanan" data-studio="1">
+  <div class="panggung" style="background:linear-gradient(160deg,#FFFCF3 0%,#E5F1E8 52%,#C6D8CB 100%)">
+    <div class="pola" style="background-image:repeating-linear-gradient(45deg,#3A765F14 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,#3A765F0f 0 2px,transparent 2px 16px);"></div>
+    <div class="isi" style="color:#3D5F4F">
+      <div class="deco" style="color:#3A765F">۞ ✦ ۞</div>
+      <div class="judul" style="font-family:&quot;Cinzel&quot;,serif;color:#3A765F">Gerbang Arch · Khitanan Emerald</div>
+      <div class="garis" style="background:#3A765F"></div>
+      <div class="tanggal" style="font-family:&quot;Cinzel&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#3A765F;color:#3A765F">EMERALD</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#21</span>
+      <h3>Gerbang Arch · Khitanan Emerald</h3>
+      <span class="badge">GERBANG</span>
+      <span class="badge studio">STUDIO</span>
+    </div>
+    <div class="baris2">
+      <span class="ev">🕌 Khitanan</span>
+      <span class="harga">—</span>
+    </div>
+    <p class="desc">Khitanan bernuansa emerald, doa islami, dan aksen emas lembut</p>
+    <div class="swatch">
+      <i title="#FFFCF3" style="background:#FFFCF3"></i><i title="#E5F1E8" style="background:#E5F1E8"></i><i title="#C6D8CB" style="background:#C6D8CB"></i>
+      <i class="aksen" title="aksen #3A765F" style="background:#3A765F"></i>
+      <i class="tinta" title="tinta #3D5F4F" style="background:#3D5F4F"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cinzel&quot;,serif">cinzel</dd></div>
+      <div><dt>Pola</dt><dd>arabesque</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">۞ ✦ ۞</dd></div>
+      <div><dt>Cover</dt><dd>arch (lengkung)</dd></div>
+      <div><dt>id</dt><dd class="mono">gerbang-khitanan-emerald</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="aqiqah" data-studio="1">
+  <div class="panggung" style="background:linear-gradient(160deg,#FCF8F0 0%,#F3E9D4 52%,#E1D1B5 100%)">
+    <div class="pola" style="background-image:repeating-linear-gradient(45deg,#8C705214 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,#8C70520f 0 2px,transparent 2px 16px);"></div>
+    <div class="isi" style="color:#5E5142">
+      <div class="deco" style="color:#8C7052">۞ ❖ ۞</div>
+      <div class="judul" style="font-family:&quot;Marcellus&quot;,serif;color:#8C7052">Gerbang Arch · Aqiqah Natural</div>
+      <div class="garis" style="background:#8C7052"></div>
+      <div class="tanggal" style="font-family:&quot;Marcellus&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#8C7052;color:#8C7052">NATURAL</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#22</span>
+      <h3>Gerbang Arch · Aqiqah Natural</h3>
+      <span class="badge">GERBANG</span>
+      <span class="badge studio">STUDIO</span>
+    </div>
+    <div class="baris2">
+      <span class="ev">👶 Aqiqah</span>
+      <span class="harga">—</span>
+    </div>
+    <p class="desc">Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung</p>
+    <div class="swatch">
+      <i title="#FCF8F0" style="background:#FCF8F0"></i><i title="#F3E9D4" style="background:#F3E9D4"></i><i title="#E1D1B5" style="background:#E1D1B5"></i>
+      <i class="aksen" title="aksen #8C7052" style="background:#8C7052"></i>
+      <i class="tinta" title="tinta #5E5142" style="background:#5E5142"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Marcellus&quot;,serif">marcellus</dd></div>
+      <div><dt>Pola</dt><dd>arabesque</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">۞ ❖ ۞</dd></div>
+      <div><dt>Cover</dt><dd>arch (lengkung)</dd></div>
+      <div><dt>id</dt><dd class="mono">gerbang-aqiqah-natural</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="ultah" data-studio="1">
+  <div class="panggung" style="background:linear-gradient(160deg,#FFF8F4 0%,#FFE6DC 52%,#F2C9CB 100%)">
+    <div class="pola" style="background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;"></div>
+    <div class="isi" style="color:#644355">
+      <div class="deco" style="color:#A65066">✸ ✦ ✸</div>
+      <div class="judul" style="font-family:&quot;Dancing Script&quot;,cursive;color:#A65066">Gerbang Arch · Ulang Tahun Ceria</div>
+      <div class="garis" style="background:#A65066"></div>
+      <div class="tanggal" style="font-family:&quot;Dancing Script&quot;,cursive">Sabtu, 12 Desember 2026</div>
+      <div class="monogram" style="border-color:#A65066;color:#A65066">CERIA</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#23</span>
+      <h3>Gerbang Arch · Ulang Tahun Ceria</h3>
+      <span class="badge">GERBANG</span>
+      <span class="badge studio">STUDIO</span>
+    </div>
+    <div class="baris2">
+      <span class="ev">🎂 Ultah Anak</span>
+      <span class="harga">—</span>
+    </div>
+    <p class="desc">Ulang tahun ceria dengan sentuhan editorial, coral, dan arch</p>
+    <div class="swatch">
+      <i title="#FFF8F4" style="background:#FFF8F4"></i><i title="#FFE6DC" style="background:#FFE6DC"></i><i title="#F2C9CB" style="background:#F2C9CB"></i>
+      <i class="aksen" title="aksen #A65066" style="background:#A65066"></i>
+      <i class="tinta" title="tinta #644355" style="background:#644355"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Dancing Script&quot;,cursive">dancing</dd></div>
+      <div><dt>Pola</dt><dd>confetti</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono">✸ ✦ ✸</dd></div>
+      <div><dt>Cover</dt><dd>arch (lengkung)</dd></div>
+      <div><dt>id</dt><dd class="mono">gerbang-pesta-ceria</dd></div>
+    </dl>
+  </div>
+</article></div>
+  <section class="judul">15 model cover pembuka (<code>coverLayout</code>) — terpisah dari tema</section>
+  <div class="cvgrid">
+<div class="cv"><span class="cvn">01</span>
+  <b>✉️ Amplop Klasik</b><code>amplop</code><p>Amplop kertas dengan segel — tampilan bawaan.</p></div>
+<div class="cv"><span class="cvn">02</span>
+  <b>💌 Kartu Stationery</b><code>kartu</code><p>Kartu kertas tegas dengan tombol pil, tanpa gambar amplop.</p></div>
+<div class="cv"><span class="cvn">03</span>
+  <b>🖼️ Foto Penuh</b><code>foto</code><p>Foto cover memenuhi layar, nama terbaca di atas lapisan gelap.</p></div>
+<div class="cv"><span class="cvn">04</span>
+  <b>🏛️ Gerbang Lengkung</b><code>gerbang</code><p>Foto dibingkai lengkung di tengah seperti gerbang.</p></div>
+<div class="cv"><span class="cvn">05</span>
+  <b>✦ Minimalis</b><code>minimal</code><p>Tanpa foto: monogram &amp; tipografi saja di atas latar tema.</p></div>
+<div class="cv"><span class="cvn">06</span>
+  <b>🧵 Batik Nusantara</b><code>batik</code><p>Bingkai motif geometris terinspirasi batik, dengan lapisan warna hangat.</p></div>
+<div class="cv"><span class="cvn">07</span>
+  <b>🌸 Taman Sakura</b><code>sakura</code><p>Kelopak merah muda, sudut lembut, dan nuansa taman musim semi.</p></div>
+<div class="cv"><span class="cvn">08</span>
+  <b>🌙 Langit Malam</b><code>night</code><p>Latar malam bertabur bintang dengan tipografi terang yang tenang.</p></div>
+<div class="cv"><span class="cvn">09</span>
+  <b>🎟️ Tiket Kenangan</b><code>ticket</code><p>Bentuk tiket acara berlekuk dan garis perforasi di sisi kartu.</p></div>
+<div class="cv"><span class="cvn">10</span>
+  <b>📰 Editorial Majalah</b><code>editorial</code><p>Tata letak asimetris seperti sampul majalah, bersih dan berkarakter.</p></div>
+<div class="cv"><span class="cvn">11</span>
+  <b>📸 Tumpukan Polaroid</b><code>polaroid</code><p>Kartu foto miring dengan bingkai putih ala album kenangan.</p></div>
+<div class="cv"><span class="cvn">12</span>
+  <b>🫧 Kaca Embun</b><code>glass</code><p>Kartu kaca buram transparan dengan kilau lembut di atas palet tema.</p></div>
+<div class="cv"><span class="cvn">13</span>
+  <b>👑 Royal Nusantara</b><code>royal</code><p>Bingkai kerajaan bernuansa zamrud dan emas dengan garis berlapis.</p></div>
+<div class="cv"><span class="cvn">14</span>
+  <b>📜 Surat Arsip</b><code>archive</code><p>Kertas surat bertekstur lawas, garis tinta, dan cap klasik.</p></div>
+<div class="cv"><span class="cvn">15</span>
+  <b>🌃 Neon Kota</b><code>neon</code><p>Gaya malam urban dengan cahaya neon kontras dan tombol bercahaya.</p></div></div>
+</main>
+<footer>
+  Tema menentukan <b>palet, font, pola latar, ornamen, dan gaya cover bawaan</b>.
+  Model cover menentukan <b>komposisi layar pembuka</b>. Keduanya dipilih terpisah di tab
+  <b>Desain &amp; Cover</b> Studio, jadi satu tema bisa tampil beda dengan 15 model cover.
+</footer>
+<script>
+/* Satu-satunya JS di halaman ini: penyaring kategori. Tekstur pola tema sudah
+   di-inline saat build oleh patCss() hasil panen dari undangan.html. */
+(function(){
+  const urut=[].slice.call(document.querySelectorAll('.kartu'));
+  const btns=[].slice.call(document.querySelectorAll('.bilahan button'));
+  const hit=document.querySelector('.hitung');
+  function saring(f){
+    let n=0;
+    urut.forEach(k=>{
+      const ev=k.getAttribute('data-ev'),st=k.getAttribute('data-studio')==='1';
+      const ok=f==='all'?true:f==='studio'?st:(ev===f||ev==='all');
+      k.style.display=ok?'':'none';if(ok)n++;
+    });
+    hit.textContent=n+' tema tampil';
+  }
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+    saring(b.getAttribute('data-f'));
+  }));
+  saring('all');
+})();
+</script>
+</body>
+</html>
