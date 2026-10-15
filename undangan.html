@@ -42,7 +42,7 @@ button{font-family:inherit;cursor:pointer}
 .logo-badge img{width:38px;height:38px}
 
 /* ---------- COVER ---------- */
-#cover{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 26px;
+#cover{position:fixed;inset:0;height:100vh;height:100dvh;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 26px;
   background:linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));
   transition:opacity .7s ease,visibility .7s;}
 #cover .pat{position:absolute;inset:0;pointer-events:none;opacity:.5}
@@ -60,7 +60,7 @@ button{font-family:inherit;cursor:pointer}
 #cover .open{position:relative;margin-top:44px;display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 34px;border:0;border-radius:99px;background:var(--ink);color:var(--ink-fg);font-size:14px;font-weight:600;letter-spacing:.04em;box-shadow:0 18px 40px rgba(0,0,0,.22);animation:pulse 2.2s ease-in-out infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 #cover .open .env{font-size:18px}
-#cover .brand{position:absolute;bottom:22px;left:0;right:0;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);opacity:.55}
+#cover .brand{position:absolute;bottom:max(16px,env(safe-area-inset-bottom));left:0;right:0;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);opacity:.55}
 /* ---------- TEMA 3D (artwork realistis) ----------
    Tema ulang tahun ber-artwork memakai gambar 3D sebagai latar cover. Teks cover
    tetap terbaca karena diberi lapisan gelap tipis; warna teks diatur di boot(). */
@@ -116,7 +116,7 @@ body.foto-full #cover .date{margin-top:16px}
 body.foto-full #cover .open{margin-top:22px}
 /* Blok teks + amplop duduk lebih rendah (bawah-tengah), foto bagian atas lebih leluasa */
 body.wedding-cover.foto-full #cover,body.foto-full #cover{justify-content:flex-end;padding:0 0 8px}
-body.wedding-cover.foto-full #cover .bdfr,body.foto-full #cover .bdfr{margin:0 auto 88px}
+body.wedding-cover.foto-full #cover .bdfr,body.foto-full #cover .bdfr{margin:0 auto clamp(36px,10vh,88px)}
 .couple-foto{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0 18px}
 .couple-foto.tunggal{margin-bottom:14px}
 .couple-foto .cf{width:min(112px,30vw);aspect-ratio:3/4;overflow:hidden;border-radius:999px 999px 16px 16px;
@@ -408,7 +408,7 @@ body:not(.opened) .nv-bar{display:none}
 @keyframes cdPulse{0%,100%{transform:scale(1)}16%{transform:scale(1.13)}42%{transform:scale(1)}}
 .cdw.past .n{color:var(--accent-body)}
 
-.cvcue{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;flex-direction:column;
+.cvcue{position:absolute;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;flex-direction:column;
   align-items:center;gap:3px;font:600 8.5px 'Inter',system-ui,sans-serif;letter-spacing:.26em;
   text-transform:uppercase;color:var(--ink);opacity:.62;animation:cvcueBob 2.3s ease-in-out infinite;pointer-events:none}
 .cvcue i{width:14px;height:14px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;
@@ -618,6 +618,148 @@ body.cvl-kartu #cover .open,body.cvl-minimal #cover .open{flex-direction:row;ali
 body.cvl-kartu #cover .open .env,body.cvl-minimal #cover .open .env{display:none;position:static;transform:none;opacity:1}
 body.cvl-minimal #cover .orn,body.cvl-minimal #cover .cvf,body.cvl-minimal #cover .cvlatar{display:none}
 body.cvl-minimal #cover .bdfr{background:transparent;border-color:transparent;box-shadow:none}
+
+/* Sepuluh model tambahan: tiap gaya punya siluet, suasana, dan motifnya sendiri. */
+body.cvl-batik #cover{background:linear-gradient(145deg,#f2e6d2,#fffaf1 52%,#e9d9bf)}
+body.cvl-batik #cover .pat{opacity:.22}
+body.cvl-batik #cover .bdfr{isolation:isolate;border-radius:22px;background:repeating-linear-gradient(45deg,rgba(122,83,43,.045) 0 2px,transparent 2px 11px),linear-gradient(145deg,rgba(255,255,255,.97),rgba(249,239,221,.95));box-shadow:inset 0 0 0 6px rgba(122,83,43,.08),0 24px 58px rgba(70,49,25,.2)}
+body.cvl-batik #cover .bdfr::before{content:'';position:absolute;inset:10px;border:1px solid color-mix(in srgb,var(--accent) 52%,#d8bd8c);border-radius:14px;pointer-events:none;z-index:0}
+body.cvl-batik #cover .inner{position:relative;z-index:1}
+body.cvl-batik #cover .date{border-radius:8px;background:rgba(255,255,255,.82);border-color:color-mix(in srgb,var(--accent) 45%,#fff)}
+
+body.cvl-sakura #cover{background:radial-gradient(circle at 12% 20%,rgba(240,165,187,.42) 0 5px,transparent 6px),radial-gradient(circle at 84% 27%,rgba(240,165,187,.32) 0 4px,transparent 5px),radial-gradient(circle at 20% 76%,rgba(255,255,255,.8) 0 3px,transparent 4px),linear-gradient(155deg,#fff9fb,#f8e8ef 58%,#fff7f9)}
+body.cvl-sakura #cover .bdfr{isolation:isolate;border-radius:34px 12px 34px 12px;background:rgba(255,255,255,.82);border-color:rgba(196,112,139,.32);box-shadow:0 22px 58px rgba(154,83,111,.18)}
+body.cvl-sakura #cover .bdfr::before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 16px 18px,rgba(213,119,151,.55) 0 3px,transparent 3.5px),radial-gradient(ellipse at 16px 8px,rgba(244,183,203,.66) 0 4px,transparent 4.5px),radial-gradient(ellipse at 26px 18px,rgba(244,183,203,.6) 0 4px,transparent 4.5px),radial-gradient(ellipse at 16px 28px,rgba(244,183,203,.62) 0 4px,transparent 4.5px),radial-gradient(ellipse at 6px 18px,rgba(244,183,203,.58) 0 4px,transparent 4.5px);background-repeat:no-repeat;background-position:top 12px right 12px;pointer-events:none;z-index:0}
+body.cvl-sakura #cover .inner{position:relative;z-index:1}
+body.cvl-sakura #cover .date{border-radius:12px;background:rgba(255,247,250,.86);border-color:rgba(196,112,139,.38)}
+body.cvl-sakura #cover .open{background:linear-gradient(135deg,#b75c7c,#8f4664);border-radius:14px}
+
+body.cvl-night #cover{background:radial-gradient(circle at 18% 15%,rgba(255,255,255,.95) 0 1px,transparent 1.8px),radial-gradient(circle at 74% 23%,rgba(215,223,255,.8) 0 1px,transparent 1.8px),radial-gradient(circle at 83% 69%,rgba(255,255,255,.72) 0 1px,transparent 1.8px),radial-gradient(circle at 32% 78%,rgba(215,223,255,.7) 0 1px,transparent 1.8px),linear-gradient(155deg,#202b52,#0b1020 62%,#17132b)}
+body.cvl-night #cover .pat{opacity:.16}
+body.cvl-night #cover .veil{box-shadow:inset 0 0 140px rgba(3,6,18,.48)}
+body.cvl-night #cover .bdfr{border-radius:28px;background:rgba(9,13,30,.72);border-color:rgba(222,225,255,.34);box-shadow:0 0 64px rgba(108,126,220,.2)}
+body.cvl-night #cover .kicker,body.cvl-night #cover .std-label,body.cvl-night #cover .wedding-subtitle,body.cvl-night #cover .wedding-meta,body.cvl-night #cover .host,body.cvl-night #cover .wedding-note,body.cvl-night #cover .wedding-hint{color:#ececff}
+body.cvl-night #cover h1,body.cvl-night #cover .date{color:#fffaf0}
+body.cvl-night #cover .date{background:rgba(255,255,255,.1);border-color:rgba(230,232,255,.42)}
+body.cvl-night #cover .open{background:linear-gradient(135deg,#b9c5ff,#e0b8f5);color:#15162b}
+
+body.cvl-ticket #cover .bdfr{isolation:isolate;max-width:390px;border-radius:16px;background:linear-gradient(135deg,#fff9e9,#f7e9c8);box-shadow:0 24px 58px rgba(95,70,32,.22)}
+body.cvl-ticket #cover .bdfr::before,body.cvl-ticket #cover .bdfr::after{content:'';position:absolute;top:14px;bottom:14px;width:18px;background:radial-gradient(circle at 0 9px,#dfc999 0 5px,transparent 5.7px) left top/18px 18px repeat-y;pointer-events:none;z-index:0}
+body.cvl-ticket #cover .bdfr::before{left:0}
+body.cvl-ticket #cover .bdfr::after{right:0;transform:scaleX(-1)}
+body.cvl-ticket #cover .inner{position:relative;z-index:1}
+body.cvl-ticket #cover .date{border:1px dashed color-mix(in srgb,var(--accent) 65%,#9a7b43);border-radius:8px;background:rgba(255,255,255,.62)}
+body.cvl-ticket #cover .open{border-radius:8px;box-shadow:0 10px 22px rgba(88,63,27,.22)}
+
+body.cvl-editorial #cover .bdfr{max-width:420px;border-radius:4px;border-left:5px solid var(--accent);background:rgba(255,253,248,.94);box-shadow:0 22px 55px rgba(45,39,31,.16)}
+body.cvl-editorial #cover .inner{max-width:360px;margin:0 auto;text-align:left}
+body.cvl-editorial #cover .orn{letter-spacing:.28em;text-align:left}
+body.cvl-editorial #cover .cvf{width:min(34vw,132px);margin:14px 0 10px}
+body.cvl-editorial #cover .kicker{font-size:9px;letter-spacing:.22em}
+body.cvl-editorial #cover h1{font-size:clamp(30px,7vw,46px);line-height:1.05}
+body.cvl-editorial #cover .amp{font-size:19px;margin:3px 0}
+body.cvl-editorial #cover .date{padding:8px 12px;border-radius:3px;background:transparent;border-color:var(--accent)}
+body.cvl-editorial #cover .open{height:48px;margin:22px 0 0;padding:0 20px;border-radius:5px}
+
+body.cvl-polaroid #cover .bdfr{max-width:400px;border-radius:8px;background:#fffdf8;box-shadow:0 28px 60px rgba(28,24,19,.24);transform:rotate(-.8deg)}
+body.cvl-polaroid #cover .cvf{padding:8px 8px 28px!important;border-radius:5px!important;background:#fffdf8!important;box-shadow:0 12px 28px rgba(0,0,0,.2)!important}
+body.cvl-polaroid #cover .cvf img{border-radius:2px}
+body.cvl-polaroid #cover .date{border-radius:4px;background:#f7f3ea;color:#594c3a;border-color:#e4dac8}
+body.cvl-polaroid #cover .open{border-radius:8px}
+
+body.cvl-glass #cover{background:linear-gradient(135deg,color-mix(in srgb,var(--g0) 70%,#fff),color-mix(in srgb,var(--g2) 58%,#e8eeff))}
+body.cvl-glass #cover .bdfr{border-radius:30px;background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.78);backdrop-filter:blur(22px) saturate(1.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 25px 62px rgba(50,69,92,.2)}
+body.cvl-glass #cover .date{background:rgba(255,255,255,.34);border-color:rgba(255,255,255,.72);backdrop-filter:blur(12px)}
+body.cvl-glass #cover .cvf{box-shadow:0 16px 36px rgba(29,40,60,.26)}
+
+body.cvl-royal #cover{background:radial-gradient(ellipse at 50% 18%,#355b4b,#122b23 62%,#071711)}
+body.cvl-royal #cover .pat{opacity:.2}
+body.cvl-royal #cover .bdfr{isolation:isolate;border-radius:5px;background:linear-gradient(155deg,rgba(18,47,37,.96),rgba(7,24,19,.94));box-shadow:inset 0 0 0 6px rgba(219,190,115,.12),0 28px 64px rgba(0,0,0,.34)}
+body.cvl-royal #cover .bdfr::before{content:'';position:absolute;inset:11px;border:1px solid rgba(220,192,119,.58);border-radius:2px;pointer-events:none;z-index:0}
+body.cvl-royal #cover .inner{position:relative;z-index:1}
+body.cvl-royal #cover .kicker,body.cvl-royal #cover .std-label,body.cvl-royal #cover .wedding-subtitle,body.cvl-royal #cover .wedding-meta,body.cvl-royal #cover .host,body.cvl-royal #cover .wedding-note,body.cvl-royal #cover .wedding-hint{color:#e6d6a9}
+body.cvl-royal #cover h1,body.cvl-royal #cover .date{color:#fff6df}
+body.cvl-royal #cover .date{border-radius:4px;background:rgba(255,255,255,.08);border-color:rgba(220,192,119,.52)}
+body.cvl-royal #cover .open{background:linear-gradient(135deg,#e0c36f,#b9933e);color:#18251e;border-radius:5px}
+
+body.cvl-archive #cover{background:linear-gradient(90deg,#ded0b4,#f7efdf 18%,#eee1c8 82%,#d8c6a5)}
+body.cvl-archive #cover .bdfr{isolation:isolate;border-radius:4px;background:repeating-linear-gradient(0deg,rgba(91,68,41,.035) 0 1px,transparent 1px 6px),linear-gradient(135deg,#fffaf0,#f2e6d1);box-shadow:0 24px 58px rgba(69,51,30,.22)}
+body.cvl-archive #cover .bdfr::before{content:'';position:absolute;inset:9px;border:1px dashed rgba(116,88,53,.46);pointer-events:none;z-index:0}
+body.cvl-archive #cover .inner{position:relative;z-index:1;font-family:Georgia,serif}
+body.cvl-archive #cover .kicker,body.cvl-archive #cover .std-label{font-family:Georgia,serif;letter-spacing:.2em;color:#705a3a}
+body.cvl-archive #cover h1{font-style:italic;color:#4f3d28}
+body.cvl-archive #cover .date{border:1px dashed #9c8054;border-radius:4px;background:rgba(255,255,255,.52);color:#5f4b32}
+body.cvl-archive #cover .open{background:#604b32;border-radius:5px}
+
+body.cvl-neon #cover{background:radial-gradient(circle at 50% 6%,rgba(91,47,133,.55),transparent 40%),linear-gradient(160deg,#11101f,#070a16 64%,#171023)}
+body.cvl-neon #cover .pat{opacity:.12}
+body.cvl-neon #cover .bdfr{isolation:isolate;border-radius:22px;background:rgba(7,10,23,.78);box-shadow:0 0 0 1px rgba(71,238,255,.72),0 0 28px rgba(71,238,255,.32),inset 0 0 42px rgba(49,27,90,.35)}
+body.cvl-neon #cover .bdfr::before{content:'';position:absolute;inset:8px;border:1px solid rgba(255,83,211,.54);border-radius:15px;pointer-events:none;z-index:0}
+body.cvl-neon #cover .inner{position:relative;z-index:1}
+body.cvl-neon #cover .kicker,body.cvl-neon #cover .std-label,body.cvl-neon #cover .wedding-subtitle,body.cvl-neon #cover .wedding-meta,body.cvl-neon #cover .host,body.cvl-neon #cover .wedding-note,body.cvl-neon #cover .wedding-hint{color:#73f2ff}
+body.cvl-neon #cover h1{color:#fff;text-shadow:0 0 10px rgba(91,233,255,.65),0 0 26px rgba(255,82,214,.34)}
+body.cvl-neon #cover .date{background:rgba(71,238,255,.08);border-color:rgba(71,238,255,.65);color:#fff}
+body.cvl-neon #cover .open{background:#ff65d5;color:#1a0922;box-shadow:0 0 22px rgba(255,101,213,.64)}
+
+/* Cover tetap nyaman di layar ponsel pendek/lebar: gunakan tinggi viewport dinamis,
+   area aman notch, nama yang panjang boleh membungkus, dan rapatkan ornamen sebelum CTA terpotong. */
+@media(max-width:480px){
+ #cover{padding:max(14px,env(safe-area-inset-top)) 14px max(48px,calc(env(safe-area-inset-bottom) + 28px))}
+ #cover .bdfr{width:100%;min-width:0;padding:clamp(16px,3.5vh,24px) clamp(12px,3.8vw,18px)}
+ #cover .inner{min-width:0;overflow-wrap:anywhere}
+ #cover h1{max-width:100%;overflow-wrap:anywhere;font-size:clamp(27px,8vw,40px)}
+ #cover .date{max-width:100%;flex-wrap:wrap;justify-content:center;padding:9px 12px;font-size:12px}
+ #cover .host{max-width:100%;overflow-wrap:anywhere}
+ #cover .brand{bottom:max(10px,env(safe-area-inset-bottom))}
+ .cvcue{bottom:max(10px,env(safe-area-inset-bottom))}
+ body.wedding-cover #cover{padding:max(12px,env(safe-area-inset-top)) 10px max(48px,calc(env(safe-area-inset-bottom) + 28px))}
+ body.wedding-cover #cover .wedding-invite-card{width:100%;padding:clamp(14px,2.8vh,22px) clamp(12px,3.8vw,18px)}
+ body.wedding-cover #cover .cvf{width:min(31vw,112px);margin:6px auto 8px}
+ body.wedding-cover #cover .wedding-note{max-width:100%;margin:9px auto 0;padding-top:8px;font-size:11px;line-height:1.5}
+ body.wedding-cover #cover .date{margin-top:11px}
+ body.wedding-cover #cover .open{margin-top:12px}
+ body.wedding-cover #cover .brand{bottom:max(10px,env(safe-area-inset-bottom))}
+ body.foto-full #cover .bdfr{width:calc(100% - 20px);margin-bottom:max(30px,calc(env(safe-area-inset-bottom) + 24px))}
+}
+@media(max-height:760px){
+ #cover{padding-top:max(12px,calc(env(safe-area-inset-top) + 6px));padding-bottom:max(48px,calc(env(safe-area-inset-bottom) + 28px))}
+ #cover .bdfr{padding-top:clamp(12px,2.6vh,22px);padding-bottom:clamp(12px,2.6vh,22px)}
+ #cover .cvf{width:min(34vw,132px);margin-top:10px}
+ body.gerbang-arch #cover .cvf-arch{width:min(34vw,132px)}
+ #cover .kicker{margin-top:14px}
+ #cover .open,body.cvl-kartu #cover .open,body.cvl-minimal #cover .open{margin-top:20px;height:50px}
+ body.wedding-cover #cover{padding-top:max(12px,env(safe-area-inset-top));padding-bottom:max(48px,calc(env(safe-area-inset-bottom) + 28px))}
+ body.wedding-cover #cover .wedding-invite-card{padding-top:clamp(12px,2.4vh,18px);padding-bottom:clamp(12px,2.4vh,18px)}
+ body.wedding-cover #cover .cvf{width:min(28vw,104px);margin:5px auto 7px}
+ body.wedding-cover #cover .wedding-note{margin-top:7px;padding-top:7px;line-height:1.45}
+ body.wedding-cover #cover .date{margin-top:10px}
+ body.wedding-cover #cover .wedding-meta{margin-top:8px}
+ body.wedding-cover #cover .open{margin-top:11px;height:46px}
+ body.foto-full #cover .bdfr{margin-bottom:max(30px,calc(env(safe-area-inset-bottom) + 20px))}
+}
+@media(max-height:620px){
+ #cover{padding-top:max(8px,env(safe-area-inset-top));padding-bottom:max(44px,calc(env(safe-area-inset-bottom) + 24px))}
+ #cover .orn{font-size:14px;letter-spacing:9px}
+ #cover .chara{font-size:36px;margin-top:8px}
+ #cover .cvf{width:min(28vw,96px);margin-top:6px}
+ body.gerbang-arch #cover .cvf-arch{width:min(28vw,96px)}
+ #cover .kicker{margin-top:8px}
+ #cover h1{font-size:clamp(25px,7.2vw,34px);margin-top:7px}
+ #cover .date{margin-top:9px;padding:6px 11px}
+ #cover .host{margin-top:7px}
+ #cover .open,body.cvl-kartu #cover .open,body.cvl-minimal #cover .open{height:44px;margin-top:12px;padding:0 24px}
+ body.wedding-cover #cover .wedding-invite-card{padding:11px 11px}
+ body.wedding-cover #cover .cvf{width:min(22vw,76px);margin:3px auto 5px}
+ body.wedding-cover #cover .kicker{font-size:24px}
+ body.wedding-cover #cover h1{font-size:clamp(24px,7vw,34px)}
+ body.wedding-cover #cover .wedding-note{font-size:10px;line-height:1.35;margin-top:5px;padding-top:5px}
+ body.wedding-cover #cover .wedding-subtitle{font-size:9px;margin-top:3px}
+ body.wedding-cover #cover .date{margin-top:7px;padding:6px 9px}
+ body.wedding-cover #cover .host{font-size:10px;margin-top:5px}
+ body.wedding-cover #cover .wedding-meta{font-size:11px;margin-top:5px}
+ body.wedding-cover #cover .open{height:42px;margin-top:8px}
+ body.foto-full #cover .bdfr{margin-bottom:max(24px,calc(env(safe-area-inset-bottom) + 18px))}
+}
 /* ==== Harapan mempelai + stiker ucapan + paginasi buku tamu ==== */
 .harapan-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
 .harapan-kartu{position:relative;padding:18px 14px 14px;border-radius:16px;background:linear-gradient(165deg,var(--g0),var(--g1));
@@ -832,6 +974,23 @@ function fxCoverId(AN){const v=AN&&AN.effect;return FX_COVER.some(f=>f[0]===v)?v
 /* ---------- util ---------- */
 const $=id=>document.getElementById(id);
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+let _coverCrop={x:50,y:50,z:1};
+function fitCoverPhoto(im,frame,p){
+ const b=frame.getBoundingClientRect(),w=frame.clientWidth||b.width,h=frame.clientHeight||b.height;
+ const iw=im.naturalWidth||0,ih=im.naturalHeight||0;
+ if(!w||!h||!iw||!ih)return false;
+ const fit=Math.max(w/iw,h/ih),fw=iw*fit*p.z,fh=ih*fit*p.z;
+ im.style.position='absolute';im.style.right='auto';im.style.bottom='auto';
+ im.style.maxWidth='none';im.style.maxHeight='none';im.style.width=fw+'px';im.style.height=fh+'px';
+ im.style.left=(-Math.max(0,fw-w)*p.x/100)+'px';im.style.top=(-Math.max(0,fh-h)*p.y/100)+'px';
+ im.style.objectFit='fill';im.style.objectPosition='50% 50%';im.style.transform='none';return true
+}
+function fitCoverPhotos(){document.querySelectorAll('#cover .cvf img,#cover .cvlatar img').forEach(im=>{
+ const p=_coverCrop;if(!fitCoverPhoto(im,im.parentElement,p)){
+  im.style.objectFit='cover';im.style.objectPosition=p.x+'% '+p.y+'%';im.style.transform='scale('+p.z+')'
+ }
+})}
+window.addEventListener('resize',()=>{if(window.requestAnimationFrame)requestAnimationFrame(fitCoverPhotos);else fitCoverPhotos()},{passive:true});
 function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
 function patCss(t){
  const tile=(svg,size)=>`background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${size};background-repeat:repeat;`;
@@ -1132,10 +1291,28 @@ async function muatBukuTamu(paksa){const el=document.getElementById('btList');if
  }catch(e){tampilBukuTamu([])}
  finally{if(tw)clearTimeout(tw)}}
 
+/* Tema kustom ikut snapshot JSON; array TPL publik tidak pernah ditambah/diurut ulang.
+   Validasi palet, pola, font, id, dan path aset sebelum memakai data dari server. */
+function customThemeFromDraft(id,rows){
+ if(!Array.isArray(rows)||!id||TPL.some(t=>t.id===id)||!/^custom-[a-z0-9][a-z0-9-]{2,80}$/.test(id))return null;
+ const raw=rows.find(t=>t&&t.id===id);if(!raw||typeof raw!=='object')return null;
+ const base=TPL.find(t=>t.id===raw.baseTpl)||TPL[0];
+ const warna=(v,b)=>/^#[0-9a-f]{6}$/i.test(String(v||''))?String(v).toUpperCase():b;
+ const fontIds=FONTS.map(f=>f.id),polas=['','batik','botanical','frost','arab','confetti'];
+ const aset=v=>{const p=String(v||'').split('/');return p[0]==='assets'&&p.length>1&&p.slice(1).every(x=>/^[a-z0-9._-]+$/i.test(x))&&!p.includes('..')?v:''};
+ const g=Array.isArray(raw.g)?raw.g:base.g;
+ return {id,nama:String(raw.nama||'Template Kustom').replace(/[<>]/g,'').slice(0,60),ev:['pernikahan','khitanan','ultah','aqiqah','all'].includes(raw.ev)?raw.ev:base.ev,
+  g:[0,1,2].map(i=>warna(g[i],base.g[i])),accent:warna(raw.accent,base.accent),ink:warna(raw.ink,base.ink),
+  deco:String(raw.deco||base.deco||'✦ ❖ ✦').replace(/[<>]/g,'').slice(0,60),pat:polas.includes(raw.pat)?raw.pat:(base.pat||''),
+  ft:fontIds.includes(raw.ft)?raw.ft:base.ft,char:String(raw.char||base.char||'').replace(/[<>]/g,'').slice(0,24),
+  arch:!!raw.arch,bg3d:aset(raw.bg3d),bgPaper:aset(raw.bgPaper),custom:true,studioOnly:raw.studioOnly!==false};
+}
 /* ---------- build halaman ---------- */
 function boot(draft){
  const d=(draft.data&&typeof draft.data==='object')?draft.data:null;
- const tpl=(d&&d.tpl)?(TPL.find(t=>t.id===d.tpl)||null):null;
+ const tplId=d&&d.tpl?String(d.tpl):'';
+ const customTpl=d&&tplId?customThemeFromDraft(tplId,d.tplCustom):null;
+ const tpl=customTpl||(tplId?(TPL.find(t=>t.id===tplId)||null):null);
  const tplF=tpl||TPL[Math.max(0,Math.min(TPL.length-1,(Number.isFinite(+draft.theme)?+draft.theme:0))) ]||TPL[0];
  let ev=(d&&d.event)||tplF.ev;
  if(!d&&tplF.ev==='all'){const li=Number.isFinite(+draft.theme)?+draft.theme:-1;if(LEGACY_EV[li]&&LEGACY_KEY[LEGACY_EV[li]]!=='all')ev=LEGACY_KEY[LEGACY_EV[li]]}
@@ -1168,8 +1345,8 @@ function boot(draft){
  const PAPER=isWedding?(tplF.bgPaper||''):'';
  if(isWedding){document.body.classList.add('wedding-cover','theme-'+tplF.id)}
  if(tplF.arch)document.body.classList.add('gerbang-arch');
- /* Model cover pembuka (5 pilihan dari Studio): amplop | kartu | foto | gerbang | minimal */
- const CVL=['amplop','kartu','foto','gerbang','minimal'].indexOf(d&&d.coverLayout)>=0?d.coverLayout:'amplop';
+ /* Model cover pembuka: lima model dasar + sepuluh gaya unik dari Studio. */
+ const CVL=['amplop','kartu','foto','gerbang','minimal','batik','sakura','night','ticket','editorial','polaroid','glass','royal','archive','neon'].indexOf(d&&d.coverLayout)>=0?d.coverLayout:'amplop';
  if(CVL!=='amplop')document.body.classList.add('cvl-'+CVL);
  if(PAPER){document.body.classList.add('wedding-paper-art');rs.setProperty('--wedding-paper-art',"url('"+PAPER+"')")}
  rs.setProperty('--g0',tplF.g[0]);rs.setProperty('--g1',tplF.g[1]);rs.setProperty('--g2',tplF.g[2]);
@@ -1196,8 +1373,9 @@ function boot(draft){
  else if(CVL==='minimal')cvStyle='none';
  const cpo=(d&&d.coverPos)||{};
  const angkaPos=(v,b)=>{const n=parseFloat(v);return isFinite(n)?Math.min(100,Math.max(0,n)):b};
- const cvZ=(()=>{const n=parseFloat(cpo.z);return isFinite(n)?Math.min(2.2,Math.max(1,n)):1})();
+ const cvZ=(()=>{const n=parseFloat(cpo.z);return isFinite(n)?Math.min(4,Math.max(1,n)):1})();
  const cvP={x:angkaPos(cpo.x,50),y:angkaPos(cpo.y,50),z:cvZ};
+ _coverCrop=cvP;
  if(ART&&cvStyle!=='full'){document.body.classList.add('art3d');rs.setProperty('--cover-art',"url('"+ART+"')")}
  if(tplF.tier==='vip'&&window.AsVip4d){document.body.classList.add('vip4d');
   try{AsVip4d.mount({art:ART||'',deco:tplF.deco||'',part:tplF.part||'gold',scene:tplF.scene||'zoom'})}catch(e){/* efek VIP gagal mount — undangan tetap tampil normal */}}
@@ -1266,14 +1444,14 @@ function boot(draft){
  /* ---------- HTML ---------- */
  let h='';
  h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div>${cvStyle==='full'
-  ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"><i class="cvbl tl"></i><i class="cvbl tr"></i><i class="cvbl bl"></i><i class="cvbl br"></i></div>`
+  ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" onload="fitCoverPhotos()" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"><i class="cvbl tl"></i><i class="cvbl tr"></i><i class="cvbl bl"></i><i class="cvbl br"></i></div>`
   :''}<div class="bdfr ${isWedding?'wedding-invite-card':''}" style="${bdStyle}">${bdCorners}${ORN}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
    ${CVL==='minimal'?`<div class="monogram ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:260ms':''}">${esc(monogramOf(titleMain,titleSub))}</div>`:''}
    ${cvStyle==='none'||cvStyle==='full'?''
-     :`<div class="cvf cvf-${cvStyle} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`}
+     :`<div class="cvf cvf-${cvStyle} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" onload="fitCoverPhotos()" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`}
    <div class="kicker ${isWedding?'wedding-kicker':''} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(isWedding?"You're Invited":EV_KICKER[ev]||'Undangan')}</div>
-   ${tplF.char&&!isWedding?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms;':''}${tplF.char.length>2?'font-size:'+(tplF.char.length>6?32:tplF.char.length>4?38:46)+'px;font-family:var(--ft);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-cover);line-height:1;margin-top:16px;filter:none;text-shadow:0 2px 12px rgba(0,0,0,.14);':''}">${tplF.char}</div>`:''}`;
+   ${tplF.char&&!isWedding?`<div class="chara ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:650ms;':''}${tplF.char.length>2?'font-size:'+(tplF.char.length>6?32:tplF.char.length>4?38:46)+'px;font-family:var(--ft);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-cover);line-height:1;filter:none;text-shadow:0 2px 12px rgba(0,0,0,.14);':''}">${esc(tplF.char)}</div>`:''}`;
  if(ev==='pernikahan'){
   h+=txOn
    ?`<h1>${wspan(titleMain,h1d)}</h1><div class="amp anim-word" style="animation-delay:${h1d+nW(titleMain)*90+150}ms">&amp;</div><h1>${wspan(titleSub,h1d+nW(titleMain)*90+300)}</h1>`
@@ -1423,6 +1601,7 @@ function boot(draft){
  h+=`</div></div>`;
 
  $('app').innerHTML=h;
+ fitCoverPhotos();if(window.requestAnimationFrame)requestAnimationFrame(fitCoverPhotos);
  muatBukuTamu();
 
  /* interaksi */

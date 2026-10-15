@@ -124,7 +124,13 @@ function undangan(tpl, event = 'pernikahan', coverStyle) {
   };
 }
 function tplOfCheck(w, t){ return w.eval(`(state.tpl='${t.id}', tplOf().accent)`); }
-async function renderLive(id, event = 'pernikahan', coverStyle) {
+async function renderLive(id, event = 'pernikahan', coverStyle, customTheme, coverLayout) {
+  const draft = undangan(id, event, coverStyle);
+  if (coverLayout) draft.data.coverLayout = coverLayout;
+  if (customTheme) {
+    draft.data.tpl = customTheme.id;draft.data.tplCustom = [customTheme];draft.data.accent = customTheme.accent;
+    draft.data.fontTitle = customTheme.ft;draft.theme = studioTpl.findIndex(t => t.id === 'midnight-gold');
+  }
   const dom = new JSDOM(liveHtml, { url: 'https://asproject.my.id/undangan.html?slug=theme-test', runScripts: 'outside-only', pretendToBeVisual: true });
   const w = dom.window;
   w.HTMLMediaElement.prototype.pause = () => {}; w.HTMLMediaElement.prototype.play = () => Promise.resolve();
@@ -133,7 +139,7 @@ async function renderLive(id, event = 'pernikahan', coverStyle) {
   w.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} };
   w.fetch = () => Promise.reject(new Error('fixture: no network'));
   for (const asset of ['assets/scroll-effects.js', 'assets/theme-contrast.js', 'assets/button-help.js']) w.eval(read(asset));
-  w.eval('window.EMBEDDED_DATA=' + JSON.stringify(undangan(id, event, coverStyle)) + ';');
+  w.eval('window.EMBEDDED_DATA=' + JSON.stringify(draft) + ';');
   for (const tag of w.document.querySelectorAll('script:not([src])')) w.eval(tag.textContent);
   await new Promise(resolve => setTimeout(resolve, 430));
   return dom;
@@ -166,6 +172,33 @@ async function testArchLive() {
   const explicit = await renderLive(archOnly[0].id, archOnly[0].ev, 'polaroid');
   assert(explicit.window.document.querySelector('#cover .cvf-polaroid'), 'gaya cover tersimpan mengalahkan default arch di live');
   explicit.window.close();
+}
+
+async function testCustomTemplateLive() {
+  const custom={id:'custom-qa-theme',nama:'Tema Kustom QA',baseTpl:'midnight-gold',ev:'pernikahan',
+    g:['#FFFDF5','#F4E8D2','#D9C6A1'],accent:'#123456',ink:'#304050',deco:'✦ ❖ ✦',pat:'botanical',ft:'lora',char:'KUSTOM',studioOnly:true};
+  const dom=await renderLive('midnight-gold','pernikahan',undefined,custom),w=dom.window;
+  try {
+    assert(w.document.body.classList.contains('theme-custom-qa-theme'),'custom template dipilih sebelum indeks tema numerik');
+    assert(w.document.body.classList.contains('wedding-cover'),'custom template mempertahankan skin wedding');
+    assert.equal(w.document.documentElement.style.getPropertyValue('--accent'),custom.accent,'aksen custom dirender');
+    assert.equal(w.document.documentElement.style.getPropertyValue('--g0'),custom.g[0],'palet custom dirender');
+    assert.deepEqual(liveTpl.map(t=>t.id),studioTpl.map(t=>t.id),'array TPL publik tetap sama panjang dan urut');
+    assert(w.document.querySelector('#cover .wedding-invite-card'),'kartu undangan custom tetap tampil');
+  } finally { dom.window.close(); }
+}
+
+async function testCoverLayoutsLive() {
+  const layouts=['amplop','kartu','foto','gerbang','minimal','batik','sakura','night','ticket','editorial','polaroid','glass','royal','archive','neon'];
+  for (const id of layouts) {
+    const dom=await renderLive('ivory-klasik','pernikahan',undefined,undefined,id),w=dom.window;
+    try {
+      assert(w.document.querySelector('#cover .wedding-invite-card'),`${id}: cover tetap ter-render`);
+      if(id==='amplop')assert(!w.document.body.classList.contains('cvl-amplop'),'Amplop Klasik tetap model bawaan tanpa class tambahan');
+      else assert(w.document.body.classList.contains('cvl-'+id),`${id}: class model dipasang pada live cover`);
+    } finally { dom.window.close(); }
+  }
+  console.log('PASS: 15 model cover (5 dasar + 10 unik) dirender live dan cover tetap utuh.');
 }
 
 async function testStudioPreview() {
@@ -251,7 +284,7 @@ async function testStudioPreview() {
 
 (async () => {
   try {
-    if (JSDOM) { await testLiveExamples(); await testArchLive(); await testStudioPreview(); }
+    if (JSDOM) { await testLiveExamples(); await testArchLive(); await testCustomTemplateLive(); await testCoverLayoutsLive(); await testStudioPreview(); }
     else console.log('INFO: jsdom unavailable; runtime rendering checks skipped.');
     console.log(`PASS: ${studioTpl.length} tema selaras Studio/live (${expectedPublic.length} publik, ${archOnly.length} Studio-only); ${wedding.length} tema memakai skin wedding; semua enam Arch diuji di renderer & preview.`);
   } catch (error) { console.error(error); process.exitCode = 1; }

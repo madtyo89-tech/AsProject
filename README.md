@@ -105,10 +105,14 @@ dan galeri undangan jangan digeser — tampilkan beberapa foto sekaligus.
 - **Slide tanpa ruang kosong**: `setupNavPager()` mengukur tinggi tiap bagian saat aliran normal lalu
   menggabung bagian pendek (greedy, maks `innerHeight-150`) ke satu slide (`.pslide-multi`); isi slide
   ditengahkan vertikal (`justify-content:safe center`) supaya slide pendek tidak menyisakan bawah kosong.
-- **5 model cover pembuka** (`coverLayout`): amplop klasik (bawaan), kartu stationery, foto penuh,
-  gerbang lengkung, minimalis. Pilihan ada di tab *Desain & Cover* Studio (`CV_LAYOUTS`/`setCvLayout`),
-  tersimpan di draft & payload publish, dirender undangan live lewat class `body.cvl-*` (+ monogram untuk
-  model minimalis). Pratinjau Studio = iframe `undangan.html?preview=1` sehingga selalu sama dengan hasil publish.
+- **15 model cover pembuka** (`coverLayout`): lima model lama — Amplop Klasik (bawaan), Kartu Stationery,
+  Foto Penuh, Gerbang Lengkung, Minimalis — ditambah Batik Nusantara (`batik`), Taman Sakura (`sakura`),
+  Langit Malam (`night`), Tiket Kenangan (`ticket`), Editorial Majalah (`editorial`), Tumpukan Polaroid
+  (`polaroid`), Kaca Embun (`glass`), Royal Nusantara (`royal`), Surat Arsip (`archive`), dan Neon Kota
+  (`neon`). Tiap model baru memiliki komposisi dan suasana visual tersendiri. Pilihan ada di tab *Desain & Cover*
+  Studio (`CV_LAYOUTS`/`setCvLayout`), tersimpan di draft, template kustom, arsip, dan payload publish, serta
+  dirender undangan live lewat class `body.cvl-*` (+ monogram untuk model minimalis). Pratinjau Studio = iframe
+  `undangan.html?preview=1` sehingga selalu sama dengan hasil publish.
 - **Musik upload awet**: blob musik lokal disimpan ke IndexedDB (`asproject-musik`), bukan data URL di
   localStorage (penyebab kuota jebol & musik bisu saat dipakai lagi). `syncAudio()` mengambil blob URL dari
   IndexedDB; jika blob hilang muncul peringatan, dan publish mengingatkan bahwa musik lokal tidak ikut ke tamu.
@@ -118,6 +122,57 @@ dan galeri undangan jangan digeser — tampilkan beberapa foto sekaligus.
 - Bukti tampilan: `.preview-shots/20-studio-picker-cover.png` s.d. `28-slide-2.png`.
 - Dicek otomatis: `tools/cek-kesehatan.py` bagian 20–23 (galeri grid, packing slide, model cover, musik IDB,
   susunan tab) serta seluruh suite `tools/test-*.cjs`.
+
+## Ronde 5: Simpan sebagai Template Baru (2026-10-15)
+
+- Tab **Desain & Cover** menyediakan kartu **💾 Simpan sebagai Template Baru**. Template menyimpan palet,
+  warna aksen, font judul/isi, border, ornamen, serta model dan gaya cover; foto undangan tidak disalin
+  ke template. Nama template dibatasi 60 karakter.
+- Perpustakaan `tplCustom` tersimpan di perangkat (maksimal 80), memiliki ID `custom-*`, badge **CUSTOM**,
+  serta aksi **Nama**, **Salin**, dan **Hapus**. Saat template aktif dihapus, Studio memilih tema aman.
+  Template baru dan hasil duplikasi bersifat khusus Studio secara bawaan.
+- Centang **Tambahkan ke Katalog Publik** untuk membuat baris harga/promo di **Katalog Template** Studio.
+  Tema publik dapat disembunyikan dari picker; menghapus baris katalognya mengembalikan tema menjadi khusus
+  Studio. Array publik `TPL` tidak berubah sehingga indeks `theme` lama tetap stabil.
+- Snapshot publish, arsip lokal, ekspor HTML, preview, dan pemulihan draft membawa definisi `tplCustom`.
+  `undangan.html` memvalidasi ID, palet, font, pola, karakter, dan path aset sebelum memilih tema kustom;
+  bila tema tidak dikenal, renderer tetap memakai fallback TPL publik. Draft lama tanpa `tplCustom` tetap
+  dapat dibuka dan mempertahankan perpustakaan lokal yang sudah ada.
+- Bantuan aksi baru menggunakan Bahasa Indonesia. Bukti Playwright berurutan setelah ronde sebelumnya:
+  `.preview-shots/29-mobile-simpan-template.png`, `.preview-shots/30-desktop-template-kustom.png`,
+  dan `.preview-shots/31-undangan-live-template-kustom.png`.
+- Uji tambahan: `node tools/test-template-custom.cjs` dan (dengan server `python3 tools/serve.py 8080`)
+  `node tools/test-template-custom-browser.cjs`. Suite lain yang mencakup regresi terkait: `tools/test-wedding-templates.cjs`,
+  `tools/test-publish-fallback.cjs`, `tools/test-button-help.cjs`, dan `tools/test-mobile-browser.cjs`;
+  seluruh suite diperiksa lagi oleh `python3 tools/cek-kesehatan.py`.
+
+## Tambahan 10 model cover pembuka (2026-10-15)
+
+Lima model cover yang sudah ada tetap tersedia; Studio kini menawarkan sepuluh gaya baru yang berbeda:
+
+| ID | Nama di Studio | Arah visual |
+|---|---|---|
+| `batik` | Batik Nusantara | Bingkai geometris dan palet batik hangat |
+| `sakura` | Taman Sakura | Kelopak merah muda, sudut lembut, nuansa musim semi |
+| `night` | Langit Malam | Langit gelap bertabur bintang dan tipografi terang |
+| `ticket` | Tiket Kenangan | Kartu tiket acara dengan perforasi dan garis putus-putus |
+| `editorial` | Editorial Majalah | Tata letak asimetris, tipografi dan aksen editorial |
+| `polaroid` | Tumpukan Polaroid | Bingkai foto putih miring seperti album kenangan |
+| `glass` | Kaca Embun | Panel kaca buram dan kilau lembut |
+| `royal` | Royal Nusantara | Zamrud gelap, garis berlapis, dan aksen emas |
+| `archive` | Surat Arsip | Kertas bertekstur lawas dan tinta klasik |
+| `neon` | Neon Kota | Latar urban gelap dengan cahaya neon kontras |
+
+Semua model tersedia di grid responsif **Desain & Cover**, memiliki label/bantuan berbahasa Indonesia,
+serta ikut tersimpan di draft, template kustom, snapshot publish, arsip, dan ekspor HTML. Renderer
+`undangan.html` menerima ID yang sama; pemilih Studio dan renderer tidak mengubah urutan tema publik `TPL`.
+
+Bukti Playwright berurutan: `.preview-shots/32-mobile-15-model-cover.png`,
+`.preview-shots/33-cover-batik-nusantara.png`, dan `.preview-shots/34-cover-neon-kota.png`.
+Pemeriksaan mencakup 15 model di renderer live, persistensi cover `neon` pada template kustom, serta
+pemilih responsif di 320, 390, 768, dan 1280 px. Jalankan `node tools/test-wedding-templates.cjs`,
+`node tools/test-template-custom.cjs`, `node tools/test-template-custom-browser.cjs` (dengan server lokal),
+`node tools/test-button-help.cjs`, dan `python3 tools/cek-kesehatan.py`.
 
 ## Perbaikan alur Studio: publish ulang, riwayat, tombol kembali, pratinjau = hasil akhir (2026-10-14)
 
@@ -342,32 +397,37 @@ pernikahan, khitanan, aqiqah, dan ulang tahun.
 | 8 | `full` | foto penuh jadi latar cover + panel kaca gelap |
 | 9 | `none` | tanpa foto di cover (foto tetap tampil di bagian galeri) |
 
-Cara mengatur (di Studio, tab undangan):
+Cara mengatur (di Studio, tab **Musik & Galeri**):
 
 1. unggah **Foto Utama / Cover**;
 2. pilih salah satu dari **9 gaya** (pratinjau memakai foto Anda sendiri);
-3. **geser fotonya** di kotak “geser foto” (jari/mouse) — perpindahan dihitung dari
-   ukuran gambar asli supaya gerakannya pas 1:1 — lalu atur **zoom** (1×–2,2×);
-4. tekan **Publikasikan** agar gaya + posisi foto ikut tersimpan ke undangan live
+3. atur **zoom (1×–4×)**, lalu geser fotonya di kotak “geser foto” (jari/mouse).
+   Rentang geser mengikuti seluruh bidang crop setelah zoom, jadi foto bisa digeser
+   sampai tepi bingkai;
+4. bila salah pilih, tekan tombol **×** pada thumbnail untuk menghapus cover, foto
+   pasangan/anak, foto galeri satu per satu, atau foto cerita;
+5. tekan **Publikasikan** agar gaya + posisi foto ikut tersimpan ke undangan live
    (undangan yang sudah terbit perlu diterbitkan ulang).
 
 Catatan teknis:
 
-- posisi/zoom disimpan sebagai `coverPos:{x,y,z}` (persen) dan dipakai lewat
-  `object-position` + `transform:scale()`; gaya disimpan sebagai `coverStyle`;
+- posisi/zoom disimpan sebagai `coverPos:{x,y,z}` (persen). Renderer menyesuaikan
+  ukuran foto terhadap bingkai dan menghitung `left/top` dari ruang crop yang tersedia;
+  gaya disimpan sebagai `coverStyle`;
 - gaya **`full`** memakai lapisan gelap + panel kaca `rgba(10,8,6,.84)` di belakang
   teks, sehingga teks putih tetap ≥ 4.5:1 **walau fotonya serba putih** (diuji);
-- cover bisa **digulir** dan bingkai mengecil di layar pendek, jadi tombol
-  *Buka Undangan* tidak pernah terpotong karena tambahan foto;
+- cover memakai tinggi viewport dinamis, menghormati safe area/notch, dan merapatkan
+  tata letak pada layar pendek. Nama panjang bisa membungkus; konten tetap bisa
+  digulir bila tinggi layar memang tidak cukup;
 - undangan tanpa foto tampil **persis seperti sebelumnya** (tidak ada bingkai kosong).
 
 Kartu **“Preview Undangan”** di dashboard master (`master.html`) juga menampilkan foto
-cover itu beserta nama gayanya — termasuk latar gelap untuk gaya `full`, dan keterangan
-*“Belum ada foto cover”* bila belum diatur. Data diambil dari snapshot undangan yang
-sudah dipublish, jadi tekan **Selesaikan Undangan** dulu agar ikut terbarui.
+cover itu beserta nama gayanya — termasuk crop yang sama, latar gelap untuk gaya `full`,
+dan keterangan *“Belum ada foto cover”* bila belum diatur. Data diambil dari snapshot
+undangan yang sudah dipublish, jadi tekan **Selesaikan Undangan** dulu agar ikut terbarui.
 
-Uji: `node tools/test-foto-cover.cjs` (86 pemeriksaan, termasuk potongan
-`cvCoverMini()` dari `master.html`) dan bagian `[17]` di `tools/cek-kesehatan.py`.
+Uji: `node tools/test-foto-cover.cjs` (crop setelah zoom, tombol hapus, dan pratinjau
+Master) dan bagian `[17]` di `tools/cek-kesehatan.py`.
 Lembar perbandingan: `pilihan-gaya-foto-cover.png` dan `master-preview-foto-cover.png`
 (di luar repositori; dibuat dengan skrip sharp, bukan bagian aplikasi).
 

@@ -35,7 +35,9 @@ const dom=new JSDOM(html,{
   assert.equal(w.eval('typeof db'),'undefined','SDK/CDN is unavailable in this fixture');
   w.eval(`state.started=true;state.form.namaPria='REST';state.form.namaWanita='Fallback';
    state.form.tanggalAcara='2027-02-20';state.form.jamAcara='10:30';state.form.venue='Gedung';
-   state.slug='rest-fallback';save()`);
+   state.slug='rest-fallback';
+   state.tplCustom=normalizeTplCustom([{id:'custom-rest001',nama:'Tema REST',baseTpl:'jawa-elegan',ev:'pernikahan',g:['#FFFFFF','#EEEEEE','#DDDDDD'],accent:'#123456',ink:'#304050',ft:'lora',pat:'',studioOnly:true}]);
+   state.tpl='custom-rest001';state.accent='#123456';save()`);
   await w.eval('(async()=>{await publish()})()');
 
   assert.equal(w.eval('state.published'),true,'REST success marks the invitation published');
@@ -48,6 +50,9 @@ const dom=new JSDOM(html,{
   const payload=JSON.parse(requests[0].options.body);
   assert.equal(payload.slug,'rest-fallback');
   assert.equal(payload.data.form.namaPria,'REST');
+  assert.equal(payload.theme,0,'custom theme never shifts the public TPL index');
+  assert.equal(payload.data.tpl,'custom-rest001');
+  assert.equal(payload.data.tplCustom[0].id,'custom-rest001','complete custom theme travels in the publish snapshot');
 
   response={ok:false,status:400,body:JSON.stringify({
    code:'PGRST204',message:"Could not find the 'data' column of 'invitation_drafts' in the schema cache"
