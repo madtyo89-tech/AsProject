@@ -48,14 +48,34 @@ cek(/tplF\.tier==='vip'&&window\.AsVip4d/.test(und), 'mount hanya saat template 
 cek(/fetch\('assets\/vip-4d\.js'\)/.test(stu) && /vipJs\?/.test(stu), 'studio menyematkan module ke export mandiri');
 
 /* Tema VIP diambil dari katalog, bukan daftar tetap: sejak 2026-10-10 katalog direset
-   ke satu tema dasar sehingga tidak ada tema tier 'vip'. Mesin 4D & gating tetap diuji. */
-const idVip = (s) => [...s.matchAll(/\{id:'([a-z0-9-]+)'[^\n]*?tier:'vip'/g)].map((m) => m[1]);
+   ke satu tema dasar sehingga tidak ada tema tier 'vip'. Mesin 4D & gating tetap diuji.
+
+   Catatan: ekstraksi entri TPL HARUS per-objek, bukan per-baris. Baris TPL dikemas
+   beberapa tema sekaligus, jadi pola lama /\{id:'x'[^\n]*?tier:'vip'/ bisa menganggap
+   tier:'vip' milik tema lain di baris yang sama sebagai milik tema pertama. */
+function entriTpl(s, id) {
+  const i = s.indexOf("{id:'" + id + "'");
+  if (i < 0) return '';
+  let j = i + 1, depth = 1, q = null;
+  while (j < s.length) {
+    const c = s[j];
+    if (q) { if (c === '\\') { j += 2; continue; } if (c === q) q = null; }
+    else if (c === "'" || c === '"') q = c;
+    else if (c === '{' || c === '[' || c === '(') depth++;
+    else if (c === '}' || c === ']' || c === ')') { depth--; if (depth === 0) break; }
+    j++;
+  }
+  return depth === 0 ? s.slice(i, j + 1) : '';
+}
+function idVip(s) {
+  const out = [];
+  for (const m of s.matchAll(/\{id:'([a-z0-9-]+)'/g))
+    if (/tier:'vip'/.test(entriTpl(s, m[1]))) out.push(m[1]);
+  return out;
+}
 const VIP = idVip(stu).filter((id) => idVip(und).includes(id));
 if (!VIP.length) console.log('  ..  katalog tanpa tema tier VIP — pemeriksaan pasangan tema dilewati');
-function entri(s, id) {
-  const m = s.match(new RegExp("\\{id:'" + id + "'[^\\n]*\\}"));
-  return m ? m[0] : '';
-}
+const entri = entriTpl;
 for (const id of VIP) {
   const a = entri(stu, id), b = entri(und, id);
   cek(!!a && !!b, 'tema VIP ' + id + ' ada di studio & undangan');
