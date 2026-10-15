@@ -50,6 +50,26 @@ input,textarea,select{outline:0}
 .cv-layout-btn.on{border-color:#111;background:#111;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.13)}
 .cv-layout-btn .cv-layout-icon{font-size:20px;line-height:1}
 .cv-layout-btn .cv-layout-name{font-size:10px;font-weight:600;line-height:1.3;text-align:center}
+/* ===== Pilihan gaya tombol "Buka Undangan" (13 gaya, cermin CSS undangan.html) ===== */
+.bo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin-top:12px}
+.bo-btn{min-width:0;display:grid;align-content:start;justify-items:center;gap:6px;padding:10px 6px 8px;border:2px solid var(--line);border-radius:14px;background:#fbfaf8;color:inherit;cursor:pointer;transition:transform .15s,border-color .15s,background .15s,box-shadow .15s;font-family:inherit}
+.bo-btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.08)}
+.bo-btn.on{border-color:#111;background:#111;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.13)}
+.bo-btn .bo-name{font-size:10px;font-weight:600;line-height:1.3;text-align:center}
+.bo-sample{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 12px;font-size:9.5px;font-weight:700;letter-spacing:.05em;white-space:nowrap;pointer-events:none}
+.bo-amplop{border-radius:7px;background:linear-gradient(172deg,#FFFCF5,#F2E3C2);color:#5C4222;border:1px solid rgba(168,130,63,.55);box-shadow:inset 0 8px 0 rgba(240,225,188,.65),0 5px 10px rgba(90,60,20,.22)}
+.bo-pil{border-radius:99px;background:#26332a;color:#fff}
+.bo-emas{border-radius:99px;background:linear-gradient(135deg,#F0D894,#C9A24B 60%,#A8823F);color:#3A2A10;border:1px solid rgba(168,130,63,.7)}
+.bo-garis{border-radius:99px;background:rgba(255,255,255,.5);color:#3c4a3e;border:1.5px solid #3c4a3e}
+.bo-kaca{border-radius:99px;background:rgba(255,255,255,.45);color:#33503c;border:1px solid rgba(120,150,130,.65);box-shadow:inset 0 1px 0 #fff,0 5px 12px rgba(40,70,50,.16)}
+.bo-pita{border-radius:3px;background:linear-gradient(135deg,#B4506B,#7E2A44);color:#fff;clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);padding:0 16px}
+.bo-cap{border-radius:6px;background:#FFFCF5;color:#5C4222;border:2px dashed #B08A44;box-shadow:3px 3px 0 rgba(176,138,68,.4)}
+.bo-daun{border-radius:99px 6px 99px 6px;background:linear-gradient(135deg,#5F7A5C,#2F4A2C);color:#fff}
+.bo-kartu{border-radius:7px;background:#fff;color:#4B4237;border:1px solid rgba(120,100,70,.4);box-shadow:inset 0 0 0 2px #fff,inset 0 0 0 3px rgba(168,130,63,.6),0 5px 10px rgba(90,60,20,.15)}
+.bo-neon{border-radius:99px;background:#11101F;color:#7DF3FF;border:1px solid #47EEFF;box-shadow:0 0 12px rgba(71,238,255,.55)}
+.bo-mutiara{border-radius:99px;background:linear-gradient(160deg,#fff,#EFE3CB);color:#6B5A34;border:1px solid #D9C69A}
+.bo-royal{border-radius:6px;background:linear-gradient(150deg,#1E3A30,#0E241B);color:#EAD9A4;border:1px solid #C9A95C}
+.bo-minimal{border-radius:0;background:transparent;color:inherit;border:0;border-bottom:2px solid #B08A44;height:auto;padding:4px 2px;letter-spacing:.16em}
 .menubtn{width:100%;display:flex;align-items:center;gap:12px;border-radius:16px;border:1px solid var(--line);padding:12px;text-align:left;background:#fff;transition:.15s;margin-bottom:6px}
 .menubtn:hover{background:#fbfaf8}
 .menubtn.on{background:#111;color:#fff;border-color:#111}
@@ -199,7 +219,8 @@ a.sm-btn{display:inline-flex;align-items:center;justify-content:center;text-deco
  #floatPrev:not(.fp-expanded) .fp-box{width:156px}
  #floatPrev:not(.fp-expanded) .fp-screen{height:min(220px,calc(100dvh - 120px))}
  #floatPrev .fp-head{padding:6px;gap:2px}
- #floatPrev .fp-actions button{width:28px;height:32px}
+ #floatPrev .fp-actions{gap:2px}
+ #floatPrev .fp-actions button{width:24px;height:32px;font-size:11px}
  #floatPrev .fp-hint{font-size:8px;padding:4px}
 }
 @media(max-width:360px){.grid2{grid-template-columns:minmax(0,1fr)}.span2{grid-column:auto}}
@@ -428,6 +449,9 @@ const CUSTOM_TPL_PATTERNS=['','batik','botanical','frost','arab','confetti'];
 const CUSTOM_TPL_EVENTS=['pernikahan','khitanan','ultah','aqiqah','all'];
 const CUSTOM_TPL_COVER_STYLES=['kotak','oval','lingkaran','arch','polaroid','emas','kapsul','full','none'];
 const CUSTOM_TPL_COVER_LAYOUTS=['amplop','kartu','foto','gerbang','minimal','batik','sakura','night','ticket','editorial','polaroid','glass','royal','archive','neon'];
+/* Ukuran foto cover & gaya tombol buka — daftar id WAJIB identik dengan undangan.html */
+const CV_UKURAN_ID=['kecil','sedang','besar','jumbo'];
+const BTN_OPEN_ID=['amplop','pil','emas','garis','kaca','pita','cap','daun','kartu','neon','mutiara','royal','minimal'];
 function customColor(v,fallback){const s=String(v||'').trim();return /^#[0-9a-f]{6}$/i.test(s)?s.toUpperCase():fallback}
 function customAsset(v){const s=String(v||''),parts=s.split('/');return parts[0]==='assets'&&parts.length>1&&parts.slice(1).every(p=>/^[a-z0-9._-]+$/i.test(p))&&!parts.includes('..')?s:''}
 function normalizeTplCustom(items){
@@ -450,6 +474,8 @@ function normalizeTplCustom(items){
   if(['tanpa','ranting','bunga3d','bunga4d'].includes(source.ornSudut))design.ornSudut=source.ornSudut;
   if(CUSTOM_TPL_COVER_LAYOUTS.includes(source.coverLayout))design.coverLayout=source.coverLayout;
   if(CUSTOM_TPL_COVER_STYLES.includes(source.coverStyle))design.coverStyle=source.coverStyle;
+  if(CV_UKURAN_ID.includes(source.coverSize))design.coverSize=source.coverSize;
+  if(BTN_OPEN_ID.includes(source.coverBtn))design.coverBtn=source.coverBtn;
   if(typeof source.coverStyleExplicit==='boolean')design.coverStyleExplicit=source.coverStyleExplicit;
   if(typeof source.darkMode==='boolean')design.darkMode=source.darkMode;
   if(typeof source.goldOrn==='boolean')design.goldOrn=source.goldOrn;
@@ -586,7 +612,7 @@ const DEF={
   liveAkad:'',liveResepsi:'',
   harapanPria:'',harapanWanita:'',
   ucapanCustom:''},
- musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverLayout:'amplop',coverStyleExplicit:false,coverPos:{x:50,y:50,z:1},fotoPria:'',fotoWanita:'',gallery:[],videoLink:'',
+ musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverLayout:'amplop',coverStyleExplicit:false,coverPos:{x:50,y:50,z:1},coverSize:'sedang',coverBtn:'amplop',fotoPria:'',fotoWanita:'',gallery:[],videoLink:'',
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'',
  guestCodes:{},masterKey:'',selGuest:null,showNameQr:true,
@@ -622,6 +648,8 @@ if(stored.tab==='master'||stored.tab==='domain')stored.tab='terbit'; /* susunan 
  state.coverPos=Object.assign({x:50,y:50,z:1},state.coverPos||{});
  if(!CUSTOM_TPL_COVER_LAYOUTS.includes(state.coverLayout))state.coverLayout='amplop';
  if(!state.coverStyle)state.coverStyle='kotak';
+ if(!CV_UKURAN_ID.includes(state.coverSize))state.coverSize='sedang';
+ if(!BTN_OPEN_ID.includes(state.coverBtn))state.coverBtn='amplop';
  /* Migrasi: gaya non-default dari proyek lama dianggap pilihan manual. */
  if(typeof stored.coverStyleExplicit==='boolean')state.coverStyleExplicit=stored.coverStyleExplicit;
  else state.coverStyleExplicit=!!stored.coverStyle&&!['kotak','arch'].includes(stored.coverStyle);
@@ -664,7 +692,7 @@ DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.pu
 /* Signature murah untuk mendeteksi "ada perubahan sejak publish terakhir" tanpa
    ikut menyalin foto base64 (cukup panjangnya saja). */
 function sigHash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h+str.charCodeAt(i))|0;return h.toString(36)+'.'+str.length}
-function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.tplCustom||[],state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,state.coverLayout||'amplop',!!state.coverStyleExplicit,state.coverPos,(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug]))}
+function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.tplCustom||[],state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,state.coverLayout||'amplop',!!state.coverStyleExplicit,state.coverPos,state.coverSize||'sedang',state.coverBtn||'amplop',(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug]))}
 function draftDirty(){return !!(state.published&&state.pubSig&&state.pubSig!==draftSig())}
 /* Ketik isian tidak me-render ulang seluruh editor (agar fokus tidak hilang),
    jadi status "perubahan belum dipublikasikan" & tombol Publish Ulang
@@ -792,7 +820,14 @@ const FX_BUKA=[
  ['lipat','Lipat Atas','cover terlipat naik ke atas'],
  ['turun','Turun','cover meluncur turun lalu memudar'],
  ['zoom','Zoom','cover memudar sambil membesar'],
- ['fade','Fade','memudar klasik tanpa gerak']];
+ ['fade','Fade','memudar klasik tanpa gerak'],
+ ['kanan','Geser Kanan','cover meluncur keluar ke kanan'],
+ ['naik','Naik','cover meluncur naik ke atas layar'],
+ ['putar','Putar Membesar','cover memudar sambil berputar & membesar'],
+ ['balik','Balik Kanan','halaman dibalik dari sisi kanan'],
+ ['menyusut','Menyusut','cover mengecil ke tengah lalu menghilang'],
+ ['miring','Miring Meluncur','cover miring meluncur ke kiri bawah'],
+ ['tirai','Tirai Menyempit','cover menyempit ke tengah seperti tirai menutup']];
 function fxBukaId(){const v=state.anim.buka;return FX_BUKA.some(f=>f[0]===v)?v:'gilir'}
 function fxCoverId(){const v=state.anim.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 let animSig=null;
@@ -891,6 +926,8 @@ function applyTplToState(t){if(!t)return false;
  if(d.ornSudut)state.ornSudut=d.ornSudut;
  if(d.coverLayout)state.coverLayout=d.coverLayout;
  if(d.coverStyle)state.coverStyle=d.coverStyle;
+ if(CV_UKURAN_ID.includes(d.coverSize))state.coverSize=d.coverSize;
+ if(BTN_OPEN_ID.includes(d.coverBtn))state.coverBtn=d.coverBtn;
  if(typeof d.coverStyleExplicit==='boolean')state.coverStyleExplicit=d.coverStyleExplicit;
  if(typeof d.darkMode==='boolean')state.darkMode=d.darkMode;
  if(typeof d.goldOrn==='boolean')state.goldOrn=d.goldOrn;
@@ -907,7 +944,7 @@ function makeCustomTemplate(name,isPublic){
   bg3d:source.bg3d,bgPaper:source.bgPaper,studioOnly:!isPublic,
   desc:'Tema kustom berdasarkan '+source.nama,
   design:{fontBody:state.fontBody,border:state.border,ornSudut:state.ornSudut,coverLayout:state.coverLayout||'amplop',
-   coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,darkMode:!!state.darkMode,goldOrn:!!state.goldOrn}}]).slice(-80).find(t=>t.id===id)
+   coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,coverSize:state.coverSize||'sedang',coverBtn:state.coverBtn||'amplop',darkMode:!!state.darkMode,goldOrn:!!state.goldOrn}}]).slice(-80).find(t=>t.id===id)
 }
 function saveCustomTemplate(){
  const nama=String(state.tplDraftName||'').trim().slice(0,60);
@@ -1094,8 +1131,40 @@ const CV_LAYOUTS=[
  ['archive','Surat Arsip','📜','Kertas surat bertekstur lawas, garis tinta, dan cap klasik.'],
  ['neon','Neon Kota','🌃','Gaya malam urban dengan cahaya neon kontras dan tombol bercahaya.']
 ];
-function setCvLayout(id){if(!CV_LAYOUTS.some(c=>c[0]===id))return;state.coverLayout=id;save();render();renderPreview()}
-function setCvStyle(id){if(!CV_BENTUK[id])return;state.coverStyle=id;state.coverStyleExplicit=true;save();render();notify('Gaya foto cover: '+cvNama())}
+/* Pilihan yang mengubah wajah cover (model/gaya/ukuran foto/tombol buka)
+   membuat pratinjau kembali ke cover — kalau tidak, pilihan barunya tidak
+   kelihatan karena pratinjau masih menampilkan isi undangan yang terbuka. */
+function pvKeCover(){document.querySelectorAll('iframe.pv-frame').forEach(f=>{try{const t=f.contentWindow;if(t)t.postMessage({type:'asproject:cover'},'*')}catch(e){}})}
+function setCvLayout(id){if(!CV_LAYOUTS.some(c=>c[0]===id))return;state.coverLayout=id;save();render();renderPreview();pvKeCover()}
+/* Ukuran foto di cover — dulu fotonya dikunci kecil (maks. 170px) tanpa pilihan.
+   Sekarang pemilik memilih sendiri; "sedang" (bawaan) sudah lebih besar. */
+const CV_UKURAN=[
+ ['kecil','Kecil','Foto mungil — nama & teks cover makin lega.'],
+ ['sedang','Sedang','Bawaan baru: lebih besar dari ukuran lama.'],
+ ['besar','Besar','Foto jadi fokus utama cover.'],
+ ['jumbo','Jumbo','Paling besar, nyaris selebar kartu cover.']
+];
+function cvSizeId(){return CV_UKURAN_ID.includes(state.coverSize)?state.coverSize:'sedang'}
+function setCvSize(id){if(!CV_UKURAN_ID.includes(id))return;state.coverSize=id;save();render();renderPreview();pvKeCover();notify('Ukuran foto cover: '+(CV_UKURAN.find(u=>u[0]===id)||[])[1])}
+/* 13 gaya tombol "Buka Undangan" — id & nama WAJIB sama dengan CSS btnopen-* di undangan.html */
+const BTN_OPEN_STYLES=[
+ ['amplop','Amplop Segel','✉️','Amplop kertas dengan flap + segel lilin (bawaan).'],
+ ['pil','Pil Klasik','✉️','Pil gelap mengikuti warna tema — ringkas & tegas.'],
+ ['emas','Pil Emas','✉️','Pil gradasi emas berkilau untuk nuansa mewah.'],
+ ['garis','Garis Halus','✉️','Pil transparan berbingkai garis warna tema.'],
+ ['kaca','Kaca Embun','✉️','Pil kaca buram (glass) lembut di atas cover.'],
+ ['pita','Pita Banner','🎀','Banner pita berlekuk dengan huruf kapital.'],
+ ['cap','Cap Pos','✉️','Kotak cap pos bergaris putus-putus + bayangan cap.'],
+ ['daun','Daun Sage','🍃','Pil hijau daun dengan dua sudut melengkung daun.'],
+ ['kartu','Kartu Putih','💌','Kartu putih berbingkai ganda aksen tema.'],
+ ['neon','Neon Malam','🌃','Gelap bercahaya neon cyan — kontras di cover terang/gelap.'],
+ ['mutiara','Mutiara','🤍','Pil ivory mutiara dengan kilau lembut.'],
+ ['royal','Royal Zamrud','👑','Zamrud gelap + huruf emas bergaya kerajaan.'],
+ ['minimal','Teks Minimal','→','Tanpa kotak: teks bergaris bawah aksen saja.']
+];
+function coverBtnId(){return BTN_OPEN_ID.includes(state.coverBtn)?state.coverBtn:'amplop'}
+function setCoverBtn(id){if(!BTN_OPEN_ID.includes(id))return;state.coverBtn=id;save();render();renderPreview();pvKeCover();notify('Tombol Buka Undangan: '+(BTN_OPEN_STYLES.find(b=>b[0]===id)||[])[1])}
+function setCvStyle(id){if(!CV_BENTUK[id])return;state.coverStyle=id;state.coverStyleExplicit=true;save();render();renderPreview();pvKeCover();notify('Gaya foto cover: '+cvNama())}
 function cvTerapkanCrop(im,frame,p){
  const b=frame.getBoundingClientRect(),w=frame.clientWidth||b.width,h=frame.clientHeight||b.height;
  const iw=im.naturalWidth||0,ih=im.naturalHeight||0;
@@ -1114,9 +1183,9 @@ function cvGambar(){const p=cvPos();
  });
  const lab=document.getElementById('cvZoom');if(lab)lab.textContent=p.z.toFixed(2)+'×';
  const rng=document.getElementById('cvRange');if(rng&&Number(rng.value)!==p.z)rng.value=p.z}
-function cvZoom(v){cvPos().z=Math.min(4,Math.max(1,parseFloat(v)||1));cvGambar();save()}
-function cvTengah(){const p=cvPos();p.x=50;p.y=50;cvGambar();save()}
-function cvReset(){state.coverPos={x:50,y:50,z:1};save();render();notify('Posisi foto direset')}
+function cvZoom(v){cvPos().z=Math.min(4,Math.max(1,parseFloat(v)||1));cvGambar();save();renderPreview()}
+function cvTengah(){const p=cvPos();p.x=50;p.y=50;cvGambar();save();renderPreview()}
+function cvReset(){state.coverPos={x:50,y:50,z:1};save();render();renderPreview();notify('Posisi foto direset')}
 /* Geser foto: posisi x/y memilih seluruh rentang crop yang masih tersedia.
    Ukuran dihitung sesudah zoom, jadi foto tetap bisa digeser sampai tepi bingkai. */
 let _cvDrag=null;
@@ -1134,7 +1203,7 @@ function cvJalan(e){if(!_cvDrag)return;const d=_cvDrag,p=cvPos();
  p.y=Math.max(0,Math.min(100,d.y-(ly?(e.clientY-d.y0)*100/ly:0)));
  cvGambar()}
 function cvLepas(){if(!_cvDrag)return;_cvDrag.el.style.cursor='grab';_cvDrag=null;
- window.removeEventListener('pointermove',cvJalan);window.removeEventListener('pointerup',cvLepas);window.removeEventListener('pointercancel',cvLepas);save()}
+ window.removeEventListener('pointermove',cvJalan);window.removeEventListener('pointerup',cvLepas);window.removeEventListener('pointercancel',cvLepas);save();renderPreview()}
 window.addEventListener('resize',()=>{if(typeof requestAnimationFrame==='function')requestAnimationFrame(cvGambar);else cvGambar()},{passive:true});
 /* Kecilkan foto sampai maks 1200 px (JPEG 0.82 / PNG). Data URL asli langsung
    dipakai dulu agar tidak pernah menunggu; versi kecil menyusul menggantikan.
@@ -1208,7 +1277,7 @@ async function publish(){
    slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    amplop:JSON.parse(JSON.stringify(state.amplop)),videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href,local:false}:{name:'',url:'',local:false},
-   cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),
+   cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),coverBtn:coverBtnId(),
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),linkMode:state.linkMode||'personal',
    masterKey:state.masterKey||'',savedAt:new Date().toISOString()}};
@@ -1232,7 +1301,7 @@ async function dlUndangan(){
    amplop:JSON.parse(JSON.stringify(state.amplop)),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
+   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),coverBtn:coverBtnId(),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],publishedAt:new Date().toISOString()};
   if(JSON.stringify(data).length>1500000){data.gallery=[];
    if(JSON.stringify(data).length>1200000){data.cover='';
@@ -1301,6 +1370,8 @@ function applyDraftData(d,extra){
  else state.coverStyleExplicit=!!d.cover&&!!d.coverStyle&&!['kotak','arch'].includes(d.coverStyle);
  if(!state.coverStyleExplicit)syncDefaultCoverStyle(tplOf());
  if(d.coverPos)state.coverPos=Object.assign({x:50,y:50,z:1},d.coverPos);
+ state.coverSize=CV_UKURAN_ID.includes(d.coverSize)?d.coverSize:'sedang';
+ state.coverBtn=BTN_OPEN_ID.includes(d.coverBtn)?d.coverBtn:'amplop';
  if(d.fotoPria!==undefined)state.fotoPria=d.fotoPria||'';
  if(d.fotoWanita!==undefined)state.fotoWanita=d.fotoWanita||'';
  if(Array.isArray(d.gallery))state.gallery=d.gallery.filter(Boolean).slice(0,12);
@@ -1507,6 +1578,14 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
      <span class="cv-layout-icon" aria-hidden="true">${ic||'⌒'}</span><span class="cv-layout-name">${nama}</span></button>`}).join('')}
   </div>
  </div>
+ <div class="card"><h4>🔘 Tombol Buka Undangan <span class="chip" style="margin-left:auto">13 pilihan</span></h4>
+  <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-top:-4px">Pilih gaya tombol <b>Buka Undangan</b> di cover. Tombol selalu tampil tepat di tengah — pratinjau langsung mengikuti pilihan.</div>
+  <div class="bo-grid" role="group" aria-label="Pilih gaya tombol buka undangan">
+   ${BTN_OPEN_STYLES.map(([id,nama,ic,desc])=>{const on=coverBtnId()===id;
+    return `<button type="button" class="bo-btn ${on?'on':''}" aria-label="Pilih tombol ${nama}" aria-pressed="${on}" onclick="setCoverBtn('${id}')" data-help="${esc(desc)}">
+     <span class="bo-sample bo-${id}" aria-hidden="true">${id==='minimal'?'BUKA UNDANGAN →':ic+' Buka Undangan'}</span><span class="bo-name">${nama}</span></button>`}).join('')}
+  </div>
+ </div>
  <div class="card"><h4>🎨 Warna & Font</h4>
   <div style="display:grid;gap:16px">
    <div><div class="f" style="margin-bottom:8px">Warna Aksen Custom</div>
@@ -1688,6 +1767,14 @@ function tabMusik(){const d=DOA[state.doa]||DOA.pernikahan;return `<div style="d
       ${id==='none'?`<span style="position:absolute;inset:0;display:grid;place-items:center;font-size:16px">🚫</span>`:''}
      </span>
      <span style="display:block;font-size:9px;margin-top:3px;font-weight:${on?'700':'400'};color:${on?'#111':'var(--mut)'}">${b.nama}</span></button>`}).join('')}
+   </div>
+   <div style="margin-top:14px">
+    <div class="f" style="margin-bottom:6px">Ukuran foto utama (cover & profil) — 4 pilihan</div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px" role="group" aria-label="Pilih ukuran foto cover">
+     ${CV_UKURAN.map(([id,nama,desc])=>{const on=cvSizeId()===id;
+      return `<button type="button" class="fxbtn ${on?'on':''}" style="text-align:center;justify-items:center" aria-label="Ukuran foto ${nama}" aria-pressed="${on}" onclick="setCvSize('${id}')" data-help="${esc(desc)}"><b>${nama}</b><span>${id==='kecil'?'±140px':id==='sedang'?'±210px':id==='besar'?'±254px':'±298px'}</span></button>`}).join('')}
+    </div>
+    <div style="font-size:10px;color:var(--mut);margin-top:6px;line-height:1.5">Ukuran <b>Sedang</b> (bawaan) sekarang lebih besar dari versi lama, dan berlaku juga untuk foto profil di dalam undangan. Di cover, tidak berlaku untuk gaya <b>Penuh</b> (foto jadi latar) &amp; <b>Tanpa</b>.</div>
    </div>
    <div style="margin-top:12px;display:flex;gap:12px;align-items:flex-start">
     <div id="cvAtur" onpointerdown="cvMulai(event)" style="width:min(160px,40vw);aspect-ratio:3/4;border-radius:12px;overflow:hidden;position:relative;background:#111;touch-action:none;cursor:grab;flex:none;border:1px solid var(--line)">
@@ -2151,7 +2238,7 @@ function barisUndangan(){
    amplop:JSON.parse(JSON.stringify(state.amplop)),
    slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),
+   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),coverBtn:coverBtnId(),
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
@@ -2170,11 +2257,22 @@ function pvUkur(ifr){
  box.style.width=Math.round(PV_LEBAR*k)+'px';box.style.height=Math.round(PV_TINGGI*k)+'px';
  box.style.margin='0 auto';
 }
-function pvKirim(ifr){try{const t=ifr.contentWindow;if(t)t.postMessage({type:'asproject:preview',row:barisUndangan()},'*')}catch(e){}}
+function pvKirim(ifr){
+ const row=barisUndangan();
+ /* Simpan payload terakhir di elemen iframe: bila pesan ini terkirim saat
+    iframe masih memuat (dokumen lama), handler load mengirim ulang payload
+    terakhir ini — pesan tidak hilang di tengah jalan. */
+ ifr.__aspRow=row;
+ try{const t=ifr.contentWindow;if(t)t.postMessage({type:'asproject:preview',row},'*')}catch(e){}
+}
 const _pvPantau=new WeakSet();
 function pvPasang(ifr){
  if(!ifr)return;
- if(!_pvPantau.has(ifr)){_pvPantau.add(ifr);ifr.addEventListener('load',()=>{pvUkur(ifr);pvKirim(ifr)})}
+ if(!_pvPantau.has(ifr)){_pvPantau.add(ifr);ifr.addEventListener('load',()=>{
+  ifr.__aspSiap=true;pvUkur(ifr);
+  /* Pakai payload tersimpan terakhir (bisa lebih baru dari saat load mulai). */
+  try{const t=ifr.contentWindow,row=ifr.__aspRow||barisUndangan();if(t)t.postMessage({type:'asproject:preview',row},'*')}catch(e){}
+ })}
  pvUkur(ifr);pvKirim(ifr);
 }
 /* Semua pratinjau (panel kanan & kotak melayang) memakai berkas undangan yang sama. */
@@ -2196,24 +2294,40 @@ function pvPerbaruiSekarang(){if(_pvTimer)clearTimeout(_pvTimer);syncPreview()}
 let _fpExpanded=false,_fpDrag=null;
 function syncFloat(){const w=$('floatPrev');if(!w)return;
  w.classList.toggle('fp-expanded',_fpExpanded);
- if(!state.floatPrevOn){w.style.left='';w.style.top='';w.style.right='';w.style.bottom='';w.innerHTML=`<button class="fp-pill" onclick="setFloat(true)" title="Tampilkan floating preview">📱 Preview</button>`;return}
+ if(!state.floatPrevOn){w.style.left='';w.style.top='';w.style.right='';w.style.bottom='';w.innerHTML=`<button class="fp-pill" onclick="setFloat(true)" title="Tampilkan floating preview">📱 Preview</button>`;syncPreview();return}
  if(!w.querySelector('iframe.pv-frame')){
   w.innerHTML=`<div class="fp-box">
   <div class="fp-head" onpointerdown="fpDragStart(event)"><span>📱 Live<span class="fp-t-full"> Preview</span></span>
    <span class="fp-actions">
+    <button title="Muat ulang preview" aria-label="Muat ulang preview secara manual" onclick="fpRefresh()">⟳</button>
     <button title="Kembali ke cover" aria-label="Kembali ke cover awal undangan" onclick="fpCover()">⤒</button>
-    <button title="${_fpExpanded?'Perkecil preview':'Perbesar preview'}" aria-label="${_fpExpanded?'Perkecil preview':'Perbesar preview'}" aria-expanded="${_fpExpanded}" onclick="floatGo()">${_fpExpanded?'⤡':'⤢'}</button>
+    <button class="fp-expand-btn" title="${_fpExpanded?'Perkecil preview':'Perbesar preview'}" aria-label="${_fpExpanded?'Perkecil preview':'Perbesar preview'}" aria-expanded="${_fpExpanded}" onclick="floatGo()">${_fpExpanded?'⤡':'⤢'}</button>
     <button title="Sembunyikan preview" aria-label="Sembunyikan preview" onclick="setFloat(false)">–</button>
    </span></div>
   <div class="fp-screen" tabindex="0" role="region" aria-label="Pratinjau undangan, gulir di dalam layar untuk melihat isi">${pvHtml()}</div>
-  <div class="fp-hint">geser judul • gulir di dalam layar • ⤒ cover • ⤢ perbesar</div>
+  <div class="fp-hint">geser judul • ⟳ muat ulang • ⤒ cover • ⤢ perbesar</div>
  </div>`;
   fitFloat();
  }
+ /* Ikon tombol perbesar WAJIB mengikuti keadaan terakhir walau iframe tidak
+    dibangun ulang (dulu ikonnya basi: sudah besar tapi ikon tetap "perbesar"). */
+ const eb=w.querySelector('.fp-expand-btn');
+ if(eb){eb.textContent=_fpExpanded?'⤡':'⤢';eb.title=_fpExpanded?'Perkecil preview':'Perbesar preview';eb.setAttribute('aria-label',eb.title);eb.setAttribute('aria-expanded',String(_fpExpanded))}
  syncPreview();
 }
 function setFloat(v){state.floatPrevOn=v;save();syncFloat()}
-function floatGo(){_fpExpanded=!_fpExpanded;syncFloat()}
+function floatGo(){_fpExpanded=!_fpExpanded;syncFloat();fitFloat()}
+/* Muat ulang manual floating preview: buang iframe lama (beserta keadaan
+   macetnya) lalu pasang iframe baru; draft terakhir dikirim ulang saat load.
+   Dipakai bila pratinjau kosong/macet — pemilik tidak perlu refresh halaman. */
+function fpRefresh(){
+ const w=$('floatPrev');if(!w)return;
+ if(!state.floatPrevOn){setFloat(true)}
+ const layar=w.querySelector('.fp-screen');
+ if(layar){layar.innerHTML=pvHtml();const f=layar.querySelector('iframe.pv-frame');if(f)pvPasang(f)}
+ else syncFloat();
+ notify('Preview dimuat ulang ⟳')
+}
 /* Tombol ⤒: bawa isi preview kembali ke cover undangan (bagian paling atas). */
 function fpCover(){const w=$('floatPrev'),f=w&&w.querySelector('iframe.pv-frame');if(!f)return;
  try{const t=f.contentWindow;if(t){t.postMessage({type:'asproject:cover'},'*');if(typeof t.scrollTo==='function')t.scrollTo(0,0)}}catch(e){}}
