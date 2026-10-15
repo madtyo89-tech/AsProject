@@ -1,0 +1,8 @@
+# Konfigurasi Supabase CLI untuk Edge Function bot WhatsApp AsProject.
+# Ganti project_id dengan ref project Supabase Anda (lihat supabase/functions/wa-bot/README.md).
+project_id = "asproject"
+
+# Meta (WhatsApp) tidak mengirim JWT Supabase, jadi verifikasi JWT dimatikan.
+# Keamanan webhook dijamin oleh tanda tangan X-Hub-Signature-256 (WA_APP_SECRET).
+[functions.wa-bot]
+verify_jwt = false

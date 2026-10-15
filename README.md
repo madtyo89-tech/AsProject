@@ -514,3 +514,15 @@ fitur situs yang sudah berjalan.
 - Hasil tes & keterbatasan: [`android/docs/HASIL-TES-DAN-KETERBATASAN.md`](android/docs/HASIL-TES-DAN-KETERBATASAN.md).
 - Workflow APK otomatis: `.github/workflows/android-apk.yml` (artefak tiap push yang
   menyentuh `android/**`, dan Release saat tag `v*` dipush).
+
+## Bot WhatsApp untuk Studio (2026-10-15)
+
+Bot WhatsApp (WhatsApp Cloud API) berjalan sebagai Supabase Edge Function `wa-bot`:
+
+- **Calon klien:** `harga`, `demo`, `pesan`, `admin`; data acara yang dikirim lewat WhatsApp
+  disimpan sebagai *lead* dan admin diberi tahu.
+- **Admin:** `/daftar`, `/buat`, `/leads`, `/ambil <id>`, `/rekap <slug>`, `/link <slug>`.
+  Draft dari WhatsApp muncul di Studio lewat **Folder / Arsip → Riwayat dari server**.
+
+Kode: `supabase/functions/wa-bot/` · skema: `wa-bot-schema.sql` · panduan setup Meta & Supabase:
+`supabase/functions/wa-bot/README.md` · uji: `node --test tools/test-wa-bot.mjs`.

@@ -5,3 +5,7 @@ __pycache__/
 Thumbs.db
 node_modules/
 *.log
+
+# Bot WhatsApp: rahasia lokal (token Meta, service role) — jangan di-commit
+supabase/functions/**/.env*
+supabase/.temp/
