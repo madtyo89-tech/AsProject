@@ -94,7 +94,7 @@ function val(expr){return run(expr)}
   check('baris katalog dan template custom ikut snapshot/arsip/export',()=>html.includes('tplCustom:JSON.parse(JSON.stringify(state.tplCustom||[]))')&&html.includes('tplCustom:normalizeTplCustom(state.tplCustom)'));
   check('aksi custom baru memiliki bantuan konteks bahasa Indonesia',()=>{
    const help=fs.readFileSync(path.join(__dirname,'..','assets/button-help.js'),'utf8');
-   return ['saveCustomTemplate','renameCustomTpl','duplicateCustomTpl','deleteCustomTpl'].every(k=>help.includes(k+':'))
+   return ['setCvLayout','saveCustomTemplate','renameCustomTpl','duplicateCustomTpl','deleteCustomTpl'].every(k=>help.includes(k+':'))&&html.includes('Latar malam bertabur bintang')
   });
   check('tidak ada error JavaScript runtime selama alur custom',()=>true);
   console.log(`\nRingkasan: ${tests.length} lulus, 0 gagal`);
