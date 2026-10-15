@@ -245,6 +245,9 @@ body.opened #content{opacity:1}
 .card{background:var(--card);border:1px solid #f0e6d6;border-radius:22px;padding:28px 22px;text-align:center;box-shadow:0 16px 40px rgba(90,70,30,.07);margin-bottom:18px}
 .kicker{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--accent-body);opacity:.9}
 .divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:16px 0;color:var(--gold)}
+.divider svg{flex:0 0 auto;max-width:60%}
+.orn-motif{display:flex;justify-content:center}
+.orn-motif svg{max-width:150px;height:auto}
 .divider::before,.divider::after{content:"";height:1px;width:56px;background:linear-gradient(90deg,transparent,#e2cf9f)}
 .divider::after{background:linear-gradient(90deg,#e2cf9f,transparent)}
 h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body);line-height:1.15}
@@ -1090,13 +1093,13 @@ body.lay-panggung .footer{color:#e9dfcc}
 /* Urutan TPL identik dengan Studio untuk menjaga kolom theme; studioOnly:true
    menandai varian internal yang dapat dipublish tanpa listing/harga baru. */
 const TPL=[
- {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',layout:'klasik'},{id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',deco:'❖ ✦ ❖',pat:'batik',ft:'marcellus',char:'JAWA',layout:'arsip'},{id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',layout:'editorial-sage'},{id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'GOLD',layout:'panggung-emas'},{id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',layout:'zigzag-rustic'},{id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',layout:'poster-ceria'},{id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'ISLAMI',layout:'bab-islami'},{id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',layout:'poster-anak'},{id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',deco:'✦ ❀ ✦',pat:'',ft:'dancing',char:'SWEET',layout:'kaca-manis'},{id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',deco:'❖ ─ ❖',pat:'',ft:'ebgaramond',char:'ELEGAN',layout:'kaca-dewasa'},{id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',layout:'lembut-biru'},{id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',deco:'✿ ✦ ✿',pat:'',ft:'caveat',char:'PUTRI',layout:'lembut-merah'},{id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'ADAB',layout:'bab-netral'},{id:'midnight-gold',nama:'Midnight Gold',ev:'pernikahan',g:['#1E1A15','#2E2419','#4A3A22'],accent:'#D4AF37',ink:'#F2E8D5',deco:'✦ ❖ ✦',pat:'',ft:'cinzel',char:'ONYX',layout:'split-midnight'},{id:'emerald-royal',nama:'Emerald Royal',ev:'pernikahan',g:['#14342B','#1F4D3E','#356B55'],accent:'#D9B86C',ink:'#F0EAD6',deco:'❖ ✦ ❖',pat:'botanical',ft:'marcellus',char:'ZAMRUD',layout:'bab-royal'},{id:'navy-crest',nama:'Navy Crest',ev:'khitanan',g:['#16233F','#223457','#334B76'],accent:'#E7C27D',ink:'#F2ECDC',deco:'★ ✦ ★',pat:'',ft:'ebgaramond',char:'BINTANG',layout:'split-navy'},{id:'golden-jubilee',nama:'Golden Jubilee',ev:'ultah',g:['#F5E7C8','#E8CF96','#D4AF37'],accent:'#8C6D1F',ink:'#5C4714',deco:'✦ ✸ ✦',pat:'',ft:'playfair',char:'JUBILE',layout:'zigzag-jubile'},{id:'pearl-ivory',nama:'Pearl Ivory',ev:'aqiqah',g:['#F8F4EE','#EFE6D8','#E0D2BC'],accent:'#A88B5C',ink:'#5E4E36',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',char:'MUTIARA',layout:'editorial-mutiara'},
-{id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'botanical',ft:'cormorant',char:'ROSEWOOD',arch:true,studioOnly:true,desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood',layout:'panggung-gerbang'},
-{id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#E8EDD9','#C8D4BE'],accent:'#526A55',ink:'#435348',badge:'GERBANG',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',arch:true,studioOnly:true,desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch',layout:'editorial-mutiara'},
-{id:'gerbang-midnight-navy',nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'NAVY',arch:true,studioOnly:true,desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis',layout:'split-midnight'},
-{id:'gerbang-khitanan-emerald',nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',badge:'GERBANG',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'EMERALD',arch:true,studioOnly:true,desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut',layout:'bab-islami'},
-{id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'GERBANG',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'NATURAL',arch:true,studioOnly:true,desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung',layout:'lembut-biru'},
-{id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'GERBANG',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',arch:true,studioOnly:true,desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch',layout:'poster-anak'}
+ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',layout:'klasik',orn:'klasik'},{id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',deco:'❖ ✦ ❖',pat:'batik',ft:'marcellus',char:'JAWA',layout:'arsip',orn:'batik'},{id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',layout:'editorial-sage',orn:'geometrik'},{id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'GOLD',layout:'panggung-emas',orn:'deco'},{id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',layout:'zigzag-rustic',orn:'mawar'},{id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',layout:'poster-ceria',orn:'confetti'},{id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'ISLAMI',layout:'bab-islami',orn:'bulan'},{id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',layout:'poster-anak',orn:'kembang-api'},{id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',deco:'✦ ❀ ✦',pat:'',ft:'dancing',char:'SWEET',layout:'kaca-manis',orn:'pita'},{id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',deco:'❖ ─ ❖',pat:'',ft:'ebgaramond',char:'ELEGAN',layout:'kaca-dewasa',orn:'zaitun'},{id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',layout:'lembut-biru',orn:'awan'},{id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',deco:'✿ ✦ ✿',pat:'',ft:'caveat',char:'PUTRI',layout:'lembut-merah',orn:'bunga'},{id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'ADAB',layout:'bab-netral',orn:'arabesque'},{id:'midnight-gold',nama:'Midnight Gold',ev:'pernikahan',g:['#1E1A15','#2E2419','#4A3A22'],accent:'#D4AF37',ink:'#F2E8D5',deco:'✦ ❖ ✦',pat:'',ft:'cinzel',char:'ONYX',layout:'split-midnight',orn:'onyx'},{id:'emerald-royal',nama:'Emerald Royal',ev:'pernikahan',g:['#14342B','#1F4D3E','#356B55'],accent:'#D9B86C',ink:'#F0EAD6',deco:'❖ ✦ ❖',pat:'botanical',ft:'marcellus',char:'ZAMRUD',layout:'bab-royal',orn:'botanical'},{id:'navy-crest',nama:'Navy Crest',ev:'khitanan',g:['#16233F','#223457','#334B76'],accent:'#E7C27D',ink:'#F2ECDC',deco:'★ ✦ ★',pat:'',ft:'ebgaramond',char:'BINTANG',layout:'split-navy',orn:'mahkota'},{id:'golden-jubilee',nama:'Golden Jubilee',ev:'ultah',g:['#F5E7C8','#E8CF96','#D4AF37'],accent:'#8C6D1F',ink:'#5C4714',deco:'✦ ✸ ✦',pat:'',ft:'playfair',char:'JUBILE',layout:'zigzag-jubile',orn:'bintang'},{id:'pearl-ivory',nama:'Pearl Ivory',ev:'aqiqah',g:['#F8F4EE','#EFE6D8','#E0D2BC'],accent:'#A88B5C',ink:'#5E4E36',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',char:'MUTIARA',layout:'editorial-mutiara',orn:'mutiara'},
+{id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'botanical',ft:'cormorant',char:'ROSEWOOD',arch:true,studioOnly:true,desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood',layout:'panggung-gerbang',orn:'mawar'},
+{id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#E8EDD9','#C8D4BE'],accent:'#526A55',ink:'#435348',badge:'GERBANG',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',arch:true,studioOnly:true,desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch',layout:'editorial-mutiara',orn:'mutiara'},
+{id:'gerbang-midnight-navy',nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'NAVY',arch:true,studioOnly:true,desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis',layout:'split-midnight',orn:'onyx'},
+{id:'gerbang-khitanan-emerald',nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',badge:'GERBANG',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'EMERALD',arch:true,studioOnly:true,desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut',layout:'bab-islami',orn:'arabesque'},
+{id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'GERBANG',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'NATURAL',arch:true,studioOnly:true,desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung',layout:'lembut-biru',orn:'botanical'},
+{id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'GERBANG',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',arch:true,studioOnly:true,desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch',layout:'poster-anak',orn:'confetti'}
 ];
 /* Peta migrasi katalog LAMA (72 tema, urutan ev per index) — dipakai hanya untuk menebak
    jenis acara draft lama yang tidak punya snapshot 'data', supaya struktur cover-nya tidak
@@ -1305,6 +1308,217 @@ const FX_COVER=[
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade','kanan','naik','putar','balik','menyusut','miring','tirai'].includes(v)?v:'gilir'}
 function ornSudutId(v){return ['tanpa','ranting','bunga3d','bunga4d'].includes(v)?v:'ranting'}
+/* ===== Ornamen SVG per tema =====
+   Deretan simbol Unicode di field deco (mis. "X . X") diganti motif yang
+   benar-benar digambar untuk divider dan footer. Field deco TETAP diisi dan
+   tetap dipakai sebagai fallback, jadi undangan lama yang belum menyimpan
+   orn tampil persis seperti sebelumnya -- tidak ada yang rusak.
+   Semua motif memakai currentColor supaya otomatis ikut warna divider tema. */
+
+/* Kelopak/daun tunggal: ellipse yang diputar mengelilingi titik jangkar. */
+function ornDaun(cx,cy,rx,ry,rot,op){
+ return '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="currentColor"'+
+  ' transform="rotate('+rot+' '+cx+' '+cy+')" opacity="'+(op==null?.8:op)+'"/>';
+}
+/* Roset: n kelopak tersebar merata mengelilingi pusat -- dijamin simetris. */
+function ornRoset(cx,cy,n,rx,ry,jarak,op){
+ let s='';
+ for(let i=0;i<n;i++){
+  const a=i*360/n, rad=a*Math.PI/180;
+  const px=cx+Math.cos(rad)*jarak, py=cy+Math.sin(rad)*jarak;
+  s+=ornDaun(px.toFixed(1),py.toFixed(1),rx,ry,a.toFixed(1),op);
+ }
+ return s;
+}
+/* Sinar memancar dari pusat, untuk motif art-deco dan bintang. */
+function ornSinar(cx,cy,n,r1,r2,w,op){
+ let s='';
+ for(let i=0;i<n;i++){
+  const a=i*360/n, rad=a*Math.PI/180;
+  s+='<line x1="'+(cx+Math.cos(rad)*r1).toFixed(1)+'" y1="'+(cy+Math.sin(rad)*r1).toFixed(1)+
+     '" x2="'+(cx+Math.cos(rad)*r2).toFixed(1)+'" y2="'+(cy+Math.sin(rad)*r2).toFixed(1)+
+     '" stroke="currentColor" stroke-width="'+w+'" stroke-linecap="round" opacity="'+op+'"/>';
+ }
+ return s;
+}
+const ORN_GARIS=(d,w,op)=>'<path d="'+d+'" fill="none" stroke="currentColor" stroke-width="'+
+ (w==null?1.3:w)+'" stroke-linecap="round" opacity="'+(op==null?.9:op)+'"/>';
+function ornBungkus(isi){
+ return '<svg viewBox="0 0 168 28" fill="none" aria-hidden="true" '+
+  'style="width:132px;height:22px;display:block">'+isi+'</svg>';
+}
+
+const ORNAMEN={
+ /* Gulungan simetris bertemu intan di tengah -- ornamen undangan klasik. */
+ klasik:()=>ornBungkus(
+   ORN_GARIS('M84 14c-7-8-16-9-25-4-5.5 3-8.5 8-6 11 2 2.4 6.4 1.4 7-1.6.4-2.2-2.2-3.6-4-1.8',1.3,.85)+
+   ORN_GARIS('M84 14c7-8 16-9 25-4 5.5 3 8.5 8 6 11-2 2.4-6.4 1.4-7-1.6-.4-2.2 2.2-3.6 4-1.8',1.3,.85)+
+   '<path d="M84 7l4.2 7-4.2 7-4.2-7Z" fill="currentColor"/>'+
+   '<circle cx="60" cy="14" r="1.5" fill="currentColor" opacity=".6"/>'+
+   '<circle cx="108" cy="14" r="1.5" fill="currentColor" opacity=".6"/>'),
+
+ /* Dua tangkai berdaun melengkung keluar dari kuncup tengah. */
+ botanical:()=>ornBungkus(
+   ORN_GARIS('M84 14c-10 0-20 2-30 8',1.2,.7)+ORN_GARIS('M84 14c10 0 20 2 30 8',1.2,.7)+
+   ornDaun(66,17,7,3,-24,.75)+ornDaun(56,20,6,2.6,-30,.6)+
+   ornDaun(102,17,7,3,24,.75)+ornDaun(112,20,6,2.6,30,.6)+
+   '<path d="M84 6c4 3 4 8 0 11-4-3-4-8 0-11Z" fill="currentColor"/>'+
+   '<circle cx="84" cy="20" r="1.8" fill="currentColor" opacity=".7"/>'),
+
+ /* Bintang delapan khas arabesque dengan lengkungan saling silang. */
+ arabesque:()=>ornBungkus(
+   '<rect x="76" y="6" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".9"/>'+
+   '<rect x="76" y="6" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".9" transform="rotate(45 84 14)"/>'+
+   '<circle cx="84" cy="14" r="2.6" fill="currentColor"/>'+
+   ORN_GARIS('M70 14c-6-6-14-7-22-3',1.2,.75)+ORN_GARIS('M70 14c-6 6-14 7-22 3',1.2,.55)+
+   ORN_GARIS('M98 14c6-6 14-7 22-3',1.2,.75)+ORN_GARIS('M98 14c6 6 14 7 22 3',1.2,.55)+
+   '<circle cx="46" cy="14" r="1.6" fill="currentColor" opacity=".6"/>'+
+   '<circle cx="122" cy="14" r="1.6" fill="currentColor" opacity=".6"/>'),
+
+ /* Kipas art-deco: sinar memancar diapit batang bertingkat. */
+ deco:()=>ornBungkus(
+   ornSinar(84,20,9,3,15,1.2,.8)+
+   ORN_GARIS('M62 20h10M96 20h10',1.6,.9)+
+   ORN_GARIS('M50 20h8M110 20h8',1.6,.65)+
+   ORN_GARIS('M40 20h6M122 20h6',1.6,.45)+
+   '<circle cx="84" cy="20" r="2.4" fill="currentColor"/>'),
+
+ /* Confetti: titik dan bintang tersebar, nada ceria. */
+ confetti:()=>{
+  let s='';
+  const titik=[[30,10,2],[46,19,1.5],[62,8,1.8],[100,9,1.6],[118,18,2],[136,11,1.5],[74,21,1.3],[94,21,1.3]];
+  titik.forEach(([x,y,r],i)=>{s+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="currentColor" opacity="'+(.45+i%3*.2).toFixed(2)+'"/>'});
+  s+='<path d="M84 5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.9-5.2 2.9 1-5.9-4.3-4.1 5.9-.8Z" fill="currentColor"/>';
+  return ornBungkus(s);
+ },
+
+ /* Untaian mutiara: lingkaran bergradasi dengan tetesan di tengah. */
+ mutiara:()=>{
+  let s='';
+  const r=[1.2,1.7,2.3,3,3.6];
+  r.forEach((rad,i)=>{
+   s+='<circle cx="'+(84-14*(i+1))+'" cy="14" r="'+rad+'" fill="currentColor" opacity="'+(.9-i*.1).toFixed(2)+'"/>';
+   s+='<circle cx="'+(84+14*(i+1))+'" cy="14" r="'+rad+'" fill="currentColor" opacity="'+(.9-i*.1).toFixed(2)+'"/>';
+  });
+  s+='<path d="M84 5c4.6 5 6.4 8.2 6.4 10.6A6.4 6.4 0 0 1 84 22a6.4 6.4 0 0 1-6.4-6.4C77.6 13.2 79.4 10 84 5Z" fill="currentColor"/>';
+  return ornBungkus(s);
+ },
+
+ /* Awan lembut dengan bintang kecil -- nuansa bayi. */
+ awan:()=>ornBungkus(
+   '<path d="M40 20a6 6 0 0 1 1.4-11.7A8.4 8.4 0 0 1 57.6 9 5.6 5.6 0 0 1 58 20Z" fill="currentColor" opacity=".55"/>'+
+   '<path d="M110 20a6 6 0 0 1 1.4-11.7A8.4 8.4 0 0 1 127.6 9 5.6 5.6 0 0 1 128 20Z" fill="currentColor" opacity=".55"/>'+
+   '<path d="M84 6l2 4.6 4.6 2-4.6 2-2 4.6-2-4.6-4.6-2 4.6-2Z" fill="currentColor"/>'+
+   '<circle cx="70" cy="20" r="1.4" fill="currentColor" opacity=".5"/><circle cx="98" cy="20" r="1.4" fill="currentColor" opacity=".5"/>'),
+
+ /* Tiga kuntum bunga berkelopak lima dengan tangkai. */
+ bunga:()=>{
+  const kuntum=(cx,cy,sk,op)=>ornRoset(cx,cy,5,4.4*sk,2*sk,3.4*sk,op)+
+   '<circle cx="'+cx+'" cy="'+cy+'" r="'+(1.7*sk)+'" fill="currentColor"/>';
+  return ornBungkus(
+   ORN_GARIS('M84 24v-6M60 24c2-5 6-8 12-9M108 24c-2-5-6-8-12-9',1.1,.6)+
+   kuntum(84,11,1.15,.9)+kuntum(60,15,.8,.7)+kuntum(108,15,.8,.7));
+ },
+
+ /* Bintang heraldik bersinar diapit dua lengkung laurel. */
+ bintang:()=>ornBungkus(
+   ornSinar(84,14,12,7,13,.9,.5)+
+   '<path d="M84 3l3.4 7.2 7.8 1-5.7 5.4 1.5 7.8-7-3.8-7 3.8 1.5-7.8-5.7-5.4 7.8-1Z" fill="currentColor"/>'+
+   ORN_GARIS('M66 20c-8-2-14 0-20 5',1.4,.8)+ORN_GARIS('M102 20c8-2 14 0 20 5',1.4,.8)+
+   ornDaun(56,21,4.4,1.9,-20,.6)+ornDaun(112,21,4.4,1.9,20,.6)),
+
+ /* Onyx: chevron dan intan bersudut tajam, kesan mewah gelap. */
+ onyx:()=>{
+  let s='<path d="M84 4l7 10-7 10-7-10Z" fill="currentColor"/>';
+  for(let i=1;i<=3;i++){
+   const o=(1-i*.24).toFixed(2), k=i*11;
+   s+=ORN_GARIS('M'+(77-k)+' 8l-6 6 6 6',1.8,o)+ORN_GARIS('M'+(91+k)+' 8l6 6-6 6',1.8,o);
+  }
+  return ornBungkus(s);
+ },
+
+ /* Kawung: empat ellips saling tumpang mengelilingi pusat, motif batik. */
+ batik:()=>ornBungkus(
+   ornRoset(84,14,4,7.5,4,7,.55)+
+   '<circle cx="84" cy="14" r="2.6" fill="currentColor"/>'+
+   ORN_GARIS('M62 14h-16M106 14h16',1.1,.5)+
+   '<circle cx="42" cy="14" r="1.7" fill="currentColor" opacity=".5"/>'+
+   '<circle cx="126" cy="14" r="1.7" fill="currentColor" opacity=".5"/>'),
+
+ /* Mawar: spiral kelopak dengan dua daun. */
+ mawar:()=>ornBungkus(
+   '<path d="M84 14a3.2 3.2 0 1 1 3.2-3.2 6 6 0 1 1-6 6 8.6 8.6 0 1 0 8.6-8.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'+
+   ORN_GARIS('M74 16c-8 1-14 4-18 8M94 16c8 1 14 4 18 8',1.1,.6)+
+   ornDaun(60,19,6.4,2.8,-18,.7)+ornDaun(108,19,6.4,2.8,18,.7)),
+
+ /* Geometrik: garis dan bujur sangkar modern, minimal tanpa lengkungan. */
+ geometrik:()=>{
+  let s='<rect x="79" y="9" width="10" height="10" fill="currentColor"/>';
+  for(let i=1;i<=4;i++){
+   const o=(1-i*.2).toFixed(2), x=i*11;
+   s+='<rect x="'+(79-x)+'" y="'+(9+i)+'" width="'+(10-i*2)+'" height="'+(10-i*2)+
+      '" fill="none" stroke="currentColor" stroke-width="1" opacity="'+o+'"/>';
+   s+='<rect x="'+(89+x-10+i*2)+'" y="'+(9+i)+'" width="'+(10-i*2)+'" height="'+(10-i*2)+
+      '" fill="none" stroke="currentColor" stroke-width="1" opacity="'+o+'"/>';
+  }
+  return ornBungkus(s);
+ },
+
+ /* Kembang api: tiga letupan sinar berbeda ukuran. */
+ 'kembang-api':()=>ornBungkus(
+   ornSinar(84,13,10,2.5,12,1.1,.85)+
+   ornSinar(48,17,8,1.5,7,.9,.55)+
+   ornSinar(120,17,8,1.5,7,.9,.55)+
+   '<circle cx="84" cy="13" r="2.2" fill="currentColor"/>'+
+   '<circle cx="48" cy="17" r="1.5" fill="currentColor" opacity=".7"/>'+
+   '<circle cx="120" cy="17" r="1.5" fill="currentColor" opacity=".7"/>'),
+
+ /* Bulan sabit dan bintang -- ornamen islami. */
+ bulan:()=>ornBungkus(
+   '<path d="M90 4a11 11 0 1 0 0 20 13 13 0 0 1 0-20Z" fill="currentColor"/>'+
+   '<path d="M70 8l1.8 4 4.2.6-3 3 .7 4.2-3.7-2-3.7 2 .7-4.2-3-3 4.2-.6Z" fill="currentColor" opacity=".8"/>'+
+   ORN_GARIS('M58 18c-6 0-12 1-16 4M112 18c6 0 12 1 16 4',1.1,.55)+
+   '<circle cx="40" cy="22" r="1.4" fill="currentColor" opacity=".5"/>'+
+   '<circle cx="130" cy="22" r="1.4" fill="currentColor" opacity=".5"/>'),
+
+ /* Pita: simpul dengan dua ekor menjuntai. */
+ pita:()=>ornBungkus(
+   '<path d="M84 14c-5-6-13-8-18-5-4 2.4-3 8 2 9 5 1 11-1 16-4Z" fill="currentColor" opacity=".8"/>'+
+   '<path d="M84 14c5-6 13-8 18-5 4 2.4 3 8-2 9-5 1-11-1-16-4Z" fill="currentColor" opacity=".8"/>'+
+   '<ellipse cx="84" cy="14" rx="3.6" ry="3" fill="currentColor"/>'+
+   ORN_GARIS('M81 17c-2 5-5 7-9 8M87 17c2 5 5 7 9 8',1.2,.7)),
+
+ /* Zaitun: dua tangkai laurel melengkung bertemu di tengah. */
+ zaitun:()=>{
+  let s='';
+  for(let i=0;i<4;i++){
+   const t=i/3;
+   s+=ornDaun((66-14*t).toFixed(1),(20-8*t).toFixed(1),5,2.1,(-30+i*8),.75-i*.1);
+   s+=ornDaun((102+14*t).toFixed(1),(20-8*t).toFixed(1),5,2.1,(30-i*8),.75-i*.1);
+  }
+  return ornBungkus(
+   ORN_GARIS('M80 22c-10 0-20-4-28-12',1.2,.7)+ORN_GARIS('M88 22c10 0 20-4 28-12',1.2,.7)+s+
+   '<circle cx="84" cy="12" r="2.4" fill="currentColor"/>');
+ },
+
+ /* Mahkota: tiga puncak dengan permata. */
+ mahkota:()=>ornBungkus(
+   '<path d="M68 21l-4-13 9 6 11-11 11 11 9-6-4 13Z" fill="currentColor" opacity=".85"/>'+
+   '<rect x="68" y="21" width="32" height="3.4" rx="1.4" fill="currentColor"/>'+
+   '<circle cx="64" cy="7" r="1.8" fill="currentColor"/><circle cx="84" cy="3" r="2" fill="currentColor"/>'+
+   '<circle cx="104" cy="7" r="1.8" fill="currentColor"/>'+
+   ORN_GARIS('M56 22h-14M112 22h14',1.1,.5))
+};
+
+/* Motif ornamen untuk sebuah tema. Jatuh ke deretan simbol deco lama bila
+   tema tidak punya orn atau id-nya tak dikenal -- aman untuk snapshot lama. */
+function ornMotif(tplF){
+ const id=tplF&&tplF.orn;
+ if(id&&ORNAMEN[id]){try{return ORNAMEN[id]()}catch(e){/* motif gagal digambar */}}
+ return null;
+}
+function ornIdValid(v){return typeof v==='string'&&Object.prototype.hasOwnProperty.call(ORNAMEN,v)}
+
 /* Bunga ornamen sudut 3D/4D: tiga lapis kelopak (l-back / l-mid / l-front)
    dengan gradasi + highlight → kesan kedalaman; mode 4D menambah gerak melayang. */
 function ornBungaSvg(){
@@ -2023,7 +2237,7 @@ function boot(draft){
  /* 1. Kepada YTH */
  s+=`<div class="${RV('card guest')}">${ORN}<div class="ya">Kepada YTH</div>
   <div class="to">${esc(GUEST||'Bapak / Ibu / Saudara/i')}</div>
-  <div class="divider">${esc(tplF.deco)}</div>
+  <div class="divider">${ornMotif(tplF)||esc(tplF.deco)}</div>
   <p class="muted">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.</p>
   ${salamBuka?`<div class="salam">${esc(salamBuka)}</div>`:''}</div>`;
   return s};
@@ -2051,7 +2265,7 @@ function boot(draft){
    ${(fpOrang||fwOrang)?`<div class="couple-foto${(fpOrang&&fwOrang)?'':' tunggal'}">${fpOrang?cfImg(fpOrang,names[0].nm):''}${(fpOrang&&fwOrang)?'<div class="cf-amp">❦</div>':''}${fwOrang?cfImg(fwOrang,names[0].nm):''}</div>`:''}
    <div class="name-big">${esc(names[0].nm)}</div>
    ${names[0].rl?`<div class="role">${names[0].rl}</div>`:''}
-   <div class="divider">${esc(tplF.deco)}</div></div>`;
+   <div class="divider">${ornMotif(tplF)||esc(tplF.deco)}</div></div>`;
  }
   return s};
  B.harapan=()=>{let s='';
@@ -2130,12 +2344,12 @@ function boot(draft){
  /* 7. Ucapan */
  s+=`<div class="${RV('card')}"><div class="kicker">Ucapan</div>
   <p class="muted" style="font-size:13px">${esc((form&&form.ucapanCustom)||(ev==='pernikahan'?'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.':'Menghadiri acara ini merupakan kehormatan bagi kami. Doa restu Bapak/Ibu/Saudara/i adalah hadiah terindah bagi si kecil.'))}</p>
-  <div class="divider">${esc(tplF.deco)}</div>
+  <div class="divider">${ornMotif(tplF)||esc(tplF.deco)}</div>
   <div class="name-big" style="font-size:26px">${esc(fullNm)}</div></div>`;
   return s};
  B.footer=()=>{let s='';
  /* footer */
- s+=`<div class="footer"><div class="orn">${esc(tplF.deco)}</div>
+ s+=`<div class="footer"><div class="orn orn-motif">${ornMotif(tplF)||esc(tplF.deco)}</div>
   ${salamTutup?`<div class="salam-tutup">${esc(salamTutup)}</div>`:''}
   <p>Terima kasih atas doa dan kasihnya 🤍</p>
   <footer class="as-contact" aria-label="Contact Us AsProject" style="margin-top:24px;padding:24px 16px;border:1px solid #e8e4dc;border-radius:20px;background:#faf9f6;color:#262626;text-align:center;font-family:Inter,system-ui,sans-serif;overflow-wrap:anywhere">
