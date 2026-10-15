@@ -78,6 +78,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 .g-link{margin-top:10px;background:var(--bg-soft);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;font-family:ui-monospace,monospace;font-size:9.5px;color:var(--ink-light);display:flex;gap:8px;align-items:center;word-break:break-all}
 .g-link span{flex:1;min-width:0}
 .g-acts{display:flex;gap:6px;margin-top:8px}
+.wa-prev{margin-top:10px;border:1px solid var(--line);border-radius:14px;background:var(--bg-soft);padding:10px 12px}
+.wa-prev summary{cursor:pointer;font-size:11px;font-weight:700;color:var(--ink-light)}
+.wa-prev-txt{margin-top:8px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;line-height:1.65;color:var(--ink);background:#fff;border:1px solid var(--line-soft);border-radius:10px;padding:10px 12px}
 .empty{text-align:center;padding:26px 10px;color:var(--ink-faint);font-size:11.5px;line-height:1.7}
 /* mini browser */
 .browser{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff;margin-top:12px}
@@ -207,7 +210,7 @@ function toast(msg,type,ms){const t=$('#toast');t.textContent=msg;t.className='s
 
 /* ---------- state ---------- */
 let DRAFT=null,GS=[],RMAP={},RSROWS=[];
-let filter='all',search='',selGuest=null,bankOn=true,bankName='',bankAcc='',bankHolder='',saving=false;
+let filter='all',search='',selGuest=null,bankOn=true,bankName='',bankAcc='',bankHolder='',saving=false,waPrevOpen=false;
 
 /* ---------- demo ---------- */
 const DEMO_DRAFT={slug:'demo-master',name1:'Dina',name2:'Bagas',theme:'sage',data:{
@@ -241,6 +244,31 @@ function headName(){const d=DRAFT.data||{};const f=d.form||{};
  return f.name||DRAFT.name1||'Undangan';}
 function evLabel(){const e=(DRAFT.data||{}).event||'';return ({pernikahan:'Pernikahan',khitanan:'Akad Khitanan','ulang-tahun':'Ulang Tahun',aqiqah:'Aqiqah'})[e]||'Undangan'}
 function initials(g){const p=String(g).replace(/^(pak|bu|ibu|bapak|kak|dr|drs|ir)\.?\s+/i,'').trim().split(/\s+/);return ((p[0]||'?')[0]+((p[1]||'')[0]||'')).toUpperCase()}
+
+/* ==== PESAN WA UNDANGAN — blok bersama, WAJIB identik di studio.html, master.html & undangan.html ====
+   Satu format pesan untuk SEMUA tombol kirim/bagikan link undangan: Studio (WA per tamu, Kirim Link
+   via WhatsApp, Bagikan via WhatsApp di layar "Undangan sudah jadi!"), Undangan Master (Share via
+   WhatsApp untuk semua & per tamu), dan tombol Bagikan di undangan live. Template milik pemilik
+   ikut snapshot publish (data.waTemplate); bila kosong dipakai teks bawaan. Tanpa {link_undangan},
+   link tetap ditambahkan di akhir supaya pesan tidak pernah terkirim tanpa link.
+   Dicek otomatis oleh tools/cek-kesehatan.py dan tools/test-pesan-wa.cjs. */
+const WA_TEMPLATE_DEFAULT='Assalamualaikum {nama_tamu} 🙏\n\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara {acara} kami:\n\n{link_undangan}\n\nMerupakan kebahagiaan bagi kami atas kehadiran & doanya.\n\nTerima kasih 🤍\n{nama_pengantin}';
+const WA_SAPA_UMUM='Bapak/Ibu/Saudara/i';
+const WA_ACARA={pernikahan:'Pernikahan',khitanan:'Tasyakuran Khitanan',ultah:'Sweet Birthday Party',aqiqah:'Tasyakuran Aqiqah'};
+function acaraWa(ev){return WA_ACARA[ev]||'Syukuran'}
+function isiPesanWa(tpl,v){
+ let t=String(tpl==null?'':tpl);
+ if(!t.trim())t=WA_TEMPLATE_DEFAULT;
+ if(t.indexOf('{link_undangan}')<0)t=t.replace(/\s+$/,'')+'\n\n{link_undangan}';
+ return t.replace(/\{(nama_tamu|link_undangan|nama_pengantin|acara)\}/g,(m,k)=>v&&v[k]!=null?String(v[k]):'');
+}
+function waUrl(teks){return 'https://wa.me/?text='+encodeURIComponent(teks)}
+/* ==== /PESAN WA UNDANGAN ==== */
+/* Pesan WA untuk tamu — format SAMA dengan Studio: template milik pemilik (data.waTemplate dari
+   snapshot publish) atau teks bawaan. g = nama tamu → sapaan nama + link personal;
+   tanpa g → sapaan umum Bapak/Ibu/Saudara/i + link untuk semua tamu (tanpa ?to=). */
+function pesanWa(g){const d=DRAFT.data||{};
+ return isiPesanWa(d.waTemplate,{nama_tamu:g||WA_SAPA_UMUM,link_undangan:g?guestLink(g):allLink(),nama_pengantin:headName(),acara:acaraWa(d.event)})}
 
 /* ---------- akses & load ---------- */
 function bad(title,sub){$('#app').innerHTML=`<div class="scrim"><div class="box"><div class="logo-badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div><h2>${esc(title)}</h2><p>${esc(sub)}</p></div></div>`}
@@ -353,6 +381,10 @@ function renderAll(){
      <button class="btn btn-wa" onclick="shareAllWa()">💬 Share via WhatsApp</button>
      <button class="btn btn-ghost" onclick="openAllLink()">↗ Buka Undangan</button>
     </div>
+    <details class="wa-prev" ${waPrevOpen?'open':''} ontoggle="waPrevOpen=this.open"><summary>👁 Lihat isi pesan WhatsApp</summary>
+     <div class="wa-prev-txt">${esc(pesanWa(null))}</div>
+     <div class="card-s">Tombol <b>Share via WhatsApp</b> per tamu memakai format yang sama — sapaan berganti nama tamu &amp; link personalnya. Teks diatur di Studio → tab Tamu &amp; QR.</div>
+    </details>
     ${(d.linkMode||'personal')==='single'?'<div class="card-s" style="margin-top:8px">Mode <b>1 LINK</b> aktif — link inilah yang dipakai semua tamu.</div>':''}
    </div>
    <!-- link tamu -->
@@ -465,10 +497,7 @@ function copyMaster(){copyText(masterLink(),'Link master tersalin ✓','ok')}
 function allLink(){return baseLink()+'/u/'+SLUG}
 function copyAllLink(){copyText(allLink(),'Link untuk semua tamu tersalin ✓','ok')}
 function openAllLink(){window.open(allLink(),'_blank','noopener,noreferrer')}
-function shareAllWa(){
- const teks='Halo! Berikut undangan digital '+headName()+'.\nBuka link ini untuk melihat detail acara, lokasi, dan mengisi konfirmasi kehadiran:\n\n'+allLink()+'\n\nTerima kasih atas doa dan kehadiran 🤍';
- window.open('https://wa.me/?text='+encodeURIComponent(teks),'_blank');
-}
+function shareAllWa(){window.open(waUrl(pesanWa(null)),'_blank')}
 /* ---- Link scan QR panitia (check-in tamu) ---- */
 function scanUrl(){return baseLink()+'/scan.html?s='+encodeURIComponent(SLUG)+'&k='+encodeURIComponent(DRAFT.data.masterKey||'')}
 function copyScan(){copyText(scanUrl(),'Link scan panitia tersalin ✓','ok')}
@@ -510,12 +539,7 @@ function copyText(t,msg,type){
  else fallbackCopy(t,msg,type);
 }
 function fallbackCopy(t,msg,type){const i=document.createElement('textarea');i.value=t;document.body.appendChild(i);i.select();try{document.execCommand('copy')}catch(e){}i.remove();toast(msg,type)}
-function shareWa(g){
- const d=DRAFT.data||{};const f=d.form||{};
- const nm=(f.name)||headName();
- const msg='Halo '+g+' 👋\n\nKamu kami undang untuk menghadiri acara '+evLabel().toLowerCase()+' '+nm+'.\n\nBuka undangannya di sini:\n'+guestLink(g)+'\n\nTerima kasih banyak 🙏';
- window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
-}
+function shareWa(g){window.open(waUrl(pesanWa(g)),'_blank')}
 async function saveBank(){
  saving=true;const b=$('#bankSave');if(b)b.textContent='Menyimpan…';
  bankName=document.getElementById('bankName')?document.getElementById('bankName').value.trim():bankName;

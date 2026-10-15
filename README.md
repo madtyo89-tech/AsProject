@@ -80,6 +80,49 @@ berubah setiap isian/tema disunting. Kontrol di bilah judulnya:
 Dicek otomatis oleh `python3 tools/cek-kesehatan.py` (bagian floating preview)
 dan `node tools/test-floating-preview.cjs`.
 
+## Pesan WhatsApp undangan seragam di semua tombol (2026-10-15)
+
+Masukan pengguna: tulisan yang ikut terkirim berbeda-beda di tiap tombol link — ada yang
+lengkap, ada yang tidak. Sekarang **semua tombol yang mengirim/membagikan link undangan
+memakai satu pesan yang sama**, yaitu teks *💬 Tulisan Undangan untuk WA* di Studio → tab
+**Tamu & QR**. Bawaannya:
+
+```
+Assalamualaikum Bapak/Ibu/Saudara/i 🙏
+
+Dengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara Tasyakuran Khitanan kami:
+
+https://asproject.my.id/u/satrio-pandu-mahardika
+
+Merupakan kebahagiaan bagi kami atas kehadiran & doanya.
+
+Terima kasih 🤍
+Satrio Pandu Mahardika
+```
+
+| Tombol | Sebelumnya | Sekarang |
+| --- | --- | --- |
+| Studio · WA per tamu & 📤 Kirim Link via WhatsApp | lengkap | tetap lengkap (sapaan nama tamu + link `?to=` bila tamu dipilih) |
+| Studio · layar *Undangan sudah jadi!* → Bagikan via WhatsApp | "Dengan hormat, kami mengundang Anda ke acara …" | pesan lengkap, link untuk semua tamu |
+| Master · 🌐 Link untuk Semua → 💬 Share via WhatsApp | "Halo! Berikut undangan digital …" | pesan lengkap, link untuk semua tamu |
+| Master · Share via WhatsApp per tamu | "Halo {nama} 👋 Kamu kami undang …" | pesan lengkap, sapaan nama + link personal |
+| Undangan live · 🔗 Bagikan | "Undangan {nama} — {tanggal}" + URL yang sedang dibuka (bisa membawa `?to=` tamu lain) | pesan lengkap, link `/u/{slug}` tanpa nama |
+
+- Variabel: `{nama_tamu}` (link tanpa nama → *Bapak/Ibu/Saudara/i*), `{link_undangan}`,
+  `{nama_pengantin}`, `{acara}` (*Pernikahan*, *Tasyakuran Khitanan*, *Sweet Birthday Party*,
+  *Tasyakuran Aqiqah*; dulu pernikahan terbaca "acara The Wedding Of kami"). Setiap variabel
+  diganti di semua kemunculannya (dulu hanya yang pertama); bila
+  `{link_undangan}` terhapus dari teks, link tetap ditambahkan di akhir pesan.
+- Teks milik pemilik ikut snapshot publish (`data.waTemplate`), sehingga Master dan undangan
+  live memakai teks yang sama dengan Studio. Mengubah teks menyalakan status **Publish Ulang**;
+  tombol **↺ Kembalikan teks bawaan** muncul setelah teks diubah, dan pratinjau pesan ikut
+  berubah saat mengetik. Master punya **👁 Lihat isi pesan WhatsApp** untuk mengecek isinya.
+- Tombol **Salin** tetap menyalin link saja. Di luar cakupan (tujuannya berbeda): share link
+  scan panitia, kirim RSVP ke WA, link master privat, dan tombol WA bisnis AsProject.
+- Kode bersama ada di blok `/* ==== PESAN WA UNDANGAN … */` yang wajib identik di
+  `studio.html`, `master.html`, dan `undangan.html`. Dicek otomatis oleh
+  `tools/cek-kesehatan.py` (bagian [25]) dan `node tools/test-pesan-wa.cjs` (jsdom, offline).
+
 ## Link undangan untuk semua tamu (tanpa nama) di Master & Studio (2026-10-15)
 
 - Halaman **master.html** mendapat kartu **🌐 Link Undangan untuk Semua**: satu tautan

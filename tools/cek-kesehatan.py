@@ -601,8 +601,9 @@ def cek_fitur_terbaru():
     lapor("ok" if ok else "masalah", "studio.html: pilihan tema (tplsFor) menghormati template tersembunyi")
     ok = "${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>" in studio
     lapor("ok" if ok else "masalah", "studio.html: daftar katalog diurutkan per kategori")
-    # 4) teks WA personal: nama tamu terpilih + link bersih
-    ok = "g?g.nama:'Bapak/Ibu/Saudara/i'" in studio and "g?baseUrl()+'?to='+" in studio
+    # 4) teks WA personal: nama tamu terpilih + link bersih (pesanWa memakai link dari guests())
+    ok = ("nama_tamu:g?g.nama:WA_SAPA_UMUM" in studio and "link_undangan:g?g.link:baseUrl()" in studio
+          and "link:state.linkMode==='single'?baseUrl():baseUrl()+'?to='+encodeURIComponent(nama)" in studio)
     lapor("ok" if ok else "masalah",
           "studio.html: teks WA berisi nama tamu terpilih & link tanpa placeholder ?to=NamaTamu")
     # 5) Regresi: border preview hanya di zona cover (persis live) & migrasi dblBorder lama
@@ -977,6 +978,71 @@ def cek_template_custom():
           "uji template kustom: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300]))
 
 
+def cek_pesan_wa():
+    """2026-10-15: tulisan WA undangan berbeda di tiap tombol (ada yang lengkap, ada yang tidak).
+    Sekarang semua tombol kirim/bagikan link undangan memakai SATU template yang sama."""
+    print("\n[25] Pesan WhatsApp undangan seragam di semua tombol kirim/bagikan")
+    studio, master, live = baca("studio.html"), baca("master.html"), baca("undangan.html")
+
+    def blok(s):
+        a = s.find("/* ==== PESAN WA UNDANGAN")
+        b = s.find("/* ==== /PESAN WA UNDANGAN ==== */")
+        return s[a:b] if a >= 0 and b > a else None
+    bs, bm, bl = blok(studio), blok(master), blok(live)
+    ok = bool(bs) and bs == bm == bl
+    lapor("ok" if ok else "masalah",
+          "blok PESAN WA (teks bawaan, sapaan umum, nama acara, pengisi variabel) identik di studio, master & undangan")
+    m = re.search(r"const WA_TEMPLATE_DEFAULT='([^']*)';", bs or "")
+    contoh = ("Assalamualaikum {nama_tamu} 🙏\\n\\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir"
+              " di acara {acara} kami:\\n\\n{link_undangan}\\n\\nMerupakan kebahagiaan bagi kami atas kehadiran"
+              " & doanya.\\n\\nTerima kasih 🤍\\n{nama_pengantin}")
+    ok = bool(m) and m.group(1) == contoh and "const WA_SAPA_UMUM='Bapak/Ibu/Saudara/i';" in (bs or "")
+    lapor("ok" if ok else "masalah",
+          "teks bawaan WA = format contoh pemilik (salam, acara, link, doa, terima kasih, nama)")
+    ok = ("function waLink(g){return waUrl(pesanWa(g))}" in studio
+          and "function waShareText(){return pesanWa(selGuest())}" in studio
+          and "if(action==='wa')window.open(waUrl(pesanWa(null))" in studio
+          and "waTemplate:WA_TEMPLATE_DEFAULT" in studio
+          and "Dengan hormat, kami mengundang Anda" not in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: WA per tamu, Kirim Link via WhatsApp & Bagikan via WhatsApp (layar selesai) memakai pesanWa()")
+    baris_at = studio.find("function barisUndangan()")
+    pv_at = studio.find("function pvHtml()", baris_at)
+    sig = studio[studio.find("function draftSig"):studio.find("function draftDirty")]
+    ok = (baris_at >= 0 and "waTemplate:String(state.waTemplate||'')" in studio[baris_at:pv_at]
+          and studio.count("waTemplate:String(state.waTemplate||'')") >= 3
+          and "if(typeof d.waTemplate==='string'&&d.waTemplate.trim())state.waTemplate=d.waTemplate" in studio
+          and "state.waTemplate===WA_TEMPLATE_DEFAULT?[]:" in sig)
+    lapor("ok" if ok else "masalah",
+          "studio.html: teks WA ikut snapshot publish/arsip/ekspor, dipulihkan saat dibuka lagi, dan memicu Publish Ulang bila diubah")
+    ok = ("function shareAllWa(){window.open(waUrl(pesanWa(null))" in master
+          and "function shareWa(g){window.open(waUrl(pesanWa(g))" in master
+          and "isiPesanWa(d.waTemplate," in master
+          and "Halo! Berikut undangan digital" not in master and "Kamu kami undang" not in master)
+    lapor("ok" if ok else "masalah",
+          "master.html: Share via WhatsApp (semua & per tamu) memakai template pemilik (data.waTemplate), format sama")
+    ok = ("isiPesanWa(d&&d.waTemplate,{nama_tamu:WA_SAPA_UMUM,link_undangan:linkUndanganUmum(" in live
+          and "function linkUndanganUmum(slug)" in live
+          and "navigator.share({title:document.title,text:txt})" in live
+          and "const txt='Undangan '+fullNm" not in live)
+    lapor("ok" if ok else "masalah",
+          "undangan.html: tombol Bagikan mengirim pesan lengkap yang sama + link untuk semua (/u/slug tanpa ?to=)")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji pesan WA dilewati")
+        return
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    if probe.returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji pesan WA dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-pesan-wa.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji pesan WA semua tombol: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -987,7 +1053,7 @@ def main():
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
-               cek_template_custom):
+               cek_template_custom, cek_pesan_wa):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

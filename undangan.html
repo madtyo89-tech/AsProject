@@ -47,7 +47,7 @@ button{font-family:inherit;cursor:pointer}
   transition:opacity .7s ease,visibility .7s;}
 #cover .pat{position:absolute;inset:0;pointer-events:none;opacity:.5}
 #cover .veil{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(255,255,255,.25)}
-#cover .inner{position:relative;max-width:400px;width:100%}
+#cover .inner{position:relative;max-width:400px;width:100%;margin-left:auto;margin-right:auto}
 #cover .bdfr{position:relative;width:100%;max-width:440px;padding:30px 18px}
 #cover .bdc{position:absolute;width:22px;height:22px;pointer-events:none;z-index:2;display:block}
 #cover .orn{font-size:20px;letter-spacing:14px;color:var(--accent-cover);opacity:.85}
@@ -61,6 +61,9 @@ button{font-family:inherit;cursor:pointer}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 #cover .open .env{font-size:18px}
 #cover .brand{position:absolute;bottom:max(16px,env(safe-area-inset-bottom));left:0;right:0;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);opacity:.55}
+/* Label nama template (kicker hijau, kata besar seperti "ISLAMI", deretan bintang/ornamen teks)
+   tidak ditampilkan di cover. Nama & detail acara tetap tampil seperti biasa. */
+#cover .inner>.kicker,#cover .inner>.chara,#cover .inner>.orn{display:none!important}
 /* ---------- TEMA 3D (artwork realistis) ----------
    Tema ulang tahun ber-artwork memakai gambar 3D sebagai latar cover. Teks cover
    tetap terbaca karena diberi lapisan gelap tipis; warna teks diatur di boot(). */
@@ -264,6 +267,20 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 .acara .vt{margin-top:10px;font-size:12.5px;line-height:1.6;color:#7a7065}
 .acara .vt b{color:var(--ink-body)}
 .mapbtn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;height:38px;padding:0 16px;border-radius:99px;background:var(--ink-body);color:var(--ink-body-fg);font-size:12px;font-weight:600;text-decoration:none}
+.mapreload{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:99px;border:1px solid #e5d9c4;background:#fffdf9;color:#57503f;font-size:12px;font-weight:600;cursor:pointer}
+.mapreload:disabled{opacity:.55;cursor:wait}
+/* Peta: bingkai berukuran tetap + penampung "memuat" di belakang iframe.
+   Iframe sengaja tidak diberi src sejak awal (lihat petaPasangLazy):
+   Google Maps yang dirender saat induknya display:none — slide navpager
+   yang belum aktif — mengukur viewport 0x0 dan hasilnya cuma bidang
+   biru/abu kosong yang tidak pulih saat slide akhirnya ditampilkan. */
+.mapwrap{position:relative;height:210px;background:#e9eff2;overflow:hidden}
+.mapwrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.mapph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;text-align:center;color:#7a7065;font-size:12px;background:linear-gradient(170deg,#f6f8f9,#e7edef);transition:opacity .35s ease}
+.mapph .pin{font-size:26px;line-height:1;animation:mapPin 1.2s ease-in-out infinite}
+.mapwrap.map-tampil .mapph{opacity:0;pointer-events:none}
+@keyframes mapPin{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media (prefers-reduced-motion:reduce){.mapph .pin{animation:none}}
 
 /* countdown */
 .cdw{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
@@ -294,6 +311,9 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 #musikBtn .disc{width:18px;height:18px;flex:none;border-radius:50%;background:conic-gradient(var(--gold),#f6e2a5,var(--gold));animation:sp 3s linear infinite;display:grid;place-items:center}
 #musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
 #musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Nama lagu/template tidak ditulis di cover — hanya ikon piringan. Nama muncul lagi setelah undangan dibuka. */
+body:not(.opened) #musikBtn .t{display:none}
+body:not(.opened) #musikBtn{padding:0 13px}
 
 /* ==== Mode pratinjau (iframe Studio): tanpa tombol kontrol Studio ==== */
 body.preview-mode #coverBack{display:none}
@@ -1051,6 +1071,36 @@ function fxCoverId(AN){const v=AN&&AN.effect;return FX_COVER.some(f=>f[0]===v)?v
 /* ---------- util ---------- */
 const $=id=>document.getElementById(id);
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+/* ==== PESAN WA UNDANGAN — blok bersama, WAJIB identik di studio.html, master.html & undangan.html ====
+   Satu format pesan untuk SEMUA tombol kirim/bagikan link undangan: Studio (WA per tamu, Kirim Link
+   via WhatsApp, Bagikan via WhatsApp di layar "Undangan sudah jadi!"), Undangan Master (Share via
+   WhatsApp untuk semua & per tamu), dan tombol Bagikan di undangan live. Template milik pemilik
+   ikut snapshot publish (data.waTemplate); bila kosong dipakai teks bawaan. Tanpa {link_undangan},
+   link tetap ditambahkan di akhir supaya pesan tidak pernah terkirim tanpa link.
+   Dicek otomatis oleh tools/cek-kesehatan.py dan tools/test-pesan-wa.cjs. */
+const WA_TEMPLATE_DEFAULT='Assalamualaikum {nama_tamu} 🙏\n\nDengan memohon rahmat Allah SWT, kami mengundang untuk hadir di acara {acara} kami:\n\n{link_undangan}\n\nMerupakan kebahagiaan bagi kami atas kehadiran & doanya.\n\nTerima kasih 🤍\n{nama_pengantin}';
+const WA_SAPA_UMUM='Bapak/Ibu/Saudara/i';
+const WA_ACARA={pernikahan:'Pernikahan',khitanan:'Tasyakuran Khitanan',ultah:'Sweet Birthday Party',aqiqah:'Tasyakuran Aqiqah'};
+function acaraWa(ev){return WA_ACARA[ev]||'Syukuran'}
+function isiPesanWa(tpl,v){
+ let t=String(tpl==null?'':tpl);
+ if(!t.trim())t=WA_TEMPLATE_DEFAULT;
+ if(t.indexOf('{link_undangan}')<0)t=t.replace(/\s+$/,'')+'\n\n{link_undangan}';
+ return t.replace(/\{(nama_tamu|link_undangan|nama_pengantin|acara)\}/g,(m,k)=>v&&v[k]!=null?String(v[k]):'');
+}
+function waUrl(teks){return 'https://wa.me/?text='+encodeURIComponent(teks)}
+/* ==== /PESAN WA UNDANGAN ==== */
+/* Link yang ikut tombol 🔗 Bagikan = link untuk semua tamu (/u/{slug}, tanpa ?to=) — sama dengan
+   Studio & Master, jadi penerima pesan terusan tidak melihat nama tamu lain di sapaan. Halaman
+   offline (file://) / subdomain wildcard memakai domain utama; mode demo membagikan URL demo. */
+function linkUndanganUmum(slug){
+ const s=String(slug||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
+ const h=String(location.hostname||'').toLowerCase();
+ const web=/^https?:$/.test(location.protocol)&&!!h&&h.slice(-16)!=='.asproject.my.id';
+ if(DEMO||!s)return web?location.href.split('#')[0]:'https://asproject.my.id/';
+ if(!web)return 'https://asproject.my.id/u/'+s;
+ return location.origin+location.pathname.replace(/[^/]*$/,'')+'u/'+s;
+}
 let _coverCrop={x:50,y:50,z:1};
 function fitCoverPhoto(im,frame,p){
  const b=frame.getBoundingClientRect(),w=frame.clientWidth||b.width,h=frame.clientHeight||b.height;
@@ -1188,6 +1238,91 @@ function setupMusic(url,name){
 function sItem(it){const m=String(it||'').split(/\s+—\s+|\s+-\s+/);return{a:(m[0]||'').trim(),b:m.slice(1).join(' — ').trim()}}
 function sLines(v){return String(v||'').split('\n').map(x=>x.trim()).filter(Boolean)}
 function sHex(h){return/^#[0-9a-fA-F]{3,8}$/.test(h)}
+/* ---------- peta lokasi ---------- */
+/* Alamat dari tautan Maps pemilik dipakai lebih dulu: tautan panjang Google
+   Maps biasanya membawa koordinat (@lat,lng / !3dlat!4dlng) atau q= yang jauh
+   lebih akurat daripada menebak dari nama tempat + alamat yang ditulis bebas.
+   Nama tempat yang sudah tercantum di dalam alamat tidak diulang dua kali —
+   query ganda seperti "Bendo Gede 2, Bendo Gede 2, Sumbergiri, ..." membuat
+   Google gagal menentukan titik dan embed-nya berhenti di bidang biru. */
+function petaQueryDariLink(link){
+ const mentah=String(link||'').trim();
+ if(!mentah)return'';
+ let s=mentah;
+ try{s=decodeURIComponent(mentah.replace(/\+/g,'%20'))}catch(e){}
+ let m=s.match(/!3d(-?\d{1,3}\.\d+)\s*!4d(-?\d{1,3}\.\d+)/);
+ if(m)return m[1]+','+m[2];
+ m=s.match(/@(-?\d{1,3}\.\d+),(-?\d{1,3}\.\d+)/);
+ if(m)return m[1]+','+m[2];
+ try{
+  const u=new URL(mentah,location.href);
+  const qp=(u.searchParams.get('q')||u.searchParams.get('query')||u.searchParams.get('ll')||u.searchParams.get('destination')||'').trim();
+  if(qp)return qp.replace(/\s+/g,' ');
+ }catch(e){}
+ return'';
+}
+function petaQuery(form,venue){
+ const dariLink=petaQueryDariLink(form&&form.mapsLink);
+ if(dariLink)return dariLink;
+ const v=String(venue||'').trim().replace(/\s+/g,' ');
+ const a=String((form&&form.alamat)||'').trim().replace(/\s+/g,' ');
+ if(v&&a){
+  const lv=v.toLowerCase(),la=a.toLowerCase();
+  if(la.includes(lv))return a;
+  if(lv.includes(la))return v;
+  return v+', '+a;
+ }
+ return v||a;
+}
+/* www.google.com/maps adalah alamat kanonik embed tanpa API key;
+   host lama maps.google.com menambah satu redirect yang sering macet
+   di koneksi seluler lambat sebelum petanya sendiri sempat dimuat. */
+function petaEmbedUrl(q){return 'https://www.google.com/maps?q='+encodeURIComponent(q)+'&z=16&hl=id&output=embed'}
+function petaMuatSatu(f){
+ if(!f||f.dataset.mapLoaded)return;
+ const src=f.getAttribute('data-map-src');if(!src)return;
+ f.dataset.mapLoaded='1';
+ const wrap=f.closest?f.closest('.mapwrap'):null;
+ if(wrap&&!f.dataset.mapHook){
+  f.dataset.mapHook='1';
+  f.addEventListener('load',()=>{if(f.getAttribute('src'))wrap.classList.add('map-tampil')});
+ }
+ f.src=src;
+}
+function petaMuat(scope){
+ (scope||document).querySelectorAll('iframe[data-map-src]').forEach(petaMuatSatu);
+}
+window.__aspMuatPeta=petaMuat;
+/* Pasang src iframe peta HANYA saat kartunya benar-benar (hampir) terlihat.
+   Selain menghemat kuota tamu, ini obat bidang biru di mode slide: saat
+   boot, slide yang belum aktif ber-display:none, dan Maps yang dipaksa
+   render di ukuran 0x0 tidak menggambar ulang ubinnya saat slide tampil. */
+function petaPasangLazy(){
+ if(window.__aspMapIO){try{window.__aspMapIO.disconnect()}catch(e){}window.__aspMapIO=null}
+ const frames=[...document.querySelectorAll('iframe[data-map-src]')];
+ if(!frames.length)return;
+ if(!('IntersectionObserver' in window)){frames.forEach(petaMuatSatu);return}
+ const io=new IntersectionObserver(es=>{
+  es.forEach(en=>{if(en.isIntersecting){petaMuatSatu(en.target);io.unobserve(en.target)}});
+ },{rootMargin:'250px 0px',threshold:0.01});
+ window.__aspMapIO=io;
+ frames.forEach(f=>io.observe(f));
+}
+/* Dipanggil tombol "Muat Ulang Peta": koneksi putus di tengah unduhan ubin
+   membuat embed berhenti di bidang biru; muat paksa dari nol tanpa
+   mengharuskan tamu me-reload seluruh undangan. */
+function muatUlangPeta(btn){
+ const card=btn&&btn.closest?btn.closest('[data-mapcard]'):null;
+ const f=card?card.querySelector('iframe[data-map-src]'):document.querySelector('iframe[data-map-src]');
+ if(!f)return;
+ const src=f.getAttribute('data-map-src');if(!src)return;
+ const wrap=f.closest?f.closest('.mapwrap'):null;
+ if(wrap)wrap.classList.remove('map-tampil');
+ if(btn)btn.disabled=true;
+ delete f.dataset.mapLoaded;
+ f.removeAttribute('src');
+ setTimeout(()=>{petaMuatSatu(f);if(btn)btn.disabled=false},80);
+}
 function liveSlides(d,ev,tplF,fullNm,form,venue){
  if(!d||!d.slides)return'';
  const S=d.slides,h=[];
@@ -1227,10 +1362,19 @@ function liveSlides(d,ev,tplF,fullNm,form,venue){
   <div style="margin-top:10px;font-size:16px;font-weight:700;color:var(--ink-body)">${esc(S.dresscode.text||'—')}</div>
   ${cols.length?`<div style="display:flex;justify-content:center;gap:10px;margin-top:16px">${cols.map(c=>`<div style="width:28px;height:28px;border-radius:99px;background:${c};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2)"></div>`).join('')}</div>
   <div style="margin-top:10px;font-size:10px;font-family:ui-monospace,monospace;color:#b3a894">${esc(cols.join('  '))}</div>`:''}</div>`)}
- if(S.map&&S.map.on){const q=(form&&form.alamat)||venue||'';
-  h.push(`<div class="rv"><div class="card" style="padding:0;overflow:hidden">
-   <div style="padding:12px 16px;font-size:12px;font-weight:600;color:var(--ink-body);display:flex;gap:8px;align-items:center;border-bottom:1px solid #f0e6d8">📍 ${esc(venue||'Lokasi Acara')}</div>
-   <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed" style="width:100%;height:200px;border:0;display:block" loading="lazy" title="Peta lokasi"></iframe></div></div>`)}
+ if(S.map&&S.map.on){const alm=String((form&&form.alamat)||'').trim();
+  const q=petaQuery(form,venue);
+  const lnk=(form&&form.mapsLink&&!/example/i.test(form.mapsLink))?form.mapsLink:(q?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q):'');
+  const embed=q?petaEmbedUrl(q):'';
+  h.push(`<div class="rv"><div class="card" data-mapcard style="padding:0;overflow:hidden">
+   <div style="padding:12px 16px;border-bottom:1px solid #f0e6d8">
+    <div style="font-size:12px;font-weight:600;color:var(--ink-body)">📍 ${esc(venue||'Lokasi Acara')}</div>
+    ${alm?`<div style="margin-top:4px;font-size:11.5px;line-height:1.55;color:#7a7065">${esc(alm).replace(/\n/g,'<br>')}</div>`:''}
+   </div>
+   ${embed?`<div class="mapwrap"><div class="mapph" aria-hidden="true"><div class="pin">📍</div><div>Memuat peta…</div></div><iframe class="mapframe" data-map-src="${esc(embed)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Peta lokasi" allowfullscreen></iframe></div>`
+    :`<div style="padding:18px 16px;font-size:12px;line-height:1.6;color:#7a7065;text-align:center">📍 Alamat lokasi belum diisi.</div>`}
+   ${(lnk||embed)?`<div style="padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${lnk?`<a class="mapbtn" style="margin-top:0" href="${esc(lnk)}" target="_blank" rel="noopener">📍 Buka di Peta</a>`:''}${embed?`<button type="button" class="mapreload" onclick="muatUlangPeta(this)">↻ Muat Ulang Peta</button>`:''}</div>`:''}
+  </div></div>`)}
  if(S.gift&&S.gift.on&&S.gift.text.trim())h.push(card(`${kick('🎁 Alamat Kado')}<div style="margin-top:12px;font-size:13px;line-height:1.8;color:#57503f">${esc(S.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:12px;font-size:22px">🎀</div>`));
  if(S.rsvp&&S.rsvp.on)h.push(card(`${kick('✉️ RSVP')}
   <p class="muted" style="margin-top:6px">Mohon konfirmasi kehadirannya — tombol cepat di bawah, atau WhatsApp.</p>
@@ -1398,6 +1542,7 @@ function bootBersihkan(){
     dibersihkan supaya tidak menumpuk tiap pratinjau diperbarui. */
  document.querySelectorAll('.nv-bar,.gal-lb,#aspAmbient').forEach(el=>el.remove());
  if(window.__aspCdTimer){clearInterval(window.__aspCdTimer);window.__aspCdTimer=null}
+ if(window.__aspMapIO){try{window.__aspMapIO.disconnect()}catch(e){}window.__aspMapIO=null}
 }
 function boot(draft){
  bootBersihkan();
@@ -1787,10 +1932,12 @@ function boot(draft){
  }
  if(btnShare){
   btnShare.addEventListener('click',async()=>{
-   const txt='Undangan '+fullNm+' — '+esc(dateStr||'');
-   if(navigator.share){try{await navigator.share({title:document.title,text:txt,url:location.href});return}catch(e){}}
-   try{await navigator.clipboard.writeText(location.href);ivToast('Tautan undangan tersalin — bagikan ke tamu ✨')}
-   catch(e){location.href='https://wa.me/?text='+encodeURIComponent(txt+'\n'+location.href)}
+   /* Pesan lengkap yang SAMA dengan tombol WA di Studio & Master (template pemilik, sapaan umum,
+      link untuk semua tamu) — link sudah ada di dalam teks, jadi tidak dikirim lagi lewat url. */
+   const txt=isiPesanWa(d&&d.waTemplate,{nama_tamu:WA_SAPA_UMUM,link_undangan:linkUndanganUmum(draft.slug||SLUG),nama_pengantin:fullNm,acara:acaraWa(ev)});
+   if(navigator.share){try{await navigator.share({title:document.title,text:txt});return}catch(e){if(e&&e.name==='AbortError')return}}
+   try{await navigator.clipboard.writeText(txt);ivToast('Pesan undangan tersalin — tinggal tempel & kirim ✨')}
+   catch(e){location.href=waUrl(txt)}
   });
  }
 
@@ -1814,6 +1961,9 @@ function boot(draft){
  ambientPasang(tplF);
  /* scroll reveal — bagian muncul halus saat tamu menggulir */
  setupNavPager(AN.navMode);
+ /* Peta baru boleh dimuat setelah pager selesai menata slide, supaya
+    iframe tidak pernah dirender di dalam slide display:none. */
+ petaPasangLazy();
  if(rvOn&&typeof setupScrollReveal==='function')setupScrollReveal(document.getElementById('app')||document.body);
 }
 
@@ -1851,6 +2001,10 @@ function setupNavPager(mode){
   cur=k;
   slides.forEach((s,j)=>s.classList.toggle('pact',j===k));
   const s=slides[k];
+  /* Slide baru saja berubah dari display:none menjadi tampil: sekarang
+     aman memasang src peta di dalamnya (lihat petaPasangLazy). Observer
+     biasanya ikut memicu ini, pemanggilan langsung adalah jaringnya. */
+  if(window.__aspMuatPeta)window.__aspMuatPeta(s);
   s.classList.remove('nv-anim');void s.offsetWidth;s.classList.add('nv-anim');
   s.style.setProperty('--nvdir',dir<0?'-1':'1');
   s.scrollTop=0;
