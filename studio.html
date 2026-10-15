@@ -2193,7 +2193,7 @@ function slideBlocks(){
    <div style="font-size:11px;font-weight:600">📍 ${esc(f.venue||'Lokasi Acara')}</div>
    ${alm?`<div style="margin-top:3px;font-size:10px;line-height:1.5;color:#737373">${esc(alm).replace(/\n/g,'<br>')}</div>`:''}
   </div>
-  <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed" style="width:100%;height:150px;border:0;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Peta lokasi"></iframe></div>`)}
+  <iframe src="https://www.google.com/maps?q=${encodeURIComponent(q)}&z=16&hl=id&output=embed" style="width:100%;height:150px;border:0;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Peta lokasi"></iframe></div>`)}
  if(SL.gift.on&&SL.gift.text.trim())out.push(card(`${kicker('🎁 Alamat Kado')}<div style="margin-top:8px;font-size:12px;line-height:1.7;color:#333">${esc(SL.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:10px;font-size:20px">🎀</div>`));
  if(SL.rsvp.on)out.push(card(`${kicker('✉️ RSVP')}
   <div style="font-size:11px;color:#737373;margin-top:4px">Mohon konfirmasi kehadirannya melalui WhatsApp.</div>
