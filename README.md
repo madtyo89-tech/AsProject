@@ -123,6 +123,84 @@ Satrio Pandu Mahardika
   `studio.html`, `master.html`, dan `undangan.html`. Dicek otomatis oleh
   `tools/cek-kesehatan.py` (bagian [25]) dan `node tools/test-pesan-wa.cjs` (jsdom, offline).
 
+## Kerangka berbeda per tema (2026-10-15)
+
+Sebelum rombakan ini, 18 tema publik berbagi **satu kerangka DOM**: tiap bagian
+dibungkus `<div class="card rv">` + `<div class="kicker">` dengan urutan terkunci
+1→7 (Kepada YTH · Doa · Profil · Waktu & Tempat · slide konten · Buku Tamu ·
+Galeri · Amplop · Ucapan). Tema hanya menyuntik warna, font, pola, bingkai, dan
+ornamen — jadi tema Rp49.000 dan tema Rp99.000 berbeda **cat** saja, bukan bentuk.
+
+Sekarang tiap entri `TPL` membawa `layout:` yang menunjuk satu preset di
+`const LAYOUTS` (`undangan.html`). Satu preset menentukan empat hal:
+
+| Bidang | Arti |
+|---|---|
+| `shell` | kelas body `lay-<shell>` — bentuk & tata letak bagian (10 shell) |
+| `urutan` | varian susunan bagian A–E — alur baca ikut berbeda |
+| `ekstra` | bagian eksklusif yang hanya lahir di preset itu |
+| `vip` | menyalakan mesin 4D (parallax 3 lapis + partikel + entrance sinematik) |
+
+**18 tema publik memakai 18 preset berbeda**, jadi tidak ada dua tema yang
+berkerangka sama. Enam varian Gerbang Arch (Studio-only) memakai lima preset yang
+sudah ada ditambah `panggung-gerbang`.
+
+Sepuluh shell: `klasik` (kerangka lama, tanpa aturan CSS), `editorial` (majalah
+tanpa kotak kartu), `bab` (pembatas gelap + angka romawi), `split` (rail lengket
+dua kolom di ≥900px), `zigzag` (panel selang-seling saling tumpang), `kaca`
+(panel blur lebar beragam), `poster` (tiap bagian setinggi layar + scroll snap),
+`arsip` (kertas bergaris + label cap), `lembut` (kartu miring berserak),
+`panggung` (sinematik + pita foto full-bleed).
+
+Enam bagian eksklusif — semuanya dibangun dari data yang **sudah ada** di
+snapshot, jadi undangan lama ikut dapat tanpa pemiliknya mengisi apa pun:
+`navDot` (navigasi titik lengket), `babAngka` (angka romawi per bagian),
+`kutipBesar` (pita kutipan full-bleed), `heroFoto` (pita foto dari galeri),
+`galeriStrip` (galeri geser mendatar), `jamFlip` (countdown gaya flip-clock).
+
+### Cara kerjanya
+
+- Bagian tidak lagi langsung dirangkai ke `h`. Tiap bagian jadi pembangun bernama
+  di `B{}`, lalu `LX.urutan` yang menyusun lewat `susunBagian()`. Bagian dibangun
+  **dalam urutan tampil** supaya nomor `scroll-reveal` (`RV()`) tetap mengikuti
+  alur baca.
+- `liveSlides()` dipecah jadi `slideBag()` yang mengembalikan kantong per-slide;
+  `liveSlides()` dipertahankan sebagai pembungkus yang tetap mengembalikan
+  **string** dengan urutan lama — `tools/test-peta.cjs` memanggilnya langsung dan
+  `tools/cek-kesehatan.py` aturan 9 memeriksa ke-10 id slide di dalamnya.
+- Kartu sengaja tetap **terang** di semua shell: banyak warna teks di
+  `liveSlides()` di-hardcode (`#57503f`, `#4a4436`, `#8a7f72`) sehingga kartu
+  gelap akan membuat teks tak terbaca. Yang didramatisir adalah ruang **antar**
+  bagian, bukan kartunya.
+- `#cover` tidak diubah: kerangka cover tetap diatur tema + `CVL` + `arch`.
+
+### Jaminan regresi
+
+Preset `klasik` melepas bagian apa adanya tanpa pembungkus, sehingga Ivory Klasik
+— dan undangan lama yang snapshot-nya tidak membawa `layout` — menghasilkan HTML
+**identik byte-per-byte** dengan sebelum rombakan. Daftar 20 bagian beserta kelas
+body-nya direkam dari `origin/main` ke `tools/layout-klasik-golden.json` dan
+dibandingkan setiap kali `tools/test-layout-tema.cjs` dijalankan.
+
+Urutan `TPL` tidak digeser (indeks = nilai kolom `theme` di Supabase); rombakan
+hanya **menambah** field. Studio mendapat `LAYOUT_NAMA` untuk melabeli pemilih
+tema ("▦ Editorial Sage"), dijaga sinkron dengan `LAYOUTS[id].nama` oleh tes.
+
+### Dua bug laten yang ikut diperbaiki
+
+1. `AsVip4d.mount()` dipanggil **sebelum** `$('app').innerHTML=h`, padahal mount
+   mencari `#cover` lewat `getElementById`. Cover selalu `null`, jadi mesin 4D
+   tidak pernah benar-benar jalan meskipun CSS dan modulnya lengkap. Mount
+   dipindah ke setelah DOM terpasang.
+2. `tools/test-vip-4d.cjs` mengekstrak entri TPL per **baris**, padahal baris TPL
+   dikemas beberapa tema sekaligus. Pola `/\{id:'x'[^\n]*?tier:'vip'/` menganggap
+   `tier:'vip'` milik tema lain di baris yang sama sebagai milik tema pertama —
+   saat diuji, `midnight-gold` yang bertier vip dilaporkan sebagai `ivory-klasik`.
+   Diganti extractor per-objek yang menghormati kedalaman kurung dan string.
+
+Lihat perbedaannya berdampingan di `katalog-demo/perbandingan-tema.html`
+(bangun ulang: `node tools/bikin-perbandingan-tema.cjs`).
+
 ## Link undangan untuk semua tamu (tanpa nama) di Master & Studio (2026-10-15)
 
 - Halaman **master.html** mendapat kartu **🌐 Link Undangan untuk Semua**: satu tautan

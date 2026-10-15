@@ -78,6 +78,27 @@ const patCssSrc = potongFungsi(live, 'function patCss(t){', 'undangan.html');
 /* patCss() fungsi murni (data -> string CSS), jadi dijalankan di sini saja —
    halaman hasil tidak perlu JS untuk menampilkan tekstur pola. */
 const patCss = eval('(' + patCssSrc.replace(/^function patCss/, 'function') + ')');
+/* Kerangka per tema: LAYOUTS (preset) dan URUTAN (varian susunan bagian) murni
+   data, jadi bisa dipanen & dipakai langsung di sini. */
+/* potongFungsi() mengembalikan teks mulai dari PENANDA (ikut "const X="), beda
+   dengan potongArray() yang mulai dari '['. Jadi prefix-nya dipotong dulu. */
+const LAYOUTS = eval('(' + potongFungsi(live, 'const LAYOUTS={', 'undangan.html').replace(/^const LAYOUTS=/, '') + ')');
+const URUTAN = eval('(' + potongFungsi(live, 'const URUTAN={', 'undangan.html').replace(/^const URUTAN=/, '') + ')');
+const LABEL_BAGIAN = {
+  guest: 'Tamu', doa: 'Doa', profil: 'Nama', harapan: 'Harapan', acara: 'Acara',
+  timeline: 'Alur', story: 'Kisah', quote: 'Kutipan', menu: 'Menu', party: 'Panitia',
+  dresscode: 'Busana', map: 'Peta', gift: 'Kado', rsvp: 'RSVP', closing: 'Penutup',
+  bukutamu: 'Buku Tamu', galeri: 'Galeri', amplop: 'Amplop', ucapan: 'Ucapan',
+};
+const LABEL_EKSTRA = {
+  navDot: 'navigasi titik', babAngka: 'angka romawi', kutipBesar: 'pita kutipan',
+  heroFoto: 'pita foto', galeriStrip: 'galeri geser', jamFlip: 'flip-clock',
+};
+function kerangka(t) {
+  const L = LAYOUTS[t.layout] || LAYOUTS.klasik;
+  const ur = URUTAN[L.urutan] || URUTAN.A;
+  return { L, ur };
+}
 
 if (!Array.isArray(TPL) || !TPL.length) throw new Error('TPL kosong — panen gagal.');
 
@@ -106,11 +127,13 @@ function kartu(x) {
   <div class="panggung" style="background:${gradasi}">
     <div class="pola" style="${esc(patCss(t) || '')}"></div>
     <div class="isi" style="color:${esc(teks)}">
-      <div class="deco" style="color:${esc(t.accent)}">${esc(t.deco || '')}</div>
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
       <div class="judul" style="font-family:${esc(fontOf(t.ft))};color:${esc(t.accent)}">${esc(t.nama)}</div>
       <div class="garis" style="background:${esc(t.accent)}"></div>
       <div class="tanggal" style="font-family:${esc(fontOf(t.ft))}">Sabtu, 12 Desember 2026</div>
-      ${t.char ? `<div class="monogram" style="border-color:${esc(t.accent)};color:${esc(t.accent)}">${esc(t.char)}</div>` : ''}
     </div>
   </div>
   <div class="meta">
@@ -125,6 +148,17 @@ function kartu(x) {
       <span class="harga">${rupiah(t.harga)}</span>
     </div>
     <p class="desc">${esc(t.desc || '')}</p>
+    ${(() => {
+      const { L, ur } = kerangka(t);
+      const ex = (L.ekstra || []).map(k => LABEL_EKSTRA[k] || k);
+      return `
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ ${esc(L.nama)}</span>
+        <span class="mono">shell:${esc(L.shell)} · urutan ${esc(L.urutan)}${L.vip ? ' · 4D' : ''}</span></div>
+      <div class="urut">${ur.map((k, n) => `<i title="${esc(LABEL_BAGIAN[k] || k)}"><b>${n + 1}</b>${esc(LABEL_BAGIAN[k] || k)}</i>`).join('')}</div>
+      ${ex.length ? `<div class="ekstra">Ekstra: ${ex.map(esc).join(' · ')}</div>` : ''}
+    </div>`;
+    })()}
     <div class="swatch">
       ${g.map(c => `<i title="${esc(c)}" style="background:${esc(c)}"></i>`).join('')}
       <i class="aksen" title="aksen ${esc(t.accent)}" style="background:${esc(t.accent)}"></i>
@@ -133,7 +167,8 @@ function kartu(x) {
     <dl>
       <div><dt>Font</dt><dd style="font-family:${esc(fontOf(t.ft))}">${esc(t.ft || '—')}</dd></div>
       <div><dt>Pola</dt><dd>${esc(PAT_LABEL[t.pat || ''] || t.pat || 'polos')}</dd></div>
-      <div><dt>Ornamen</dt><dd class="mono">${esc(t.deco || '—')}</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">${esc(t.deco || '—')}</dd></div>
+      <div><dt>Kerangka</dt><dd>${esc((LAYOUTS[t.layout] || LAYOUTS.klasik).nama)}</dd></div>
       <div><dt>Cover</dt><dd>${t.arch ? 'arch (lengkung)' : 'kotak (bawaan)'}</dd></div>
       <div><dt>id</dt><dd class="mono">${esc(t.id)}</dd></div>
     </dl>
@@ -189,6 +224,18 @@ section.judul{margin:30px 0 14px;font:600 20px/1.2 "Cormorant Garamond",serif;bo
 .baris2{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--muted)}
 .harga{font-weight:600;color:var(--ink)}
 .desc{margin:0;font-size:12.8px;color:var(--muted);line-height:1.5}
+/* ---- diagram kerangka: yang membedakan tema selain warna ---- */
+.badge.lay{background:#1f1a12;color:#f0d79a}
+.kerangka{margin:11px 0 0;padding:11px 12px;border-radius:12px;background:#faf7f0;
+  border:1px solid var(--line);border-left:3px solid #c9a44c}
+.kjudul{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-bottom:9px}
+.kjudul .mono{font-size:10px;color:var(--muted);letter-spacing:.02em}
+.urut{display:flex;flex-wrap:wrap;gap:4px}
+.urut i{display:inline-flex;align-items:center;gap:4px;font-style:normal;font-size:10.5px;
+  padding:3px 7px 3px 4px;border-radius:999px;background:#fff;border:1px solid #e6ddca;color:#4a4436}
+.urut i b{display:grid;place-items:center;width:14px;height:14px;border-radius:99px;
+  background:#efe7d6;color:#7a5d12;font-size:8.5px;font-weight:700}
+.ekstra{margin-top:9px;font-size:10.5px;color:#7a5d12;line-height:1.5}
 .swatch{display:flex;gap:5px}
 .swatch i{width:22px;height:22px;border-radius:6px;border:1px solid rgba(0,0,0,.12)}
 .swatch i.aksen,.swatch i.tinta{border-radius:50%}
@@ -213,7 +260,17 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
   oleh <code>tools/bikin-perbandingan-tema.cjs</code> — jangan disunting manual.
   Nomor <span class="idx" style="padding:1px 5px">#</span> adalah indeks array = nilai kolom
   <code>theme</code> di Supabase. Kartu di bawah memakai gradasi (<code>g[0]→g[2]</code>), aksen, tinta,
-  font, pola SVG, dan ornamen persis seperti renderer <code>undangan.html</code>.</p>
+  font, dan pola SVG persis seperti renderer <code>undangan.html</code>.</p>
+  <p style="margin-top:10px"><b>Sejak 2026-10-15 tema tidak lagi sekadar beda warna.</b>
+  Tiap tema membawa <code>layout:</code> yang menentukan <b>kerangka</b>: bentuk bagian
+  (10 shell), urutan bagian (varian A–E), dan bagian eksklusif. Blok
+  <span class="badge lay">▦ Kerangka</span> di tiap kartu menggambar urutan bagian yang
+  benar-benar dirender — bandingkan dua kartu untuk melihat bedanya susunan, bukan cuma palet.
+  18 tema publik memakai 18 kerangka berbeda.</p>
+  <p style="margin-top:10px;color:var(--muted);font-size:12.5px">Mockup cover tidak lagi
+  menggambar kicker, ornamen (<code>deco</code>), dan label template (<code>chara</code>):
+  sejak PR #21 renderer menyembunyikannya di cover. <code>deco</code> tetap dipakai di
+  divider dan footer; <code>chara</code> saat ini tidak tampil di mana pun.</p>
 </header>
 <div class="bilahan"><div class="dalam">
   <span style="font-size:12.5px;color:var(--muted)">Saring:</span>

@@ -129,13 +129,24 @@ tetap perlu dilihat langsung di browser karena sandbox tidak punya browser.
 Menampilkan **24 tema berdampingan** (18 publik + 6 varian Gerbang Arch khusus Studio)
 beserta **15 model cover** dalam satu layar, supaya perbedaan antar tema bisa dinilai
 tanpa membuka Studio satu per satu. Tiap kartu merender gradasi `g[0]→g[2]`, warna
-aksen, warna tinta, font judul, pola latar, ornamen, dan monogram `char` — nilai yang
-sama persis dengan yang dipakai renderer `undangan.html`.
+aksen, warna tinta, font judul, dan pola latar — nilai yang sama persis dengan yang
+dipakai renderer `undangan.html`.
+
+Sejak rombakan kerangka 2026-10-15 tiap kartu juga menggambar **diagram kerangka**:
+nama preset `layout`, shell CSS, varian urutan, daftar bagian bernomor sesuai susunan
+yang benar-benar dirender, bagian eksklusif, dan tanda `4D` bila preset itu menyalakan
+mesin parallax/partikel. Inilah yang membedakan tema selain palet — dua kartu bisa
+dibandingkan susunannya secara langsung.
+
+Mockup cover **tidak lagi** menggambar kicker, ornamen (`deco`), dan label template
+(`chara`): sejak PR #21 renderer menyembunyikannya di cover lewat
+`#cover .inner>.kicker,#cover .inner>.chara,#cover .inner>.orn{display:none!important}`.
+`deco` tetap dipakai di divider dan footer; `chara` saat ini tidak tampil di mana pun.
 
 Halaman ini **dibangun, bukan disunting manual**. Datanya dipanen dari `const TPL` /
-`const CV_LAYOUTS` di `studio.html` dan `const FONTS` / `function patCss()` di
-`undangan.html`, lalu tekstur polanya di-inline saat build. Setelah menambah tema baru
-di akhir array, jalankan ulang:
+`const CV_LAYOUTS` di `studio.html` dan `const FONTS` / `const LAYOUTS` / `const URUTAN`
+/ `function patCss()` di `undangan.html`, lalu tekstur polanya di-inline saat build.
+Setelah menambah tema baru di akhir array atau menambah preset layout, jalankan ulang:
 
 ```bash
 node tools/bikin-perbandingan-tema.cjs
