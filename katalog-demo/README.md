@@ -24,6 +24,7 @@ Live* katalog publik; enam demo tambahan di bawah dibuka lewat URL langsung.
 | `undangan-khitanan-emerald.html` | Khitanan Emerald · emerald & gold | demo tambahan; tidak mengubah routing katalog |
 | `undangan-aqiqah-natural.html` | Aqiqah Natural · ivory & sand | demo tambahan; tidak mengubah routing katalog |
 | `undangan-ulang-tahun-ceria.html` | Pesta Ceria · plum & coral | demo tambahan; tidak mengubah routing katalog |
+| `undangan-luxury-seal.html` | *Luxury Invitation No. 001* — artifact React dari sesi Arena, dipulihkan | demo mandiri; tidak di-route katalog |
 | `perbandingan-tema.html` | dibangun `tools/bikin-perbandingan-tema.cjs` | 24 tema berdampingan + 15 model cover |
 | `index.html` | halaman pengantar Drive | daftar 12 tema + tautan ke demo di atas |
 | `foto-cover.jpg`, `foto-rahma-cover.jpg` | foto contoh | latar cover halaman-halaman di atas |
@@ -70,6 +71,58 @@ opsional, dan konten kategori tetap dipertahankan.
 
 Foto pada demo mandiri tetap menggunakan aset lokal yang tercantum di bagian **Foto lokal
 untuk enam demo tambahan** di atas.
+
+### `undangan-luxury-seal.html` — artifact Arena yang dipulihkan
+
+Undangan "Luxury Invitation No. 001 · Aurelia & Leonhard" ini **bukan** berasal dari
+Google Drive dan **bukan** bagian dari sistem tema `TPL`. Aslinya dibuat sebagai
+*chat artifact* di sesi Arena sebelumnya, jadi hanya hidup di dalam percakapan itu —
+tidak pernah masuk repo, dan sandbox sesi lama sudah dibuang. Berkas ini adalah
+pemulihan dari sumber yang ditempel ulang, supaya karyanya tidak hilang lagi.
+
+Bedanya dari 12 demo lain:
+
+- **React 18 + Tailwind**, satu komponen `_o()` dengan animasi bertahap
+  (`idle → crack → flap → light → burst → rise → done`), bukan HTML/CSS statis.
+- **Segel lilin interaktif**: pecah saat diklik, confetti emas, debum emas di kanvas,
+  efek tilt mengikuti mouse/`deviceorientation`, jejak kursor bercahaya, dan audio
+  WebAudio yang dibangkitkan saat runtime (tidak ada berkas suara).
+- **Kartu bisa dibalik** dengan drag (mouse/sentuh) untuk melihat sisi belakang
+  berisi QR dan peta.
+- **CSS Tailwind di-inline** (dipanen dari artifact, hanya kelas yang dipakai) supaya
+  tidak bergantung `cdn.tailwindcss.com`; React/ReactDOM diambil dari `unpkg.com`
+  dan Google Fonts dari `fonts.googleapis.com`. **Butuh internet** untuk membuka.
+
+Tiga penyesuaian dari versi artifact, semuanya di bagian atas `<script>` dan diberi
+komentar:
+
+1. Bundel React inline (~45 KB minified) diganti CDN + shim alias `F`, `gf`, `yf`,
+   `f`, `w`, sehingga kode komponen di bawahnya tidak berubah sama sekali.
+2. Shim `f`/`w` meniru **`jsx()`/`jsxs()` dari `react/jsx-runtime`**, bukan
+   `React.createElement`. Ini wajib: pada jsx-runtime argumen ke-3 adalah *key*,
+   pada createElement argumen ke-3 adalah *child*. Kalau salah peta, semua
+   `.map((h,m)=>w(type,{...},m))` cuma merender angka indeksnya — timeline, galeri,
+   ucapan, dan angka countdown jadi kosong.
+3. Spasi antar-kata pada nama yang dipecah per huruf diganti `\xA0` (non-breaking
+   space); tiap huruf adalah `inline-block`, jadi spasi biasa akan kolaps.
+
+Chrome khusus Arena dibuang karena tidak berlaku di luar chat: `@font-face`
+"Optimistic", `data-clippy-inline-media-manifest`, dan tiga `<script>` protokol
+postMessage `ecto:*`. `<link>` Google Fonts **ditambahkan** — artifact aslinya tidak
+punya, sehingga Cormorant Garamond / Great Vibes / Montserrat jatuh ke font serif
+bawaan.
+
+> **Catatan:** tanggal bawaan `2026-06-20T17:00` sudah lewat, jadi countdown
+> menampilkan `00 : 00 : 00 : 00`. Ganti lewat tombol **✦ BUAT SEPERTI INI**
+> (atau state awal `M` di baris `function _o()`). Semua perubahan hanya pratinjau
+> lokal di memori — tidak tersimpan dan tidak terkirim ke mana pun, sama seperti
+> RSVP-nya.
+
+Sudah diverifikasi render headless (jsdom + React 18.3.1 UMD): cover, urutan buka
+segel, timeline 4 item, galeri 4 kartu, ucapan 2 kartu, countdown 4 angka, QR 49 sel,
+sisi belakang kartu, modal personalisasi (5 input + reset), dan modal RSVP (kirim →
+"Terima kasih!" → tutup sendiri) semuanya muncul tanpa error runtime. Tampilan visual
+tetap perlu dilihat langsung di browser karena sandbox tidak punya browser.
 
 ### Halaman perbandingan tema (`perbandingan-tema.html`)
 
