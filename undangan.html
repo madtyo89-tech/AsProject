@@ -294,6 +294,9 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 #musikBtn .disc{width:18px;height:18px;flex:none;border-radius:50%;background:conic-gradient(var(--gold),#f6e2a5,var(--gold));animation:sp 3s linear infinite;display:grid;place-items:center}
 #musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
 #musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Nama lagu/template tidak ditulis di cover — hanya ikon piringan. Nama muncul lagi setelah undangan dibuka. */
+body:not(.opened) #musikBtn .t{display:none}
+body:not(.opened) #musikBtn{padding:0 13px}
 
 /* ==== Mode pratinjau (iframe Studio): tanpa tombol kontrol Studio ==== */
 body.preview-mode #coverBack{display:none}
