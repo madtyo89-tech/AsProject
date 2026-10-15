@@ -233,12 +233,12 @@ async function render(d) {
       'arsip menyimpan gaya cover pilihan dan penanda manual/default');
   cek(/state\.coverStyleExplicit=true/.test(stu), 'pilihan gaya cover manual dipertahankan saat mengganti tema');
   cek((stu.match(/coverPos:Object\.assign/g) || []).length >= 3, 'posisi/zoom foto ikut tersimpan');
-  cek(stu.includes('if(a.snap.coverStyle)state.coverStyle=a.snap.coverStyle'),
+  cek(stu.includes('if(d.coverStyle)state.coverStyle=d.coverStyle'),
       'membuka arsip memulihkan gaya foto');
   cek(/state\.coverPos=Object\.assign\(\{x:50,y:50,z:1\},state\.coverPos\|\|\{\}\)/.test(stu),
       'draft lama tetap aman (coverPos dilengkapi nilai bawaan)');
-  cek(stu.includes("cvGaya==='full'") && /blokFotoPrev/.test(stu),
-      'pratinjau HP menampilkan bingkai foto sesuai gaya terpilih');
+  cek(/d\.coverStyle/.test(und) && /coverPos/.test(und) && stu.includes('undangan.html?preview=1'),
+      'pratinjau HP = renderer live yang menampilkan bingkai foto sesuai gaya terpilih');
   cek(/class="cvprev"/.test(stu), 'kotak pratinjau & gaya memakai gambar yang sama (langsung ikut bergeser)');
 
   if (JSDOM) {
@@ -257,25 +257,30 @@ async function render(d) {
        Hasil simpanannya dibaca dari localStorage seperti draft sungguhan. */
     w.uploadCover({ files: [new w.File(['x'], 'fotoku.png', { type: 'image/png' })] });
     await new Promise((r) => setTimeout(r, 400));   // FileReader + render() studio
-    cekAsli('unggah foto mengisi foto cover', /data:image\/png/.test(w.phoneHtml()));
+    /* Pratinjau kini = berkas undangan.html asli di iframe, jadi yang diuji adalah
+       payload yang dikirim Studio ke renderer live (barisUndangan). */
+    cekAsli('unggah foto mengisi foto cover', /^data:image\/png/.test(w.eval('barisUndangan().data.cover')));
 
     w.setCvStyle('oval');
     w.cvZoom(1.5);
-    const p = w.phoneHtml();
-    cekAsli('pratinjau memuat bingkai gaya terpilih (oval)', /border-radius:50%/.test(p));
-    cekAsli('pratinjau memakai zoom dari penyesuai', /scale\(1\.5\)/.test(p));
-    cekAsli('pratinjau menandai gaya foto', /• Oval/.test(p));
+    w.set('tab', 'musik');
+    cekAsli('payload pratinjau memuat bingkai gaya terpilih (oval)', w.eval('barisUndangan().data.coverStyle') === 'oval');
+    cekAsli('payload memakai zoom dari penyesuai', Math.abs(w.eval('barisUndangan().data.coverPos.z') - 1.5) < 1e-6);
+    cekAsli('editor menandai gaya foto aktif', (() => {
+      const b = w.document.querySelector('button[title="Oval"]');
+      const label = b && [...b.querySelectorAll('span')].pop();
+      return !!label && label.style.fontWeight === '700';
+    })());
 
     const simpan = JSON.parse(w.localStorage.getItem('asproject_studio_v3') || '{}');
     cekAsli('gaya foto ikut tersimpan di draft', simpan.coverStyle === 'oval');
     cekAsli('posisi & zoom tersimpan di draft', !!simpan.coverPos && Math.abs(simpan.coverPos.z - 1.5) < 1e-6);
 
     w.setCvStyle('full');
-    const p2 = w.phoneHtml();
-    cekAsli('pratinjau gaya penuh memakai foto sebagai latar', /url\(data:image/.test(p2) && /color:#fff/.test(p2));
+    cekAsli('payload gaya penuh mengirim style full ke renderer live', w.eval('barisUndangan().data.coverStyle') === 'full');
 
     w.setCvStyle('none');
-    cekAsli('pratinjau gaya "tanpa" tidak menggambar bingkai', !/scale\(1\.5\)/.test(w.phoneHtml()));
+    cekAsli('payload gaya \"tanpa\" mengirim style none ke renderer live', w.eval('barisUndangan().data.coverStyle') === 'none');
     dom.window.close();
   } else {
     console.log('  (pratinjau studio dilewati: jsdom belum terpasang)');

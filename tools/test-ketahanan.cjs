@@ -203,6 +203,23 @@ function draft(over) {
   await sleep(200);
   const wkText = [...DL.querySelectorAll('.bt-wk')].map(x => x.textContent).join(' ');
   t('Feed: tanggal rusak tidak memunculkan NaN', !wkText.includes('NaN'), wkText);
+
+  /* 10) Tombol kembali ke cover: membalik keadaan "opened" dan aman dipanggil berulang */
+  const cb = DL.getElementById('coverBack');
+  t('Cover: tombol kembali ke cover ada dan ber-aria', !!cb && !!cb.getAttribute('aria-label'), cb && cb.getAttribute('aria-label'));
+  t('Cover: sembunyi selama undangan belum dibuka', !DL.body.classList.contains('opened'), DL.body.className);
+  wL.eval('document.body.classList.add("opened")');
+  cb.click();
+  t('Cover: klik tombol mengembalikan undangan ke cover pembuka', !DL.body.classList.contains('opened'), DL.body.className);
+  wL.eval('document.body.classList.add("opened")');
+  wL.eval('kembaliKeCover()');
+  t('Cover: kembaliKeCover() berfungsi dari global', !DL.body.classList.contains('opened'), '');
+  wL.eval('kembaliKeCover()');
+  t('Cover: dipanggil lagi tanpa efek samping', !DL.body.classList.contains('opened') && evErrL.length === 0, '');
+  wL.eval('document.body.classList.add("opened")');
+  wL.eval('kembaliKeCover()');
+  t('Cover: undangan bisa dibuka ulang setelah kembali ke cover', (wL.eval('document.body.classList.add("opened"), document.body.classList.contains("opened")') === true), '');
+
   t('Halaman utuh: tidak ada error tak tertangkap (live)', evErrL.length === 0, evErrL.slice(0, 2).join(' | '));
 
   dom.window.close(); domD.window.close(); domL.window.close();

@@ -295,6 +295,21 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 #musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
 #musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* ==== Mode pratinjau (iframe Studio): tanpa tombol kontrol Studio ==== */
+body.preview-mode #coverBack{display:none}
+/* Saat data diperbarui dari Studio, jangan ulang animasi masuk supaya tidak berkedip. */
+body.pv-soft *,body.pv-soft *::before,body.pv-soft *::after{animation:none!important;transition:none!important}
+
+/* ==== Tombol kembali ke cover: muncul hanya setelah undangan dibuka ==== */
+#coverBack{position:fixed;right:14px;bottom:16px;z-index:120;display:none;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-radius:99px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(90,70,30,.18);color:var(--ink-body);font-size:11px;font-weight:600;cursor:pointer}
+body.opened #coverBack{display:inline-flex}
+#coverBack .arw{font-size:15px;line-height:1}
+/* Bar navigasi slide (mode navpager) duduk di tengah bawah — naikkan tombol agar tidak bertumpuk. */
+body.navpager #coverBack{bottom:66px}
+/* Hero katalog menampilkan undangan yang sudah terbuka: tombol ini tidak perlu ikut tampil. */
+body.embed-buka #coverBack{display:none}
+@media (max-width:380px){#coverBack{right:10px;gap:6px;padding:0 13px}}
+
 /* ---------- ANIMASI ---------- */
 @keyframes uUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes uZoom{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
@@ -351,6 +366,9 @@ body.navpager #content{position:fixed;inset:0;z-index:1}
 body.navpager #content .wrap{position:relative;height:100%;max-width:none;margin:0;padding:0}
 body.navpager .pslide{display:none;position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;padding:64px 18px 96px;max-width:none}
 body.navpager .pslide.pact{display:block}
+/* Isi slide ditengahkan vertikal supaya bagian bawah tidak kosong memanjang. */
+body.navpager .pslide.pact{display:flex;flex-direction:column;justify-content:safe center}
+body.navpager .pslide-multi.pact{gap:16px}
 body.navpager .pslide.nv-anim{animation-duration:.55s;animation-fill-mode:both;animation-timing-function:cubic-bezier(.22,.8,.36,1)}
 body.nv-slide .pslide.nv-anim{animation-name:nvSlide}
 body.nv-fade .pslide.nv-anim{animation-name:nvFade}
@@ -398,15 +416,16 @@ body:not(.opened) .nv-bar{display:none}
 @keyframes cvcueBob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,6px)}}
 @keyframes cvcueArr{0%,100%{opacity:.35}50%{opacity:1}}
 
-.galx{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:18px -20px 0;
-  padding:8px 20px 16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.galx::-webkit-scrollbar{display:none}
-.galx-slide{flex:none;scroll-snap-align:center;border:0;padding:0;background:none;cursor:zoom-in;
-  border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(60,44,22,.15);transition:transform .35s ease,box-shadow .35s ease}
-.galx-slide:hover{transform:translateY(-5px) scale(1.015);box-shadow:0 20px 42px rgba(60,44,22,.24)}
-.galx-slide img{display:block;height:262px;width:100%;object-fit:cover}
-.galx-slide.t img{width:192px}
-.galx-slide.w img{width:312px}
+/* Galeri tampil sebagai grid rapi (bukan geser) supaya halaman tidak terlihat kosong. */
+.gal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.gal-cell{position:relative;border:0;padding:0;background:none;cursor:zoom-in;border-radius:14px;overflow:hidden}
+.gal-cell img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;border:1px solid #f0e6d6}
+.gal-cell.besar{grid-column:1/-1}
+.gal-cell.besar img{aspect-ratio:4/3}
+.gal-more{position:absolute;inset:0;display:grid;place-items:center;background:rgba(24,18,10,.5);color:#fff;font-size:15px;font-weight:700;letter-spacing:.04em;border-radius:14px}
+/* Slide mode: beberapa bagian pendek digabung per slide agar tidak ada ruang kosong besar. */
+.pslide-multi{display:flex;flex-direction:column;gap:16px}
+.pslide-multi>*{margin-top:0!important}
 .gal-hint{margin-top:2px;font:500 9px 'Inter',system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;
   color:color-mix(in srgb,var(--ink-body) 55%,#fff);text-align:center}
 
@@ -576,8 +595,29 @@ body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .
   body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:none}
   body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after,
   body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,-50%);opacity:0}
-}
 
+}
+/* Monogram untuk model cover Minimalis. */
+.monogram{font-family:var(--ft);font-size:44px;font-weight:700;letter-spacing:.14em;color:var(--accent);margin:2px 0 6px}
+/* Model cover Kartu Stationery: tombol buka jadi pil, kartu lebih tegas. */
+body.cvl-kartu #cover .open .env{display:none}
+body.cvl-kartu #cover .open{height:46px;padding:0 26px;border-radius:99px}
+body.cvl-kartu #cover .bdfr{border-width:2px;box-shadow:0 18px 46px rgba(60,44,22,.20)}
+body.cvl-kartu .geser-hint{display:none}
+/* Model cover Minimalis: tanpa foto, tipografi saja. */
+body.cvl-minimal #cover .cvf,body.cvl-minimal #cover .cvlatar{display:none}
+body.cvl-minimal #cover .bdfr{background:transparent;border-color:transparent;box-shadow:none}
+/* Model cover Foto Penuh: nama terbaca di atas scrim gelap. */
+body.cvl-foto #cover .bdfr{background:linear-gradient(180deg,rgba(10,8,6,.10),rgba(10,8,6,.62));border-color:transparent;box-shadow:none;color:#fff}
+body.cvl-foto #cover .bdfr .kicker,body.cvl-foto #cover .bdfr .std-label,body.cvl-foto #cover .bdfr .wedding-subtitle,body.cvl-foto #cover .bdfr .wedding-note,body.cvl-foto #cover .bdfr .host,body.cvl-foto #cover .bdfr .wedding-meta{color:rgba(255,255,255,.92)}
+body.cvl-foto #cover .bdfr h1,body.cvl-foto #cover .bdfr .date{color:#fff}
+body.cvl-foto .geser-hint{color:rgba(255,255,255,.8)}
+body.cvl-kartu #cover .open::before,body.cvl-kartu #cover .open::after,
+body.cvl-minimal #cover .open::before,body.cvl-minimal #cover .open::after{display:none}
+body.cvl-kartu #cover .open,body.cvl-minimal #cover .open{flex-direction:row;align-items:center;justify-content:center;height:46px;padding:0 26px;border-radius:99px;margin-top:18px}
+body.cvl-kartu #cover .open .env,body.cvl-minimal #cover .open .env{display:none;position:static;transform:none;opacity:1}
+body.cvl-minimal #cover .orn,body.cvl-minimal #cover .cvf,body.cvl-minimal #cover .cvlatar{display:none}
+body.cvl-minimal #cover .bdfr{background:transparent;border-color:transparent;box-shadow:none}
 /* ==== Harapan mempelai + stiker ucapan + paginasi buku tamu ==== */
 .harapan-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
 .harapan-kartu{position:relative;padding:18px 14px 14px;border-radius:16px;background:linear-gradient(165deg,var(--g0),var(--g1));
@@ -625,6 +665,7 @@ body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .
 <body>
 <audio id="musik" loop preload="none"></audio>
 <button id="musikBtn" aria-label="Putar/jeda musik"><span class="disc"></span><span class="t" id="musikNama">Musik</span></button>
+<button id="coverBack" aria-label="Kembali ke cover undangan" title="Kembali ke cover undangan"><span class="arw" aria-hidden="true">⤒</span><span>Cover</span></button>
 <div id="app"></div>
 
 <script>
@@ -825,9 +866,43 @@ const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 const Q=new URLSearchParams(location.search);
 const GUEST=(Q.get('to')||'').trim();
 const DEMO=Q.get('demo')==='1';
+/* Mode pratinjau: halaman ini dipasang di iframe Studio (studio.html?preview=1).
+   Semua interaksi tetap seperti tamu, tetapi tanpa jaringan (tanpa tulis RSVP,
+   tanpa ambil buku tamu dari server) dan tanpa tombol kontrol milik Studio. */
+const PREVIEW=Q.get('preview')==='1';
+if(PREVIEW)document.body.classList.add('preview-mode');
 /* demo auto-buka (dipakai hero dinamis index): tampilkan isi undangan langsung,
    tanpa memutar musik — tombol Buka Undangan tidak dipicu */
-if(DEMO&&Q.get('buka')==='1')document.body.classList.add('opened');
+if(DEMO&&Q.get('buka')==='1'){document.body.classList.add('opened','embed-buka');}
+
+/* ---------- tombol kembali ke cover (tampil setelah undangan dibuka) ---------- */
+/* Membalik keadaan "opened": cover pembuka tampil lagi dan tamu bisa menekan
+   "Buka Undangan" sekali lagi. Musik latar sengaja tidak dihentikan. */
+function monogramOf(a,b){const ini=x=>{const w=String(x||'').trim().split(/\s+/).filter(Boolean);return ((w[0]||'')[0]||'')+((w[w.length-1]||'')[0]||'')};return (ini(a)+(b?'·'+ini(b):'')).toUpperCase()}
+function kembaliKeCover(){
+ if(!document.body.classList.contains('opened'))return;
+ document.body.classList.remove('opened');
+ kabariInduk();
+}
+(function(){const b=document.getElementById('coverBack');if(b)b.addEventListener('click',kembaliKeCover)})();
+
+/* ---------- pipa pratinjau dari Studio ---------- */
+/* Studio mengirim baris draft (bentuk yang sama dengan publish) ke iframe ini,
+   jadi yang dilihat pemilik di Studio = yang dilihat tamu di undangan live. */
+function kabariInduk(){if(!PREVIEW)return;try{if(window.parent&&window.parent!==window)
+ window.parent.postMessage({type:'asproject:preview-state',opened:document.body.classList.contains('opened')},'*')}catch(e){}}
+let _pvSudah=false;
+function pvTerapkan(row){
+ if(!row||typeof row!=='object')return;
+ const opened=document.body.classList.contains('opened'),y=window.scrollY||0;
+ try{boot(row)}catch(e){return}
+ if(_pvSudah){document.body.classList.add('pv-soft');document.body.classList.toggle('opened',opened);try{window.scrollTo(0,y)}catch(e2){}}
+ _pvSudah=true;kabariInduk();
+}
+window.addEventListener('asproject:preview',()=>{pvTerapkan(window.__asPreview)});
+window.addEventListener('message',e=>{const m=e.data;if(!m||typeof m!=='object')return;
+ if(m.type==='asproject:preview')pvTerapkan(m.row);
+ else if(m.type==='asproject:cover'){if(document.body.classList.contains('opened'))kembaliKeCover();else{try{window.scrollTo(0,0)}catch(e2){}}}});
 let SLUG=(Q.get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
 if(!SLUG){const h=location.hostname.toLowerCase();
  if(h.slice(-16)==='.asproject.my.id'&&h.length>16)SLUG=h.split('.')[0]}
@@ -970,7 +1045,7 @@ async function rsvpSave(st){
  document.querySelectorAll('[data-r="'+st+'"]').forEach(b=>{b.classList.add('sent');setTimeout(()=>b.classList.remove('sent'),900)});
  /* Mode demo / file mandiri: simpan lokal saja — jangan menulis baris palsu
     ke database produksi. */
- if(DEMO||!SLUG){
+ if(DEMO||PREVIEW||!SLUG){
   BT_LOCAL.unshift(ucapanBaru(n,st,pesan));
   tampilBukuTamu(daftarUcapanDemo());
   ivToast(toastRsvp(st,n));
@@ -1039,7 +1114,7 @@ function tampilBukuTamu(rows){const el=document.getElementById('btList');if(!el)
 function daftarUcapanDemo(){
  return [...BT_LOCAL,...DEMO_WISHES.map(w=>({guest:w.guest,status:w.status,pesan:w.pesan,t:Date.now()-w.ago}))]}
 async function muatBukuTamu(paksa){const el=document.getElementById('btList');if(!el)return;
- if(DEMO||!SLUG){tampilBukuTamu(daftarUcapanDemo());return}
+ if(DEMO||PREVIEW||!SLUG){tampilBukuTamu(daftarUcapanDemo());return}
  if(!paksa)el.innerHTML='<div class="bt-memuat">Memuat ucapan…</div>';
  const H={headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}};
  const ctl=(typeof AbortController!=='undefined')?new AbortController():null;
@@ -1093,6 +1168,9 @@ function boot(draft){
  const PAPER=isWedding?(tplF.bgPaper||''):'';
  if(isWedding){document.body.classList.add('wedding-cover','theme-'+tplF.id)}
  if(tplF.arch)document.body.classList.add('gerbang-arch');
+ /* Model cover pembuka (5 pilihan dari Studio): amplop | kartu | foto | gerbang | minimal */
+ const CVL=['amplop','kartu','foto','gerbang','minimal'].indexOf(d&&d.coverLayout)>=0?d.coverLayout:'amplop';
+ if(CVL!=='amplop')document.body.classList.add('cvl-'+CVL);
  if(PAPER){document.body.classList.add('wedding-paper-art');rs.setProperty('--wedding-paper-art',"url('"+PAPER+"')")}
  rs.setProperty('--g0',tplF.g[0]);rs.setProperty('--g1',tplF.g[1]);rs.setProperty('--g2',tplF.g[2]);
  rs.setProperty('--accent',tplF.accent);rs.setProperty('--ink',tplF.ink);
@@ -1110,9 +1188,12 @@ function boot(draft){
  const fotoUtama=String((d&&d.cover)||'').trim();
  const CV_GAYA=['kotak','oval','lingkaran','arch','polaroid','emas','kapsul'];
  const cvDiminta=String((d&&d.coverStyle)||(tplF.arch?'arch':''));
- const cvStyle=!fotoUtama?'none'
+ let cvStyle=!fotoUtama?'none'
   :(CV_GAYA.indexOf(cvDiminta)>=0?cvDiminta
    :(cvDiminta==='full'?'full':(cvDiminta==='none'?'none':'kotak')));
+ if(CVL==='gerbang'&&fotoUtama){cvStyle='arch';document.body.classList.add('gerbang-arch')}
+ else if(CVL==='foto'&&fotoUtama)cvStyle='full';
+ else if(CVL==='minimal')cvStyle='none';
  const cpo=(d&&d.coverPos)||{};
  const angkaPos=(v,b)=>{const n=parseFloat(v);return isFinite(n)?Math.min(100,Math.max(0,n)):b};
  const cvZ=(()=>{const n=parseFloat(cpo.z);return isFinite(n)?Math.min(2.2,Math.max(1,n)):1})();
@@ -1188,6 +1269,7 @@ function boot(draft){
   ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"><i class="cvbl tl"></i><i class="cvbl tr"></i><i class="cvbl bl"></i><i class="cvbl br"></i></div>`
   :''}<div class="bdfr ${isWedding?'wedding-invite-card':''}" style="${bdStyle}">${bdCorners}${ORN}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
+   ${CVL==='minimal'?`<div class="monogram ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:260ms':''}">${esc(monogramOf(titleMain,titleSub))}</div>`:''}
    ${cvStyle==='none'||cvStyle==='full'?''
      :`<div class="cvf cvf-${cvStyle} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:330ms':''}"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"></div>`}
    <div class="kicker ${isWedding?'wedding-kicker':''} ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:400ms':''}">${esc(isWedding?"You're Invited":EV_KICKER[ev]||'Undangan')}</div>
@@ -1300,9 +1382,9 @@ function boot(draft){
  /* 5. Galeri — carousel dinamis + zoom (rombak 2026-10-11) */
  if(d&&Array.isArray(d.gallery)&&d.gallery.length){
   const gs=d.gallery.slice(0,12);
-  h+=`<div class="${RV('card')}"><div class="kicker">Galeri</div><div class="galx">`+
-   gs.map((u,i)=>`<button type="button" class="galx-slide ${i%3===1?'t':'w'}" data-gal="${i}" aria-label="Perbesar foto ${i+1}"><img src="${esc(u)}" alt="Galeri ${i+1}" loading="lazy" onerror="this.closest('button').style.display='none'"></button>`).join('')+
-   `</div><div class="gal-hint">Geser untuk melihat · ketuk untuk memperbesar</div></div>`;
+  h+=`<div class="${RV('card')}"><div class="kicker">Galeri</div><div class="gal-grid">`+
+   gs.slice(0,6).map((u,i)=>`<button type="button" class="gal-cell${i===0?' besar':''}" data-gal="${i}" aria-label="Perbesar foto ${i+1}"><img src="${esc(u)}" alt="Galeri ${i+1}" loading="lazy" onerror="this.closest('button').style.display='none'">${i===5&&gs.length>6?`<span class="gal-more">+${gs.length-6} foto</span>`:''}</button>`).join('')+
+   `</div><div class="gal-hint">Ketuk foto untuk memperbesar</div></div>`;
  }
 
  /* 6. Amplop */
@@ -1344,7 +1426,7 @@ function boot(draft){
  muatBukuTamu();
 
  /* interaksi */
- function bukaCover(){if(document.body.classList.contains('opened'))return;document.body.classList.add('opened');if(play)play()}
+ function bukaCover(){if(document.body.classList.contains('opened'))return;document.body.classList.add('opened');if(play)play();kabariInduk()}
  $('btnOpen').addEventListener('click',bukaCover);
  (function(){const cv=document.getElementById('cover');if(!cv)return;
   let sx=0,sy=0,aktif=false;
@@ -1459,9 +1541,23 @@ function setupNavPager(mode){
  if(NAV_MODES.indexOf(mode)<0)return;
  const wrap=document.querySelector('#content .wrap');
  if(!wrap)return;
- const slides=[...wrap.children];
+ let slides=[...wrap.children];
  if(slides.length<2)return;
- slides.forEach(s=>s.classList.add('pslide'));
+ /* Ukur tinggi tiap bagian selagi aliran normal, lalu gabungkan bagian pendek
+    ke satu slide supaya tidak ada slide yang bawahnya kosong memanjang. */
+ const target=Math.max(430,(window.innerHeight||700)-150);
+ const hs=slides.map(el=>{const r=el.getBoundingClientRect();return (r&&r.height)||el.offsetHeight||0});
+ const groups=[];let gr=[slides[0]],sum=hs[0];
+ for(let i=1;i<slides.length;i++){
+  if(sum+hs[i]+16<=target){gr.push(slides[i]);sum+=hs[i]+16}
+  else{groups.push(gr);gr=[slides[i]];sum=hs[i]}
+ }
+ groups.push(gr);
+ slides=groups.map(g=>{
+  if(g.length===1){g[0].classList.add('pslide');return g[0]}
+  const w=document.createElement('div');w.className='pslide pslide-multi';
+  g[0].parentNode.insertBefore(w,g[0]);g.forEach(el=>w.appendChild(el));return w});
+ if(slides.length<2){slides.forEach(x=>x.classList.remove('pslide','pslide-multi'));return}
  document.body.classList.add('navpager','nv-'+mode);
  const bar=document.createElement('div');
  bar.className='nv-bar';
@@ -1638,7 +1734,8 @@ if(DEMO){const _t=(Q.get('tpl')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
    DEMO_DRAFT.data.form.ucapanCustom='Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.';}}}
 
 /* ---------- mulai ---------- */
-if(typeof EMBEDDED_DATA!=='undefined'&&EMBEDDED_DATA){loading();setTimeout(()=>boot(EMBEDDED_DATA),350)}
+if(PREVIEW){loading()}
+else if(typeof EMBEDDED_DATA!=='undefined'&&EMBEDDED_DATA){loading();setTimeout(()=>boot(EMBEDDED_DATA),350)}
 else if(DEMO){loading();setTimeout(()=>boot(DEMO_DRAFT),350)}
 else if(!SLUG){notFound()}
 else{

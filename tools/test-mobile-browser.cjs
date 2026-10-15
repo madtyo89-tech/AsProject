@@ -17,7 +17,7 @@ const assert = require('node:assert/strict');
    await page.setViewportSize({ width, height: 844 });
    await page.goto('http://localhost:8080/studio.html');
    await page.evaluate(()=>{if(!state.started)startInvitation()});
-   for (const tab of ['info','master','desain','slide','musik','tamu','amplop','domain']) {
+   for (const tab of ['info','desain','slide','musik','amplop','tamu','terbit']) {
     await page.evaluate(tab => set('tab',tab), tab);
     const overflow = await page.evaluate(() => ({ width: innerWidth, doc: document.documentElement.scrollWidth }));
 
@@ -27,7 +27,7 @@ const assert = require('node:assert/strict');
    const box = await page.locator('#floatPrev').boundingBox();
    assert(box.x >= 0 && box.x + box.width <= width + 1, `${width}px: expanded preview fits`);
    assert(box.y >= 0 && box.y + box.height <= 845, `${width}px: expanded preview height fits`);
-   console.log(`PASS: ${width}px, eight tabs and expanded preview`);
+   console.log(`PASS: ${width}px, seven tabs and expanded preview`);
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => { setFloat(false); openMasterMenu(); });
@@ -68,6 +68,25 @@ const assert = require('node:assert/strict');
    assert.equal(await contact.getAttribute('target'),'_blank');
    const contactBox=await contact.boundingBox();
    assert(contactBox.x>=0&&contactBox.x+contactBox.width<=width&&contactBox.height>=44,'Contact button fits mobile and is touch sized');
+   // Tombol kembali ke cover: hanya tampil setelah undangan dibuka, muat, dan tidak bertumpuk.
+   const back=page.locator('#coverBack');
+   assert.equal(await back.count(),1,'Live invitation offers a back-to-cover button');
+   assert(!await back.isVisible(),`Cover button stays hidden before opening at ${width}px`);
+   // Animasi pembuka membuat tombol "tidak stabil" bagi Playwright → picu klik lewat DOM.
+   await page.evaluate(()=>document.getElementById('btnOpen').click());
+   await page.waitForTimeout(1100);
+   assert(await back.isVisible(),`Cover button appears after opening at ${width}px`);
+   const backBox=await back.boundingBox();
+   assert(backBox.x>=0&&backBox.x+backBox.width<=width+1,`Cover button fits ${width}px`);
+   assert(backBox.height>=44,`Cover button is touch sized at ${width}px`);
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`No overflow after opening at ${width}px`);
+   const mBox=await page.locator('#musikBtn').boundingBox();
+   if(mBox)assert(mBox.x+mBox.width<=backBox.x||backBox.x+backBox.width<=mBox.x||mBox.y+mBox.height<=backBox.y||backBox.y+backBox.height<=mBox.y,`Music and cover buttons do not overlap at ${width}px`);
+   await back.click();
+   await page.waitForTimeout(1000);
+   assert(!await back.isVisible(),`Cover button hides again after returning to cover at ${width}px`);
+   assert(await page.evaluate(()=>{const c=getComputedStyle(document.getElementById('cover'));return c.visibility!=='hidden'&&parseFloat(c.opacity)>.5}),`Cover is visible again at ${width}px`);
+   assert(!await page.evaluate(()=>document.body.classList.contains('opened')),`Invitation state returns to cover at ${width}px`);
   }
   // Creation workflow: local Supabase fixture, no production writes.
   await page.addInitScript(() => {

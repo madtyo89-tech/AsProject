@@ -64,6 +64,117 @@ dan (setelah server lokal aktif di :8080) `node tools/test-mobile-browser.cjs`.
 Browser memerlukan library sistem Chromium; atur `LD_LIBRARY_PATH` bila memakai
 library bundled. Tes publish memakai fixture lokal, **bukan database produksi**.
 
+## Floating preview undangan di Studio (tombol kembali ke cover, 2026-10-14)
+
+Mini HP melayang (`#floatPrev`) menampilkan undangan yang sedang dibuat dan ikut
+berubah setiap isian/tema disunting. Kontrol di bilah judulnya:
+
+- **⤒ Kembali ke cover** — menggulir isi preview kembali ke cover undangan di
+  bagian paling atas (halus bila browser mendukung; tetap bekerja di jsdom).
+- **⤢ / ⤡** perbesar/perkecil, dan **–** menyembunyikan preview (jadi pil
+  📱 Preview). Judul bisa digeser untuk memindahkan widget.
+- Posisi, ukuran, dan pilihan sembunyikan bertahan setelah refresh; posisi
+  dijepit ke dalam layar saat jendela diperkecil. Di layar **Undangan sudah
+  jadi!** widget disembunyikan karena fokus pada link.
+
+Dicek otomatis oleh `python3 tools/cek-kesehatan.py` (bagian floating preview)
+dan `node tools/test-floating-preview.cjs`.
+
+## Link undangan untuk semua tamu (tanpa nama) di Master & Studio (2026-10-15)
+
+- Halaman **master.html** mendapat kartu **🌐 Link Undangan untuk Semua**: satu tautan
+  tanpa `?to=` (sapaan pembuka umum *Bapak/Ibu/Saudara/i*) dengan tombol **Salin**,
+  **💬 Share via WhatsApp**, dan **↗ Buka Undangan** — cocok untuk grup/media sosial;
+  RSVP & buku tamu tetap tercatat. Saat mode *1 LINK* aktif, kartu menegaskan bahwa
+  link inilah yang dipakai semua tamu.
+- Tab **Domain** di Studio kini menampilkan dua tautan terpisah: *Link untuk semua
+  tamu (tanpa nama)* dan *contoh link personal* (`?to=NamaTamu`), masing-masing dengan
+  tombol salinnya sendiri — sebelumnya tombol salin selalu membawa placeholder
+  `?to=NamaTamu` sehingga rawan ikut terbagikan.
+- Dicek otomatis oleh `tools/cek-kesehatan.py` (bagian link untuk semua tamu).
+
+## Ronde 4: tata letak rapat, galeri grid, 5 model cover, musik lokal awet, urutan Studio (2026-10-15)
+
+Masukan pengguna ronde ini: bagian bawah template jangan kosong memanjang, musik upload harus tetap
+bersuara saat dipakai lagi, sediakan pilihan jenis cover (5 dulu), susun ulang urutan pengisian Studio,
+dan galeri undangan jangan digeser — tampilkan beberapa foto sekaligus.
+
+- **Galeri grid di undangan live** (`undangan.html`): carousel geser `.galx` diganti grid dua kolom
+  (`.gal-grid`/`.gal-cell`) — foto pertama lebar penuh, maksimal enam foto tampil, sisanya ditandai
+  overlay "+N foto"; ketuk foto tetap membuka lightbox. Petunjuk berubah jadi "Ketuk foto untuk memperbesar".
+- **Slide tanpa ruang kosong**: `setupNavPager()` mengukur tinggi tiap bagian saat aliran normal lalu
+  menggabung bagian pendek (greedy, maks `innerHeight-150`) ke satu slide (`.pslide-multi`); isi slide
+  ditengahkan vertikal (`justify-content:safe center`) supaya slide pendek tidak menyisakan bawah kosong.
+- **5 model cover pembuka** (`coverLayout`): amplop klasik (bawaan), kartu stationery, foto penuh,
+  gerbang lengkung, minimalis. Pilihan ada di tab *Desain & Cover* Studio (`CV_LAYOUTS`/`setCvLayout`),
+  tersimpan di draft & payload publish, dirender undangan live lewat class `body.cvl-*` (+ monogram untuk
+  model minimalis). Pratinjau Studio = iframe `undangan.html?preview=1` sehingga selalu sama dengan hasil publish.
+- **Musik upload awet**: blob musik lokal disimpan ke IndexedDB (`asproject-musik`), bukan data URL di
+  localStorage (penyebab kuota jebol & musik bisu saat dipakai lagi). `syncAudio()` mengambil blob URL dari
+  IndexedDB; jika blob hilang muncul peringatan, dan publish mengingatkan bahwa musik lokal tidak ikut ke tamu.
+- **Urutan Studio dirapikan**: 7 tab — Info Acara, Desain & Cover, Slide & Animasi, Musik & Galeri,
+  Amplop & Ucapan, Tamu & QR, **Terbit & Bagikan** (gabungan Kirim Master + Domain) — plus tombol
+  Lanjut/Mundur antar langkah di bawah isi tab; stepbar dan menu navigasi mengikuti susunan baru.
+- Bukti tampilan: `.preview-shots/20-studio-picker-cover.png` s.d. `28-slide-2.png`.
+- Dicek otomatis: `tools/cek-kesehatan.py` bagian 20–23 (galeri grid, packing slide, model cover, musik IDB,
+  susunan tab) serta seluruh suite `tools/test-*.cjs`.
+
+## Perbaikan alur Studio: publish ulang, riwayat, tombol kembali, pratinjau = hasil akhir (2026-10-14)
+
+Empat keluhan alur kerja diperbaiki sekaligus:
+
+1. **Publish ulang & penanda perubahan.** Setelah publish, setiap suntingan membuat
+   bar editor menampilkan `● Ada perubahan belum dipublikasikan` dan tombol utama
+   berubah jadi **🔁 Publish Ulang** (kuning saat ada perubahan). Penanda memakai
+   `draftSig()` (hash isian, bukan foto base64) sehingga murah dihitung tiap ketikan;
+   setelah publish ulang status kembali "undangan live sudah sinkron".
+2. **Riwayat undangan yang pernah dibuat.** Halaman *Folder / Arsip* kini punya kartu
+   **Riwayat dari server**: daftar semua slug yang pernah di-publish diambil dari
+   Supabase (`muatRiwayat()`), dan **Buka** memuat isi lengkapnya ke editor
+   (`bukaRiwayatServer()` → kolom jsonb `data`). Entri arsip lokal juga menyimpan
+   snapshot lengkap (amplop, galeri, foto mempelai, daftar tamu, link mode) lewat
+   `applyDraftData()`; foto base64 tidak ikut disimpan di perangkat (diambil ulang
+   dari server) supaya `localStorage` tidak cepat penuh. `save()` kini tidak menelan
+   `QuotaExceededError` diam-diam: arsip diringkas bertahap dan pemilik diberi tahu.
+   Catatan privasi policy database ditampilkan di kartu riwayat.
+3. **Tombol kembali.** Editor punya **← Layar Awal** (layar pembuka Studio; draft
+   aman, ada tombol *▶ Lanjutkan Undangan*) dan **← Halaman Utama** (keluar situs);
+   halaman Katalog/Arsip mendapat **← Halaman Utama** mendampingi *← Kembali ke
+   Editor*.
+4. **Pratinjau sama dengan hasil publish.** Studio tidak lagi menggambar ulang
+   undangan: panel kanan dan floating preview memuat **`undangan.html?preview=1`**
+   di iframe dan mengirim isian lewat `postMessage` (`barisUndangan()` — bentuk data
+   yang sama persis dengan payload `publish()`). Mode pratinjau menyembunyikan tombol
+   kontrol Studio, tidak menulis RSVP ke server, dan tidak mengulang animasi saat
+   data diperbarui. Karena hanya ada satu renderer, perbaikan tampilan otomatis ikut
+   ke pratinjau.
+
+Dicek otomatis oleh `tools/cek-kesehatan.py` (bagian publish ulang/riwayat/tombol
+kembali/pratinjau iframe), `tools/test-floating-preview.cjs` (iframe, drag, ⤒ cover),
+`tools/test-wedding-templates.cjs` & `tools/test-foto-cover.cjs` (payload gaya/tema
+ke renderer live), dan `tools/test-mobile-browser.cjs` (tanpa overflow 320–1280 px).
+
+## Tombol kembali ke cover di undangan live (2026-10-14)
+
+Selain tombol di Studio, undangan live (`undangan.html`) sekarang punya tombol
+**⤒ Cover** di kanan bawah. Perilakunya:
+
+- **Muncul hanya setelah undangan dibuka** (`body.opened`) — di layar cover
+  pembuka tombol disembunyikan, jadi tamu tidak melihat kontrol sebelum masuk.
+- Menekannya menghapus keadaan `opened`: undangan kembali ke cover pembuka dan
+  tamu bisa menekan **Buka Undangan** lagi. Musik latar sengaja **tidak**
+  dihentikan (sama seperti perilaku tombol musik).
+- Otomatis **naik ke atas bar navigasi slide** saat undangan memakai mode
+  `navpager`, dan **disembunyikan di hero katalog** (`index.html` memuat
+  `undangan.html?demo=1&buka=1` dan menandai `body.embed-buka`) supaya iframe
+  pratinjau tidak menampilkan kontrol yang tidak perlu.
+- Bantuan tombol (tekan-tahan / F1) tersedia lewat `assets/button-help.js`.
+
+Dicek otomatis oleh `python3 tools/cek-kesehatan.py` (bagian tombol kembali ke
+cover), `node tools/test-ketahanan.cjs` (membalik `opened`, aman dipanggil
+berulang), dan `node tools/test-mobile-browser.cjs` (muncul/sembunyi, ukuran
+sentuh ≥44px, tanpa tumpang tindih dengan tombol musik atau bar slide).
+
 ## Halaman Katalog Template & Arsip di Studio (perbaikan 2026-10-12)
 
 Menu **Katalog Template** (edit harga/promo) dan **Folder / Arsip** dibuka dari sidebar
