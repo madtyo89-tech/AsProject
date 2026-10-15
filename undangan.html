@@ -47,7 +47,7 @@ button{font-family:inherit;cursor:pointer}
   transition:opacity .7s ease,visibility .7s;}
 #cover .pat{position:absolute;inset:0;pointer-events:none;opacity:.5}
 #cover .veil{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(255,255,255,.25)}
-#cover .inner{position:relative;max-width:400px;width:100%}
+#cover .inner{position:relative;max-width:400px;width:100%;margin-left:auto;margin-right:auto}
 #cover .bdfr{position:relative;width:100%;max-width:440px;padding:30px 18px}
 #cover .bdc{position:absolute;width:22px;height:22px;pointer-events:none;z-index:2;display:block}
 #cover .orn{font-size:20px;letter-spacing:14px;color:var(--accent-cover);opacity:.85}
@@ -61,6 +61,9 @@ button{font-family:inherit;cursor:pointer}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 #cover .open .env{font-size:18px}
 #cover .brand{position:absolute;bottom:max(16px,env(safe-area-inset-bottom));left:0;right:0;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);opacity:.55}
+/* Label nama template (kicker hijau, kata besar seperti "ISLAMI", deretan bintang/ornamen teks)
+   tidak ditampilkan di cover. Nama & detail acara tetap tampil seperti biasa. */
+#cover .inner>.kicker,#cover .inner>.chara,#cover .inner>.orn{display:none!important}
 /* ---------- TEMA 3D (artwork realistis) ----------
    Tema ulang tahun ber-artwork memakai gambar 3D sebagai latar cover. Teks cover
    tetap terbaca karena diberi lapisan gelap tipis; warna teks diatur di boot(). */
@@ -294,6 +297,9 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 #musikBtn .disc{width:18px;height:18px;flex:none;border-radius:50%;background:conic-gradient(var(--gold),#f6e2a5,var(--gold));animation:sp 3s linear infinite;display:grid;place-items:center}
 #musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
 #musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Nama lagu/template tidak ditulis di cover — hanya ikon piringan. Nama muncul lagi setelah undangan dibuka. */
+body:not(.opened) #musikBtn .t{display:none}
+body:not(.opened) #musikBtn{padding:0 13px}
 
 /* ==== Mode pratinjau (iframe Studio): tanpa tombol kontrol Studio ==== */
 body.preview-mode #coverBack{display:none}
@@ -1227,10 +1233,17 @@ function liveSlides(d,ev,tplF,fullNm,form,venue){
   <div style="margin-top:10px;font-size:16px;font-weight:700;color:var(--ink-body)">${esc(S.dresscode.text||'—')}</div>
   ${cols.length?`<div style="display:flex;justify-content:center;gap:10px;margin-top:16px">${cols.map(c=>`<div style="width:28px;height:28px;border-radius:99px;background:${c};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2)"></div>`).join('')}</div>
   <div style="margin-top:10px;font-size:10px;font-family:ui-monospace,monospace;color:#b3a894">${esc(cols.join('  '))}</div>`:''}</div>`)}
- if(S.map&&S.map.on){const q=(form&&form.alamat)||venue||'';
+ if(S.map&&S.map.on){const alm=String((form&&form.alamat)||'').trim();
+  const q=[venue,alm].filter(Boolean).join(', ');
+  const lnk=(form&&form.mapsLink&&!/example/i.test(form.mapsLink))?form.mapsLink:(q?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q):'');
   h.push(`<div class="rv"><div class="card" style="padding:0;overflow:hidden">
-   <div style="padding:12px 16px;font-size:12px;font-weight:600;color:var(--ink-body);display:flex;gap:8px;align-items:center;border-bottom:1px solid #f0e6d8">📍 ${esc(venue||'Lokasi Acara')}</div>
-   <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed" style="width:100%;height:200px;border:0;display:block" loading="lazy" title="Peta lokasi"></iframe></div></div>`)}
+   <div style="padding:12px 16px;border-bottom:1px solid #f0e6d8">
+    <div style="font-size:12px;font-weight:600;color:var(--ink-body)">📍 ${esc(venue||'Lokasi Acara')}</div>
+    ${alm?`<div style="margin-top:4px;font-size:11.5px;line-height:1.55;color:#7a7065">${esc(alm).replace(/\n/g,'<br>')}</div>`:''}
+   </div>
+   <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed" style="width:100%;height:200px;border:0;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Peta lokasi"></iframe>
+   ${lnk?`<div style="padding:12px 16px"><a class="mapbtn" style="margin-top:0" href="${esc(lnk)}" target="_blank" rel="noopener">📍 Buka di Peta</a></div>`:''}
+  </div></div>`)}
  if(S.gift&&S.gift.on&&S.gift.text.trim())h.push(card(`${kick('🎁 Alamat Kado')}<div style="margin-top:12px;font-size:13px;line-height:1.8;color:#57503f">${esc(S.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:12px;font-size:22px">🎀</div>`));
  if(S.rsvp&&S.rsvp.on)h.push(card(`${kick('✉️ RSVP')}
   <p class="muted" style="margin-top:6px">Mohon konfirmasi kehadirannya — tombol cepat di bawah, atau WhatsApp.</p>
