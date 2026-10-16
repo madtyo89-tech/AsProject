@@ -2648,7 +2648,11 @@ function boot(draft){
  if(BD){const A=tplF.accent;if(BD.s)bdStyle=BD.s(A);if(BD.extra)bdStyle+=(bdStyle?';':'')+BD.extra(A);const bk=ornBingkaiUntuk(BD.id,A);if(bk)bdStyle+=(bdStyle?';':'')+bk}
  const ornId=ornSudutId(d&&d.ornSudut);
   const ORN_SVG=(ORN_SUDUT[ornId]?ornSudutSvg(ornId):null)||((ornId==='bunga3d'||ornId==='bunga4d')?ornBunga(ornId==='bunga4d'?'4d':'3d'):`<svg viewBox="0 0 74 74" fill="none" aria-hidden="true"><path d="M8 66 C8 32 32 8 66 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 56 C21 44 28 34 38 26" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".8"/><path d="M13 41 C22 39 29 33 31 24 C22 26 14 33 13 41Z" fill="currentColor" opacity=".65"/><path d="M29 22 C38 20 45 13 47 5 C38 7 30 13 29 22Z" fill="currentColor" opacity=".65"/><path d="M42 31 C51 29 58 22 60 13 C51 15 43 22 42 31Z" fill="currentColor" opacity=".5"/><circle cx="63" cy="11" r="2.2" fill="currentColor"/><circle cx="11" cy="63" r="1.9" fill="currentColor"/></svg>`);
- const ORN=ornId==='tanpa'?'':`<i class="orn-c tl orn-${ornId}">${ORN_SVG}</i><i class="orn-c tr orn-${ornId}">${ORN_SVG}</i><i class="orn-c bl orn-${ornId}">${ORN_SVG}</i><i class="orn-c br orn-${ornId}">${ORN_SVG}</i>`;
+ /* Ornamen sudut SAMPUL ditiadakan saat cover memakai foto penuh: panel kartu
+    menjadi transparan sehamparan foto, sehingga ornamen sudut tertutup foto
+    dan hanya menjadi beban tersembunyi. Ornamen sudut isi kartu dan bingkai
+    layar (SCR) tetap jalan seperti biasa. */
+ const ORN=(ornId==='tanpa'||cvStyle==='full')?'':`<i class="orn-c tl orn-${ornId}">${ORN_SVG}</i><i class="orn-c tr orn-${ornId}">${ORN_SVG}</i><i class="orn-c bl orn-${ornId}">${ORN_SVG}</i><i class="orn-c br orn-${ornId}">${ORN_SVG}</i>`;
  /* Bingkai layar: ornamen sudut yang sama dipasang menempel di keempat pojok
     layar (fixed), muncul hanya setelah undangan dibuka. Kosong bila pemilik
     memilih "tanpa ornamen sudut". */

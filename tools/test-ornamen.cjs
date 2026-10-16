@@ -44,7 +44,7 @@ const studioSrc = read('studio.html');
 const TPL = eval(potong(undSrc, 'const TPL=[', '[', ']'));
 const TPL_STUDIO = eval(potong(studioSrc, 'const TPL=[', '[', ']'));
 
-function draft(theme, ev, orn, ornSudut) {
+function draft(theme, ev, orn, ornSudut, coverLayout) {
   const acara = ev || 'pernikahan';
   return {
     slug: 'uji-ornamen', name1: 'Satrio', name2: '', theme: theme,
@@ -55,6 +55,8 @@ function draft(theme, ev, orn, ornSudut) {
          tanpa orn tetap menguji jalur bawaan tema */
       orn: orn,
       ornSudut: ornSudut,
+      cover: coverLayout ? 'https://x.test/foto-cover.jpg' : undefined,
+      coverLayout: coverLayout,
       form: {
         namaPria: 'Satrio', namaWanita: acara === 'pernikahan' ? 'Pandu' : '', tanggalAcara: '2026-11-02',
         jamAcara: '08:00', venue: 'Bendo Gede', zona: 'WIB',
@@ -66,7 +68,7 @@ function draft(theme, ev, orn, ornSudut) {
   };
 }
 
-async function render(theme, ev, orn, ornSudut) {
+async function render(theme, ev, orn, ornSudut, coverLayout) {
   const dom = new JSDOM(undSrc, {
     runScripts: 'dangerously',
     url: 'https://x.test/undangan.html?slug=uji-ornamen',
@@ -86,7 +88,7 @@ async function render(theme, ev, orn, ornSudut) {
   const w = dom.window, D = w.document;
   await sleep(300);
   let err = null;
-  try { w.eval('boot(' + JSON.stringify(draft(theme, ev, orn, ornSudut)) + ')'); } catch (e) { err = e.message; }
+  try { w.eval('boot(' + JSON.stringify(draft(theme, ev, orn, ornSudut, coverLayout)) + ')'); } catch (e) { err = e.message; }
   await sleep(120);
   const divider = [...D.querySelectorAll('.divider')];
   const footer = D.querySelector('.footer .orn');
@@ -101,6 +103,7 @@ async function render(theme, ev, orn, ornSudut) {
     footerKelas: footer ? footer.className : null,
     coverOrnTeks: coverOrn ? coverOrn.textContent.trim() : null,
     coverOrnSvg: coverOrn ? !!coverOrn.querySelector('svg') : null,
+    bdfrOrn: D.querySelectorAll('#cover .bdfr .orn-c').length,
     frameJumlah: D.querySelectorAll('.scr-frame .orn-c').length,
     frameSvg: D.querySelectorAll('.scr-frame .orn-c svg').length,
     frameKelas: [...D.querySelectorAll('.scr-frame .orn-c')].map((e) => e.className).sort(),
@@ -266,6 +269,14 @@ async function render(theme, ev, orn, ornSudut) {
       ((undSrc.match(/\.scr-frame \.orn-c svg\{filter:[^}]*\}/) || [''])[0].match(/drop-shadow\(/g) || []).length + ' lapis');
     t('bingkai layar disembunyikan saat cetak', undSrc.includes('@media print{.scr-frame{display:none!important}}'));
     t('memilih "tanpa ornamen sudut" menghapus bingkai layar', rTanpa.frameJumlah === 0, rTanpa.frameJumlah + ' sudut');
+    /* Cover foto penuh: panel kartu transparan sehamparan foto, ornamen sudut
+       sampul tertutup foto — jadi memang ditiadakan, bingkai layar tetap. */
+    const rFull = await render(0, 'pernikahan', undefined, 'deco', 'foto');
+    const rKotak = await render(0, 'pernikahan', undefined, 'deco', 'kotak');
+    t('cover foto penuh: ornamen sudut sampul ditiadakan', rFull.bdfrOrn === 0, rFull.bdfrOrn + ' sudut');
+    t('cover foto penuh: bingkai layar tetap 4 sudut', rFull.frameJumlah === 4, rFull.frameJumlah + ' sudut');
+    t('cover berfoto gaya kotak: ornamen sudut sampul tetap 4', rKotak.bdfrOrn === 4, rKotak.bdfrOrn + ' sudut');
+    t('tanpa foto: ornamen sudut sampul tetap 4', r.bdfrOrn === 4, r.bdfrOrn + ' sudut');
   }
 
   /* ---------- 7. ringkasan pemakaian ---------- */
