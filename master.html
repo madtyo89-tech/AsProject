@@ -77,6 +77,17 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 .b-belum{background:var(--bg-soft);color:var(--ink-faint)}
 .g-link{margin-top:10px;background:var(--bg-soft);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;font-family:ui-monospace,monospace;font-size:9.5px;color:var(--ink-light);display:flex;gap:8px;align-items:center;word-break:break-all}
 .g-link span{flex:1;min-width:0}
+/* Mode link tamu & editor daftar tamu (Master) — biar pemilik tidak perlu
+   kembali ke Studio hanya untuk memilih mode personal atau menambah nama. */
+.mode-list{display:grid;gap:8px;margin-top:12px}
+.modebtn{text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;color:var(--ink-light);cursor:pointer;line-height:1.5}
+.modebtn b{display:block;font-size:12px;color:var(--ink);margin-bottom:2px}
+.modebtn i{font-style:normal;font-size:10.5px;opacity:.8}
+.modebtn.on{border-color:var(--sage-dark);background:var(--sage-light);box-shadow:0 3px 12px rgba(143,169,152,.22)}
+.modebtn.on b{color:var(--sage-dark)}
+.gl-tag{font-style:normal;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 7px;border-radius:99px;background:var(--line-soft);color:var(--ink-faint);flex-shrink:0}
+.gl-tag.p{background:var(--sage-light);color:var(--sage-dark)}
+.gedit{margin-top:12px;width:100%;min-height:104px;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:12px;font-family:ui-monospace,monospace;background:var(--bg-soft);color:var(--ink);resize:vertical}
 .g-acts{display:flex;gap:6px;margin-top:8px}
 .wa-prev{margin-top:10px;border:1px solid var(--line);border-radius:14px;background:var(--bg-soft);padding:10px 12px}
 .wa-prev summary{cursor:pointer;font-size:11px;font-weight:700;color:var(--ink-light)}
@@ -229,11 +240,21 @@ function baseLink(){
  const h=location.hostname||'asproject.my.id';
  return location.protocol+'//'+h;
 }
+/* Mode link menentukan tautan mana yang dipakai tombol/kartu di dashboard ini.
+   Mode `single` = satu tautan untuk semua tamu (tanpa ?to=), mode `personal` =
+   tiap tamu punya tautan ?to=Nama sendiri. Pemilik bisa menggantinya langsung
+   dari dashboard (setLinkMode) tanpa kembali ke Studio. */
+function linkMode(){const d=(DRAFT&&DRAFT.data)||{};return d.linkMode==='single'?'single':'personal'}
+function isSingle(){return linkMode()==='single'}
 function guestLink(g){
- const d=DRAFT.data||{};
- if((d.linkMode||'personal')==='single')return baseLink()+'/u/'+SLUG;
+ if(isSingle())return baseLink()+'/u/'+SLUG;
  return baseLink()+'/u/'+SLUG+'?to='+encodeURIComponent(g);
 }
+/* Tautan personal apa pun modenya. Sapaan ?to=Nama selalu bekerja di undangan
+   live, jadi pemilik tetap boleh menyalin/mengirim tautan personal walau
+   sedang memakai mode 1 LINK. */
+function guestLinkPersonal(g){return baseLink()+'/u/'+SLUG+'?to='+encodeURIComponent(g)}
+function daftarLinkPersonal(){return GS.map(x=>x+': '+guestLinkPersonal(x)).join('\n')}
 function masterLink(){return baseLink()+'/master.html?slug='+SLUG+'&k='+(DRAFT.data.masterKey||'')}
 function norm(s){return String(s||'').trim().toLowerCase().replace(/\s+/g,' ')}
 function parseGuests(){const raw=(DRAFT.data&&DRAFT.data.guestsRaw)||'';GS=raw.split('\n').map(s=>s.trim()).filter(Boolean);if(!selGuest&&GS.length)selGuest=GS[0]}
@@ -355,6 +376,7 @@ function renderAll(){
   return true;
  });
  const g=selGuest;const rg=g?rsvpOf(g):null;const amp=d.amplop||{};
+ const single=isSingle();   /* mode link: 1 link untuk semua vs personal per tamu */
  const cvM=cvCoverMini(d);   // foto cover untuk kartu preview
  $('#app').innerHTML=`<div class="frame-wrap"><div class="frame"><div class="notch"></div>
   <header class="hdr">
@@ -372,6 +394,20 @@ function renderAll(){
     <div class="card-s">Link khusus kamu. Buka di HP/laptop — daftar tamu, RSVP realtime, dan edit data tanpa login.</div>
     <div class="linkbox"><span>${esc(masterLink())}</span><button class="btn btn-copy" onclick="copyMaster()">Salin</button></div>
    </div>
+   <!-- mode link tamu: personal per tamu vs 1 link untuk semua -->
+   <div class="card">
+    <div class="card-t">🧷 Mode Link Tamu</div>
+    <div class="card-s">Pilih cara tamu membuka undangan. Bisa diganti kapan saja di sini — langsung tersimpan ke undangan yang sudah publish, tanpa perlu membuka Studio.</div>
+    <div class="mode-list">
+     <button class="modebtn ${!single?'on':''}" onclick="setLinkMode('personal')">
+      <b>👤 Link Personal — beda tiap tamu</b><i>Tiap tamu dapat <b>?to=Nama</b> sendiri, jadi sapaan <b>Kepada Yth.</b> di undangan otomatis menyebut namanya.</i>
+     </button>
+     <button class="modebtn ${single?'on':''}" onclick="setLinkMode('single')">
+      <b>🔗 1 Link untuk semua tamu</b><i>Satu tautan tanpa nama (sapaan umum <b>Bapak/Ibu/Saudara/i</b>), praktis untuk grup WhatsApp & status. QR check-in tetap unik per tamu.</i>
+     </button>
+    </div>
+    <div class="card-s" style="margin-top:10px">Mode aktif: <b>${single?'1 LINK untuk semua tamu':'PERSONAL per tamu'}</b>${GS.length?(' • '+GS.length+' tamu'):' • belum ada tamu'}</div>
+   </div>
    <!-- link untuk semua tamu -->
    <div class="card">
     <div class="card-t">🌐 Link Undangan untuk Semua</div>
@@ -385,13 +421,20 @@ function renderAll(){
      <div class="wa-prev-txt">${esc(pesanWa(null))}</div>
      <div class="card-s">Tombol <b>Share via WhatsApp</b> per tamu memakai format yang sama — sapaan berganti nama tamu &amp; link personalnya. Teks diatur di Studio → tab Tamu &amp; QR.</div>
     </details>
-    ${(d.linkMode||'personal')==='single'?'<div class="card-s" style="margin-top:8px">Mode <b>1 LINK</b> aktif — link inilah yang dipakai semua tamu.</div>':''}
+    ${single?'<div class="card-s" style="margin-top:8px">Mode <b>1 LINK</b> aktif — link inilah yang dipakai semua tamu.</div>'
+           :'<div class="card-s" style="margin-top:8px">Untuk kirim massal ke grup, link ini paling praktis. Mau per tamu? Pakai kartu <b>👥 Link Personal Tamu</b> di bawah.</div>'}
    </div>
    <!-- link tamu -->
    <div class="card">
     <div class="card-t">👥 Link Personal Tamu</div>
-    <div class="card-s">Setiap tamu dapat tautan miliknya sendiri. Sapaan <b>Kepada Yth.</b> otomatis sesuai nama di link. Untuk tautan tanpa nama, pakai <b>Link Undangan untuk Semua</b> di atas.</div>
-    <div class="linkbox"><span>${esc(baseLink())}/u/${esc(SLUG)}${(d.linkMode||'personal')==='single'?'':'?to=NamaTamu'}</span><button class="btn btn-ghost" onclick="copyAll()">Salin Semua</button></div>
+    <div class="card-s">${single
+      ?'Tautan dengan <b>?to=Nama</b> tetap bekerja walau mode <b>1 LINK</b> sedang aktif — berguna kalau kamu ingin menyapa tamu tertentu dengan namanya. Tekan <b>Pakai mode personal</b> agar semua tombol memakai tautan ini.'
+      :'Setiap tamu dapat tautan miliknya sendiri. Sapaan <b>Kepada Yth.</b> otomatis sesuai nama di link. Untuk tautan tanpa nama, pakai <b>Link Undangan untuk Semua</b> di atas.'}</div>
+    <div class="linkbox"><span>${esc(baseLink())}/u/${esc(SLUG)}?to=NamaTamu</span><button class="btn btn-ghost" onclick="copyAll()">Salin Semua</button></div>
+    ${single?`<div class="g-acts" style="margin-top:10px">
+     <button class="btn btn-wa" onclick="setLinkMode('personal')">👤 Pakai mode personal</button>
+     <button class="btn btn-ghost" onclick="copyPersonalSemua()">📋 Salin link personal semua</button>
+    </div><div class="card-s">Sekarang tombol WhatsApp per tamu mengirim <b>link umum</b> (sesuai mode 1 LINK).</div>`:''}
    </div>
    <!-- link scan QR panitia -->
    <div class="card">
@@ -413,6 +456,18 @@ function renderAll(){
     <div class="stat st-ragu"><b>${st.c}</b><span>Belum Pasti</span></div>
     <div class="stat st-tidak"><b>${st.b}</b><span>Tidak Hadir</span></div>
    </div>
+   <!-- editor daftar tamu: biar tidak perlu balik ke Studio cuma untuk menambah nama -->
+   <div class="card">
+    <div class="card-t">✍️ Tambah / Ubah Daftar Tamu</div>
+    <div class="card-s">Satu nama per baris (boleh dengan sapaan, mis. <b>Pak Andi &amp; Keluarga</b>). Perubahan langsung berlaku di link tamu, sapaan <b>Kepada Yth.</b>, dan QR check-in — tanpa publish ulang.</div>
+    <textarea class="gedit" id="gRaw" spellcheck="false" placeholder="Pak Andi Wijaya &amp; Keluarga&#10;Bu Rina Marlina">${esc((d.guestsRaw||'').trim())}</textarea>
+    <div class="g-acts" style="margin-top:10px">
+     <button class="btn btn-wa" onclick="simpanTamu()">💾 Simpan Daftar Tamu</button>
+     <button class="btn btn-ghost" onclick="resetTamu()">↺ Kembalikan</button>
+     <span class="card-s" style="margin:0;align-self:center">${GS.length?GS.length+' tamu tersimpan':'belum ada tamu'}</span>
+    </div>
+    <div class="card-s" style="margin-top:8px;font-style:italic">✦ Kode QR tamu dibuat otomatis. Kalau nanti mau mengedit lagi di Studio, buka dulu undangan ini lewat <b>Riwayat Server → Buka</b> supaya daftar ini ikut terbaca.</div>
+   </div>
    <!-- guest list -->
    <div class="card">
     <div class="card-t">Daftar Tamu & Konfirmasi</div>
@@ -427,10 +482,10 @@ function renderAll(){
       const sub=r?('RSVP '+r.status+(r.updated_at?' • '+String(r.updated_at).slice(0,10):'')):'Belum konfirmasi';
       return `<div class="guest ${gm===g?'sel':''}" onclick="onSelectIdx(${gi})">
        <div class="g-top"><span class="g-av">${esc(initials(gm))}</span><span class="g-name"><b>${esc(gm)}</b><i>${esc(sub)}</i></span>${badge}</div>
-       <div class="g-link"><span>${esc(guestLink(gm))}</span><button class="btn btn-ghost" onclick="event.stopPropagation();copyGuestIdx(${gi})">📋 Salin Link</button></div>
-       <div class="g-acts"><button class="btn btn-wa" onclick="event.stopPropagation();shareWaIdx(${gi})">💬 Share via WhatsApp</button><button class="btn btn-ghost" onclick="event.stopPropagation();copyGuestIdx(${gi})">📋 Copy Link</button></div>
+       <div class="g-link"><span>${esc(guestLink(gm))}</span><i class="gl-tag${single?'':' p'}">${single?'link umum':'link personal'}</i><button class="btn btn-ghost" onclick="event.stopPropagation();copyGuestIdx(${gi})">📋 Salin Link</button></div>
+       <div class="g-acts"><button class="btn btn-wa" onclick="event.stopPropagation();shareWaIdx(${gi})">💬 Share via WhatsApp</button><button class="btn btn-ghost" onclick="event.stopPropagation();copyGuestIdx(${gi})">📋 Copy Link</button>${single?`<button class="btn btn-ghost" onclick="event.stopPropagation();copyGuestPersonalIdx(${gi})">👤 Salin link personal</button>`:''}</div>
       </div>`}).join('')}</div>`
-     :`<div class="empty">${GS.length?'Tidak ada tamu yang cocok.':'Belum ada tamu.<br>Tambahkan di <b>Studio → tab Tamu & QR</b> lalu publish ulang.'}</div>`}
+     :`<div class="empty">${GS.length?'Tidak ada tamu yang cocok.':'Belum ada tamu.<br>Tulis namanya di kartu <b>✍️ Tambah / Ubah Daftar Tamu</b> di atas — langsung tersimpan.'}</div>`}
    </div>
    <!-- preview tamu -->
    ${g?`<div class="card">
@@ -491,6 +546,76 @@ function onBankTgl(){bankOn=!bankOn;const t=$('#bankTgl');if(t)t.classList.toggl
  ['bankName','bankAcc','bankHolder'].forEach(id=>{const el=document.getElementById(id);if(el)el.className=bankOn?'':'dis'});
  renderAll()}
 function copyMaster(){copyText(masterLink(),'Link master tersalin ✓','ok')}
+/* ---------- simpan sebagian snapshot ke database (pola sama dengan saveBank) ----------
+   Hanya kolom `data` yang dikirim, dan isinya diklon dulu supaya bidang lain
+   (form, amplop, galeri, slides, …) tidak ikut hilang. Kalau database menolak
+   (RLS/schema lama), perubahan tetap dipakai di layar ini + pesan jelas —
+   dashboard tidak pernah diam-diam tampak "tersimpan" padahal gagal. */
+async function simpanData(ubah,pesanOk,pesanGagal,sesudah){
+ const d=JSON.parse(JSON.stringify(DRAFT.data||{}));
+ ubah(d);
+ const pakai=()=>{DRAFT.data=d;if(sesudah)sesudah();renderAll()};
+ if(DEMO){pakai();toast('Demo — perubahan hanya di pratinjau ini','');return false}
+ try{
+  const r=await fetch(SUPABASE_URL+'/rest/v1/invitation_drafts?slug=eq.'+SLUG,{
+   method:'PATCH',
+   headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+   body:JSON.stringify({data:d})});
+  if(!r.ok)throw new Error('http');
+  pakai();toast(pesanOk,'ok');return true;
+ }catch(e){
+  pakai();toast(pesanGagal,'err',5200);return false;
+ }
+}
+/* Ganti mode link dari dashboard: langsung tersimpan, jadi tautan yang dikirim
+   tombol WhatsApp di halaman ini ikut berubah tanpa membuka Studio. */
+function setLinkMode(m){
+ const mode=m==='single'?'single':'personal';
+ if(mode===linkMode()){toast('Mode '+(mode==='single'?'1 LINK':'personal')+' sudah aktif','');return}
+ return simpanData(d=>{d.linkMode=mode},
+  mode==='single'?'✓ Mode 1 LINK aktif — semua tamu memakai link umum'
+                 :'✓ Mode personal aktif — tiap tamu dapat link ?to= namanya',
+  'Tersimpan di pratinjau ini. Database menolak (RLS) — ganti mode di Studio → tab Tamu & QR lalu publish ulang');
+}
+/* Simpan daftar tamu dari dashboard. Kode QR tamu lama dipertahankan supaya
+   QR yang sudah dicetak/dibagikan tidak berubah; nama baru dapat kode baru
+   dengan aturan yang sama seperti Studio. */
+function namaTamuUnik(teks){
+ const lihat={},hasil=[];
+ String(teks||'').split('\n').forEach(b=>{
+  const n=b.trim().replace(/\s+/g,' ');
+  if(!n)return;
+  const k=norm(n);
+  if(lihat[k])return;
+  lihat[k]=1;hasil.push(n);
+ });
+ return hasil;
+}
+function simpanTamu(){
+ const el=document.getElementById('gRaw');
+ if(!el)return;
+ const daftar=namaTamuUnik(el.value);
+ const kodex=Object.assign({},(DRAFT.data&&DRAFT.data.guestCodes)||{});
+ /* Kode lama dicocokkan tanpa peduli huruf besar/kecil & spasi: merapikan tulisan
+    nama ("pak andi" -> "Pak Andi") TIDAK mengganti QR yang sudah dicetak/dibagikan. */
+ const kodeRapi={};Object.keys(kodex).forEach(k=>{kodeRapi[norm(k)]=kodex[k]});
+ const lama=String((DRAFT.data&&DRAFT.data.guestsRaw)||'').split('\n').map(x=>norm(x)).filter(Boolean);
+ let baru=0;
+ daftar.forEach(n=>{
+  if(!kodex[n])kodex[n]=kodeRapi[norm(n)]||Math.random().toString(36).substring(2,10).toUpperCase();
+  if(lama.indexOf(norm(n))<0)baru++;
+ });
+ const hilang=lama.filter(n=>daftar.map(x=>norm(x)).indexOf(n)<0).length;
+ return simpanData(d=>{d.guestsRaw=daftar.join('\n');d.guestCodes=kodex},
+  (baru?'+'+baru+' tamu baru • ':'')+(hilang?'−'+hilang+' dihapus • ':'')+'✓ Daftar tamu tersimpan ('+daftar.length+' tamu)',
+  'Tersimpan di pratinjau ini. Database menolak (RLS) — salin daftar ini ke Studio → tab Tamu & QR lalu publish ulang',
+  ()=>{parseGuests();if(selGuest&&GS.indexOf(selGuest)<0)selGuest=GS[0]||null});
+}
+/* Kembalikan isi kotak ke daftar yang tersimpan (sebelum menekan Simpan). */
+function resetTamu(){
+ const el=document.getElementById('gRaw');
+ if(el){el.value=((DRAFT.data&&DRAFT.data.guestsRaw)||'').trim();toast('Isi kotak dikembalikan ke daftar tersimpan','')}
+}
 /* ---- Link undangan untuk semua tamu (tanpa nama) ---- */
 /* Satu tautan yang bisa dibagikan ke grup/media sosial: undangan terbuka dengan
    sapaan umum, RSVP & buku tamu tetap tercatat seperti biasa. */
@@ -532,7 +657,20 @@ function unduhDaftarHadir(){
  a.download='Daftar-Hadir-'+SLUG+'-'+new Date().toISOString().slice(0,10)+'.csv';
  document.body.appendChild(a);a.click();a.remove();
 }
-function copyAll(){copyText(GS.map(x=>x+': '+guestLink(x)).join('\n'),'Semua link tamu tersalin ✓','ok')}
+function copyAll(){
+ if(isSingle()){
+  copyText(allLink(),'Mode 1 LINK — link umum tersalin (dipakai semua tamu) ✓','ok');
+  toast('Mode 1 LINK aktif: semua tamu memakai link umum. Mau link per tamu? Pilih “Link Personal” di kartu Mode Link Tamu.','',4200);
+  return;
+ }
+ if(!GS.length){copyText(baseLink()+'/u/'+SLUG+'?to=NamaTamu','Belum ada tamu — contoh pola link personal tersalin ✓','ok');return}
+ copyText(daftarLinkPersonal(),'Semua link personal tersalin ✓','ok');
+}
+function copyPersonalSemua(){
+ if(!GS.length){copyText(baseLink()+'/u/'+SLUG+'?to=NamaTamu','Belum ada tamu — contoh pola link personal tersalin ✓','ok');return}
+ copyText(daftarLinkPersonal(),GS.length+' link personal tersalin ✓ (walau mode 1 LINK)','ok');
+}
+function copyGuestPersonalIdx(i){const gm=GS[i];if(gm)copyText(guestLinkPersonal(gm),'Link personal '+gm+' tersalin ✓','ok')}
 function copyGuest(g){copyText(guestLink(g),'Link '+g+' tersalin ✓','ok')}
 function copyText(t,msg,type){
  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast(msg,type),()=>fallbackCopy(t,msg,type))}

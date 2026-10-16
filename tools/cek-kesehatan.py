@@ -1085,6 +1085,54 @@ def cek_qr_undangan():
           + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
 
 
+def cek_mode_link_master():
+    """2026-10-16: pemilik melaporkan "Link personal sama yang semua tamu sama"
+    dan "di undangan master mau isi yang personal juga ga ada opsinya".
+    Penyebabnya: undangan yang sudah publish memakai mode 1 LINK dan Master
+    tidak punya tombol untuk menggantinya. Sekarang dashboard Master punya
+    kartu Mode Link Tamu (personal <-> 1 LINK, tersimpan lewat PATCH kolom
+    `data` saja) + editor daftar tamu, jadi tidak perlu bolak-balik ke Studio.
+    """
+    print("\n[28] Mode link tamu & daftar tamu di Undangan Master")
+    m = baca("master.html")
+    pilih = ("function setLinkMode" in m and 'class="modebtn' in m and "Mode aktif:" in m
+             and ".mode-list{" in m and ".modebtn{" in m)
+    lapor("ok" if pilih else "masalah",
+          "master.html: kartu Mode Link Tamu (personal / 1 LINK) bisa ditekan langsung dari dashboard")
+    sah = ("function isSingle()" in m and "d.linkMode==='single'?'single':'personal'" in m
+           and "return baseLink()+'/u/'+SLUG+'?to='+encodeURIComponent(g)" in m)
+    lapor("ok" if sah else "masalah",
+          "master.html: linkMode()/isSingle() jadi satu sumber; guestLinkPersonal() selalu ber-?to=")
+    ikut = ("?to=NamaTamu" in m and "function copyPersonalSemua" in m and "function copyGuestPersonalIdx" in m
+            and "if(isSingle()){" in m)
+    lapor("ok" if ikut else "masalah",
+          "master.html: tombol salin, tag baris tamu & pesan WA ikut mode; link personal tetap tersedia di mode 1 LINK")
+    aman = ("await fetch(SUPABASE_URL+'/rest/v1/invitation_drafts?slug=eq.'+SLUG" in m
+            and "body:JSON.stringify({data:d})" in m
+            and "Database menolak (RLS)" in m and "const d=JSON.parse(JSON.stringify(DRAFT.data||{}));" in m)
+    lapor("ok" if aman else "masalah",
+          "master.html: PATCH hanya kolom data (diklon dulu) & kegagalan RLS/jaringan tidak pernah tampak tersimpan")
+    editor = ('id="gRaw"' in m and "function simpanTamu" in m and "function namaTamuUnik" in m
+              and "function resetTamu" in m and "kodeRapi[norm(n)]" in m
+              and "Math.random().toString(36).substring(2,10).toUpperCase()" in m)
+    lapor("ok" if editor else "masalah",
+          "master.html: editor daftar tamu (tambah/ubah/hapus, duplikat dibuang, kode QR lama tidak berubah)")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji mode link Master dilewati")
+        return
+    if subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT).returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji mode link Master dilewati")
+        return
+    r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-master-link.cjs")],
+                       capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji mode link & daftar tamu Master (ganti mode, PATCH, RLS, editor, XSS): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
+
 def cek_pesan_wa():
     """2026-10-15: tulisan WA undangan berbeda di tiap tombol (ada yang lengkap, ada yang tidak).
     Sekarang semua tombol kirim/bagikan link undangan memakai SATU template yang sama."""
@@ -1160,7 +1208,8 @@ def main():
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
-               cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan):
+               cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
+               cek_mode_link_master):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
