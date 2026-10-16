@@ -2304,12 +2304,17 @@ function setupMusic(url,name){
    requestAnimationFrame(loop)};
   loop();viz.classList.add('on');
  }catch(e){an=null}};
+ /* Kelas musik-on mengikuti KEJADIAN audio sungguhan, bukan niat memutar:
+    bila autoplay diblokir browser, piringan & cincin denyut tidak menipu. */
+ a.addEventListener('play',()=>document.body.classList.add('musik-on'));
+ a.addEventListener('pause',()=>document.body.classList.remove('musik-on'));
+ a.addEventListener('ended',()=>document.body.classList.remove('musik-on'));
  btn.addEventListener('click',()=>{
-  if(!on){a.play().then(()=>{on=true;document.body.classList.add('musik-on');hook()}).catch(()=>{})}
-  else{a.pause();on=false;document.body.classList.remove('musik-on');viz.classList.remove('on');bars.forEach(b=>b.style.height='3px')}
+  if(!on){a.play().then(()=>{on=true;hook()}).catch(()=>{})}
+  else{a.pause();on=false;viz.classList.remove('on');bars.forEach(b=>b.style.height='3px')}
  });
  return ()=>{a.play().catch(()=>{});
-  if(!on){on=true;document.body.classList.add('musik-on');hook()}
+  if(!on){on=true;hook()}
   a.addEventListener('playing',hook,{once:true});
   viz.classList.add('on')}
 }

@@ -51,10 +51,12 @@ cek(/body:not\(\.btnopen-amplop\) #cover \.open/.test(und), 'gaya non-amplop mer
 /* Efek membuka cover ikut ditambah: 13 transisi yang sama di kedua berkas. */
 const fxStudio = ambilId(stu, /const FX_BUKA=\[([\s\S]*?)\];/);
 const fxUnd = ambilId(und, /const v=AN&&AN\.buka;return \[([^\]]*)\]/);
-cek(fxStudio.length === 13, `efek membuka cover ada ${fxStudio.length} pilihan (10-15)`);
+cek(fxStudio.length === 20, `efek membuka cover ada ${fxStudio.length} pilihan (kini 20)`);
 cek(JSON.stringify(fxUnd) === JSON.stringify(fxStudio), 'daftar efek membuka cover identik di Studio & renderer');
 for (const id of fxStudio) {
-  cek(und.includes(`body.buka-${id}.opened #cover{`) || id === 'fade' && und.includes('body.buka-fade.opened #cover{'),
+  /* Selector boleh berkelompok (mis. beberapa gaya berbagi satu aturan),
+     jadi cukup cocokkan sampai koma atau kurung buka. */
+  cek(new RegExp('body\\.buka-' + id + '\\.opened #cover[,{]').test(und),
     `undangan.html: transisi membuka "${id}" ada`);
 }
 
