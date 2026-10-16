@@ -138,12 +138,21 @@ function draftFor(tpl, idx) {
   let bAll = 0;
   for (const b of borders) { w.eval(`setBorder('${b}')`); if (w.eval(`state.border==='${b}'`)) bAll++; }
   t('studio: tier VIP bisa pakai 32/32 border', bAll === borders.length, bAll + '/' + borders.length);
+  /* Kunci tier border dilepas: ambang eksklusif (>=Rp119rb) dan VIP (>=Rp149rb)
+     tidak terjangkau harga katalog (termahal Rp99rb), sehingga 9 border mustahil
+     dipakai siapa pun. Yang kini dituntut: tema termurah pun bisa memakai
+     semuanya. Catatan: pengujian lama memanggil setBorder('lace') padahal id
+     yang benar 'lace-ivory', jadi "border gratis lolos" itu lolos karena id-nya
+     tidak dikenal, bukan karena memang bebas. */
   w.eval(`state.tpl='${DASAR}';state.border='double'`);
-  w.eval(`setBorder('vip-diamond')`);
-  const blocked1 = w.eval(`state.border==='double'`);
-  w.eval(`setBorder('lace')`);
-  const free1 = w.eval(`state.border==='lace'`);
-  t('studio: tier basic — border VIP terkunci, border gratis lolos', blocked1 && free1);
+  let bDasar = 0;
+  for (const b of borders) { w.eval(`setBorder('${b}')`); if (w.eval(`state.border==='${b}'`)) bDasar++; }
+  t('studio: tier dasar bisa pakai semua border (tidak ada yang terkunci)',
+    bDasar === borders.length, bDasar + '/' + borders.length);
+  w.eval(`state.border='double'`);
+  w.eval(`setBorder('lace-ivory')`);
+  t('studio: border berhias lace-ivory bisa dipilih tema dasar',
+    w.eval(`state.border==='lace-ivory'`), w.eval('state.border'));
 
   /* font: semua 17 di VIP; font eks terkunci di basic */
   const fonts = w.eval('FONTS.map(f=>f.id)');

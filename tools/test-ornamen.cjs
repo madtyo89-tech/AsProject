@@ -131,6 +131,20 @@ async function render(theme, ev) {
   t('tidak ada motif di registry yang menganggur',
     REG.every((m) => semuaMotif.has(m)), REG.filter((m) => !semuaMotif.has(m)).join(', '));
 
+  /* ORN_NAMA (studio) harus memuat id yang sama persis dengan ORNAMEN (undangan).
+     Kalau melenceng, picker menawarkan motif yang tidak bisa dirender, atau
+     menyembunyikan motif yang ada, dan normalizeTplCustom menolak nilai sah. */
+  const ORN_NAMA = eval('(' + potong(studioSrc, 'const ORN_NAMA={', '{', '}') + ')');
+  const namaMotif = Object.keys(ORN_NAMA);
+  t('ORN_NAMA studio memuat semua id ORNAMEN undangan',
+    REG.every((m) => namaMotif.includes(m)),
+    REG.filter((m) => !namaMotif.includes(m)).join(', '));
+  t('ORN_NAMA tidak menawarkan id yang tak ada di ORNAMEN',
+    namaMotif.every((m) => REG.includes(m)),
+    namaMotif.filter((m) => !REG.includes(m)).join(', '));
+  t('setiap motif punya nama tampilan tidak kosong',
+    namaMotif.every((m) => typeof ORN_NAMA[m] === 'string' && ORN_NAMA[m].trim()));
+
   const publik = TPL.map((x, i) => ({ x, i })).filter((o) => !o.x.studioOnly);
   const unikPublik = new Set(publik.map((o) => o.x.orn));
   t('18 tema publik memakai 18 motif berbeda (tidak ada kembar)',
