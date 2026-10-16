@@ -233,6 +233,13 @@ function draftFor(tpl, idx) {
     (htmlDesain.match(/background:#fff;background-image:/g) || []).length + ' pratinjau');
   t('studio: label pola menyebut jumlah yang benar',
     htmlDesain.includes('Pola Latar (' + nPola + ' motif)'), 'seharusnya ' + nPola + ' motif');
+  const nBuka = (htmlDesain.match(/setAnim\('buka','/g) || []).length;
+  t('studio: picker gaya membuka merender 16 pilihan', nBuka === 16, nBuka + ' tombol');
+  w.eval(`setAnim('buka','pintu')`);
+  t('studio: setAnim buka menyimpan pilihan pemilik', w.eval(`state.anim.buka==='pintu'`), w.eval('state.anim.buka'));
+  w.eval(`setAnim('buka','palsu')`);
+  t('studio: id gaya buka asing tetap jatuh ke gaya sah', w.eval(`FX_BUKA.some(f=>f[0]===fxBukaId())`), w.eval('state.anim.buka'));
+  w.eval(`setAnim('buka','gilir')`);
   t('studio: label border menyebut jumlah yang benar (bukan 20 yang lama)',
     htmlDesain.includes('Border Undangan (' + idBorder.length + ' jenis)'),
     'seharusnya ' + idBorder.length + ' jenis');

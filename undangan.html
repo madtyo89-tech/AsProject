@@ -630,6 +630,58 @@ body.buka-balik.opened #cover{transform-origin:100% 50%;transform:perspective(13
 body.buka-menyusut.opened #cover{transform-origin:50% 50%;transform:scale(.8)}
 body.buka-miring.opened #cover{transform:rotate(-6deg) translate(-58%,16%)}
 body.buka-tirai.opened #cover{transform-origin:50% 50%;transform:scaleX(.68)}
+
+/* ---------- GAYA BUKA BARU: sampul buku / daun pintu / kotak kado ----------
+   Memperluas sistem FX_BUKA yang sudah ada. Panel .bkl (kiri/kanan) dan .bkt
+   (atas/bawah) memakai gradasi yang sama dengan cover lalu beranimasi saat
+   dibuka: dua daun pintu berayun dari tengah, tutup kotak kado terangkat
+   disertai letupan kelip, dan sampul buku membalik dari tepi kiri sampai
+   punggungnya menghilang (backface-visibility). */
+#cover .bkl{position:absolute;top:0;bottom:0;width:50.6%;display:none;opacity:0;pointer-events:none;background:linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:200% 100%;backface-visibility:hidden}
+#cover .bkl.l{left:0;background-position:0 0;transform-origin:left center}
+#cover .bkl.r{right:0;background-position:100% 0;transform-origin:right center}
+#cover .bkt{position:absolute;left:0;right:0;height:50.6%;display:none;opacity:0;pointer-events:none;background:linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:100% 200%;backface-visibility:hidden}
+#cover .bkt.t{top:0;background-position:0 0;transform-origin:center top}
+#cover .bkt.b{bottom:0;background-position:0 100%;transform-origin:center bottom}
+.kt-burst{display:none;position:absolute;left:50%;top:44%;width:0;height:0;pointer-events:none}
+.kt-burst i{position:absolute;left:0;top:0;width:11px;height:11px;background:var(--gold,#d4af37);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);opacity:0}
+body.buka-pintu #cover .bkl{display:block}
+body.buka-kotak #cover .bkt,body.buka-kotak .kt-burst{display:block}
+body.buka-pintu #cover{perspective:1200px;transform-style:preserve-3d}
+body.buka-buku.opened #cover{opacity:1;visibility:visible;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-158deg);backface-visibility:hidden;transition:transform 1.05s cubic-bezier(.62,.05,.3,1),visibility 0s 1.12s}
+body.buka-pintu.opened #cover .bdfr,body.buka-kotak.opened #cover .bdfr,body.buka-pintu.opened #cover .pat,body.buka-kotak.opened #cover .pat,body.buka-pintu.opened #cover .veil,body.buka-kotak.opened #cover .veil{opacity:0;transition:opacity .25s ease}
+body.buka-pintu.opened #cover,body.buka-kotak.opened #cover{opacity:1;visibility:visible;pointer-events:none;transition:visibility 0s 1.25s}
+body.buka-pintu.opened #cover .bkl.l{animation:pintuL .95s cubic-bezier(.55,.06,.28,.99) .1s both}
+body.buka-pintu.opened #cover .bkl.r{animation:pintuR .95s cubic-bezier(.55,.06,.28,.99) .1s both}
+body.buka-kotak.opened #cover .bkt.t{animation:kotakT 1.05s cubic-bezier(.5,.08,.3,1) .05s both}
+body.buka-kotak.opened #cover .bkt.b{animation:kotakB 1.05s ease-in .32s both}
+body.buka-kotak.opened .kt-burst i{animation:ktTerbang 1.15s ease-out .5s both}
+@keyframes pintuL{0%{opacity:1;transform:rotateY(0)}100%{opacity:1;transform:rotateY(-102deg)}}
+@keyframes pintuR{0%{opacity:1;transform:rotateY(0)}100%{opacity:1;transform:rotateY(102deg)}}
+@keyframes kotakT{0%{opacity:1;transform:rotateX(0)}55%{opacity:1;transform:rotateX(-116deg)}100%{opacity:0;transform:rotateX(-116deg) translateY(-8%)}}
+@keyframes kotakB{0%{opacity:1;transform:translateY(0)}70%{opacity:1}100%{opacity:0;transform:translateY(16%)}}
+@keyframes ktTerbang{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}18%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(160deg)}}
+
+/* Reveal elegan bingkai layar: tiap sudut tersibak dari pojok layarnya lewat
+   clip-path (bukan transform, supaya mirror .orn-c tetap utuh), berjenjang
+   dari kiri-atas, lalu ornamen "bernapas" pelan tanpa henti. */
+.scr-frame .orn-c{clip-path:inset(0 100% 100% 0);transition:clip-path 1.1s cubic-bezier(.22,.85,.25,1),opacity .9s ease}
+.scr-frame .orn-c.tr{transition-delay:.25s,.25s}
+.scr-frame .orn-c.bl{transition-delay:.45s,.45s}
+.scr-frame .orn-c.br{transition-delay:.65s,.65s}
+body.opened .scr-frame .orn-c{clip-path:inset(0 0 0 0)}
+@keyframes scrNapas{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.78}}
+body.opened .scr-frame .orn-c svg{animation:scrNapas 7.5s ease-in-out 1.7s infinite}
+body.opened .scr-frame .orn-c.tr svg{animation-delay:2s}
+body.opened .scr-frame .orn-c.bl svg{animation-delay:2.3s}
+body.opened .scr-frame .orn-c.br svg{animation-delay:2.6s}
+@media (prefers-reduced-motion:reduce){
+ .scr-frame .orn-c{transition:none!important}
+ body.opened .scr-frame .orn-c svg{animation:none!important}
+ #cover .bkl,#cover .bkt,.kt-burst i{animation:none!important;opacity:0!important}
+ body.buka-buku.opened #cover,body.buka-pintu.opened #cover,body.buka-kotak.opened #cover{opacity:0;visibility:hidden;transform:none;transition:opacity .3s ease,visibility 0s .3s}
+}
+
 body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:perspective(720px) rotateX(-168deg)}
 body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after{transform:translate(-50%,8%) scale(.5);opacity:0}
 body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,4%) scale(.5);opacity:0}
@@ -1321,7 +1373,7 @@ const FX_COVER=[
  ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
  ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal'],['vip-zoom','VIP Deep Zoom'],['vip-curtain','VIP Curtain']];
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
-function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade','kanan','naik','putar','balik','menyusut','miring','tirai'].includes(v)?v:'gilir'}
+function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade','kanan','naik','putar','balik','menyusut','miring','tirai','buku','pintu','kotak'].includes(v)?v:'gilir'}
 function ornSudutId(v){return ['tanpa','ranting','bunga3d','bunga4d','deco','filigree','girih','damask','mendung'].includes(v)?v:'ranting'}
 /* ===== Ornamen SVG per tema =====
    Deretan simbol Unicode di field deco (mis. "X . X") diganti motif yang
@@ -2671,7 +2723,7 @@ function boot(draft){
 
  /* ---------- HTML ---------- */
  let h='';
- h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}"><div class="pat" style="${polaCss(patAktif(d,tplF),tplF,1)}"></div><div class="veil"></div>${cvStyle==='full'
+ h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}"><div class="pat" style="${polaCss(patAktif(d,tplF),tplF,1)}"></div><div class="veil"></div><i class="bkl l"></i><i class="bkl r"></i><i class="bkt t"></i><i class="bkt b"></i><span class="kt-burst" aria-hidden="true"><i style="--dx:-70px;--dy:-90px"></i><i style="--dx:60px;--dy:-110px"></i><i style="--dx:-110px;--dy:-40px"></i><i style="--dx:105px;--dy:-55px"></i><i style="--dx:-30px;--dy:-140px"></i><i style="--dx:35px;--dy:-70px"></i></span>${cvStyle==='full'
   ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" onload="fitCoverPhotos()" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"><i class="cvbl tl"></i><i class="cvbl tr"></i><i class="cvbl bl"></i><i class="cvbl br"></i></div>`
   :''}<div class="bdfr ${isWedding?'wedding-invite-card':''}" style="${bdStyle}">${bdCorners}${ORN}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>

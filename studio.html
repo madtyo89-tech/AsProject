@@ -1551,7 +1551,10 @@ const FX_BUKA=[
  ['balik','Balik Kanan','halaman dibalik dari sisi kanan'],
  ['menyusut','Menyusut','cover mengecil ke tengah lalu menghilang'],
  ['miring','Miring Meluncur','cover miring meluncur ke kiri bawah'],
- ['tirai','Tirai Menyempit','cover menyempit ke tengah seperti tirai menutup']];
+ ['tirai','Tirai Menyempit','cover menyempit ke tengah seperti tirai menutup'],
+ ['buku','Sampul Buku','cover membalik dari tepi kiri seperti sampul buku dibuka'],
+ ['pintu','Daun Pintu','dua daun pintu berayun membuka dari tengah'],
+ ['kotak','Kotak Kado','tutup kotak terangkat disertai letupan kelip']];
 function fxBukaId(){const v=state.anim.buka;return FX_BUKA.some(f=>f[0]===v)?v:'gilir'}
 function fxCoverId(){const v=state.anim.effect;return FX_COVER.some(f=>f[0]===v)?v:'zoom'}
 let animSig=null;
