@@ -549,9 +549,10 @@ body:not(.opened) #aspAmbient{opacity:.42}
 #cover .bdfr,.card.guest{position:relative}
 /* Bunga 3D/4D: tiga lapis kelopak + bayangan lembut → kesan kedalaman */
 .orn-c.orn-bunga3d,.orn-c.orn-bunga4d{width:106px;height:106px;opacity:.9}
-.orn-c.orn-bunga3d svg,.orn-c.orn-bunga4d svg{filter:drop-shadow(0 3px 5px rgba(60,40,10,.28)) drop-shadow(0 1px 0 rgba(255,255,255,.32))}
+.orn-c svg{filter:drop-shadow(1px 1.2px 0 rgba(255,255,255,.6)) drop-shadow(-1px -1.1px 0 rgba(43,28,8,.34)) drop-shadow(0 3px 5px rgba(60,40,10,.22))}
+.orn-c.orn-deco,.orn-c.orn-filigree,.orn-c.orn-girih,.orn-c.orn-damask,.orn-c.orn-mendung{width:92px;height:92px;opacity:.92}
 .orn-c .orn-l{transform-box:fill-box;transform-origin:50% 50%}
-@media (max-width:420px){.orn-c{width:54px;height:54px}.orn-c.orn-bunga3d,.orn-c.orn-bunga4d{width:78px;height:78px}}
+@media (max-width:420px){.orn-c{width:54px;height:54px}.orn-c.orn-bunga3d,.orn-c.orn-bunga4d{width:78px;height:78px}.orn-c.orn-deco,.orn-c.orn-filigree,.orn-c.orn-girih,.orn-c.orn-damask,.orn-c.orn-mendung{width:64px;height:64px}}
 /* 4D: tiap sudut berayun pelan berbeda fase, lapisan kelopak melayang berbeda arah */
 body.orn-bunga4d .orn-c{animation:ornAyun 7s ease-in-out infinite}
 body.orn-bunga4d .orn-c.tr{animation-delay:-1.6s}
@@ -1307,7 +1308,7 @@ const FX_COVER=[
  ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal'],['vip-zoom','VIP Deep Zoom'],['vip-curtain','VIP Curtain']];
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
 function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade','kanan','naik','putar','balik','menyusut','miring','tirai'].includes(v)?v:'gilir'}
-function ornSudutId(v){return ['tanpa','ranting','bunga3d','bunga4d'].includes(v)?v:'ranting'}
+function ornSudutId(v){return ['tanpa','ranting','bunga3d','bunga4d','deco','filigree','girih','damask','mendung'].includes(v)?v:'ranting'}
 /* ===== Ornamen SVG per tema =====
    Deretan simbol Unicode di field deco (mis. "X . X") diganti motif yang
    benar-benar digambar untuk divider dan footer. Field deco TETAP diisi dan
@@ -1704,6 +1705,164 @@ function ornIdValid(v){return typeof v==='string'&&Object.prototype.hasOwnProper
 
 /* Bunga ornamen sudut 3D/4D: tiga lapis kelopak (l-back / l-mid / l-front)
    dengan gradasi + highlight → kesan kedalaman; mode 4D menambah gerak melayang. */
+/* ===== Ornamen sudut: dibangun dari referensi yang benar-benar dilihat =====
+
+   Sebelumnya hanya ada 4 pilihan (tanpa / ranting / bunga3d / bunga4d) dan
+   bunga3d dengan bunga4d memakai SVG yang SAMA persis -- satu-satunya beda
+   hanyalah animasi CSS, jadi pada tampilan diam keduanya identik.
+
+   Gaya-gaya di bawah diambil dari ciri visual referensi yang diperiksa satu
+   per satu (lihat katalog referensi di image-search/):
+
+   deco     -> kipas sunburst memancar dari satu titik, kipas seperempat
+               lingkaran bersarang di sudut, garis paralel rangkap membentuk
+               bingkai L, kipas kecil berulang di tepi
+   filigree -> sulur meruncing (tebal ke tipis) menjulur sepanjang tepi dan
+               berujung tetesan, gerombol spiral C/S di sudut, aksen trefoil,
+               titik "mata" di persimpangan dalam
+   girih    -> bintang bersudut banyak di pusat, teselasi bintang-heksagon,
+               pita strapwork saling silang membentuk L
+   damask   -> palmette simetris bilateral: finial tetesan di tengah, gulungan
+               di kedua sisi, kelopak berlapis, aksen titik
+   mendung  -> mega mendung Cirebon: garis awan konsentris berlapis yang
+               bergelombang, diulang lebih kecil di sepanjang tepi
+
+   Emboss (permintaan terpisah) diterapkan lewat CSS: cahaya dari kiri-atas
+   dan bayangan ke kanan-bawah, jadi ornamen tampak timbul dari kertas. */
+
+/* Satu sudut digambar dalam kotak 0..100, jangkar di kiri-atas; tiga sudut
+   lain dibuat dengan pencerminan (bkCermin* sudah ada di blok bingkai). */
+const ORN_SUDUT = {
+ /* kipas art-deco */
+ deco: () => {
+   let s = '';
+   s += "<path d='M3 97V3h94' fill='none' stroke='currentColor' stroke-width='2.6'/>";
+   s += "<path d='M9 97V9h88' fill='none' stroke='currentColor' stroke-width='1.1' opacity='.85'/>";
+   s += "<path d='M15 97V15h82' fill='none' stroke='currentColor' stroke-width='.6' opacity='.6'/>";
+   for (let i = 0; i < 4; i++) {
+     const r = 24 + i * 9;
+     s += "<path d='M3 " + r + "A" + (r - 3) + ' ' + (r - 3) + " 0 0 0 " + r + " 3' fill='none' stroke='currentColor' stroke-width='" + (i === 0 ? 2 : 1) + "' opacity='" + (0.95 - i * 0.16).toFixed(2) + "'/>";
+   }
+   for (let i = 0; i < 7; i++) {
+     const a = (12 + i * 11) * Math.PI / 180, x1 = 6 + Math.cos(a) * 16, y1 = 6 + Math.sin(a) * 16,
+       x2 = 6 + Math.cos(a) * 40, y2 = 6 + Math.sin(a) * 40;
+     s += "<line x1='" + x1.toFixed(1) + "' y1='" + y1.toFixed(1) + "' x2='" + x2.toFixed(1) + "' y2='" + y2.toFixed(1) + "' stroke='currentColor' stroke-width='" + (i % 2 ? 1 : 2.2) + "' opacity='.9'/>";
+   }
+   s += "<path d='M3 62A24 24 0 0 0 27 86L3 86Z' fill='currentColor' opacity='.5'/>";
+   s += "<path d='M62 3A24 24 0 0 0 86 27L86 3Z' fill='currentColor' opacity='.5'/>";
+   return s;
+ },
+ /* sulur filigree meruncing */
+ filigree: () => {
+   let s = '';
+   s += "<path d='M97 3C72 3 44 6 24 15C46 9 72 6 97 6Z' fill='currentColor' opacity='.9'/>";
+   s += "<path d='M3 97C3 72 6 44 15 24C9 46 6 72 6 97Z' fill='currentColor' opacity='.9'/>";
+   s += "<path d='M96 4c3-2 6 0 5 3-1 2-4 2-5-1Z' fill='currentColor'/>";
+   s += "<path d='M4 96c-2 3 0 6 3 5 2-1 2-4-1-5Z' fill='currentColor'/>";
+   const spiral = (cx, cy, r, o) => "<path d='M" + cx + ' ' + cy + 'a' + r + ' ' + r + ' 0 1 1 ' + (r * .8) + ' ' + (r * .8) + 'a' + (r * .5) + ' ' + (r * .5) + " 0 1 0 -" + (r * .45) + ' ' + (r * .45) + "' fill='none' stroke='currentColor' stroke-width='1.7' opacity='" + o + "'/>";
+   s += spiral(26, 26, 9, .95) + spiral(40, 18, 6, .8) + spiral(18, 40, 6, .8);
+   s += spiral(34, 34, 4.5, .7);
+   const trefoil = (cx, cy, o) => "<circle cx='" + (cx - 3) + "' cy='" + cy + "' r='2.6' fill='currentColor' opacity='" + o + "'/><circle cx='" + (cx + 3) + "' cy='" + cy + "' r='2.6' fill='currentColor' opacity='" + o + "'/><circle cx='" + cx + "' cy='" + (cy - 3.4) + "' r='2.6' fill='currentColor' opacity='" + o + "'/>";
+   s += trefoil(52, 30, .75) + trefoil(30, 52, .75) + trefoil(46, 46, .6);
+   s += "<circle cx='20' cy='20' r='2.4' fill='currentColor'/>";
+   return s;
+ },
+ /* girih islami: bintang + strapwork */
+ girih: () => {
+   let s = '';
+   s += "<path d='M2 98V14L14 2h84' fill='none' stroke='currentColor' stroke-width='2.4'/>";
+   s += "<path d='M8 98V20L20 8h78' fill='none' stroke='currentColor' stroke-width='1.2' opacity='.8'/>";
+   s += "<path d='M2 98V14L14 2' fill='none' stroke='currentColor' stroke-width='1.2' opacity='.8' transform='translate(3,3)'/>";
+   const star = (cx, cy, r, o) => {
+     let p = '';
+     for (let k = 0; k < 2; k++) p += "<rect x='" + (cx - r) + "' y='" + (cy - r) + "' width='" + (2 * r) + "' height='" + (2 * r) + "' fill='none' stroke='currentColor' stroke-width='1.3' opacity='" + o + "' transform='rotate(" + (k * 45) + ' ' + cx + ' ' + cy + ")'/>";
+     return p + "<circle cx='" + cx + "' cy='" + cy + "' r='" + (r * .34) + "' fill='currentColor' opacity='" + o + "'/>";
+   };
+   s += star(30, 30, 13, .95);
+   s += star(66, 10, 6, .7) + star(10, 66, 6, .7) + star(52, 52, 5, .55);
+   s += "<path d='M44 20l8 8M20 44l8 8M48 48l8 8' stroke='currentColor' stroke-width='1.2' opacity='.7'/>";
+   return s;
+ },
+ /* palmette damask seperempat */
+ damask: () => {
+   let s = '';
+   s += "<path d='M30 6C22 16 18 26 20 38C10 30 6 20 8 8C16 8 25 4 30 6Z' fill='currentColor' opacity='.85'/>";
+   s += "<path d='M6 30C16 22 26 18 38 20C30 10 20 6 8 8C8 16 4 25 6 30Z' fill='currentColor' opacity='.85'/>";
+   s += "<path d='M34 34c-6-2-10-6-12-12 8 2 12 6 12 12Z' fill='currentColor' opacity='.7'/>";
+   const petal = (cx, cy, rx, ry, rot, o) => "<ellipse cx='" + cx + "' cy='" + cy + "' rx='" + rx + "' ry='" + ry + "' fill='currentColor' opacity='" + o + "' transform='rotate(" + rot + ' ' + cx + ' ' + cy + ")'/>";
+   s += petal(46, 22, 9, 3.4, -34, .65) + petal(22, 46, 9, 3.4, 56, .65);
+   s += petal(58, 12, 7, 2.6, -22, .5) + petal(12, 58, 7, 2.6, 68, .5);
+   s += petal(60, 40, 6, 2.4, -50, .45) + petal(40, 60, 6, 2.4, 40, .45);
+   s += "<circle cx='34' cy='34' r='3.4' fill='currentColor'/>";
+   s += "<circle cx='70' cy='8' r='1.8' fill='currentColor' opacity='.6'/><circle cx='8' cy='70' r='1.8' fill='currentColor' opacity='.6'/>";
+   s += "<path d='M96 4H60M4 96V60' stroke='currentColor' stroke-width='1' opacity='.5'/>";
+   return s;
+ },
+ /* mega mendung: awan konsentris */
+ mendung: () => {
+   let s = '';
+   const awan = (k, o) => {
+     const r = 46 - k * 8;
+     return "<path d='M2 " + (r + 6) + "C" + (r * .3) + ' ' + (r * .8) + ' ' + (r * .45) + ' ' + (r * .5) + ' ' + (r * .62) + ' ' + (r * .55) +
+       "C" + (r * .7) + ' ' + (r * .3) + ' ' + (r * .85) + ' ' + (r * .3) + ' ' + (r * .95) + ' ' + (r * .5) +
+       "C" + (r + 2) + ' ' + (r * .45) + ' ' + (r + 4) + ' ' + (r * .62) + ' ' + (r + 6) + " 2' fill='none' stroke='currentColor' stroke-width='" + (2.4 - k * .4).toFixed(1) + "' opacity='" + o + "'/>";
+   };
+   s += awan(0, .95) + awan(1, .8) + awan(2, .62) + awan(3, .45);
+   const kecil = (cx, cy, o) => "<path d='M" + (cx - 8) + ' ' + cy + 'c2-5 6-7 9-5 2-4 7-4 9 0 3-2 7 0 8 5Z' + "' fill='none' stroke='currentColor' stroke-width='1.3' opacity='" + o + "'/>";
+   s += kecil(70, 10, .6) + kecil(10, 70, .6) + kecil(56, 56, .45);
+   return s;
+ }
+};
+
+/* Kembalikan SVG satu sudut untuk gaya yang diminta. */
+function ornSudutSvg(id) {
+  const g = ORN_SUDUT[id];
+  if (!g) return null;
+  try {
+    return "<svg viewBox='0 0 100 100' fill='none' aria-hidden='true'>" + g() + "</svg>";
+  } catch (e) { return null; }
+}
+
+/* CSS agar ornamen sudut juga hadir di SEMUA lapisan kartu, bukan hanya
+   sampul dan kartu tamu. Dipasang sebagai lapisan background (ikut ter-clip
+   border-radius, tidak merebut pseudo-element) lewat <style> yang disuntik
+   saat boot karena warnanya mengikuti aksen tema. */
+function ornSudutCssDariSvg(svg, A) {
+  if (!svg) return '';
+  const m = String(svg).match(/viewBox=["']([^"']+)["']/);
+  if (!m) return '';
+  const vb = m[1].trim().split(/\s+/);
+  const W = vb[2], H = vb[3];
+  /* Buang pembungkus <svg> supaya pencerminan bekerja pada isinya, bukan
+     menyarangkan <svg> di dalam <svg>. */
+  const isi = String(svg).replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+  const K = 54, uri = (inner) => "url('data:image/svg+xml," +
+    encodeURIComponent("<svg xmlns=\"http://www.w3.org/2000/svg\" width='" + W + "' height='" + H +
+      "' viewBox='" + vb.join(' ') + "'>" + inner + "</svg>").replace(/'/g, '%27') + "')";
+  const satu = isi;
+  const tl = uri(satu), tr = uri(bkCerminX(satu, W, H)),
+    br = uri(bkCerminXY(satu, W, H)), bl = uri(bkCerminY(satu, W, H));
+  return '.card{background-image:' + [tl, tr, br, bl].join(',') + ';' +
+    'background-position:left 7px top 7px,right 7px top 7px,right 7px bottom 7px,left 7px bottom 7px;' +
+    'background-repeat:no-repeat,no-repeat,no-repeat,no-repeat;' +
+    'background-size:' + K + 'px ' + K + 'px,' + K + 'px ' + K + 'px,' + K + 'px ' + K + 'px,' + K + 'px ' + K + 'px}';
+}
+
+/* 3D dan 4D kini menghasilkan SVG yang BENAR-BENAR berbeda. Sebelumnya kedua
+   pilihan memanggil ornBungaSvg() tanpa argumen sehingga gambarannya identik
+   dan satu-satunya pembeda hanyalah animasi CSS -- pada tampilan diam keduanya
+   sama persis. Mode 4D menambah cincin kilau keempat dan inti lebih terang. */
+function ornBunga(mode){
+ let s=ornBungaSvg();
+ if(mode==='4d'){
+  let ek="<g class='orn-l l-glow'>";
+  for(let i=0;i<8;i++){const a=i*45*Math.PI/180;
+   ek+="<circle cx='"+(50+Math.cos(a)*44).toFixed(1)+"' cy='"+(50+Math.sin(a)*44).toFixed(1)+"' r='2.4' fill='#fff' opacity='.85'/>"}
+  ek+="<circle cx='50' cy='50' r='7.5' fill='#fff' opacity='.5'/></g>";
+  s=s.replace('</svg>',ek+'</svg>');
+ }
+ return s;
+}
 function ornBungaSvg(){
  const P=(cx,cy,rx,ry,fill,n,off)=>{let s='';for(let i=0;i<n;i++){const a=off+i*(360/n);
   s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="'+fill+'" transform="rotate('+a+' '+cx+' '+cy+')"/>'}return s};
@@ -2368,8 +2527,12 @@ function boot(draft){
  const BD=BORDERS.find(b=>b.id===(d&&d.border))||null;let bdStyle='';
  if(BD){const A=tplF.accent;if(BD.s)bdStyle=BD.s(A);if(BD.extra)bdStyle+=(bdStyle?';':'')+BD.extra(A);const bk=ornBingkaiUntuk(BD.id,A);if(bk)bdStyle+=(bdStyle?';':'')+bk}
  const ornId=ornSudutId(d&&d.ornSudut);
- const ORN_SVG=(ornId==='bunga3d'||ornId==='bunga4d')?ornBungaSvg():`<svg viewBox="0 0 74 74" fill="none" aria-hidden="true"><path d="M8 66 C8 32 32 8 66 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 56 C21 44 28 34 38 26" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".8"/><path d="M13 41 C22 39 29 33 31 24 C22 26 14 33 13 41Z" fill="currentColor" opacity=".65"/><path d="M29 22 C38 20 45 13 47 5 C38 7 30 13 29 22Z" fill="currentColor" opacity=".65"/><path d="M42 31 C51 29 58 22 60 13 C51 15 43 22 42 31Z" fill="currentColor" opacity=".5"/><circle cx="63" cy="11" r="2.2" fill="currentColor"/><circle cx="11" cy="63" r="1.9" fill="currentColor"/></svg>`;
+  const ORN_SVG=(ORN_SUDUT[ornId]?ornSudutSvg(ornId):null)||((ornId==='bunga3d'||ornId==='bunga4d')?ornBunga(ornId==='bunga4d'?'4d':'3d'):`<svg viewBox="0 0 74 74" fill="none" aria-hidden="true"><path d="M8 66 C8 32 32 8 66 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 56 C21 44 28 34 38 26" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".8"/><path d="M13 41 C22 39 29 33 31 24 C22 26 14 33 13 41Z" fill="currentColor" opacity=".65"/><path d="M29 22 C38 20 45 13 47 5 C38 7 30 13 29 22Z" fill="currentColor" opacity=".65"/><path d="M42 31 C51 29 58 22 60 13 C51 15 43 22 42 31Z" fill="currentColor" opacity=".5"/><circle cx="63" cy="11" r="2.2" fill="currentColor"/><circle cx="11" cy="63" r="1.9" fill="currentColor"/></svg>`);
  const ORN=ornId==='tanpa'?'':`<i class="orn-c tl orn-${ornId}">${ORN_SVG}</i><i class="orn-c tr orn-${ornId}">${ORN_SVG}</i><i class="orn-c bl orn-${ornId}">${ORN_SVG}</i><i class="orn-c br orn-${ornId}">${ORN_SVG}</i>`;
+ /* Ornamen sudut juga dipasang di semua kartu isi, bukan hanya sampul dan
+    kartu tamu. Disuntik sebagai <style> karena warnanya mengikuti aksen tema. */
+ (function(){let st=document.getElementById('ornSudutLive');if(!st){st=document.createElement('style');st.id='ornSudutLive';(document.head||document.documentElement).appendChild(st)}
+  st.textContent=ornSudutCssDariSvg(ornId==='tanpa'?'':ORN_SVG,tplF.accent||'#8b7358')})();
  const bdCorners=(()=>{if(!BD||!BD.corner)return'';const w=BD.corner,A=tplF.accent;
   const c=p=>`<i class="bdc" style="border:0 solid ${A};${p}"></i>`;
   return c('top:10px;left:10px;border-top-width:'+w+'px;border-left-width:'+w+'px')+c('top:10px;right:10px;border-top-width:'+w+'px;border-right-width:'+w+'px')+c('bottom:10px;left:10px;border-bottom-width:'+w+'px;border-left-width:'+w+'px')+c('bottom:10px;right:10px;border-bottom-width:'+w+'px;border-right-width:'+w+'px')})();
