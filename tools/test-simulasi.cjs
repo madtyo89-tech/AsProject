@@ -234,7 +234,7 @@ function draftFor(tpl, idx) {
   t('studio: label pola menyebut jumlah yang benar',
     htmlDesain.includes('Pola Latar (' + nPola + ' motif)'), 'seharusnya ' + nPola + ' motif');
   const nBuka = (htmlDesain.match(/setAnim\('buka','/g) || []).length;
-  t('studio: picker gaya membuka merender 16 pilihan', nBuka === 16, nBuka + ' tombol');
+  t('studio: picker gaya membuka merender 20 pilihan', nBuka === 20, nBuka + ' tombol');
   w.eval(`setAnim('buka','pintu')`);
   t('studio: setAnim buka menyimpan pilihan pemilik', w.eval(`state.anim.buka==='pintu'`), w.eval('state.anim.buka'));
   w.eval(`setAnim('buka','palsu')`);

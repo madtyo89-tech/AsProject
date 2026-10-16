@@ -637,10 +637,10 @@ body.buka-tirai.opened #cover{transform-origin:50% 50%;transform:scaleX(.68)}
    dibuka: dua daun pintu berayun dari tengah, tutup kotak kado terangkat
    disertai letupan kelip, dan sampul buku membalik dari tepi kiri sampai
    punggungnya menghilang (backface-visibility). */
-#cover .bkl{position:absolute;top:0;bottom:0;width:50.6%;display:none;opacity:0;pointer-events:none;background:linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:200% 100%;backface-visibility:hidden}
+#cover .bkl{position:absolute;top:0;bottom:0;width:50.6%;display:none;opacity:0;pointer-events:none;background-image:var(--bukaImg,none),linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:200% 100%,200% 100%;background-repeat:no-repeat,no-repeat;backface-visibility:hidden}
 #cover .bkl.l{left:0;background-position:0 0;transform-origin:left center}
 #cover .bkl.r{right:0;background-position:100% 0;transform-origin:right center}
-#cover .bkt{position:absolute;left:0;right:0;height:50.6%;display:none;opacity:0;pointer-events:none;background:linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:100% 200%;backface-visibility:hidden}
+#cover .bkt{position:absolute;left:0;right:0;height:50.6%;display:none;opacity:0;pointer-events:none;background-image:var(--bukaImg,none),linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:100% 200%,100% 200%;background-repeat:no-repeat,no-repeat;backface-visibility:hidden}
 #cover .bkt.t{top:0;background-position:0 0;transform-origin:center top}
 #cover .bkt.b{bottom:0;background-position:0 100%;transform-origin:center bottom}
 .kt-burst{display:none;position:absolute;left:50%;top:44%;width:0;height:0;pointer-events:none}
@@ -681,6 +681,40 @@ body.opened .scr-frame .orn-c.br svg{animation-delay:2.6s}
  #cover .bkl,#cover .bkt,.kt-burst i{animation:none!important;opacity:0!important}
  body.buka-buku.opened #cover,body.buka-pintu.opened #cover,body.buka-kotak.opened #cover{opacity:0;visibility:hidden;transform:none;transition:opacity .3s ease,visibility 0s .3s}
 }
+
+/* ---------- SKIN BUKA TAMBAHAN: struktur beda-beda, full layar, sadar foto ----------
+   iris   : cover tersibak diagonal lewat clip-path polygon (tanpa panel).
+   lubang : cover tersedot mengecil ke tengah lewat clip-path circle.
+   blinds : empat lajur horizontal meluncur berselang-seling (multi-panel).
+   jungkit: cover terjungkit ke belakang seperti drawbridge (rotateX bawah).
+   Semua panel/lajur memakai --bukaImg bila cover berfoto penuh, sehingga
+   potongan foto ikut tersibak dan efeknya tetap full layar & menyatu. */
+#cover .bld{position:absolute;left:0;right:0;height:25.6%;display:none;opacity:0;pointer-events:none;background-image:var(--bukaImg,none),linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:100% 400%,100% 400%;background-repeat:no-repeat,no-repeat;backface-visibility:hidden}
+#cover .bld.b1{top:0;background-position:0 0,0 0}
+#cover .bld.b2{top:25%;background-position:0 33.33%,0 33.33%}
+#cover .bld.b3{top:50%;background-position:0 66.66%,0 66.66%}
+#cover .bld.b4{top:75%;background-position:0 100%,0 100%}
+body.buka-blinds #cover .bld{display:block}
+body.buka-iris #cover{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+body.buka-lubang #cover{clip-path:circle(150% at 50% 50%)}
+body.buka-blinds.opened #cover .bdfr,body.buka-blinds.opened #cover .pat,body.buka-blinds.opened #cover .veil{opacity:0;transition:opacity .25s ease}
+body.buka-pintu.opened #cover .cvlatar,body.buka-kotak.opened #cover .cvlatar,body.buka-blinds.opened #cover .cvlatar{opacity:0;transition:opacity .25s ease}
+body.buka-blinds.opened #cover,body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover{opacity:1;visibility:visible;pointer-events:none;transition:visibility 0s 1.15s}
+body.buka-blinds.opened #cover .bld.b1{animation:blindsL .8s cubic-bezier(.65,.05,.3,.95) .05s both}
+body.buka-blinds.opened #cover .bld.b2{animation:blindsR .8s cubic-bezier(.65,.05,.3,.95) .15s both}
+body.buka-blinds.opened #cover .bld.b3{animation:blindsL .8s cubic-bezier(.65,.05,.3,.95) .25s both}
+body.buka-blinds.opened #cover .bld.b4{animation:blindsR .8s cubic-bezier(.65,.05,.3,.95) .35s both}
+body.buka-iris.opened #cover{clip-path:polygon(0 0,0 0,0 0,0 0);transition:clip-path 1s cubic-bezier(.7,.05,.3,1),visibility 0s 1.05s}
+body.buka-lubang.opened #cover{clip-path:circle(0% at 50% 50%);transition:clip-path .95s cubic-bezier(.6,.05,.3,1),visibility 0s 1s}
+body.buka-jungkit.opened #cover{transform-origin:50% 100%;transform:perspective(1200px) rotateX(94deg);transition:transform .95s cubic-bezier(.55,.08,.3,1),visibility 0s 1s}
+@keyframes blindsL{0%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(-102%)}}
+@keyframes blindsR{0%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(102%)}}
+@media (prefers-reduced-motion:reduce){
+ #cover .bld{animation:none!important;opacity:0!important}
+ body.buka-iris #cover,body.buka-lubang #cover{clip-path:none}
+ body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover,body.buka-blinds.opened #cover{opacity:0;visibility:hidden;transform:none;clip-path:none;transition:opacity .3s ease,visibility 0s .3s}
+}
+
 
 body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:perspective(720px) rotateX(-168deg)}
 body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after{transform:translate(-50%,8%) scale(.5);opacity:0}
@@ -1373,7 +1407,7 @@ const FX_COVER=[
  ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
  ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal'],['vip-zoom','VIP Deep Zoom'],['vip-curtain','VIP Curtain']];
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
-function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade','kanan','naik','putar','balik','menyusut','miring','tirai','buku','pintu','kotak'].includes(v)?v:'gilir'}
+function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade','kanan','naik','putar','balik','menyusut','miring','tirai','buku','pintu','kotak','iris','lubang','blinds','jungkit'].includes(v)?v:'gilir'}
 function ornSudutId(v){return ['tanpa','ranting','bunga3d','bunga4d','deco','filigree','girih','damask','mendung'].includes(v)?v:'ranting'}
 /* ===== Ornamen SVG per tema =====
    Deretan simbol Unicode di field deco (mis. "X . X") diganti motif yang
@@ -2623,6 +2657,9 @@ function boot(draft){
  if(CVL==='gerbang'&&fotoUtama){cvStyle='arch';document.body.classList.add('gerbang-arch')}
  else if(CVL==='foto'&&fotoUtama)cvStyle='full';
  else if(CVL==='minimal')cvStyle='none';
+ /* Bila cover berfoto penuh, panel gaya membuka ikut membawa potongan
+    foto yang sama supaya efek pintu/kotak/blinds menyatu dengan foto. */
+ const bukaImg=(cvStyle==='full'&&fotoUtama)?`--bukaImg:url('${fotoUtama.replace(/'/g,'%27').replace(/"/g,'%22')}')`:'';
  const cpo=(d&&d.coverPos)||{};
  const angkaPos=(v,b)=>{const n=parseFloat(v);return isFinite(n)?Math.min(100,Math.max(0,n)):b};
  const cvZ=(()=>{const n=parseFloat(cpo.z);return isFinite(n)?Math.min(4,Math.max(1,n)):1})();
@@ -2723,7 +2760,7 @@ function boot(draft){
 
  /* ---------- HTML ---------- */
  let h='';
- h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}"><div class="pat" style="${polaCss(patAktif(d,tplF),tplF,1)}"></div><div class="veil"></div><i class="bkl l"></i><i class="bkl r"></i><i class="bkt t"></i><i class="bkt b"></i><span class="kt-burst" aria-hidden="true"><i style="--dx:-70px;--dy:-90px"></i><i style="--dx:60px;--dy:-110px"></i><i style="--dx:-110px;--dy:-40px"></i><i style="--dx:105px;--dy:-55px"></i><i style="--dx:-30px;--dy:-140px"></i><i style="--dx:35px;--dy:-70px"></i></span>${cvStyle==='full'
+ h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}" style="${bukaImg}"><div class="pat" style="${polaCss(patAktif(d,tplF),tplF,1)}"></div><div class="veil"></div><i class="bkl l"></i><i class="bkl r"></i><i class="bkt t"></i><i class="bkt b"></i><span class="kt-burst" aria-hidden="true"><i style="--dx:-70px;--dy:-90px"></i><i style="--dx:60px;--dy:-110px"></i><i style="--dx:-110px;--dy:-40px"></i><i style="--dx:105px;--dy:-55px"></i><i style="--dx:-30px;--dy:-140px"></i><i style="--dx:35px;--dy:-70px"></i></span><i class="bld b1"></i><i class="bld b2"></i><i class="bld b3"></i><i class="bld b4"></i>${cvStyle==='full'
   ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" onload="fitCoverPhotos()" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"><i class="cvbl tl"></i><i class="cvbl tr"></i><i class="cvbl bl"></i><i class="cvbl br"></i></div>`
   :''}<div class="bdfr ${isWedding?'wedding-invite-card':''}" style="${bdStyle}">${bdCorners}${ORN}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
