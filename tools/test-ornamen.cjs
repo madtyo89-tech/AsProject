@@ -44,7 +44,7 @@ const studioSrc = read('studio.html');
 const TPL = eval(potong(undSrc, 'const TPL=[', '[', ']'));
 const TPL_STUDIO = eval(potong(studioSrc, 'const TPL=[', '[', ']'));
 
-function draft(theme, ev, orn) {
+function draft(theme, ev, orn, ornSudut) {
   const acara = ev || 'pernikahan';
   return {
     slug: 'uji-ornamen', name1: 'Satrio', name2: '', theme: theme,
@@ -54,6 +54,7 @@ function draft(theme, ev, orn) {
       /* orn milik pemilik; undefined dibuang JSON.stringify sehingga draft
          tanpa orn tetap menguji jalur bawaan tema */
       orn: orn,
+      ornSudut: ornSudut,
       form: {
         namaPria: 'Satrio', namaWanita: acara === 'pernikahan' ? 'Pandu' : '', tanggalAcara: '2026-11-02',
         jamAcara: '08:00', venue: 'Bendo Gede', zona: 'WIB',
@@ -65,7 +66,7 @@ function draft(theme, ev, orn) {
   };
 }
 
-async function render(theme, ev, orn) {
+async function render(theme, ev, orn, ornSudut) {
   const dom = new JSDOM(undSrc, {
     runScripts: 'dangerously',
     url: 'https://x.test/undangan.html?slug=uji-ornamen',
@@ -85,7 +86,7 @@ async function render(theme, ev, orn) {
   const w = dom.window, D = w.document;
   await sleep(300);
   let err = null;
-  try { w.eval('boot(' + JSON.stringify(draft(theme, ev, orn)) + ')'); } catch (e) { err = e.message; }
+  try { w.eval('boot(' + JSON.stringify(draft(theme, ev, orn, ornSudut)) + ')'); } catch (e) { err = e.message; }
   await sleep(120);
   const divider = [...D.querySelectorAll('.divider')];
   const footer = D.querySelector('.footer .orn');
@@ -100,6 +101,9 @@ async function render(theme, ev, orn) {
     footerKelas: footer ? footer.className : null,
     coverOrnTeks: coverOrn ? coverOrn.textContent.trim() : null,
     coverOrnSvg: coverOrn ? !!coverOrn.querySelector('svg') : null,
+    frameJumlah: D.querySelectorAll('.scr-frame .orn-c').length,
+    frameSvg: D.querySelectorAll('.scr-frame .orn-c svg').length,
+    frameKelas: [...D.querySelectorAll('.scr-frame .orn-c')].map((e) => e.className).sort(),
   };
   /* PENTING: hitung SEBELUM w.close(). outerHTML hasil parse sudah dinormalkan
      jsdom (tag mandiri jadi <path></path>), jadi pembandingnya harus lewat
@@ -241,6 +245,27 @@ async function render(theme, ev, orn) {
       studioSrc.includes('if(ORN_NAMA[source.orn])design.orn=source.orn;'));
     t('studio: pemulihan riwayat server membaca d.orn',
       studioSrc.includes('if(ORN_NAMA[d.orn])state.orn=d.orn;'));
+  }
+
+  /* ---------- 6b. bingkai layar di pojok viewport ---------- */
+  {
+    const r = await render(0, 'pernikahan', undefined, 'deco');
+    const rTanpa = await render(0, 'pernikahan', undefined, 'tanpa');
+    t('bingkai layar lahir dengan 4 sudut ber-SVG',
+      r.frameJumlah === 4 && r.frameSvg === 4, r.frameJumlah + ' sudut/' + r.frameSvg + ' svg');
+    t('keempat pojok (tl/tr/bl/br) hadir untuk mirror',
+      r.frameKelas.join(',').includes('tl') && r.frameKelas.join(',').includes('tr') &&
+      r.frameKelas.join(',').includes('bl') && r.frameKelas.join(',').includes('br'),
+      r.frameKelas.join(' | '));
+    t('bingkai layar fixed & tidak menangkap sentuhan',
+      undSrc.includes('.scr-frame{position:fixed') && undSrc.includes('.scr-frame{position:fixed;inset:0;pointer-events:none'));
+    t('bingkai layar hanya muncul setelah undangan dibuka',
+      undSrc.includes('body.opened .scr-frame{opacity:1;visibility:visible}'));
+    t('bayangan svg bingkai bertingkat (realistis, minimal 4 lapis)',
+      ((undSrc.match(/\.scr-frame \.orn-c svg\{filter:[^}]*\}/) || [''])[0].match(/drop-shadow\(/g) || []).length >= 5,
+      ((undSrc.match(/\.scr-frame \.orn-c svg\{filter:[^}]*\}/) || [''])[0].match(/drop-shadow\(/g) || []).length + ' lapis');
+    t('bingkai layar disembunyikan saat cetak', undSrc.includes('@media print{.scr-frame{display:none!important}}'));
+    t('memilih "tanpa ornamen sudut" menghapus bingkai layar', rTanpa.frameJumlah === 0, rTanpa.frameJumlah + ' sudut');
   }
 
   /* ---------- 7. ringkasan pemakaian ---------- */

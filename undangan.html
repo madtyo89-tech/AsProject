@@ -553,6 +553,20 @@ body:not(.opened) #aspAmbient{opacity:.42}
 .orn-c.orn-deco,.orn-c.orn-filigree,.orn-c.orn-girih,.orn-c.orn-damask,.orn-c.orn-mendung{width:92px;height:92px;opacity:.92}
 .orn-c .orn-l{transform-box:fill-box;transform-origin:50% 50%}
 @media (max-width:420px){.orn-c{width:54px;height:54px}.orn-c.orn-bunga3d,.orn-c.orn-bunga4d{width:78px;height:78px}.orn-c.orn-deco,.orn-c.orn-filigree,.orn-c.orn-girih,.orn-c.orn-damask,.orn-c.orn-mendung{width:64px;height:64px}}
+
+/* ---------- BINGKAI LAYAR: ornamen sudut menempel di pojok viewport ----------
+   Lapisan fixed di atas isi tetapi di bawah popup/scrim. Tidak menangkap
+   sentuhan sama sekali, dan hanya muncul setelah undangan dibuka supaya
+   sampul tidak berhias dobel. Bayangan dibuat bertingkat (emboss + bayangan
+   ambien dalam) supaya ornamen terasa melayang nyata di atas halaman. */
+.scr-frame{position:fixed;inset:0;pointer-events:none;z-index:150;opacity:0;visibility:hidden;transition:opacity .7s ease,visibility .7s}
+body.opened .scr-frame{opacity:1;visibility:visible}
+.scr-frame .orn-c{top:8px;left:8px;right:auto;bottom:auto;width:clamp(58px,15vw,92px);height:clamp(58px,15vw,92px);opacity:.95;color:var(--accent-body)}
+.scr-frame .orn-c.tr{top:8px;right:8px;left:auto}
+.scr-frame .orn-c.bl{top:auto;bottom:8px;left:8px;right:auto}
+.scr-frame .orn-c.br{top:auto;bottom:8px;right:8px;left:auto}
+.scr-frame .orn-c svg{filter:drop-shadow(1px 1.2px 0 rgba(255,255,255,.6)) drop-shadow(-1px -1.1px 0 rgba(43,28,8,.34)) drop-shadow(0 2px 2px rgba(40,26,6,.3)) drop-shadow(0 7px 12px rgba(40,26,6,.26)) drop-shadow(0 16px 26px rgba(40,26,6,.16))}
+@media print{.scr-frame{display:none!important}}
 /* 4D: tiap sudut berayun pelan berbeda fase, lapisan kelopak melayang berbeda arah */
 body.orn-bunga4d .orn-c{animation:ornAyun 7s ease-in-out infinite}
 body.orn-bunga4d .orn-c.tr{animation-delay:-1.6s}
@@ -2635,6 +2649,10 @@ function boot(draft){
  const ornId=ornSudutId(d&&d.ornSudut);
   const ORN_SVG=(ORN_SUDUT[ornId]?ornSudutSvg(ornId):null)||((ornId==='bunga3d'||ornId==='bunga4d')?ornBunga(ornId==='bunga4d'?'4d':'3d'):`<svg viewBox="0 0 74 74" fill="none" aria-hidden="true"><path d="M8 66 C8 32 32 8 66 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 56 C21 44 28 34 38 26" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".8"/><path d="M13 41 C22 39 29 33 31 24 C22 26 14 33 13 41Z" fill="currentColor" opacity=".65"/><path d="M29 22 C38 20 45 13 47 5 C38 7 30 13 29 22Z" fill="currentColor" opacity=".65"/><path d="M42 31 C51 29 58 22 60 13 C51 15 43 22 42 31Z" fill="currentColor" opacity=".5"/><circle cx="63" cy="11" r="2.2" fill="currentColor"/><circle cx="11" cy="63" r="1.9" fill="currentColor"/></svg>`);
  const ORN=ornId==='tanpa'?'':`<i class="orn-c tl orn-${ornId}">${ORN_SVG}</i><i class="orn-c tr orn-${ornId}">${ORN_SVG}</i><i class="orn-c bl orn-${ornId}">${ORN_SVG}</i><i class="orn-c br orn-${ornId}">${ORN_SVG}</i>`;
+ /* Bingkai layar: ornamen sudut yang sama dipasang menempel di keempat pojok
+    layar (fixed), muncul hanya setelah undangan dibuka. Kosong bila pemilik
+    memilih "tanpa ornamen sudut". */
+ const SCR=ornId==='tanpa'?'':`<div class="scr-frame" aria-hidden="true"><i class="orn-c tl orn-${ornId}">${ORN_SVG}</i><i class="orn-c tr orn-${ornId}">${ORN_SVG}</i><i class="orn-c bl orn-${ornId}">${ORN_SVG}</i><i class="orn-c br orn-${ornId}">${ORN_SVG}</i></div>`;
  /* Ornamen sudut juga dipasang di semua kartu isi, bukan hanya sampul dan
     kartu tamu. Disuntik sebagai <style> karena warnanya mengikuti aksen tema. */
  (function(){let st=document.getElementById('ornSudutLive');if(!st){st=document.createElement('style');st.id='ornSudutLive';(document.head||document.documentElement).appendChild(st)}
@@ -2831,6 +2849,7 @@ function boot(draft){
  h+=B.footer();
  h+=`</div></div>`;
 
+ h+=SCR;
  $('app').innerHTML=h;
  fitCoverPhotos();if(window.requestAnimationFrame)requestAnimationFrame(fitCoverPhotos);
  /* Mesin 4D HARUS dimount di sini, bukan di atas: AsVip4d.mount() mencari
