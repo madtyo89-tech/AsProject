@@ -1056,6 +1056,15 @@ def cek_qr_undangan():
              and "QR-Checkin-" in live and "/^https?:$/.test(location.protocol)" in live)
     lapor("ok" if jalan else "masalah",
           "undangan.html: tombol Simpan QR, PNG→SVG, dan mode berkas mandiri (file://) aman")
+    pindai = ("function qrPindaiBuka" in live and "function qrPindaiTutup" in live
+              and ".qrscan{" in live and "wakeLock" in live and "requestFullscreen" in live
+              and "if(!box.hidden)return;" in live)
+    lapor("ok" if pindai else "masalah",
+          "undangan.html: mode pindai layar putih + QR besar (wake lock & layar penuh opsional, tidak diminta ulang)")
+    hadir = ("function qrCekHadir" in live and "qrHadirJalan" in live and "rest/v1/checkin?slug=eq." in live
+             and "qrBadgeTulis" in live and ".qrbadge{" in live and "guest=eq." in live)
+    lapor("ok" if hadir else "masalah",
+          "undangan.html: centang “sudah check-in” dari tabel checkin (satu baris tamu, sekali jalan, tanpa spam)")
     if not os.path.exists(os.path.join(ROOT, "assets", "qrcode.js")):
         lapor("masalah", "assets/qrcode.js hilang — kartu QR tidak akan tergambar")
         return

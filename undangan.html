@@ -315,6 +315,20 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 .qrbtns{margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .qrbtn{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 16px;border-radius:99px;border:1px solid #e5d9c4;background:#fffdf9;color:#57503f;font-size:12px;font-weight:600;cursor:pointer}
 .qrcard.qr-kosong .qrsvg,.qrcard.qr-kosong .qrnm,.qrcard.qr-kosong .qrkd,.qrcard.qr-kosong .qrbtns{display:none}
+/* Mode pindai: layar putih penuh + QR besar, paling gampang dipindai kamera
+   panitia di tempat yang cahayanya kurang. Wake lock dipakai supaya layar
+   tidak mati saat tamu mengantre di pintu masuk. */
+.qrscan{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:20px 18px;background:#fff;text-align:center;overflow:auto}
+.qrscan[hidden]{display:none}
+.qrscan-lbl{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-body)}
+.qrscan-qr{width:min(78vw,320px);height:min(78vw,320px);padding:10px;border-radius:16px;background:#fff;box-shadow:0 0 0 1px #ececec}
+.qrscan-qr svg{display:block;width:100%;height:100%}
+.qrscan-nm{margin-top:4px;font-size:20px;font-weight:700;color:#111;word-break:break-word}
+.qrscan-kd{font-size:11px;letter-spacing:.1em;color:#8a8a8a;font-family:ui-monospace,monospace}
+.qrscan-tip{max-width:300px;font-size:11.5px;line-height:1.6;color:#7a7065}
+.qrscan .qrbtn{margin-top:2px}
+.qrbadge{margin-top:10px;display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:5px 12px;border-radius:99px;background:#eaf7ee;border:1px solid #cfe9d8;color:#256b3e;font-size:11.5px;font-weight:600}
+.qrbadge[hidden]{display:none}
 
 /* countdown */
 .cdw{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
@@ -2726,6 +2740,112 @@ function qrPngDataUrl(teks,label){
   return cv.toDataURL('image/png');
  }catch(e){return''}
 }
+/* ---------- mode pindai: layar putih penuh supaya gampang dipindai ---------- */
+let qrScanBox=null,qrWakeLock=null,qrScanEsc=null;
+function qrScanEl(){
+ if(qrScanBox)return qrScanBox;
+ const box=document.createElement('div');
+ box.className='qrscan';box.hidden=true;
+ box.innerHTML='<div class="qrscan-lbl">\u{1F39F}\uFE0F Kartu Tamu \u00B7 QR Check-in</div>'
+  +'<div class="qrscan-qr" id="qrscanQr"></div>'
+  +'<div class="qrscan-nm" id="qrscanNm"></div>'
+  +'<div class="qrscan-kd" id="qrscanKd"></div>'
+  +'<div class="qrscan-tip">Terangkan layar ke kamera panitia \u2014 naikkan kecerahan layar bila perlu. Layar ditahan tetap menyala selama mode ini.</div>'
+  +'<div class="qrbadge" id="qrscanBadge" hidden></div>'
+  +'<button type="button" class="qrbtn" id="qrscanTutup">Tutup</button>';
+ box.addEventListener('click',function(e){if(e.target===box)qrPindaiTutup()});
+ box.querySelector('#qrscanTutup').addEventListener('click',qrPindaiTutup);
+ document.body.appendChild(box);
+ qrScanBox=box;
+ return box;
+}
+/* Menyalin QR yang sudah digambar (bukan menggambar ulang) supaya yang dipindai
+   panitia persis QR yang sama dengan yang tampil di kartu. */
+function qrPindaiBuka(){
+ const card=document.getElementById('qrcard'),svg=card?card.querySelector('#qrSvg svg'):null;
+ if(!svg)return;
+ const box=qrScanEl();
+ box.querySelector('#qrscanQr').innerHTML=svg.outerHTML;
+ box.querySelector('#qrscanNm').textContent=card.getAttribute('data-qr-nama')||'';
+ box.querySelector('#qrscanKd').textContent=card.getAttribute('data-qr-kode')?('Kode: '+card.getAttribute('data-qr-kode')):'';
+ const asli=card.querySelector('#qrbadge'),salin=box.querySelector('#qrscanBadge'),ada=!!(asli&&!asli.hidden);
+ salin.hidden=!ada;if(ada)salin.textContent=asli.textContent;
+ if(!box.hidden)return;   /* sudah terbuka: cukup disegarkan, tanpa minta izin ulang */
+ box.hidden=false;
+ box.scrollTop=0;
+ document.documentElement.style.overflow='hidden';
+ /* Layar tetap nyala + layar penuh: dua-duanya opsional — peramban yang tidak
+    mendukung atau menolaknya tidak boleh mengganggu tampilannya. */
+ try{if(navigator.wakeLock&&navigator.wakeLock.request)navigator.wakeLock.request('screen').then(function(l){qrWakeLock=l}).catch(function(){})}catch(e){}
+ try{if(document.documentElement.requestFullscreen){const p=document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){})}}catch(e){}
+ if(!qrScanEsc){qrScanEsc=function(e){if(e.key==='Escape')qrPindaiTutup()};document.addEventListener('keydown',qrScanEsc)}
+ qrCekHadir(card.getAttribute('data-qr-nama')||'');
+}
+function qrPindaiTutup(){
+ const box=qrScanBox;if(!box||box.hidden)return;
+ box.hidden=true;box.querySelector('#qrscanQr').innerHTML='';
+ document.documentElement.style.overflow='';
+ try{if(qrWakeLock&&qrWakeLock.release)qrWakeLock.release()}catch(e){}
+ qrWakeLock=null;
+ try{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen()}catch(e){}
+ if(qrScanEsc){document.removeEventListener('keydown',qrScanEsc);qrScanEsc=null}
+}
+/* ---------- tanda sudah check-in ---------- */
+let qrHadirNama='',qrHadirTimer=null,qrHadirAda=false,qrHadirVis=false,qrHadirJalan=false;
+function qrWaktuCheckin(iso){
+ try{const d=new Date(iso);if(isNaN(d.getTime()))return'';
+  const p=n=>(n<10?'0':'')+n;
+  return p(d.getHours())+':'+p(d.getMinutes())+' \u2022 '+d.toLocaleDateString('id-ID',{day:'numeric',month:'short'})}catch(e){return''}
+}
+function qrBadgeTulis(t){
+ const a=document.getElementById('qrbadge');if(a){a.hidden=!t;a.textContent=t||''}
+ const b=document.getElementById('qrscanBadge');if(b){b.hidden=!t;if(t)b.textContent=t}
+}
+/* Panitia mencatat kehadiran di tabel `checkin` saat memindai QR (scan.html).
+   Kartu ini membaca baris tamu ITU SENDIRI: sekali saat QR digambar, lalu tiap
+   60 detik selama undangan masih dibuka — jadi centangnya muncul tanpa tamu
+   harus menyegarkan halaman. Tabel/akses yang belum ada = diam saja. */
+function qrCekHadir(nama){
+ const nm=String(nama||'').replace(/\s+/g,' ').trim();
+ if(qrHadirNama!==nm){
+  qrHadirNama=nm;qrHadirAda=false;qrHadirJalan=false;
+  if(qrHadirTimer){clearTimeout(qrHadirTimer);qrHadirTimer=null}
+  qrBadgeTulis('');
+ }
+ if(!nm||qrHadirAda||DEMO||PREVIEW||!SLUG)return;
+ if(!qrHadirVis){
+  qrHadirVis=true;
+  document.addEventListener('visibilitychange',function(){
+   if(!document.hidden&&qrHadirNama&&!qrHadirAda&&!qrHadirJalan&&!qrHadirTimer)qrHadirAmbil()});
+ }
+ /* Satu permintaan pada satu waktu: nama yang masih diketik belum jadi request,
+    dan permintaan yang sedang jalan tidak ditumpuk yang baru. */
+ if(qrHadirJalan||qrHadirTimer)return;
+ qrHadirTimer=setTimeout(function(){qrHadirTimer=null;qrHadirAmbil()},1200);
+}
+function qrHadirAmbil(){
+ if(!qrHadirNama||qrHadirAda||qrHadirJalan)return;
+ if(document.hidden){qrHadirAmbilNanti();return}
+ qrHadirJalan=true;
+ fetch(SUPABASE_URL+'/rest/v1/checkin?slug=eq.'+encodeURIComponent(SLUG)+'&guest=eq.'+encodeURIComponent(qrHadirNama)+'&select=guest,checked_in_at',{headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}})
+  .then(function(r){return r&&r.ok?r.json():null})
+  .then(function(rows){
+   qrHadirJalan=false;
+   if(Array.isArray(rows)&&rows.length){
+    qrHadirAda=true;
+    if(qrHadirTimer){clearTimeout(qrHadirTimer);qrHadirTimer=null}
+    qrBadgeTulis('\u2705 Sudah check-in'+(rows[0].checked_in_at?(' \u2022 '+qrWaktuCheckin(rows[0].checked_in_at)):''));
+    return;
+   }
+   qrHadirAmbilNanti();
+  })
+  .catch(function(){qrHadirJalan=false;qrHadirAmbilNanti()});
+}
+function qrHadirAmbilNanti(){
+ if(qrHadirAda)return;
+ if(qrHadirTimer)clearTimeout(qrHadirTimer);
+ qrHadirTimer=setTimeout(function(){qrHadirTimer=null;if(document.hidden){qrHadirAmbilNanti();return}qrHadirAmbil()},60000);
+}
 function qrPanelHtml(){
  const basis=qrBasisUrl();if(!basis)return'';
  return `<div class="qrcard" id="qrcard" data-qr-basis="${esc(basis)}">
@@ -2734,7 +2854,8 @@ function qrPanelHtml(){
    <div class="qrnm" id="qrNm"></div>
    <div class="qrkd" id="qrKd"></div>
    <div class="qrtip" id="qrTip"></div>
-   <div class="qrbtns"><button type="button" class="qrbtn" onclick="qrUnduh(this)">⬇ Simpan QR</button></div>
+   <div class="qrbadge" id="qrbadge" hidden></div>
+   <div class="qrbtns"><button type="button" class="qrbtn" onclick="qrPindaiBuka()">🔆 Mode pindai</button><button type="button" class="qrbtn" onclick="qrUnduh(this)">⬇ Simpan QR</button></div>
   </div>`;
 }
 /* Isi/segarkan kartu QR untuk satu nama. Dipanggil saat boot (nama dari tautan
@@ -2763,6 +2884,8 @@ function qrIsi(nama){
  if(tip)tip.textContent=kode
   ?'Tunjukkan QR ini ke panitia di pintu masuk. Simpan/screenshot biar tidak perlu membuka undangan lagi.'
   :'QR ini memakai nama Anda. Minta pemilik acara menambahkan nama Anda di daftar tamu supaya kodenya ikut tercetak.';
+ /* Centang "sudah check-in" menyusul sendiri setelah panitia memindai. */
+ qrCekHadir(nm);
  if(!svg)return;
  svg.innerHTML='<div class="qrload">Menyiapkan QR…</div>';
  qrPustaka().then(ok=>{

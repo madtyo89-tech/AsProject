@@ -84,7 +84,13 @@ function buatDom(url, opsi) {
     runScripts: 'dangerously', url, pretendToBeVisual: true,
     beforeParse(w) {
       stubIO(w);
-      w.fetch = async () => { throw new Error('offline-uji'); };
+      /* Satu daftar per jendela: tamu lain (jendela lain) bukan urusan tes ini. */
+      w.__fetches = [];
+      /* Jaringan uji: alamat dicatat, perilakunya diatur lewat w.__fetch. */
+      w.fetch = function (u, o) {
+        w.__fetches.push(String(u));
+        return w.__fetch ? w.__fetch(String(u), o) : Promise.reject(new Error('offline-uji'));
+      };
       try { w.eval(read('assets/scroll-effects.js')); } catch (e) {}
       try { w.eval(read('assets/theme-contrast.js')); } catch (e) {}
       /* Di produksi assets/qrcode.js dimuat malas oleh qrPustaka(); untuk uji
@@ -251,8 +257,9 @@ function bacaQr(matriks, skala) {
   t('Malas: tanpa pustaka tetap tidak ada galat halaman', true);
 
   /* =============== 5) Tombol Simpan QR =============== */
-  const btn = D.querySelector('.qrbtn');
+  const btn = D.querySelector('.qrcard button[onclick*="qrUnduh"]');
   t('Simpan: tombol tersedia di kartu', !!btn && /Simpan QR/.test(btn.textContent), btn && btn.textContent);
+  t('Pindai: tombol mode pindai ada di sebelahnya', D.querySelectorAll('.qrcard .qrbtn').length === 2 && /Mode pindai/.test(D.querySelector('.qrcard .qrbtn').textContent), D.querySelector('.qrcard .qrbtn').textContent);
   let klikGagal = null;
   try { w.eval('qrUnduh(document.querySelector(".qrcard .qrbtn"))'); } catch (e) { klikGagal = e.message; }
   t('Simpan: tanpa kanvas & tanpa createObjectURL pun tidak melempar', klikGagal === null, klikGagal);
@@ -276,6 +283,117 @@ function bacaQr(matriks, skala) {
     D.createElement = asli;
     t('Simpan: PNG dibuat saat kanvas tersedia', tersimpan.length === 1 && tersimpan[0].href === 'data:image/png;base64,AAA', JSON.stringify(tersimpan));
     t('Simpan: nama berkas mengikuti pola Studio', !!tersimpan[0] && tersimpan[0].nama === 'QR-Checkin-' + SLUG_UJI + '-budi-santoso-' + KODE_A + '.png', tersimpan[0] && tersimpan[0].nama);
+  }
+
+  /* =============== 7) Mode pindai: layar putih penuh + QR besar =============== */
+  {
+    /* API opsional (wake lock / layar penuh) dipalsukan supaya bisa dipastikan
+       benar-benar dipanggil — dan benar-benar dilepas saat ditutup. */
+    let layarPenuh = false;
+    const catat = { wake: 0, wakeLepas: 0, full: 0, fullKeluar: 0 };
+    Object.defineProperty(B.w.navigator, 'wakeLock', {
+      configurable: true,
+      value: { request: () => { catat.wake++; return Promise.resolve({ release() { catat.wakeLepas++; } }); } },
+    });
+    Object.defineProperty(DB.documentElement, 'requestFullscreen', {
+      configurable: true, value: () => { catat.full++; layarPenuh = true; return Promise.resolve(); },
+    });
+    Object.defineProperty(DB, 'exitFullscreen', {
+      configurable: true, value: () => { catat.fullKeluar++; layarPenuh = false; return Promise.resolve(); },
+    });
+    Object.defineProperty(DB, 'fullscreenElement', { configurable: true, get: () => (layarPenuh ? DB.documentElement : null) });
+
+    await ketik(GUEST_B);
+    t('Pindai: lapisan belum dibuat sebelum tombolnya ditekan', !B.w.eval('!!qrScanBox'));
+    B.w.eval('qrPindaiBuka()');
+    await sleep(30);
+    const scQr = DB.getElementById('qrscanQr');
+    t('Pindai: lapisan dibuka & ditempel di <body> (bukan di dalam kartu)', B.w.eval('qrScanBox.hidden===false && qrScanBox.parentNode===document.body'));
+    t('Pindai: hanya satu lapisan walau dibuka berkali-kali', B.w.eval('qrPindaiBuka();qrPindaiBuka();document.querySelectorAll(".qrscan").length') === 1);
+    t('Pindai: nama & kode ikut tampil besar', DB.getElementById('qrscanNm').textContent === GUEST_B && /ZX98YU76/.test(DB.getElementById('qrscanKd').textContent), DB.getElementById('qrscanNm').textContent + ' / ' + DB.getElementById('qrscanKd').textContent);
+    t('Pindai: QR disalin dari kartu, bukan digambar ulang', !!scQr.querySelector('svg') && scQr.querySelector('svg').outerHTML === box.querySelector('#qrSvg svg').outerHTML);
+    const matriksScan = matriksSvg(scQr.querySelector('svg').outerHTML);
+    const bacaScan = matriksScan ? bacaQr(matriksScan, 4) : null;
+    t('Pindai: QR di mode pindai tetap terbaca jadi URL yang sama', bacaScan === box.getAttribute('data-qr-teks'), String(bacaScan));
+    t('Pindai: layar ditahan tetap nyala (wake lock diminta sekali)', catat.wake === 1, JSON.stringify(catat));
+    t('Pindai: layar penuh diminta', catat.full >= 1, JSON.stringify(catat));
+    t('Pindai: gulir halaman dikunci selama mode pindai', B.w.eval('document.documentElement.style.overflow') === 'hidden');
+    t('Pindai: dijelaskan cara memakainya ke panitia', /kamera panitia/.test(DB.querySelector('.qrscan-tip').textContent), DB.querySelector('.qrscan-tip').textContent);
+
+    B.w.eval('qrPindaiTutup()');
+    t('Pindai: ditutup → lapisan disembunyikan & isinya dibuang', B.w.eval('qrScanBox.hidden') === true && DB.getElementById('qrscanQr').innerHTML === '');
+    t('Pindai: wake lock dilepas & layar penuh ditutup', catat.wakeLepas === 1 && catat.fullKeluar === 1, JSON.stringify(catat));
+    t('Pindai: gulir halaman pulih setelah ditutup', B.w.eval('document.documentElement.style.overflow') === '');
+
+    /* Tanpa nama = tanpa QR: tombolnya tidak boleh membuka lapisan kosong. */
+    inp.value = '';
+    inp.dispatchEvent(new B.w.Event('input'));
+    await sleep(420);
+    B.w.eval('qrPindaiBuka()');
+    t('Pindai: kartu tanpa nama tidak membuka lapisan kosong', B.w.eval('qrScanBox.hidden') === true);
+    /* Hentikan penjadwalan check-in dari jendela ini & jendela ?to= supaya
+       tidak ada permintaan susulan yang tercampur ke bagian berikutnya. */
+    B.w.eval('qrCekHadir("")');
+    A.w.eval('qrCekHadir("")');
+    await sleep(50);
+  }
+
+  /* Daftar permintaan milik jendela B dipakai untuk semua pemeriksaan check-in. */
+  const fB = B.w.__fetches;
+
+  /* =============== 8) Centang "sudah check-in" =============== */
+  {
+    const barisHadir = [{ guest: GUEST_A, checked_in_at: '2026-11-02T03:15:00Z' }];
+    B.w.__fetch = (u) => u.includes('rest/v1/checkin')
+      ? Promise.resolve({ ok: true, json: async () => barisHadir })
+      : Promise.reject(new Error('offline-uji'));
+    fB.length = 0;
+    await ketik(GUEST_A);
+    t('Check-in: lencana masih kosong sebelum jawaban server datang', DB.getElementById('qrbadge').hidden);
+    await sleep(1500);
+    const badge = DB.getElementById('qrbadge');
+    t('Check-in: lencana muncul setelah panitia memindai QR', !badge.hidden && /Sudah check-in/.test(badge.textContent), badge.textContent);
+    t('Check-in: waktu hadir ikut ditampilkan', /\d{1,2}[.:]\d{2}/.test(badge.textContent), badge.textContent);
+    const cekUrl = fB.filter(u => u.includes('rest/v1/checkin'));
+    t('Check-in: hanya baris tamu itu yang dibaca, bukan seluruh daftar', cekUrl.length === 1 && cekUrl[0].includes('guest=eq.' + encodeURIComponent(GUEST_A)), JSON.stringify(cekUrl));
+    t('Check-in: dibatasi per undangan (slug)', !!cekUrl[0] && cekUrl[0].includes('slug=eq.' + SLUG_UJI), cekUrl[0]);
+    await sleep(1300);
+    t('Check-in: sudah ketemu → tidak ada permintaan ulang', fB.filter(u => u.includes('rest/v1/checkin')).length === 1, String(fB.filter(u => u.includes('rest/v1/checkin')).length));
+    B.w.eval('qrPindaiBuka()');
+    t('Check-in: lencana ikut tampil di mode pindai', !DB.getElementById('qrscanBadge').hidden && /Sudah check-in/.test(DB.getElementById('qrscanBadge').textContent), DB.getElementById('qrscanBadge').textContent);
+    B.w.eval('qrPindaiTutup()');
+  }
+
+  /* (sejak sini, hitungan permintaan memakai daftar milik jendela B sendiri) */
+
+  /* ---- belum check-in & jaringan gagal: tidak ada lencana palsu, tanpa galat ---- */
+  {
+    B.w.__fetch = (u) => u.includes('rest/v1/checkin') ? Promise.resolve({ ok: true, json: async () => [] }) : Promise.reject(new Error('offline-uji'));
+    fB.length = 0;
+    await ketik(GUEST_B);
+    await sleep(1500);
+    t('Belum check-in: lencana tetap tersembunyi', DB.getElementById('qrbadge').hidden);
+    t('Belum check-in: dibaca sekali lalu menunggu kabar berikutnya', fB.filter(u => u.includes('rest/v1/checkin')).length === 1, String(fB.filter(u => u.includes('rest/v1/checkin')).length));
+    B.w.eval('qrCekHadir("")');
+    B.w.__fetch = () => Promise.reject(new Error('putus'));
+    fB.length = 0;
+    await ketik('Tamu offline');
+    await sleep(1500);
+    t('Gagal/offline: lencana tetap tersembunyi tanpa galat halaman', DB.getElementById('qrbadge').hidden);
+    B.w.eval('qrCekHadir("")');
+    await sleep(50);
+  }
+
+  /* ---- mode demo: tidak menembak jaringan check-in ---- */
+  {
+    const DEM = buatDom('https://x.test/undangan.html?demo=1&to=' + encodeURIComponent(GUEST_A), { pustakaQr: false });
+    await sleep(900);
+    DEM.w.__fetch = () => Promise.resolve({ ok: true, json: async () => [] });
+    DEM.w.__fetches.length = 0;
+    DEM.w.eval('qrCekHadir(' + JSON.stringify(GUEST_A) + ')');
+    await sleep(1500);
+    t('Demo: tidak ada permintaan check-in (mode demo tanpa database)', DEM.w.__fetches.filter(u => u.includes('rest/v1/checkin')).length === 0, JSON.stringify(DEM.w.__fetches));
+    DEM.dom.window.close();
   }
 
   /* =============== 6) Kontrak statis =============== */

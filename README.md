@@ -641,9 +641,25 @@ Berkas HTML mandiri (`file://`) tidak menampilkan kartunya karena tidak punya al
 publik untuk QR. Kalau pustaka/penggambaran gagal, kartunya bilang apa adanya dan
 mengarahkan panitia mencatat manual.
 
+### Mode pindai & centang "sudah check-in" (2026-10-16)
+
+- **🔆 Mode pindai** membuka lapisan **layar putih penuh** berisi QR yang lebih besar
+  (disalin dari kartu, bukan digambar ulang, jadi yang dipindai panitia persis QR yang
+  sama), nama, kode, dan tombol Tutup. Layar **ditahan tetap nyala** (`navigator.wakeLock`)
+  dan **layar penuh** diminta — keduanya opsional: peramban yang tidak mendukung atau
+  menolaknya tidak mengganggu tampilan, dan keduanya dilepas saat ditutup. Lapisan ini
+  juga bisa ditutup dengan tombol Escape atau menekan area kosongnya.
+- **✅ Sudah check-in** muncul di kartu QR (dan di mode pindai) setelah panitia memindai
+  QR tamu di `scan.html` — kartu membaca **satu baris tamu itu sendiri** dari tabel
+  `checkin`, sekali saat QR digambar lalu tiap 60 detik selama undangan masih dibuka,
+  dan ikut mengecek saat tab kembali aktif. Permintaannya **satu pada satu waktu**
+  (tidak menumpuk), berhenti begitu tamunya sudah tercatat, dan diam saja kalau tabel
+  `checkin` belum dibuat, jaringan putus, atau undangan sedang mode demo/pratinjau —
+  tidak ada lencana palsu dan tidak ada galat halaman.
+
 ### Jaminan regresi
 
-`node tools/test-qr-undangan.cjs` (jsdom, 52 pemeriksaan) mengunci: panel menempel di
+`node tools/test-qr-undangan.cjs` (jsdom, 78 pemeriksaan) mengunci: panel menempel di
 kartu RSVP, nama dari `?to=` vs nama yang diketik, aturan kecocokan kode, basis URL di
 `/u/{slug}`, XSS nama ber-tag, jalur unduh PNG → SVG, dan yang terpenting — **QR yang
 benar-benar digambar dibaca kembali oleh `assets/jsqr.js`** (dekoder yang dipakai
