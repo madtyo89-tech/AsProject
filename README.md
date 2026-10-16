@@ -408,7 +408,9 @@ Tambahan kecil yang menyertainya:
   elemen atau skrip baru (diuji 4 pola serangan di Chromium).
 
 Laporan lengkap (termasuk yang sudah benar dan saran yang belum dikerjakan):
-`LAPORAN-AUDIT-2026-10-16.md`.
+`LAPORAN-AUDIT-2026-10-16.md`, versi halaman siap cetak/PDF → **`laporan-audit.html`**
+(ditandai `noindex`, dibuka lokal lewat `python3 tools/serve.py`:
+`http://localhost:8080/laporan-audit.html`).
 
 Uji & pemeriksa yang dikunci bersamanya:
 

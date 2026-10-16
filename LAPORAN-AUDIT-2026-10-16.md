@@ -5,7 +5,7 @@ Perintah pemeriksaan yang dijalankan (semua dari akar repo):
 ```bash
 python3 tools/cek-kesehatan.py                     # 322 ok, 0 masalah
 python3 tools/serve.py &                           # emulasi GitHub Pages :8080
-for t in tools/test-*.cjs; do node "$t"; done       # 27 berkas uji, semuanya lulus
+for t in tools/test-*.cjs; do node "$t"; done       # 28 berkas uji, semuanya lulus
 LD_LIBRARY_PATH=… node tools/test-mobile-browser.cjs         # Chromium sungguhan
 LD_LIBRARY_PATH=… node tools/test-button-help.cjs
 LD_LIBRARY_PATH=… node tools/test-template-custom-browser.cjs
