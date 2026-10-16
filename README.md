@@ -208,6 +208,9 @@ Lihat perbedaannya berdampingan di `katalog-demo/perbandingan-tema.html`
   **💬 Share via WhatsApp**, dan **↗ Buka Undangan** — cocok untuk grup/media sosial;
   RSVP & buku tamu tetap tercatat. Saat mode *1 LINK* aktif, kartu menegaskan bahwa
   link inilah yang dipakai semua tamu.
+- Sejak 2026-10-16 mode *personal ↔ 1 LINK* bisa diganti langsung dari dashboard Master
+  (kartu **🧷 Mode Link Tamu**) dan daftar tamu bisa ditambah/diubah di sana — lihat
+  **Mode link tamu & daftar tamu langsung dari Master (2026-10-16)** di bawah.
 - Tab **Domain** di Studio kini menampilkan dua tautan terpisah: *Link untuk semua
   tamu (tanpa nama)* dan *contoh link personal* (`?to=NamaTamu`), masing-masing dengan
   tombol salinnya sendiri — sebelumnya tombol salin selalu membawa placeholder
@@ -551,6 +554,178 @@ Uji: `node tools/test-foto-cover.cjs` (crop setelah zoom, tombol hapus, dan prat
 Master) dan bagian `[17]` di `tools/cek-kesehatan.py`.
 Lembar perbandingan: `pilihan-gaya-foto-cover.png` dan `master-preview-foto-cover.png`
 (di luar repositori; dibuat dengan skrip sharp, bukan bagian aplikasi).
+
+## Peta lokasi undangan: ubin sendiri, embed Google jadi lapisan opsional (2026-10-16)
+
+Tamu melaporkan slide **Peta** cuma bidang biru kosong, lengkap dengan kotak galat dari
+Google sendiri ("Maaf, ka…" — terlihat di tangkapan layar ponsel tamu). Perbaikan
+sebelumnya (iframe tidak dirender di dalam slide `display:none`, query tanpa duplikasi,
+host kanonik `www.google.com/maps`) tetap ada dan tetap benar — dan tetap tidak cukup:
+iframe-nya memang dimuat, footer Google ("Pintasan keyboard", "Data peta ©2026") juga
+tergambar, **tapi ubin petanya tidak pernah datang**.
+
+Isi iframe itu lintas-asal: status HTTP, geometri, sampai pesan galat di dalamnya tidak
+bisa dibaca — dan tidak bisa diperbaiki — dari halaman kita. Karena itu tampilan peta
+yang **wajib** muncul tidak lagi bergantung pada embed.
+
+### Yang berubah
+
+- **Pratinjau ubin sendiri** (`petaGambarUbin`): kanvas 3×3 ubin 256 px (zoom 17) dari
+  tiga penyedia tanpa kunci API yang dicoba berurutan **per ubin** — CARTO Voyager
+  (`@2x`, tetap tajam di layar rapat) → OpenStreetMap → Esri. Satu CDN yang diblokir
+  jaringan tamu tidak lagi berarti peta kosong; ubin yang gagal cuma pindah penyedia.
+- **Pin & atribusi digambar sendiri.** Pin SVG memakai aksen tema; teks atribusi
+  mengikuti CDN yang benar-benar terpakai dan menautkan ke
+  `openstreetmap.org/copyright` — syarat lisensi ubin.
+- **Skala penutup dihitung, bukan ditebak.** Kanvas digeser supaya titik lokasi tepat di
+  tengah kartu, lalu diskalakan seminimal mungkin yang masih menutupi seluruh kartu —
+  tidak ada celah di tepi, berapa pun lebar layarnya (diuji 96 kombinasi titik × ukuran).
+- **Koordinat dulu, jaringan belakangan.** Tautan Maps pemilik yang membawa koordinat
+  (`@lat,lng`, `!3d/!4d`, `q=lat,lng`) dipakai langsung tanpa satu pun permintaan
+  jaringan. Tautan pendek (`maps.app.goo.gl`) tidak membawa koordinat dan alamat
+  tujuannya tidak bisa dibaca dari peramban, jadi jalur itu geokode **Nominatim** lalu
+  **Photon** (batas 4,5 detik), hasilnya disimpan di `localStorage`
+  (`asp-peta:<query>`, 30 hari) supaya membuka undangan berikutnya tidak menghubungi
+  server geokode lagi. Catatan privasi: pada jalur itu nama tempat dikirim ke layanan
+  geokode publik — sama seperti sebelumnya nama tempat dikirim ke Google lewat embed.
+- **Embed Google jadi tombol, bukan tampilan wajib.** Tombol **🗺️ Peta interaktif**
+  memasang iframe Google di atas pratinjau; menekannya lagi (teksnya berubah jadi
+  **↩︎ Pratinjau peta**) mencabut `src`-nya supaya kuota tamu tidak dipakai untuk peta
+  yang sedang tidak dilihat. Membuka undangan tidak pernah lagi memasang iframe itu
+  sendirian. **↻ Muat ulang** hanya tampil di mode interaktif.
+- **Selalu ada jalan keluar.** Tombol **🧭 Rute ke Lokasi**
+  (`maps/dir/?api=1&destination=…`) membuka navigasi Google Maps langsung dari ponsel.
+  Kalau pratinjau gagal (tiga CDN ubin diblokir **dan** geokode pun gagal), kartu masuk
+  mode `.peta-gagal`: pesannya mengarahkan ke Google Maps dan seluruh area peta bisa
+  ditekan. Tidak ada lagi bidang biru tanpa penjelasan.
+
+### Jaminan regresi
+
+`node tools/test-peta.cjs` (jsdom, 76 pemeriksaan) mengunci kontrak di atas: iframe lahir
+tanpa `src` dan tetap tanpa `src` setelah pratinjau siap, 9 ubin dari penyedia pertama,
+tiap `error` ubin berpindah CDN, geokode dipakai sekali lalu dari cache, mode gagal
+memunculkan tautan keluar, alamat ber-tag tetap ter-escape, plus uji properti geometri:
+96 kombinasi titik (Indonesia, lintang ekstrem, bujur 0) × ukuran kartu harus tertutup
+penuh dengan pin tepat di tengah. `python3 tools/cek-kesehatan.py` menjalankan tes yang
+sama sebagai bagian repo (aturan `[26]`).
+
+## Kartu QR check-in di dalam undangan (2026-10-16)
+
+QR check-in dulu hanya bisa **diunduh dari Studio** sebagai PNG, jadi tamu yang datang
+tanpa cetakan tidak punya apa pun untuk dipindai panitia. Sekarang undangan menampilkan
+QR itu untuk tamunya sendiri, di kartu **🎟️ Kartu Tamu · QR Check-in** yang menempel di
+bagian **RSVP** (bukan slide baru — urutan 10 slide tetap sama).
+
+### Isi QR = sama persis dengan yang diunduh dari Studio
+
+`checkin.html?guest=<nama>&id=<KODE>&s=<slug>` — dibangun dari basis akar situs, jadi
+tetap benar walau undangan dibuka lewat `/u/{slug}` (segmen `/u/` dipotong lebih dulu,
+lihat `qrBasisUrl`). Panitia memindainya dengan `scan.html` seperti biasa, atau tamu
+tinggal menekan **⬇ Simpan QR** (PNG 600 px + pita emas berisi kode & nama, seragam
+dengan berkas dari Studio) kalau ingin menyimpannya di galeri.
+
+### Bagaimana nama tamunya didapat
+
+- **Tautan personal** (`?to=Nama`) → QR langsung tampil begitu undangan dibuka.
+- **Mode 1 link untuk semua** → kartu QR mulai kosong dengan petunjuk, lalu QR muncul
+  begitu tamu menulis namanya di kolom RSVP (dengan jeda 300 ms supaya tidak digambar
+  ulang tiap ketukan).
+- Nama yang **tidak ada di daftar tamu** tetap dapat QR, tapi tanpa `id` — panitia
+  mencatat kehadiran dari namanya. Hanya kecocokan **persis** (tanpa beda huruf besar/
+  kecil) yang boleh memakai kode, supaya nama yang mirip tidak tercatat sebagai tamu lain.
+- RSVP dimatikan? Kartu QR tetap tampil sendiri di posisi yang sama.
+
+### Ramah kuota & tanpa layanan luar
+
+`assets/qrcode.js` (MIT) **dimuat malas** — tamu yang tidak menyentuh RSVP tidak
+mengunduh 56 KB ekstra. QR-nya digambar sebagai SVG (tajam di layar rapat, quiet zone
+4 modul, modul gelap digabung per baris), tanpa panggilan ke layanan pembuat QR mana pun.
+Berkas HTML mandiri (`file://`) tidak menampilkan kartunya karena tidak punya alamat
+publik untuk QR. Kalau pustaka/penggambaran gagal, kartunya bilang apa adanya dan
+mengarahkan panitia mencatat manual.
+
+### Mode pindai & centang "sudah check-in" (2026-10-16)
+
+- **🔆 Mode pindai** membuka lapisan **layar putih penuh** berisi QR yang lebih besar
+  (disalin dari kartu, bukan digambar ulang, jadi yang dipindai panitia persis QR yang
+  sama), nama, kode, dan tombol Tutup. Layar **ditahan tetap nyala** (`navigator.wakeLock`)
+  dan **layar penuh** diminta — keduanya opsional: peramban yang tidak mendukung atau
+  menolaknya tidak mengganggu tampilan, dan keduanya dilepas saat ditutup. Lapisan ini
+  juga bisa ditutup dengan tombol Escape atau menekan area kosongnya.
+- **✅ Sudah check-in** muncul di kartu QR (dan di mode pindai) setelah panitia memindai
+  QR tamu di `scan.html` — kartu membaca **satu baris tamu itu sendiri** dari tabel
+  `checkin`, sekali saat QR digambar lalu tiap 60 detik selama undangan masih dibuka,
+  dan ikut mengecek saat tab kembali aktif. Permintaannya **satu pada satu waktu**
+  (tidak menumpuk), berhenti begitu tamunya sudah tercatat, dan diam saja kalau tabel
+  `checkin` belum dibuat, jaringan putus, atau undangan sedang mode demo/pratinjau —
+  tidak ada lencana palsu dan tidak ada galat halaman.
+
+### Jaminan regresi
+
+`node tools/test-qr-undangan.cjs` (jsdom, 78 pemeriksaan) mengunci: panel menempel di
+kartu RSVP, nama dari `?to=` vs nama yang diketik, aturan kecocokan kode, basis URL di
+`/u/{slug}`, XSS nama ber-tag, jalur unduh PNG → SVG, dan yang terpenting — **QR yang
+benar-benar digambar dibaca kembali oleh `assets/jsqr.js`** (dekoder yang dipakai
+`scan.html`) menjadi URL check-in yang utuh. `python3 tools/cek-kesehatan.py` menjalankan
+tes yang sama sebagai aturan `[27]`.
+
+## Mode link tamu & daftar tamu langsung dari Master (2026-10-16)
+
+Laporan pemilik: **"Link personal sama yang semua tamu sama"** dan **"di undangan
+master mau isi yang personal juga ga ada opsinya"**. Tautannya tidak salah — undangan
+yang sudah di-publish memakai snapshot dengan `data.linkMode = "single"` (mode *1 LINK*),
+dan di mode itu Master memang mengirim satu tautan tanpa nama untuk semua tamu, termasuk
+di kartu *Link Personal Tamu* yang tetap memamerkan tautan tanpa `?to=`. Yang hilang cuma
+satu: **cara berpindah mode tanpa kembali ke Studio.**
+
+### 🧷 Kartu Mode Link Tamu
+
+- Dua pilihan: **👤 Link Personal — beda tiap tamu** (`?to=Nama` per tamu, sapaan
+  *Kepada Yth.* di undangan otomatis menyebut namanya) dan **🔗 1 Link untuk semua tamu**
+  (satu tautan tanpa nama, praktis untuk grup WhatsApp & status). Kartu menuliskan mode
+  aktif + jumlah tamu.
+- Menekan salah satu langsung menyimpan: `PATCH /rest/v1/invitation_drafts?slug=eq.…`
+  dengan **body `{data:…}` saja**. Snapshot diklon lebih dulu, jadi `form`, `amplop`,
+  `guestsRaw`, `guestCodes`, galeri, dan slide tidak ikut hilang. Undangan yang sudah
+  di-publish membaca baris yang sama → **tidak perlu publish ulang**.
+- Menekan mode yang sudah aktif tidak mengirim permintaan apa pun.
+- Database menolak (RLS/schema lama) atau jaringan putus → perubahan tetap terlihat di
+  dashboard + pesan jujur berisi arahan ke **Studio → tab Tamu & QR** lalu publish ulang.
+  Tidak pernah diam-diam tampak "tersimpan". Mode demo berubah di layar dengan pesan
+  "hanya pratinjau", tanpa menyentuh jaringan.
+
+### 👥 Kartu Link Personal Tamu selalu bisa dipakai
+
+- Walau mode 1 LINK aktif, tautan `...?to=NamaTamu` tetap **ditampilkan dan tetap bekerja**
+  di undangan live, lengkap dengan tombol **👤 Pakai mode personal** dan **📋 Salin link
+  personal semua** (daftar `Nama: link` siap tempel).
+- Baris tamu diberi tanda **link umum**/**link personal**; di mode 1 LINK tiap baris dapat
+  tombol **👤 Salin link personal** sendiri.
+- **Salin Semua** mengikuti mode: 1 LINK → link umum sekali + petunjuk cara pindah mode;
+  personal → daftar per tamu. Tombol WhatsApp per tamu & **Bagikan Semua** ikut mode yang
+  sama (Bagikan Semua tetap memakai link umum, sesuai fungsinya).
+
+### ✍️ Tambah / Ubah Daftar Tamu dari dashboard
+
+- Satu nama per baris di kotak editor. **💾 Simpan Daftar Tamu** merapikan spasi ganda,
+  membuang baris kosong & duplikat (tanpa peduli huruf besar/kecil & spasi), lalu
+  menyimpan lewat jalur `PATCH {data}` yang sama — tanpa publish ulang.
+- **Kode QR tamu lama tidak berubah**: nama yang cuma dirapikan tulisannya
+  (`pak andi` → `Pak Andi`) tetap memakai kode yang sama, jadi QR yang sudah dicetak atau
+  dibagikan tetap sahih. Nama baru mendapat kode 8 huruf/angka kapital dengan aturan yang
+  sama seperti Studio, langsung terbaca di undangan live.
+- Tombol **↺ Kembalikan** mengembalikan isi kotak ke daftar yang tersimpan; pesan hasil
+  menyebut jumlah tamu baru/dihapus dan total tamunya.
+
+### Jaminan regresi
+
+`node tools/test-master-link.cjs` (jsdom, 63 pemeriksaan) mengunci: kartu mode & tombol
+"Pakai mode personal" ada, ganti mode mengirim PATCH kolom `data` berisi `linkMode` baru
+sementara `form`/`amplop`/`guestsRaw`/`guestCodes` tetap utuh, tampilan (link per baris,
+tag, tombol salin, pesan WA) ikut berubah, RLS menolak & jaringan putus tetap jujur di
+layar, editor tamu (rapikan, dedupe, kode lama, kode baru), XSS nama ber-tag, dan mode demo
+tidak menembak jaringan. `python3 tools/cek-kesehatan.py` menjalankan tes yang sama sebagai
+aturan `[28]`.
 
 ## Link Scan QR Panitia (check-in tamu)
 

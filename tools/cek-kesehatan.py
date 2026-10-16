@@ -13,6 +13,10 @@
 #   6. konten terlarang: 'beb' berdiri sendiri di halaman, KartuDigital, dsb.
 #   7. blok injeksi di index.html tidak terduplikasi saat edit berulang
 #   8. peta demo vs file yang benar-benar ada
+#   9. peta undangan: pratinjau ubin sendiri wajib ada, embed Google hanya
+#      lapisan opsional (tamu tidak boleh disajikan bidang biru kosong)
+#  10. kartu QR check-in di dalam undangan: isi QR harus sama dengan yang
+#      diunduh dari Studio/Master, pustaka dimuat malas, ada jalan keluar
 #
 # Yang TIDAK bisa dibuktikan di sini (butuh browser sungguhan): tampilan,
 # animasi, autoplay musik, IntersectionObserver, perilaku klik.
@@ -983,6 +987,152 @@ def cek_template_custom():
           "uji template kustom: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300]))
 
 
+def cek_peta_undangan():
+    """2026-10-16: tamu melaporkan embed Google Maps berhenti di bidang biru
+    walau iframe-nya sudah dimuat lambat & query-nya sudah bersih — kotak galat
+    datang dari Google sendiri, dan isi iframe lintas-asal tidak bisa diperiksa
+    dari halaman kita. Peta undangan sekarang digambar dari ubin biasa
+    (OpenStreetMap/CARTO/Esri) dan embed Google turun jadi lapisan opsional."""
+    print("\n[26] Peta undangan: pratinjau ubin sendiri + embed Google opsional")
+    live = baca("undangan.html")
+    ubin = ("basemaps.cartocdn.com/rastertiles" in live
+            and "tile.openstreetmap.org/" in live
+            and "server.arcgisonline.com/ArcGIS" in live)
+    lapor("ok" if ubin else "masalah",
+          "undangan.html: tiga penyedia ubin tanpa kunci API (CARTO → OpenStreetMap → Esri)")
+    opsional = (".mapwrap:not(.live) iframe{display:none}" in live
+                and "onclick=\"petaToggle(this)\"" in live
+                and "petaMuatSatu" in live)
+    lapor("ok" if opsional else "masalah",
+          "undangan.html: iframe Google hanya tampil setelah tamu menekan \"Peta interaktif\"")
+    jalan = ("https://www.google.com/maps/dir/?api=1&destination=" in live
+             and "class=\"mapfallback\"" in live
+             and ".mapwrap.peta-gagal .mapfallback{display:block}" in live
+             and "https://www.openstreetmap.org/copyright" in live)
+    lapor("ok" if jalan else "masalah",
+          "undangan.html: selalu ada jalan keluar — tombol rute, tautan cadangan, atribusi OSM")
+    koord = ("function petaLatLngDariLink" in live and "nominatim.openstreetmap.org" in live
+             and "photon.komoot.io" in live and "asp-peta:" in live)
+    lapor("ok" if koord else "masalah",
+          "undangan.html: koordinat dari tautan pemilik dipakai lebih dulu, geokode daring + cache localStorage jadi cadangan")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji peta dilewati")
+        return
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    if probe.returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji peta dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-peta.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji peta (ubin, cadangan CDN, geokode, jalan keluar): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
+
+def cek_qr_undangan():
+    """2026-10-16: QR check-in tadinya hanya bisa diunduh dari Studio/Master
+    sebagai PNG, jadi tamu tanpa cetakan tidak punya apa pun untuk dipindai
+    panitia di pintu masuk. Sekarang undangan menampilkan QR yang SAMA untuk
+    tamunya sendiri (checkin.html?guest=..&id=..&s=..) di bagian RSVP."""
+    print("\n[27] Kartu QR check-in di dalam undangan")
+    live = baca("undangan.html")
+    dasar = ("function qrPanelHtml" in live and "function qrKodeUntuk" in live
+             and "checkin.html?" in live and 'class="qrcard"' in live
+             and ".qrcard{" in live and ".qrcard.qr-kosong" in live)
+    lapor("ok" if dasar else "masalah",
+          "undangan.html: kartu QR + gaya tampilannya ada (qrPanelHtml/qrKodeUntuk/qrcard)")
+    ident = ("const GUEST=(Q.get('to')" in live and "window.__aspKode=Object.assign({},(d&&d.guestCodes)||{})" in live
+             and "qrNamaNormal(k)===cari" in live and 'id="rvpN"' in live)
+    lapor("ok" if ident else "masalah",
+          "undangan.html: nama dari tautan personal (?to=) & kolom RSVP; kode hanya dari kecocokan persis")
+    ringan = ('s.src=\'assets/qrcode.js\'' in live or 's.src="assets/qrcode.js"' in live)
+    berat = '<script src="assets/qrcode.js"></script>' in live
+    lapor("ok" if (ringan and not berat) else "masalah",
+          "undangan.html: assets/qrcode.js dimuat malas (tamu tanpa RSVP tidak mengunduh 56 KB)")
+    jalan = ("function qrUnduh" in live and "minta panitia mencatat kehadiran manual" in live
+             and "QR-Checkin-" in live and "/^https?:$/.test(location.protocol)" in live)
+    lapor("ok" if jalan else "masalah",
+          "undangan.html: tombol Simpan QR, PNG→SVG, dan mode berkas mandiri (file://) aman")
+    pindai = ("function qrPindaiBuka" in live and "function qrPindaiTutup" in live
+              and ".qrscan{" in live and "wakeLock" in live and "requestFullscreen" in live
+              and "if(!box.hidden)return;" in live)
+    lapor("ok" if pindai else "masalah",
+          "undangan.html: mode pindai layar putih + QR besar (wake lock & layar penuh opsional, tidak diminta ulang)")
+    hadir = ("function qrCekHadir" in live and "qrHadirJalan" in live and "rest/v1/checkin?slug=eq." in live
+             and "qrBadgeTulis" in live and ".qrbadge{" in live and "guest=eq." in live)
+    lapor("ok" if hadir else "masalah",
+          "undangan.html: centang “sudah check-in” dari tabel checkin (satu baris tamu, sekali jalan, tanpa spam)")
+    if not os.path.exists(os.path.join(ROOT, "assets", "qrcode.js")):
+        lapor("masalah", "assets/qrcode.js hilang — kartu QR tidak akan tergambar")
+        return
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji QR dilewati")
+        return
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    if probe.returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji QR dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-qr-undangan.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji kartu QR (isi sama dengan QR Studio, dibaca ulang jsQR): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
+
+def cek_mode_link_master():
+    """2026-10-16: pemilik melaporkan "Link personal sama yang semua tamu sama"
+    dan "di undangan master mau isi yang personal juga ga ada opsinya".
+    Penyebabnya: undangan yang sudah publish memakai mode 1 LINK dan Master
+    tidak punya tombol untuk menggantinya. Sekarang dashboard Master punya
+    kartu Mode Link Tamu (personal <-> 1 LINK, tersimpan lewat PATCH kolom
+    `data` saja) + editor daftar tamu, jadi tidak perlu bolak-balik ke Studio.
+    """
+    print("\n[28] Mode link tamu & daftar tamu di Undangan Master")
+    m = baca("master.html")
+    pilih = ("function setLinkMode" in m and 'class="modebtn' in m and "Mode aktif:" in m
+             and ".mode-list{" in m and ".modebtn{" in m)
+    lapor("ok" if pilih else "masalah",
+          "master.html: kartu Mode Link Tamu (personal / 1 LINK) bisa ditekan langsung dari dashboard")
+    sah = ("function isSingle()" in m and "d.linkMode==='single'?'single':'personal'" in m
+           and "return baseLink()+'/u/'+SLUG+'?to='+encodeURIComponent(g)" in m)
+    lapor("ok" if sah else "masalah",
+          "master.html: linkMode()/isSingle() jadi satu sumber; guestLinkPersonal() selalu ber-?to=")
+    ikut = ("?to=NamaTamu" in m and "function copyPersonalSemua" in m and "function copyGuestPersonalIdx" in m
+            and "if(isSingle()){" in m)
+    lapor("ok" if ikut else "masalah",
+          "master.html: tombol salin, tag baris tamu & pesan WA ikut mode; link personal tetap tersedia di mode 1 LINK")
+    aman = ("await fetch(SUPABASE_URL+'/rest/v1/invitation_drafts?slug=eq.'+SLUG" in m
+            and "body:JSON.stringify({data:d})" in m
+            and "Database menolak (RLS)" in m and "const d=JSON.parse(JSON.stringify(DRAFT.data||{}));" in m)
+    lapor("ok" if aman else "masalah",
+          "master.html: PATCH hanya kolom data (diklon dulu) & kegagalan RLS/jaringan tidak pernah tampak tersimpan")
+    editor = ('id="gRaw"' in m and "function simpanTamu" in m and "function namaTamuUnik" in m
+              and "function resetTamu" in m and "kodeRapi[norm(n)]" in m
+              and "Math.random().toString(36).substring(2,10).toUpperCase()" in m)
+    lapor("ok" if editor else "masalah",
+          "master.html: editor daftar tamu (tambah/ubah/hapus, duplikat dibuang, kode QR lama tidak berubah)")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji mode link Master dilewati")
+        return
+    if subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT).returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji mode link Master dilewati")
+        return
+    r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-master-link.cjs")],
+                       capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji mode link & daftar tamu Master (ganti mode, PATCH, RLS, editor, XSS): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
+
 def cek_pesan_wa():
     """2026-10-15: tulisan WA undangan berbeda di tiap tombol (ada yang lengkap, ada yang tidak).
     Sekarang semua tombol kirim/bagikan link undangan memakai SATU template yang sama."""
@@ -1058,7 +1208,8 @@ def main():
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
-               cek_template_custom, cek_pesan_wa):
+               cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
+               cek_mode_link_master):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
