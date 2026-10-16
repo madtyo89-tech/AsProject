@@ -236,7 +236,7 @@ async function render(theme, ev, orn) {
     t('studio: 3 payload publish/export + design template kustom membawa orn',
       nPayload === 4, nPayload + ' titik, harap 4');
     t('studio: draftSig memperhitungkan orn agar pratinjau ikut berubah',
-      studioSrc.includes("state.border,state.orn||'',state.ornSudut"));
+      studioSrc.includes("state.border,state.orn||'',state.pat||'',state.ornSudut"));
     t('studio: normalizeTplCustom memutihkan design.orn',
       studioSrc.includes('if(ORN_NAMA[source.orn])design.orn=source.orn;'));
     t('studio: pemulihan riwayat server membaca d.orn',

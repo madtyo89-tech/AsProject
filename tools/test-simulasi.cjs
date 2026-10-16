@@ -162,16 +162,19 @@ function draftFor(tpl, idx) {
      jadi TPL berisi 25 entri. Tema sintetis itu tidak punya border/orn bawaan
      dan memang tidak boleh ikut dihitung. */
   t('studio: 24 tema katalog punya border bawaan', temaUji.length === 24, temaUji.length + ' tema');
-  let bBawaan = 0, oBawaan = 0, gagalBorder = [], gagalOrn = [];
+  let bBawaan = 0, oBawaan = 0, pBawaan = 0, gagalBorder = [], gagalOrn = [], gagalPat = [];
   for (const id of temaUji) {
-    w.eval(`state.border='';state.orn='';pickTpl('${id}')`);
+    w.eval(`state.border='';state.orn='';state.pat='';pickTpl('${id}')`);
     if (w.eval(`tplById('${id}').border===state.border`)) bBawaan++; else gagalBorder.push(id);
     if (w.eval(`(tplById('${id}').orn||'')===state.orn`)) oBawaan++; else gagalOrn.push(id);
+    if (w.eval(`(tplById('${id}').pat||'')===state.pat`)) pBawaan++; else gagalPat.push(id);
   }
   t('studio: memilih tema menerapkan border bawaannya (24/24)',
     bBawaan === temaUji.length, bBawaan + '/' + temaUji.length + ' gagal: ' + gagalBorder.join(','));
   t('studio: memilih tema menerapkan motif ornamen bawaannya (24/24)',
     oBawaan === temaUji.length, oBawaan + '/' + temaUji.length + ' gagal: ' + gagalOrn.join(','));
+  t('studio: memilih tema menerapkan pola latar bawaannya (24/24)',
+    pBawaan === temaUji.length, pBawaan + '/' + temaUji.length + ' gagal: ' + gagalPat.join(','));
 
   /* pemilik menimpa, dan id asing ditolak menjadi "ikut tema" */
   w.eval(`pickTpl('${temaUji[0]}');setOrn('mahkota')`);
@@ -179,13 +182,18 @@ function draftFor(tpl, idx) {
   w.eval(`setOrn('tidak-ada-di-registry')`);
   t('studio: setOrn menolak id tak dikenal menjadi kosong (ikut tema)',
     w.eval(`state.orn===''`), w.eval('state.orn'));
+  w.eval(`pickTpl('${temaUji[0]}');setPat('damask')`);
+  t('studio: setPat menyimpan pilihan pemilik', w.eval(`state.pat==='damask'`), w.eval('state.pat'));
+  w.eval(`setPat('tidak-ada-di-registry')`);
+  t('studio: setPat menolak id tak dikenal menjadi kosong (ikut tema)',
+    w.eval(`state.pat===''`), w.eval('state.pat'));
 
   /* design milik template kustom harus menang atas bawaan tema */
-  w.eval(`state.orn='';state.border='double'`);
-  w.eval(`applyTplToState({id:'__uji__',nama:'uji',ev:'all',border:'thin',orn:'bulan',design:{border:'onyx-inlay',orn:'pita'}})`);
+  w.eval(`state.orn='';state.border='double';state.pat=''`);
+  w.eval(`applyTplToState({id:'__uji__',nama:'uji',ev:'all',border:'thin',orn:'bulan',pat:'ombak',design:{border:'onyx-inlay',orn:'pita',pat:'marmer'}})`);
   t('studio: design template kustom menimpa bawaan tema',
-    w.eval(`state.border==='onyx-inlay'&&state.orn==='pita'`),
-    w.eval(`state.border+'/'+state.orn`));
+    w.eval(`state.border==='onyx-inlay'&&state.orn==='pita'&&state.pat==='marmer'`),
+    w.eval(`state.border+'/'+state.orn+'/'+state.pat`));
   w.eval(`pickTpl('${temaUji[0]}')`);
 
   /* ---- cakupan border bawaan ---- */
@@ -215,6 +223,16 @@ function draftFor(tpl, idx) {
   t('studio: picker menampilkan pratinjau SVG tiap motif',
     (htmlDesain.match(/class="ornpick"/g) || []).length === nMotif,
     (htmlDesain.match(/class="ornpick"/g) || []).length + ' pratinjau');
+  const nPola = w.eval('POLA_IDS.length');
+  const nTombolPat = (htmlDesain.match(/setPat\(/g) || []).length;
+  t(`studio: picker pola latar merender ${nPola} motif + 1 pilihan "ikut tema"`,
+    nTombolPat === nPola + 1, nTombolPat + ' tombol');
+  t('studio: picker pola menampilkan pratinjau background tiap motif',
+    (htmlDesain.match(/Pola Latar/g) || []).length >= 1 &&
+    (htmlDesain.match(/background:#fff;background-image:/g) || []).length === nPola,
+    (htmlDesain.match(/background:#fff;background-image:/g) || []).length + ' pratinjau');
+  t('studio: label pola menyebut jumlah yang benar',
+    htmlDesain.includes('Pola Latar (' + nPola + ' motif)'), 'seharusnya ' + nPola + ' motif');
   t('studio: label border menyebut jumlah yang benar (bukan 20 yang lama)',
     htmlDesain.includes('Border Undangan (' + idBorder.length + ' jenis)'),
     'seharusnya ' + idBorder.length + ' jenis');

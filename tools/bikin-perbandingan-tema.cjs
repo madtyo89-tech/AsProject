@@ -74,10 +74,11 @@ const live = baca('undangan.html');
 const TPL = eval(potongArray(studio, 'const TPL=[', 'studio.html'));
 const CV_LAYOUTS = eval(potongArray(studio, 'const CV_LAYOUTS=[', 'studio.html'));
 const FONTS = eval(potongArray(live, 'const FONTS=[', 'undangan.html'));
-const patCssSrc = potongFungsi(live, 'function patCss(t){', 'undangan.html');
-/* patCss() fungsi murni (data -> string CSS), jadi dijalankan di sini saja —
-   halaman hasil tidak perlu JS untuk menampilkan tekstur pola. */
-const patCss = eval('(' + patCssSrc.replace(/^function patCss/, 'function') + ')');
+/* Pola latar kini hidup di registri POLA (tools/pola-blok.js) yang ditempel ke
+   undangan.html & studio.html. polaCss() fungsi murni (data -> string CSS),
+   jadi dijalankan di sini saja — halaman hasil tidak perlu JS untuk tekstur. */
+const polaApi = eval('(function(){' + baca('tools/pola-blok.js') + ';return{polaCss:polaCss}})()');
+const patCss = (t) => polaApi.polaCss(t && t.pat, t, 1);
 /* Kerangka per tema: LAYOUTS (preset) dan URUTAN (varian susunan bagian) murni
    data, jadi bisa dipanen & dipakai langsung di sini. */
 /* potongFungsi() mengembalikan teks mulai dari PENANDA (ikut "const X="), beda
