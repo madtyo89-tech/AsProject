@@ -13,6 +13,8 @@
 #   6. konten terlarang: 'beb' berdiri sendiri di halaman, KartuDigital, dsb.
 #   7. blok injeksi di index.html tidak terduplikasi saat edit berulang
 #   8. peta demo vs file yang benar-benar ada
+#   9. peta undangan: pratinjau ubin sendiri wajib ada, embed Google hanya
+#      lapisan opsional (tamu tidak boleh disajikan bidang biru kosong)
 #
 # Yang TIDAK bisa dibuktikan di sini (butuh browser sungguhan): tampilan,
 # animasi, autoplay musik, IntersectionObserver, perilaku klik.
@@ -983,6 +985,51 @@ def cek_template_custom():
           "uji template kustom: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300]))
 
 
+def cek_peta_undangan():
+    """2026-10-16: tamu melaporkan embed Google Maps berhenti di bidang biru
+    walau iframe-nya sudah dimuat lambat & query-nya sudah bersih — kotak galat
+    datang dari Google sendiri, dan isi iframe lintas-asal tidak bisa diperiksa
+    dari halaman kita. Peta undangan sekarang digambar dari ubin biasa
+    (OpenStreetMap/CARTO/Esri) dan embed Google turun jadi lapisan opsional."""
+    print("\n[26] Peta undangan: pratinjau ubin sendiri + embed Google opsional")
+    live = baca("undangan.html")
+    ubin = ("basemaps.cartocdn.com/rastertiles" in live
+            and "tile.openstreetmap.org/" in live
+            and "server.arcgisonline.com/ArcGIS" in live)
+    lapor("ok" if ubin else "masalah",
+          "undangan.html: tiga penyedia ubin tanpa kunci API (CARTO → OpenStreetMap → Esri)")
+    opsional = (".mapwrap:not(.live) iframe{display:none}" in live
+                and "onclick=\"petaToggle(this)\"" in live
+                and "petaMuatSatu" in live)
+    lapor("ok" if opsional else "masalah",
+          "undangan.html: iframe Google hanya tampil setelah tamu menekan \"Peta interaktif\"")
+    jalan = ("https://www.google.com/maps/dir/?api=1&destination=" in live
+             and "class=\"mapfallback\"" in live
+             and ".mapwrap.peta-gagal .mapfallback{display:block}" in live
+             and "https://www.openstreetmap.org/copyright" in live)
+    lapor("ok" if jalan else "masalah",
+          "undangan.html: selalu ada jalan keluar — tombol rute, tautan cadangan, atribusi OSM")
+    koord = ("function petaLatLngDariLink" in live and "nominatim.openstreetmap.org" in live
+             and "photon.komoot.io" in live and "asp-peta:" in live)
+    lapor("ok" if koord else "masalah",
+          "undangan.html: koordinat dari tautan pemilik dipakai lebih dulu, geokode daring + cache localStorage jadi cadangan")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji peta dilewati")
+        return
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    if probe.returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji peta dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-peta.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji peta (ubin, cadangan CDN, geokode, jalan keluar): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
+
 def cek_pesan_wa():
     """2026-10-15: tulisan WA undangan berbeda di tiap tombol (ada yang lengkap, ada yang tidak).
     Sekarang semua tombol kirim/bagikan link undangan memakai SATU template yang sama."""
@@ -1058,7 +1105,7 @@ def main():
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
-               cek_template_custom, cek_pesan_wa):
+               cek_template_custom, cek_pesan_wa, cek_peta_undangan):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

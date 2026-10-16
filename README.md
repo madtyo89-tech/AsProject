@@ -552,6 +552,60 @@ Master) dan bagian `[17]` di `tools/cek-kesehatan.py`.
 Lembar perbandingan: `pilihan-gaya-foto-cover.png` dan `master-preview-foto-cover.png`
 (di luar repositori; dibuat dengan skrip sharp, bukan bagian aplikasi).
 
+## Peta lokasi undangan: ubin sendiri, embed Google jadi lapisan opsional (2026-10-16)
+
+Tamu melaporkan slide **Peta** cuma bidang biru kosong, lengkap dengan kotak galat dari
+Google sendiri ("Maaf, ka…" — terlihat di tangkapan layar ponsel tamu). Perbaikan
+sebelumnya (iframe tidak dirender di dalam slide `display:none`, query tanpa duplikasi,
+host kanonik `www.google.com/maps`) tetap ada dan tetap benar — dan tetap tidak cukup:
+iframe-nya memang dimuat, footer Google ("Pintasan keyboard", "Data peta ©2026") juga
+tergambar, **tapi ubin petanya tidak pernah datang**.
+
+Isi iframe itu lintas-asal: status HTTP, geometri, sampai pesan galat di dalamnya tidak
+bisa dibaca — dan tidak bisa diperbaiki — dari halaman kita. Karena itu tampilan peta
+yang **wajib** muncul tidak lagi bergantung pada embed.
+
+### Yang berubah
+
+- **Pratinjau ubin sendiri** (`petaGambarUbin`): kanvas 3×3 ubin 256 px (zoom 17) dari
+  tiga penyedia tanpa kunci API yang dicoba berurutan **per ubin** — CARTO Voyager
+  (`@2x`, tetap tajam di layar rapat) → OpenStreetMap → Esri. Satu CDN yang diblokir
+  jaringan tamu tidak lagi berarti peta kosong; ubin yang gagal cuma pindah penyedia.
+- **Pin & atribusi digambar sendiri.** Pin SVG memakai aksen tema; teks atribusi
+  mengikuti CDN yang benar-benar terpakai dan menautkan ke
+  `openstreetmap.org/copyright` — syarat lisensi ubin.
+- **Skala penutup dihitung, bukan ditebak.** Kanvas digeser supaya titik lokasi tepat di
+  tengah kartu, lalu diskalakan seminimal mungkin yang masih menutupi seluruh kartu —
+  tidak ada celah di tepi, berapa pun lebar layarnya (diuji 96 kombinasi titik × ukuran).
+- **Koordinat dulu, jaringan belakangan.** Tautan Maps pemilik yang membawa koordinat
+  (`@lat,lng`, `!3d/!4d`, `q=lat,lng`) dipakai langsung tanpa satu pun permintaan
+  jaringan. Tautan pendek (`maps.app.goo.gl`) tidak membawa koordinat dan alamat
+  tujuannya tidak bisa dibaca dari peramban, jadi jalur itu geokode **Nominatim** lalu
+  **Photon** (batas 4,5 detik), hasilnya disimpan di `localStorage`
+  (`asp-peta:<query>`, 30 hari) supaya membuka undangan berikutnya tidak menghubungi
+  server geokode lagi. Catatan privasi: pada jalur itu nama tempat dikirim ke layanan
+  geokode publik — sama seperti sebelumnya nama tempat dikirim ke Google lewat embed.
+- **Embed Google jadi tombol, bukan tampilan wajib.** Tombol **🗺️ Peta interaktif**
+  memasang iframe Google di atas pratinjau; menekannya lagi (teksnya berubah jadi
+  **↩︎ Pratinjau peta**) mencabut `src`-nya supaya kuota tamu tidak dipakai untuk peta
+  yang sedang tidak dilihat. Membuka undangan tidak pernah lagi memasang iframe itu
+  sendirian. **↻ Muat ulang** hanya tampil di mode interaktif.
+- **Selalu ada jalan keluar.** Tombol **🧭 Rute ke Lokasi**
+  (`maps/dir/?api=1&destination=…`) membuka navigasi Google Maps langsung dari ponsel.
+  Kalau pratinjau gagal (tiga CDN ubin diblokir **dan** geokode pun gagal), kartu masuk
+  mode `.peta-gagal`: pesannya mengarahkan ke Google Maps dan seluruh area peta bisa
+  ditekan. Tidak ada lagi bidang biru tanpa penjelasan.
+
+### Jaminan regresi
+
+`node tools/test-peta.cjs` (jsdom, 76 pemeriksaan) mengunci kontrak di atas: iframe lahir
+tanpa `src` dan tetap tanpa `src` setelah pratinjau siap, 9 ubin dari penyedia pertama,
+tiap `error` ubin berpindah CDN, geokode dipakai sekali lalu dari cache, mode gagal
+memunculkan tautan keluar, alamat ber-tag tetap ter-escape, plus uji properti geometri:
+96 kombinasi titik (Indonesia, lintang ekstrem, bujur 0) × ukuran kartu harus tertutup
+penuh dengan pin tepat di tengah. `python3 tools/cek-kesehatan.py` menjalankan tes yang
+sama sebagai bagian repo (aturan `[26]`).
+
 ## Link Scan QR Panitia (check-in tamu)
 
 Sekarang QR di tab **Tamu & QR** adalah **QR asli** (bukan hiasan) — setiap QR berisi

@@ -272,18 +272,34 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 .mapbtn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;height:38px;padding:0 16px;border-radius:99px;background:var(--ink-body);color:var(--ink-body-fg);font-size:12px;font-weight:600;text-decoration:none}
 .mapreload{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:99px;border:1px solid #e5d9c4;background:#fffdf9;color:#57503f;font-size:12px;font-weight:600;cursor:pointer}
 .mapreload:disabled{opacity:.55;cursor:wait}
-/* Peta: bingkai berukuran tetap + penampung "memuat" di belakang iframe.
-   Iframe sengaja tidak diberi src sejak awal (lihat petaPasangLazy):
-   Google Maps yang dirender saat induknya display:none — slide navpager
-   yang belum aktif — mengukur viewport 0x0 dan hasilnya cuma bidang
-   biru/abu kosong yang tidak pulih saat slide akhirnya ditampilkan. */
+/* Peta: pratinjau yang digambar sendiri (ubin OpenStreetMap/CARTO) + lapisan
+   Google "Peta interaktif" yang HANYA dipasang kalau tamu menekannya.
+   Kenapa: embed Google (output=embed) di sebagian ponsel tamu berhenti di
+   bidang biru dengan kotak galat milik Google sendiri — isinya lintas-asal,
+   jadi dari sisi kita tidak bisa diperiksa atau dipulihkan. Ubin peta biasa
+   adalah gambar: kalau satu CDN diblokir jaringan tamu, ubin itu dicoba ke
+   CDN berikutnya (lihat PETA_SUMBER), bukan ditinggal biru. */
 .mapwrap{position:relative;height:210px;background:#e9eff2;overflow:hidden}
-.mapwrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.mapwrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;z-index:2}
+.mapwrap:not(.live) iframe{display:none}
+.mapstat{position:absolute;inset:0;overflow:hidden;background:linear-gradient(170deg,#f7f9fa,#e9eff1)}
+.mapstat .ubin{position:absolute;left:0;top:0;transform-origin:0 0}
+.mapstat .ubin img{position:absolute;width:256px;height:256px;max-width:none;display:block;background:#eef2f4}
+.mapstat .bayang{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 50%,rgba(0,0,0,0) 42%,rgba(0,0,0,.16) 100%),linear-gradient(180deg,rgba(255,255,255,.12),rgba(0,0,0,.06))}
+.mapstat .pin2{position:absolute;left:50%;top:50%;width:28px;height:38px;margin:-38px 0 0 -14px;pointer-events:none;filter:drop-shadow(0 6px 8px rgba(0,0,0,.3))}
+.mapstat .pin2 svg{display:block;animation:mapPin 2.6s ease-in-out infinite}
+.mapattr{position:absolute;right:6px;bottom:4px;z-index:1;display:none;font-size:9px;line-height:1.5;color:#3f3a33;background:rgba(255,255,255,.82);padding:2px 6px;border-radius:6px;text-decoration:none}
+.mapwrap.map-tampil:not(.peta-gagal) .mapattr{display:block}
 .mapph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;text-align:center;color:#7a7065;font-size:12px;background:linear-gradient(170deg,#f6f8f9,#e7edef);transition:opacity .35s ease}
 .mapph .pin{font-size:26px;line-height:1;animation:mapPin 1.2s ease-in-out infinite}
 .mapwrap.map-tampil .mapph{opacity:0;pointer-events:none}
+.mapfallback{position:absolute;inset:0;z-index:3;display:none}
+.mapwrap.peta-gagal .mapfallback{display:block}
+.mapwrap.live .mapfallback{display:none}
+.mapwrap.peta-gagal .mapph{opacity:1;pointer-events:auto}
+.mapwrap.peta-gagal .mapph .pin{animation:none}
 @keyframes mapPin{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@media (prefers-reduced-motion:reduce){.mapph .pin{animation:none}}
+@media (prefers-reduced-motion:reduce){.mapph .pin{animation:none}.mapstat .pin2 svg{animation:none}}
 
 /* countdown */
 .cdw{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
@@ -2335,7 +2351,7 @@ function sHex(h){return/^#[0-9a-fA-F]{3,8}$/.test(h)}
    lebih akurat daripada menebak dari nama tempat + alamat yang ditulis bebas.
    Nama tempat yang sudah tercantum di dalam alamat tidak diulang dua kali —
    query ganda seperti "Bendo Gede 2, Bendo Gede 2, Sumbergiri, ..." membuat
-   Google gagal menentukan titik dan embed-nya berhenti di bidang biru. */
+   Google gagal menentukan titik. */
 function petaQueryDariLink(link){
  const mentah=String(link||'').trim();
  if(!mentah)return'';
@@ -2365,54 +2381,250 @@ function petaQuery(form,venue){
  }
  return v||a;
 }
-/* www.google.com/maps adalah alamat kanonik embed tanpa API key;
-   host lama maps.google.com menambah satu redirect yang sering macet
-   di koneksi seluler lambat sebelum petanya sendiri sempat dimuat. */
+/* "lat,lng" apa adanya — dari query maupun dari teks alamat yang sudah berupa
+   koordinat. Ubin peta statis butuh angka, jadi bentuk ini paling berharga. */
+function petaLatLngDariTeks(t){
+ const m=String(t||'').trim().match(/^(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)$/);
+ if(!m)return null;
+ const lat=parseFloat(m[1]),lng=parseFloat(m[2]);
+ if(!isFinite(lat)||!isFinite(lng)||lat<-90||lat>90||lng<-180||lng>180)return null;
+ return {lat:lat,lng:lng};
+}
+/* Koordinat dari tautan Maps pemilik — dicoba lebih dulu karena tidak perlu
+   jaringan. Tautan pendek (maps.app.goo.gl) tidak membawa koordinat dan alamat
+   tujuannya tidak bisa dibaca dari peramban (lintas-asal), jadi jalur itu jatuh
+   ke geokode nama tempat. */
+function petaLatLngDariLink(link){
+ const mentah=String(link||'').trim();
+ if(!mentah)return null;
+ let s=mentah;
+ try{s=decodeURIComponent(mentah.replace(/\+/g,'%20'))}catch(e){}
+ let m=s.match(/!3d(-?\d{1,3}\.\d+)\s*!4d(-?\d{1,3}\.\d+)/);
+ if(m)return {lat:parseFloat(m[1]),lng:parseFloat(m[2])};
+ m=s.match(/@(-?\d{1,3}\.\d+),(-?\d{1,3}\.\d+)/);
+ if(m)return {lat:parseFloat(m[1]),lng:parseFloat(m[2])};
+ try{
+  const u=new URL(mentah,location.href);
+  return petaLatLngDariTeks(u.searchParams.get('q')||u.searchParams.get('query')||u.searchParams.get('ll')||u.searchParams.get('center')||u.searchParams.get('destination')||'');
+ }catch(e){}
+ return null;
+}
+/* www.google.com/maps adalah alamat kanonik embed tanpa API key; host lama
+   maps.google.com menambah satu redirect yang sering macet di koneksi seluler
+   lambat. Sejak peta punya pratinjau ubin sendiri, iframe ini hanya lapisan
+   opsional "Peta interaktif" — bukan lagi satu-satunya sumber tampilan peta. */
 function petaEmbedUrl(q){return 'https://www.google.com/maps?q='+encodeURIComponent(q)+'&z=16&hl=id&output=embed'}
+/* Tautan rute: paling berguna di ponsel (langsung membuka navigasi Google Maps)
+   dan tidak bergantung pada embed sama sekali. */
+function petaRuteUrl(q,ll){
+ const tujuan=ll?(ll.lat+','+ll.lng):String(q||'').trim();
+ return tujuan?'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(tujuan):'';
+}
 function petaMuatSatu(f){
  if(!f||f.dataset.mapLoaded)return;
  const src=f.getAttribute('data-map-src');if(!src)return;
  f.dataset.mapLoaded='1';
- const wrap=f.closest?f.closest('.mapwrap'):null;
- if(wrap&&!f.dataset.mapHook){
-  f.dataset.mapHook='1';
-  f.addEventListener('load',()=>{if(f.getAttribute('src'))wrap.classList.add('map-tampil')});
- }
  f.src=src;
 }
 function petaMuat(scope){
  (scope||document).querySelectorAll('iframe[data-map-src]').forEach(petaMuatSatu);
 }
-window.__aspMuatPeta=petaMuat;
-/* Pasang src iframe peta HANYA saat kartunya benar-benar (hampir) terlihat.
-   Selain menghemat kuota tamu, ini obat bidang biru di mode slide: saat
-   boot, slide yang belum aktif ber-display:none, dan Maps yang dipaksa
-   render di ukuran 0x0 tidak menggambar ulang ubinnya saat slide tampil. */
-function petaPasangLazy(){
- if(window.__aspMapIO){try{window.__aspMapIO.disconnect()}catch(e){}window.__aspMapIO=null}
- const frames=[...document.querySelectorAll('iframe[data-map-src]')];
- if(!frames.length)return;
- if(!('IntersectionObserver' in window)){frames.forEach(petaMuatSatu);return}
- const io=new IntersectionObserver(es=>{
-  es.forEach(en=>{if(en.isIntersecting){petaMuatSatu(en.target);io.unobserve(en.target)}});
- },{rootMargin:'250px 0px',threshold:0.01});
- window.__aspMapIO=io;
- frames.forEach(f=>io.observe(f));
+
+/* ---------- pratinjau ubin statis (tanpa kunci API) ----------
+   Embed Google lintas-asal bisa berhenti di bidang biru dengan kotak galat milik
+   Google sendiri, dan isinya tidak bisa kita periksa atau pulihkan dari sini.
+   Karena itu peta yang WAJIB tampil digambar dari ubin biasa: gambar 256 px
+   yang bisa dicoba ulang ke CDN lain kalau satu penyedia diblokir jaringan tamu. */
+const PETA_UBIN=256,PETA_Z=17;
+const PETA_SUMBER=[
+ {id:'carto',nama:'CARTO',attrib:'© OpenStreetMap · CARTO',ubin:function(z,x,y){return 'https://basemaps.cartocdn.com/rastertiles/voyager/'+z+'/'+x+'/'+y+'@2x.png'}},
+ {id:'osm',nama:'OpenStreetMap',attrib:'© OpenStreetMap',ubin:function(z,x,y){return 'https://tile.openstreetmap.org/'+z+'/'+x+'/'+y+'.png'}},
+ {id:'esri',nama:'Esri',attrib:'© Esri',ubin:function(z,x,y){return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/'+z+'/'+y+'/'+x}}
+];
+function petaFrac(lat,lng,z){
+ const n=Math.pow(2,z),s=Math.sin(lat*Math.PI/180);
+ return {x:(lng+180)/360*n,y:(0.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n};
 }
-/* Dipanggil tombol "Muat Ulang Peta": koneksi putus di tengah unduhan ubin
-   membuat embed berhenti di bidang biru; muat paksa dari nol tanpa
+function petaAtribusi(pakai){
+ const ada={};pakai.forEach(function(id){ada[id]=1});
+ if(!ada.osm&&!ada.carto)return '© Esri';
+ return '© OpenStreetMap'+(ada.esri?' · Esri':(ada.carto?' · CARTO':''));
+}
+/* Kanvas 3x3 ubin: titik lokasi selalu duduk di ubin tengah, jadi setelah kanvas
+   digeser supaya titiknya pas di tengah kartu, kanvas masih menutupi seluruh
+   kartu berapa pun rasio layarnya. Skalanya dihitung dari syarat penutupan
+   (bukan angka tetap) supaya tidak pernah ada celah di tepi. */
+function petaGambarUbin(wrap,lat,lng){
+ const stat=wrap.querySelector('.mapstat'),kanvas=stat?stat.querySelector('.ubin'):null;
+ if(!kanvas)return;
+ const t=petaFrac(lat,lng,PETA_Z),x0=Math.floor(t.x),y0=Math.floor(t.y),S=PETA_UBIN;
+ const kol=[x0-1,x0,x0+1],bar=[y0-1,y0,y0+1];
+ const batas=Math.pow(2,PETA_Z),lebar=S*kol.length,tinggi=S*bar.length;
+ const cx=(t.x-(x0-1))*S,cy=(t.y-(y0-1))*S;
+ kanvas.style.width=lebar+'px';kanvas.style.height=tinggi+'px';
+ kanvas.innerHTML='';
+ const kotak=wrap.getBoundingClientRect?wrap.getBoundingClientRect():{width:0,height:0};
+ const W=kotak.width||wrap.clientWidth||360,H=kotak.height||wrap.clientHeight||210;
+ const skala=Math.max(W/(2*cx),W/(2*(lebar-cx)),H/(2*cy),H/(2*(tinggi-cy)))*1.04;
+ kanvas.style.transform='translate('+(W/2-cx*skala).toFixed(2)+'px,'+(H/2-cy*skala).toFixed(2)+'px) scale('+skala.toFixed(6)+')';
+ const dipakai={},at=stat.querySelector('.mapattr');
+ let gagal=0,jumlah=0;
+ kol.forEach(function(tx,ki){bar.forEach(function(ty,bi){
+  if(tx<0||ty<0||tx>=batas||ty>=batas)return;
+  jumlah++;
+  const img=document.createElement('img');
+  img.alt='';img.decoding='async';
+  img.style.left=(ki*S)+'px';img.style.top=(bi*S)+'px';
+  let ke=0;
+  const pakai=function(i){img.src=PETA_SUMBER[i].ubin(PETA_Z,tx,ty)};
+  img.addEventListener('error',function(){
+   ke++;
+   if(ke<PETA_SUMBER.length){pakai(ke);return}
+   gagal++;img.remove();
+   if(gagal*2>jumlah)petaGagal(wrap,'Pratinjau peta tidak bisa dimuat di koneksi ini — tap untuk buka Google Maps 🧭');
+  });
+  img.addEventListener('load',function(){
+   dipakai[PETA_SUMBER[ke].id]=1;
+   if(at)at.textContent=petaAtribusi(Object.keys(dipakai));
+   /* Placeholder baru dilepas setelah ubin pertama benar-benar tergambar —
+      kartu tidak pernah mengaku "siap" hanya karena src sudah dipasang. */
+   wrap.classList.add('map-tampil');
+  });
+  pakai(0);
+  kanvas.appendChild(img);
+ })});
+}
+/* Geokode daring: pemilik undangan biasanya menempel tautan pendek Google Maps
+   yang tidak membawa koordinat. Nominatim dulu (data OpenStreetMap, sama dengan
+   ubinnya), lalu Photon. Hasilnya disimpan di localStorage supaya membuka
+   undangan berikutnya tidak menghubungi server geokode lagi — hemat kuota tamu
+   dan ramah ke layanan gratis itu. Gagal dua-duanya bukan jalan buntu: kartu
+   masuk mode peta-gagal dengan tombol Google Maps, bukan bidang biru. */
+const PETA_CACHE_MS=2592000000;
+function petaLatLngDariHasil(j){
+ if(Array.isArray(j)&&j.length){
+  const a=j[0],lat=parseFloat(a&&a.lat),lng=parseFloat(a&&a.lon);
+  if(isFinite(lat)&&isFinite(lng))return {lat:lat,lng:lng};
+ }
+ const f=j&&j.features&&j.features[0];
+ if(f&&f.geometry&&Array.isArray(f.geometry.coordinates)){
+  const c=f.geometry.coordinates,lat=parseFloat(c[1]),lng=parseFloat(c[0]);
+  if(isFinite(lat)&&isFinite(lng))return {lat:lat,lng:lng};
+ }
+ return null;
+}
+function petaGeokode(q,cb){
+ const teks=String(q||'').trim();
+ if(!teks){cb(null);return}
+ const kunci='asp-peta:'+teks.toLowerCase().slice(0,140);
+ try{
+  const c=localStorage.getItem(kunci);
+  if(c){const o=JSON.parse(c);if(o&&isFinite(o.lat)&&isFinite(o.lng)&&Date.now()-(o.t||0)<PETA_CACHE_MS){cb(o);return}}
+ }catch(e){}
+ const sumber=[
+  'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=id&q=',
+  'https://photon.komoot.io/api/?limit=1&q='
+ ];
+ let i=0;
+ const coba=function(){
+  if(i>=sumber.length){cb(null);return}
+  const url=sumber[i++]+encodeURIComponent(teks);
+  let batal=null,timer=null;
+  try{batal=new AbortController();timer=setTimeout(function(){try{batal.abort()}catch(e){}},4500)}catch(e){}
+  fetch(url,{mode:'cors',signal:batal&&batal.signal,headers:{Accept:'application/json'}})
+   .then(function(r){return r&&r.ok?r.json():null})
+   .then(function(j){
+    if(timer)clearTimeout(timer);
+    const ll=petaLatLngDariHasil(j);
+    if(!ll){coba();return}
+    try{localStorage.setItem(kunci,JSON.stringify({lat:ll.lat,lng:ll.lng,t:Date.now()}))}catch(e){}
+    cb(ll);
+   })
+   .catch(function(){if(timer)clearTimeout(timer);coba()});
+ };
+ coba();
+}
+function petaGagal(wrap,pesan){
+ if(!wrap)return;
+ wrap.classList.add('peta-gagal');
+ const t=wrap.querySelector('.mptxt');
+ if(t&&pesan)t.textContent=pesan;
+ const p=wrap.querySelector('.mapph .pin');
+ if(p)p.textContent='🧭';
+}
+/* Siapkan satu kartu peta: koordinat langsung dari tautan pemilik kalau ada,
+   kalau tidak geokode nama tempatnya. */
+function petaSiapkanSatu(card){
+ if(!card||!card.querySelector)return;
+ const wrap=card.querySelector('.mapwrap');
+ if(!wrap||wrap.dataset.petaSiap)return;
+ wrap.dataset.petaSiap='1';
+ const q=(card.getAttribute('data-peta-q')||'').trim();
+ let ll=null;
+ if(card.getAttribute('data-peta-lat')!==null&&card.getAttribute('data-peta-lng')!==null){
+  ll=petaLatLngDariTeks(card.getAttribute('data-peta-lat')+','+card.getAttribute('data-peta-lng'));
+ }
+ if(ll){petaGambarUbin(wrap,ll.lat,ll.lng);return}
+ if(!q){petaGagal(wrap,'Titik lokasi belum diisi — tap untuk membuka Google Maps 🧭');return}
+ const t=wrap.querySelector('.mptxt');
+ if(t)t.textContent='Menentukan titik lokasi…';
+ petaGeokode(q,function(res){
+  if(!wrap.isConnected)return;
+  if(res&&isFinite(res.lat)&&isFinite(res.lng)){petaGambarUbin(wrap,res.lat,res.lng);return}
+  petaGagal(wrap,'Pratinjau peta tidak bisa dimuat di koneksi ini — tap untuk buka Google Maps 🧭');
+ });
+}
+/* Semua kartu peta yang belum siap di dalam `scope`: dipanggil saat kartunya
+   mendekati layar (IntersectionObserver) dan oleh navpager ketika slide peta
+   dibuka — kanvas 0x0 di slide yang masih display:none tidak bisa dipakai
+   menghitung skala penutup, jadi peta menunggu sampai benar-benar tampil. */
+function petaSiapkan(scope){
+ const akar=scope&&scope.querySelectorAll?scope:document;
+ const daftar=[];
+ if(akar!==document&&akar.matches&&akar.matches('[data-mapcard]'))daftar.push(akar);
+ Array.prototype.forEach.call(akar.querySelectorAll('[data-mapcard]'),function(c){daftar.push(c)});
+ daftar.forEach(petaSiapkanSatu);
+}
+window.__aspMuatPeta=petaSiapkan;
+function petaPantauPeta(){
+ const kartu=Array.prototype.slice.call(document.querySelectorAll('[data-mapcard]'));
+ if(!kartu.length)return;
+ if(window.__aspPetaIO){try{window.__aspPetaIO.disconnect()}catch(e){}window.__aspPetaIO=null}
+ if(!('IntersectionObserver' in window)){kartu.forEach(petaSiapkanSatu);return}
+ const io=new IntersectionObserver(function(es){
+  es.forEach(function(en){if(en.isIntersecting){petaSiapkanSatu(en.target);io.unobserve(en.target)}});
+ },{rootMargin:'250px 0px',threshold:0.01});
+ window.__aspPetaIO=io;
+ kartu.forEach(function(c){io.observe(c)});
+}
+/* Tombol "Muat Ulang Peta" di mode interaktif: koneksi putus di tengah unduhan
+   ubin membuat embed berhenti di bidang kosong; muat paksa dari nol tanpa
    mengharuskan tamu me-reload seluruh undangan. */
 function muatUlangPeta(btn){
  const card=btn&&btn.closest?btn.closest('[data-mapcard]'):null;
  const f=card?card.querySelector('iframe[data-map-src]'):document.querySelector('iframe[data-map-src]');
  if(!f)return;
  const src=f.getAttribute('data-map-src');if(!src)return;
- const wrap=f.closest?f.closest('.mapwrap'):null;
- if(wrap)wrap.classList.remove('map-tampil');
  if(btn)btn.disabled=true;
  delete f.dataset.mapLoaded;
  f.removeAttribute('src');
- setTimeout(()=>{petaMuatSatu(f);if(btn)btn.disabled=false},80);
+ setTimeout(function(){petaMuatSatu(f);if(btn)btn.disabled=false},80);
+}
+/* Tombol "Peta interaktif": memasang iframe Google di atas pratinjau ubin, dan
+   mencabutnya lagi saat tamu kembali ke pratinjau supaya kuota tamu tidak
+   dipakai untuk peta yang sedang tidak dilihat. */
+function petaToggle(btn){
+ const card=btn&&btn.closest?btn.closest('[data-mapcard]'):null;
+ if(!card)return;
+ const wrap=card.querySelector('.mapwrap'),f=card.querySelector('iframe[data-map-src]');
+ if(!wrap||!f)return;
+ const hidup=wrap.classList.toggle('live');
+ btn.textContent=hidup?'↩︎ Pratinjau peta':'🗺️ Peta interaktif';
+ const ulang=card.querySelector('.mapulang');
+ if(ulang)ulang.style.display=hidup?'':'none';
+ if(hidup){petaMuatSatu(f);return}
+ delete f.dataset.mapLoaded;
+ f.removeAttribute('src');
 }
 function slideBag(d,ev,tplF,fullNm,form,venue){
  if(!d||!d.slides)return{};
@@ -2458,16 +2670,35 @@ function slideBag(d,ev,tplF,fullNm,form,venue){
   <div style="margin-top:10px;font-size:10px;font-family:ui-monospace,monospace;color:#b3a894">${esc(cols.join('  '))}</div>`:''}</div>`)}
  if(S.map&&S.map.on){const alm=String((form&&form.alamat)||'').trim();
   const q=petaQuery(form,venue);
+  const ll=petaLatLngDariLink(form&&form.mapsLink)||petaLatLngDariTeks(q);
   const lnk=(form&&form.mapsLink&&!/example/i.test(form.mapsLink))?form.mapsLink:(q?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q):'');
   const embed=q?petaEmbedUrl(q):'';
-  h.push('map',`<div class="rv"><div class="card" data-mapcard style="padding:0;overflow:hidden">
+  const rute=petaRuteUrl(q,ll);
+  const linkBuka=lnk||rute;
+  /* Pin digambar sendiri supaya pratinjau peta tidak bergantung pada ikon
+     pihak ketiga; warnanya ikut aksen tema. */
+  const pin=`<svg viewBox="0 0 24 32" width="28" height="38" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 20 12 20s12-11 12-20C24 5.4 18.6 0 12 0Z" fill="var(--accent-body,#8a6e4b)"/><circle cx="12" cy="12" r="4.6" fill="#fff"/></svg>`;
+  h.push('map',`<div class="rv"><div class="card" data-mapcard${q?` data-peta-q="${esc(q)}"`:''}${ll?` data-peta-lat="${ll.lat}" data-peta-lng="${ll.lng}"`:''} style="padding:0;overflow:hidden">
    <div style="padding:12px 16px;border-bottom:1px solid #f0e6d8">
     <div style="font-size:12px;font-weight:600;color:var(--ink-body)">📍 ${esc(venue||'Lokasi Acara')}</div>
     ${alm?`<div style="margin-top:4px;font-size:11.5px;line-height:1.55;color:#7a7065">${esc(alm).replace(/\n/g,'<br>')}</div>`:''}
    </div>
-   ${embed?`<div class="mapwrap"><div class="mapph" aria-hidden="true"><div class="pin">📍</div><div>Memuat peta…</div></div><iframe class="mapframe" data-map-src="${esc(embed)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Peta lokasi" allowfullscreen></iframe></div>`
+   ${(q||ll)?`<div class="mapwrap">
+    <div class="mapstat" aria-hidden="true">
+     <div class="ubin"></div><div class="bayang"></div>
+     <div class="pin2">${pin}</div>
+     <a class="mapattr" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
+    </div>
+    <div class="mapph"><div class="pin">📍</div><div class="mptxt">Menyiapkan pratinjau peta…</div></div>
+    ${linkBuka?`<a class="mapfallback" href="${esc(linkBuka)}" target="_blank" rel="noopener" aria-label="Buka lokasi di Google Maps"></a>`:''}
+    ${embed?`<iframe class="mapframe" data-map-src="${esc(embed)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Peta lokasi" allowfullscreen></iframe>`:''}
+   </div>
+   <div style="padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    ${rute?`<a class="mapbtn" style="margin-top:0" href="${esc(rute)}" target="_blank" rel="noopener">🧭 Rute ke Lokasi</a>`:(lnk?`<a class="mapbtn" style="margin-top:0" href="${esc(lnk)}" target="_blank" rel="noopener">📍 Buka di Peta</a>`:'')}
+    ${embed?`<button type="button" class="mapreload maptoggle" onclick="petaToggle(this)">🗺️ Peta interaktif</button>`:''}
+    ${embed?`<button type="button" class="mapreload mapulang" onclick="muatUlangPeta(this)" style="display:none">↻ Muat ulang</button>`:''}
+   </div>`
     :`<div style="padding:18px 16px;font-size:12px;line-height:1.6;color:#7a7065;text-align:center">📍 Alamat lokasi belum diisi.</div>`}
-   ${(lnk||embed)?`<div style="padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${lnk?`<a class="mapbtn" style="margin-top:0" href="${esc(lnk)}" target="_blank" rel="noopener">📍 Buka di Peta</a>`:''}${embed?`<button type="button" class="mapreload" onclick="muatUlangPeta(this)">↻ Muat Ulang Peta</button>`:''}</div>`:''}
   </div></div>`)}
  if(S.gift&&S.gift.on&&S.gift.text.trim())h.push('gift',card(`${kick('🎁 Alamat Kado')}<div style="margin-top:12px;font-size:13px;line-height:1.8;color:#57503f">${esc(S.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:12px;font-size:22px">🎀</div>`));
  if(S.rsvp&&S.rsvp.on)h.push('rsvp',card(`${kick('✉️ RSVP')}
@@ -3155,9 +3386,9 @@ function boot(draft){
  ambientPasang(tplF);
  /* scroll reveal — bagian muncul halus saat tamu menggulir */
  setupNavPager(AN.navMode);
- /* Peta baru boleh dimuat setelah pager selesai menata slide, supaya
-    iframe tidak pernah dirender di dalam slide display:none. */
- petaPasangLazy();
+ /* Peta baru digambar setelah pager selesai menata slide: kanvas ubin yang
+    diukur saat induknya display:none menghasilkan skala 0x0. */
+ petaPantauPeta();
  if(rvOn&&typeof setupScrollReveal==='function')setupScrollReveal(document.getElementById('app')||document.body);
 }
 
@@ -3196,7 +3427,7 @@ function setupNavPager(mode){
   slides.forEach((s,j)=>s.classList.toggle('pact',j===k));
   const s=slides[k];
   /* Slide baru saja berubah dari display:none menjadi tampil: sekarang
-     aman memasang src peta di dalamnya (lihat petaPasangLazy). Observer
+     aman menggambar ubin peta di dalamnya (lihat petaPantauPeta). Observer
      biasanya ikut memicu ini, pemanggilan langsung adalah jaringnya. */
   if(window.__aspMuatPeta)window.__aspMuatPeta(s);
   s.classList.remove('nv-anim');void s.offsetWidth;s.classList.add('nv-anim');
