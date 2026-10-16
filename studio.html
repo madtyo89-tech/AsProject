@@ -6,7 +6,9 @@
 <meta name="theme-color" content="#111">
 <title>asproject.my.id — Studio Undangan Premium 4in1</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
-<link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <style>
 :root{--bg:#fafaf8;--card:#fff;--line:#eee;--line2:#e9e9e9;--ink:#1a1a1a;--mut:#737373;--mut2:#a3a3a3;--gold:#D4AF37;--cream:#FFFBEB;--cream2:#FDE68A;--soft:#f5f5f4}
 *{box-sizing:border-box;margin:0}
@@ -1603,7 +1605,12 @@ function resetWaTemplate(){state.waTemplate=WA_TEMPLATE_DEFAULT;save();render();
 
 /* ============ HELPERS ============ */
 const $=id=>document.getElementById(id);
-function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+/* Nilai yang disisipkan ke dalam onclick="fn('…')" harus aman untuk atribut HTML
+   DAN literal string JavaScript. esc() saja tidak cukup: &#39; dikembalikan jadi
+   apostrof oleh parser HTML, sehingga nama tamu seperti O'Brien membuat tombol
+   gagal ("missing ) after argument list"). Backslash & apostrof diberi pelindung. */
+function jsEsc(s){return esc(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 function slugify(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,32)}
 function notify(msg){document.querySelectorAll('.notice').forEach(n=>n.remove());const n=document.createElement('div');n.className='notice';n.innerHTML='<span style="width:20px;height:20px;border-radius:99px;background:#10b981;display:grid;place-items:center;font-size:12px">✓</span>'+esc(msg);document.body.append(n);setTimeout(()=>n.remove(),3000)}
 function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
@@ -2568,6 +2575,71 @@ function tabMusik(){const d=DOA[state.doa]||DOA.pernikahan;return `<div style="d
   <label class="f" style="margin-top:12px">Ucapan & Doa Custom<textarea rows="3" oninput="updF('ucapanCustom',this.value)">${esc(state.form.ucapanCustom)}</textarea></label>
  </div></div>`}
 
+/* Isi kartu QR + Tulisan WA. Dipisah dari tabTamu() supaya refreshTamu()
+   bisa membangunnya ulang tanpa menggambar seluruh editor (kursor pemilik
+   tetap di tempatnya saat mengetik daftar tamu). */
+function tamuQrCardIsi(){const g=selGuest(),single=state.linkMode==='single';return `  <h4 style="color:#fff">🔐 QR Check-in & QR Undangan ${single?'<span class="pill" style="background:#D4AF37;color:#000;font-size:9px">1 LINK + QR UNIK</span>':''}</h4>
+  <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:12px">${single?'Mode 1 Link aktif: Link undangan SAMA untuk semua tamu, tapi QR check-in tetap unik per tamu.':'Ada 2 QR per tamu — keduanya bisa di-download:'} <b>QR Check-in</b> untuk panitia di pintu masuk (wajib), dan <b>QR Undangan</b> untuk tamu (opsional — misal dicetak di kartu undangan; scan langsung membuka undangannya).</div>
+  ${g?`<div style="background:#fff;border-radius:16px;padding:16px;color:#000">
+   <div style="font-size:13px;font-weight:600">${esc(g.nama)}</div>
+   <div style="font-size:11px;color:var(--mut);margin-top:4px">Code: ${g.code}</div>
+   <div style="font-size:10px;font-family:ui-monospace,monospace;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;word-break:break-all">${single?esc(g.checkin):esc(g.link)}</div>
+   <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:148px;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center">
+     <div style="width:108px;height:108px;margin:0 auto;border-radius:10px;background:var(--soft);border:1px solid var(--line);overflow:hidden"><img src="${qrData(g)}" style="width:100%;height:100%;object-fit:contain;padding:6px"></div>
+     <div style="font-size:10.5px;font-weight:700;margin-top:8px">QR Check-in</div>
+     <div style="font-size:9px;color:var(--mut);line-height:1.4">Untuk <b>panitia</b> scan di pintu masuk</div>
+     <button class="sm-btn dark" style="margin-top:8px;width:100%" onclick="dlQr('${jsEsc(g.nama)}')">⬇ Download QR</button>
+    </div>
+    <div style="flex:1;min-width:148px;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center">
+     <div style="width:108px;height:108px;margin:0 auto;border-radius:10px;background:var(--soft);border:1px solid var(--line);overflow:hidden"><img src="${qrDataUndangan(g)}" style="width:100%;height:100%;object-fit:contain;padding:6px"></div>
+     <div style="font-size:10.5px;font-weight:700;margin-top:8px">QR Undangan <span style="color:#8a6d0f">(opsional)</span></div>
+     <div style="font-size:9px;color:var(--mut);line-height:1.4">Untuk <b>tamu</b> — scan buka undangan</div>
+     <button class="sm-btn" style="margin-top:8px;width:100%" onclick="dlQrUndangan('${jsEsc(g.nama)}')">⬇ Download QR</button>
+    </div>
+   </div>
+  </div>`
+  :'<div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;font-size:11px;color:rgba(255,255,255,.7)">Pilih tamu dari daftar di atas untuk generate QR check-in random.</div>'}
+  <div style="margin-top:16px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">
+   <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:11px">Tampilkan Nama di QR<input type="checkbox" ${state.showNameQr?'checked':''} onchange="set('showNameQr',this.checked)"></label>
+   <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:4px">Jika aktif, nama tamu kecil tampil di bawah QR untuk memudahkan panitia.</div>
+  </div>
+  <div style="margin-top:16px">
+   <div style="font-size:11px;font-weight:500;margin-bottom:4px">💬 Tulisan Undangan untuk WA (variabel: {nama_tamu}, {link_undangan}, {nama_pengantin}, {acara})</div>
+   <div style="font-size:10px;line-height:1.6;color:rgba(255,255,255,.5);margin-bottom:6px">Satu teks untuk <b>semua tombol kirim/bagikan link undangan</b>: WA per tamu, Kirim Link via WhatsApp, Bagikan via WhatsApp (layar Undangan sudah jadi), Share via WhatsApp di Undangan Master, dan tombol Bagikan di undangan. Untuk link tanpa nama, {nama_tamu} menjadi <b>${WA_SAPA_UMUM}</b>. Setelah mengubah teks, <b>Publish Ulang</b> agar Master &amp; undangan live ikut memakainya.</div>
+   <textarea rows="6" aria-label="Tulisan undangan untuk WhatsApp" style="width:100%;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);padding:8px 12px;font-size:11px;font-family:ui-monospace,monospace;color:#fff" oninput="updWaTemplate(this.value)">${esc(state.waTemplate)}</textarea>
+   <button id="waResetBtn" class="sm-btn" style="margin-top:6px;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff;display:${state.waTemplate===WA_TEMPLATE_DEFAULT?'none':'inline-flex'}" onclick="resetWaTemplate()" data-help="Kembalikan tulisan WA ke teks bawaan AsProject.">↺ Kembalikan teks bawaan</button>
+   <div style="margin-top:10px;border-radius:12px;background:rgba(37,211,102,.08);border:1px solid rgba(37,211,102,.35);padding:10px 12px">
+    <div style="font-size:10px;color:rgba(255,255,255,.55);margin-bottom:6px">📱 Pratinjau pesan WA — <span id="waPrevLabel">${g?'untuk '+esc(g.nama):'untuk semua tamu (tanpa nama)'}</span>:</div>
+    <div id="waPesanPrev" style="font-size:11px;line-height:1.7;color:#fff;white-space:pre-wrap">${esc(waShareText())}</div>
+   </div>
+   <button onclick="waSend()" style="margin-top:10px;width:100%;height:42px;border-radius:99px;background:#25D366;color:#fff;font-size:12px;font-weight:600;border:0;cursor:pointer">📤 Kirim Link via WhatsApp</button>
+  </div>
+ </div>`}
+let _tamuTimer=null;
+function jadwalRefreshTamu(){if(_tamuTimer)clearTimeout(_tamuTimer);_tamuTimer=setTimeout(refreshTamu,320)}
+/* Daftar tamu berubah (diketik pemilik / impor CSV): perbarui hanya bagian
+   yang bergantung padanya. Dulu daftar tetap basi sampai pindah tab. */
+function refreshTamu(){
+ const gs=guests();
+ if(state.selGuest&&!gs.some(x=>x.nama===state.selGuest))state.selGuest=null;
+ const baris=document.getElementById('tamuBaris');if(baris)baris.innerHTML=tamuBarisHtml(gs);
+ const jumlah=document.getElementById('tamuJumlah');if(jumlah)jumlah.textContent=gs.length+' tamu';
+ const kartu=document.getElementById('kartuQrTamu');if(kartu)kartu.innerHTML=tamuQrCardIsi();
+ const prev=document.getElementById('waPesanPrev');if(prev)prev.textContent=waShareText();
+ save();
+}
+/* Baris daftar tamu. Dipakai tabTamu() DAN refreshTamu(): saat pemilik
+   mengetik nama tamu, editor tidak digambar ulang (agar kursor aman), jadi
+   daftar di bawahnya diperbarui langsung — dulu daftar tetap basi sampai
+   pemilik berpindah tab. */
+function tamuBarisHtml(gs){const single=state.linkMode==='single';return gs.map(x=>`<div class="guestrow ${state.selGuest===x.nama?'sel':''}">
+   <div style="width:32px;height:32px;border-radius:99px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:600;flex:none">${esc(x.nama.slice(0,1).toUpperCase())}</div>
+   <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.nama)}</div>
+   <div style="font-size:10px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.link)}${single?` <span style="color:#8a6d0f">• QR: ${x.code}</span>`:''}</div></div>
+   <button class="sm-btn" style="background:#fff" onclick="copyTxt('${jsEsc(x.link)}')">Copy</button>
+   <a class="sm-btn wa" style="text-decoration:none" target="_blank" href="${waLink(x)}">WA</a>
+   <button class="sm-btn dark" onclick="set('selGuest','${jsEsc(x.nama)}')">QR</button></div>`).join('')}
 function tabTamu(){const gs=guests(),g=selGuest(),single=state.linkMode==='single';return `<div style="display:grid;gap:16px">
  <div class="card"><h4>⚙️ Mode Link Undangan • BARU</h4>
   <div style="display:grid;gap:8px;padding:4px;border-radius:16px;background:var(--soft);border:1px solid var(--line)">
@@ -2591,7 +2663,7 @@ function tabTamu(){const gs=guests(),g=selGuest(),single=state.linkMode==='singl
    <button class="sm-btn" onclick="exportCsv()">Export CSV</button>
    <button class="sm-btn dark" onclick="copyTxt(guests().map(g=>g.nama+': '+g.link).join('\\n'),'Semua link disalin ✓')">Salin Semua Link</button>
   </div>
-  <textarea rows="4" placeholder="1 baris 1 nama tamu" style="width:100%;border:1px solid var(--line2);border-radius:12px;padding:8px 12px;font-size:12px;font-family:ui-monospace,monospace" oninput="upd('guestsRaw',this.value)">${esc(state.guestsRaw)}</textarea>
+  <textarea rows="4" placeholder="1 baris 1 nama tamu" style="width:100%;border:1px solid var(--line2);border-radius:12px;padding:8px 12px;font-size:12px;font-family:ui-monospace,monospace" oninput="upd('guestsRaw',this.value);jadwalRefreshTamu()">${esc(state.guestsRaw)}</textarea>
   <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
    <span style="font-size:11px;color:var(--mut)">${single?`1 Link untuk semua tamu • ${gs.length} tamu, QR tetap unik`:`Auto Generate Link Personal ?to=NamaTamu • ${gs.length} tamu`}</span>
    <span class="pill" style="margin-left:auto;font-size:9px;font-weight:600;${single?'background:#111;color:#fff':'background:#f0f9ff;color:#0c4a6e;border:1px solid #dbeafe'}">${single?'1 LINK MODE':'PERSONAL MODE'}</span>
@@ -2599,56 +2671,12 @@ function tabTamu(){const gs=guests(),g=selGuest(),single=state.linkMode==='singl
   <div style="margin-top:8px;padding:10px;border-radius:12px;font-size:11px;font-family:ui-monospace,monospace;word-break:break-all;${single?'background:#111;color:#fff':'background:var(--soft);border:1px solid var(--line)'}">Preview: ${single?baseUrl():baseUrl()+'?to=NamaTamu'} ${single?'<span style="opacity:.6">• sama untuk semua</span>':''}</div>
  </div>
  <div class="card">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4 style="margin:0">Daftar Link Tamu</h4><span class="chip">${gs.length} tamu</span></div>
-  <div class="sb" style="max-height:320px;overflow-y:auto;padding-right:4px">
-  ${gs.map(x=>`<div class="guestrow ${state.selGuest===x.nama?'sel':''}">
-   <div style="width:32px;height:32px;border-radius:99px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:600;flex:none">${esc(x.nama.slice(0,1).toUpperCase())}</div>
-   <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.nama)}</div>
-   <div style="font-size:10px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.link)}${single?` <span style="color:#8a6d0f">• QR: ${x.code}</span>`:''}</div></div>
-   <button class="sm-btn" style="background:#fff" onclick="copyTxt('${esc(x.link)}')">Copy</button>
-   <a class="sm-btn wa" style="text-decoration:none" target="_blank" href="${waLink(x)}">WA</a>
-   <button class="sm-btn dark" onclick="set('selGuest','${esc(x.nama)}')">QR</button></div>`).join('')}
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h4 style="margin:0">Daftar Link Tamu</h4><span class="chip" id="tamuJumlah">${gs.length} tamu</span></div>
+  <div class="sb" id="tamuBaris" style="max-height:320px;overflow-y:auto;padding-right:4px">
+  ${tamuBarisHtml(gs)}
   </div>
  </div>
- <div class="card" style="background:#111;color:#fff;border-color:#111">
-  <h4 style="color:#fff">🔐 QR Check-in & QR Undangan ${single?'<span class="pill" style="background:#D4AF37;color:#000;font-size:9px">1 LINK + QR UNIK</span>':''}</h4>
-  <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:12px">${single?'Mode 1 Link aktif: Link undangan SAMA untuk semua tamu, tapi QR check-in tetap unik per tamu.':'Ada 2 QR per tamu — keduanya bisa di-download:'} <b>QR Check-in</b> untuk panitia di pintu masuk (wajib), dan <b>QR Undangan</b> untuk tamu (opsional — misal dicetak di kartu undangan; scan langsung membuka undangannya).</div>
-  ${g?`<div style="background:#fff;border-radius:16px;padding:16px;color:#000">
-   <div style="font-size:13px;font-weight:600">${esc(g.nama)}</div>
-   <div style="font-size:11px;color:var(--mut);margin-top:4px">Code: ${g.code}</div>
-   <div style="font-size:10px;font-family:ui-monospace,monospace;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;word-break:break-all">${single?esc(g.checkin):esc(g.link)}</div>
-   <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
-    <div style="flex:1;min-width:148px;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center">
-     <div style="width:108px;height:108px;margin:0 auto;border-radius:10px;background:var(--soft);border:1px solid var(--line);overflow:hidden"><img src="${qrData(g)}" style="width:100%;height:100%;object-fit:contain;padding:6px"></div>
-     <div style="font-size:10.5px;font-weight:700;margin-top:8px">QR Check-in</div>
-     <div style="font-size:9px;color:var(--mut);line-height:1.4">Untuk <b>panitia</b> scan di pintu masuk</div>
-     <button class="sm-btn dark" style="margin-top:8px;width:100%" onclick="dlQr('${esc(g.nama)}')">⬇ Download QR</button>
-    </div>
-    <div style="flex:1;min-width:148px;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center">
-     <div style="width:108px;height:108px;margin:0 auto;border-radius:10px;background:var(--soft);border:1px solid var(--line);overflow:hidden"><img src="${qrDataUndangan(g)}" style="width:100%;height:100%;object-fit:contain;padding:6px"></div>
-     <div style="font-size:10.5px;font-weight:700;margin-top:8px">QR Undangan <span style="color:#8a6d0f">(opsional)</span></div>
-     <div style="font-size:9px;color:var(--mut);line-height:1.4">Untuk <b>tamu</b> — scan buka undangan</div>
-     <button class="sm-btn" style="margin-top:8px;width:100%" onclick="dlQrUndangan('${esc(g.nama)}')">⬇ Download QR</button>
-    </div>
-   </div>
-  </div>`
-  :'<div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;font-size:11px;color:rgba(255,255,255,.7)">Pilih tamu dari daftar di atas untuk generate QR check-in random.</div>'}
-  <div style="margin-top:16px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">
-   <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:11px">Tampilkan Nama di QR<input type="checkbox" ${state.showNameQr?'checked':''} onchange="set('showNameQr',this.checked)"></label>
-   <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:4px">Jika aktif, nama tamu kecil tampil di bawah QR untuk memudahkan panitia.</div>
-  </div>
-  <div style="margin-top:16px">
-   <div style="font-size:11px;font-weight:500;margin-bottom:4px">💬 Tulisan Undangan untuk WA (variabel: {nama_tamu}, {link_undangan}, {nama_pengantin}, {acara})</div>
-   <div style="font-size:10px;line-height:1.6;color:rgba(255,255,255,.5);margin-bottom:6px">Satu teks untuk <b>semua tombol kirim/bagikan link undangan</b>: WA per tamu, Kirim Link via WhatsApp, Bagikan via WhatsApp (layar Undangan sudah jadi), Share via WhatsApp di Undangan Master, dan tombol Bagikan di undangan. Untuk link tanpa nama, {nama_tamu} menjadi <b>${WA_SAPA_UMUM}</b>. Setelah mengubah teks, <b>Publish Ulang</b> agar Master &amp; undangan live ikut memakainya.</div>
-   <textarea rows="6" aria-label="Tulisan undangan untuk WhatsApp" style="width:100%;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);padding:8px 12px;font-size:11px;font-family:ui-monospace,monospace;color:#fff" oninput="updWaTemplate(this.value)">${esc(state.waTemplate)}</textarea>
-   <button id="waResetBtn" class="sm-btn" style="margin-top:6px;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff;display:${state.waTemplate===WA_TEMPLATE_DEFAULT?'none':'inline-flex'}" onclick="resetWaTemplate()" data-help="Kembalikan tulisan WA ke teks bawaan AsProject.">↺ Kembalikan teks bawaan</button>
-   <div style="margin-top:10px;border-radius:12px;background:rgba(37,211,102,.08);border:1px solid rgba(37,211,102,.35);padding:10px 12px">
-    <div style="font-size:10px;color:rgba(255,255,255,.55);margin-bottom:6px">📱 Pratinjau pesan WA — ${g?'untuk '+esc(g.nama):'untuk semua tamu (tanpa nama)'}:</div>
-    <div id="waPesanPrev" style="font-size:11px;line-height:1.7;color:#fff;white-space:pre-wrap">${esc(waShareText())}</div>
-   </div>
-   <button onclick="waSend()" style="margin-top:10px;width:100%;height:42px;border-radius:99px;background:#25D366;color:#fff;font-size:12px;font-weight:600;border:0;cursor:pointer">📤 Kirim Link via WhatsApp</button>
-  </div>
- </div></div>`}
+ <div class="card" id="kartuQrTamu" style="background:#111;color:#fff;border-color:#111">${tamuQrCardIsi()}</div>`}
 
 function tabAmplop(){const a=state.amplop;return `<div style="display:grid;gap:16px">
  <div class="card">
@@ -2664,7 +2692,7 @@ function tabAmplop(){const a=state.amplop;return `<div style="display:grid;gap:1
   <label style="display:flex;align-items:center;gap:8px;font-size:11px;margin-top:12px"><input type="checkbox" ${a.showCopy?'checked':''} onchange="setA('showCopy',this.checked)"> Tombol Copy No Rek Otomatis</label>
   <div style="margin-top:16px;padding:12px;border-radius:12px;background:#fbfaf8;border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
    <div style="font-size:11px"><b>${esc(a.bank)}</b> • ${esc(a.noRek)} • a.n ${esc(a.pemilik)}</div>
-   <button class="sm-btn dark" onclick="copyTxt('${esc(a.noRek)}','No rekening disalin ✓')">Copy</button>
+   <button class="sm-btn dark" onclick="copyTxt('${jsEsc(a.noRek)}','No rekening disalin ✓')">Copy</button>
   </div>
  </div>
  <div class="card" style="background:var(--cream);border-color:var(--cream2)">
@@ -2875,7 +2903,7 @@ function arsip(){
      <b>${esc((r.name1||'')+(r.name2?' & '+r.name2:''))}</b>
      <span style="font-size:10px;color:var(--mut)">${esc(r.slug)} • ${esc(String(r.event_date||'').slice(0,10)||'tanpa tanggal')} • diperbarui ${esc(tgl)}</span>
      ${iniPunya?'<span class="pill" style="font-size:9px;margin-left:6px;background:var(--soft);border:1px solid var(--line)">perangkat ini</span>':''}
-    </div><button class="sm-btn dark" style="min-height:44px" onclick="bukaRiwayatServer('${esc(r.slug)}')" data-help="Buka undangan ini ke editor untuk dilihat atau diedit lagi.">Buka</button></div>`}).join('')}</div>
+    </div><button class="sm-btn dark" style="min-height:44px" onclick="bukaRiwayatServer('${jsEsc(r.slug)}')" data-help="Buka undangan ini ke editor untuk dilihat atau diedit lagi.">Buka</button></div>`}).join('')}</div>
    <div style="margin-top:10px;font-size:10.5px;color:var(--mut);line-height:1.6"><b>Catatan:</b> dengan policy database saat ini, daftar ini bisa dibaca siapa pun yang tahu alamat API — jangan pakai slug yang bersifat rahasia untuk undangan privat.</div>`
    :'<div style="margin-top:12px;font-size:11px;color:var(--mut)">Belum ada undangan di server.</div>')
   :''}

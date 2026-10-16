@@ -381,6 +381,47 @@ Uji: `node tools/test-katalog-admin.cjs` (42 pemeriksaan jsdom: navigasi, hapus,
 dengan localStorage yang sama, pulihkan, katalog kosong, Undangan Baru) dan bagian `[23]`
 di `tools/cek-kesehatan.py`.
 
+## Rapikan total: bug yang ditemukan & diperbaiki (2026-10-16)
+
+Pemeriksaan menyeluruh (statis + jsdom + Chromium sungguhan) menemukan enam hal yang
+benar-benar salah. Semuanya sudah diperbaiki dan dikunci uji:
+
+| # | Gejala yang dilihat pemilik/tamu | Sebab | Perbaikan |
+| --- | --- | --- | --- |
+| 1 | Nama tamu seperti **O'Brien** → tombol **QR / Copy / Download QR** di Studio diam saja (tanpa pesan). Konsol: *missing ) after argument list* | Nama disisipkan ke `onclick="fn('NAMA')"` hanya dengan `esc()`. Parser HTML mengubah `&#39;` kembali jadi apostrof, jadi JavaScript-nya rusak | `jsEsc()` (aman untuk atribut HTML **dan** literal string JS); dipakai di tombol yang memuat nama/link/no. rekening/slug pemilik |
+| 2 | Mengetik daftar tamu di **Tamu & QR**: "Daftar Tamu & Link" tetap **0 tamu**, kartu QR & pratinjau pesan WA basi — nama baru muncul setelah pindah tab | `oninput` hanya menyimpan + memperbarui pratinjau iframe; daftar digambar ulang cuma oleh `render()` | `refreshTamu()` + `jadwalRefreshTamu()` (jeda 320 ms): jumlah, baris, kartu QR, dan pratinjau WA diperbarui langsung **tanpa** render penuh — kursor tetap di tempatnya |
+| 3 | Bantuan tombol (tahan / F1) kadang tidak muncul di Studio (uji browser flaky) | Handler gulir selalu `hide()`. `focus()`/F1 **memicu gulir** → tooltip yang baru dibuat langsung dihapus. Race: kadang menang, kadang kalah | `place()` menghitung ulang posisi saat halaman bergulir; tooltip hanya ditutup bila tombolnya keluar layar. Gulir *sebelum* tooltip muncul tetap membatalkannya |
+| 4 | `katalog-demo/undangan-luxury-seal.html` → **layar kosong** begitu unpkg diblokir/lambat (*React is not defined*) | Halaman demo mengambil React & ReactDOM dari CDN tepat saat halaman dibuka | React 18.3.1 UMD (MIT) disimpan di `assets/react*.production.min.js` + pesan gagal yang jelas bila berkas hilang |
+| 5 | `tools/rsvp.sql` gagal dari Supabase SQL Editor | `create policy "rsvp_anon_read"` ditulis **dua kali** (dan tidak idempoten) | Ditulis ulang: tiap policy `drop policy if exists` + `create`, dijalankan berulang tetap aman |
+| 6 | Ikon tab hilang di 24 halaman (master, demo, katalog-demo), semua halaman demo `lang="en"`, katalog utama tanpa keterangan/pratinjau tautan | Belum pernah ditambahkan | `assets/favicon.svg` (latar hitam + monogram emas) & `assets/apple-touch-icon.png` dipasang di semua 30 halaman, `lang="id"` diperbaiki, plus `description`/`og:*`/`theme-color` |
+
+Tambahan kecil yang menyertainya:
+
+- Undangan live kini mengisi **og:judul, og:keterangan, og:foto** dari data undangan
+  (dulu teks bawaan "Undangan digital dari AsProject"); `og:image` dipakai hanya bila
+  fotonya URL publik — foto lokal pemilik berbentuk `data:` diabaikan perayap.
+- `katalog-demo/undangan-luxury-seal.html` masih satu-satunya demo yang butuh React;
+  demo lain tetap murni HTML/CSS/JS.
+- Rute tautan diperiksa ulang di server emulasi Pages: `/u/{slug}`, `/u/{slug}/` dengan
+  `?to=` (termasuk `?to=` berisi `&`), `/checkin`, dan `/u/{slug}/checkin` semuanya mendarat
+  di halaman yang benar; nama tamu berisi HTML/atribut (`?to=`) tidak menghasilkan satu pun
+  elemen atau skrip baru (diuji 4 pola serangan di Chromium).
+
+Laporan lengkap (termasuk yang sudah benar dan saran yang belum dikerjakan):
+`LAPORAN-AUDIT-2026-10-16.md`.
+
+Uji & pemeriksa yang dikunci bersamanya:
+
+- `node tools/test-bantuan-tombol.cjs` — 27 pemeriksaan jsdom (bantuan bertahan saat
+  menggulir, tetap dibatalkan oleh gulir saat menahan, Escape/resize/pointer tetap menutup).
+- `node tools/test-pesan-wa.cjs` — bertambah jadi 47 pemeriksaan: nama ber-apostrof
+  (`O'Brien`) & ber-tanda kutip, daftar tamu hidup saat mengetik, pilihan tamu direset
+  saat namanya dihapus dari daftar.
+- `python3 tools/cek-kesehatan.py` — bagian **[29] Kerapian halaman** (ikon tab, `lang`,
+  tidak ada skrip CDN yang bisa mematikan halaman, semua rujukan berkas lokal ada, og tags)
+  dan **[30] Nama tamu aman di onclick & daftar tamu hidup**; ringkasan sekarang
+  **322 ok, 0 masalah**.
+
 ## Katalog tema (direset + diisi ulang 2026-10-10)
 
 Katalog lama berisi 72 tema lengkap dengan artwork-nya. Seluruhnya dihapus, lalu diisi

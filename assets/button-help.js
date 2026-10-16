@@ -104,15 +104,24 @@
   if(owner){if(previousDescription===null)owner.removeAttribute('aria-describedby');else owner.setAttribute('aria-describedby',previousDescription)}
   tip?.remove();tip=null;owner=null;
  }
+ /* Tempatkan ulang tooltip mengikuti tombolnya. Dipakai saat tampil pertama dan
+    setiap kali halaman bergulir — penggulungan akibat focus()/F1 terjadi SESUDAH
+    tooltip dibuat, jadi menutup tooltip di setiap peristiwa gulir membuat
+    bantuan tombol hilang seketika. Bila tombolnya keluar layar, baru tutup. */
+ function place(){
+  if(!tip||!owner)return;
+  const box=owner.getBoundingClientRect(),r=tip.getBoundingClientRect();
+  if(box.bottom<0||box.top>innerHeight||box.right<0||box.left>innerWidth){hide();return}
+  tip.style.left=Math.max(8,Math.min(box.left+box.width/2-r.width/2,innerWidth-r.width-8))+'px';
+  tip.style.top=Math.max(8,Math.min(box.top-r.height-10>=8?box.top-r.height-10:box.bottom+10,innerHeight-r.height-8))+'px';
+ }
  function show(el){
   if(!el.isConnected)return;
   hide();owner=el;previousDescription=el.getAttribute('aria-describedby');
   tip=document.createElement('div');tip.id='as-button-help';tip.className='as-button-help';tip.setAttribute('role','tooltip');
   tip.textContent=helpFor(el);document.body.appendChild(tip);
   el.setAttribute('aria-describedby',[previousDescription,tip.id].filter(Boolean).join(' '));
-  const box=el.getBoundingClientRect(),r=tip.getBoundingClientRect();
-  tip.style.left=Math.max(8,Math.min(box.left+box.width/2-r.width/2,innerWidth-r.width-8))+'px';
-  tip.style.top=Math.max(8,Math.min(box.top-r.height-10>=8?box.top-r.height-10:box.bottom+10,innerHeight-r.height-8))+'px';
+  place();
  }
  function target(event){const el=event.target.closest?.(selector);return el&&!el.closest('[inert]')?el:null}
  function cancel(){clearTimeout(timer);active=null}
@@ -145,7 +154,7 @@
   }
  },true);
  document.addEventListener('focusout',()=>hide());
- document.addEventListener('scroll',()=>{cancel();hide()},true);
+ document.addEventListener('scroll',()=>{cancel();place()},true);
  window.addEventListener('resize',()=>{cancel();hide()});
  window.addEventListener('blur',()=>{cancel();hide()});
 })();

@@ -2,7 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Luxury Invitation No. 001 · Aurelia &amp; Leonhard — AsProject</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -193,12 +196,22 @@ body{background:var(--bg);color:var(--text);overscroll-behavior:none;font-family
 <body>
   <div id="root"></div>
 
-  <!-- React 18.3.1 UMD produksi via CDN. Artifact aslinya mem-bundle React +
-       ReactDOM + scheduler inline (~45KB minified). Di sini diganti CDN supaya
-       berkas tetap terbaca & bisa dirawat; perilaku render identik. -->
-  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- React 18.3.1 UMD produksi DISIMPAN LOKAL di assets/ (MIT, © Meta/Facebook).
+       Sebelumnya diambil dari unpkg: begitu CDN itu diblokir/lambat, halaman ini
+       gagal total ("React is not defined" → layar kosong). Berkas lokal selalu
+       tersedia di GitHub Pages, jadi demonya tetap tampil tanpa internet CDN. -->
+  <script src="../assets/react.production.min.js"></script>
+  <script src="../assets/react-dom.production.min.js"></script>
   <script>
+/* Bila React gagal dimuat (berkas hilang/diblokir), tampilkan pesan yang jelas
+   alih-alih error "React is not defined" dengan layar putih. */
+if(typeof React==='undefined'||typeof ReactDOM==='undefined'){
+  document.getElementById('root').innerHTML='<div style="padding:32px;text-align:center;font:14px/1.7 Inter,system-ui,sans-serif">'
+   +'<b>Pratinjau tidak bisa dimuat.</b><br>Berkas React lokal (assets/react.production.min.js) tidak ditemukan. '
+   +'Muat ulang halaman ini dari server (bukan file lokal).</div>';
+  throw new Error('React belum termuat');
+}
+
 /* Alias mengikuti nama hasil bundel artifact asli, jadi kode komponen di bawah
    tidak perlu diubah sama sekali dari versi yang kamu buat. */
 const F = React;                 /* React namespace (useState/useEffect/useMemo/…) */

@@ -1198,6 +1198,113 @@ def cek_pesan_wa():
           + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
 
 
+
+# ------------------------------------ 29. kerapian halaman (ikon, bahasa, tanpa CDN)
+def cek_kerapian_halaman():
+    """Hal-hal kecil yang membuat situs terasa "setengah jadi" di mata tamu:
+    ikon tab yang hilang, bahasa halaman salah, dan berkas yang diambil dari
+    CDN pihak ketiga (mati satu CDN → halaman kosong)."""
+    print("\n[29] Kerapian halaman: ikon tab, bahasa, dan berkas lokal")
+    semua = []
+    for rel in sorted(os.listdir(ROOT)):
+        if rel.endswith(".html"):
+            semua.append(rel)
+    for folder in ("demo", "katalog-demo"):
+        for rel in sorted(os.listdir(os.path.join(ROOT, folder))):
+            if rel.endswith(".html"):
+                semua.append(f"{folder}/{rel}")
+    tanpa_ikon, salah_bahasa, cdn, rujukan_hilang = [], [], [], []
+    for rel in semua:
+        html = baca(rel)
+        # Komentar HTML (petunjuk untuk pemilik) tidak pernah dirender browser,
+        # jadi contoh di dalamnya bukan rujukan berkas yang harus ada.
+        html = re.sub(r"<!--.*?-->", "", html, flags=re.S)
+        if "rel=\"icon\"" not in html and "rel='icon'" not in html:
+            tanpa_ikon.append(rel)
+        if not re.search(r'<html[^>]*\blang="id"', html, re.I):
+            salah_bahasa.append(rel)
+        for m in re.finditer(r'<script[^>]*\bsrc="(https?://[^"]+)"', html, re.I):
+            # Supabase JS dari CDN memang disengaja: Publish tetap jalan lewat
+            # fallback REST bila CDN itu diblokir (lihat README alur publish).
+            if "supabase-js" in m.group(1):
+                continue
+            cdn.append(f"{rel} → {m.group(1)}")
+        for m in re.finditer(r'(?:src|href)="((?!#|https?:|mailto:|tel:|data:|//)[^"]+)"', html, re.I):
+            tujuan = m.group(1).split("#")[0].split("?")[0]
+            if not tujuan or "${" in m.group(1):
+                continue        # nilai dinamis dari template JS, bukan berkas tetap
+            dasar = ROOT if tujuan.startswith("/") else os.path.dirname(os.path.join(ROOT, rel))
+            if not os.path.exists(os.path.normpath(os.path.join(dasar, tujuan.lstrip("/")))):
+                rujukan_hilang.append(f"{rel} → {tujuan}")
+    lapor("ok" if not tanpa_ikon else "masalah",
+          f"semua {len(semua)} halaman punya ikon tab (favicon)" if not tanpa_ikon
+          else "halaman tanpa ikon tab: " + ", ".join(tanpa_ikon[:6]))
+    lapor("ok" if not salah_bahasa else "masalah",
+          "semua halaman ber-<html lang=\"id\"> (bahasa Indonesia)" if not salah_bahasa
+          else "bahasa halaman salah: " + ", ".join(salah_bahasa[:6]))
+    lapor("ok" if not cdn else "masalah",
+          "tidak ada skrip pihak ketiga yang bisa mematikan halaman (kecuali Supabase JS yang punya fallback REST)"
+          if not cdn else "skrip CDN yang bisa mematikan halaman: " + " | ".join(cdn[:4]))
+    lapor("ok" if not rujukan_hilang else "masalah",
+          "semua rujukan berkas lokal di seluruh halaman ada di disk"
+          if not rujukan_hilang else "rujukan hilang: " + " | ".join(rujukan_hilang[:4]))
+    for rel in ("assets/favicon.svg", "assets/apple-touch-icon.png",
+                "assets/react.production.min.js", "assets/react-dom.production.min.js"):
+        lapor("ok" if os.path.isfile(os.path.join(ROOT, rel)) else "masalah", f"{rel} tersedia")
+    # Pratinjau tautan (WhatsApp/Facebook) & judul di hasil pencarian.
+    und = baca("undangan.html")
+    idx = baca("index.html")
+    lapor("ok" if ('meta name="description"' in idx and 'property="og:title"' in idx
+                  and 'property="og:image"' in idx) else "masalah",
+          "index.html: judul, keterangan, dan pratinjau tautan (og:image) ada")
+    lapor("ok" if ("ogD.content=EV_KICKER[ev]+' '+fullNm" in und and 'meta name="theme-color"' in und
+                  and "const ogI=document.querySelector('meta[property=\"og:image\"]')" in und) else "masalah",
+          "undangan.html: og:judul/keterangan/foto ikut data undangan (bukan teks bawaan)")
+    seal = baca("katalog-demo/undangan-luxury-seal.html")
+    lapor("ok" if ("../assets/react.production.min.js" in seal
+                  and "../assets/react-dom.production.min.js" in seal
+                  and "typeof React==='undefined'" in seal)
+          else "masalah",
+          "katalog-demo/undangan-luxury-seal.html: React lokal + pesan gagal yang jelas (dulu layar kosong)")
+
+
+# ------------------------------------ 30. nama tamu aman di onclick & daftar hidup
+def cek_nama_tamu_aman():
+    """Nama tamu milik pemilik masuk ke atribut onclick="fn('NAMA')" dan ke daftar
+    tamu. Dua bug nyata (2026-10-16):
+      - esc() saja tidak cukup: parser HTML mengubah &#39; kembali jadi apostrof,
+        sehingga nama seperti O'Brien merusak JavaScript tombol (tombol mati);
+      - daftar tamu tidak ikut berubah saat pemilik mengetik (basi sampai pindah tab)."""
+    print("\n[30] Nama tamu: aman di onclick & daftar ikut berubah saat mengetik")
+    stu = baca("studio.html")
+    lapor("ok" if "function jsEsc(" in stu else "masalah",
+          "studio.html: ada jsEsc() (escape untuk atribut HTML + literal JS)")
+    sisa = re.findall(r"""on(?:click|input|change)="[^"]*\$\{(?:esc|)(?:\(|)([a-z]+\.(?:nama|link|slug|noRek|code))""", stu)
+    lapor("ok" if not sisa else "masalah",
+          "tidak ada lagi nama/link pemilik yang disisipkan ke onclick tanpa jsEsc()"
+          if not sisa else "masih pakai esc() di onclick: " + ", ".join(sorted(set(sisa))[:5]))
+    lapor("ok" if "function refreshTamu()" in stu and "jadwalRefreshTamu()" in stu else "masalah",
+          "studio.html: refreshTamu() + jadwalRefreshTamu() (daftar tamu diperbarui saat mengetik)")
+    bh = baca("assets/button-help.js")
+    lapor("ok" if "function place()" in bh and "addEventListener('scroll',()=>{cancel();place()}" in bh
+          else "masalah",
+          "assets/button-help.js: bantuan tidak lagi terhapus oleh gulir (place(), bukan hide())")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji nama tamu & daftar tamu dilewati")
+        return
+    if subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT).returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji nama tamu & daftar tamu dilewati")
+        return
+    for skrip, label in (("tools/test-pesan-wa.cjs", "nama tamu ber-apostrof & daftar tamu hidup"),
+                         ("tools/test-bantuan-tombol.cjs", "bantuan tombol bertahan saat halaman bergulir")):
+        r = subprocess.run(["node", os.path.join(ROOT, skrip)], capture_output=True, text=True, cwd=ROOT)
+        baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+        gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+        lapor("ok" if r.returncode == 0 else "masalah",
+              f"{skrip}: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200])
+              + ("" if not gagal else " — " + " | ".join(gagal)[:240]))
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -1209,7 +1316,7 @@ def main():
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
                cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
-               cek_mode_link_master):
+               cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
