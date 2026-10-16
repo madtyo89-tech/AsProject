@@ -138,12 +138,111 @@ function draftFor(tpl, idx) {
   let bAll = 0;
   for (const b of borders) { w.eval(`setBorder('${b}')`); if (w.eval(`state.border==='${b}'`)) bAll++; }
   t('studio: tier VIP bisa pakai 32/32 border', bAll === borders.length, bAll + '/' + borders.length);
+  /* Kunci tier border dilepas: ambang eksklusif (>=Rp119rb) dan VIP (>=Rp149rb)
+     tidak terjangkau harga katalog (termahal Rp99rb), sehingga 9 border mustahil
+     dipakai siapa pun. Yang kini dituntut: tema termurah pun bisa memakai
+     semuanya. Catatan: pengujian lama memanggil setBorder('lace') padahal id
+     yang benar 'lace-ivory', jadi "border gratis lolos" itu lolos karena id-nya
+     tidak dikenal, bukan karena memang bebas. */
   w.eval(`state.tpl='${DASAR}';state.border='double'`);
-  w.eval(`setBorder('vip-diamond')`);
-  const blocked1 = w.eval(`state.border==='double'`);
-  w.eval(`setBorder('lace')`);
-  const free1 = w.eval(`state.border==='lace'`);
-  t('studio: tier basic — border VIP terkunci, border gratis lolos', blocked1 && free1);
+  let bDasar = 0;
+  for (const b of borders) { w.eval(`setBorder('${b}')`); if (w.eval(`state.border==='${b}'`)) bDasar++; }
+  t('studio: tier dasar bisa pakai semua border (tidak ada yang terkunci)',
+    bDasar === borders.length, bDasar + '/' + borders.length);
+  w.eval(`state.border='double'`);
+  w.eval(`setBorder('lace-ivory')`);
+  t('studio: border berhias lace-ivory bisa dipilih tema dasar',
+    w.eval(`state.border==='lace-ivory'`), w.eval('state.border'));
+
+  /* ---- bawaan tema: border dan motif ornamen ----
+     Memilih tema harus menerapkan bawaannya, tetapi pemilik tetap bisa menimpa.
+     Tanpa ini semua tema jatuh ke border 'double' dan tidak ada motif sama sekali. */
+  const temaUji = w.eval('TPL.filter(t=>t.border).map(t=>t.id)');
+  /* Test ini menyuntikkan tema sintetis 'uji-vip' ke TPL untuk menguji tier,
+     jadi TPL berisi 25 entri. Tema sintetis itu tidak punya border/orn bawaan
+     dan memang tidak boleh ikut dihitung. */
+  t('studio: 24 tema katalog punya border bawaan', temaUji.length === 24, temaUji.length + ' tema');
+  let bBawaan = 0, oBawaan = 0, pBawaan = 0, gagalBorder = [], gagalOrn = [], gagalPat = [];
+  for (const id of temaUji) {
+    w.eval(`state.border='';state.orn='';state.pat='';pickTpl('${id}')`);
+    if (w.eval(`tplById('${id}').border===state.border`)) bBawaan++; else gagalBorder.push(id);
+    if (w.eval(`(tplById('${id}').orn||'')===state.orn`)) oBawaan++; else gagalOrn.push(id);
+    if (w.eval(`(tplById('${id}').pat||'')===state.pat`)) pBawaan++; else gagalPat.push(id);
+  }
+  t('studio: memilih tema menerapkan border bawaannya (24/24)',
+    bBawaan === temaUji.length, bBawaan + '/' + temaUji.length + ' gagal: ' + gagalBorder.join(','));
+  t('studio: memilih tema menerapkan motif ornamen bawaannya (24/24)',
+    oBawaan === temaUji.length, oBawaan + '/' + temaUji.length + ' gagal: ' + gagalOrn.join(','));
+  t('studio: memilih tema menerapkan pola latar bawaannya (24/24)',
+    pBawaan === temaUji.length, pBawaan + '/' + temaUji.length + ' gagal: ' + gagalPat.join(','));
+
+  /* pemilik menimpa, dan id asing ditolak menjadi "ikut tema" */
+  w.eval(`pickTpl('${temaUji[0]}');setOrn('mahkota')`);
+  t('studio: setOrn menyimpan pilihan pemilik', w.eval(`state.orn==='mahkota'`), w.eval('state.orn'));
+  w.eval(`setOrn('tidak-ada-di-registry')`);
+  t('studio: setOrn menolak id tak dikenal menjadi kosong (ikut tema)',
+    w.eval(`state.orn===''`), w.eval('state.orn'));
+  w.eval(`pickTpl('${temaUji[0]}');setPat('damask')`);
+  t('studio: setPat menyimpan pilihan pemilik', w.eval(`state.pat==='damask'`), w.eval('state.pat'));
+  w.eval(`setPat('tidak-ada-di-registry')`);
+  t('studio: setPat menolak id tak dikenal menjadi kosong (ikut tema)',
+    w.eval(`state.pat===''`), w.eval('state.pat'));
+
+  /* design milik template kustom harus menang atas bawaan tema */
+  w.eval(`state.orn='';state.border='double';state.pat=''`);
+  w.eval(`applyTplToState({id:'__uji__',nama:'uji',ev:'all',border:'thin',orn:'bulan',pat:'ombak',design:{border:'onyx-inlay',orn:'pita',pat:'marmer'}})`);
+  t('studio: design template kustom menimpa bawaan tema',
+    w.eval(`state.border==='onyx-inlay'&&state.orn==='pita'&&state.pat==='marmer'`),
+    w.eval(`state.border+'/'+state.orn+'/'+state.pat`));
+  w.eval(`pickTpl('${temaUji[0]}')`);
+
+  /* ---- cakupan border bawaan ---- */
+  const GAYA = w.eval('Object.keys(BINGKAI_GAYA)');
+  const dipakai = w.eval('TPL.filter(t=>t.border).map(t=>t.border)');
+  const idBorder = w.eval('BORDERS.map(b=>b.id)');
+  t('studio: semua border bawaan tema adalah id yang sah',
+    dipakai.every((b) => idBorder.includes(b)),
+    dipakai.filter((b) => !idBorder.includes(b)).join(','));
+  t('studio: ke-12 border berhias jadi bawaan setidaknya satu tema',
+    GAYA.every((g) => dipakai.includes(g)),
+    GAYA.filter((g) => !dipakai.includes(g)).join(','));
+
+  /* ---- picker ornamen benar-benar terender ---- */
+  /* render() keluar lebih awal ke welcomeView()/readyView() bila state.started
+     belum nyala, _welcome masih true, atau stage-nya 'ready'. Ketiga-tiganya
+     harus dibereskan dulu supaya panel tabDesain() benar-benar terender. */
+  w.eval(`state.started=true;_welcome=false;state.stage='editor';state.page='editor';state.tab='desain';render()`);
+  /* Dihitung dari #root, BUKAN document.body: studio.html punya <script> inline
+     di dalam body, sehingga teks sumbernya (definisi setOrn dan template picker)
+     ikut terhitung dan menggandakan jumlah tombol. */
+  const htmlDesain = w.eval("document.getElementById('root').innerHTML");
+  const nMotif = w.eval('Object.keys(ORN_NAMA).length');
+  const nTombol = (htmlDesain.match(/setOrn\(/g) || []).length;
+  t(`studio: picker ornamen merender ${nMotif} motif + 1 pilihan "ikut tema"`,
+    nTombol === nMotif + 1, nTombol + ' tombol');
+  t('studio: picker menampilkan pratinjau SVG tiap motif',
+    (htmlDesain.match(/class="ornpick"/g) || []).length === nMotif,
+    (htmlDesain.match(/class="ornpick"/g) || []).length + ' pratinjau');
+  const nPola = w.eval('POLA_IDS.length');
+  const nTombolPat = (htmlDesain.match(/setPat\(/g) || []).length;
+  t(`studio: picker pola latar merender ${nPola} motif + 1 pilihan "ikut tema"`,
+    nTombolPat === nPola + 1, nTombolPat + ' tombol');
+  t('studio: picker pola menampilkan pratinjau background tiap motif',
+    (htmlDesain.match(/Pola Latar/g) || []).length >= 1 &&
+    (htmlDesain.match(/background:#fff;background-image:/g) || []).length === nPola,
+    (htmlDesain.match(/background:#fff;background-image:/g) || []).length + ' pratinjau');
+  t('studio: label pola menyebut jumlah yang benar',
+    htmlDesain.includes('Pola Latar (' + nPola + ' motif)'), 'seharusnya ' + nPola + ' motif');
+  const nBuka = (htmlDesain.match(/setAnim\('buka','/g) || []).length;
+  t('studio: picker gaya membuka merender 20 pilihan', nBuka === 20, nBuka + ' tombol');
+  w.eval(`setAnim('buka','pintu')`);
+  t('studio: setAnim buka menyimpan pilihan pemilik', w.eval(`state.anim.buka==='pintu'`), w.eval('state.anim.buka'));
+  w.eval(`setAnim('buka','palsu')`);
+  t('studio: id gaya buka asing tetap jatuh ke gaya sah', w.eval(`FX_BUKA.some(f=>f[0]===fxBukaId())`), w.eval('state.anim.buka'));
+  w.eval(`setAnim('buka','gilir')`);
+  t('studio: label border menyebut jumlah yang benar (bukan 20 yang lama)',
+    htmlDesain.includes('Border Undangan (' + idBorder.length + ' jenis)'),
+    'seharusnya ' + idBorder.length + ' jenis');
 
   /* font: semua 17 di VIP; font eks terkunci di basic */
   const fonts = w.eval('FONTS.map(f=>f.id)');

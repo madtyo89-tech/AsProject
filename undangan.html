@@ -245,6 +245,9 @@ body.opened #content{opacity:1}
 .card{background:var(--card);border:1px solid #f0e6d6;border-radius:22px;padding:28px 22px;text-align:center;box-shadow:0 16px 40px rgba(90,70,30,.07);margin-bottom:18px}
 .kicker{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--accent-body);opacity:.9}
 .divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:16px 0;color:var(--gold)}
+.divider svg{flex:0 0 auto;max-width:60%}
+.orn-motif{display:flex;justify-content:center}
+.orn-motif svg{max-width:150px;height:auto}
 .divider::before,.divider::after{content:"";height:1px;width:56px;background:linear-gradient(90deg,transparent,#e2cf9f)}
 .divider::after{background:linear-gradient(90deg,#e2cf9f,transparent)}
 h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body);line-height:1.15}
@@ -546,9 +549,24 @@ body:not(.opened) #aspAmbient{opacity:.42}
 #cover .bdfr,.card.guest{position:relative}
 /* Bunga 3D/4D: tiga lapis kelopak + bayangan lembut → kesan kedalaman */
 .orn-c.orn-bunga3d,.orn-c.orn-bunga4d{width:106px;height:106px;opacity:.9}
-.orn-c.orn-bunga3d svg,.orn-c.orn-bunga4d svg{filter:drop-shadow(0 3px 5px rgba(60,40,10,.28)) drop-shadow(0 1px 0 rgba(255,255,255,.32))}
+.orn-c svg{filter:drop-shadow(1px 1.2px 0 rgba(255,255,255,.6)) drop-shadow(-1px -1.1px 0 rgba(43,28,8,.34)) drop-shadow(0 3px 5px rgba(60,40,10,.22))}
+.orn-c.orn-deco,.orn-c.orn-filigree,.orn-c.orn-girih,.orn-c.orn-damask,.orn-c.orn-mendung{width:92px;height:92px;opacity:.92}
 .orn-c .orn-l{transform-box:fill-box;transform-origin:50% 50%}
-@media (max-width:420px){.orn-c{width:54px;height:54px}.orn-c.orn-bunga3d,.orn-c.orn-bunga4d{width:78px;height:78px}}
+@media (max-width:420px){.orn-c{width:54px;height:54px}.orn-c.orn-bunga3d,.orn-c.orn-bunga4d{width:78px;height:78px}.orn-c.orn-deco,.orn-c.orn-filigree,.orn-c.orn-girih,.orn-c.orn-damask,.orn-c.orn-mendung{width:64px;height:64px}}
+
+/* ---------- BINGKAI LAYAR: ornamen sudut menempel di pojok viewport ----------
+   Lapisan fixed di atas isi tetapi di bawah popup/scrim. Tidak menangkap
+   sentuhan sama sekali, dan hanya muncul setelah undangan dibuka supaya
+   sampul tidak berhias dobel. Bayangan dibuat bertingkat (emboss + bayangan
+   ambien dalam) supaya ornamen terasa melayang nyata di atas halaman. */
+.scr-frame{position:fixed;inset:0;pointer-events:none;z-index:150;opacity:0;visibility:hidden;transition:opacity .7s ease,visibility .7s}
+body.opened .scr-frame{opacity:1;visibility:visible}
+.scr-frame .orn-c{top:8px;left:8px;right:auto;bottom:auto;width:clamp(58px,15vw,92px);height:clamp(58px,15vw,92px);opacity:.95;color:var(--accent-body)}
+.scr-frame .orn-c.tr{top:8px;right:8px;left:auto}
+.scr-frame .orn-c.bl{top:auto;bottom:8px;left:8px;right:auto}
+.scr-frame .orn-c.br{top:auto;bottom:8px;right:8px;left:auto}
+.scr-frame .orn-c svg{filter:drop-shadow(1px 1.2px 0 rgba(255,255,255,.6)) drop-shadow(-1px -1.1px 0 rgba(43,28,8,.34)) drop-shadow(0 2px 2px rgba(40,26,6,.3)) drop-shadow(0 7px 12px rgba(40,26,6,.26)) drop-shadow(0 16px 26px rgba(40,26,6,.16))}
+@media print{.scr-frame{display:none!important}}
 /* 4D: tiap sudut berayun pelan berbeda fase, lapisan kelopak melayang berbeda arah */
 body.orn-bunga4d .orn-c{animation:ornAyun 7s ease-in-out infinite}
 body.orn-bunga4d .orn-c.tr{animation-delay:-1.6s}
@@ -612,6 +630,140 @@ body.buka-balik.opened #cover{transform-origin:100% 50%;transform:perspective(13
 body.buka-menyusut.opened #cover{transform-origin:50% 50%;transform:scale(.8)}
 body.buka-miring.opened #cover{transform:rotate(-6deg) translate(-58%,16%)}
 body.buka-tirai.opened #cover{transform-origin:50% 50%;transform:scaleX(.68)}
+
+/* ---------- GAYA BUKA BARU: sampul buku / daun pintu / kotak kado ----------
+   Memperluas sistem FX_BUKA yang sudah ada. Panel .bkl (kiri/kanan) dan .bkt
+   (atas/bawah) memakai gradasi yang sama dengan cover lalu beranimasi saat
+   dibuka: dua daun pintu berayun dari tengah, tutup kotak kado terangkat
+   disertai letupan kelip, dan sampul buku membalik dari tepi kiri sampai
+   punggungnya menghilang (backface-visibility). */
+#cover .bkl{position:absolute;top:0;bottom:0;width:50.6%;display:none;opacity:0;pointer-events:none;background-image:var(--bukaImg,none),linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:200% 100%,200% 100%;background-repeat:no-repeat,no-repeat;backface-visibility:hidden}
+#cover .bkl.l{left:0;background-position:0 0;transform-origin:left center}
+#cover .bkl.r{right:0;background-position:100% 0;transform-origin:right center}
+#cover .bkt{position:absolute;left:0;right:0;height:50.6%;display:none;opacity:0;pointer-events:none;background-image:var(--bukaImg,none),linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:100% 200%,100% 200%;background-repeat:no-repeat,no-repeat;backface-visibility:hidden}
+#cover .bkt.t{top:0;background-position:0 0;transform-origin:center top}
+#cover .bkt.b{bottom:0;background-position:0 100%;transform-origin:center bottom}
+.kt-burst{display:none;position:absolute;left:50%;top:44%;width:0;height:0;pointer-events:none}
+.kt-burst i{position:absolute;left:0;top:0;width:11px;height:11px;background:var(--gold,#d4af37);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);opacity:0}
+body.buka-pintu #cover .bkl{display:block}
+body.buka-kotak #cover .bkt,body.buka-kotak .kt-burst{display:block}
+body.buka-pintu #cover{perspective:1200px;transform-style:preserve-3d}
+body.buka-buku.opened #cover{opacity:1;visibility:visible;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-158deg);backface-visibility:hidden;transition:transform 1.05s cubic-bezier(.62,.05,.3,1),visibility 0s 1.12s}
+body.buka-pintu.opened #cover .bdfr,body.buka-kotak.opened #cover .bdfr,body.buka-pintu.opened #cover .pat,body.buka-kotak.opened #cover .pat,body.buka-pintu.opened #cover .veil,body.buka-kotak.opened #cover .veil{opacity:0;transition:opacity .25s ease}
+body.buka-pintu.opened #cover,body.buka-kotak.opened #cover{opacity:1;visibility:visible;pointer-events:none;transition:visibility 0s 1.25s}
+body.buka-pintu.opened #cover .bkl.l{animation:pintuL .95s cubic-bezier(.55,.06,.28,.99) .1s both}
+body.buka-pintu.opened #cover .bkl.r{animation:pintuR .95s cubic-bezier(.55,.06,.28,.99) .1s both}
+body.buka-kotak.opened #cover .bkt.t{animation:kotakT 1.05s cubic-bezier(.5,.08,.3,1) .05s both}
+body.buka-kotak.opened #cover .bkt.b{animation:kotakB 1.05s ease-in .32s both}
+body.buka-kotak.opened .kt-burst i{animation:ktTerbang 1.15s ease-out .5s both}
+@keyframes pintuL{0%{opacity:1;transform:rotateY(0)}100%{opacity:1;transform:rotateY(-102deg)}}
+@keyframes pintuR{0%{opacity:1;transform:rotateY(0)}100%{opacity:1;transform:rotateY(102deg)}}
+@keyframes kotakT{0%{opacity:1;transform:rotateX(0)}55%{opacity:1;transform:rotateX(-116deg)}100%{opacity:0;transform:rotateX(-116deg) translateY(-8%)}}
+@keyframes kotakB{0%{opacity:1;transform:translateY(0)}70%{opacity:1}100%{opacity:0;transform:translateY(16%)}}
+@keyframes ktTerbang{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}18%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(160deg)}}
+
+/* Reveal elegan bingkai layar: tiap sudut tersibak dari pojok layarnya lewat
+   clip-path (bukan transform, supaya mirror .orn-c tetap utuh), berjenjang
+   dari kiri-atas, lalu ornamen "bernapas" pelan tanpa henti. */
+.scr-frame .orn-c{clip-path:inset(0 100% 100% 0);transition:clip-path 1.1s cubic-bezier(.22,.85,.25,1),opacity .9s ease}
+.scr-frame .orn-c.tr{transition-delay:.25s,.25s}
+.scr-frame .orn-c.bl{transition-delay:.45s,.45s}
+.scr-frame .orn-c.br{transition-delay:.65s,.65s}
+body.opened .scr-frame .orn-c{clip-path:inset(0 0 0 0)}
+@keyframes scrNapas{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.78}}
+body.opened .scr-frame .orn-c svg{animation:scrNapas 7.5s ease-in-out 1.7s infinite}
+body.opened .scr-frame .orn-c.tr svg{animation-delay:2s}
+body.opened .scr-frame .orn-c.bl svg{animation-delay:2.3s}
+body.opened .scr-frame .orn-c.br svg{animation-delay:2.6s}
+@media (prefers-reduced-motion:reduce){
+ .scr-frame .orn-c{transition:none!important}
+ body.opened .scr-frame .orn-c svg{animation:none!important}
+ #cover .bkl,#cover .bkt,.kt-burst i{animation:none!important;opacity:0!important}
+ body.buka-buku.opened #cover,body.buka-pintu.opened #cover,body.buka-kotak.opened #cover{opacity:0;visibility:hidden;transform:none;transition:opacity .3s ease,visibility 0s .3s}
+}
+
+/* ---------- SKIN BUKA TAMBAHAN: struktur beda-beda, full layar, sadar foto ----------
+   iris   : cover tersibak diagonal lewat clip-path polygon (tanpa panel).
+   lubang : cover tersedot mengecil ke tengah lewat clip-path circle.
+   blinds : empat lajur horizontal meluncur berselang-seling (multi-panel).
+   jungkit: cover terjungkit ke belakang seperti drawbridge (rotateX bawah).
+   Semua panel/lajur memakai --bukaImg bila cover berfoto penuh, sehingga
+   potongan foto ikut tersibak dan efeknya tetap full layar & menyatu. */
+#cover .bld{position:absolute;left:0;right:0;height:25.6%;display:none;opacity:0;pointer-events:none;background-image:var(--bukaImg,none),linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:100% 400%,100% 400%;background-repeat:no-repeat,no-repeat;backface-visibility:hidden}
+#cover .bld.b1{top:0;background-position:0 0,0 0}
+#cover .bld.b2{top:25%;background-position:0 33.33%,0 33.33%}
+#cover .bld.b3{top:50%;background-position:0 66.66%,0 66.66%}
+#cover .bld.b4{top:75%;background-position:0 100%,0 100%}
+body.buka-blinds #cover .bld{display:block}
+body.buka-iris #cover{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+body.buka-lubang #cover{clip-path:circle(150% at 50% 50%)}
+body.buka-blinds.opened #cover .bdfr,body.buka-blinds.opened #cover .pat,body.buka-blinds.opened #cover .veil{opacity:0;transition:opacity .25s ease}
+body.buka-pintu.opened #cover .cvlatar,body.buka-kotak.opened #cover .cvlatar,body.buka-blinds.opened #cover .cvlatar{opacity:0;transition:opacity .25s ease}
+body.buka-blinds.opened #cover,body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover{opacity:1;visibility:visible;pointer-events:none;transition:visibility 0s 1.15s}
+body.buka-blinds.opened #cover .bld.b1{animation:blindsL .8s cubic-bezier(.65,.05,.3,.95) .05s both}
+body.buka-blinds.opened #cover .bld.b2{animation:blindsR .8s cubic-bezier(.65,.05,.3,.95) .15s both}
+body.buka-blinds.opened #cover .bld.b3{animation:blindsL .8s cubic-bezier(.65,.05,.3,.95) .25s both}
+body.buka-blinds.opened #cover .bld.b4{animation:blindsR .8s cubic-bezier(.65,.05,.3,.95) .35s both}
+body.buka-iris.opened #cover{clip-path:polygon(0 0,0 0,0 0,0 0);transition:clip-path 1s cubic-bezier(.7,.05,.3,1),visibility 0s 1.05s}
+body.buka-lubang.opened #cover{clip-path:circle(0% at 50% 50%);transition:clip-path .95s cubic-bezier(.6,.05,.3,1),visibility 0s 1s}
+body.buka-jungkit.opened #cover{transform-origin:50% 100%;transform:perspective(1200px) rotateX(94deg);transition:transform .95s cubic-bezier(.55,.08,.3,1),visibility 0s 1s}
+@keyframes blindsL{0%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(-102%)}}
+@keyframes blindsR{0%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(102%)}}
+@media (prefers-reduced-motion:reduce){
+ #cover .bld{animation:none!important;opacity:0!important}
+ body.buka-iris #cover,body.buka-lubang #cover{clip-path:none}
+ body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover,body.buka-blinds.opened #cover{opacity:0;visibility:hidden;transform:none;clip-path:none;transition:opacity .3s ease,visibility 0s .3s}
+}
+
+/* ---------- #7 PAKET "LEBIH HIDUP": micro-interaction halus ---------- */
+:where(button):active{transform:scale(.965)}
+.scroll-reveal .divider svg path,.scroll-reveal .footer .orn svg path{stroke-dasharray:520;stroke-dashoffset:520}
+.scroll-reveal.sr-in .divider svg path,.scroll-reveal.sr-in .footer .orn svg path{animation:ornGambar 1.5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes ornGambar{to{stroke-dashoffset:0}}
+.cdw-mini .n,.cdw .n{display:inline-block;transform-origin:50% 60%}
+.cd-tick{animation:cdPop .45s cubic-bezier(.3,1.4,.4,1)}
+@keyframes cdPop{0%{transform:scale(1.28);opacity:.55}100%{transform:scale(1);opacity:1}}
+#musikBtn .disc{animation-play-state:paused}
+body.musik-on #musikBtn .disc{animation-play-state:running}
+body.musik-on #musikBtn::after{content:'';position:absolute;inset:-4px;border-radius:99px;border:2px solid var(--gold,#d4af37);opacity:.5;pointer-events:none;animation:ringNada 1.8s ease-out infinite}
+@keyframes ringNada{0%{transform:scale(.9);opacity:.55}100%{transform:scale(1.28);opacity:0}}
+.gal-grid img{transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.gal-grid img:hover{transform:scale(1.05)}
+.gal-grid img:active{transform:scale(.98)}
+.nv-dots i.on{animation:dotNadi 2.2s ease-in-out infinite}
+@keyframes dotNadi{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.75}}
+
+/* ---------- #5 SKELETON COVER PER MODEL ----------
+   split   : dua kolom (foto/monogram di samping teks) saat layar lega,
+             bertumpuk rapi saat sempit -- bukan kartu tengah lagi.
+   segel   : tanggal jadi perangko miring di sudut, ornamen jadi segel besar.
+   jendela : foto jadi jendela lengkung di atas, teks masuk pita berlatar. */
+.cvsplit{display:grid;gap:14px}
+.cvsplit .cvsp-a{display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center}
+.cvsplit .cvsp-a .cvf{width:100%;max-width:260px}
+@media (min-width:640px){
+ .cvsplit{grid-template-columns:42% 1fr;align-items:center;column-gap:22px}
+ .cvsplit .cvsp-b{text-align:left}
+ .cvsplit .cvsp-b h1{margin-left:0;margin-right:0}
+ .cvsplit .cvsp-a .cvf{max-width:none;height:100%;min-height:260px}
+}
+.cv-segel{position:relative}
+.cv-segel>.orn{font-size:26px;letter-spacing:10px}
+.cv-segel .cvstamp{position:absolute;top:-4px;right:-2px;transform:rotate(8deg);border:2px dashed var(--accent-cover);border-radius:8px;padding:6px 9px;text-align:center;opacity:.92;background:color-mix(in srgb,#fff 55%,transparent)}
+.cv-segel .cvstamp .std-label{margin-top:2px}
+.cv-jendela .cvf{border-radius:220px 220px 18px 18px/48% 48% 18px 18px;overflow:hidden}
+.cv-jendela .cvband{margin-top:12px;padding:14px 12px 10px;border-radius:16px;background:color-mix(in srgb,var(--card,#fff) 78%,transparent);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+@media (prefers-reduced-motion:reduce){
+ :where(button):active{transform:none}
+ .scroll-reveal .divider svg path,.scroll-reveal .footer .orn svg path{stroke-dashoffset:0;animation:none}
+ .cd-tick{animation:none}
+ body.musik-on #musikBtn::after{animation:none;opacity:0}
+ .gal-grid img:hover,.gal-grid img:active{transform:none}
+ .nv-dots i.on{animation:none}
+}
+
+
+
 body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:perspective(720px) rotateX(-168deg)}
 body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after{transform:translate(-50%,8%) scale(.5);opacity:0}
 body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,4%) scale(.5);opacity:0}
@@ -893,6 +1045,185 @@ body.btnopen-mutiara #cover .open{border-radius:99px;background:linear-gradient(
 body.btnopen-royal #cover .open{border-radius:8px;background:linear-gradient(150deg,#1E3A30,#0E241B);color:#EAD9A4;border:1px solid #C9A95C;box-shadow:0 16px 34px rgba(8,25,18,.42);letter-spacing:.12em;text-transform:uppercase;font-size:12.5px}
 body.btnopen-minimal #cover .open{border-radius:0;background:transparent;color:var(--btn-ink);border:0;border-bottom:2px solid var(--accent-cover,var(--accent));box-shadow:none;min-width:0;height:auto;padding:10px 6px;letter-spacing:.2em;text-transform:uppercase;font-size:12px;animation:none}
 @media (prefers-reduced-motion:reduce){body:not(.btnopen-amplop) #cover .open{animation:none}}
+
+/* ==========================================================================
+   KERANGKA LAYOUT — 9 shell + 6 bagian eksklusif (2026-10-15)
+   Dipasang lewat kelas body `lay-<shell>` oleh layoutOf(tplF) dan pembungkus
+   `.lay-slot.lay-slot-<kunci>` oleh susunBagian(). Preset `klasik` sengaja
+   TIDAK punya aturan di sini: output-nya harus tetap persis seperti lama.
+
+   Aturan main yang dipegang semua shell:
+   - latar .card tetap TERANG. Banyak warna teks di liveSlides() di-hardcode
+     (#57503f, #4a4436, #8a7f72, ...) sehingga kartu gelap akan membuat teks
+     tak terbaca. Yang didramatisir adalah ruang ANTAR bagian, bukan kartunya.
+   - mobile-first. Lebar dasar .wrap 470px; shell yang butuh kolom lebih
+     (split) baru melebar di >=900px.
+   - tidak mengubah #cover: kerangka cover tetap diatur tema + CVL + arch.
+   ========================================================================== */
+
+/* ---------- bagian eksklusif: bentuk dasarnya (semua shell) ---------- */
+.lay-slot{position:relative}
+.lay-navdot{position:fixed;right:8px;top:50%;transform:translateY(-50%);z-index:40;
+  display:flex;flex-direction:column;gap:9px;padding:9px 6px;border-radius:99px;
+  background:color-mix(in srgb,var(--g1) 72%,#fff);border:1px solid color-mix(in srgb,var(--accent) 22%,#fff);
+  box-shadow:0 8px 22px rgba(60,45,20,.16);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
+.lay-navdot a{display:block;width:9px;height:9px;padding:0;text-decoration:none}
+.lay-navdot a i{display:block;width:9px;height:9px;border-radius:99px;
+  background:color-mix(in srgb,var(--accent) 34%,#fff);transition:transform .25s,background .25s}
+.lay-navdot a:hover i,.lay-navdot a:focus-visible i{transform:scale(1.55);background:var(--accent-body)}
+.lay-bab{display:block;font-family:var(--ft);font-size:12px;letter-spacing:.34em;color:var(--accent-body);
+  opacity:.75;text-align:center;margin:0 0 -6px}
+.lay-kutip{margin:6px 0 20px;padding:26px 20px;text-align:center;position:relative;
+  border-top:1px solid color-mix(in srgb,var(--accent) 30%,#fff);
+  border-bottom:1px solid color-mix(in srgb,var(--accent) 30%,#fff);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--g0) 55%,#fff),transparent)}
+.lay-kutip-t{display:block;font-size:38px;line-height:.6;color:var(--accent);opacity:.4}
+.lay-kutip p{margin:12px 0 0;font-family:Georgia,serif;font-style:italic;font-size:14.5px;
+  line-height:1.85;color:#4a4436}
+.lay-kutip cite{display:block;margin-top:10px;font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;font-style:normal;color:#9a8f82}
+.lay-hero{margin:4px -20px 20px;position:relative;overflow:hidden;background:#141009}
+.lay-hero img{display:block;width:100%;height:clamp(150px,42vw,240px);object-fit:cover;opacity:.92}
+.lay-hero figcaption{position:absolute;right:12px;bottom:10px;padding:4px 11px;border-radius:99px;
+  background:rgba(12,10,7,.62);color:#ffe9b8;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  -webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+.lay-strip .gal-grid{display:flex;grid-template-columns:none;gap:12px;overflow-x:auto;
+  scroll-snap-type:x mandatory;padding-bottom:10px;-webkit-overflow-scrolling:touch}
+.lay-strip .gal-cell{flex:0 0 76%;grid-column:auto;grid-row:auto;scroll-snap-align:center}
+.lay-strip .gal-hint::after{content:" · geser mendatar"}
+.lay-flip .cdw .u{background:#171208;border-radius:9px;padding:9px 4px 7px;
+  box-shadow:inset 0 1px 0 rgba(255,235,190,.16),0 6px 16px rgba(20,14,4,.28);position:relative;overflow:hidden}
+.lay-flip .cdw .u::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;
+  background:rgba(0,0,0,.55);box-shadow:0 1px 0 rgba(255,235,190,.12)}
+.lay-flip .cdw .n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;
+  color:#ffe9b8;text-shadow:0 1px 0 rgba(0,0,0,.6)}
+.lay-flip .cdw .l{color:#c9b48c}
+
+/* ---------- SHELL 1: editorial — majalah, tanpa kotak kartu ---------- */
+body.lay-editorial .wrap{max-width:600px;padding:40px 24px 90px;background:none}
+body.lay-editorial .lay-slot{margin-bottom:34px;counter-increment:ed}
+body.lay-editorial .lay-slot::before{content:"§ " counter(ed,decimal-leading-zero);
+  display:block;font-size:10px;letter-spacing:.3em;color:var(--accent);opacity:.65;margin-bottom:9px}
+body.lay-editorial .card{background:none;border:0;border-top:1px solid color-mix(in srgb,var(--accent) 26%,#fff);
+  border-radius:0;padding:20px 0 0;text-align:left;box-shadow:none;margin-bottom:0}
+body.lay-editorial .kicker{font-size:11px;letter-spacing:.34em;text-align:left}
+body.lay-editorial .lay-kutip,body.lay-editorial .lay-hero{margin-left:0;margin-right:0}
+body.lay-editorial .lay-bab{text-align:left}
+
+/* ---------- SHELL 2: bab — pembatas gelap + angka romawi ---------- */
+body.lay-bab .wrap{padding:0 0 90px;background:
+  linear-gradient(180deg,var(--g0),var(--g1) 45%,var(--g2))}
+body.lay-bab .lay-slot{padding:30px 20px 6px;position:relative}
+body.lay-bab .lay-slot+.lay-slot::before{content:"";position:absolute;left:50%;top:0;
+  width:min(470px,88%);height:1px;transform:translateX(-50%);
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 45%,#fff),transparent)}
+body.lay-bab .lay-bab{display:flex;align-items:center;justify-content:center;gap:12px;
+  margin:0 0 18px;font-size:11px;letter-spacing:.4em}
+body.lay-bab .lay-bab::before,body.lay-bab .lay-bab::after{content:"";height:1px;width:44px;
+  background:color-mix(in srgb,var(--accent) 40%,#fff)}
+body.lay-bab .card{border-radius:8px;border-top:3px solid var(--accent);margin-bottom:0}
+body.lay-bab .kicker{letter-spacing:.36em}
+
+/* ---------- SHELL 3: split — rail lengket + kolom konten (desktop) ---------- */
+@media(min-width:900px){
+ body.lay-split .wrap{max-width:980px;display:grid;grid-template-columns:190px minmax(0,1fr);
+   gap:30px;align-items:start;padding:44px 26px 90px}
+ body.lay-split .lay-navdot{position:sticky;right:auto;top:44px;transform:none;
+   grid-column:1;grid-row:1/span 99;flex-direction:column;align-items:flex-start;
+   gap:11px;padding:16px 14px;border-radius:18px;background:color-mix(in srgb,var(--g0) 80%,#fff)}
+ body.lay-split .lay-navdot a{display:flex;align-items:center;gap:9px;width:auto}
+ body.lay-split .lay-navdot a::after{content:attr(data-ke);font-size:9.5px;letter-spacing:.14em;
+   text-transform:uppercase;color:var(--ink-body);opacity:.62}
+ body.lay-split .lay-slot{grid-column:2}
+ body.lay-split .card{text-align:left}
+ body.lay-split .lay-hero{margin-left:0;margin-right:0;border-radius:18px}
+}
+body.lay-split .card{border-radius:16px;border-left:3px solid var(--accent)}
+
+/* ---------- SHELL 4: zigzag — panel selang-seling saling tumpang ---------- */
+body.lay-zigzag .wrap{padding:34px 14px 90px}
+body.lay-zigzag .lay-slot{margin-bottom:-8px}
+body.lay-zigzag .lay-slot:nth-of-type(odd){transform:rotate(-.5deg);margin-right:12px}
+body.lay-zigzag .lay-slot:nth-of-type(even){transform:rotate(.5deg);margin-left:12px}
+body.lay-zigzag .card{border-radius:26px 8px 26px 8px;
+  box-shadow:0 20px 44px rgba(80,60,25,.15);border-width:1px}
+body.lay-zigzag .lay-slot:nth-of-type(even) .card{border-radius:8px 26px 8px 26px}
+body.lay-zigzag .lay-kutip,body.lay-zigzag .lay-hero{transform:none}
+
+/* ---------- SHELL 5: kaca — panel kaca mengambang, lebar beragam ---------- */
+body.lay-kaca .wrap{padding:34px 18px 90px;background:
+  radial-gradient(90% 60% at 12% 0%,color-mix(in srgb,var(--g0) 88%,#fff),transparent 62%),
+  radial-gradient(80% 60% at 92% 34%,color-mix(in srgb,var(--g2) 78%,#fff),transparent 60%),
+  radial-gradient(90% 70% at 50% 100%,color-mix(in srgb,var(--g1) 84%,#fff),transparent 62%),var(--g0)}
+body.lay-kaca .card{background:color-mix(in srgb,#fff 62%,transparent);
+  border:1px solid color-mix(in srgb,#fff 78%,transparent);border-radius:24px;
+  -webkit-backdrop-filter:blur(13px) saturate(1.25);backdrop-filter:blur(13px) saturate(1.25);
+  box-shadow:0 18px 44px rgba(70,55,25,.13),inset 0 1px 0 rgba(255,255,255,.75)}
+body.lay-kaca .lay-slot:nth-of-type(3n){max-width:93%;margin-left:auto;margin-right:auto}
+body.lay-kaca .lay-slot:nth-of-type(4n+1){max-width:97%}
+
+/* ---------- SHELL 6: poster — tiap bagian setinggi layar, snap ---------- */
+html:has(body.lay-poster){scroll-snap-type:y proximity}
+body.lay-poster .wrap{max-width:none;padding:0 0 0;background:var(--g0)}
+body.lay-poster .lay-slot{min-height:96svh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;padding:44px 20px;scroll-snap-align:start;
+  border-bottom:1px solid color-mix(in srgb,var(--accent) 16%,#fff)}
+body.lay-poster .card{width:min(470px,100%);max-width:100%;border-radius:28px;
+  padding:34px 24px;box-shadow:0 26px 60px rgba(70,50,20,.16);margin-bottom:0}
+body.lay-poster .kicker{font-size:11px;letter-spacing:.4em}
+body.lay-poster .lay-hero{width:100%;margin:0 0 22px}
+body.lay-poster .lay-hero img{height:clamp(180px,52vw,300px)}
+body.lay-poster .lay-navdot{right:6px;gap:7px}
+body.lay-poster .lay-navdot a i{width:7px;height:7px}
+
+/* ---------- SHELL 7: arsip — kertas bergaris, label cap, metadata mono ---------- */
+body.lay-arsip .wrap{padding:34px 18px 90px;background-color:var(--g0);background-image:
+  repeating-linear-gradient(180deg,transparent 0 27px,color-mix(in srgb,var(--accent) 9%,transparent) 27px 28px)}
+body.lay-arsip .card{border-radius:3px;border:1px double color-mix(in srgb,var(--accent) 46%,#fff);
+  box-shadow:3px 3px 0 color-mix(in srgb,var(--accent) 15%,transparent);padding:24px 20px}
+body.lay-arsip .kicker{display:inline-block;padding:4px 11px;border:1.5px solid var(--accent-body);
+  border-radius:3px;transform:rotate(-1.4deg);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.22em;font-size:9.5px;color:var(--accent-body);opacity:1;
+  background:color-mix(in srgb,#fff 60%,transparent)}
+body.lay-arsip .tgl,body.lay-arsip .jam,body.lay-arsip .no,
+body.lay-arsip .cdw .n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+body.lay-arsip .lay-bab{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.3em}
+body.lay-arsip .lay-navdot{border-radius:3px}
+body.lay-arsip .lay-navdot a i{border-radius:1px}
+
+/* ---------- SHELL 8: lembut — kartu miring berserak, sudut membulat ---------- */
+body.lay-lembut .wrap{padding:34px 18px 90px;background:
+  radial-gradient(70% 46% at 18% 6%,color-mix(in srgb,var(--g0) 92%,#fff),transparent 66%),
+  radial-gradient(66% 44% at 86% 52%,color-mix(in srgb,var(--g2) 82%,#fff),transparent 64%),var(--g1)}
+body.lay-lembut .card{border-radius:30px 30px 30px 6px;border:2px dashed color-mix(in srgb,var(--accent) 30%,#fff);
+  box-shadow:0 14px 34px rgba(90,70,40,.11)}
+body.lay-lembut .lay-slot:nth-of-type(3n+2) .card{border-radius:30px 6px 30px 30px;transform:rotate(-.7deg)}
+body.lay-lembut .lay-slot:nth-of-type(4n) .card{transform:rotate(.7deg)}
+body.lay-lembut .kicker{letter-spacing:.24em}
+body.lay-lembut .lay-bab{font-size:14px;letter-spacing:.2em}
+
+/* ---------- SHELL 9: panggung — sinematik: hero full-bleed + spotlight ---------- */
+body.lay-panggung .wrap{padding:0 0 90px;background:
+  radial-gradient(78% 40% at 50% 0%,color-mix(in srgb,var(--g1) 74%,#fff),transparent 66%),
+  linear-gradient(180deg,#191409,#241b0e 46%,#15100a)}
+body.lay-panggung .lay-slot{padding:26px 18px 4px;position:relative}
+body.lay-panggung .lay-slot::after{content:"";position:absolute;left:50%;bottom:-8px;
+  width:min(300px,64%);height:60px;transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(60% 100% at 50% 0%,color-mix(in srgb,var(--accent) 26%,transparent),transparent 72%)}
+body.lay-panggung .card{border-radius:20px;border:1px solid color-mix(in srgb,var(--accent) 34%,#fff);
+  box-shadow:0 26px 60px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,240,205,.5);
+  background:linear-gradient(180deg,#FFFEFA,var(--g0))}
+body.lay-panggung .lay-hero{margin:0 -18px 22px}
+body.lay-panggung .lay-hero img{height:clamp(190px,56vw,320px);opacity:1;
+  -webkit-mask-image:linear-gradient(180deg,#000 62%,transparent);mask-image:linear-gradient(180deg,#000 62%,transparent)}
+body.lay-panggung .lay-bab{color:#ffe9b8;opacity:.9;text-shadow:0 0 18px rgba(212,175,55,.5)}
+body.lay-panggung .lay-kutip{border-color:color-mix(in srgb,var(--accent) 40%,transparent);
+  background:linear-gradient(180deg,rgba(255,240,205,.09),transparent)}
+body.lay-panggung .lay-kutip p{color:#f4ead6}
+body.lay-panggung .lay-kutip cite{color:#c9b48c}
+body.lay-panggung .lay-navdot{background:rgba(22,17,9,.78);border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+body.lay-panggung .lay-navdot a i{background:color-mix(in srgb,var(--accent) 60%,#000)}
+body.lay-panggung .footer{color:#e9dfcc}
 </style>
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
@@ -911,19 +1242,110 @@ body.btnopen-minimal #cover .open{border-radius:0;background:transparent;color:v
 /* Urutan TPL identik dengan Studio untuk menjaga kolom theme; studioOnly:true
    menandai varian internal yang dapat dipublish tanpa listing/harga baru. */
 const TPL=[
- {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',deco:'✦ ❖ ✦',pat:'',ft:'cormorant'},{id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',deco:'❖ ✦ ❖',pat:'batik',ft:'marcellus',char:'JAWA'},{id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE'},{id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'GOLD'},{id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC'},{id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA'},{id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'ISLAMI'},{id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY'},{id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',deco:'✦ ❀ ✦',pat:'',ft:'dancing',char:'SWEET'},{id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',deco:'❖ ─ ❖',pat:'',ft:'ebgaramond',char:'ELEGAN'},{id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY'},{id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',deco:'✿ ✦ ✿',pat:'',ft:'caveat',char:'PUTRI'},{id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'ADAB'},{id:'midnight-gold',nama:'Midnight Gold',ev:'pernikahan',g:['#1E1A15','#2E2419','#4A3A22'],accent:'#D4AF37',ink:'#F2E8D5',deco:'✦ ❖ ✦',pat:'',ft:'cinzel',char:'ONYX'},{id:'emerald-royal',nama:'Emerald Royal',ev:'pernikahan',g:['#14342B','#1F4D3E','#356B55'],accent:'#D9B86C',ink:'#F0EAD6',deco:'❖ ✦ ❖',pat:'botanical',ft:'marcellus',char:'ZAMRUD'},{id:'navy-crest',nama:'Navy Crest',ev:'khitanan',g:['#16233F','#223457','#334B76'],accent:'#E7C27D',ink:'#F2ECDC',deco:'★ ✦ ★',pat:'',ft:'ebgaramond',char:'BINTANG'},{id:'golden-jubilee',nama:'Golden Jubilee',ev:'ultah',g:['#F5E7C8','#E8CF96','#D4AF37'],accent:'#8C6D1F',ink:'#5C4714',deco:'✦ ✸ ✦',pat:'',ft:'playfair',char:'JUBILE'},{id:'pearl-ivory',nama:'Pearl Ivory',ev:'aqiqah',g:['#F8F4EE','#EFE6D8','#E0D2BC'],accent:'#A88B5C',ink:'#5E4E36',deco:'✦ ❖ ✦',pat:'',ft:'cormorant',char:'MUTIARA'},
-{id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'botanical',ft:'cormorant',char:'ROSEWOOD',arch:true,studioOnly:true,desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood'},
-{id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#E8EDD9','#C8D4BE'],accent:'#526A55',ink:'#435348',badge:'GERBANG',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',arch:true,studioOnly:true,desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch'},
-{id:'gerbang-midnight-navy',nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'',ft:'playfair',char:'NAVY',arch:true,studioOnly:true,desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis'},
-{id:'gerbang-khitanan-emerald',nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',badge:'GERBANG',deco:'۞ ✦ ۞',pat:'arab',ft:'cinzel',char:'EMERALD',arch:true,studioOnly:true,desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut'},
-{id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'GERBANG',deco:'۞ ❖ ۞',pat:'arab',ft:'marcellus',char:'NATURAL',arch:true,studioOnly:true,desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung'},
-{id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'GERBANG',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',arch:true,studioOnly:true,desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch'}
+ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',deco:'✦ ❖ ✦',pat:'damask',ft:'cormorant',layout:'klasik',orn:'klasik',border:'double'},{id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',deco:'❖ ✦ ❖',pat:'parang',ft:'marcellus',char:'JAWA',layout:'arsip',orn:'batik',border:'frame2'},{id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',layout:'editorial-sage',orn:'geometrik',border:'thin'},{id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',deco:'✦ ❖ ✦',pat:'deco',ft:'playfair',char:'GOLD',layout:'panggung-emas',orn:'deco',border:'vip-diamond'},{id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',layout:'zigzag-rustic',orn:'mawar',border:'gapdash'},{id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',layout:'poster-ceria',orn:'confetti',border:'dotted'},{id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',deco:'۞ ✦ ۞',pat:'girih',ft:'cinzel',char:'ISLAMI',layout:'bab-islami',orn:'bulan',border:'filigree'},{id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',layout:'poster-anak',orn:'kembang-api',border:'dashed'},{id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',deco:'✦ ❀ ✦',pat:'tabur',ft:'dancing',char:'SWEET',layout:'kaca-manis',orn:'pita',border:'ribbon-satin'},{id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',deco:'❖ ─ ❖',pat:'marmer',ft:'ebgaramond',char:'ELEGAN',layout:'kaca-dewasa',orn:'zaitun',border:'topbot'},{id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',layout:'lembut-biru',orn:'awan',border:'halo'},{id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',deco:'✿ ✦ ✿',pat:'renda',ft:'caveat',char:'PUTRI',layout:'lembut-merah',orn:'bunga',border:'pearl-crown'},{id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',deco:'۞ ❖ ۞',pat:'damask',ft:'marcellus',char:'ADAB',layout:'bab-netral',orn:'arabesque',border:'corners'},{id:'midnight-gold',nama:'Midnight Gold',ev:'pernikahan',g:['#1E1A15','#2E2419','#4A3A22'],accent:'#D4AF37',ink:'#F2E8D5',deco:'✦ ❖ ✦',pat:'sulur',ft:'cinzel',char:'ONYX',layout:'split-midnight',orn:'onyx',border:'onyx-inlay'},{id:'emerald-royal',nama:'Emerald Royal',ev:'pernikahan',g:['#14342B','#1F4D3E','#356B55'],accent:'#D9B86C',ink:'#F0EAD6',deco:'❖ ✦ ❖',pat:'botanical',ft:'marcellus',char:'ZAMRUD',layout:'bab-royal',orn:'botanical',border:'laurel'},{id:'navy-crest',nama:'Navy Crest',ev:'khitanan',g:['#16233F','#223457','#334B76'],accent:'#E7C27D',ink:'#F2ECDC',deco:'★ ✦ ★',pat:'ombak',ft:'ebgaramond',char:'BINTANG',layout:'split-navy',orn:'mahkota',border:'vip-crown'},{id:'golden-jubilee',nama:'Golden Jubilee',ev:'ultah',g:['#F5E7C8','#E8CF96','#D4AF37'],accent:'#8C6D1F',ink:'#5C4714',deco:'✦ ✸ ✦',pat:'deco',ft:'playfair',char:'JUBILE',layout:'zigzag-jubile',orn:'bintang',border:'artdeco'},{id:'pearl-ivory',nama:'Pearl Ivory',ev:'aqiqah',g:['#F8F4EE','#EFE6D8','#E0D2BC'],accent:'#A88B5C',ink:'#5E4E36',deco:'✦ ❖ ✦',pat:'renda',ft:'cormorant',char:'MUTIARA',layout:'editorial-mutiara',orn:'mutiara',border:'lace-ivory'},
+{id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'botanical',ft:'cormorant',char:'ROSEWOOD',arch:true,studioOnly:true,desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood',layout:'panggung-gerbang',orn:'mawar',border:'gold-leaf'},
+{id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#E8EDD9','#C8D4BE'],accent:'#526A55',ink:'#435348',badge:'GERBANG',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',arch:true,studioOnly:true,desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch',layout:'editorial-mutiara',orn:'mutiara',border:'pearl'},
+{id:'gerbang-midnight-navy',nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'mendung',ft:'playfair',char:'NAVY',arch:true,studioOnly:true,desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis',layout:'split-midnight',orn:'onyx',border:'vip-aurora'},
+{id:'gerbang-khitanan-emerald',nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',badge:'GERBANG',deco:'۞ ✦ ۞',pat:'girih',ft:'cinzel',char:'EMERALD',arch:true,studioOnly:true,desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut',layout:'bab-islami',orn:'arabesque',border:'laurel'},
+{id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'GERBANG',deco:'۞ ❖ ۞',pat:'kawung',ft:'marcellus',char:'NATURAL',arch:true,studioOnly:true,desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung',layout:'lembut-biru',orn:'botanical',border:'halo'},
+{id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'GERBANG',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',arch:true,studioOnly:true,desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch',layout:'poster-anak',orn:'confetti',border:'dotted'}
 ];
 /* Peta migrasi katalog LAMA (72 tema, urutan ev per index) — dipakai hanya untuk menebak
    jenis acara draft lama yang tidak punya snapshot 'data', supaya struktur cover-nya tidak
    berubah. Temanya sendiri sudah dihapus: semua index jatuh ke tema dasar. */
 const LEGACY_EV='wwwwwwwkkuuuaaawwwwwkkkkkuuuuuaaaaauuuaawwxxxxxwwwwwkkkkkuuuuuaaaaawkuaw';const LEGACY_KEY={w:'pernikahan',k:'khitanan',u:'ultah',a:'aqiqah',x:'all'};
 
+/* ==== KERANGKA LAYOUT PER TEMA (2026-10-15) ==================================
+   Sebelumnya semua tema berbagi SATU kerangka DOM: tiap bagian dibungkus
+   `<div class="card rv">` + `<div class="kicker">` dengan urutan terkunci 1→7.
+   Tema hanya menyuntik warna, font, pola, bingkai, dan ornamen — jadi tema
+   Rp49.000 dan tema Rp99.000 berbeda cat saja, bukan bentuk.
+
+   Sekarang tiap entri TPL membawa `layout:` yang menunjuk satu preset di bawah.
+   Satu preset menentukan EMPAT hal sekaligus:
+     shell  → kelas body `lay-<shell>`: bentuk & tata letak bagian (10 shell)
+     urutan → susunan bagian, varian A–E: alur bacanya ikut berbeda
+     ekstra → bagian eksklusif yang hanya lahir di preset itu
+     vip    → mount mesin 4D (parallax 3 lapis + partikel + entrance sinematik)
+
+   18 tema publik memakai 18 preset berbeda, jadi tidak ada dua tema yang
+   berkerangka sama. Preset `klasik` = kerangka lama PERSIS (shell tanpa
+   pembungkus, urutan A, tanpa ekstra) sehingga tema Ivory Klasik dan undangan
+   lama yang datanya tak membawa `layout` tampil sama seperti sebelumnya.
+   Dijaga oleh tools/test-layout-tema.cjs terhadap golden origin/main.       */
+const URUTAN={
+ /* A = urutan lama (dipakai preset klasik; jadi patokan regresi) */
+ A:['guest','doa','profil','harapan','acara','timeline','story','quote','menu','party','dresscode','map','gift','rsvp','closing','bukutamu','galeri','amplop','ucapan'],
+ /* B = mempelai dulu, doa turun setelah alur acara */
+ B:['guest','profil','harapan','acara','timeline','story','doa','quote','menu','party','dresscode','map','gift','galeri','bukutamu','amplop','rsvp','closing','ucapan'],
+ /* C = bercerita dulu: kisah & timeline membuka, galeri naik lebih awal */
+ C:['guest','story','timeline','profil','harapan','acara','quote','doa','galeri','menu','party','dresscode','map','gift','bukutamu','amplop','rsvp','closing','ucapan'],
+ /* D = to the point: waktu & tempat segera setelah tamu disapa */
+ D:['guest','acara','timeline','profil','harapan','galeri','story','quote','doa','menu','party','dresscode','map','gift','bukutamu','rsvp','closing','amplop','ucapan'],
+ /* E = visual dulu: galeri jadi pembuka, teks menyusul */
+ E:['guest','galeri','profil','harapan','acara','timeline','story','quote','doa','menu','party','dresscode','map','gift','bukutamu','amplop','rsvp','closing','ucapan']
+};
+const LAYOUTS={
+ 'klasik':           {nama:'Klasik',            shell:'klasik',   urutan:'A',ekstra:[]},
+ 'arsip':            {nama:'Arsip Jawa',        shell:'arsip',    urutan:'A',ekstra:['navDot']},
+ 'editorial-sage':   {nama:'Editorial Sage',    shell:'editorial',urutan:'B',ekstra:['kutipBesar']},
+ 'editorial-mutiara':{nama:'Editorial Mutiara', shell:'editorial',urutan:'E',ekstra:['kutipBesar']},
+ 'panggung-emas':    {nama:'Panggung Emas',     shell:'panggung', urutan:'C',ekstra:['heroFoto','galeriStrip'],vip:true},
+ 'panggung-gerbang': {nama:'Panggung Gerbang',  shell:'panggung', urutan:'C',ekstra:['heroFoto'],vip:true},
+ 'zigzag-rustic':    {nama:'Zigzag Rustic',     shell:'zigzag',   urutan:'A',ekstra:[]},
+ 'zigzag-jubile':    {nama:'Zigzag Jubilee',    shell:'zigzag',   urutan:'C',ekstra:['galeriStrip']},
+ 'poster-ceria':     {nama:'Poster Ceria',      shell:'poster',   urutan:'D',ekstra:['jamFlip']},
+ 'poster-anak':      {nama:'Poster Anak',       shell:'poster',   urutan:'D',ekstra:['jamFlip','galeriStrip']},
+ 'bab-islami':       {nama:'Bab Islami',        shell:'bab',      urutan:'A',ekstra:['babAngka']},
+ 'bab-netral':       {nama:'Bab Netral',        shell:'bab',      urutan:'B',ekstra:['babAngka']},
+ 'bab-royal':        {nama:'Bab Royal',         shell:'bab',      urutan:'C',ekstra:['babAngka','kutipBesar']},
+ 'kaca-manis':       {nama:'Kaca Manis',        shell:'kaca',     urutan:'E',ekstra:['navDot']},
+ 'kaca-dewasa':      {nama:'Kaca Dewasa',       shell:'kaca',     urutan:'B',ekstra:['navDot']},
+ 'lembut-biru':      {nama:'Lembut Biru',       shell:'lembut',   urutan:'A',ekstra:[]},
+ 'lembut-merah':     {nama:'Lembut Merah',      shell:'lembut',   urutan:'E',ekstra:[]},
+ 'split-midnight':   {nama:'Split Midnight',    shell:'split',    urutan:'B',ekstra:['navDot','heroFoto'],vip:true},
+ 'split-navy':       {nama:'Split Navy',        shell:'split',    urutan:'A',ekstra:['navDot']}
+};
+function layoutOf(t){return LAYOUTS[(t&&t.layout)||'']||LAYOUTS.klasik}
+const ROMAWI=['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'];
+
+/* Bagian eksklusif: lahir dari data yang SUDAH ada di snapshot, jadi undangan
+   lama ikut dapat tanpa pemiliknya mengisi apa pun. */
+function htmlKutipBesar(ev,S){
+ const q=(S&&S.quote&&S.quote.custom)?{text:S.quote.text,author:S.quote.author}:(QUOTES[ev]||QUOTES.pernikahan);
+ if(!q||!q.text)return'';
+ return`<div class="lay-kutip"><span class="lay-kutip-t" aria-hidden="true">❝</span>
+  <p>${esc(q.text)}</p>${q.author?`<cite>— ${esc(q.author)}</cite>`:''}</div>`}
+function htmlHeroFoto(d){
+ const g=(d&&Array.isArray(d.gallery))?d.gallery.filter(Boolean):[];
+ if(!g.length)return'';
+ return`<figure class="lay-hero"><img src="${esc(g[0])}" alt="" loading="lazy"
+  onerror="this.closest('.lay-hero').style.display='none'"><figcaption>${esc(g.length)} momen</figcaption></figure>`}
+
+/* Susun bagian menurut preset. `polos` = preset klasik: bagian dilepas apa
+   adanya tanpa pembungkus, sehingga output-nya identik byte-per-byte dengan
+   renderer sebelum rombakan. Preset lain membungkus tiap bagian jadi
+   `.lay-slot.lay-slot-<kunci>` supaya shell CSS bisa menata per bagian. */
+function susunBagian(SEC,LX,d,ev){
+ const ur=URUTAN[LX.urutan]||URUTAN.A,x=LX.ekstra||[];
+ const polos=LX.shell==='klasik'&&!x.length;
+ const aktif=ur.filter(k=>String(SEC[k]||'').trim());
+ const out=[];let bab=0;
+ if(!polos&&x.includes('navDot'))
+  out.push(`<nav class="lay-navdot" aria-label="Navigasi bagian">`+
+   aktif.map((k,i)=>`<a href="#bagian-${i+1}" data-ke="${esc(k)}" title="Bagian ${i+1}"><i></i></a>`).join('')+`</nav>`);
+ aktif.forEach((k,i)=>{
+  const html=SEC[k];
+  if(polos){out.push(html);return}
+  let cls='lay-slot lay-slot-'+k;
+  if(x.includes('galeriStrip')&&k==='galeri')cls+=' lay-strip';
+  if(x.includes('jamFlip')&&k==='acara')cls+=' lay-flip';
+  let sisip='';
+  if(x.includes('babAngka')){bab++;sisip+=`<i class="lay-bab" aria-hidden="true">${ROMAWI[bab]||bab}</i>`}
+  if(x.includes('kutipBesar')&&k==='profil')sisip+=htmlKutipBesar(ev,d&&d.slides);
+  if(x.includes('heroFoto')&&k==='acara')sisip+=htmlHeroFoto(d);
+  out.push(`<div class="${cls}" id="bagian-${i+1}">${sisip}${html}</div>`)});
+ return out.join('')}
 
 const FONTS=[
  {id:'cormorant',fam:'"Cormorant Garamond",serif'},
@@ -965,19 +1387,19 @@ const BORDERS=[
  {id:'corners',n:'Sudut Elegan',corner:3},
  {id:'cornersthin',n:'Sudut Halus',corner:1,extra:A=>`border:1px solid ${A}33`},
  {id:'royal',n:'Royal Double',s:A=>`border:4px double ${A};box-shadow:inset 0 0 0 1px ${A}44`},
- {id:'laurel',n:'Laurel Emas',ex:1,s:A=>`border:2px solid ${A};box-shadow:0 0 0 5px color-mix(in srgb,${A} 20%,transparent),inset 0 0 0 1px ${A}`},
- {id:'artdeco',n:'Art Deco',ex:1,s:A=>`border:3px double ${A};box-shadow:inset 0 0 0 5px #fffdf9,inset 0 0 0 6px ${A}`},
- {id:'pearl',n:'Untaian Mutiara',ex:1,s:A=>`border:2px dotted ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 4px ${A}`},
+ {id:'laurel',n:'Laurel Emas',s:A=>`border:2px solid ${A};box-shadow:0 0 0 5px color-mix(in srgb,${A} 20%,transparent),inset 0 0 0 1px ${A}`},
+ {id:'artdeco',n:'Art Deco',s:A=>`border:3px double ${A};box-shadow:inset 0 0 0 5px #fffdf9,inset 0 0 0 6px ${A}`},
+ {id:'pearl',n:'Untaian Mutiara',s:A=>`border:2px dotted ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 4px ${A}`},
  /* ==== 9 BORDER BER-TIER: PREMIUM ⭐ / EKSKLUSIF 🔒 / VIP 👑 ==== */
- {id:'gold-leaf',n:'Daun Emas',tk:'premium',s:A=>`border:5px solid ${A};border-image:linear-gradient(135deg,${A} 15%,#fffdf9 50%,${A} 85%) 1`},
- {id:'lace-ivory',n:'Renda Ivory',tk:'premium',s:A=>`border:2px dotted ${A};outline:2px dotted ${A};outline-offset:5px`},
- {id:'ribbon-satin',n:'Pita Satin',tk:'premium',s:A=>`border:8px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9`},
- {id:'filigree',n:'Filigree Emas',tk:'eks',s:A=>`border:3px double ${A};box-shadow:inset 0 0 12px ${A}44,inset 0 0 0 2px #fffdf9`},
- {id:'pearl-crown',n:'Mahkota Mutiara',tk:'eks',s:A=>`border:4px double ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 5px ${A}55`},
- {id:'onyx-inlay',n:'Inlay Onyx',tk:'eks',s:A=>`border:6px solid #17181a;box-shadow:inset 0 0 0 2px ${A}`},
- {id:'vip-crown',n:'Crown VIP',tk:'vip',s:A=>`border:3px double ${A};outline:2px solid ${A};outline-offset:4px;box-shadow:inset 0 0 0 2px #fffdf9`},
- {id:'vip-aurora',n:'Aurora VIP',tk:'vip',s:A=>`border:6px solid ${A};border-image:linear-gradient(160deg,${A},#8e4e92 35%,#0ea5e9 70%,${A}) 1`},
- {id:'vip-diamond',n:'Diamond VIP',tk:'vip',s:A=>`border:7px ridge ${A};box-shadow:0 0 18px ${A}66,inset 0 0 0 2px #fffdf9`}];
+ {id:'gold-leaf',n:'Daun Emas',s:A=>`border:5px solid ${A};border-image:linear-gradient(135deg,${A} 15%,#fffdf9 50%,${A} 85%) 1`},
+ {id:'lace-ivory',n:'Renda Ivory',s:A=>`border:2px dotted ${A};outline:2px dotted ${A};outline-offset:5px`},
+ {id:'ribbon-satin',n:'Pita Satin',s:A=>`border:8px solid ${A};box-shadow:inset 0 0 0 3px #fffdf9`},
+ {id:'filigree',n:'Filigree Emas',s:A=>`border:3px double ${A};box-shadow:inset 0 0 12px ${A}44,inset 0 0 0 2px #fffdf9`},
+ {id:'pearl-crown',n:'Mahkota Mutiara',s:A=>`border:4px double ${A};box-shadow:0 0 0 3px #fffdf9,0 0 0 5px ${A}55`},
+ {id:'onyx-inlay',n:'Inlay Onyx',s:A=>`border:6px solid #17181a;box-shadow:inset 0 0 0 2px ${A}`},
+ {id:'vip-crown',n:'Crown VIP',s:A=>`border:3px double ${A};outline:2px solid ${A};outline-offset:4px;box-shadow:inset 0 0 0 2px #fffdf9`},
+ {id:'vip-aurora',n:'Aurora VIP',s:A=>`border:6px solid ${A};border-image:linear-gradient(160deg,${A},#8e4e92 35%,#0ea5e9 70%,${A}) 1`},
+ {id:'vip-diamond',n:'Diamond VIP',s:A=>`border:7px ridge ${A};box-shadow:0 0 18px ${A}66,inset 0 0 0 2px #fffdf9`}];
 
 const DOA={
  pernikahan:{ar:'بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ',latin:'Barakallahu laka wa baraka \u2018alaika wa jama\u2019a bainakuma fi khair',arti:'Semoga Allah memberkahimu, memberi keberkahan atasmu, dan mempertemukan kalian berdua dalam kebaikan.'},
@@ -1033,10 +1455,562 @@ const FX_COVER=[
  ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
  ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal'],['vip-zoom','VIP Deep Zoom'],['vip-curtain','VIP Curtain']];
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
-function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade','kanan','naik','putar','balik','menyusut','miring','tirai'].includes(v)?v:'gilir'}
-function ornSudutId(v){return ['tanpa','ranting','bunga3d','bunga4d'].includes(v)?v:'ranting'}
+function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade','kanan','naik','putar','balik','menyusut','miring','tirai','buku','pintu','kotak','iris','lubang','blinds','jungkit'].includes(v)?v:'gilir'}
+function ornSudutId(v){return ['tanpa','ranting','bunga3d','bunga4d','deco','filigree','girih','damask','mendung'].includes(v)?v:'ranting'}
+/* ===== Ornamen SVG per tema =====
+   Deretan simbol Unicode di field deco (mis. "X . X") diganti motif yang
+   benar-benar digambar untuk divider dan footer. Field deco TETAP diisi dan
+   tetap dipakai sebagai fallback, jadi undangan lama yang belum menyimpan
+   orn tampil persis seperti sebelumnya -- tidak ada yang rusak.
+   Semua motif memakai currentColor supaya otomatis ikut warna divider tema. */
+
+/* Kelopak/daun tunggal: ellipse yang diputar mengelilingi titik jangkar. */
+function ornDaun(cx,cy,rx,ry,rot,op){
+ return '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="currentColor"'+
+  ' transform="rotate('+rot+' '+cx+' '+cy+')" opacity="'+(op==null?.8:op)+'"/>';
+}
+/* Roset: n kelopak tersebar merata mengelilingi pusat -- dijamin simetris. */
+function ornRoset(cx,cy,n,rx,ry,jarak,op){
+ let s='';
+ for(let i=0;i<n;i++){
+  const a=i*360/n, rad=a*Math.PI/180;
+  const px=cx+Math.cos(rad)*jarak, py=cy+Math.sin(rad)*jarak;
+  s+=ornDaun(px.toFixed(1),py.toFixed(1),rx,ry,a.toFixed(1),op);
+ }
+ return s;
+}
+/* Sinar memancar dari pusat, untuk motif art-deco dan bintang. */
+function ornSinar(cx,cy,n,r1,r2,w,op){
+ let s='';
+ for(let i=0;i<n;i++){
+  const a=i*360/n, rad=a*Math.PI/180;
+  s+='<line x1="'+(cx+Math.cos(rad)*r1).toFixed(1)+'" y1="'+(cy+Math.sin(rad)*r1).toFixed(1)+
+     '" x2="'+(cx+Math.cos(rad)*r2).toFixed(1)+'" y2="'+(cy+Math.sin(rad)*r2).toFixed(1)+
+     '" stroke="currentColor" stroke-width="'+w+'" stroke-linecap="round" opacity="'+op+'"/>';
+ }
+ return s;
+}
+const ORN_GARIS=(d,w,op)=>'<path d="'+d+'" fill="none" stroke="currentColor" stroke-width="'+
+ (w==null?1.3:w)+'" stroke-linecap="round" opacity="'+(op==null?.9:op)+'"/>';
+function ornBungkus(isi){
+ /* Ukuran lewat ATRIBUT, bukan inline style, supaya bisa ditimpa CSS.
+    Picker ornamen di Studio butuh pratinjau kecil; inline style akan menang
+    atas aturan CSS mana pun sehingga pratinjau tak bisa dikecilkan. */
+ return '<svg viewBox="0 0 168 28" width="132" height="22" fill="none" aria-hidden="true" '+
+  'style="display:block;max-width:100%">'+isi+'</svg>';
+}
+
+const ORNAMEN={
+ /* Gulungan simetris bertemu intan di tengah -- ornamen undangan klasik. */
+ klasik:()=>ornBungkus(
+   ORN_GARIS('M84 14c-7-8-16-9-25-4-5.5 3-8.5 8-6 11 2 2.4 6.4 1.4 7-1.6.4-2.2-2.2-3.6-4-1.8',1.3,.85)+
+   ORN_GARIS('M84 14c7-8 16-9 25-4 5.5 3 8.5 8 6 11-2 2.4-6.4 1.4-7-1.6-.4-2.2 2.2-3.6 4-1.8',1.3,.85)+
+   '<path d="M84 7l4.2 7-4.2 7-4.2-7Z" fill="currentColor"/>'+
+   '<circle cx="60" cy="14" r="1.5" fill="currentColor" opacity=".6"/>'+
+   '<circle cx="108" cy="14" r="1.5" fill="currentColor" opacity=".6"/>'),
+
+ /* Dua tangkai berdaun melengkung keluar dari kuncup tengah. */
+ botanical:()=>ornBungkus(
+   ORN_GARIS('M84 14c-10 0-20 2-30 8',1.2,.7)+ORN_GARIS('M84 14c10 0 20 2 30 8',1.2,.7)+
+   ornDaun(66,17,7,3,-24,.75)+ornDaun(56,20,6,2.6,-30,.6)+
+   ornDaun(102,17,7,3,24,.75)+ornDaun(112,20,6,2.6,30,.6)+
+   '<path d="M84 6c4 3 4 8 0 11-4-3-4-8 0-11Z" fill="currentColor"/>'+
+   '<circle cx="84" cy="20" r="1.8" fill="currentColor" opacity=".7"/>'),
+
+ /* Bintang delapan khas arabesque dengan lengkungan saling silang. */
+ arabesque:()=>ornBungkus(
+   '<rect x="76" y="6" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".9"/>'+
+   '<rect x="76" y="6" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".9" transform="rotate(45 84 14)"/>'+
+   '<circle cx="84" cy="14" r="2.6" fill="currentColor"/>'+
+   ORN_GARIS('M70 14c-6-6-14-7-22-3',1.2,.75)+ORN_GARIS('M70 14c-6 6-14 7-22 3',1.2,.55)+
+   ORN_GARIS('M98 14c6-6 14-7 22-3',1.2,.75)+ORN_GARIS('M98 14c6 6 14 7 22 3',1.2,.55)+
+   '<circle cx="46" cy="14" r="1.6" fill="currentColor" opacity=".6"/>'+
+   '<circle cx="122" cy="14" r="1.6" fill="currentColor" opacity=".6"/>'),
+
+ /* Kipas art-deco: sinar memancar diapit batang bertingkat. */
+ deco:()=>ornBungkus(
+   ornSinar(84,20,9,3,15,1.2,.8)+
+   ORN_GARIS('M62 20h10M96 20h10',1.6,.9)+
+   ORN_GARIS('M50 20h8M110 20h8',1.6,.65)+
+   ORN_GARIS('M40 20h6M122 20h6',1.6,.45)+
+   '<circle cx="84" cy="20" r="2.4" fill="currentColor"/>'),
+
+ /* Confetti: titik dan bintang tersebar, nada ceria. */
+ confetti:()=>{
+  let s='';
+  const titik=[[30,10,2],[46,19,1.5],[62,8,1.8],[100,9,1.6],[118,18,2],[136,11,1.5],[74,21,1.3],[94,21,1.3]];
+  titik.forEach(([x,y,r],i)=>{s+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="currentColor" opacity="'+(.45+i%3*.2).toFixed(2)+'"/>'});
+  s+='<path d="M84 5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.9-5.2 2.9 1-5.9-4.3-4.1 5.9-.8Z" fill="currentColor"/>';
+  return ornBungkus(s);
+ },
+
+ /* Untaian mutiara: lingkaran bergradasi dengan tetesan di tengah. */
+ mutiara:()=>{
+  let s='';
+  const r=[1.2,1.7,2.3,3,3.6];
+  r.forEach((rad,i)=>{
+   s+='<circle cx="'+(84-14*(i+1))+'" cy="14" r="'+rad+'" fill="currentColor" opacity="'+(.9-i*.1).toFixed(2)+'"/>';
+   s+='<circle cx="'+(84+14*(i+1))+'" cy="14" r="'+rad+'" fill="currentColor" opacity="'+(.9-i*.1).toFixed(2)+'"/>';
+  });
+  s+='<path d="M84 5c4.6 5 6.4 8.2 6.4 10.6A6.4 6.4 0 0 1 84 22a6.4 6.4 0 0 1-6.4-6.4C77.6 13.2 79.4 10 84 5Z" fill="currentColor"/>';
+  return ornBungkus(s);
+ },
+
+ /* Awan lembut dengan bintang kecil -- nuansa bayi. */
+ awan:()=>ornBungkus(
+   '<path d="M40 20a6 6 0 0 1 1.4-11.7A8.4 8.4 0 0 1 57.6 9 5.6 5.6 0 0 1 58 20Z" fill="currentColor" opacity=".55"/>'+
+   '<path d="M110 20a6 6 0 0 1 1.4-11.7A8.4 8.4 0 0 1 127.6 9 5.6 5.6 0 0 1 128 20Z" fill="currentColor" opacity=".55"/>'+
+   '<path d="M84 6l2 4.6 4.6 2-4.6 2-2 4.6-2-4.6-4.6-2 4.6-2Z" fill="currentColor"/>'+
+   '<circle cx="70" cy="20" r="1.4" fill="currentColor" opacity=".5"/><circle cx="98" cy="20" r="1.4" fill="currentColor" opacity=".5"/>'),
+
+ /* Tiga kuntum bunga berkelopak lima dengan tangkai. */
+ bunga:()=>{
+  const kuntum=(cx,cy,sk,op)=>ornRoset(cx,cy,5,4.4*sk,2*sk,3.4*sk,op)+
+   '<circle cx="'+cx+'" cy="'+cy+'" r="'+(1.7*sk)+'" fill="currentColor"/>';
+  return ornBungkus(
+   ORN_GARIS('M84 24v-6M60 24c2-5 6-8 12-9M108 24c-2-5-6-8-12-9',1.1,.6)+
+   kuntum(84,11,1.15,.9)+kuntum(60,15,.8,.7)+kuntum(108,15,.8,.7));
+ },
+
+ /* Bintang heraldik bersinar diapit dua lengkung laurel. */
+ bintang:()=>ornBungkus(
+   ornSinar(84,14,12,7,13,.9,.5)+
+   '<path d="M84 3l3.4 7.2 7.8 1-5.7 5.4 1.5 7.8-7-3.8-7 3.8 1.5-7.8-5.7-5.4 7.8-1Z" fill="currentColor"/>'+
+   ORN_GARIS('M66 20c-8-2-14 0-20 5',1.4,.8)+ORN_GARIS('M102 20c8-2 14 0 20 5',1.4,.8)+
+   ornDaun(56,21,4.4,1.9,-20,.6)+ornDaun(112,21,4.4,1.9,20,.6)),
+
+ /* Onyx: chevron dan intan bersudut tajam, kesan mewah gelap. */
+ onyx:()=>{
+  let s='<path d="M84 4l7 10-7 10-7-10Z" fill="currentColor"/>';
+  for(let i=1;i<=3;i++){
+   const o=(1-i*.24).toFixed(2), k=i*11;
+   s+=ORN_GARIS('M'+(77-k)+' 8l-6 6 6 6',1.8,o)+ORN_GARIS('M'+(91+k)+' 8l6 6-6 6',1.8,o);
+  }
+  return ornBungkus(s);
+ },
+
+ /* Kawung: empat ellips saling tumpang mengelilingi pusat, motif batik. */
+ batik:()=>ornBungkus(
+   ornRoset(84,14,4,7.5,4,7,.55)+
+   '<circle cx="84" cy="14" r="2.6" fill="currentColor"/>'+
+   ORN_GARIS('M62 14h-16M106 14h16',1.1,.5)+
+   '<circle cx="42" cy="14" r="1.7" fill="currentColor" opacity=".5"/>'+
+   '<circle cx="126" cy="14" r="1.7" fill="currentColor" opacity=".5"/>'),
+
+ /* Mawar: spiral kelopak dengan dua daun. */
+ mawar:()=>ornBungkus(
+   '<path d="M84 14a3.2 3.2 0 1 1 3.2-3.2 6 6 0 1 1-6 6 8.6 8.6 0 1 0 8.6-8.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'+
+   ORN_GARIS('M74 16c-8 1-14 4-18 8M94 16c8 1 14 4 18 8',1.1,.6)+
+   ornDaun(60,19,6.4,2.8,-18,.7)+ornDaun(108,19,6.4,2.8,18,.7)),
+
+ /* Geometrik: garis dan bujur sangkar modern, minimal tanpa lengkungan. */
+ geometrik:()=>{
+  let s='<rect x="79" y="9" width="10" height="10" fill="currentColor"/>';
+  for(let i=1;i<=4;i++){
+   const o=(1-i*.2).toFixed(2), x=i*11;
+   s+='<rect x="'+(79-x)+'" y="'+(9+i)+'" width="'+(10-i*2)+'" height="'+(10-i*2)+
+      '" fill="none" stroke="currentColor" stroke-width="1" opacity="'+o+'"/>';
+   s+='<rect x="'+(89+x-10+i*2)+'" y="'+(9+i)+'" width="'+(10-i*2)+'" height="'+(10-i*2)+
+      '" fill="none" stroke="currentColor" stroke-width="1" opacity="'+o+'"/>';
+  }
+  return ornBungkus(s);
+ },
+
+ /* Kembang api: tiga letupan sinar berbeda ukuran. */
+ 'kembang-api':()=>ornBungkus(
+   ornSinar(84,13,10,2.5,12,1.1,.85)+
+   ornSinar(48,17,8,1.5,7,.9,.55)+
+   ornSinar(120,17,8,1.5,7,.9,.55)+
+   '<circle cx="84" cy="13" r="2.2" fill="currentColor"/>'+
+   '<circle cx="48" cy="17" r="1.5" fill="currentColor" opacity=".7"/>'+
+   '<circle cx="120" cy="17" r="1.5" fill="currentColor" opacity=".7"/>'),
+
+ /* Bulan sabit dan bintang -- ornamen islami. */
+ bulan:()=>ornBungkus(
+   '<path d="M90 4a11 11 0 1 0 0 20 13 13 0 0 1 0-20Z" fill="currentColor"/>'+
+   '<path d="M70 8l1.8 4 4.2.6-3 3 .7 4.2-3.7-2-3.7 2 .7-4.2-3-3 4.2-.6Z" fill="currentColor" opacity=".8"/>'+
+   ORN_GARIS('M58 18c-6 0-12 1-16 4M112 18c6 0 12 1 16 4',1.1,.55)+
+   '<circle cx="40" cy="22" r="1.4" fill="currentColor" opacity=".5"/>'+
+   '<circle cx="130" cy="22" r="1.4" fill="currentColor" opacity=".5"/>'),
+
+ /* Pita: simpul dengan dua ekor menjuntai. */
+ pita:()=>ornBungkus(
+   '<path d="M84 14c-5-6-13-8-18-5-4 2.4-3 8 2 9 5 1 11-1 16-4Z" fill="currentColor" opacity=".8"/>'+
+   '<path d="M84 14c5-6 13-8 18-5 4 2.4 3 8-2 9-5 1-11-1-16-4Z" fill="currentColor" opacity=".8"/>'+
+   '<ellipse cx="84" cy="14" rx="3.6" ry="3" fill="currentColor"/>'+
+   ORN_GARIS('M81 17c-2 5-5 7-9 8M87 17c2 5 5 7 9 8',1.2,.7)),
+
+ /* Zaitun: dua tangkai laurel melengkung bertemu di tengah. */
+ zaitun:()=>{
+  let s='';
+  for(let i=0;i<4;i++){
+   const t=i/3;
+   s+=ornDaun((66-14*t).toFixed(1),(20-8*t).toFixed(1),5,2.1,(-30+i*8),.75-i*.1);
+   s+=ornDaun((102+14*t).toFixed(1),(20-8*t).toFixed(1),5,2.1,(30-i*8),.75-i*.1);
+  }
+  return ornBungkus(
+   ORN_GARIS('M80 22c-10 0-20-4-28-12',1.2,.7)+ORN_GARIS('M88 22c10 0 20-4 28-12',1.2,.7)+s+
+   '<circle cx="84" cy="12" r="2.4" fill="currentColor"/>');
+ },
+
+ /* Mahkota: tiga puncak dengan permata. */
+ mahkota:()=>ornBungkus(
+   '<path d="M68 21l-4-13 9 6 11-11 11 11 9-6-4 13Z" fill="currentColor" opacity=".85"/>'+
+   '<rect x="68" y="21" width="32" height="3.4" rx="1.4" fill="currentColor"/>'+
+   '<circle cx="64" cy="7" r="1.8" fill="currentColor"/><circle cx="84" cy="3" r="2" fill="currentColor"/>'+
+   '<circle cx="104" cy="7" r="1.8" fill="currentColor"/>'+
+   ORN_GARIS('M56 22h-14M112 22h14',1.1,.5))
+};
+
+/* Motif ornamen yang dipakai. Pilihan pemilik di snapshot (d.orn) menang atas
+   bawaan tema (tplF.orn), dan keduanya harus id yang dikenal registry. Bila
+   tidak ada yang sah, kembalikan null supaya pemanggil jatuh ke deretan simbol
+   deco lama -- aman untuk snapshot terbitan lama yang belum menyimpan orn. */
+function ornMotif(d,tplF){
+ const pilih=(d&&d.orn)||'';
+ const id=ornIdValid(pilih)?pilih:(tplF&&tplF.orn);
+ if(id&&ORNAMEN[id]){try{return ORNAMEN[id]()}catch(e){/* motif gagal digambar */}}
+ return null;
+}
+/* ===== Bingkai ornamen per pilihan border =====
+
+   Keluhan: 32 pilihan border semuanya persegi, dan yang namanya mewah
+   (Laurel Emas, Filigree, Mahkota Mutiara, Crown VIP) isinya cuma variasi
+   border + box-shadow -- tidak ada ornamennya sama sekali.
+
+   Di sini tiap border berhias mendapat motif yang benar-benar digambar:
+   empat sudut + empat tepi, dipasang sebagai LAPISAN BACKGROUND.
+
+   Kenapa background, bukan border-image atau pseudo-element:
+   - border-image mengabaikan border-radius, padahal hampir semua model cover
+     (cvl-glass, cvl-sakura, cvl-batik, ...) menetapkan radius. Sudut ornamen
+     akan mencuat keluar melewati lengkungan.
+   - .bdfr::before dan ::after sudah dipakai 9 aturan cvl-*, jadi tidak tersedia.
+   Background ikut ter-clip oleh border-radius dan tidak merebut apa pun.
+
+   Warna memakai aksen tema (A) yang sudah diterima fungsi s(A) di BORDERS. */
+
+const BK_K = 46;   // ukuran kotak sudut, px
+const BK_E = 40;   // panjang satu unit tepi yang diulang, px
+const BK_T = 14;   // tebal pita border, px
+
+/* Enkoding SVG ke data URI. encodeURIComponent menangani '#' pada warna heks
+   dan tanda kutip, jadi aman diselipkan ke dalam fungsi url() milik CSS. */
+function bkUri(isi, w, h) {
+  const svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width='" + w + "' height='" + h +
+    "' viewBox='0 0 " + w + ' ' + h + "'>" + isi + '</svg>';
+  /* Pembatas url() harus KUTIP TUNGGAL. Keluaran ini diselipkan ke atribut HTML
+     berkutip ganda (style="${bdStyle}"), jadi kutip ganda di sini akan menutup
+     atributnya lebih awal dan memotong seluruh ornamen -- gejalanya bingkai
+     tetap polos walaupun fungsinya mengembalikan ribuan karakter.
+     encodeURIComponent tidak mengemas apostrof, jadi diganti manual ke %27
+     agar tidak ada kutip tunggal liar di dalam URI. */
+  return "url('data:image/svg+xml," + encodeURIComponent(svg).replace(/'/g, '%27') + "')";
+}
+/* Cermin/putar markup supaya satu desain sudut bisa dipakai di empat pojok
+   dan satu desain tepi bisa dipakai di empat sisi. */
+const bkCerminX = (isi, w, h) => "<g transform='translate(" + w + ",0) scale(-1,1)'>" + isi + "</g>";
+const bkCerminY = (isi, w, h) => "<g transform='translate(0," + h + ") scale(1,-1)'>" + isi + "</g>";
+const bkCerminXY = (isi, w, h) => "<g transform='translate(" + w + "," + h + ") scale(-1,-1)'>" + isi + "</g>";
+
+/* --- 12 desain sudut, digambar dalam kotak 0..BK_K --- */
+const BK_SUDUT = {
+ /* Tangkai laurel melengkung dengan lima daun. */
+ laurel: A => {
+   let s = "<path d='M6 40C6 22 18 8 38 6' fill='none' stroke='" + A + "' stroke-width='1.6' stroke-linecap='round'/>";
+   for (let i = 0; i < 5; i++) {
+     const t = i / 4, x = 8 + 26 * t, y = 38 - 30 * t * t - 2 * t;
+     s += "<ellipse cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' rx='6' ry='2.6' fill='" + A +
+       "' transform='rotate(" + (-52 + i * 7) + ' ' + x.toFixed(1) + ' ' + y.toFixed(1) + ")' opacity='" + (0.9 - i * 0.09).toFixed(2) + "'/>";
+   }
+   return s;
+ },
+ /* Sulur filigree: dua spiral bertemu. */
+ filigree: A => "<path d='M4 42C4 24 16 10 34 6' fill='none' stroke='" + A + "' stroke-width='1.5'/>" +
+   "<path d='M34 6c7-2 12 3 9 8-2 4-8 3-8-2 0-3 3-5 5-3' fill='none' stroke='" + A + "' stroke-width='1.4' stroke-linecap='round'/>" +
+   "<path d='M12 34c-6 1-9 6-6 10 2 3 7 2 7-2' fill='none' stroke='" + A + "' stroke-width='1.3' stroke-linecap='round' opacity='.8'/>" +
+   "<circle cx='22' cy='24' r='2' fill='" + A + "'/>",
+ /* Tiga mutiara bergradasi. */
+ pearl: A => "<circle cx='10' cy='38' r='3' fill='" + A + "' opacity='.55'/>" +
+   "<circle cx='21' cy='28' r='4' fill='" + A + "' opacity='.75'/>" +
+   "<circle cx='34' cy='15' r='5' fill='" + A + "'/>" +
+   "<path d='M6 42C14 30 26 18 42 6' fill='none' stroke='" + A + "' stroke-width='.9' opacity='.5'/>",
+ /* Renda: kipas scallop bertingkat. */
+ lace: A => "<path d='M4 42a10 10 0 0 1 10-10 10 10 0 0 1 10-10 10 10 0 0 1 10-10' fill='none' stroke='" + A + "' stroke-width='1.3'/>" +
+   "<circle cx='14' cy='32' r='1.6' fill='" + A + "'/><circle cx='24' cy='22' r='1.6' fill='" + A + "'/>" +
+   "<circle cx='34' cy='12' r='1.6' fill='" + A + "'/>" +
+   "<path d='M4 42h38' stroke='" + A + "' stroke-width='.8' opacity='.4'/>",
+ /* Art-deco: kipas bertingkat dengan sinar. */
+ artdeco: A => "<path d='M6 40A34 34 0 0 1 40 6' fill='none' stroke='" + A + "' stroke-width='1.6'/>" +
+   "<path d='M13 40A27 27 0 0 1 40 13' fill='none' stroke='" + A + "' stroke-width='1.2' opacity='.8'/>" +
+   "<path d='M20 40A20 20 0 0 1 40 20' fill='none' stroke='" + A + "' stroke-width='1' opacity='.6'/>" +
+   "<path d='M8 40L40 8M16 40L40 16M24 40L40 24' stroke='" + A + "' stroke-width='.7' opacity='.45'/>",
+ /* Daun emas: sepasang daun bersisik. */
+ 'gold-leaf': A => "<path d='M6 40C10 22 24 10 42 6' fill='none' stroke='" + A + "' stroke-width='1.4'/>" +
+   "<path d='M14 34c0-8 6-14 14-14-1 8-6 14-14 14Z' fill='" + A + "' opacity='.85'/>" +
+   "<path d='M24 24c0-7 5-12 12-12-1 7-5 12-12 12Z' fill='" + A + "' opacity='.6'/>" +
+   "<circle cx='10' cy='38' r='1.8' fill='" + A + "'/>",
+ /* Pita satin: tiga pita diagonal mengilap. */
+ ribbon: A => "<path d='M2 44L44 2M12 44L44 12M22 44L44 22' stroke='" + A + "' stroke-width='3' opacity='.55' stroke-linecap='round'/>" +
+   "<path d='M7 44L44 7M17 44L44 17' stroke='" + A + "' stroke-width='1' opacity='.9'/>",
+ /* Mahkota mutiara: untaian plus tiga titik puncak. */
+ 'pearl-crown': A => "<path d='M4 40l8-16 8 10 8-18 8 22' fill='none' stroke='" + A + "' stroke-width='1.5' stroke-linejoin='round'/>" +
+   "<circle cx='12' cy='22' r='2.4' fill='" + A + "'/><circle cx='28' cy='14' r='2.4' fill='" + A + "'/>" +
+   "<circle cx='38' cy='18' r='1.8' fill='" + A + "' opacity='.7'/>",
+ /* Inlay onyx: balok angular berlapis. */
+ 'onyx-inlay': A => "<path d='M4 42V14L32 4h10' fill='none' stroke='" + A + "' stroke-width='2'/>" +
+   "<path d='M10 42V20L30 10h12' fill='none' stroke='" + A + "' stroke-width='1' opacity='.6'/>" +
+   "<rect x='34' y='6' width='6' height='6' fill='" + A + "'/>",
+ /* Mahkota VIP: zigzag dengan permata. */
+ 'vip-crown': A => "<path d='M2 40l9-20 9 13 9-22 9 29' fill='" + A + "' opacity='.8'/>" +
+   "<rect x='2' y='40' width='40' height='4' fill='" + A + "'/>" +
+   "<circle cx='11' cy='18' r='2.2' fill='" + A + "'/><circle cx='29' cy='10' r='2.2' fill='" + A + "'/>",
+ /* Aurora VIP: gelombang berlapis. */
+ 'vip-aurora': A => "<path d='M2 34c8-12 16 8 24-4s12 4 16-6' fill='none' stroke='" + A + "' stroke-width='2' opacity='.85'/>" +
+   "<path d='M2 26c8-12 16 8 24-4s12 4 16-6' fill='none' stroke='" + A + "' stroke-width='1.4' opacity='.6'/>" +
+   "<path d='M2 18c8-12 16 8 24-4s12 4 16-6' fill='none' stroke='" + A + "' stroke-width='1' opacity='.4'/>",
+ /* Intan VIP: facet bersudut. */
+ 'vip-diamond': A => "<path d='M22 6l14 14-14 22L8 20Z' fill='none' stroke='" + A + "' stroke-width='1.6'/>" +
+   "<path d='M8 20h28M22 6v36M14 12l16 20M30 12L14 32' stroke='" + A + "' stroke-width='.8' opacity='.6'/>"
+};
+
+/* --- 12 desain tepi, satu unit 0..BK_E yang diulang --- */
+const BK_TEPI = {
+ laurel: A => "<path d='M0 7h40' stroke='" + A + "' stroke-width='1.1' opacity='.75'/>" +
+   "<ellipse cx='10' cy='7' rx='5' ry='2' fill='" + A + "' opacity='.7' transform='rotate(-18 10 7)'/>" +
+   "<ellipse cx='30' cy='7' rx='5' ry='2' fill='" + A + "' opacity='.7' transform='rotate(18 30 7)'/>",
+ filigree: A => "<path d='M0 8c6-8 14 8 20 0s14 8 20 0' fill='none' stroke='" + A + "' stroke-width='1.3'/>" +
+   "<circle cx='10' cy='4' r='1.5' fill='" + A + "'/><circle cx='30' cy='4' r='1.5' fill='" + A + "'/>",
+ pearl: A => "<circle cx='5' cy='7' r='2' fill='" + A + "' opacity='.6'/><circle cx='15' cy='7' r='2.6' fill='" + A + "' opacity='.8'/>" +
+   "<circle cx='25' cy='7' r='2.6' fill='" + A + "' opacity='.8'/><circle cx='35' cy='7' r='2' fill='" + A + "' opacity='.6'/>",
+ lace: A => "<path d='M0 2a10 10 0 0 0 20 0 10 10 0 0 0 20 0' fill='none' stroke='" + A + "' stroke-width='1.3'/>" +
+   "<circle cx='10' cy='11' r='1.4' fill='" + A + "'/><circle cx='30' cy='11' r='1.4' fill='" + A + "'/>",
+ artdeco: A => "<path d='M0 12h40' stroke='" + A + "' stroke-width='1.4'/>" +
+   "<path d='M5 12V4M15 12V7M25 12V7M35 12V4' stroke='" + A + "' stroke-width='1.6'/>" +
+   "<path d='M0 2h40' stroke='" + A + "' stroke-width='.8' opacity='.5'/>",
+ 'gold-leaf': A => "<path d='M0 10c7-9 13-9 20 0s13 9 20 0' fill='none' stroke='" + A + "' stroke-width='1.2'/>" +
+   "<path d='M10 6c0-4 3-6 6-6 0 4-2 6-6 6ZM30 6c0-4 3-6 6-6 0 4-2 6-6 6Z' fill='" + A + "' opacity='.7'/>",
+ ribbon: A => "<path d='M0 12L12 0M8 12L20 0M16 12L28 0M24 12L36 0M32 12L44 0' stroke='" + A + "' stroke-width='2.4' opacity='.5'/>",
+ 'pearl-crown': A => "<path d='M0 12l5-8 5 6 5-9 5 11 5-11 5 9 5-6 5 8' fill='none' stroke='" + A + "' stroke-width='1.3' stroke-linejoin='round'/>",
+ 'onyx-inlay': A => "<path d='M0 4h40M0 10h40' stroke='" + A + "' stroke-width='1.4'/>" +
+   "<path d='M4 4v6M14 4v6M24 4v6M34 4v6' stroke='" + A + "' stroke-width='.9' opacity='.6'/>",
+ 'vip-crown': A => "<path d='M0 12l6-9 7 6 7-9 7 9 7-6 6 9Z' fill='" + A + "' opacity='.75'/>",
+ 'vip-aurora': A => "<path d='M0 9c7-9 13 7 20-1s13 7 20-1' fill='none' stroke='" + A + "' stroke-width='2' opacity='.8'/>" +
+   "<path d='M0 4c7-9 13 7 20-1s13 7 20-1' fill='none' stroke='" + A + "' stroke-width='1' opacity='.45'/>",
+ 'vip-diamond': A => "<path d='M0 7l7-6 7 6-7 6ZM14 7l7-6 7 6-7 6ZM28 7l7-6 7 6-7 6Z' fill='none' stroke='" + A + "' stroke-width='1.3'/>"
+};
+
+/* Rakit CSS bingkai: 4 sudut (no-repeat) + 4 tepi (repeat) sebagai background. */
+function ornBingkaiCss(A, gaya) {
+  const sd = BK_SUDUT[gaya], tp = BK_TEPI[gaya];
+  if (!sd || !tp) return '';
+  const K = BK_K, E = BK_E, T = BK_T;
+  const sTL = bkUri(sd(A), K, K);
+  const sTR = bkUri(bkCerminX(sd(A), K, K), K, K);
+  const sBR = bkUri(bkCerminXY(sd(A), K, K), K, K);
+  const sBL = bkUri(bkCerminY(sd(A), K, K), K, K);
+  const tT = bkUri(tp(A), E, T);
+  const tB = bkUri(bkCerminY(tp(A), E, T), E, T);
+  /* Tepi kiri/kanan = desain tepi atas yang diputar 90 derajat.
+     rotate(-90) memetakan (x,y) ke (y,-x), lalu translate(0,E) mengangkatnya
+     kembali ke kuadran positif sehingga pas di kotak T x E.
+     rotate(90) memetakan (x,y) ke (-y,x), lalu translate(T,0) melakukan hal sama. */
+  const tL = bkUri("<g transform='translate(0," + E + ") rotate(-90)'>" + tp(A) + '</g>', T, E);
+  const tR = bkUri("<g transform='translate(" + T + ",0) rotate(90)'>" + tp(A) + "</g>", T, E);
+  return [
+    'background-image:' + [sTL, sTR, sBR, sBL, tT, tB, tL, tR].join(','),
+    'background-size:' + [K + 'px ' + K + 'px', K + 'px ' + K + 'px', K + 'px ' + K + 'px', K + 'px ' + K + 'px',
+      E + 'px ' + T + 'px', E + 'px ' + T + 'px', T + 'px ' + E + 'px', T + 'px ' + E + 'px'].join(','),
+    'background-position:' + ['top left', 'top right', 'bottom right', 'bottom left',
+      'top ' + (K - T / 2) + 'px left ' + K + 'px', 'bottom ' + (K - T / 2) + 'px left ' + K + 'px',
+      'left ' + (K - T / 2) + 'px top ' + K + 'px', 'right ' + (K - T / 2) + 'px top ' + K + 'px'].join(','),
+    'background-repeat:' + ['no-repeat', 'no-repeat', 'no-repeat', 'no-repeat',
+      'repeat-x', 'repeat-x', 'repeat-y', 'repeat-y'].join(','),
+    'background-origin:border-box'
+  ].join(';');
+}
+
+/* Gaya bingkai untuk tiap id border. Border sederhana (thin, solid, dashed, ...)
+   sengaja tidak dipetakan -- namanya memang jujur, tidak perlu dihias. */
+const BINGKAI_GAYA = {
+  /* KUNCI = id border yang ada di BORDERS. NILAI = nama gaya di BK_SUDUT/BK_TEPI.
+     Keduanya bukan ruang nama yang sama: 'lace' dan 'ribbon' adalah nama gaya,
+     sedangkan id border-nya 'lace-ivory' dan 'ribbon-satin'. Memakai nama gaya
+     sebagai kunci membuat entri yang tak pernah cocok dengan border mana pun. */
+  laurel: 'laurel', filigree: 'filigree', pearl: 'pearl',
+  'lace-ivory': 'lace', artdeco: 'artdeco', 'gold-leaf': 'gold-leaf',
+  'ribbon-satin': 'ribbon', 'pearl-crown': 'pearl-crown',
+  'onyx-inlay': 'onyx-inlay', 'vip-crown': 'vip-crown',
+  'vip-aurora': 'vip-aurora', 'vip-diamond': 'vip-diamond'
+};
+function ornBingkaiUntuk(id, A) {
+  const g = BINGKAI_GAYA[id];
+  if (!g) return '';
+  try { return ornBingkaiCss(A, g); } catch (e) { return ''; }
+}
+
+function ornIdValid(v){return typeof v==='string'&&Object.prototype.hasOwnProperty.call(ORNAMEN,v)}
+
 /* Bunga ornamen sudut 3D/4D: tiga lapis kelopak (l-back / l-mid / l-front)
    dengan gradasi + highlight → kesan kedalaman; mode 4D menambah gerak melayang. */
+/* ===== Ornamen sudut: dibangun dari referensi yang benar-benar dilihat =====
+
+   Sebelumnya hanya ada 4 pilihan (tanpa / ranting / bunga3d / bunga4d) dan
+   bunga3d dengan bunga4d memakai SVG yang SAMA persis -- satu-satunya beda
+   hanyalah animasi CSS, jadi pada tampilan diam keduanya identik.
+
+   Gaya-gaya di bawah diambil dari ciri visual referensi yang diperiksa satu
+   per satu (lihat katalog referensi di image-search/):
+
+   deco     -> kipas sunburst memancar dari satu titik, kipas seperempat
+               lingkaran bersarang di sudut, garis paralel rangkap membentuk
+               bingkai L, kipas kecil berulang di tepi
+   filigree -> sulur meruncing (tebal ke tipis) menjulur sepanjang tepi dan
+               berujung tetesan, gerombol spiral C/S di sudut, aksen trefoil,
+               titik "mata" di persimpangan dalam
+   girih    -> bintang bersudut banyak di pusat, teselasi bintang-heksagon,
+               pita strapwork saling silang membentuk L
+   damask   -> palmette simetris bilateral: finial tetesan di tengah, gulungan
+               di kedua sisi, kelopak berlapis, aksen titik
+   mendung  -> mega mendung Cirebon: garis awan konsentris berlapis yang
+               bergelombang, diulang lebih kecil di sepanjang tepi
+
+   Emboss (permintaan terpisah) diterapkan lewat CSS: cahaya dari kiri-atas
+   dan bayangan ke kanan-bawah, jadi ornamen tampak timbul dari kertas. */
+
+/* Satu sudut digambar dalam kotak 0..100, jangkar di kiri-atas; tiga sudut
+   lain dibuat dengan pencerminan (bkCermin* sudah ada di blok bingkai). */
+const ORN_SUDUT = {
+ /* kipas art-deco */
+ deco: () => {
+   let s = '';
+   s += "<path d='M3 97V3h94' fill='none' stroke='currentColor' stroke-width='2.6'/>";
+   s += "<path d='M9 97V9h88' fill='none' stroke='currentColor' stroke-width='1.1' opacity='.85'/>";
+   s += "<path d='M15 97V15h82' fill='none' stroke='currentColor' stroke-width='.6' opacity='.6'/>";
+   for (let i = 0; i < 4; i++) {
+     const r = 24 + i * 9;
+     s += "<path d='M3 " + r + "A" + (r - 3) + ' ' + (r - 3) + " 0 0 0 " + r + " 3' fill='none' stroke='currentColor' stroke-width='" + (i === 0 ? 2 : 1) + "' opacity='" + (0.95 - i * 0.16).toFixed(2) + "'/>";
+   }
+   for (let i = 0; i < 7; i++) {
+     const a = (12 + i * 11) * Math.PI / 180, x1 = 6 + Math.cos(a) * 16, y1 = 6 + Math.sin(a) * 16,
+       x2 = 6 + Math.cos(a) * 40, y2 = 6 + Math.sin(a) * 40;
+     s += "<line x1='" + x1.toFixed(1) + "' y1='" + y1.toFixed(1) + "' x2='" + x2.toFixed(1) + "' y2='" + y2.toFixed(1) + "' stroke='currentColor' stroke-width='" + (i % 2 ? 1 : 2.2) + "' opacity='.9'/>";
+   }
+   s += "<path d='M3 62A24 24 0 0 0 27 86L3 86Z' fill='currentColor' opacity='.5'/>";
+   s += "<path d='M62 3A24 24 0 0 0 86 27L86 3Z' fill='currentColor' opacity='.5'/>";
+   return s;
+ },
+ /* sulur filigree meruncing */
+ filigree: () => {
+   let s = '';
+   s += "<path d='M97 3C72 3 44 6 24 15C46 9 72 6 97 6Z' fill='currentColor' opacity='.9'/>";
+   s += "<path d='M3 97C3 72 6 44 15 24C9 46 6 72 6 97Z' fill='currentColor' opacity='.9'/>";
+   s += "<path d='M96 4c3-2 6 0 5 3-1 2-4 2-5-1Z' fill='currentColor'/>";
+   s += "<path d='M4 96c-2 3 0 6 3 5 2-1 2-4-1-5Z' fill='currentColor'/>";
+   const spiral = (cx, cy, r, o) => "<path d='M" + cx + ' ' + cy + 'a' + r + ' ' + r + ' 0 1 1 ' + (r * .8) + ' ' + (r * .8) + 'a' + (r * .5) + ' ' + (r * .5) + " 0 1 0 -" + (r * .45) + ' ' + (r * .45) + "' fill='none' stroke='currentColor' stroke-width='1.7' opacity='" + o + "'/>";
+   s += spiral(26, 26, 9, .95) + spiral(40, 18, 6, .8) + spiral(18, 40, 6, .8);
+   s += spiral(34, 34, 4.5, .7);
+   const trefoil = (cx, cy, o) => "<circle cx='" + (cx - 3) + "' cy='" + cy + "' r='2.6' fill='currentColor' opacity='" + o + "'/><circle cx='" + (cx + 3) + "' cy='" + cy + "' r='2.6' fill='currentColor' opacity='" + o + "'/><circle cx='" + cx + "' cy='" + (cy - 3.4) + "' r='2.6' fill='currentColor' opacity='" + o + "'/>";
+   s += trefoil(52, 30, .75) + trefoil(30, 52, .75) + trefoil(46, 46, .6);
+   s += "<circle cx='20' cy='20' r='2.4' fill='currentColor'/>";
+   return s;
+ },
+ /* girih islami: bintang + strapwork */
+ girih: () => {
+   let s = '';
+   s += "<path d='M2 98V14L14 2h84' fill='none' stroke='currentColor' stroke-width='2.4'/>";
+   s += "<path d='M8 98V20L20 8h78' fill='none' stroke='currentColor' stroke-width='1.2' opacity='.8'/>";
+   s += "<path d='M2 98V14L14 2' fill='none' stroke='currentColor' stroke-width='1.2' opacity='.8' transform='translate(3,3)'/>";
+   const star = (cx, cy, r, o) => {
+     let p = '';
+     for (let k = 0; k < 2; k++) p += "<rect x='" + (cx - r) + "' y='" + (cy - r) + "' width='" + (2 * r) + "' height='" + (2 * r) + "' fill='none' stroke='currentColor' stroke-width='1.3' opacity='" + o + "' transform='rotate(" + (k * 45) + ' ' + cx + ' ' + cy + ")'/>";
+     return p + "<circle cx='" + cx + "' cy='" + cy + "' r='" + (r * .34) + "' fill='currentColor' opacity='" + o + "'/>";
+   };
+   s += star(30, 30, 13, .95);
+   s += star(66, 10, 6, .7) + star(10, 66, 6, .7) + star(52, 52, 5, .55);
+   s += "<path d='M44 20l8 8M20 44l8 8M48 48l8 8' stroke='currentColor' stroke-width='1.2' opacity='.7'/>";
+   return s;
+ },
+ /* palmette damask seperempat */
+ damask: () => {
+   let s = '';
+   s += "<path d='M30 6C22 16 18 26 20 38C10 30 6 20 8 8C16 8 25 4 30 6Z' fill='currentColor' opacity='.85'/>";
+   s += "<path d='M6 30C16 22 26 18 38 20C30 10 20 6 8 8C8 16 4 25 6 30Z' fill='currentColor' opacity='.85'/>";
+   s += "<path d='M34 34c-6-2-10-6-12-12 8 2 12 6 12 12Z' fill='currentColor' opacity='.7'/>";
+   const petal = (cx, cy, rx, ry, rot, o) => "<ellipse cx='" + cx + "' cy='" + cy + "' rx='" + rx + "' ry='" + ry + "' fill='currentColor' opacity='" + o + "' transform='rotate(" + rot + ' ' + cx + ' ' + cy + ")'/>";
+   s += petal(46, 22, 9, 3.4, -34, .65) + petal(22, 46, 9, 3.4, 56, .65);
+   s += petal(58, 12, 7, 2.6, -22, .5) + petal(12, 58, 7, 2.6, 68, .5);
+   s += petal(60, 40, 6, 2.4, -50, .45) + petal(40, 60, 6, 2.4, 40, .45);
+   s += "<circle cx='34' cy='34' r='3.4' fill='currentColor'/>";
+   s += "<circle cx='70' cy='8' r='1.8' fill='currentColor' opacity='.6'/><circle cx='8' cy='70' r='1.8' fill='currentColor' opacity='.6'/>";
+   s += "<path d='M96 4H60M4 96V60' stroke='currentColor' stroke-width='1' opacity='.5'/>";
+   return s;
+ },
+ /* mega mendung: awan konsentris */
+ mendung: () => {
+   let s = '';
+   const awan = (k, o) => {
+     const r = 46 - k * 8;
+     return "<path d='M2 " + (r + 6) + "C" + (r * .3) + ' ' + (r * .8) + ' ' + (r * .45) + ' ' + (r * .5) + ' ' + (r * .62) + ' ' + (r * .55) +
+       "C" + (r * .7) + ' ' + (r * .3) + ' ' + (r * .85) + ' ' + (r * .3) + ' ' + (r * .95) + ' ' + (r * .5) +
+       "C" + (r + 2) + ' ' + (r * .45) + ' ' + (r + 4) + ' ' + (r * .62) + ' ' + (r + 6) + " 2' fill='none' stroke='currentColor' stroke-width='" + (2.4 - k * .4).toFixed(1) + "' opacity='" + o + "'/>";
+   };
+   s += awan(0, .95) + awan(1, .8) + awan(2, .62) + awan(3, .45);
+   const kecil = (cx, cy, o) => "<path d='M" + (cx - 8) + ' ' + cy + 'c2-5 6-7 9-5 2-4 7-4 9 0 3-2 7 0 8 5Z' + "' fill='none' stroke='currentColor' stroke-width='1.3' opacity='" + o + "'/>";
+   s += kecil(70, 10, .6) + kecil(10, 70, .6) + kecil(56, 56, .45);
+   return s;
+ }
+};
+
+/* Kembalikan SVG satu sudut untuk gaya yang diminta. */
+function ornSudutSvg(id) {
+  const g = ORN_SUDUT[id];
+  if (!g) return null;
+  try {
+    return "<svg viewBox='0 0 100 100' fill='none' aria-hidden='true'>" + g() + "</svg>";
+  } catch (e) { return null; }
+}
+
+/* CSS agar ornamen sudut juga hadir di SEMUA lapisan kartu, bukan hanya
+   sampul dan kartu tamu. Dipasang sebagai lapisan background (ikut ter-clip
+   border-radius, tidak merebut pseudo-element) lewat <style> yang disuntik
+   saat boot karena warnanya mengikuti aksen tema. */
+function ornSudutCssDariSvg(svg, A) {
+  if (!svg) return '';
+  const m = String(svg).match(/viewBox=["']([^"']+)["']/);
+  if (!m) return '';
+  const vb = m[1].trim().split(/\s+/);
+  const W = vb[2], H = vb[3];
+  /* Buang pembungkus <svg> supaya pencerminan bekerja pada isinya, bukan
+     menyarangkan <svg> di dalam <svg>. */
+  const isi = String(svg).replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+  const K = 54, uri = (inner) => "url('data:image/svg+xml," +
+    encodeURIComponent("<svg xmlns=\"http://www.w3.org/2000/svg\" width='" + W + "' height='" + H +
+      "' viewBox='" + vb.join(' ') + "'>" + inner + "</svg>").replace(/'/g, '%27') + "')";
+  const satu = isi;
+  const tl = uri(satu), tr = uri(bkCerminX(satu, W, H)),
+    br = uri(bkCerminXY(satu, W, H)), bl = uri(bkCerminY(satu, W, H));
+  return '.card{background-image:' + [tl, tr, br, bl].join(',') + ';' +
+    'background-position:left 7px top 7px,right 7px top 7px,right 7px bottom 7px,left 7px bottom 7px;' +
+    'background-repeat:no-repeat,no-repeat,no-repeat,no-repeat;' +
+    'background-size:' + K + 'px ' + K + 'px,' + K + 'px ' + K + 'px,' + K + 'px ' + K + 'px,' + K + 'px ' + K + 'px}';
+}
+
+/* 3D dan 4D kini menghasilkan SVG yang BENAR-BENAR berbeda. Sebelumnya kedua
+   pilihan memanggil ornBungaSvg() tanpa argumen sehingga gambarannya identik
+   dan satu-satunya pembeda hanyalah animasi CSS -- pada tampilan diam keduanya
+   sama persis. Mode 4D menambah cincin kilau keempat dan inti lebih terang. */
+function ornBunga(mode){
+ let s=ornBungaSvg();
+ if(mode==='4d'){
+  let ek="<g class='orn-l l-glow'>";
+  for(let i=0;i<8;i++){const a=i*45*Math.PI/180;
+   ek+="<circle cx='"+(50+Math.cos(a)*44).toFixed(1)+"' cy='"+(50+Math.sin(a)*44).toFixed(1)+"' r='2.4' fill='#fff' opacity='.85'/>"}
+  ek+="<circle cx='50' cy='50' r='7.5' fill='#fff' opacity='.5'/></g>";
+  s=s.replace('</svg>',ek+'</svg>');
+ }
+ return s;
+}
 function ornBungaSvg(){
  const P=(cx,cy,rx,ry,fill,n,off)=>{let s='';for(let i=0;i<n;i++){const a=off+i*(360/n);
   s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="'+fill+'" transform="rotate('+a+' '+cx+' '+cy+')"/>'}return s};
@@ -1119,23 +2093,129 @@ function fitCoverPhotos(){document.querySelectorAll('#cover .cvf img,#cover .cvl
 })}
 window.addEventListener('resize',()=>{if(window.requestAnimationFrame)requestAnimationFrame(fitCoverPhotos);else fitCoverPhotos()},{passive:true});
 function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
-function patCss(t){
- const tile=(svg,size)=>`background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${size};background-repeat:repeat;`;
- if(t.pat==='batik'){
-  const c=t.accent||'#8b653d';
-  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".24" stroke-width="1.5"><path d="M48 4C65 17 65 27 48 41 31 27 31 17 48 4ZM92 48C79 65 69 65 55 48 69 31 79 31 92 48ZM48 92C31 79 31 69 48 55 65 69 65 79 48 92ZM4 48C17 31 27 31 41 48 27 65 17 65 4 48Z"/><path d="M48 31 65 48 48 65 31 48Z"/><circle cx="48" cy="48" r="4"/></g></svg>`, '48px 48px');
+/* ===========================================================================
+   pola-blok.js — registri POLA latar (background pattern) untuk AsProject.
+
+   Blok ini adalah sumber-kebenaran tunggal untuk semua pola latar. Isi file
+   ini ditempel (splice) ke undangan.html DAN studio.html oleh patcher, supaya
+   keduanya selalu identik. Jangan sunting salinan di dalam HTML langsung;
+   sunting file ini lalu jalankan patcher.
+
+   Setiap entri: { n: nama tampil, d: keterangan picker, op: opasitas dasar,
+                   size: nilai background-size, svg(c,op) ATAU css(t) }.
+   polaCss(id, t, skala) menghasilkan potongan CSS background (image+size+
+   repeat). skala dipakai untuk melunakkan pola saat dipasang sebagai latar
+   halaman (bukan sampul).
+
+   Motif baru digambar dari referensi visual: mega mendung (awan berlapis +
+   spiral), parang (larik diagonal berisi bilah), kawung (lingkaran berpotong
+   membentuk rosset empat kelopak), damask (medalion palmette half-drop),
+   girih (bintang delapan + intan sudut), deco (kipas/busur bertingkat),
+   sulur (sulur daun melingkar), renda (tepi berskalop + titik), marmer
+   (urat batu panjang), ombak (kipas seigaiha), zigzag (chevron), tabur
+   (kelip bintang tersebar).
+   =========================================================================== */
+const POLA = {
+ /* --- lima pola lama, dipindah apa adanya supaya tampilan lama tidak berubah --- */
+ batik: {
+  n: 'Batik Kawung', d: 'Rosset batik empat kelopak', op: .24, size: '48px 48px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.5"><path d="M48 4C65 17 65 27 48 41 31 27 31 17 48 4ZM92 48C79 65 69 65 55 48 69 31 79 31 92 48ZM48 92C31 79 31 69 48 55 65 69 65 79 48 92ZM4 48C17 31 27 31 41 48 27 65 17 65 4 48Z"/><path d="M48 31 65 48 48 65 31 48Z"/><circle cx="48" cy="48" r="4"/></g></svg>`
+ },
+ botanical: {
+  n: 'Ranting Daun', d: 'Tangkai daun melintang', op: .17, size: '120px 120px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.5" stroke-linecap="round"><path d="M14 108C42 87 65 56 106 13"/><path d="M34 92C17 89 15 73 16 67 31 65 42 75 34 92ZM52 73C36 71 34 57 35 51 51 49 60 59 52 73ZM72 51C57 48 56 34 58 28 73 28 81 39 72 51ZM39 89C42 73 56 69 63 70 64 85 53 95 39 89ZM59 66C62 51 76 47 83 49 83 64 73 73 59 66ZM81 42C84 29 96 24 102 26 103 39 94 48 81 42Z"/></g></svg>`
+ },
+ frost: {
+  n: 'Kristal Es', d: 'Keping salju halus', op: .2, size: '96px 96px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.35" stroke-linecap="round"><path d="M24 12v28M12 19l24 14M36 19 12 33M70 52v32M56 61l28 15M84 61 56 76M48 48l7 7-7 7-7-7Z"/><path d="m20 17 4 4 4-4m-16 12 5-1 1 5m16-5-5-1-1 5m28 30 4 5 4-5m-16 13 5-1 1 5m16-5-5-1-1 5"/></g></svg>`
+ },
+ arab: {
+  n: 'Anyaman Diagonal', d: 'Garis silang anyaman', op: 0, size: '',
+  css: t => `background-image:repeating-linear-gradient(45deg,${t.accent}14 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0f 0 2px,transparent 2px 16px);`
+ },
+ confetti: {
+  n: 'Konfeti', d: 'Titik warna pesta', op: 0, size: '',
+  css: t => `background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`
+ },
+
+ /* --- dua belas pola baru --- */
+ mendung: {
+  n: 'Mega Mendung', d: 'Awan batik Cirebon berlapis', op: .2, size: '120px 120px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.6" stroke-linecap="round"><path d="M14 40C26 28 44 26 60 30C76 26 94 30 106 40C94 50 76 54 60 50C44 54 26 50 14 40Z"/><path d="M26 40C36 33 48 32 60 35C72 32 84 33 94 40C84 46 72 47 60 45C48 47 36 46 26 40Z"/><path d="M60 38c5-1 7 3 3 5c-3 1-5-2-3-4"/><path d="M18 88C28 79 42 77 54 80C66 77 80 79 90 88C80 95 66 97 54 94C42 97 28 95 18 88Z"/><path d="M28 88C36 83 46 82 54 84C62 82 72 83 80 88C72 92 62 93 54 91C46 93 36 92 28 88Z"/><path d="M54 86c4-1 6 2 3 4c-3 1-4-2-3-3"/></g></svg>`
+ },
+ parang: {
+  n: 'Parang', d: 'Larik diagonal bilah batik', op: .2, size: '72px 72px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.4" stroke-linecap="round"><path d="M0 36 36 0M0 72 72 0M36 72 72 36"/><path d="M10 26c4 0 6 2 6 6M28 8c4 0 6 2 6 6M20 44c4 0 6 2 6 6M46 26c4 0 6 2 6 6M38 62c4 0 6 2 6 6M56 44c4 0 6 2 6 6"/><path d="M16 20l3 3M40 44l3 3M52 20l3 3M28 56l3 3"/></g></svg>`
+ },
+ kawung: {
+  n: 'Kawung', d: 'Lingkaran berpotong empat kelopak', op: .2, size: '64px 64px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.4"><circle cx="0" cy="0" r="18"/><circle cx="64" cy="0" r="18"/><circle cx="0" cy="64" r="18"/><circle cx="64" cy="64" r="18"/><circle cx="32" cy="32" r="18"/><circle cx="32" cy="32" r="3"/><path d="M32 14v-5M32 55v5M14 32h-5M55 32h5"/></g></svg>`
+ },
+ damask: {
+  n: 'Damask', d: 'Medalion palmette klasik', op: .2, size: '96px 96px',
+  svg: (c, op) => {
+   const m = `<path d="M0 -16C6 -10 8 -4 8 0C8 6 4 10 0 14C-4 10 -8 6 -8 0C-8 -4 -6 -10 0 -16Z"/><path d="M8 2C14 0 18 4 16 8C14 11 10 10 10 7"/><path d="M-8 2C-14 0 -18 4 -16 8C-14 11 -10 10 -10 7"/><path d="M0 -20v-4M5 -18l3-3M-5 -18l-3-3"/><circle cx="0" cy="20" r="1.6"/>`;
+   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.3" stroke-linecap="round"><g transform="translate(48 28)">${m}</g><g transform="translate(0 76)">${m}</g><g transform="translate(96 76)">${m}</g></g></svg>`;
+  }
+ },
+ girih: {
+  n: 'Girih', d: 'Bintang delapan geometris', op: .2, size: '80px 80px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.3"><g transform="translate(40 40)"><rect x="-15" y="-15" width="30" height="30"/><rect x="-15" y="-15" width="30" height="30" transform="rotate(45)"/><circle r="4"/></g><path d="M0 0 22 22M80 0 58 22M0 80 22 58M80 80 58 58"/><g transform="translate(0 0) rotate(45)"><rect x="-7" y="-7" width="14" height="14"/></g><g transform="translate(80 0) rotate(45)"><rect x="-7" y="-7" width="14" height="14"/></g><g transform="translate(0 80) rotate(45)"><rect x="-7" y="-7" width="14" height="14"/></g><g transform="translate(80 80) rotate(45)"><rect x="-7" y="-7" width="14" height="14"/></g></g></svg>`
+ },
+ deco: {
+  n: 'Kipas Deco', d: 'Busur kipas art deco', op: .2, size: '80px 40px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 40"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.3"><path d="M8 40a32 32 0 0 1 64 0"/><path d="M16 40a24 24 0 0 1 48 0"/><path d="M24 40a16 16 0 0 1 32 0"/><path d="M32 40a8 8 0 0 1 16 0"/><path d="M-32 0a32 32 0 0 1 64 0"/><path d="M-24 0a24 24 0 0 1 48 0"/><path d="M-16 0a16 16 0 0 1 32 0"/><path d="M48 0a32 32 0 0 1 64 0"/><path d="M56 0a24 24 0 0 1 48 0"/><path d="M64 0a16 16 0 0 1 32 0"/></g></svg>`
+ },
+ sulur: {
+  n: 'Sulur', d: 'Sulur daun melingkar', op: .18, size: '100px 100px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.4" stroke-linecap="round"><path d="M10 90C30 70 30 50 50 50C70 50 70 30 90 10"/><path d="M50 50c-8-2-12-8-10-14c6-2 12 2 10 14Z"/><path d="M50 50c2 8 8 12 14 10c2-6-2-12-14-10Z"/><path d="M28 72c-6 0-10-4-9-9c5-1 9 3 9 9Z"/><path d="M72 28c0-6 4-10 9-9c1 5-3 9-9 9Z"/><path d="M90 10c4-2 8 0 8 4M10 90c-4 2-8 0-8-4"/><circle cx="50" cy="50" r="1.8"/></g></svg>`
+ },
+ renda: {
+  n: 'Renda', d: 'Tepi berskalop seperti renda', op: .22, size: '56px 28px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 28"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.2"><path d="M0 8a14 14 0 0 0 28 0a14 14 0 0 0 28 0"/><path d="M6 8a8 8 0 0 0 16 0M34 8a8 8 0 0 0 16 0"/><circle cx="14" cy="15" r="1.5"/><circle cx="42" cy="15" r="1.5"/><path d="M14 26v-7M42 26v-7M0 26h56" stroke-dasharray="2 3"/></g></svg>`
+ },
+ marmer: {
+  n: 'Marmer', d: 'Urat batu alami', op: .14, size: '140px 140px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.1" stroke-linecap="round"><path d="M-10 30C20 24 34 44 60 40C86 36 96 16 122 20C138 22 146 30 150 30"/><path d="M-10 78C16 70 30 92 58 86C84 80 98 60 124 66C140 70 148 78 150 78"/><path d="M-10 122C22 116 36 134 64 128C90 122 102 104 128 110C142 113 148 122 150 122"/><path d="M60 40c4 8 2 14-4 18M58 86c6 6 6 12 2 18M122 20c-2 8 0 12 6 16"/></g></svg>`
+ },
+ ombak: {
+  n: 'Ombak', d: 'Kipas gelombang seigaiha', op: .2, size: '60px 30px',
+  svg: (c, op) => {
+   const f = `<path d="M-15 0a15 15 0 0 1 30 0"/><path d="M-10 0a10 10 0 0 1 20 0"/><path d="M-5 0a5 5 0 0 1 10 0"/>`;
+   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.2"><g transform="translate(15 30)">${f}</g><g transform="translate(45 30)">${f}</g><g transform="translate(0 15)">${f}</g><g transform="translate(30 15)">${f}</g><g transform="translate(60 15)">${f}</g></g></svg>`;
+  }
+ },
+ zigzag: {
+  n: 'Zigzag', d: 'Chevron rapat', op: .2, size: '48px 24px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 24"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.4" stroke-linejoin="round"><path d="M0 16 12 4 24 16 36 4 48 16"/><path d="M0 22 12 10 24 22 36 10 48 22"/></g></svg>`
+ },
+ tabur: {
+  n: 'Tabur Kelip', d: 'Bintang kecil tersebar', op: .22, size: '90px 90px',
+  svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.3" stroke-linejoin="round"><path d="M22 15C23 20 24 21 29 22C24 23 23 24 22 29C21 24 20 23 15 22C20 21 21 20 22 15Z"/><path d="M66 35C67 39 68 40 72 41C68 42 67 43 66 47C65 43 64 42 60 41C64 40 65 39 66 35Z"/><path d="M40 64C41 69 42 70 47 71C42 72 41 73 40 78C39 73 38 72 33 71C38 70 39 69 40 64Z"/><path d="M78 76C79 79 80 80 83 81C80 82 79 83 78 86C77 83 76 82 73 81C76 80 77 79 78 76Z"/><path d="M10 52C11 55 12 56 15 57C12 58 11 59 10 62C9 59 8 58 5 57C8 56 9 55 10 52Z"/><circle cx="52" cy="14" r="1.4"/><circle cx="14" cy="80" r="1.4"/><circle cx="80" cy="52" r="1.2"/></g></svg>`
  }
- if(t.pat==='botanical'){
-  const c=t.accent||'#66816a';
-  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><g fill="none" stroke="${c}" stroke-opacity=".17" stroke-width="1.5" stroke-linecap="round"><path d="M14 108C42 87 65 56 106 13"/><path d="M34 92C17 89 15 73 16 67 31 65 42 75 34 92ZM52 73C36 71 34 57 35 51 51 49 60 59 52 73ZM72 51C57 48 56 34 58 28 73 28 81 39 72 51ZM39 89C42 73 56 69 63 70 64 85 53 95 39 89ZM59 66C62 51 76 47 83 49 83 64 73 73 59 66ZM81 42C84 29 96 24 102 26 103 39 94 48 81 42Z"/></g></svg>`, '120px 120px');
- }
- if(t.pat==='frost'){
-  const c=t.accent||'#38BDF8';
-  return tile(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g fill="none" stroke="${c}" stroke-opacity=".2" stroke-width="1.35" stroke-linecap="round"><path d="M24 12v28M12 19l24 14M36 19 12 33M70 52v32M56 61l28 15M84 61 56 76M48 48l7 7-7 7-7-7Z"/><path d="m20 17 4 4 4-4m-16 12 5-1 1 5m16-5-5-1-1 5m28 30 4 5 4-5m-16 13 5-1 1 5m16-5-5-1-1 5"/></g></svg>`, '96px 96px');
- }
- if(t.pat==='arab')return `background-image:repeating-linear-gradient(45deg,${t.accent}14 0 2px,transparent 2px 16px),repeating-linear-gradient(-45deg,${t.accent}0f 0 2px,transparent 2px 16px);`;
- if(t.pat==='confetti')return `background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;`;
- return ''}
+};
+const POLA_IDS = Object.keys(POLA);
+
+/* Kembalikan potongan CSS background untuk pola id pada tema t.
+   skala (opsional) melunakkan opasitas, dipakai lapisan latar halaman. */
+function polaCss(id, t, skala) {
+ const P = POLA[id];
+ if (!P) return '';
+ const tema = t || {};
+ if (P.css) return P.css(tema);
+ const c = tema.accent || '#8b7358';
+ const op = Math.max(.04, Math.round(P.op * (skala == null ? 1 : skala) * 100) / 100);
+ const svg = P.svg(c, op);
+ return `background-image:url(data:image/svg+xml,${encodeURIComponent(svg)});background-size:${P.size};background-repeat:repeat;`;
+}
+
+/* Id pola yang dipakai pemilik (d.pat) menang atas bawaan tema. */
+function patAktif(d, tplF) {
+ const pilih = (d && d.pat) || '';
+ if (POLA[pilih]) return pilih;
+ return (tplF && tplF.pat) || '';
+}
+function patCss(t,skala){return polaCss(t&&t.pat,t,skala)}
 const BULAN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 function parseDate(s){if(!s)return null;const m=String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);if(!m)return null;return new Date(+m[1],+m[2]-1,+m[3])}
@@ -1224,6 +2304,11 @@ function setupMusic(url,name){
    requestAnimationFrame(loop)};
   loop();viz.classList.add('on');
  }catch(e){an=null}};
+ /* Kelas musik-on mengikuti KEJADIAN audio sungguhan, bukan niat memutar:
+    bila autoplay diblokir browser, piringan & cincin denyut tidak menipu. */
+ a.addEventListener('play',()=>document.body.classList.add('musik-on'));
+ a.addEventListener('pause',()=>document.body.classList.remove('musik-on'));
+ a.addEventListener('ended',()=>document.body.classList.remove('musik-on'));
  btn.addEventListener('click',()=>{
   if(!on){a.play().then(()=>{on=true;hook()}).catch(()=>{})}
   else{a.pause();on=false;viz.classList.remove('on');bars.forEach(b=>b.style.height='3px')}
@@ -1323,13 +2408,16 @@ function muatUlangPeta(btn){
  f.removeAttribute('src');
  setTimeout(()=>{petaMuatSatu(f);if(btn)btn.disabled=false},80);
 }
-function liveSlides(d,ev,tplF,fullNm,form,venue){
- if(!d||!d.slides)return'';
- const S=d.slides,h=[];
+function slideBag(d,ev,tplF,fullNm,form,venue){
+ if(!d||!d.slides)return{};
+ const S=d.slides,bag={};
+ /* `h.push` dipertahankan sebagai nama supaya badan fungsi tak banyak berubah,
+    tapi kini menerima (kunci, html) dan menampung per-slide, bukan satu deret. */
+ const h={push:(k,v)=>{bag[k]=(bag[k]||'')+v}};
  const card=inner=>`<div class="card rv">${inner}</div>`;
  const kick=t=>`<div class="kicker">${t}</div>`;
  if(S.timeline&&S.timeline.on){const it=sLines(S.timeline.items);
-  if(it.length)h.push(card(`${kick('⏱️ Timeline Acara')}<div style="margin-top:16px">`+it.map((x,i)=>{const s=sItem(x);return `
+  if(it.length)h.push('timeline',card(`${kick('⏱️ Timeline Acara')}<div style="margin-top:16px">`+it.map((x,i)=>{const s=sItem(x);return `
    <div style="display:flex;gap:14px">
     <div style="display:flex;flex-direction:column;align-items:center">
      <div style="width:10px;height:10px;border-radius:99px;background:var(--accent);margin-top:5px;flex:none"></div>
@@ -1338,27 +2426,27 @@ function liveSlides(d,ev,tplF,fullNm,form,venue){
     <div style="${i<it.length-1?'padding-bottom:16px':''}"><div style="font-size:14px;font-weight:700;color:var(--ink-body)">${esc(s.a||'Sesi')}${s.b?` <span style="font-weight:500;color:#8a7f72;font-size:12px">• ${esc(s.b)}</span>`:''}</div></div>
    </div>`}).join('')+'</div>'))}
  if(S.story&&S.story.on){const sit=(Array.isArray(S.story.items)?S.story.items:[]).filter(x=>x&&(x.judul||x.teks||x.foto));
-  if(sit.length)h.push(`<div class="card rv"><div class="kicker">💞 Cerita Kami</div><div class="st-list">`+sit.map((x,i)=>`
+  if(sit.length)h.push('story',`<div class="card rv"><div class="kicker">💞 Cerita Kami</div><div class="st-list">`+sit.map((x,i)=>`
    <div class="st-item"><div class="st-rail"><div class="st-dot"></div>${i<sit.length-1?'<div class="st-line"></div>':''}</div>
     <div class="st-body">${x.tgl?`<div class="st-tgl">${esc(x.tgl)}</div>`:''}
      ${x.judul?`<div class="st-judul">${esc(x.judul)}</div>`:''}
      ${x.teks?`<div class="st-teks">${esc(x.teks)}</div>`:''}
      ${x.foto?`<div class="st-foto"><img src="${esc(x.foto)}" alt="${esc(x.judul||'Cerita kami')}" loading="lazy" onerror="this.closest('.st-foto').style.display='none'"><div class="st-cap">${esc(x.judul||'')}</div></div>`:''}
     </div></div>`).join('')+`</div></div>`);
-  else if(S.story.text&&S.story.text.trim())h.push(`<div class="card rv"><div class="kicker">💞 Cerita Kami</div>
+  else if(S.story.text&&S.story.text.trim())h.push('story',`<div class="card rv"><div class="kicker">💞 Cerita Kami</div>
   <p style="margin-top:14px;font-size:14px;font-style:italic;line-height:1.9;color:#57503f;font-family:Georgia,serif">${esc(S.story.text)}</p></div>`)}
  {const q=S.quote&&S.quote.custom?{text:S.quote.text,author:S.quote.author}:(QUOTES[ev]||QUOTES.pernikahan);
-  if(S.quote&&S.quote.on&&q.text)h.push(`<div class="card rv"><div style="font-size:34px;line-height:.8;color:var(--accent-body);opacity:.45">❝</div>
+  if(S.quote&&S.quote.on&&q.text)h.push('quote',`<div class="card rv"><div style="font-size:34px;line-height:.8;color:var(--accent-body);opacity:.45">❝</div>
   <div style="margin-top:12px;font-size:14.5px;font-style:italic;line-height:1.85;color:#4a4436;font-family:Georgia,serif">${esc(q.text)}</div>
   <div style="margin-top:12px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9a8f82">— ${esc(q.author||'')}</div></div>`)}
  if(S.menu&&S.menu.on){const it=sLines(S.menu.items);
-  if(it.length)h.push(card(`${kick('🍽️ Menu Acara')}<div style="margin-top:12px">`+it.map(x=>{const s=sItem(x);return `
+  if(it.length)h.push('menu',card(`${kick('🍽️ Menu Acara')}<div style="margin-top:12px">`+it.map(x=>{const s=sItem(x);return `
    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed #eadfc8"><div style="font-size:14px;font-weight:600;color:var(--ink-body)">${esc(s.a||'Menu')}</div><div style="font-size:12px;color:#8a7f72;text-align:right">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
  if(S.party&&S.party.on){const it=sLines(S.party.items);
-  if(it.length)h.push(card(`${kick('🎩 Panitia / Bridal Party')}<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">`+it.map(x=>{const s=sItem(x);return `
+  if(it.length)h.push('party',card(`${kick('🎩 Panitia / Bridal Party')}<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">`+it.map(x=>{const s=sItem(x);return `
    <div style="display:flex;flex-direction:column;padding:12px 14px;border-radius:16px;background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d8;min-width:100px"><div style="font-size:13px;font-weight:700;color:var(--ink-body)">${esc(s.a||'')}</div><div style="font-size:11px;color:#8a7f72;margin-top:3px">${esc(s.b||'')}</div></div>`}).join('')+'</div>'))}
  if(S.dresscode&&S.dresscode.on){const cols=String(S.dresscode.colors||'').split(',').map(c=>c.trim()).filter(sHex);
-  h.push(`<div class="card rv"><div class="kicker">👗 Dress Code</div>
+  h.push('dresscode',`<div class="card rv"><div class="kicker">👗 Dress Code</div>
   <div style="margin-top:10px;font-size:16px;font-weight:700;color:var(--ink-body)">${esc(S.dresscode.text||'—')}</div>
   ${cols.length?`<div style="display:flex;justify-content:center;gap:10px;margin-top:16px">${cols.map(c=>`<div style="width:28px;height:28px;border-radius:99px;background:${c};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2)"></div>`).join('')}</div>
   <div style="margin-top:10px;font-size:10px;font-family:ui-monospace,monospace;color:#b3a894">${esc(cols.join('  '))}</div>`:''}</div>`)}
@@ -1366,7 +2454,7 @@ function liveSlides(d,ev,tplF,fullNm,form,venue){
   const q=petaQuery(form,venue);
   const lnk=(form&&form.mapsLink&&!/example/i.test(form.mapsLink))?form.mapsLink:(q?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q):'');
   const embed=q?petaEmbedUrl(q):'';
-  h.push(`<div class="rv"><div class="card" data-mapcard style="padding:0;overflow:hidden">
+  h.push('map',`<div class="rv"><div class="card" data-mapcard style="padding:0;overflow:hidden">
    <div style="padding:12px 16px;border-bottom:1px solid #f0e6d8">
     <div style="font-size:12px;font-weight:600;color:var(--ink-body)">📍 ${esc(venue||'Lokasi Acara')}</div>
     ${alm?`<div style="margin-top:4px;font-size:11.5px;line-height:1.55;color:#7a7065">${esc(alm).replace(/\n/g,'<br>')}</div>`:''}
@@ -1375,8 +2463,8 @@ function liveSlides(d,ev,tplF,fullNm,form,venue){
     :`<div style="padding:18px 16px;font-size:12px;line-height:1.6;color:#7a7065;text-align:center">📍 Alamat lokasi belum diisi.</div>`}
    ${(lnk||embed)?`<div style="padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${lnk?`<a class="mapbtn" style="margin-top:0" href="${esc(lnk)}" target="_blank" rel="noopener">📍 Buka di Peta</a>`:''}${embed?`<button type="button" class="mapreload" onclick="muatUlangPeta(this)">↻ Muat Ulang Peta</button>`:''}</div>`:''}
   </div></div>`)}
- if(S.gift&&S.gift.on&&S.gift.text.trim())h.push(card(`${kick('🎁 Alamat Kado')}<div style="margin-top:12px;font-size:13px;line-height:1.8;color:#57503f">${esc(S.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:12px;font-size:22px">🎀</div>`));
- if(S.rsvp&&S.rsvp.on)h.push(card(`${kick('✉️ RSVP')}
+ if(S.gift&&S.gift.on&&S.gift.text.trim())h.push('gift',card(`${kick('🎁 Alamat Kado')}<div style="margin-top:12px;font-size:13px;line-height:1.8;color:#57503f">${esc(S.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:12px;font-size:22px">🎀</div>`));
+ if(S.rsvp&&S.rsvp.on)h.push('rsvp',card(`${kick('✉️ RSVP')}
   <p class="muted" style="margin-top:6px">Mohon konfirmasi kehadirannya — tombol cepat di bawah, atau WhatsApp.</p>
   <div style="margin-top:14px;text-align:left">
    <input id="rvpN" value="${esc(GUEST)}" placeholder="Nama Anda" style="width:100%;height:46px;border:1px solid #e5d9c4;border-radius:14px;padding:0 14px;font-size:13px;background:#fffdf9">
@@ -1394,11 +2482,20 @@ function liveSlides(d,ev,tplF,fullNm,form,venue){
    </div>
    <p style="margin-top:8px;font-size:10px;color:#b3a894;text-align:center">Tombol cepat tersimpan otomatis untuk panitia • WhatsApp tetap tersedia</p>
   </div>`));
- if(S.closing&&S.closing.on&&S.closing.text.trim())h.push(`<div class="rv" style="margin-top:30px;text-align:center;padding:8px 16px">
+ if(S.closing&&S.closing.on&&S.closing.text.trim())h.push('closing',`<div class="rv" style="margin-top:30px;text-align:center;padding:8px 16px">
   <div style="font-size:14px;letter-spacing:10px;color:var(--gold)">❖ ✦ ❖</div>
   <p style="margin-top:14px;font-size:14px;font-style:italic;line-height:1.9;color:#57503f;font-family:Georgia,serif">${esc(S.closing.text)}</p>
   <div style="margin-top:14px;font-size:12px;font-weight:600;color:var(--accent-body)">${esc(fullNm)}</div></div>`);
- return h.join('')}
+ return bag}
+/* Urutan slide bawaan — HARUS sama dengan urutan push di slideBag() dan dengan
+   SLIDE_IDS yang diperiksa tools/cek-kesehatan.py aturan 9. */
+const SLIDE_ORDER=['timeline','story','quote','menu','party','dresscode','map','gift','rsvp','closing'];
+/* liveSlides() dipertahankan apa adanya untuk pemanggil lama: tetap mengembalikan
+   STRING berisi seluruh slide dalam urutan lama. tools/test-peta.cjs memanggilnya
+   langsung. Kerangka per-tema memakai slideBag() agar tiap slide bisa dipindah. */
+function liveSlides(d,ev,tplF,fullNm,form,venue){
+ const bag=slideBag(d,ev,tplF,fullNm,form,venue);
+ return SLIDE_ORDER.map(k=>bag[k]||'').join('')}
 window.__stkU='';
 function pilihStiker(e,el){window.__stkU=(window.__stkU===e?'':e);try{document.querySelectorAll('.stk').forEach(b=>b.classList.remove('on'));if(window.__stkU&&el)el.classList.add('on')}catch(_x){}}
 function liveRsvp(){
@@ -1580,8 +2677,13 @@ function boot(draft){
  const rs=document.documentElement.style;
  const isWedding=ev==='pernikahan';
  const PAPER=isWedding?(tplF.bgPaper||''):'';
+ /* Kerangka layout tema: shell-nya dipasang di body supaya CSS bisa menata
+    #cover maupun #content. `klasik` ikut dipasang agar konsisten, tapi tidak
+    punya aturan CSS — jadi output-nya tetap persis seperti sebelum rombakan. */
+ const LX=layoutOf(tplF);
  if(isWedding){document.body.classList.add('wedding-cover','theme-'+tplF.id)}
  if(tplF.arch)document.body.classList.add('gerbang-arch');
+ document.body.classList.add('lay-'+LX.shell);
  /* Model cover pembuka: lima model dasar + sepuluh gaya unik dari Studio. */
  const CVL=['amplop','kartu','foto','gerbang','minimal','batik','sakura','night','ticket','editorial','polaroid','glass','royal','archive','neon'].indexOf(d&&d.coverLayout)>=0?d.coverLayout:'amplop';
  if(CVL!=='amplop')document.body.classList.add('cvl-'+CVL);
@@ -1608,6 +2710,9 @@ function boot(draft){
  if(CVL==='gerbang'&&fotoUtama){cvStyle='arch';document.body.classList.add('gerbang-arch')}
  else if(CVL==='foto'&&fotoUtama)cvStyle='full';
  else if(CVL==='minimal')cvStyle='none';
+ /* Bila cover berfoto penuh, panel gaya membuka ikut membawa potongan
+    foto yang sama supaya efek pintu/kotak/blinds menyatu dengan foto. */
+ const bukaImg=(cvStyle==='full'&&fotoUtama)?`--bukaImg:url('${fotoUtama.replace(/'/g,'%27').replace(/"/g,'%22')}')`:'';
  const cpo=(d&&d.coverPos)||{};
  const angkaPos=(v,b)=>{const n=parseFloat(v);return isFinite(n)?Math.min(100,Math.max(0,n)):b};
  const cvZ=(()=>{const n=parseFloat(cpo.z);return isFinite(n)?Math.min(4,Math.max(1,n)):1})();
@@ -1622,8 +2727,9 @@ function boot(draft){
  document.body.classList.add('btnopen-'+(BTN_OPEN.indexOf(d&&d.coverBtn)>=0?d.coverBtn:'amplop'));
  if(ART&&cvStyle!=='full'){document.body.classList.add('art3d');rs.setProperty('--cover-art',"url('"+ART+"')")}
  else rs.removeProperty('--cover-art');
- if(tplF.tier==='vip'&&window.AsVip4d){document.body.classList.add('vip4d');
-  try{AsVip4d.mount({art:ART||'',deco:tplF.deco||'',part:tplF.part||'gold',scene:tplF.scene||'zoom'})}catch(e){/* efek VIP gagal mount — undangan tetap tampil normal */}}
+ /* Mesin 4D menyala untuk tema bertier VIP ATAU untuk layout bertanda vip
+  (shell sinematik panggung/split). Syarat pertama sengaja dibiarkan verbatim:
+  tools/test-vip-4d.cjs mencarinya persis sebagai string. */
  const KB=TC&&TC.perbaiki?TC.perbaiki(tplF.accent,'#241d16',3):tplF.accent;
  const KT=TC&&TC.untukKonten?TC.untukKonten(tplF.ink,tplF.accent,tplF.g):null;
  rs.setProperty('--ink-body',KT?KT.ink:tplF.ink);
@@ -1681,17 +2787,33 @@ function boot(draft){
   return cls+' scroll-reveal fx-s-'+effect+' sr-axis-'+fxScrollAxis(effect)
  };
  const BD=BORDERS.find(b=>b.id===(d&&d.border))||null;let bdStyle='';
- if(BD){const A=tplF.accent;if(BD.s)bdStyle=BD.s(A);if(BD.extra)bdStyle+=(bdStyle?';':'')+BD.extra(A)}
+ if(BD){const A=tplF.accent;if(BD.s)bdStyle=BD.s(A);if(BD.extra)bdStyle+=(bdStyle?';':'')+BD.extra(A);const bk=ornBingkaiUntuk(BD.id,A);if(bk)bdStyle+=(bdStyle?';':'')+bk}
  const ornId=ornSudutId(d&&d.ornSudut);
- const ORN_SVG=(ornId==='bunga3d'||ornId==='bunga4d')?ornBungaSvg():`<svg viewBox="0 0 74 74" fill="none" aria-hidden="true"><path d="M8 66 C8 32 32 8 66 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 56 C21 44 28 34 38 26" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".8"/><path d="M13 41 C22 39 29 33 31 24 C22 26 14 33 13 41Z" fill="currentColor" opacity=".65"/><path d="M29 22 C38 20 45 13 47 5 C38 7 30 13 29 22Z" fill="currentColor" opacity=".65"/><path d="M42 31 C51 29 58 22 60 13 C51 15 43 22 42 31Z" fill="currentColor" opacity=".5"/><circle cx="63" cy="11" r="2.2" fill="currentColor"/><circle cx="11" cy="63" r="1.9" fill="currentColor"/></svg>`;
- const ORN=ornId==='tanpa'?'':`<i class="orn-c tl orn-${ornId}">${ORN_SVG}</i><i class="orn-c tr orn-${ornId}">${ORN_SVG}</i><i class="orn-c bl orn-${ornId}">${ORN_SVG}</i><i class="orn-c br orn-${ornId}">${ORN_SVG}</i>`;
+  const ORN_SVG=(ORN_SUDUT[ornId]?ornSudutSvg(ornId):null)||((ornId==='bunga3d'||ornId==='bunga4d')?ornBunga(ornId==='bunga4d'?'4d':'3d'):`<svg viewBox="0 0 74 74" fill="none" aria-hidden="true"><path d="M8 66 C8 32 32 8 66 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 56 C21 44 28 34 38 26" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".8"/><path d="M13 41 C22 39 29 33 31 24 C22 26 14 33 13 41Z" fill="currentColor" opacity=".65"/><path d="M29 22 C38 20 45 13 47 5 C38 7 30 13 29 22Z" fill="currentColor" opacity=".65"/><path d="M42 31 C51 29 58 22 60 13 C51 15 43 22 42 31Z" fill="currentColor" opacity=".5"/><circle cx="63" cy="11" r="2.2" fill="currentColor"/><circle cx="11" cy="63" r="1.9" fill="currentColor"/></svg>`);
+ /* Ornamen sudut SAMPUL ditiadakan saat cover memakai foto penuh: panel kartu
+    menjadi transparan sehamparan foto, sehingga ornamen sudut tertutup foto
+    dan hanya menjadi beban tersembunyi. Ornamen sudut isi kartu dan bingkai
+    layar (SCR) tetap jalan seperti biasa. */
+ const ORN=(ornId==='tanpa'||cvStyle==='full')?'':`<i class="orn-c tl orn-${ornId}">${ORN_SVG}</i><i class="orn-c tr orn-${ornId}">${ORN_SVG}</i><i class="orn-c bl orn-${ornId}">${ORN_SVG}</i><i class="orn-c br orn-${ornId}">${ORN_SVG}</i>`;
+ /* Bingkai layar: ornamen sudut yang sama dipasang menempel di keempat pojok
+    layar (fixed), muncul hanya setelah undangan dibuka. Kosong bila pemilik
+    memilih "tanpa ornamen sudut". */
+ const SCR=ornId==='tanpa'?'':`<div class="scr-frame" aria-hidden="true"><i class="orn-c tl orn-${ornId}">${ORN_SVG}</i><i class="orn-c tr orn-${ornId}">${ORN_SVG}</i><i class="orn-c bl orn-${ornId}">${ORN_SVG}</i><i class="orn-c br orn-${ornId}">${ORN_SVG}</i></div>`;
+ /* Ornamen sudut juga dipasang di semua kartu isi, bukan hanya sampul dan
+    kartu tamu. Disuntik sebagai <style> karena warnanya mengikuti aksen tema. */
+ (function(){let st=document.getElementById('ornSudutLive');if(!st){st=document.createElement('style');st.id='ornSudutLive';(document.head||document.documentElement).appendChild(st)}
+  st.textContent=ornSudutCssDariSvg(ornId==='tanpa'?'':ORN_SVG,tplF.accent||'#8b7358')})();
+ /* Pola latar juga dipasang samar di seluruh halaman (bukan hanya sampul)
+    supaya undangan terasa bertekstur dari atas sampai bawah. */
+ (function(){let st=document.getElementById('patLatarLive');if(!st){st=document.createElement('style');st.id='patLatarLive';(document.head||document.documentElement).appendChild(st)}
+  const cssLatar=polaCss(patAktif(d,tplF),tplF,0.6);st.textContent=cssLatar?`body{${cssLatar}}`:''})();
  const bdCorners=(()=>{if(!BD||!BD.corner)return'';const w=BD.corner,A=tplF.accent;
   const c=p=>`<i class="bdc" style="border:0 solid ${A};${p}"></i>`;
   return c('top:10px;left:10px;border-top-width:'+w+'px;border-left-width:'+w+'px')+c('top:10px;right:10px;border-top-width:'+w+'px;border-right-width:'+w+'px')+c('bottom:10px;left:10px;border-bottom-width:'+w+'px;border-left-width:'+w+'px')+c('bottom:10px;right:10px;border-bottom-width:'+w+'px;border-right-width:'+w+'px')})();
 
  /* ---------- HTML ---------- */
  let h='';
- h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}"><div class="pat" style="${patCss(tplF)}"></div><div class="veil"></div>${cvStyle==='full'
+ h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}" style="${bukaImg}"><div class="pat" style="${polaCss(patAktif(d,tplF),tplF,1)}"></div><div class="veil"></div><i class="bkl l"></i><i class="bkl r"></i><i class="bkt t"></i><i class="bkt b"></i><span class="kt-burst" aria-hidden="true"><i style="--dx:-70px;--dy:-90px"></i><i style="--dx:60px;--dy:-110px"></i><i style="--dx:-110px;--dy:-40px"></i><i style="--dx:105px;--dy:-55px"></i><i style="--dx:-30px;--dy:-140px"></i><i style="--dx:35px;--dy:-70px"></i></span><i class="bld b1"></i><i class="bld b2"></i><i class="bld b3"></i><i class="bld b4"></i>${cvStyle==='full'
   ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" onload="fitCoverPhotos()" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"><i class="cvbl tl"></i><i class="cvbl tr"></i><i class="cvbl bl"></i><i class="cvbl br"></i></div>`
   :''}<div class="bdfr ${isWedding?'wedding-invite-card':''}" style="${bdStyle}">${bdCorners}${ORN}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
@@ -1720,26 +2842,38 @@ function boot(draft){
  </div></div><div class="brand">AsProject • Undangan Digital</div>
  <div class="cvcue" aria-hidden="true"><i></i><span>Gulir</span></div></div>`;
 
- h+=`<div id="content"><div class="wrap">`;
-
+ /* ---------- KERANGKA: bagian dibangun lebih dulu, lalu disusun menurut layout ----------
+    Sebelum rombakan tiap bagian langsung dirangkai ke `h` dengan urutan terkunci,
+    jadi semua tema berbagi satu kerangka. Sekarang tiap bagian jadi pembangun
+    bernama di B{}, dan LX.urutan yang menentukan susunannya. Bagian dibangun
+    DALAM URUTAN TAMPIL supaya nomor scroll-reveal (RV) tetap mengikuti alur baca.
+    Preset `klasik` melepas bagian apa adanya → output identik dengan sebelumnya. */
+ const SEC={};
+ const B={};
+ /* `tt` dihitung di lingkup boot, bukan di dalam builder: handler kalender
+    (.ical) dan startCountdown() di bagian interaksi ikut memakainya. */
+ const tt=targetTime(draft,form);
+ B.guest=()=>{let s='';
  /* 1. Kepada YTH */
- h+=`<div class="${RV('card guest')}">${ORN}<div class="ya">Kepada YTH</div>
+ s+=`<div class="${RV('card guest')}">${ORN}<div class="ya">Kepada YTH</div>
   <div class="to">${esc(GUEST||'Bapak / Ibu / Saudara/i')}</div>
-  <div class="divider">${esc(tplF.deco)}</div>
+  <div class="divider">${ornMotif(d,tplF)||esc(tplF.deco)}</div>
   <p class="muted">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.</p>
   ${salamBuka?`<div class="salam">${esc(salamBuka)}</div>`:''}</div>`;
-
+  return s};
+ B.doa=()=>{let s='';
  /* 2. Doa */
- h+=`<div class="${RV('card')}"><div class="kicker">Doa</div>
+ s+=`<div class="${RV('card')}"><div class="kicker">Doa</div>
   <div class="doa-ar">${esc(doa.ar)}</div>
   <div class="doa-la">“${esc(doa.latin)}”</div>
   <div class="doa-arti">${esc(doa.arti)}</div></div>`;
-
+  return s};
+ B.profil=()=>{let s='';
  /* 3. Profil (pasangan / anak) */
  const fpOrang=String((d&&d.fotoPria)||'').trim(),fwOrang=String((d&&d.fotoWanita)||'').trim();
  const cfImg=(src_,alt_)=>`<div class="cf"><img src="${esc(src_)}" alt="${esc(alt_)}" loading="lazy" onerror="this.closest('.cf').style.display='none'"></div>`;
  if(ev==='pernikahan'){
-  h+=`<div class="${RV('card')}"><div class="kicker">Mempelai</div>
+  s+=`<div class="${RV('card')}"><div class="kicker">Mempelai</div>
    ${(fpOrang||fwOrang)?`<div class="couple-foto">${fpOrang?cfImg(fpOrang,'Foto '+names[0].nm):''}<div class="cf-amp">&amp;</div>${fwOrang?cfImg(fwOrang,'Foto '+names[1].nm):''}</div>`:''}
    <div class="couple">
     <div class="c"><div class="nm">${esc(names[0].nm)}</div><div class="rl">${names[0].rl}</div></div>
@@ -1747,24 +2881,26 @@ function boot(draft){
     <div class="c"><div class="nm">${esc(names[1].nm)}</div><div class="rl">${names[1].rl}</div></div>
    </div></div>`;
  }else{
-  h+=`<div class="${RV('card')}"><div class="kicker">${esc(EV_LABEL[ev]||'')}</div>
+  s+=`<div class="${RV('card')}"><div class="kicker">${esc(EV_LABEL[ev]||'')}</div>
    ${(fpOrang||fwOrang)?`<div class="couple-foto${(fpOrang&&fwOrang)?'':' tunggal'}">${fpOrang?cfImg(fpOrang,names[0].nm):''}${(fpOrang&&fwOrang)?'<div class="cf-amp">❦</div>':''}${fwOrang?cfImg(fwOrang,names[0].nm):''}</div>`:''}
    <div class="name-big">${esc(names[0].nm)}</div>
    ${names[0].rl?`<div class="role">${names[0].rl}</div>`:''}
-   <div class="divider">${esc(tplF.deco)}</div></div>`;
+   <div class="divider">${ornMotif(d,tplF)||esc(tplF.deco)}</div></div>`;
  }
-
+  return s};
+ B.harapan=()=>{let s='';
  if(ev==='pernikahan'&&(form.harapanPria||form.harapanWanita)){
-  h+=`<div class="${RV('card')} harapan"><div class="kicker">Harapan Mempelai</div>
+  s+=`<div class="${RV('card')} harapan"><div class="kicker">Harapan Mempelai</div>
    <div class="harapan-grid">
     ${form.harapanPria?`<div class="harapan-kartu"><div class="hq">\u201C</div><div class="ht">${esc(form.harapanPria)}</div><div class="hn">Harapan Pengantin Pria</div></div>`:''}
     ${form.harapanWanita?`<div class="harapan-kartu"><div class="hq">\u201C</div><div class="ht">${esc(form.harapanWanita)}</div><div class="hn">Harapan Pengantin Wanita</div></div>`:''}
    </div></div>`;
  }
-
+  return s};
+ B.acara=()=>{let s='';
  /* 4. Detail acara */
  const sesiKedua=d&&form.sesiKedua;
- h+=`<div class="${RV('card')}"><div class="kicker">Waktu & Tempat</div>
+ s+=`<div class="${RV('card')}"><div class="kicker">Waktu & Tempat</div>
   <div class="acara-grid">
    <div class="acara"><div class="lbl">${ev==='pernikahan'?(sesiKedua?'Akad Nikah':'Akad Nikah'):'Acara'}</div>
     <div class="tgl">${esc(dateStr||'—')}</div>
@@ -1774,65 +2910,66 @@ function boot(draft){
     ${urlAman(form.liveAkad)?`<a class="livebtn" href="${esc(urlAman(form.liveAkad))}" target="_blank" rel="noopener"><i></i>Tonton Live</a>`:''}
    </div>`;
  if(ev==='pernikahan'&&sesiKedua&&form.jamResepsi){
-  h+=`<div class="acara"><div class="lbl">Resepsi</div>
+  s+=`<div class="acara"><div class="lbl">Resepsi</div>
    <div class="tgl">${esc(dateStr||'—')}</div>
    <div class="jam">Pukul ${esc(form.jamResepsi)}${form.zona?esc(' '+form.zona):''}</div>
    ${venue?`<div class="vt"><b>${esc(venue)}</b>${alamat?'<br>'+esc(alamat):''}</div>`:''}
    ${urlAman(form.liveResepsi)?`<a class="livebtn" href="${esc(urlAman(form.liveResepsi))}" target="_blank" rel="noopener"><i></i>Tonton Live</a>`:''}</div>`;
  }
- h+=`</div>`;
+ s+=`</div>`;
 
  /* countdown */
- const tt=targetTime(draft,form);
  if(tt){
   const lewat=tt<=Date.now();
-  h+=`<div class="cdw${lewat?' past':''}" id="cd">
+  s+=`<div class="cdw${lewat?' past':''}" id="cd">
    <div class="cdw-head">${lewat?'Hari bahagia telah tiba 🤍':(ev==='pernikahan'?'Menuju Hari Bahagia':'Menuju Hari Acara')}</div>
    <div class="u"><div class="n" id="cdH">00</div><div class="l">Hari</div></div>
    <div class="u"><div class="n" id="cdM">00</div><div class="l">Jam</div></div>
    <div class="u"><div class="n" id="cdS">00</div><div class="l">Menit</div></div>
    <div class="u"><div class="n tick" id="cdD">00</div><div class="l">Detik</div></div></div>`;
  }
- h+=`<div class="mini-acts">${tt?'<button type="button" id="btnCalG">\u23F0 Atur Pengingat</button>':''}${tt?'<button type="button" id="btnCal">\u{1F4C5} Simpan ke Kalender</button>':''}
+ s+=`<div class="mini-acts">${tt?'<button type="button" id="btnCalG">\u23F0 Atur Pengingat</button>':''}${tt?'<button type="button" id="btnCal">\u{1F4C5} Simpan ke Kalender</button>':''}
   <button type="button" id="btnShare">\u{1F517} Bagikan</button></div>`;
- h+=`</div>`;
-
- /* 4b. 10 SLIDE KONTEN (dari snapshot studio) — urutan sama dengan studio */
- h+=liveSlides(d,ev,tplF,fullNm,form,venue);
-
+ s+=`</div>`;
+  return s};
+ B.bukutamu=()=>{let s='';
  /* 4c. Buku Tamu publik — ucapan & konfirmasi dari para tamu */
- h+=`<div class="${RV('card')}"><div class="kicker">Buku Tamu</div>
+ s+=`<div class="${RV('card')}"><div class="kicker">Buku Tamu</div>
   <p class="muted" style="font-size:12.5px">Ucapan, doa, dan kabar kehadiran dari para tamu.</p>
   <div class="bt-list" id="btList"><div class="bt-memuat">Memuat ucapan…</div></div></div>`;
-
+  return s};
+ B.galeri=()=>{let s='';
  /* 5. Galeri — carousel dinamis + zoom (rombak 2026-10-11) */
  if(d&&Array.isArray(d.gallery)&&d.gallery.length){
   const gs=d.gallery.slice(0,12);
-  h+=`<div class="${RV('card')}"><div class="kicker">Galeri</div><div class="gal-grid">`+
+  s+=`<div class="${RV('card')}"><div class="kicker">Galeri</div><div class="gal-grid">`+
    gs.slice(0,6).map((u,i)=>`<button type="button" class="gal-cell${i===0?' besar':''}" data-gal="${i}" aria-label="Perbesar foto ${i+1}"><img src="${esc(u)}" alt="Galeri ${i+1}" loading="lazy" onerror="this.closest('button').style.display='none'">${i===5&&gs.length>6?`<span class="gal-more">+${gs.length-6} foto</span>`:''}</button>`).join('')+
    `</div><div class="gal-hint">Ketuk foto untuk memperbesar</div></div>`;
  }
-
+  return s};
+ B.amplop=()=>{let s='';
  /* 6. Amplop */
  if(d&&d.amplop&&d.amplop.showAmplop&&(d.amplop.noRek||d.amplop.noEwallet)){
   const a=d.amplop;
-  h+=`<div class="${RV('card')}"><div class="kicker">Amplop Digital</div>
+  s+=`<div class="${RV('card')}"><div class="kicker">Amplop Digital</div>
    <p class="muted">Bagi yang ingin memberi tanda kasih, dapat melalui:</p><div class="amp-card">`;
-  if(a.noRek)h+=`<div class="amp-row"><div><div class="nm">${esc(a.bank||'Bank')}</div><div class="no">${esc(a.noRek)}</div><div class="ow">a.n. ${esc(a.pemilik||'—')}</div></div>
+  if(a.noRek)s+=`<div class="amp-row"><div><div class="nm">${esc(a.bank||'Bank')}</div><div class="no">${esc(a.noRek)}</div><div class="ow">a.n. ${esc(a.pemilik||'—')}</div></div>
    ${a.showCopy!==false?`<button class="copy" data-copy="${esc(a.noRek)}">Salin</button>`:''}</div>`;
-  if(a.noEwallet)h+=`<div class="amp-row"><div><div class="nm">${esc(a.ewallet||'E-Wallet')}</div><div class="no">${esc(a.noEwallet)}</div></div>
+  if(a.noEwallet)s+=`<div class="amp-row"><div><div class="nm">${esc(a.ewallet||'E-Wallet')}</div><div class="no">${esc(a.noEwallet)}</div></div>
    ${a.showCopy!==false?`<button class="copy" data-copy="${esc(a.noEwallet)}">Salin</button>`:''}</div>`;
-  h+=`</div></div>`;
+  s+=`</div></div>`;
  }
-
+  return s};
+ B.ucapan=()=>{let s='';
  /* 7. Ucapan */
- h+=`<div class="${RV('card')}"><div class="kicker">Ucapan</div>
+ s+=`<div class="${RV('card')}"><div class="kicker">Ucapan</div>
   <p class="muted" style="font-size:13px">${esc((form&&form.ucapanCustom)||(ev==='pernikahan'?'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.':'Menghadiri acara ini merupakan kehormatan bagi kami. Doa restu Bapak/Ibu/Saudara/i adalah hadiah terindah bagi si kecil.'))}</p>
-  <div class="divider">${esc(tplF.deco)}</div>
+  <div class="divider">${ornMotif(d,tplF)||esc(tplF.deco)}</div>
   <div class="name-big" style="font-size:26px">${esc(fullNm)}</div></div>`;
-
+  return s};
+ B.footer=()=>{let s='';
  /* footer */
- h+=`<div class="footer"><div class="orn">${esc(tplF.deco)}</div>
+ s+=`<div class="footer"><div class="orn orn-motif">${ornMotif(d,tplF)||esc(tplF.deco)}</div>
   ${salamTutup?`<div class="salam-tutup">${esc(salamTutup)}</div>`:''}
   <p>Terima kasih atas doa dan kasihnya 🤍</p>
   <footer class="as-contact" aria-label="Contact Us AsProject" style="margin-top:24px;padding:24px 16px;border:1px solid #e8e4dc;border-radius:20px;background:#faf9f6;color:#262626;text-align:center;font-family:Inter,system-ui,sans-serif;overflow-wrap:anywhere">
@@ -1845,11 +2982,62 @@ function boot(draft){
    </a>
    <div style="margin-top:12px;font-size:10px;color:#737373">Kontak layanan AsProject · bukan kontak RSVP</div>
   </footer></div>`;
+  return s};
 
+ h+=`<div id="content"><div class="wrap">`;
+ const UR=URUTAN[LX.urutan]||URUTAN.A;
+ /* slide konten dipecah per kunci agar bisa dipindah oleh layout */
+ {const SL=slideBag(d,ev,tplF,fullNm,form,venue);
+  SLIDE_ORDER.forEach(k=>{SEC[k]=SL[k]||''})}
+ UR.forEach(k=>{if(B[k])SEC[k]=B[k]()});
+ h+=susunBagian(SEC,LX,d,ev);
+ /* footer selalu terakhir, tidak ikut disusun ulang */
+ h+=B.footer();
  h+=`</div></div>`;
 
+ h+=SCR;
  $('app').innerHTML=h;
+ /* #5: skeleton cover per model. Node .inner ditata ulang SESUAH render supaya
+    tiap model punya kerangka DOM yang benar-benar beda, bukan hanya warna:
+    split (dua kolom), segel (tanggal jadi perangko), jendela (pita teks). */
+ const CV_STRUK={night:'split',neon:'split',minimal:'segel',archive:'segel',batik:'jendela',sakura:'jendela'};
+ (function(){const struk=CV_STRUK[CVL]||'klasik';if(struk==='klasik')return;
+  const inner=document.querySelector('#cover .bdfr .inner');if(!inner)return;
+  const q=s=>inner.querySelector(s);
+  if(struk==='split'){
+   const w=document.createElement('div');w.className='cvsplit';
+   const a=document.createElement('div');a.className='cvsp-a';
+   const b=document.createElement('div');b.className='cvsp-b';
+   const foto=q('.cvf'),mono=q('.monogram'),orn=q('.orn');
+   const utama=foto||mono||orn;
+   if(utama)a.appendChild(utama);
+   if(foto&&mono)a.appendChild(mono);
+   if(foto&&orn)a.appendChild(orn);
+   while(inner.firstChild)b.appendChild(inner.firstChild);
+   w.appendChild(a);w.appendChild(b);inner.appendChild(w);
+  }else if(struk==='segel'){
+   inner.classList.add('cv-segel');
+   const sl=q('.std-label'),dt=q('.date');
+   if(sl&&dt){const st=document.createElement('div');st.className='cvstamp';
+    sl.parentNode.insertBefore(st,sl);st.appendChild(sl);st.appendChild(dt)}
+  }else if(struk==='jendela'){
+   inner.classList.add('cv-jendela');
+   const kick=q('.kicker');
+   if(kick){const band=document.createElement('div');band.className='cvband';
+    let n=kick;while(n){const nx=n.nextSibling;band.appendChild(n);n=nx}
+    inner.appendChild(band)}
+  }})();
+
  fitCoverPhotos();if(window.requestAnimationFrame)requestAnimationFrame(fitCoverPhotos);
+ /* Mesin 4D HARUS dimount di sini, bukan di atas: AsVip4d.mount() mencari
+    #cover lewat document.getElementById('cover'), sedangkan #cover baru lahir
+    saat innerHTML di atas dipasang. Sebelum perbaikan ini mount selalu dipanggil
+    lebih dulu sehingga cover null dan mesin 4D tidak pernah benar-benar jalan.
+    Menyala untuk tema bertier VIP ATAU layout bertanda vip (shell sinematik).
+    Syarat pertama dibiarkan verbatim — tools/test-vip-4d.cjs mencarinya persis. */
+ const vip4dOn=(tplF.tier==='vip'&&window.AsVip4d)||((LX&&LX.vip)&&window.AsVip4d);
+ if(vip4dOn){document.body.classList.add('vip4d');
+  try{AsVip4d.mount({art:ART||'',deco:tplF.deco||'',part:tplF.part||'gold',scene:tplF.scene||'zoom'})}catch(e){/* efek VIP gagal mount — undangan tetap tampil normal */}}
  muatBukuTamu();
 
  /* interaksi */
@@ -2039,7 +3227,9 @@ function startCountdown(tt){
   let ms=tt-Date.now();if(ms<0)ms=0;
   const s=Math.floor(ms/1000);
   const pad=n=>String(n).padStart(2,'0');
-  const setCd=(id,v)=>{if(el(id))el(id).textContent=v;if(el(id+'0'))el(id+'0').textContent=v};
+  const setCd=(id,v)=>{const a=el(id),b=el(id+'0');
+   if(a&&a.textContent!==v){a.textContent=v;a.classList.remove('cd-tick');void a.offsetWidth;a.classList.add('cd-tick')}
+   if(b&&b.textContent!==v){b.textContent=v;b.classList.remove('cd-tick');void b.offsetWidth;b.classList.add('cd-tick')}};
   setCd('cdH',pad(Math.floor(s/86400)));
   setCd('cdM',pad(Math.floor(s%86400/3600)));
   setCd('cdS',pad(Math.floor(s%3600/60)));

@@ -590,10 +590,15 @@ def cek_fitur_terbaru():
     lapor("ok" if ok else "masalah", "studio.html: publish() menyimpan border ke snapshot data")
     ok = "const BD=BORDERS.find(b=>b.id===(d&&d.border))" in undangan and "#cover .bdfr" in undangan
     lapor("ok" if ok else "masalah", "undangan.html: live cover memakai data.border (frame .bdfr)")
+    # Kunci tier border DILEPAS atas keputusan pemilik: ambang eksklusif (>=119rb)
+    # dan VIP (>=149rb) tidak terjangkau harga katalog (termahal 99rb), jadi 9
+    # border mustahil dipakai siapa pun. Aturan ini kini menuntut kebalikannya.
     ok = ("border:'double'" in studio and "function setBorder(id){" in studio
-          and "lockOfB" in studio and "LOCK_RANK" in studio and "tk:'vip'" in studio
+          and "lockOfB" in studio and "LOCK_RANK" in studio
+          and not re.search(r"tk:'(?:vip|eks|premium)'", studio)
           and all(i in studio and i in undangan for i in ("id:'gold-leaf'", "id:'filigree'", "id:'vip-diamond'")))
-    lapor("ok" if ok else "masalah", "studio.html: picker border (state.border + setBorder) tersedia")
+    lapor("ok" if ok else "masalah",
+          "studio.html: picker border tersedia dan tidak ada border terkunci tier")
     # 3) hide template di katalog + urut per kategori
     ok = "function tglKatHide(id)" in studio and "katalogHide" in studio
     lapor("ok" if ok else "masalah", "studio.html: tombol hide/tampilkan template (katalogHide + tglKatHide)")

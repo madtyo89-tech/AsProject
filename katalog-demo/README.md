@@ -24,6 +24,8 @@ Live* katalog publik; enam demo tambahan di bawah dibuka lewat URL langsung.
 | `undangan-khitanan-emerald.html` | Khitanan Emerald · emerald & gold | demo tambahan; tidak mengubah routing katalog |
 | `undangan-aqiqah-natural.html` | Aqiqah Natural · ivory & sand | demo tambahan; tidak mengubah routing katalog |
 | `undangan-ulang-tahun-ceria.html` | Pesta Ceria · plum & coral | demo tambahan; tidak mengubah routing katalog |
+| `undangan-luxury-seal.html` | *Luxury Invitation No. 001* — artifact React dari sesi Arena, dipulihkan | demo mandiri; tidak di-route katalog |
+| `perbandingan-tema.html` | dibangun `tools/bikin-perbandingan-tema.cjs` | 24 tema berdampingan + 15 model cover |
 | `index.html` | halaman pengantar Drive | daftar 12 tema + tautan ke demo di atas |
 | `foto-cover.jpg`, `foto-rahma-cover.jpg` | foto contoh | latar cover halaman-halaman di atas |
 
@@ -69,6 +71,120 @@ opsional, dan konten kategori tetap dipertahankan.
 
 Foto pada demo mandiri tetap menggunakan aset lokal yang tercantum di bagian **Foto lokal
 untuk enam demo tambahan** di atas.
+
+### `undangan-luxury-seal.html` — artifact Arena yang dipulihkan
+
+Undangan "Luxury Invitation No. 001 · Aurelia & Leonhard" ini **bukan** berasal dari
+Google Drive dan **bukan** bagian dari sistem tema `TPL`. Aslinya dibuat sebagai
+*chat artifact* di sesi Arena sebelumnya, jadi hanya hidup di dalam percakapan itu —
+tidak pernah masuk repo, dan sandbox sesi lama sudah dibuang. Berkas ini adalah
+pemulihan dari sumber yang ditempel ulang, supaya karyanya tidak hilang lagi.
+
+Bedanya dari 12 demo lain:
+
+- **React 18 + Tailwind**, satu komponen `_o()` dengan animasi bertahap
+  (`idle → crack → flap → light → burst → rise → done`), bukan HTML/CSS statis.
+- **Segel lilin interaktif**: pecah saat diklik, confetti emas, debum emas di kanvas,
+  efek tilt mengikuti mouse/`deviceorientation`, jejak kursor bercahaya, dan audio
+  WebAudio yang dibangkitkan saat runtime (tidak ada berkas suara).
+- **Kartu bisa dibalik** dengan drag (mouse/sentuh) untuk melihat sisi belakang
+  berisi QR dan peta.
+- **CSS Tailwind di-inline** (dipanen dari artifact, hanya kelas yang dipakai) supaya
+  tidak bergantung `cdn.tailwindcss.com`; React/ReactDOM diambil dari `unpkg.com`
+  dan Google Fonts dari `fonts.googleapis.com`. **Butuh internet** untuk membuka.
+
+Tiga penyesuaian dari versi artifact, semuanya di bagian atas `<script>` dan diberi
+komentar:
+
+1. Bundel React inline (~45 KB minified) diganti CDN + shim alias `F`, `gf`, `yf`,
+   `f`, `w`, sehingga kode komponen di bawahnya tidak berubah sama sekali.
+2. Shim `f`/`w` meniru **`jsx()`/`jsxs()` dari `react/jsx-runtime`**, bukan
+   `React.createElement`. Ini wajib: pada jsx-runtime argumen ke-3 adalah *key*,
+   pada createElement argumen ke-3 adalah *child*. Kalau salah peta, semua
+   `.map((h,m)=>w(type,{...},m))` cuma merender angka indeksnya — timeline, galeri,
+   ucapan, dan angka countdown jadi kosong.
+3. Spasi antar-kata pada nama yang dipecah per huruf diganti `\xA0` (non-breaking
+   space); tiap huruf adalah `inline-block`, jadi spasi biasa akan kolaps.
+
+Chrome khusus Arena dibuang karena tidak berlaku di luar chat: `@font-face`
+"Optimistic", `data-clippy-inline-media-manifest`, dan tiga `<script>` protokol
+postMessage `ecto:*`. `<link>` Google Fonts **ditambahkan** — artifact aslinya tidak
+punya, sehingga Cormorant Garamond / Great Vibes / Montserrat jatuh ke font serif
+bawaan.
+
+> **Catatan:** tanggal bawaan `2026-06-20T17:00` sudah lewat, jadi countdown
+> menampilkan `00 : 00 : 00 : 00`. Ganti lewat tombol **✦ BUAT SEPERTI INI**
+> (atau state awal `M` di baris `function _o()`). Semua perubahan hanya pratinjau
+> lokal di memori — tidak tersimpan dan tidak terkirim ke mana pun, sama seperti
+> RSVP-nya.
+
+Sudah diverifikasi render headless (jsdom + React 18.3.1 UMD): cover, urutan buka
+segel, timeline 4 item, galeri 4 kartu, ucapan 2 kartu, countdown 4 angka, QR 49 sel,
+sisi belakang kartu, modal personalisasi (5 input + reset), dan modal RSVP (kirim →
+"Terima kasih!" → tutup sendiri) semuanya muncul tanpa error runtime. Tampilan visual
+tetap perlu dilihat langsung di browser karena sandbox tidak punya browser.
+
+### Halaman perbandingan tema (`perbandingan-tema.html`)
+
+Menampilkan **24 tema berdampingan** (18 publik + 6 varian Gerbang Arch khusus Studio)
+beserta **15 model cover** dalam satu layar, supaya perbedaan antar tema bisa dinilai
+tanpa membuka Studio satu per satu. Tiap kartu merender gradasi `g[0]→g[2]`, warna
+aksen, warna tinta, font judul, dan pola latar — nilai yang sama persis dengan yang
+dipakai renderer `undangan.html`.
+
+Sejak rombakan kerangka 2026-10-15 tiap kartu juga menggambar **diagram kerangka**:
+nama preset `layout`, shell CSS, varian urutan, daftar bagian bernomor sesuai susunan
+yang benar-benar dirender, bagian eksklusif, dan tanda `4D` bila preset itu menyalakan
+mesin parallax/partikel. Inilah yang membedakan tema selain palet — dua kartu bisa
+dibandingkan susunannya secara langsung.
+
+Mockup cover **tidak lagi** menggambar kicker, ornamen (`deco`), dan label template
+(`chara`): sejak PR #21 renderer menyembunyikannya di cover lewat
+`#cover .inner>.kicker,#cover .inner>.chara,#cover .inner>.orn{display:none!important}`.
+`deco` tetap dipakai di divider dan footer; `chara` saat ini tidak tampil di mana pun.
+
+Halaman ini **dibangun, bukan disunting manual**. Datanya dipanen dari `const TPL` /
+`const CV_LAYOUTS` di `studio.html` dan `const FONTS` / `const LAYOUTS` / `const URUTAN`
+/ `function patCss()` di `undangan.html`, lalu tekstur polanya di-inline saat build.
+Setelah menambah tema baru di akhir array atau menambah preset layout, jalankan ulang:
+
+```bash
+node tools/bikin-perbandingan-tema.cjs
+python3 tools/serve.py            # buka /katalog-demo/perbandingan-tema.html
+```
+
+Nomor `#` di tiap kartu adalah **indeks array TPL**, yaitu nilai kolom `theme` di
+Supabase — berguna saat menelusuri undangan lama. Halaman ini tidak ditautkan dari
+katalog publik dan tidak mengubah `DEMO_BY_NAME` / `DEMO_BY_CATEGORY`.
+
+### Galeri pratinjau nyata (`galeri-kerangka.html`)
+
+```bash
+node tools/bikin-galeri-kerangka.cjs
+python3 tools/serve.py            # buka /katalog-demo/galeri-kerangka.html
+```
+
+Melengkapi halaman perbandingan di atas. Bedanya mendasar:
+
+| | `perbandingan-tema.html` | `galeri-kerangka.html` |
+|---|---|---|
+| Isi kartu | mockup HTML buatan tangan | **iframe ke renderer produksi** |
+| Sumber | `TPL` + `CV_LAYOUTS` + `LAYOUTS` | `../undangan.html?demo=1&tpl=<id>&buka=1` |
+| Guna | membandingkan spesifikasi & diagram kerangka | melihat hasil nyata yang diterima tamu |
+
+24 tema dikelompokkan menurut **shell** (10 kelompok), tiap bingkai diberi label preset,
+urutan, jumlah bagian, dan chip bagian eksklusifnya. Tiga tombol di kepala mengatur lebar
+bingkai — **390 / 768 / 1100 px** — karena shell `split` baru berubah jadi dua kolom dengan
+rail lengket pada 900 px ke atas, dan `poster` mengandalkan scroll-snap setinggi layar.
+
+Parameter `demo=1&tpl=<id>&buka=1` bukan hal baru: pola yang sama sudah dipakai kartu
+katalog di `index.html`. Mode demo sengaja **tidak memutar musik**, jadi memuat 24 iframe
+sekaligus tidak menimbulkan suara bertumpuk. Semua iframe memakai `loading="lazy"` supaya
+hanya yang terlihat yang benar-benar diambil.
+
+Isi demo (nama, tanggal, foto) identik untuk semua tema, jadi perbedaan yang terlihat murni
+berasal dari kerangka — bukan dari datanya. Berkas hasilnya jangan disunting tangan;
+jalankan ulang generatornya.
 
 ## Yang diubah saat templat masuk repo
 

@@ -82,7 +82,7 @@ function val(expr){return run(expr)}
 
   // Custom payload tidak dapat menyuntikkan CSS/id lewat draft lama yang rusak.
   const normalized=val(`normalizeTplCustom([{id:'custom-aman123',nama:'<img onerror=x>',accent:'red',g:['url(x)','bad',''],pat:'url',ft:'unknown',baseTpl:'ivory-klasik',studioOnly:false}])`);
-  check('migrasi: validasi data custom menormalkan warna/font/pola dan menyingkirkan markup nama',()=>normalized.length===1&&normalized[0].nama==='img onerror=x'&&normalized[0].accent==='#8A6E4B'&&normalized[0].pat===''&&normalized[0].ft==='cormorant'&&normalized[0].studioOnly===false);
+  check('migrasi: validasi data custom menormalkan warna/font/pola dan menyingkirkan markup nama',()=>normalized.length===1&&normalized[0].nama==='img onerror=x'&&normalized[0].accent==='#8A6E4B'&&normalized[0].pat==='damask'&&normalized[0].ft==='cormorant'&&normalized[0].studioOnly===false);
 
   run("state.tab='desain';render()");
   const layoutIds=val('CV_LAYOUTS.map(x=>x[0])');
