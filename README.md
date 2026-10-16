@@ -606,6 +606,50 @@ memunculkan tautan keluar, alamat ber-tag tetap ter-escape, plus uji properti ge
 penuh dengan pin tepat di tengah. `python3 tools/cek-kesehatan.py` menjalankan tes yang
 sama sebagai bagian repo (aturan `[26]`).
 
+## Kartu QR check-in di dalam undangan (2026-10-16)
+
+QR check-in dulu hanya bisa **diunduh dari Studio** sebagai PNG, jadi tamu yang datang
+tanpa cetakan tidak punya apa pun untuk dipindai panitia. Sekarang undangan menampilkan
+QR itu untuk tamunya sendiri, di kartu **🎟️ Kartu Tamu · QR Check-in** yang menempel di
+bagian **RSVP** (bukan slide baru — urutan 10 slide tetap sama).
+
+### Isi QR = sama persis dengan yang diunduh dari Studio
+
+`checkin.html?guest=<nama>&id=<KODE>&s=<slug>` — dibangun dari basis akar situs, jadi
+tetap benar walau undangan dibuka lewat `/u/{slug}` (segmen `/u/` dipotong lebih dulu,
+lihat `qrBasisUrl`). Panitia memindainya dengan `scan.html` seperti biasa, atau tamu
+tinggal menekan **⬇ Simpan QR** (PNG 600 px + pita emas berisi kode & nama, seragam
+dengan berkas dari Studio) kalau ingin menyimpannya di galeri.
+
+### Bagaimana nama tamunya didapat
+
+- **Tautan personal** (`?to=Nama`) → QR langsung tampil begitu undangan dibuka.
+- **Mode 1 link untuk semua** → kartu QR mulai kosong dengan petunjuk, lalu QR muncul
+  begitu tamu menulis namanya di kolom RSVP (dengan jeda 300 ms supaya tidak digambar
+  ulang tiap ketukan).
+- Nama yang **tidak ada di daftar tamu** tetap dapat QR, tapi tanpa `id` — panitia
+  mencatat kehadiran dari namanya. Hanya kecocokan **persis** (tanpa beda huruf besar/
+  kecil) yang boleh memakai kode, supaya nama yang mirip tidak tercatat sebagai tamu lain.
+- RSVP dimatikan? Kartu QR tetap tampil sendiri di posisi yang sama.
+
+### Ramah kuota & tanpa layanan luar
+
+`assets/qrcode.js` (MIT) **dimuat malas** — tamu yang tidak menyentuh RSVP tidak
+mengunduh 56 KB ekstra. QR-nya digambar sebagai SVG (tajam di layar rapat, quiet zone
+4 modul, modul gelap digabung per baris), tanpa panggilan ke layanan pembuat QR mana pun.
+Berkas HTML mandiri (`file://`) tidak menampilkan kartunya karena tidak punya alamat
+publik untuk QR. Kalau pustaka/penggambaran gagal, kartunya bilang apa adanya dan
+mengarahkan panitia mencatat manual.
+
+### Jaminan regresi
+
+`node tools/test-qr-undangan.cjs` (jsdom, 52 pemeriksaan) mengunci: panel menempel di
+kartu RSVP, nama dari `?to=` vs nama yang diketik, aturan kecocokan kode, basis URL di
+`/u/{slug}`, XSS nama ber-tag, jalur unduh PNG → SVG, dan yang terpenting — **QR yang
+benar-benar digambar dibaca kembali oleh `assets/jsqr.js`** (dekoder yang dipakai
+`scan.html`) menjadi URL check-in yang utuh. `python3 tools/cek-kesehatan.py` menjalankan
+tes yang sama sebagai aturan `[27]`.
+
 ## Link Scan QR Panitia (check-in tamu)
 
 Sekarang QR di tab **Tamu & QR** adalah **QR asli** (bukan hiasan) — setiap QR berisi

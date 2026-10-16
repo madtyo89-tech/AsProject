@@ -15,6 +15,8 @@
 #   8. peta demo vs file yang benar-benar ada
 #   9. peta undangan: pratinjau ubin sendiri wajib ada, embed Google hanya
 #      lapisan opsional (tamu tidak boleh disajikan bidang biru kosong)
+#  10. kartu QR check-in di dalam undangan: isi QR harus sama dengan yang
+#      diunduh dari Studio/Master, pustaka dimuat malas, ada jalan keluar
 #
 # Yang TIDAK bisa dibuktikan di sini (butuh browser sungguhan): tampilan,
 # animasi, autoplay musik, IntersectionObserver, perilaku klik.
@@ -1030,6 +1032,50 @@ def cek_peta_undangan():
           + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
 
 
+def cek_qr_undangan():
+    """2026-10-16: QR check-in tadinya hanya bisa diunduh dari Studio/Master
+    sebagai PNG, jadi tamu tanpa cetakan tidak punya apa pun untuk dipindai
+    panitia di pintu masuk. Sekarang undangan menampilkan QR yang SAMA untuk
+    tamunya sendiri (checkin.html?guest=..&id=..&s=..) di bagian RSVP."""
+    print("\n[27] Kartu QR check-in di dalam undangan")
+    live = baca("undangan.html")
+    dasar = ("function qrPanelHtml" in live and "function qrKodeUntuk" in live
+             and "checkin.html?" in live and 'class="qrcard"' in live
+             and ".qrcard{" in live and ".qrcard.qr-kosong" in live)
+    lapor("ok" if dasar else "masalah",
+          "undangan.html: kartu QR + gaya tampilannya ada (qrPanelHtml/qrKodeUntuk/qrcard)")
+    ident = ("const GUEST=(Q.get('to')" in live and "window.__aspKode=Object.assign({},(d&&d.guestCodes)||{})" in live
+             and "qrNamaNormal(k)===cari" in live and 'id="rvpN"' in live)
+    lapor("ok" if ident else "masalah",
+          "undangan.html: nama dari tautan personal (?to=) & kolom RSVP; kode hanya dari kecocokan persis")
+    ringan = ('s.src=\'assets/qrcode.js\'' in live or 's.src="assets/qrcode.js"' in live)
+    berat = '<script src="assets/qrcode.js"></script>' in live
+    lapor("ok" if (ringan and not berat) else "masalah",
+          "undangan.html: assets/qrcode.js dimuat malas (tamu tanpa RSVP tidak mengunduh 56 KB)")
+    jalan = ("function qrUnduh" in live and "minta panitia mencatat kehadiran manual" in live
+             and "QR-Checkin-" in live and "/^https?:$/.test(location.protocol)" in live)
+    lapor("ok" if jalan else "masalah",
+          "undangan.html: tombol Simpan QR, PNG→SVG, dan mode berkas mandiri (file://) aman")
+    if not os.path.exists(os.path.join(ROOT, "assets", "qrcode.js")):
+        lapor("masalah", "assets/qrcode.js hilang — kartu QR tidak akan tergambar")
+        return
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji QR dilewati")
+        return
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    if probe.returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji QR dilewati")
+        return
+    skrip = os.path.join(ROOT, "tools", "test-qr-undangan.cjs")
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji kartu QR (isi sama dengan QR Studio, dibaca ulang jsQR): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
+
 def cek_pesan_wa():
     """2026-10-15: tulisan WA undangan berbeda di tiap tombol (ada yang lengkap, ada yang tidak).
     Sekarang semua tombol kirim/bagikan link undangan memakai SATU template yang sama."""
@@ -1105,7 +1151,7 @@ def main():
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
-               cek_template_custom, cek_pesan_wa, cek_peta_undangan):
+               cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

@@ -301,6 +301,21 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 @keyframes mapPin{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media (prefers-reduced-motion:reduce){.mapph .pin{animation:none}.mapstat .pin2 svg{animation:none}}
 
+/* Kartu tamu: QR check-in ditampilkan DI DALAM undangan (lihat qrPanelHtml).
+   Nama tamu datang dari tautan personal (?to=Nama); di mode 1 link, QR muncul
+   begitu tamu menulis namanya di kolom RSVP. */
+.qrcard{margin-top:16px;padding:14px 12px 12px;border:1px dashed #e5d9c4;border-radius:16px;background:linear-gradient(170deg,#fffdf9,#fbf6ee);text-align:center}
+.qrlbl{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-body)}
+.qrsvg{margin:10px auto 0;width:168px;height:168px;background:#fff;border:1px solid #f0e6d8;border-radius:12px;padding:8px;box-sizing:border-box}
+.qrsvg svg{display:block;width:100%;height:100%}
+.qrload{display:flex;align-items:center;justify-content:center;height:100%;padding:0 6px;font-size:10.5px;line-height:1.5;color:#b3a894}
+.qrnm{margin-top:10px;font-size:13.5px;font-weight:700;color:var(--ink-body);word-break:break-word}
+.qrkd{margin-top:2px;font-size:10.5px;letter-spacing:.08em;color:#b3a894;font-family:ui-monospace,monospace}
+.qrtip{margin-top:8px;font-size:11px;line-height:1.6;color:#7a7065}
+.qrbtns{margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.qrbtn{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 16px;border-radius:99px;border:1px solid #e5d9c4;background:#fffdf9;color:#57503f;font-size:12px;font-weight:600;cursor:pointer}
+.qrcard.qr-kosong .qrsvg,.qrcard.qr-kosong .qrnm,.qrcard.qr-kosong .qrkd,.qrcard.qr-kosong .qrbtns{display:none}
+
 /* countdown */
 .cdw{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
 .cdw .u{background:linear-gradient(170deg,#fffdf9,#faf3e6);border:1px solid #f0e6d6;border-radius:14px;padding:12px 4px}
@@ -2626,6 +2641,166 @@ function petaToggle(btn){
  delete f.dataset.mapLoaded;
  f.removeAttribute('src');
 }
+/* ---------- QR check-in tamu (di dalam undangan) ---------- */
+/* Sebelum ini QR check-in hanya bisa diunduh dari Studio/Master sebagai berkas
+   PNG. Sekarang undangan menampilkan QR yang SAMA untuk tamunya sendiri:
+   isinya checkin.html?guest=..&id=KODE&s=slug — jadi panitia tetap memindainya
+   dengan scan.html (atau kamera HP biasa) dan kehadiran tercatat seperti biasa.
+   Nama tamu datang dari tautan personal (?to=Nama); di mode 1 link, QR muncul
+   begitu tamu menulis namanya di kolom RSVP. */
+function qrNamaNormal(s){return String(s||'').replace(/\s+/g,' ').trim().toLowerCase()}
+/* Basis URL isi QR. Undangan bisa dibuka lewat /u/{slug} (dipetakan 404.html),
+   jadi segmen /u/ dipotong lebih dulu — QR harus menunjuk checkin.html di akar
+   repo, bukan di dalam folder palsu itu. Berkas HTML mandiri (file://) tidak
+   punya alamat publik, jadi kartu QR-nya tidak ditampilkan. */
+function qrBasisUrl(){
+ if(!/^https?:$/.test(location.protocol))return'';
+ const p=location.pathname,u=p.indexOf('/u/');
+ let b=u>=0?p.slice(0,u):p.replace(/\/[^/]*$/,'');
+ if(!b||b.charAt(b.length-1)!=='/')b+='/';
+ return location.origin+b;
+}
+/* Kode disimpan pemilik di daftar tamu Studio (data.guestCodes, ikut snapshot
+   publish). Hanya kecocokan PERSIS yang boleh memakai kode: nama yang mirip
+   jangan sampai tercatat sebagai tamu lain di pintu masuk. */
+function qrKodeUntuk(nama){
+ const kodex=window.__aspKode||{},cari=qrNamaNormal(nama);
+ if(!cari)return'';
+ for(const k in kodex){if(qrNamaNormal(k)===cari)return String(kodex[k]||'').toUpperCase()}
+ return'';
+}
+function qrCheckinUrl(basis,nama,kode){
+ const q=new URLSearchParams({guest:nama});
+ if(kode)q.set('id',kode);
+ if(SLUG)q.set('s',SLUG);
+ return basis+'checkin.html?'+q.toString();
+}
+/* Pustaka QR (assets/qrcode.js, MIT) dimuat HANYA saat benar-benar dipakai —
+   tamu yang tidak menyentuh RSVP tidak perlu mengunduh 56 KB ekstra. */
+let qrLib=null;
+function qrPustaka(){
+ if(window.qrcode)return Promise.resolve(true);
+ if(qrLib)return qrLib;
+ qrLib=new Promise(selesai=>{
+  const s=document.createElement('script');
+  s.src='assets/qrcode.js';s.async=true;
+  s.onload=()=>selesai(!!window.qrcode);
+  s.onerror=()=>selesai(false);
+  document.head.appendChild(s);
+ });
+ return qrLib;
+}
+let qrPetaModul=null;
+function qrModul(teks){
+ const q=window.qrcode(0,'M');q.addData(teks);q.make();
+ const n=q.getModuleCount();
+ return {n:n,gelap:function(r,c){return q.isDark(r,c)}};
+}
+/* QR digambar sebagai SVG: tajam di layar rapat, tanpa kanvas, dan tetap bisa
+   dicetak. Quiet zone 4 modul penuh (syarat pemindaian) + modul gelap digabung
+   per baris supaya berkasnya ringkas. */
+function qrSvg(teks){
+ const m=qrModul(teks),n=m.n,Q=4,S=n+Q*2;let d='';
+ for(let r=0;r<n;r++){
+  let c=0;
+  while(c<n){
+   if(!m.gelap(r,c)){c++;continue}
+   let w=1;while(c+w<n&&m.gelap(r,c+w))w++;
+   d+='M'+(c+Q)+' '+(r+Q)+'h'+w+'v1h-'+w+'z';c+=w;
+  }
+ }
+ return '<svg viewBox="0 0 '+S+' '+S+'" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="QR check-in tamu"><rect width="'+S+'" height="'+S+'" fill="#fff"/><path d="'+d+'" fill="#111"/></svg>';
+}
+/* Tombol "Simpan QR": PNG 600 px + pita emas berisi kode & nama — seragam
+   dengan QR yang diunduh dari Studio. Peramban tanpa kanvas (atau mode uji)
+   jatuh ke berkas SVG, jadi tombolnya tidak pernah jadi jalan buntu. */
+function qrPngDataUrl(teks,label){
+ try{
+  const cv=document.createElement('canvas');cv.width=600;cv.height=label?648:600;
+  const x=cv.getContext('2d');if(!x)return'';
+  x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);
+  const m=qrModul(teks),n=m.n,Q=4,C=Math.max(1,Math.floor(600/(n+Q*2))),o=Math.floor((600-n*C)/2);
+  x.fillStyle='#111';
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(m.gelap(r,c))x.fillRect(o+c*C,o+r*C,C,C);
+  if(label){x.fillStyle='#D4AF37';x.fillRect(0,600,600,48);x.fillStyle='#fff';x.font='bold 22px Inter,ui-sans-serif,sans-serif';x.fillText(String(label).slice(0,32),18,631)}
+  return cv.toDataURL('image/png');
+ }catch(e){return''}
+}
+function qrPanelHtml(){
+ const basis=qrBasisUrl();if(!basis)return'';
+ return `<div class="qrcard" id="qrcard" data-qr-basis="${esc(basis)}">
+   <div class="qrlbl">🎟️ Kartu Tamu · QR Check-in</div>
+   <div class="qrsvg" id="qrSvg"></div>
+   <div class="qrnm" id="qrNm"></div>
+   <div class="qrkd" id="qrKd"></div>
+   <div class="qrtip" id="qrTip"></div>
+   <div class="qrbtns"><button type="button" class="qrbtn" onclick="qrUnduh(this)">⬇ Simpan QR</button></div>
+  </div>`;
+}
+/* Isi/segarkan kartu QR untuk satu nama. Dipanggil saat boot (nama dari tautan
+   personal) dan setiap tamu mengetik namanya di kolom RSVP. */
+function qrIsi(nama){
+ const box=document.getElementById('qrcard');if(!box)return;
+ const basis=box.getAttribute('data-qr-basis')||'';
+ const nm=String(nama||'').replace(/\s+/g,' ').trim();
+ const svg=document.getElementById('qrSvg'),elNm=document.getElementById('qrNm'),
+  elKd=document.getElementById('qrKd'),tip=document.getElementById('qrTip');
+ if(!nm){
+  box.classList.add('qr-kosong');
+  box.setAttribute('data-qr-teks','');box.setAttribute('data-qr-nama','');box.setAttribute('data-qr-kode','');
+  if(svg)svg.innerHTML='';if(elNm)elNm.textContent='';if(elKd)elKd.textContent='';
+  if(tip)tip.textContent='Tulis nama Anda di kolom RSVP di atas — QR check-in Anda muncul di sini.';
+  return;
+ }
+ const kode=qrKodeUntuk(nm),teks=qrCheckinUrl(basis,nm,kode);
+ if(!teks){box.classList.add('qr-kosong');return}
+ box.classList.remove('qr-kosong');
+ box.setAttribute('data-qr-teks',teks);
+ box.setAttribute('data-qr-nama',nm);
+ box.setAttribute('data-qr-kode',kode);
+ if(elNm)elNm.textContent=nm;
+ if(elKd)elKd.textContent=kode?('Kode: '+kode):'';
+ if(tip)tip.textContent=kode
+  ?'Tunjukkan QR ini ke panitia di pintu masuk. Simpan/screenshot biar tidak perlu membuka undangan lagi.'
+  :'QR ini memakai nama Anda. Minta pemilik acara menambahkan nama Anda di daftar tamu supaya kodenya ikut tercetak.';
+ if(!svg)return;
+ svg.innerHTML='<div class="qrload">Menyiapkan QR…</div>';
+ qrPustaka().then(ok=>{
+  if(!document.body.contains(svg))return;
+  if(!ok){svg.innerHTML='<div class="qrload">QR tidak bisa dimuat di koneksi ini — minta panitia mencatat kehadiran manual 🙏</div>';return}
+  try{svg.innerHTML=qrSvg(teks)}
+  catch(e){svg.innerHTML='<div class="qrload">QR gagal dibuat 🙏</div>'}
+ });
+}
+function qrNamaFile(s){return String(s||'tamu').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,24)||'tamu'}
+function qrUnduh(btn){
+ const box=btn&&btn.closest?btn.closest('.qrcard'):null;if(!box)return;
+ const teks=box.getAttribute('data-qr-teks');if(!teks)return;
+ const nama=box.getAttribute('data-qr-nama')||'tamu',kode=box.getAttribute('data-qr-kode')||'';
+ const namaFile='QR-Checkin-'+(SLUG||'undangan')+'-'+qrNamaFile(nama)+(kode?'-'+kode:'');
+ const a=document.createElement('a');
+ let href=qrPngDataUrl(teks,(kode?kode+' • ':'')+nama.slice(0,20)),berkas=namaFile+'.png';
+ if(!href){
+  const svg=box.querySelector('svg');if(!svg)return;
+  try{href=URL.createObjectURL(new Blob([svg.outerHTML],{type:'image/svg+xml'}));berkas=namaFile+'.svg'}catch(e){return}
+ }
+ a.href=href;a.download=berkas;document.body.appendChild(a);a.click();a.remove();
+}
+/* Dipasang setelah DOM undangan terpasang (boot): QR langsung tampil untuk tamu
+   dari tautan personal, lalu ikut berubah saat tamu menulis namanya. */
+function qrSiapPasang(){
+ const box=document.getElementById('qrcard');if(!box)return;
+ const inp=document.getElementById('rvpN');
+ qrIsi(GUEST||(inp?inp.value:''));
+ if(inp&&!inp.dataset.qrHook){
+  inp.dataset.qrHook='1';
+  const perbarui=()=>{if(window.__qrTimer)clearTimeout(window.__qrTimer);window.__qrTimer=setTimeout(()=>qrIsi(inp.value),300)};
+  inp.addEventListener('input',perbarui);
+  inp.addEventListener('change',perbarui);
+ }
+}
+window.__aspQrIsi=qrIsi;
+
 function slideBag(d,ev,tplF,fullNm,form,venue){
  if(!d||!d.slides)return{};
  const S=d.slides,bag={};
@@ -2701,6 +2876,13 @@ function slideBag(d,ev,tplF,fullNm,form,venue){
     :`<div style="padding:18px 16px;font-size:12px;line-height:1.6;color:#7a7065;text-align:center">📍 Alamat lokasi belum diisi.</div>`}
   </div></div>`)}
  if(S.gift&&S.gift.on&&S.gift.text.trim())h.push('gift',card(`${kick('🎁 Alamat Kado')}<div style="margin-top:12px;font-size:13px;line-height:1.8;color:#57503f">${esc(S.gift.text).replace(/\n/g,'<br>')}</div><div style="margin-top:12px;font-size:22px">🎀</div>`));
+ /* Kode tamu dari daftar Studio dipakai kartu QR check-in di bawah
+    (lihat qrKodeUntuk). RSVP dimatikan bukan alasan tamu kehilangan QR-nya:
+    kartu itu tetap muncul sendiri di posisi yang sama. */
+ /* slideBag menerima objek `data` draft (lihat boot: const d=draft.data),
+    jadi daftar kode tamu ada di d.guestCodes — bukan d.data.guestCodes. */
+ window.__aspKode=Object.assign({},(d&&d.guestCodes)||{});
+ const qrKartu=qrPanelHtml();
  if(S.rsvp&&S.rsvp.on)h.push('rsvp',card(`${kick('✉️ RSVP')}
   <p class="muted" style="margin-top:6px">Mohon konfirmasi kehadirannya — tombol cepat di bawah, atau WhatsApp.</p>
   <div style="margin-top:14px;text-align:left">
@@ -2718,7 +2900,9 @@ function slideBag(d,ev,tplF,fullNm,form,venue){
     <button onclick="rsvpSave('tidak')" data-rsvpb data-r="tidak" style="height:44px;border:1px solid #e5d9c4;border-radius:99px;background:#fffdf9;color:#57503f;font-size:11px;font-weight:700">Tidak Hadir 🙏</button>
    </div>
    <p style="margin-top:8px;font-size:10px;color:#b3a894;text-align:center">Tombol cepat tersimpan otomatis untuk panitia • WhatsApp tetap tersedia</p>
+   ${qrKartu}
   </div>`));
+ else if(qrKartu)h.push('rsvp',`<div class="card rv">${qrKartu}</div>`);
  if(S.closing&&S.closing.on&&S.closing.text.trim())h.push('closing',`<div class="rv" style="margin-top:30px;text-align:center;padding:8px 16px">
   <div style="font-size:14px;letter-spacing:10px;color:var(--gold)">❖ ✦ ❖</div>
   <p style="margin-top:14px;font-size:14px;font-style:italic;line-height:1.9;color:#57503f;font-family:Georgia,serif">${esc(S.closing.text)}</p>
@@ -3389,6 +3573,8 @@ function boot(draft){
  /* Peta baru digambar setelah pager selesai menata slide: kanvas ubin yang
     diukur saat induknya display:none menghasilkan skala 0x0. */
  petaPantauPeta();
+ /* Kartu QR tamu: nama dari tautan personal (?to=) atau dari kolom RSVP. */
+ qrSiapPasang();
  if(rvOn&&typeof setupScrollReveal==='function')setupScrollReveal(document.getElementById('app')||document.body);
 }
 
