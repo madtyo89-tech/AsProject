@@ -34,8 +34,11 @@ function ornSinar(cx,cy,n,r1,r2,w,op){
 const ORN_GARIS=(d,w,op)=>'<path d="'+d+'" fill="none" stroke="currentColor" stroke-width="'+
  (w==null?1.3:w)+'" stroke-linecap="round" opacity="'+(op==null?.9:op)+'"/>';
 function ornBungkus(isi){
- return '<svg viewBox="0 0 168 28" fill="none" aria-hidden="true" '+
-  'style="width:132px;height:22px;display:block">'+isi+'</svg>';
+ /* Ukuran lewat ATRIBUT, bukan inline style, supaya bisa ditimpa CSS.
+    Picker ornamen di Studio butuh pratinjau kecil; inline style akan menang
+    atas aturan CSS mana pun sehingga pratinjau tak bisa dikecilkan. */
+ return '<svg viewBox="0 0 168 28" width="132" height="22" fill="none" aria-hidden="true" '+
+  'style="display:block;max-width:100%">'+isi+'</svg>';
 }
 
 const ORNAMEN={
@@ -200,10 +203,13 @@ const ORNAMEN={
    ORN_GARIS('M56 22h-14M112 22h14',1.1,.5))
 };
 
-/* Motif ornamen untuk sebuah tema. Jatuh ke deretan simbol deco lama bila
-   tema tidak punya orn atau id-nya tak dikenal -- aman untuk snapshot lama. */
-function ornMotif(tplF){
- const id=tplF&&tplF.orn;
+/* Motif ornamen yang dipakai. Pilihan pemilik di snapshot (d.orn) menang atas
+   bawaan tema (tplF.orn), dan keduanya harus id yang dikenal registry. Bila
+   tidak ada yang sah, kembalikan null supaya pemanggil jatuh ke deretan simbol
+   deco lama -- aman untuk snapshot terbitan lama yang belum menyimpan orn. */
+function ornMotif(d,tplF){
+ const pilih=(d&&d.orn)||'';
+ const id=ornIdValid(pilih)?pilih:(tplF&&tplF.orn);
  if(id&&ORNAMEN[id]){try{return ORNAMEN[id]()}catch(e){/* motif gagal digambar */}}
  return null;
 }

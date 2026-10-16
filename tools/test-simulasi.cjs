@@ -154,6 +154,71 @@ function draftFor(tpl, idx) {
   t('studio: border berhias lace-ivory bisa dipilih tema dasar',
     w.eval(`state.border==='lace-ivory'`), w.eval('state.border'));
 
+  /* ---- bawaan tema: border dan motif ornamen ----
+     Memilih tema harus menerapkan bawaannya, tetapi pemilik tetap bisa menimpa.
+     Tanpa ini semua tema jatuh ke border 'double' dan tidak ada motif sama sekali. */
+  const temaUji = w.eval('TPL.filter(t=>t.border).map(t=>t.id)');
+  /* Test ini menyuntikkan tema sintetis 'uji-vip' ke TPL untuk menguji tier,
+     jadi TPL berisi 25 entri. Tema sintetis itu tidak punya border/orn bawaan
+     dan memang tidak boleh ikut dihitung. */
+  t('studio: 24 tema katalog punya border bawaan', temaUji.length === 24, temaUji.length + ' tema');
+  let bBawaan = 0, oBawaan = 0, gagalBorder = [], gagalOrn = [];
+  for (const id of temaUji) {
+    w.eval(`state.border='';state.orn='';pickTpl('${id}')`);
+    if (w.eval(`tplById('${id}').border===state.border`)) bBawaan++; else gagalBorder.push(id);
+    if (w.eval(`(tplById('${id}').orn||'')===state.orn`)) oBawaan++; else gagalOrn.push(id);
+  }
+  t('studio: memilih tema menerapkan border bawaannya (24/24)',
+    bBawaan === temaUji.length, bBawaan + '/' + temaUji.length + ' gagal: ' + gagalBorder.join(','));
+  t('studio: memilih tema menerapkan motif ornamen bawaannya (24/24)',
+    oBawaan === temaUji.length, oBawaan + '/' + temaUji.length + ' gagal: ' + gagalOrn.join(','));
+
+  /* pemilik menimpa, dan id asing ditolak menjadi "ikut tema" */
+  w.eval(`pickTpl('${temaUji[0]}');setOrn('mahkota')`);
+  t('studio: setOrn menyimpan pilihan pemilik', w.eval(`state.orn==='mahkota'`), w.eval('state.orn'));
+  w.eval(`setOrn('tidak-ada-di-registry')`);
+  t('studio: setOrn menolak id tak dikenal menjadi kosong (ikut tema)',
+    w.eval(`state.orn===''`), w.eval('state.orn'));
+
+  /* design milik template kustom harus menang atas bawaan tema */
+  w.eval(`state.orn='';state.border='double'`);
+  w.eval(`applyTplToState({id:'__uji__',nama:'uji',ev:'all',border:'thin',orn:'bulan',design:{border:'onyx-inlay',orn:'pita'}})`);
+  t('studio: design template kustom menimpa bawaan tema',
+    w.eval(`state.border==='onyx-inlay'&&state.orn==='pita'`),
+    w.eval(`state.border+'/'+state.orn`));
+  w.eval(`pickTpl('${temaUji[0]}')`);
+
+  /* ---- cakupan border bawaan ---- */
+  const GAYA = w.eval('Object.keys(BINGKAI_GAYA)');
+  const dipakai = w.eval('TPL.filter(t=>t.border).map(t=>t.border)');
+  const idBorder = w.eval('BORDERS.map(b=>b.id)');
+  t('studio: semua border bawaan tema adalah id yang sah',
+    dipakai.every((b) => idBorder.includes(b)),
+    dipakai.filter((b) => !idBorder.includes(b)).join(','));
+  t('studio: ke-12 border berhias jadi bawaan setidaknya satu tema',
+    GAYA.every((g) => dipakai.includes(g)),
+    GAYA.filter((g) => !dipakai.includes(g)).join(','));
+
+  /* ---- picker ornamen benar-benar terender ---- */
+  /* render() keluar lebih awal ke welcomeView()/readyView() bila state.started
+     belum nyala, _welcome masih true, atau stage-nya 'ready'. Ketiga-tiganya
+     harus dibereskan dulu supaya panel tabDesain() benar-benar terender. */
+  w.eval(`state.started=true;_welcome=false;state.stage='editor';state.page='editor';state.tab='desain';render()`);
+  /* Dihitung dari #root, BUKAN document.body: studio.html punya <script> inline
+     di dalam body, sehingga teks sumbernya (definisi setOrn dan template picker)
+     ikut terhitung dan menggandakan jumlah tombol. */
+  const htmlDesain = w.eval("document.getElementById('root').innerHTML");
+  const nMotif = w.eval('Object.keys(ORN_NAMA).length');
+  const nTombol = (htmlDesain.match(/setOrn\(/g) || []).length;
+  t(`studio: picker ornamen merender ${nMotif} motif + 1 pilihan "ikut tema"`,
+    nTombol === nMotif + 1, nTombol + ' tombol');
+  t('studio: picker menampilkan pratinjau SVG tiap motif',
+    (htmlDesain.match(/class="ornpick"/g) || []).length === nMotif,
+    (htmlDesain.match(/class="ornpick"/g) || []).length + ' pratinjau');
+  t('studio: label border menyebut jumlah yang benar (bukan 20 yang lama)',
+    htmlDesain.includes('Border Undangan (' + idBorder.length + ' jenis)'),
+    'seharusnya ' + idBorder.length + ' jenis');
+
   /* font: semua 17 di VIP; font eks terkunci di basic */
   const fonts = w.eval('FONTS.map(f=>f.id)');
   w.eval(`state.tpl='${UJI_VIP}'`);

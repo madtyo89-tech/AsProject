@@ -44,13 +44,16 @@ const studioSrc = read('studio.html');
 const TPL = eval(potong(undSrc, 'const TPL=[', '[', ']'));
 const TPL_STUDIO = eval(potong(studioSrc, 'const TPL=[', '[', ']'));
 
-function draft(theme, ev) {
+function draft(theme, ev, orn) {
   const acara = ev || 'pernikahan';
   return {
     slug: 'uji-ornamen', name1: 'Satrio', name2: '', theme: theme,
     venue: 'Bendo Gede', event_date: '2026-11-02', event_time: '08:00',
     data: {
       event: acara,
+      /* orn milik pemilik; undefined dibuang JSON.stringify sehingga draft
+         tanpa orn tetap menguji jalur bawaan tema */
+      orn: orn,
       form: {
         namaPria: 'Satrio', namaWanita: acara === 'pernikahan' ? 'Pandu' : '', tanggalAcara: '2026-11-02',
         jamAcara: '08:00', venue: 'Bendo Gede', zona: 'WIB',
@@ -62,7 +65,7 @@ function draft(theme, ev) {
   };
 }
 
-async function render(theme, ev) {
+async function render(theme, ev, orn) {
   const dom = new JSDOM(undSrc, {
     runScripts: 'dangerously',
     url: 'https://x.test/undangan.html?slug=uji-ornamen',
@@ -82,7 +85,7 @@ async function render(theme, ev) {
   const w = dom.window, D = w.document;
   await sleep(300);
   let err = null;
-  try { w.eval('boot(' + JSON.stringify(draft(theme, ev)) + ')'); } catch (e) { err = e.message; }
+  try { w.eval('boot(' + JSON.stringify(draft(theme, ev, orn)) + ')'); } catch (e) { err = e.message; }
   await sleep(120);
   const divider = [...D.querySelectorAll('.divider')];
   const footer = D.querySelector('.footer .orn');
@@ -215,7 +218,32 @@ async function render(theme, ev) {
     w.close();
   }
 
-  /* ---------- 5. ringkasan pemakaian ---------- */
+  /* ---------- 5. pilihan pemilik menimpa bawaan tema ---------- */
+  {
+    /* ivory-klasik bawaannya 'klasik'; pemilik memilih 'mahkota' */
+    const ro = await render(0, null, 'mahkota');
+    t('override: d.orn menimpa bawaan tema',
+      ro.dividerSvg[0] === ro.motifSvg['mahkota'],
+      'dapat ' + (ro.dividerSvg[0] || '').length + ' karakter');
+    const rs = await render(0, null, 'tidak-ada-di-registry');
+    t('override: d.orn tak dikenal diabaikan, jatuh ke bawaan tema',
+      rs.dividerSvg[0] === rs.motifSvg['klasik']);
+  }
+
+  /* ---------- 6. studio menyimpan orn ke snapshot ---------- */
+  {
+    const nPayload = (studioSrc.match(/orn:state\.orn\|\|''/g) || []).length;
+    t('studio: 3 payload publish/export + design template kustom membawa orn',
+      nPayload === 4, nPayload + ' titik, harap 4');
+    t('studio: draftSig memperhitungkan orn agar pratinjau ikut berubah',
+      studioSrc.includes("state.border,state.orn||'',state.ornSudut"));
+    t('studio: normalizeTplCustom memutihkan design.orn',
+      studioSrc.includes('if(ORN_NAMA[source.orn])design.orn=source.orn;'));
+    t('studio: pemulihan riwayat server membaca d.orn',
+      studioSrc.includes('if(ORN_NAMA[d.orn])state.orn=d.orn;'));
+  }
+
+  /* ---------- 7. ringkasan pemakaian ---------- */
   console.log('\nPemakaian motif:');
   Object.entries(pakai).sort((a, b) => b[1] - a[1])
     .forEach(([m, n]) => console.log('  ' + m.padEnd(13) + n + ' tema'));
