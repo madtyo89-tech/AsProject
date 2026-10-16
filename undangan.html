@@ -715,6 +715,54 @@ body.buka-jungkit.opened #cover{transform-origin:50% 100%;transform:perspective(
  body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover,body.buka-blinds.opened #cover{opacity:0;visibility:hidden;transform:none;clip-path:none;transition:opacity .3s ease,visibility 0s .3s}
 }
 
+/* ---------- #7 PAKET "LEBIH HIDUP": micro-interaction halus ---------- */
+:where(button):active{transform:scale(.965)}
+.scroll-reveal .divider svg path,.scroll-reveal .footer .orn svg path{stroke-dasharray:520;stroke-dashoffset:520}
+.scroll-reveal.sr-in .divider svg path,.scroll-reveal.sr-in .footer .orn svg path{animation:ornGambar 1.5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes ornGambar{to{stroke-dashoffset:0}}
+.cdw-mini .n,.cdw .n{display:inline-block;transform-origin:50% 60%}
+.cd-tick{animation:cdPop .45s cubic-bezier(.3,1.4,.4,1)}
+@keyframes cdPop{0%{transform:scale(1.28);opacity:.55}100%{transform:scale(1);opacity:1}}
+#musikBtn .disc{animation-play-state:paused}
+body.musik-on #musikBtn .disc{animation-play-state:running}
+body.musik-on #musikBtn::after{content:'';position:absolute;inset:-4px;border-radius:99px;border:2px solid var(--gold,#d4af37);opacity:.5;pointer-events:none;animation:ringNada 1.8s ease-out infinite}
+@keyframes ringNada{0%{transform:scale(.9);opacity:.55}100%{transform:scale(1.28);opacity:0}}
+.gal-grid img{transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.gal-grid img:hover{transform:scale(1.05)}
+.gal-grid img:active{transform:scale(.98)}
+.nv-dots i.on{animation:dotNadi 2.2s ease-in-out infinite}
+@keyframes dotNadi{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.75}}
+
+/* ---------- #5 SKELETON COVER PER MODEL ----------
+   split   : dua kolom (foto/monogram di samping teks) saat layar lega,
+             bertumpuk rapi saat sempit -- bukan kartu tengah lagi.
+   segel   : tanggal jadi perangko miring di sudut, ornamen jadi segel besar.
+   jendela : foto jadi jendela lengkung di atas, teks masuk pita berlatar. */
+.cvsplit{display:grid;gap:14px}
+.cvsplit .cvsp-a{display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center}
+.cvsplit .cvsp-a .cvf{width:100%;max-width:260px}
+@media (min-width:640px){
+ .cvsplit{grid-template-columns:42% 1fr;align-items:center;column-gap:22px}
+ .cvsplit .cvsp-b{text-align:left}
+ .cvsplit .cvsp-b h1{margin-left:0;margin-right:0}
+ .cvsplit .cvsp-a .cvf{max-width:none;height:100%;min-height:260px}
+}
+.cv-segel{position:relative}
+.cv-segel>.orn{font-size:26px;letter-spacing:10px}
+.cv-segel .cvstamp{position:absolute;top:-4px;right:-2px;transform:rotate(8deg);border:2px dashed var(--accent-cover);border-radius:8px;padding:6px 9px;text-align:center;opacity:.92;background:color-mix(in srgb,#fff 55%,transparent)}
+.cv-segel .cvstamp .std-label{margin-top:2px}
+.cv-jendela .cvf{border-radius:220px 220px 18px 18px/48% 48% 18px 18px;overflow:hidden}
+.cv-jendela .cvband{margin-top:12px;padding:14px 12px 10px;border-radius:16px;background:color-mix(in srgb,var(--card,#fff) 78%,transparent);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+@media (prefers-reduced-motion:reduce){
+ :where(button):active{transform:none}
+ .scroll-reveal .divider svg path,.scroll-reveal .footer .orn svg path{stroke-dashoffset:0;animation:none}
+ .cd-tick{animation:none}
+ body.musik-on #musikBtn::after{animation:none;opacity:0}
+ .gal-grid img:hover,.gal-grid img:active{transform:none}
+ .nv-dots i.on{animation:none}
+}
+
+
 
 body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .open::before,body.opened #cover .open::before{transform:perspective(720px) rotateX(-168deg)}
 body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after{transform:translate(-50%,8%) scale(.5);opacity:0}
@@ -2257,11 +2305,11 @@ function setupMusic(url,name){
   loop();viz.classList.add('on');
  }catch(e){an=null}};
  btn.addEventListener('click',()=>{
-  if(!on){a.play().then(()=>{on=true;hook()}).catch(()=>{})}
-  else{a.pause();on=false;viz.classList.remove('on');bars.forEach(b=>b.style.height='3px')}
+  if(!on){a.play().then(()=>{on=true;document.body.classList.add('musik-on');hook()}).catch(()=>{})}
+  else{a.pause();on=false;document.body.classList.remove('musik-on');viz.classList.remove('on');bars.forEach(b=>b.style.height='3px')}
  });
  return ()=>{a.play().catch(()=>{});
-  if(!on){on=true;hook()}
+  if(!on){on=true;document.body.classList.add('musik-on');hook()}
   a.addEventListener('playing',hook,{once:true});
   viz.classList.add('on')}
 }
@@ -2944,6 +2992,37 @@ function boot(draft){
 
  h+=SCR;
  $('app').innerHTML=h;
+ /* #5: skeleton cover per model. Node .inner ditata ulang SESUAH render supaya
+    tiap model punya kerangka DOM yang benar-benar beda, bukan hanya warna:
+    split (dua kolom), segel (tanggal jadi perangko), jendela (pita teks). */
+ const CV_STRUK={night:'split',neon:'split',minimal:'segel',archive:'segel',batik:'jendela',sakura:'jendela'};
+ (function(){const struk=CV_STRUK[CVL]||'klasik';if(struk==='klasik')return;
+  const inner=document.querySelector('#cover .bdfr .inner');if(!inner)return;
+  const q=s=>inner.querySelector(s);
+  if(struk==='split'){
+   const w=document.createElement('div');w.className='cvsplit';
+   const a=document.createElement('div');a.className='cvsp-a';
+   const b=document.createElement('div');b.className='cvsp-b';
+   const foto=q('.cvf'),mono=q('.monogram'),orn=q('.orn');
+   const utama=foto||mono||orn;
+   if(utama)a.appendChild(utama);
+   if(foto&&mono)a.appendChild(mono);
+   if(foto&&orn)a.appendChild(orn);
+   while(inner.firstChild)b.appendChild(inner.firstChild);
+   w.appendChild(a);w.appendChild(b);inner.appendChild(w);
+  }else if(struk==='segel'){
+   inner.classList.add('cv-segel');
+   const sl=q('.std-label'),dt=q('.date');
+   if(sl&&dt){const st=document.createElement('div');st.className='cvstamp';
+    sl.parentNode.insertBefore(st,sl);st.appendChild(sl);st.appendChild(dt)}
+  }else if(struk==='jendela'){
+   inner.classList.add('cv-jendela');
+   const kick=q('.kicker');
+   if(kick){const band=document.createElement('div');band.className='cvband';
+    let n=kick;while(n){const nx=n.nextSibling;band.appendChild(n);n=nx}
+    inner.appendChild(band)}
+  }})();
+
  fitCoverPhotos();if(window.requestAnimationFrame)requestAnimationFrame(fitCoverPhotos);
  /* Mesin 4D HARUS dimount di sini, bukan di atas: AsVip4d.mount() mencari
     #cover lewat document.getElementById('cover'), sedangkan #cover baru lahir
@@ -3143,7 +3222,9 @@ function startCountdown(tt){
   let ms=tt-Date.now();if(ms<0)ms=0;
   const s=Math.floor(ms/1000);
   const pad=n=>String(n).padStart(2,'0');
-  const setCd=(id,v)=>{if(el(id))el(id).textContent=v;if(el(id+'0'))el(id+'0').textContent=v};
+  const setCd=(id,v)=>{const a=el(id),b=el(id+'0');
+   if(a&&a.textContent!==v){a.textContent=v;a.classList.remove('cd-tick');void a.offsetWidth;a.classList.add('cd-tick')}
+   if(b&&b.textContent!==v){b.textContent=v;b.classList.remove('cd-tick');void b.offsetWidth;b.classList.add('cd-tick')}};
   setCd('cdH',pad(Math.floor(s/86400)));
   setCd('cdM',pad(Math.floor(s%86400/3600)));
   setCd('cdS',pad(Math.floor(s%3600/60)));
