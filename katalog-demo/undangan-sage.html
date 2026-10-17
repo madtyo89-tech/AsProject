@@ -332,6 +332,14 @@
 
   @media(max-width:480px){ .cover h1{font-size:40px} }
 </style>
+<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
+     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
+     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
+     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
+<style>
+  /* :root — teks putih di latar berwarna lewat variabel --sage (#7c8b6a → #6c795c, putih 4.64:1) (putih 4.64:1) */
+  :root{--sage:#6c795c;--gold:#846935;--muted:#6d705c}
+</style>
 </head>
 <body class="locked">
 

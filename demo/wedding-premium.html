@@ -24,7 +24,7 @@
 :root{
   --bg:#F4EDE2; --bg2:#E8DCCA; --bg3:#FBF7F0; --soft:#D8C7B0; --line:#CDBA9C;
   --mid:#C2A88B; --acc:#7A5C3E; --deep:#5C452F; --on-acc:#FFFDF8;
-  --ink:#3E3122; --ink2:#5C4B38; --mut:#8A7660;
+  --ink:#3E3122; --ink2:#5C4B38; --mut:#6E5E4D;
   --card:rgba(255,253,248,.7); --card-solid:#FFFDF8;
   --serif:"Playfair Display",Georgia,serif; --sans:"Poppins",system-ui,sans-serif;
   --r:22px; --r-sm:14px;
@@ -34,7 +34,7 @@
 html[data-tema="minimalist-sage"]{
   --bg:#F2F6F1; --bg2:#D9E4D7; --bg3:#FAFCF9; --soft:#C2D4BE; --line:#BCCDB6;
   --mid:#A8BEA3; --acc:#5F7A5C; --deep:#465C44; --on-acc:#FBFDFB;
-  --ink:#2F3D2E; --ink2:#4C5A4A; --mut:#7C8A7A;
+  --ink:#2F3D2E; --ink2:#4C5A4A; --mut:#5D6B59;
   --card:rgba(255,255,255,.66); --card-solid:#FFFFFF;
   --serif:"Inter",system-ui,sans-serif; --sans:"Inter",system-ui,sans-serif;
   --sh:0 22px 48px -30px rgba(70,92,68,.42); --sh-sm:0 10px 24px -16px rgba(70,92,68,.36);
@@ -346,6 +346,14 @@ footer{border-top:1px solid var(--line);padding:44px 0 30px;margin-top:20px;back
 /* ---------- 16. Muncul saat digulir ---------- */
 .rv{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
 .rv.masuk{opacity:1;transform:none}
+</style>
+<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
+     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
+     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
+     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
+<style>
+  /* .btn-wa — teks putih di latar berwarna (#25d366 → #178540, putih 4.70:1) (putih 4.70:1) */
+  .btn-wa{background-color:#178540}
 </style>
 </head>
 

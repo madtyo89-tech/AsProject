@@ -54,7 +54,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;background:var(--s
 .btn-utama:hover{transform:translateY(-2px)}
 .btn-es{background:var(--card);border-color:var(--line);color:var(--deep);backdrop-filter:blur(8px)}
 .btn-es:hover{border-color:var(--mid);transform:translateY(-2px)}
-.btn-wa{background:#25D366;color:#fff;box-shadow:0 14px 30px -14px rgba(37,211,102,.8)}
+.btn-wa{background:#178540;color:#fff;box-shadow:0 14px 30px -14px rgba(37,211,102,.8)}
 .btn-wa:hover{transform:translateY(-2px);filter:brightness(1.05)}
 .btn-kecil{padding:9px 16px;font-size:12.5px}
 
@@ -259,7 +259,7 @@ footer{border-top:1px solid var(--line);padding:42px 0 28px;margin-top:20px;back
 
 /* ---------- wa terbang + toast ---------- */
 #waTerbang{position:fixed;right:18px;bottom:18px;z-index:55;width:54px;height:54px;border-radius:50%;display:grid;
-  place-items:center;background:#25D366;color:#fff;box-shadow:0 16px 32px -12px rgba(37,211,102,.85);transition:.25s}
+  place-items:center;background:#178540;color:#fff;box-shadow:0 16px 32px -12px rgba(37,211,102,.85);transition:.25s}
 #waTerbang:hover{transform:scale(1.07)}
 #waTerbang::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid rgba(37,211,102,.6);
   animation:aspDenyut 2.4s ease-out infinite}

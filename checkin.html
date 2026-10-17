@@ -21,6 +21,16 @@ h1{font-size:20px;margin:18px 0 4px}
 .badge{margin-top:22px;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#9a8f82}
 a{color:#4A6741}
 </style>
+<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
+     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
+     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
+     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
+<style>
+  /* .meta — teks #7a857c di latar #f7faf8 → #6a746c (4.62:1) (rasio 4.62:1) */
+  .meta{color:#6a746c}
+  /* .badge — teks #9a8f82 di latar #ffffff → #7e7366 (4.63:1) (rasio 4.63:1) */
+  .badge{color:#7e7366}
+</style>
 </head>
 <body>
 <div class="box">

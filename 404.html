@@ -18,6 +18,14 @@ a.btn{display:inline-flex;align-items:center;justify-content:center;margin-top:2
 a.sec{display:inline-block;margin-top:14px;font-size:12px;color:#8a7f72;text-decoration:none}
 .route{font-family:ui-monospace,monospace;font-size:11px;background:#faf3e6;border:1px solid #f0e6d6;border-radius:10px;padding:8px 12px;margin-top:16px;word-break:break-all;color:#8a6d0f}
 </style>
+<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
+     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
+     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
+     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
+<style>
+  /* .route — teks #8a6d0f di latar #faf3e6 → #866a0f (4.66:1) (rasio 4.66:1) */
+  .route{color:#866a0f}
+</style>
 </head>
 <body>
 <div class="box" id="box">

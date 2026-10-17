@@ -1635,5 +1635,25 @@ var DEMO_BY_NAME = {'Adat Jawa Elegan': 'katalog-demo/undangan-demo.html', 'Mini
 })();
 </script>
 
+<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
+     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
+     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
+     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
+<style>
+  /* .opacity-60 — opasitas 0.6 → 0.92 (.max-w-\[640px\] > .text-\[14px\]) */
+  .opacity-60{opacity:0.92!important}
+  /* footer h4, footer .font-semibold — teks #8a6d2f di latar #f3eadb → #80652c (4.61:1) (rasio 4.61:1) */
+  footer h4, footer .font-semibold{color:#80652c!important}
+  /* footer p, footer li, footer a — teks #b4a793 di latar #f3eadb (opasitas 0.6 → #685c4a) (rasio 5.47:1) */
+  footer p, footer li, footer a{color:#685c4a!important}
+  /* .opacity-70 — opasitas 0.7 → 0.92 (.hover\:opacity-100[target="_blank"][rel) */
+  .opacity-70{opacity:0.92!important}
+  /* .text-\[\#3A5A36\] — teks #728568 di latar #eaeee3 (opasitas 0.7 → #3a5a36) (rasio 6.62:1) */
+  .text-\[\#3A5A36\]{color:#3a5a36!important}
+  /* .opacity-50 — opasitas 0.5 → 0.92 (.py-4) */
+  .opacity-50{opacity:0.92!important}
+  /* footer .opacity-50 — teks #bfb39e di latar #f3eadb (opasitas 0.5 → #685c48) (rasio 5.48:1) */
+  footer .opacity-50{color:#685c48!important}
+</style>
 </body>
 </html>
