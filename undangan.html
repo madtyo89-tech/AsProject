@@ -3192,6 +3192,26 @@ function bootBersihkan(){
  if(window.__aspCdTimer){clearInterval(window.__aspCdTimer);window.__aspCdTimer=null}
  if(window.__aspMapIO){try{window.__aspMapIO.disconnect()}catch(e){}window.__aspMapIO=null}
 }
+/* ---------- bentuk data amplop digital ----------
+   Studio menulis {showAmplop, bank, noRek, pemilik, ewallet, noEwallet, showCopy}.
+   Dashboard Undangan Master versi lama menulis {on, name, acc, holder}. Dulu
+   undangan hanya membaca bentuk Studio, jadi snapshot yang terakhir disimpan
+   dari Master lama membuat bagian Amplop Digital hilang sama sekali dari
+   undangan tamu (showAmplop & noRek tidak ada). Normalisasi ini membuat kedua
+   bentuk tampil, termasuk undangan yang sudah terbit — tanpa publish ulang.
+   Bila data punya nomor tetapi tidak punya penanda tampil/sembunyi, anggap
+   tampil supaya isian yang terlanjur disimpan tidak jadi tak terlihat. */
+function amplopNormal(a){
+ a=(a&&typeof a==='object')?a:{};
+ const teks=v=>String(v==null?'':v).trim();
+ const noRek=teks(a.noRek||a.acc),noEwallet=teks(a.noEwallet);
+ const adaFlag=typeof a.showAmplop==='boolean'||typeof a.on==='boolean';
+ return {
+  tampil:adaFlag?(typeof a.showAmplop==='boolean'?a.showAmplop:!!a.on):!!(noRek||noEwallet),
+  bank:teks(a.bank||a.name),noRek,pemilik:teks(a.pemilik||a.holder),
+  ewallet:teks(a.ewallet),noEwallet,copy:a.showCopy!==false
+ };
+}
 function boot(draft){
  bootBersihkan();
  const d=(draft.data&&typeof draft.data==='object')?draft.data:null;
@@ -3507,14 +3527,14 @@ function boot(draft){
   return s};
  B.amplop=()=>{let s='';
  /* 6. Amplop */
- if(d&&d.amplop&&d.amplop.showAmplop&&(d.amplop.noRek||d.amplop.noEwallet)){
-  const a=d.amplop;
+ const a=amplopNormal(d&&d.amplop);
+ if(a.tampil&&(a.noRek||a.noEwallet)){
   s+=`<div class="${RV('card')}"><div class="kicker">Amplop Digital</div>
    <p class="muted">Bagi yang ingin memberi tanda kasih, dapat melalui:</p><div class="amp-card">`;
   if(a.noRek)s+=`<div class="amp-row"><div><div class="nm">${esc(a.bank||'Bank')}</div><div class="no">${esc(a.noRek)}</div><div class="ow">a.n. ${esc(a.pemilik||'—')}</div></div>
-   ${a.showCopy!==false?`<button class="copy" data-copy="${esc(a.noRek)}">Salin</button>`:''}</div>`;
+   ${a.copy?`<button class="copy" data-copy="${esc(a.noRek)}">Salin</button>`:''}</div>`;
   if(a.noEwallet)s+=`<div class="amp-row"><div><div class="nm">${esc(a.ewallet||'E-Wallet')}</div><div class="no">${esc(a.noEwallet)}</div></div>
-   ${a.showCopy!==false?`<button class="copy" data-copy="${esc(a.noEwallet)}">Salin</button>`:''}</div>`;
+   ${a.copy?`<button class="copy" data-copy="${esc(a.noEwallet)}">Salin</button>`:''}</div>`;
   s+=`</div></div>`;
  }
   return s};

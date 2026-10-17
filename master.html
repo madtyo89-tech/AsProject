@@ -250,6 +250,26 @@ const DEMO=Q.get('demo')==='1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+/* ---------- bentuk data amplop digital ----------
+   Studio menyimpan {showAmplop, bank, noRek, pemilik, ewallet, noEwallet},
+   sedangkan dashboard ini dulu menyimpan {on, name, acc, holder}. Akibatnya
+   kartu "Edit Info Bank" tampak kosong untuk undangan yang diisi dari Studio,
+   dan — yang lebih parah — menyimpan dari sini MENGGANTI seluruh objek amplop
+   dengan bentuk lama, sehingga bagian Amplop Digital hilang dari undangan tamu
+   (undangan hanya mengenal showAmplop/noRek). Sekarang kedua bentuk dibaca
+   lewat satu normalisasi, dan saat menyimpan bidang lain ikut dipertahankan. */
+function amplopNormal(a){
+ a=(a&&typeof a==='object')?a:{};
+ const teks=v=>String(v==null?'':v).trim();
+ const noRek=teks(a.noRek||a.acc),noEwallet=teks(a.noEwallet);
+ const adaFlag=typeof a.showAmplop==='boolean'||typeof a.on==='boolean';
+ return {
+  tampil:adaFlag?(typeof a.showAmplop==='boolean'?a.showAmplop:!!a.on):!!(noRek||noEwallet),
+  bank:teks(a.bank||a.name),noRek,pemilik:teks(a.pemilik||a.holder),
+  ewallet:teks(a.ewallet),noEwallet,copy:a.showCopy!==false
+ };
+}
+
 /* ---------- toast ---------- */
 let toastT=null;
 function toast(msg,type,ms){const t=$('#toast');t.textContent=msg;t.className='show '+(type||'');clearTimeout(toastT);toastT=setTimeout(()=>{t.className=''},ms||2600)}
@@ -348,7 +368,8 @@ function afterLoad(){
  const d=DRAFT.data||{};
  if(!DEMO&&MK!==(d.masterKey||'')){bad('Link master tidak valid','Masukkan ulang link master dari Studio (tab Domain), Kak.');return}
  parseGuests();
- bankOn=!!(d.amplop&&d.amplop.on);bankName=(d.amplop&&d.amplop.name)||'';bankAcc=(d.amplop&&d.amplop.acc)||'';bankHolder=(d.amplop&&d.amplop.holder)||'';
+ const amp=amplopNormal(d.amplop);
+ bankOn=amp.tampil;bankName=amp.bank;bankAcc=amp.noRek;bankHolder=amp.pemilik;
  loadRsvp().then(renderAll);
 }
 
@@ -749,7 +770,16 @@ async function saveBank(){
  bankAcc=document.getElementById('bankAcc')?document.getElementById('bankAcc').value.trim():bankAcc;
  bankHolder=document.getElementById('bankHolder')?document.getElementById('bankHolder').value.trim():bankHolder;
  const d=JSON.parse(JSON.stringify(DRAFT.data||{}));
- d.amplop={on:bankOn,name:bankName,bank:bankName,acc:bankAcc,holder:bankHolder};
+ /* Tulis bentuk yang dibaca undangan (showAmplop/noRek/pemilik) TANPA membuang
+    bidang dari Studio (ewallet/noEwallet/showCopy). Kunci bentuk lama tetap
+    ditulis agar dashboard versi lama & arsip tidak kehilangan arti. */
+ const lama=(d.amplop&&typeof d.amplop==='object')?d.amplop:{};
+ d.amplop=Object.assign({},lama,{
+  showAmplop:!!bankOn,on:!!bankOn,
+  bank:bankName,name:bankName,
+  noRek:bankAcc,acc:bankAcc,
+  pemilik:bankHolder,holder:bankHolder
+ });
  if(DEMO){saving=false;renderAll();toast('Demo — perubahan hanya di pratinjau','');return}
  try{
   const r=await fetch(SUPABASE_URL+'/rest/v1/invitation_drafts?slug=eq.'+SLUG,{

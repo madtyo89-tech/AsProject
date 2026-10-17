@@ -1204,7 +1204,7 @@ try{
 if(stored.tab==='master'||stored.tab==='domain')stored.tab='terbit'; /* susunan tab baru */
  state=Object.assign({},JSON.parse(JSON.stringify(DEF)),stored);
  state.tplCustom=normalizeTplCustom(state.tplCustom);
- state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,state.amplop||{});
+ state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,amplopNormal(state.amplop));
  state.slides=mergeSlides(state.slides);state.anim=Object.assign({},DEF.anim,state.anim||{});
  state.coverPos=Object.assign({x:50,y:50,z:1},state.coverPos||{});
  if(!CUSTOM_TPL_COVER_LAYOUTS.includes(state.coverLayout))state.coverLayout='amplop';
@@ -1609,6 +1609,22 @@ function resetWaTemplate(){state.waTemplate=WA_TEMPLATE_DEFAULT;save();render();
 /* ============ HELPERS ============ */
 const $=id=>document.getElementById(id);
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+/* ---------- bentuk data amplop digital ----------
+   Bentuk resmi Studio: {showAmplop, bank, noRek, pemilik, ewallet, noEwallet, showCopy}.
+   Dashboard Undangan Master versi lama menyimpan {on, name, acc, holder}; kalau
+   snapshot seperti itu dibuka di Studio, isian bank tampak kosong dan bisa
+   tertimpa saat menyimpan. Normalisasi menyamakan keduanya sekali di awal. */
+function amplopNormal(a){
+ a=(a&&typeof a==='object')?a:{};
+ const teks=v=>String(v==null?'':v).trim();
+ const noRek=teks(a.noRek||a.acc),noEwallet=teks(a.noEwallet);
+ const adaFlag=typeof a.showAmplop==='boolean'||typeof a.on==='boolean';
+ return {
+  showAmplop:adaFlag?(typeof a.showAmplop==='boolean'?a.showAmplop:!!a.on):!!(noRek||noEwallet),
+  bank:teks(a.bank||a.name),noRek,pemilik:teks(a.pemilik||a.holder),
+  ewallet:teks(a.ewallet),noEwallet,showCopy:a.showCopy!==false
+ };
+}
 /* Nilai yang disisipkan ke dalam onclick="fn('…')" harus aman untuk atribut HTML
    DAN literal string JavaScript. esc() saja tidak cukup: &#39; dikembalikan jadi
    apostrof oleh parser HTML, sehingga nama tamu seperti O'Brien membuat tombol
@@ -2035,6 +2051,8 @@ async function publish(){
    waTemplate:String(state.waTemplate||''),masterKey:state.masterKey||'',savedAt:new Date().toISOString()}};
  state.pubSig=draftSig();
  if(state.music&&state.music.local)setTimeout(()=>notifyWarn('Musik <b>'+esc(state.music.name||'lokal')+'</b> tersimpan di perangkat ini saja — tamu tidak mendengarnya. Upload musik ke Supabase (tombol di tab Musik & Galeri) agar ikut di undangan live.',15000),600);
+ if((state.amplop.noRek||state.amplop.noEwallet)&&!state.amplop.showAmplop)
+  setTimeout(()=>notifyWarn('<b>Amplop digital belum ditampilkan.</b> Nomor rekening/e-wallet sudah diisi, tetapi bagian Amplop tidak muncul di undangan tamu. Buka tab <b>Amplop &amp; Ucapan</b>, centang <b>Tampilkan</b>, lalu Publish ulang.',18000),900);
  state.arsip=[entry,...state.arsip.filter(a=>!(a.jenis===state.event&&a.nama===nama))];
  state.stage='ready';save();render();window.scrollTo(0,0);document.querySelectorAll('.notice').forEach(n=>n.remove());
  if(snapshotSkipped)notifyWarn('<b>Publish berhasil tanpa snapshot.</b> Kolom <b>data</b> belum ada di Supabase — undangan live memakai kolom dasar + template (tampilan bisa berbeda dari studio, dashboard Master terbatas). Jalankan <b>supabase-schema.sql</b> di SQL Editor, atau <button onclick="copyFixSql()">salin SQL perbaikan</button>, lalu Publish ulang.',25000);
@@ -2681,17 +2699,27 @@ function tabTamu(){const gs=guests(),g=selGuest(),single=state.linkMode==='singl
  </div>
  <div class="card" id="kartuQrTamu" style="background:#111;color:#fff;border-color:#111">${tamuQrCardIsi()}</div>`}
 
-function tabAmplop(){const a=state.amplop;return `<div style="display:grid;gap:16px">
+function tabAmplop(){const a=state.amplop;
+ const bankList=['BCA','BNI','BRI','Mandiri','BSI'];if(a.bank&&!bankList.includes(a.bank))bankList.unshift(a.bank);
+ const walletList=['DANA','OVO','GoPay','LinkAja','ShopeePay'];if(a.ewallet&&!walletList.includes(a.ewallet))walletList.unshift(a.ewallet);
+ const adaIsi=!!(a.noRek||a.noEwallet),belumTampil=adaIsi&&!a.showAmplop;
+ return `<div style="display:grid;gap:16px">
  <div class="card">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h4 style="margin:0">💳 Amplop Digital</h4>
   <label style="display:flex;align-items:center;gap:8px;font-size:11px"><input type="checkbox" ${a.showAmplop?'checked':''} onchange="setA('showAmplop',this.checked)"> Tampilkan</label></div>
+  ${belumTampil?`<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;padding:12px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;font-size:11.5px;line-height:1.65;color:#7c2d12">
+   <span style="font-size:16px;line-height:1">⚠️</span>
+   <div><b>Amplop sudah diisi, tapi belum ditampilkan.</b><br>Bagian Amplop Digital tidak akan muncul di undangan tamu selama kotak <b>Tampilkan</b> belum dicentang.
+   <button class="sm-btn dark" style="margin-top:8px;min-height:32px" onclick="setA('showAmplop',true)">Tampilkan sekarang</button></div>
+  </div>`:''}
   <div class="grid2">
-   <label class="f">Bank<select onchange="updA('bank',this.value)">${['BCA','BNI','BRI','Mandiri','BSI'].map(b=>`<option ${a.bank===b?'selected':''}>${b}</option>`).join('')}</select></label>
+   <label class="f">Bank<select onchange="updA('bank',this.value)">${bankList.map(b=>`<option ${a.bank===b?'selected':''}>${b}</option>`).join('')}</select></label>
    <label class="f">No Rekening<input value="${esc(a.noRek)}" oninput="updA('noRek',this.value)"></label>
    <label class="f span2">Nama Pemilik Rekening<input value="${esc(a.pemilik)}" oninput="updA('pemilik',this.value)"></label>
-   <label class="f">E-Wallet<select onchange="updA('ewallet',this.value)">${['DANA','OVO','GoPay','LinkAja','ShopeePay'].map(w=>`<option ${a.ewallet===w?'selected':''}>${w}</option>`).join('')}</select></label>
+   <label class="f">E-Wallet<select onchange="updA('ewallet',this.value)">${walletList.map(w=>`<option ${a.ewallet===w?'selected':''}>${w}</option>`).join('')}</select></label>
    <label class="f">No E-Wallet<input value="${esc(a.noEwallet)}" oninput="updA('noEwallet',this.value)"></label>
   </div>
+  <div style="font-size:10.5px;color:var(--mut);margin-top:8px">Bagian amplop hanya muncul di undangan bila nomor rekening/e-wallet diisi <b>dan</b> kotak <b>Tampilkan</b> dicentang.</div>
   <label style="display:flex;align-items:center;gap:8px;font-size:11px;margin-top:12px"><input type="checkbox" ${a.showCopy?'checked':''} onchange="setA('showCopy',this.checked)"> Tombol Copy No Rek Otomatis</label>
   <div style="margin-top:16px;padding:12px;border-radius:12px;background:#fbfaf8;border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
    <div style="font-size:11px"><b>${esc(a.bank)}</b> • ${esc(a.noRek)} • a.n ${esc(a.pemilik)}</div>
