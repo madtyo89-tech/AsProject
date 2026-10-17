@@ -1,0 +1,12 @@
+# robots.txt — AsProject.My.Id
+User-agent: *
+Allow: /
+
+# Halaman privat / butuh kunci akses — jangan dirayapi
+Disallow: /master.html
+Disallow: /scan.html
+Disallow: /checkin.html
+Disallow: /android/
+
+# laporan-audit.html tidak dilarang di sini; halaman itu memakai <meta name="robots" content="noindex">
+Sitemap: https://asproject.my.id/sitemap.xml

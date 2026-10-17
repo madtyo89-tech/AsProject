@@ -1305,6 +1305,47 @@ def cek_nama_tamu_aman():
               + ("" if not gagal else " — " + " | ".join(gagal)[:240]))
 
 
+# ------------------------------------------- 31. robots.txt & sitemap.xml
+def cek_robots_sitemap():
+    import xml.etree.ElementTree as ET
+    print("\n[31] robots.txt & sitemap.xml (halaman publik)")
+    if not os.path.exists("robots.txt"):
+        lapor("masalah", "robots.txt tidak ada")
+        return
+    r = baca("robots.txt")
+    lapor("ok" if "Sitemap: https://asproject.my.id/sitemap.xml" in r else "masalah",
+          "robots.txt menunjuk sitemap")
+    for privat in ("master.html", "scan.html", "checkin.html"):
+        lapor("ok" if f"Disallow: /{privat}" in r else "masalah",
+              f"robots.txt: {privat} tidak dirayapi")
+    if not os.path.exists("sitemap.xml"):
+        lapor("masalah", "sitemap.xml tidak ada")
+        return
+    try:
+        akar = ET.parse("sitemap.xml").getroot()
+    except ET.ParseError as e:
+        lapor("masalah", f"sitemap.xml bukan XML valid: {e}")
+        return
+    ns = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+    loc = [e.text.strip() for e in akar.findall("s:url/s:loc", ns)]
+    lapor("ok" if loc else "masalah", f"sitemap.xml: {len(loc)} URL")
+    peta = {}
+    for u in loc:
+        if not u.startswith("https://asproject.my.id/"):
+            lapor("masalah", f"sitemap: domain tak dikenal -> {u}")
+            continue
+        rel = u[len("https://asproject.my.id/"):] or "index.html"
+        peta[rel] = u
+        lapor("ok" if os.path.exists(rel) else "masalah",
+              f"sitemap: {rel} " + ("ada" if os.path.exists(rel) else "TIDAK ADA di repo"))
+    peta.setdefault("index.html", "https://asproject.my.id/")
+    for wajib in ("index.html", "undangan.html", "katalog-demo/index.html"):
+        lapor("ok" if wajib in peta else "masalah", f"sitemap: memuat {wajib}")
+    for privat in ("master.html", "scan.html", "checkin.html", "404.html", "laporan-audit.html"):
+        lapor("ok" if privat not in peta else "masalah",
+              f"sitemap: {privat} tidak didaftarkan (halaman privat/utility)")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -1316,7 +1357,8 @@ def main():
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
                cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
-               cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman):
+               cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman,
+               cek_robots_sitemap):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
