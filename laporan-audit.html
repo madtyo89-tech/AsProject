@@ -179,35 +179,58 @@ skrip pihak ketiga lagi selain Supabase JS yang memang punya fallback REST.</li>
 <li><strong><code>.nojekyll</code></strong> sudah ada — penting agar berkas <code>demo/_mesin.js</code> &amp; <code>demo/_mesin.css</code>
 (awalan <code>_</code>) tetap disajikan GitHub Pages.</li>
 </ul>
-<h2>C. Temuan yang belum dikerjakan (butuh keputusan pemilik)</h2>
-<ol>
-<li><strong>Kontras warna</strong> (axe-core, <code>serious</code>): 8 temuan di <code>index.html</code>, 12–16 di
-<code>katalog-demo/*</code>, 3–4 di <code>scan.html</code>/<code>checkin.html</code>, dan 4 di undangan live (<code>#waBar</code>
-demo). Semuanya soal teks abu-abu di atas latar terang/gradasi. Memperbaikinya berarti
-mengubah palet desain — sengaja tidak disentuh agar tampilan tetap seperti pilihan pemilik.</li>
-<li><strong>Landmark halaman</strong> (<code>moderate</code>): banyak bagian belum dibungkus <code>&lt;main&gt;</code>/<code>&lt;header&gt;</code>
-(mis. <code>#lockform</code> di Studio, kartu-kartu katalog). Pembaca layar tetap bisa membaca,
-tetapi navigasi per-bagian belum optimal.</li>
-<li><strong>Belum ada <code>robots.txt</code> dan <code>sitemap.xml</code></strong> — pendaftaran ke Google Search Console akan
-lebih rapi bila keduanya ada (halaman master sudah <code>noindex</code>, itu benar).</li>
-<li><strong>Belum ada web app manifest</strong> — tamu yang menekan &quot;Tambahkan ke layar utama&quot; tidak
-mendapat nama/ikon khusus (aplikasi Android sudah punya ikon sendiri).</li>
-<li><strong>Tabel <code>rsvp</code> &amp; <code>checkin</code> tanpa pembatas laju</strong> — siapa pun yang tahu slug bisa menulis
-(risiko yang sudah didokumentasikan dan diterima di <code>tools/rsvp.sql</code>). Bila ingin ditutup
-nanti: fungsi SQL + <code>pg_cron</code> atau verifikasi kode tamu per baris.</li>
-<li><strong>Uji yang butuh Chromium</strong> (<code>test-mobile-browser</code>, <code>test-button-help</code>,
-<code>test-template-custom-browser</code>) belum jalan di CI karena butuh <code>playwright-core</code> +
-<code>@sparticuz/chromium</code> dan server lokal <code>:8080</code>. Di sandbox ini ketiganya dijalankan
-manual dan lulus.</li>
-</ol>
+<h2>C. Tindak lanjut (dikerjakan 2026-10-17)</h2>
+<p>Keenam temuan di bab ini sudah dikerjakan dan diukur ulang dengan alat yang sama.</p>
+<table>
+<thead><tr><th>#</th><th>Temuan awal</th><th>Yang dikerjakan</th><th>Hasil ukur</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Kontras warna di <code>index.html</code>, <code>katalog-demo/*</code>, <code>scan</code>/<code>checkin</code>, undangan live</td>
+<td>Warna digelapkan seminimal mungkin lewat blok <code>[aksesibilitas-c]</code>; <code>opacity:.8</code> pada sublabel tombol mode dinaikkan</td>
+<td><strong>31 halaman: 0 temuan</strong>; <code>master.html?demo=1</code> 62 → 0</td></tr>
+<tr><td>2</td><td>Landmark halaman</td>
+<td><code>main</code> di 31 halaman, <code>aside</code> untuk tautan mengambang, <code>role="region"</code> untuk sampul &amp; panel demo wedding-gold</td>
+<td>axe <strong>region 450 → 0</strong>, tanpa <code>&lt;main&gt;</code> <strong>10 → 0</strong>, tanpa <code>h1</code> <strong>2 → 0</strong></td></tr>
+<tr><td>3</td><td>Belum ada <code>robots.txt</code>/<code>sitemap.xml</code></td>
+<td>Keduanya dibuat; halaman internal ditutup, 25 URL publik didaftarkan</td>
+<td>sitemap valid (25 URL), robots menunjuk <code>https://asproject.my.id/sitemap.xml</code></td></tr>
+<tr><td>4</td><td>Belum ada web app manifest</td>
+<td><code>manifest.webmanifest</code> + ikon 192/512/maskable dari <code>assets/favicon.svg</code>; tautan di 30 halaman</td>
+<td><code>test-manifest-pwa.cjs</code> lulus</td></tr>
+<tr><td>5</td><td><code>rsvp</code> &amp; <code>checkin</code> tanpa pembatas laju</td>
+<td>Tabel <code>rate_limit</code>, fungsi <code>batas_laju()</code>, trigger per IP dan per (slug, tamu)</td>
+<td><code>test-sql-rsvp.cjs</code> 19 lulus; RPC tidak bisa diuji dari sandbox (tanpa jaringan)</td></tr>
+<tr><td>6</td><td>Uji Chromium belum jalan di CI</td>
+<td>Job <code>browser</code> di workflow: server <code>:8080</code> + empat uji</td>
+<td>lulus lokal; <code>test-aksesibilitas.cjs</code> 59 lulus / 0 gagal</td></tr>
+</tbody>
+</table>
+<p>Batas laju: RSVP 12/menit &amp; 60/jam per IP, 30/jam per (slug, tamu); check-in
+30/menit &amp; 200/jam per IP. Bila perlu dilonggarkan:
+<code>drop trigger rsvp_batas_laju_trg on public.rsvp;</code> (idem check-in).
+<code>checkin.sql</code> memakai <code>batas_laju()</code> dari <code>rsvp.sql</code>, jadi jalankan
+<code>rsvp.sql</code> lebih dulu.</p>
+<h3>Sisa temuan tingkat rendah (belum dikerjakan)</h3>
+<ul>
+<li><code>katalog-demo/undangan-wedding-gold.html</code>: 1 <code>label-content-name-mismatch</code> + 4
+<code>label</code> (atribut label belum terhubung ke input).</li>
+<li><code>index.html</code>: 25 <code>button-name</code> + 3 <code>link-name</code> (tombol/tautan ikon tanpa teks alternatif).</li>
+<li><code>katalog-demo/perbandingan-tema.html</code>: <code>heading-order</code> (h3 tanpa h2).</li>
+</ul>
+<p>Ketiganya tidak menghalangi pemakaian; dicatat agar tidak hilang.</p>
 <h2>D. Menjalankan ulang pemeriksaan ini</h2>
-<pre><code class="language-bash">npm install --no-save --package-lock=false jsdom jsqr qrcode-generator   # untuk uji offline
+<pre><code class="language-bash">npm install --no-save --package-lock=false jsdom jsqr qrcode-generator pgsql-ast-parser
 python3 tools/cek-kesehatan.py
-node tools/test-bantuan-tombol.cjs &amp;&amp; node tools/test-pesan-wa.cjs
+node tools/test-sql-rsvp.cjs
+
+# uji browser (butuh Chromium + server lokal)
+npm install --no-save --package-lock=false playwright-core @sparticuz/chromium axe-core
+python3 tools/serve.py 8080 &amp;
+node tools/test-aksesibilitas.cjs
+node tools/test-manifest-pwa.cjs
 </code></pre>
-<p>Workflow baru <code>.github/workflows/cek-kesehatan.yml</code> menjalankan pemeriksa + seluruh uji
-offline otomatis pada setiap push/PR (kecuali tiga uji browser di atas), sehingga regresi
-seperti ikon yang hilang atau nama tamu ber-apostrof langsung ketahuan.</p>
+<p>Workflow <code>.github/workflows/cek-kesehatan.yml</code> menjalankan pemeriksa + seluruh uji
+offline pada setiap push/PR, plus job <strong>browser</strong> berisi empat uji Chromium di atas.
+<code>test-mobile-browser.cjs</code> tetap manual karena peka waktu animasi.</p>
 
 </main>
 <footer>

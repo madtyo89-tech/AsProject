@@ -146,7 +146,8 @@ const KUMPUL = () => {
   });
 
   for (const p of PAGES) {
-    const berkas = path.join(ROOT, p);
+    /* nama untuk berkas: buang ?query (mis. master.html?demo=1) */
+    const berkas = path.join(ROOT, p.split('?')[0]);
     const html0 = fs.readFileSync(berkas, 'utf8');
     /* analisis selalu dari kondisi dasar: blok hasil jalan sebelumnya dibuang,
        baik dari basis aturan CSS maupun dari berkas yang diuji peramban */

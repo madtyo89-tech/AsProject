@@ -1382,6 +1382,38 @@ def cek_manifest_pwa():
           "index.html: tautan manifest di akar situs")
 
 
+# ------------------------------------------- 33. pembatas laju rsvp & checkin
+def cek_pembatas_laju():
+    print("\n[33] Pembatas laju tabel rsvp & checkin (tools/*.sql)")
+    for berkas, fungsi in (("tools/rsvp.sql", "rsvp_batas_laju"), ("tools/checkin.sql", "checkin_batas_laju")):
+        if not os.path.exists(berkas):
+            lapor("masalah", f"{berkas} tidak ada")
+            continue
+        sql = baca(berkas)
+        aktif = re.sub(r"--[^\n]*", "", sql)
+        lapor("ok" if f"create or replace function public.{fungsi}" in aktif else "masalah",
+              f"{berkas}: fungsi {fungsi}() ada (dibuat ulang, tidak dobel)")
+        lapor("ok" if "drop trigger if exists" in aktif and "create trigger" in aktif else "masalah",
+              f"{berkas}: pemicu idempoten (drop lalu create)")
+        lapor("ok" if "batas_laju" in aktif and "x-forwarded-for" in aktif else "masalah",
+              f"{berkas}: pembatas memakai IP dari header")
+        lapor("ok" if "security definer" in aktif and "set search_path = public" in aktif else "masalah",
+              f"{berkas}: fungsi security definer dengan search_path tetap")
+        make_pol = len(re.findall(r"create policy", aktif))
+        drop_pol = len(re.findall(r"drop policy if exists", aktif))
+        lapor("ok" if drop_pol >= make_pol else "masalah",
+              f"{berkas}: kebijakan idempoten ({drop_pol} drop / {make_pol} create)")
+    if os.path.exists("tools/rate_limit_note.sql"):
+        lapor("info", "tools/rate_limit_note.sql ada")
+    if shutil.which("node") and os.path.isdir(os.path.join(ROOT, "node_modules/pgsql-ast-parser")):
+        r = subprocess.run(["node", "tools/test-sql-rsvp.cjs"], capture_output=True, text=True, cwd=ROOT)
+        ringkas = [b.strip() for b in r.stdout.splitlines() if b.startswith("Ringkasan")]
+        lapor("ok" if r.returncode == 0 else "masalah",
+              "uji SQL rsvp/checkin: " + (ringkas[0] if ringkas else r.stdout.strip()[-200:]))
+    else:
+        lapor("info", "pgsql-ast-parser belum terpasang — uji parser SQL dilewati")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -1394,7 +1426,7 @@ def main():
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
                cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
                cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman,
-               cek_robots_sitemap, cek_manifest_pwa):
+               cek_robots_sitemap, cek_manifest_pwa, cek_pembatas_laju):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

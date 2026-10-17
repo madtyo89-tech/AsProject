@@ -57,35 +57,47 @@ publik; foto lokal pemilik (`data:`) diabaikan perayap. Katalog utama juga dapat
 - **`.nojekyll`** sudah ada — penting agar berkas `demo/_mesin.js` & `demo/_mesin.css`
   (awalan `_`) tetap disajikan GitHub Pages.
 
-## C. Temuan yang belum dikerjakan (butuh keputusan pemilik)
+## C. Tindak lanjut (dikerjakan 2026-10-17)
 
-1. **Kontras warna** (axe-core, `serious`): 8 temuan di `index.html`, 12–16 di
-   `katalog-demo/*`, 3–4 di `scan.html`/`checkin.html`, dan 4 di undangan live (`#waBar`
-   demo). Semuanya soal teks abu-abu di atas latar terang/gradasi. Memperbaikinya berarti
-   mengubah palet desain — sengaja tidak disentuh agar tampilan tetap seperti pilihan pemilik.
-2. **Landmark halaman** (`moderate`): banyak bagian belum dibungkus `<main>`/`<header>`
-   (mis. `#lockform` di Studio, kartu-kartu katalog). Pembaca layar tetap bisa membaca,
-   tetapi navigasi per-bagian belum optimal.
-3. **Belum ada `robots.txt` dan `sitemap.xml`** — pendaftaran ke Google Search Console akan
-   lebih rapi bila keduanya ada (halaman master sudah `noindex`, itu benar).
-4. **Belum ada web app manifest** — tamu yang menekan "Tambahkan ke layar utama" tidak
-   mendapat nama/ikon khusus (aplikasi Android sudah punya ikon sendiri).
-5. **Tabel `rsvp` & `checkin` tanpa pembatas laju** — siapa pun yang tahu slug bisa menulis
-   (risiko yang sudah didokumentasikan dan diterima di `tools/rsvp.sql`). Bila ingin ditutup
-   nanti: fungsi SQL + `pg_cron` atau verifikasi kode tamu per baris.
-6. **Uji yang butuh Chromium** (`test-mobile-browser`, `test-button-help`,
-   `test-template-custom-browser`) belum jalan di CI karena butuh `playwright-core` +
-   `@sparticuz/chromium` dan server lokal `:8080`. Di sandbox ini ketiganya dijalankan
-   manual dan lulus.
+Keenam temuan di bab ini sudah dikerjakan dan diukur ulang dengan alat yang sama.
+
+| # | Temuan awal | Yang dikerjakan | Hasil ukur |
+| --- | --- | --- | --- |
+| 1 | Kontras warna: 8 temuan `index.html`, 12–16 `katalog-demo/*`, 3–4 `scan`/`checkin`, 4 undangan live | Warna digelapkan seminimal mungkin lewat blok `[aksesibilitas-c]`; `opacity:.8` pada sublabel tombol mode dinaikkan | **31 halaman: 0 temuan**; `master.html?demo=1` 62 → 0 |
+| 2 | Landmark: bagian belum dibungkus `<main>`/`header` | `main` di 31 halaman, `aside` untuk tautan mengambang, `role="region"` untuk sampul & panel di demo wedding-gold | axe **region 450 → 0**, tanpa `<main>` **10 → 0**, tanpa `h1` **2 → 0** |
+| 3 | Belum ada `robots.txt`/`sitemap.xml` | Keduanya dibuat; halaman internal (master, scan, checkin, android) ditutup, 25 URL publik didaftarkan | sitemap valid (25 URL), robots menunjuk `https://asproject.my.id/sitemap.xml` |
+| 4 | Belum ada web app manifest | `manifest.webmanifest` + ikon 192/512/maskable dari `assets/favicon.svg`; tautan dipasang di 30 halaman | `test-manifest-pwa.cjs` lulus (nama, ikon, tautan) |
+| 5 | `rsvp` & `checkin` tanpa pembatas laju | Tabel `rate_limit`, fungsi `batas_laju()`, trigger per IP dan per (slug, tamu) | `test-sql-rsvp.cjs` 19 lulus; RPC tak bisa diuji dari sandbox (tanpa jaringan) |
+| 6 | Uji Chromium belum jalan di CI | Job `browser` di workflow: server `:8080` + 4 uji | lulus lokal; `test-aksesibilitas.cjs` 59 lulus / 0 gagal |
+
+Rincian batas laju: RSVP 12/menit & 60/jam per IP, 30/jam per (slug, tamu);
+check-in 30/menit & 200/jam per IP. Bila perlu dilonggarkan:
+`drop trigger rsvp_batas_laju_trg on public.rsvp;` (idem check-in).
+`checkin.sql` memakai `batas_laju()` dari `rsvp.sql`, jadi jalankan `rsvp.sql` dulu.
+
+### Sisa temuan tingkat rendah (belum dikerjakan)
+
+- `katalog-demo/undangan-wedding-gold.html`: 1 `label-content-name-mismatch` + 4 `label`
+  (atribut label belum terhubung ke input).
+- `index.html`: 25 `button-name` + 3 `link-name` (tombol/tautan ikon tanpa teks alternatif).
+- `katalog-demo/perbandingan-tema.html`: `heading-order` (h3 muncul tanpa h2).
+
+Ketiganya tidak menghalangi pemakaian; dicatat agar tidak hilang.
 
 ## D. Menjalankan ulang pemeriksaan ini
 
 ```bash
-npm install --no-save --package-lock=false jsdom jsqr qrcode-generator   # untuk uji offline
+npm install --no-save --package-lock=false jsdom jsqr qrcode-generator pgsql-ast-parser
 python3 tools/cek-kesehatan.py
-node tools/test-bantuan-tombol.cjs && node tools/test-pesan-wa.cjs
+node tools/test-sql-rsvp.cjs
+
+# uji browser (butuh Chromium + server lokal)
+npm install --no-save --package-lock=false playwright-core @sparticuz/chromium axe-core
+python3 tools/serve.py 8080 &
+node tools/test-aksesibilitas.cjs
+node tools/test-manifest-pwa.cjs
 ```
 
-Workflow baru `.github/workflows/cek-kesehatan.yml` menjalankan pemeriksa + seluruh uji
-offline otomatis pada setiap push/PR (kecuali tiga uji browser di atas), sehingga regresi
-seperti ikon yang hilang atau nama tamu ber-apostrof langsung ketahuan.
+Workflow `.github/workflows/cek-kesehatan.yml` menjalankan pemeriksa + seluruh uji offline
+pada setiap push/PR, plus job **`browser`** berisi empat uji Chromium di atas.
+`test-mobile-browser.cjs` tetap manual karena beberapa pemeriksaannya peka waktu animasi.

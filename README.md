@@ -422,7 +422,90 @@ Uji & pemeriksa yang dikunci bersamanya:
 - `python3 tools/cek-kesehatan.py` — bagian **[29] Kerapian halaman** (ikon tab, `lang`,
   tidak ada skrip CDN yang bisa mematikan halaman, semua rujukan berkas lokal ada, og tags)
   dan **[30] Nama tamu aman di onclick & daftar tamu hidup**; ringkasan sekarang
-  **322 ok, 0 masalah**.
+  **383 ok, 0 masalah, 31 catatan** (setelah bab C di bawah).
+
+## Aksesibilitas, mesin pencari, PWA & batas laju (bab C, 2026-10-17)
+
+Tindak lanjut laporan audit: enam temuan "belum dikerjakan" pada bab C dikerjakan
+seluruhnya, lalu diukur ulang dengan alat yang sama.
+
+### Kontras teks (31 halaman → 0 temuan)
+
+`tools/audit-kontras.cjs` mengukur seluruh pasangan teks/latar di Chromium (termasuk
+gradien, opasitas, dan pseudo-elemen) memakai rumus WCAG. Awalnya 3 halaman katalog,
+`index.html`, `scan.html`, `checkin.html`, dan undangan live punya temuan — semuanya
+teks abu-abu di atas latar terang. Warna digelapkan **seminimal mungkin** lewat
+`tools/audit-kontras-perbaiki.cjs --terap` (aturan CSS ditaruh di blok
+`[aksesibilitas-c]` di tiap halaman), jadi tampilan tetap sama:
+
+- katalog & halaman statis: 0 temuan (31 halaman);
+- undangan live dengan 24 tema: teks konten ≥ 4.5:1, label ≥ 3:1 (lihat bagian
+  *Kontras teks tema undangan*);
+- state demo `master.html?demo=1`: 62 temuan → 0; sublabel tombol mode yang semula
+  `opacity:.8` dinaikkan ke 1 (warna dasarnya sudah digelapkan).
+
+Ulangi: `node tools/audit-kontras.cjs [--detail] [halaman…]` (butuh server `:8080`).
+
+### Landmark & struktur judul
+
+Setiap halaman kini punya tepat satu `<main>` (atau `role="main"`), header/footer di
+luar main, dan satu `h1` yang terlihat. Sampul & panel mengambang di
+`katalog-demo/undangan-wedding-gold.html` diberi `role="region"` + `aria-label`
+sehingga isinya tidak lagi dilaporkan "di luar landmark". Hasil axe-core: **region
+450 → 0**, halaman tanpa `<main>` **10 → 0**, tanpa `h1` **2 → 0**.
+
+Ulangi: `node tools/audit-landmark.cjs`.
+
+### `robots.txt` & `sitemap.xml`
+
+- `robots.txt` mengizinkan semua halaman publik, menutup `/master.html`, `/scan.html`,
+  `/checkin.html`, dan `/android/` (halaman internal & berkas unduhan), serta menunjuk
+  `https://asproject.my.id/sitemap.xml`.
+- `sitemap.xml` berisi 25 URL (beranda, `undangan.html`, 6 demo, 17 halaman katalog);
+  halaman `noindex`, 404, studio, dan laporan audit sengaja tidak didaftarkan.
+
+### Web app manifest (PWA)
+
+`manifest.webmanifest`: nama "AsProject — Undangan Digital", `start_url` `/`,
+`display` standalone, warna `#0a0a0a`, ikon 192/512 + maskable 512 (dirender dari
+`assets/favicon.svg`), dan pintasan ke Katalog & Studio. Tautan `<link rel="manifest">`
+dipasang di 30 halaman (kecuali `laporan-audit.html`). Uji:
+`node tools/test-manifest-pwa.cjs`.
+
+### Batas laju RSVP & check-in
+
+`tools/rsvp.sql` menambah tabel `public.rate_limit` (RLS aktif tanpa policy),
+fungsi `batas_laju(kunci, maks, detik)` (security definer + `search_path` kosong),
+lalu trigger `rsvp_batas_laju_trg`:
+
+| Aksi | Batas |
+| --- | --- |
+| RSVP per IP | 12/menit & 60/jam |
+| RSVP per (slug, tamu) | 30/jam |
+| Check-in per IP | 30/menit & 200/jam |
+
+IP diambil dari `x-forwarded-for`; bila header tidak ada, kuncinya jatuh ke
+`tanpa-ip` sehingga pembatas tetap bekerja. Bila suatu saat perlu dilonggarkan:
+`drop trigger rsvp_batas_laju_trg on public.rsvp;` (idem untuk check-in).
+`tools/checkin.sql` bergantung pada `batas_laju()` dari `rsvp.sql`, jadi jalankan
+`rsvp.sql` lebih dulu. Uji statis (parser SQL + idempotensi `create`/`drop`):
+`node tools/test-sql-rsvp.cjs` — 19 lulus.
+
+### Uji browser masuk CI
+
+Workflow `.github/workflows/cek-kesehatan.yml` kini punya job **`browser`** yang
+memasang `playwright-core`, `@sparticuz/chromium`, dan `axe-core`, menyalakan
+`tools/serve.py :8080`, lalu menjalankan:
+
+- `tools/test-button-help.cjs` (tooltip bantuan),
+- `tools/test-template-custom-browser.cjs` (template kustom + screenshot),
+- `tools/test-manifest-pwa.cjs` (manifest, ikon, tautan di 30 halaman),
+- `tools/test-aksesibilitas.cjs` — axe-core di 11 halaman (kontras, region,
+  satu `<main>`, satu `h1`, manifest) pada viewport 390×844: **59 lulus, 0 gagal**.
+
+`tools/test-mobile-browser.cjs` tetap dijalankan manual karena beberapa
+pemeriksaannya bergantung pada waktu animasi (mudah goyah). Di sandbox ini semuanya
+lulus; pemeriksa repo: **383 ok, 0 masalah, 31 catatan**.
 
 ## Katalog tema (direset + diisi ulang 2026-10-10)
 
