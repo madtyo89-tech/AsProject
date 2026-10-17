@@ -1426,13 +1426,59 @@ def main():
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
                cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
                cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman,
-               cek_robots_sitemap, cek_manifest_pwa, cek_pembatas_laju):
+               cek_robots_sitemap, cek_manifest_pwa, cek_pembatas_laju,
+               cek_amplop_digital):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
     print("Penilaian visual, animasi, autoplay musik, dan kesesuaian terhadap spek lengkap tetap perlu ditinjau.")
     print("=" * 74)
     return 1 if hitung["masalah"] else 0
+
+
+
+# ------------------------------------------- 34. amplop digital di undangan
+def cek_amplop_digital():
+    """2026-10-17: pemilik melaporkan "bagian amplop nya ga muncul di undangan".
+    Penyebabnya: Master menyimpan {on,name,acc,holder}, sedangkan undangan hanya
+    membaca {showAmplop,bank,noRek,pemilik} milik Studio — menyimpan dari Master
+    menghapus seluruh objek amplop dari snapshot. Sekarang ketiga halaman memakai
+    satu normalisasi dan Master mempertahankan bidang lain saat menyimpan.
+    """
+    print("\n[34] Amplop digital tampil di undangan (bentuk Studio & Master lama)")
+    studio, master, live = baca("studio.html"), baca("master.html"), baca("undangan.html")
+    m = ("function amplopNormal" in master and "const amp=amplopNormal(d.amplop)" in master
+         and "const lama=(d.amplop&&typeof d.amplop==='object')?d.amplop:{};" in master
+         and "d.amplop=Object.assign({},lama,{" in master
+         and "showAmplop:!!bankOn" in master and "noRek:bankAcc" in master
+         and "pemilik:bankHolder" in master)
+    lapor("ok" if m else "masalah",
+          "master.html: membaca & menyimpan amplop dua bentuk (showAmplop/noRek/pemilik + on/acc/holder) tanpa membuang e-wallet")
+    u = ("function amplopNormal" in live and "const a=amplopNormal(d&&d.amplop)" in live
+         and "a.noRek||a.acc" in live and "a.pemilik||a.holder" in live
+         and "a.tampil&&(a.noRek||a.noEwallet)" in live and "a.copy?" in live)
+    lapor("ok" if u else "masalah",
+          "undangan.html: membaca snapshot Studio maupun Master lama; sakelar Tampilkan & showCopy tetap dihormati")
+    s = ("function amplopNormal" in studio
+         and "state.amplop=Object.assign({},DEF.amplop,amplopNormal(state.amplop))" in studio
+         and "belum ditampilkan" in studio and "Tampilkan sekarang" in studio
+         and "Amplop digital belum ditampilkan" in studio)
+    lapor("ok" if s else "masalah",
+          "studio.html: snapshot lama dinormalkan + peringatan saat amplop diisi tetapi belum ditampilkan")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji amplop digital dilewati")
+        return
+    if subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT).returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji amplop digital dilewati")
+        return
+    r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-amplop.cjs")],
+                       capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji amplop digital (Master ↔ Studio ↔ undangan, sakelar tampil, XSS): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
 
 
 if __name__ == "__main__":

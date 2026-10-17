@@ -853,6 +853,58 @@ layar, editor tamu (rapikan, dedupe, kode lama, kode baru), XSS nama ber-tag, da
 tidak menembak jaringan. `python3 tools/cek-kesehatan.py` menjalankan tes yang sama sebagai
 aturan `[28]`.
 
+## Amplop digital hilang dari undangan — satu bentuk data untuk Studio, Master & tamu (2026-10-17)
+
+Laporan pemilik: **"bagian amplop nya ga muncul di undangan"**. Penyebabnya bukan tema
+atau urutan bagian, melainkan **dua bentuk data amplop yang saling bertabrakan**:
+
+| Halaman | Bentuk yang ditulis |
+| --- | --- |
+| Studio | `{ showAmplop, bank, noRek, pemilik, ewallet, noEwallet, showCopy }` |
+| Master (versi lama) | `{ on, name, acc, holder }` |
+| undangan.html | hanya membaca bentuk Studio |
+
+Akibatnya, membuka **Undangan Master → Edit Info Bank** menampilkan kolom kosong untuk
+undangan yang diisi dari Studio. Lebih parah, menekan **Simpan Perubahan Bank**
+mengganti seluruh objek `amplop` dengan bentuk lama, sehingga syarat
+`showAmplop && (noRek || noEwallet)` tidak pernah benar dan kartu **Amplop Digital**
+lenyap dari undangan tamu.
+
+### Yang diperbaiki
+
+- **Satu normalisasi** (`amplopNormal`) di `undangan.html`, `master.html`, dan
+  `studio.html`. Kedua bentuk dibaca; `acc`/`holder`/`on` diterjemahkan ke
+  `noRek`/`pemilik`/`showAmplop`. Snapshot yang sudah terbit **pulih tanpa publish
+  ulang**.
+- **Master menyimpan dengan `Object.assign`**: hanya kunci bank yang diperbarui,
+  sedangkan `ewallet`, `noEwallet`, dan `showCopy` dari Studio tetap utuh. Bentuk lama
+  tetap ditulis agar dashboard lama tidak kehilangan arti.
+- **Studio** menormalkan snapshot lama saat dibuka (isian bank tidak lagi tampak kosong),
+  mempertahankan nama bank bebas dari Master sebagai pilihan, dan menampilkan peringatan
+  **“Amplop sudah diisi, tapi belum ditampilkan”** + tombol **Tampilkan sekarang** bila
+  nomor sudah diisi tetapi kotak *Tampilkan* belum dicentang. Peringatan yang sama muncul
+  setelah Publish.
+- **Sakelar tetap dihormati**: `showAmplop:false`/`on:false` menyembunyikan bagian
+  amplop (data rekening tidak pernah tampil tanpa izin). Data lama yang punya nomor
+  tetapi tidak punya penanda tampil/sembunyi dianggap tampil agar isian yang terlanjur
+  tersimpan tidak jadi tak terlihat.
+
+### Cara pakai (bila amplop masih belum muncul)
+
+1. Buka **Studio → tab Amplop & Ucapan**. Isi Bank, No Rekening, dan Nama Pemilik.
+2. Centang **Tampilkan** (kotak di kanan judul kartu). Tombol **Tampilkan sekarang**
+   pada peringatan juga bisa dipakai.
+3. **Publish** ulang. Untuk snapshot yang terakhir disimpan dari Master lama, undangan
+   live langsung membaca bentuk barunya tanpa publish ulang.
+
+### Jaminan regresi
+
+`node tools/test-amplop.cjs` (jsdom, 27 pemeriksaan) mengunci: Master membaca isian
+Studio, menyimpan tanpa menghapus e-wallet, undangan menampilkan bentuk Studio **dan**
+bentuk Master lama, sakelar Tampilkan & tombol Salin, XSS nama bank/nomor rekening, serta
+normalisasi + peringatan di Studio. `python3 tools/cek-kesehatan.py` menjalankannya
+sebagai aturan `[34]`.
+
 ## Link Scan QR Panitia (check-in tamu)
 
 Sekarang QR di tab **Tamu & QR** adalah **QR asli** (bukan hiasan) — setiap QR berisi
