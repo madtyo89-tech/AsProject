@@ -1346,6 +1346,42 @@ def cek_robots_sitemap():
               f"sitemap: {privat} tidak didaftarkan (halaman privat/utility)")
 
 
+# ------------------------------------------- 32. manifest PWA
+def cek_manifest_pwa():
+    import json
+    print("\n[32] Manifest PWA (nama, ikon, tautan)")
+    if not os.path.exists("manifest.webmanifest"):
+        lapor("masalah", "manifest.webmanifest tidak ada")
+        return
+    try:
+        m = json.loads(baca("manifest.webmanifest"))
+    except json.JSONDecodeError as e:
+        lapor("masalah", f"manifest.webmanifest bukan JSON valid: {e}")
+        return
+    for k in ("name", "short_name", "start_url", "display", "background_color", "theme_color"):
+        lapor("ok" if m.get(k) else "masalah", f"manifest: field {k}")
+    ukuran = {i.get("sizes") for i in m.get("icons", [])}
+    lapor("ok" if {"192x192", "512x512"} <= ukuran else "masalah",
+          f"manifest: ikon 192 & 512 ({len(m.get('icons', []))} ikon)")
+    lapor("ok" if any("maskable" in (i.get("purpose") or "") for i in m.get("icons", [])) else "masalah",
+          "manifest: ikon maskable")
+    for i in m.get("icons", []):
+        src = i.get("src", "")
+        lapor("ok" if os.path.exists(src.lstrip("/")) else "masalah", f"manifest: ikon {src} ada di repo")
+    kurang = []
+    for d in ("", "demo", "katalog-demo"):
+        for f in sorted(os.listdir(d or ".")):
+            if not f.endswith(".html") or f == "laporan-audit.html":
+                continue
+            rel = f"{d}/{f}" if d else f
+            if 'rel="manifest"' not in baca(rel):
+                kurang.append(rel)
+    lapor("ok" if not kurang else "masalah",
+          "semua halaman menautkan manifest" + ("" if not kurang else f" — kurang: {', '.join(kurang[:5])}"))
+    lapor("ok" if 'rel="manifest" href="/manifest.webmanifest"' in baca("index.html") else "masalah",
+          "index.html: tautan manifest di akar situs")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -1358,7 +1394,7 @@ def main():
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
                cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
                cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman,
-               cek_robots_sitemap):
+               cek_robots_sitemap, cek_manifest_pwa):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
