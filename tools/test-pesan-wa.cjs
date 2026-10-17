@@ -259,7 +259,52 @@ async function bagikanDariUndangan(row, query, mode) {
   const acara = w.eval(`['khitanan','ultah','aqiqah'].map(e=>acaraWa(e))`);
   t('acara: khitanan/ultah/aqiqah memakai nama acara lengkap', JSON.stringify(acara) === JSON.stringify(['Tasyakuran Khitanan', 'Sweet Birthday Party', 'Tasyakuran Aqiqah']), acara);
 
-  /* ================= 6) SUMBER: blok bersama & teks lama ================= */
+  /* ================= 6) NAMA TAMU BER-APOSTROF / BER-TANDA KUTIP =================
+     Bug 2026-10-16: nama tamu disisipkan ke onclick="fn('NAMA')" hanya dengan
+     esc(). Karena parser HTML mengubah &#39; kembali menjadi apostrof, nama
+     seperti O'Brien menghasilkan JavaScript rusak ("missing ) after argument
+     list") — tombol QR/Copy di Studio tidak melakukan apa pun, tanpa pesan. */
+  console.log('— Nama tamu ber-apostrof —');
+  const TAMU_APOS = "O'Brien";
+  const TAMU_KUTIP = 'Nur "Aisyah" <b>';
+  w.eval('editInvitation()');                    /* dari layar selesai kembali ke editor */
+  w.eval(`state.selGuest=null;set('tab','tamu')`);
+  await sleep(80);
+  /* Diketik seperti pemilik: event input asli pada textarea daftar tamu. */
+  const taTamu = D.querySelector('textarea[placeholder="1 baris 1 nama tamu"]');
+  t('textarea daftar tamu ada', !!taTamu);
+  taTamu.value = TAMU_APOS + '\n' + TAMU_KUTIP;
+  taTamu.dispatchEvent(new w.Event('input', { bubbles: true }));
+  await sleep(600);
+  const barisTamu = [...D.querySelectorAll('.guestrow')];
+  t('nama ber-apostrof tetap tampil sebagai teks (bukan tag)', barisTamu.length === 2 &&
+    barisTamu[0].textContent.includes(TAMU_APOS) && D.querySelectorAll('.guestrow b').length === 0);
+  const tombolTamu = barisTamu.flatMap(r => [...r.querySelectorAll('button')]);
+  const onClick = tombolTamu.map(b => b.getAttribute('onclick'));
+  const rusak = [];
+  for (const kode of onClick) { try { new w.Function(kode); } catch (e) { rusak.push(kode + ' → ' + e.message); } }
+  t('semua onclick di daftar tamu = JavaScript yang sah (dulu "missing ) after argument list")', rusak.length === 0, rusak);
+  const qrApos = barisTamu[0] && barisTamu[0].querySelector('button.sm-btn.dark');
+  t('baris tamu punya tombol QR', !!qrApos);
+  qrApos && qrApos.click();
+  t('klik QR tamu ber-apostrof → tamu terpilih (dulu tombol mati)', w.eval('state.selGuest') === TAMU_APOS, w.eval('state.selGuest'));
+  t('QR check-in digambar untuk tamu ber-apostrof', !!D.querySelector('.card img[src^="data:image"]'));
+  const waApos = [...D.querySelectorAll('a.sm-btn.wa')].map(a => teksWa(a.getAttribute('href')));
+  t('pesan WA tamu ber-apostrof = pesan personal yang sama dengan Studio', waApos[0] === w.eval('pesanWa(guests()[0])'), waApos[0]);
+  t('link personal tamu ber-apostrof tetap utuh di dalam pesan', !!waApos[0] && waApos[0].includes(w.eval('guests()[0].link')));
+  t('sapaan pesan memakai nama tamu ber-apostrof', !!waApos[0] && waApos[0].includes("Assalamualaikum O'Brien 🙏"));
+  /* Dulu daftar & kartu QR tetap basi sampai pemilik berpindah tab. */
+  const jumlahTamu = D.getElementById('tamuJumlah');
+  t('jumlah tamu ikut berubah saat mengetik (dulu tetap "0 tamu" sampai pindah tab)',
+    !!jumlahTamu && jumlahTamu.textContent === '2 tamu', jumlahTamu && jumlahTamu.textContent);
+  taTamu.value = 'Budi Santoso';
+  taTamu.dispatchEvent(new w.Event('input', { bubbles: true }));
+  await sleep(600);
+  const kartuQr = D.getElementById('kartuQrTamu');
+  t('tamu terpilih yang dihapus dari daftar → pilihan direset (QR tidak menunjuk tamu lama)',
+    w.eval('state.selGuest') === null && !!kartuQr && /Pilih tamu/.test(kartuQr.textContent), w.eval('state.selGuest'));
+
+  /* ================= 7) SUMBER: blok bersama & teks lama ================= */
   console.log('— Sumber —');
   const blok = s => { const a = s.indexOf('/* ==== PESAN WA UNDANGAN'), b = s.indexOf('/* ==== /PESAN WA UNDANGAN ==== */'); return a >= 0 && b > a ? s.slice(a, b) : null; };
   const st = read('studio.html'), ms = read('master.html'), ud = read('undangan.html');

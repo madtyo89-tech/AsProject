@@ -10,6 +10,9 @@
 -->
 
 <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Wedding of Rahma &amp; Dika — 12.10.2026</title>
 <!--
@@ -329,6 +332,17 @@
 
   @media(max-width:480px){ .cover h1{font-size:40px} }
 </style>
+<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
+     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
+     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
+     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
+<style>
+  /* :root — teks putih di latar berwarna lewat variabel --sage (#7c8b6a → #6c795c, putih 4.64:1) (putih 4.64:1) */
+  :root{--sage:#6c795c;--gold:#846935;--muted:#6d705c}
+</style>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AsProject">
 </head>
 <body class="locked">
 
@@ -373,7 +387,7 @@
 </svg>
 
 <!-- ============ COVER ============ -->
-<div class="cover" id="cover">
+<div class="cover" id="cover" role="region" aria-label="Sampul undangan">
   <div class="cover-inner">
     <div class="mini">The Wedding Of</div>
     <h1 class="script">Rahma &amp; Dika</h1>
@@ -384,7 +398,7 @@
   </div>
 </div>
 
-<div class="frame">
+<div class="frame" role="main">
 
   <!-- ============ QUOTE & MEMPELAI ============ -->
   <section>
@@ -656,10 +670,10 @@
 </div><!-- /frame -->
 
 <!-- ============ KONTROL MODE NAVIGASI ============ -->
-<div class="dots" id="dots"></div>
+<div class="dots" id="dots" role="region" aria-label="Navigasi slide"></div>
 <button class="slide-arrow arrow-left" id="prevBtn" aria-label="Bagian sebelumnya">‹</button>
 <button class="slide-arrow arrow-right" id="nextBtn" aria-label="Bagian berikutnya">›</button>
-<div class="mode-bar">
+<div class="mode-bar" role="region" aria-label="Pilihan mode">
   <div class="mode-row">
     <span class="mode-label">Gratis</span>
     <button data-mode="scroll" class="on">📜 Gulir</button>
@@ -678,7 +692,7 @@
 </div>
 
 <!-- ============ LIGHTBOX GALERI ============ -->
-<div class="lightbox" id="lightbox">
+<div class="lightbox" id="lightbox" role="region" aria-label="Galeri foto">
   <button class="lb-close" id="lbClose" aria-label="Tutup galeri">✕</button>
   <button class="lb-nav lb-prev" id="lbPrev" aria-label="Foto sebelumnya">‹</button>
   <img class="lb-img" id="lbImg" src="" alt="Foto galeri">
@@ -693,11 +707,11 @@
 </button>
 
 <!-- ============ ANIMASI DEKOR: lapisan + tombol + panel ============ -->
-<div id="fxLayer"></div>
+<div id="fxLayer" role="region" aria-label="Efek dekoratif"></div>
 <button class="fx-btn" id="fxBtn" aria-label="Pilih animasi" title="Animasi dekorasi">
   ✨<span class="fx-tx">Efek</span>
 </button>
-<div class="fx-panel" id="fxPanel">
+<div class="fx-panel" id="fxPanel" role="region" aria-label="Panel efek">
   <div class="fx-row">
     <span class="mode-label">Animasi</span>
     <button data-fx="off">🚫 Mati</button>

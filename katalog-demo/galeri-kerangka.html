@@ -2,6 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pratinjau Nyata Semua Tema — AsProject</title>
 <style>
@@ -42,6 +45,19 @@ footer{border-top:1px solid var(--garis);padding:22px 20px 50px;color:var(--mut)
 footer code{background:#fff;border:1px solid var(--garis);border-radius:5px;padding:1px 5px}
 @media(max-width:600px){:root{--fw:100%;--fh:560px}.gal{grid-template-columns:1fr}}
 </style>
+<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
+     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
+     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
+     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
+<style>
+  /* :root — teks #7d7365 di latar #f6f2ea → variabel --mut: #756c5f (4.62:1) */
+  :root{--mut:#756c5f}
+  /* .chip.kosong — teks #a99e8d di latar #ffffff → #7f7360 (4.64:1) (rasio 4.64:1) */
+  .chip.kosong{color:#7f7360}
+</style>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AsProject">
 </head>
 <body>
 <header>

@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f1a12">
 <title>Scan QR Panitia — AsProject</title>
-<link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <script src="assets/jsqr.js"></script>
 <style>
 :root{--bg:#0f1a12;--card:#ffffff;--ink:#22301f;--mut:#7a857c;--line:#e3efe7;--grn:#4A6741;--grn2:#34d399;--amber:#b45309}
@@ -48,16 +50,27 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
 .alert{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:12px;padding:11px 13px;font-size:11.5px;line-height:1.7;margin:10px 0}
 [hidden]{display:none!important}
 </style>
+<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
+     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
+     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
+     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
+<style>
+  /* :root — teks #7a857c di latar #ffffff → variabel --mut: #6d766e (4.70:1) */
+  :root{--mut:#6d766e}
+</style>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AsProject">
 </head>
 <body>
-<div class="wrap">
+<main class="wrap">
  <div class="hdr">
   <img src="assets/logo-asproject.svg" alt="AsProject">
-  <div><b>Scan QR Panitia</b><i id="hdrSub">Check-in tamu di pintu masuk</i></div>
+  <div><h1 style="font-size:15px;margin:0;line-height:1.2">Scan QR Panitia</h1><i id="hdrSub">Check-in tamu di pintu masuk</i></div>
  </div>
 
  <div class="card" id="kartuScan">
-  <h2>Pindai QR Tamu</h2>
+  <h2 style="font-size:16px;margin:0;line-height:1.2">Pindai QR Tamu</h2>
   <p class="s">Arahkan kamera ke QR di undangan/cetak tamu. Kehadiran langsung tercatat dan muncul di Undangan Master.</p>
   <div class="cam" id="cam">
    <video id="video" playsinline muted></video>
@@ -112,7 +125,7 @@ h3{margin:16px 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercas
  </div>
 
  <div class="badge">AsProject • Panitia Check-in</div>
-</div>
+</main>
 
 <script>
 (function(){

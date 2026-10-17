@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Check-in Tamu — AsProject</title>
-<link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <style>
 body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#0f1a12;color:#f2efe9;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}
 .box{max-width:440px;width:100%;background:#fff;color:#2b2b2b;border-radius:24px;padding:38px 28px;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.45)}
@@ -19,9 +21,22 @@ h1{font-size:20px;margin:18px 0 4px}
 .badge{margin-top:22px;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#9a8f82}
 a{color:#4A6741}
 </style>
+<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
+     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
+     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
+     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
+<style>
+  /* .meta — teks #7a857c di latar #f7faf8 → #6a746c (4.62:1) (rasio 4.62:1) */
+  .meta{color:#6a746c}
+  /* .badge — teks #9a8f82 di latar #ffffff → #7e7366 (4.63:1) (rasio 4.63:1) */
+  .badge{color:#7e7366}
+</style>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AsProject">
 </head>
 <body>
-<div class="box">
+<main class="box">
  <div class="ok">✓</div>
  <h1>Check-in Tamu</h1>
  <p class="sub" id="sub">Data tamu terbaca dari QR.</p>
@@ -31,7 +46,7 @@ a{color:#4A6741}
   <div class="meta" id="meta"></div>
  </div>
  <div class="code" id="code"></div>
- <div class="badge">AsProject • QR Check-in</div>
+ <div class="badge">AsProject • QR Check-in</main>
 </div>
 <script>
 (function(){

@@ -2,6 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Master Dashboard • AsProject</title>
@@ -13,6 +16,10 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;align-items:center}
+/* <main> adalah pembungkus landmark; dulu #app langsung di bawah body.
+   flex:1 + min-width:0 + width:100% meniru perilaku lama agar layar sempit
+   tidak melebar (tanpa ini isi 430px memaksa halaman menggulir ke samping). */
+main{flex:1;width:100%;min-width:0;display:flex;flex-direction:column;align-items:center}
 #app{width:100%;min-height:100dvh;display:flex;flex-direction:column}
 .frame-wrap{width:100%;display:flex;flex-direction:column;align-items:center}
 .frame{width:100%;max-width:430px;min-height:100dvh;background:var(--bg);position:relative;display:flex;flex-direction:column}
@@ -196,10 +203,34 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 </style>
 <link rel="stylesheet" href="assets/button-help.css">
 <script src="assets/button-help.js" defer></script>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AsProject">
+<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
+     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
+     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
+     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
+<style>
+  /* :root — teks putih di latar berwarna lewat variabel --sage (#8fa998 → #5e7a67, putih 4.71:1) (putih 4.71:1) */
+  :root{--sage:#5e7a67;--green:#178540;--ink-light:#566258;--sage-dark:#4f6355;--red:#bd3f29;--ink-faint:#5e6d64;--gold:#876b3a}
+  /* .st-hadir — teks #2e7d4f di latar #e6f4ea → #2d7a4d (4.62:1) (rasio 4.62:1) */
+  .st-hadir{color:#2d7a4d}
+  /* .st-ragu — teks #9a6b00 di latar #fdf3d7 → #926600 (4.60:1) (rasio 4.60:1) */
+  .st-ragu{color:#926600}
+  /* .b-hadir — teks #2e7d4f di latar #e6f4ea → #2d7a4d (4.62:1) (rasio 4.62:1) */
+  .b-hadir{color:#2d7a4d}
+  /* .b-ragu — teks #9a6b00 di latar #fdf3d7 → #926600 (4.60:1) (rasio 4.60:1) */
+  .b-ragu{color:#926600}
+  /* Keterangan kecil di dalam tombol mode memakai opacity .8 bawaan; dinaikkan
+     agar teksnya terbaca (warna dasar sudah digelapkan lewat variabel di atas). */
+  .modebtn i, .st-rsvp > i { opacity:1 }
+</style>
 </head>
 <body>
-<div id="app"><div class="scrim"><div class="box"><div class="logo-badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div><div class="spin" style="margin:20px auto 0"></div><h2>Membuka dashboard…</h2><p>Sedang memuat data undangan, Kak.</p></div></div></div>
-<div id="toast"></div>
+<main>
+  <h1 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Dashboard undangan</h1>
+<div id="app"><div class="scrim"><div class="box"><div class="logo-badge"><img src="assets/logo-asproject.svg" alt="AsProject"></div><div class="spin" style="margin:20px auto 0"></div><h2>Membuka dashboard…</h2><p>Sedang memuat data undangan, Kak.</p></div></div></div></main>
+<div id="toast" role="region" aria-label="Notifikasi" aria-live="polite"></div>
 <script>
 'use strict';
 /* =====================================================================

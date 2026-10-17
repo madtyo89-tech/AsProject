@@ -1,0 +1,134 @@
+name: Cek Kesehatan Repo (halaman & uji offline)
+
+# Menjalankan pemeriksa repo + seluruh uji offline pada setiap push/PR.
+# Tujuannya: regresi seperti ikon tab yang hilang, nama tamu ber-apostrof yang
+# merusak tombol, atau berkas yang tiba-tiba diambil dari CDN langsung ketahuan
+# tanpa harus menunggu ada yang membuka GitHub Pages.
+#
+# Uji browser (Chromium sungguhan) dijalankan di job terpisah `browser`:
+#   tools/test-button-help.cjs             (tooltip bantuan, 27 pemeriksaan)
+#   tools/test-template-custom-browser.cjs (template kustom + screenshot)
+#   tools/test-manifest-pwa.cjs            (manifest, ikon, tautan 30 halaman)
+#   tools/test-aksesibilitas.cjs           (kontras & landmark axe-core)
+# Server lokal :8080 dinyalakan otomatis lewat tools/serve.py.
+# Uji test-mobile-browser.cjs sengaja tidak dipakai di CI: beberapa
+# pemeriksaannya bergantung pada waktu animasi sehingga mudah goyah.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.html'
+      - 'assets/**'
+      - 'tools/**'
+      - '*.sql'
+      - '.github/workflows/cek-kesehatan.yml'
+  pull_request:
+    paths:
+      - '**.html'
+      - 'assets/**'
+      - 'tools/**'
+      - '*.sql'
+      - '.github/workflows/cek-kesehatan.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cek:
+    name: Pemeriksa kesehatan + uji offline
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Siapkan Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Siapkan Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pasang pustaka uji (tidak disimpan ke repo)
+        run: npm install --no-save --package-lock=false --no-audit --no-fund jsdom jsqr qrcode-generator pgsql-ast-parser
+
+      - name: Pemeriksa kesehatan repo
+        run: python3 tools/cek-kesehatan.py
+
+      - name: Seluruh uji offline (kecuali uji yang butuh browser sungguhan)
+        run: |
+          set -euo pipefail
+          gagal=0
+          for t in tools/test-*.cjs; do
+            case "$t" in
+              *test-button-help.cjs|*test-mobile-browser.cjs|*test-template-custom-browser.cjs|*test-aksesibilitas.cjs|*test-manifest-pwa.cjs)
+                echo "== lompati (dijalankan di job browser): $t"; continue;;
+            esac
+            echo "== $t"
+            if ! node "$t"; then gagal=1; fi
+          done
+          exit "$gagal"
+
+  browser:
+    name: Uji browser (Chromium) + aksesibilitas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Siapkan Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Siapkan Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pasang pustaka uji browser
+        # @sparticuz/chromium membawa Chromium + pustaka Amazon Linux yang
+        # diekstrak saat dipakai; axe-core untuk pemeriksaan aksesibilitas.
+        run: npm install --no-save --package-lock=false --no-audit --no-fund jsdom playwright-core @sparticuz/chromium axe-core
+
+      - name: Nyalakan server lokal :8080
+        run: |
+          python3 tools/serve.py 8080 > /tmp/serve.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://localhost:8080/index.html -o /dev/null; then echo "server siap"; exit 0; fi
+            sleep 0.5
+          done
+          echo "server tidak siap"; cat /tmp/serve.log; exit 1
+
+      - name: Ekstrak pustaka Chromium (dipakai via LD_LIBRARY_PATH)
+        run: |
+          node -e "import('@sparticuz/chromium').then(async m => { await m.default.executablePath(); })"
+          ls /tmp/al2023/lib | head
+
+      - name: Uji tooltip bantuan tombol
+        run: node tools/test-button-help.cjs
+        env:
+          LD_LIBRARY_PATH: /tmp/al2023/lib
+
+      - name: Uji template kustom (browser)
+        run: node tools/test-template-custom-browser.cjs
+        env:
+          LD_LIBRARY_PATH: /tmp/al2023/lib
+
+      - name: Uji manifest PWA & ikon
+        run: node tools/test-manifest-pwa.cjs
+        env:
+          LD_LIBRARY_PATH: /tmp/al2023/lib
+
+      - name: Uji aksesibilitas (kontras, landmark)
+        run: node tools/test-aksesibilitas.cjs
+        env:
+          LD_LIBRARY_PATH: /tmp/al2023/lib
+
+      - name: Simpan log server bila gagal
+        if: failure()
+        run: cat /tmp/serve.log || true

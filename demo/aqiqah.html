@@ -2,14 +2,20 @@
 <html lang="id" data-tema="baby-boy">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Undangan Aqiqah — AsProject.My.Id</title>
 <meta name="description" content="Demo interaktif undangan aqiqah: Baby Boy, Baby Girl, dan Islamic Neutral — ganti tema langsung di halaman.">
-<meta name="theme-color" content="#4A7FB5">
+<meta name="theme-color" content="#33608F">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Poppins:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="_mesin.css">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AsProject">
 </head>
 <body class="terkunci">
 <div class="hias" id="hias" aria-hidden="true"></div>
@@ -18,9 +24,9 @@
 <audio id="lagu" loop preload="auto" src="../music/backsound-asproject.mp3"></audio>
 <main id="aspMain"></main>
 <div id="aspFooter"></div>
-<a id="waTerbang" href="#" target="_blank" rel="noopener" title="Chat WhatsApp AsProject" aria-label="Chat WhatsApp">
+<aside aria-label="Kontak WhatsApp"><a id="waTerbang" href="#" target="_blank" rel="noopener" title="Chat WhatsApp AsProject" aria-label="Chat WhatsApp">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.6-1.2.1-.2 0-.4 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.7 11.3 11.3 0 0 0 4.3 3.8c1.6.6 2.2.7 3 .6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.2-.2-.4-.3Z"/></svg>
-</a>
+</a></aside>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
 /* Satu demo untuk tiga tema aqiqah di katalog: Baby Boy, Baby Girl,
@@ -69,9 +75,9 @@ window.ASP_DEMO = {
       namaBesar: 'Arsylan <span>Ayyub</span>', profilNama: "Arsylan Ayyub Ramadhan",
       profilKet: "Putra pertama dari\nBpk. Fajar Ramadhan & Ibu Nadia Safitri",
       desk: "Lembut biru langit, ilustrasi baby boy yang gemes.",
-      swatch: ["#E3F2FD", "#BBDEFB", "#90CAF9", "#4A7FB5"],
+      swatch: ["#E3F2FD", "#BBDEFB", "#90CAF9", "#33608F"],
       fitur: ["Palet biru langit tenang", "Ilustrasi awan & bintang", "Galeri 15 foto + 1 video"],
-      vars: { bg: "#F3F9FE", bg2: "#E3F2FD", bg3: "#FBFDFF", soft: "#BBDEFB", line: "#A9CFF0", mid: "#90CAF9", acc: "#4A7FB5", deep: "#35618F", onAcc: "#FBFDFF", ink: "#23445F", ink2: "#40607A", mut: "#7C97AC", card: "rgba(255,255,255,.72)", cardSolid: "#FFFFFF", serif: '"Playfair Display",Georgia,serif', sans: '"Poppins",system-ui,sans-serif' }
+      vars: { bg: "#F3F9FE", bg2: "#E3F2FD", bg3: "#FBFDFF", soft: "#BBDEFB", line: "#A9CFF0", mid: "#90CAF9", acc: "#33608F", deep: "#27496C", onAcc: "#FBFDFF", ink: "#23445F", ink2: "#40607A", mut: "#47637E", card: "rgba(255,255,255,.72)", cardSolid: "#FFFFFF", serif: '"Playfair Display",Georgia,serif', sans: '"Poppins",system-ui,sans-serif' }
     },
     "baby-girl": {
       nama: "Baby Girl", harga: 75000, coret: 150000, badge: "Manis", glyph: "❀", motif: "cecek",

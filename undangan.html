@@ -7,7 +7,11 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Undangan Digital Premium">
 <meta property="og:description" content="Undangan digital dari AsProject">
-<link rel="icon" type="image/svg+xml" href="assets/logo-asproject.svg">
+<meta property="og:image" content="https://asproject.my.id/assets/logo-asproject-full.svg">
+<meta name="theme-color" content="#0EA5E9">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
@@ -1276,12 +1280,15 @@ body.lay-panggung .footer{color:#e9dfcc}
 <script src="assets/theme-contrast.js"></script>
 <link rel="stylesheet" href="assets/button-help.css">
 <script src="assets/button-help.js" defer></script>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AsProject">
 </head>
 <body>
 <audio id="musik" loop preload="none"></audio>
 <button id="musikBtn" aria-label="Putar/jeda musik"><span class="disc"></span><span class="t" id="musikNama">Musik</span></button>
 <button id="coverBack" aria-label="Kembali ke cover undangan" title="Kembali ke cover undangan"><span class="arw" aria-hidden="true">⤒</span><span>Cover</span></button>
-<div id="app"></div>
+<main id="app"></div>
 
 <script>
 /* Urutan TPL identik dengan Studio untuk menjaga kolom theme; studioOnly:true
@@ -3009,10 +3016,10 @@ function slideBag(d,ev,tplF,fullNm,form,venue){
  if(S.rsvp&&S.rsvp.on)h.push('rsvp',card(`${kick('✉️ RSVP')}
   <p class="muted" style="margin-top:6px">Mohon konfirmasi kehadirannya — tombol cepat di bawah, atau WhatsApp.</p>
   <div style="margin-top:14px;text-align:left">
-   <input id="rvpN" value="${esc(GUEST)}" placeholder="Nama Anda" style="width:100%;height:46px;border:1px solid #e5d9c4;border-radius:14px;padding:0 14px;font-size:13px;background:#fffdf9">
-   <select id="rvpH" style="margin-top:10px;width:100%;height:46px;border:1px solid #e5d9c4;border-radius:14px;padding:0 12px;font-size:13px;background:#fffdf9">
+   <input id="rvpN" aria-label="Nama Anda" value="${esc(GUEST)}" placeholder="Nama Anda" style="width:100%;height:46px;border:1px solid #e5d9c4;border-radius:14px;padding:0 14px;font-size:13px;background:#fffdf9">
+   <select id="rvpH" aria-label="Pilihan kehadiran: hadir, hadir bersama keluarga, atau tidak hadir" style="margin-top:10px;width:100%;height:46px;border:1px solid #e5d9c4;border-radius:14px;padding:0 12px;font-size:13px;background:#fffdf9">
     <option>Hadir 🙌</option><option>Hadir, bawa keluarga</option><option>Tidak hadir — maaf 🙏</option></select>
-   <textarea id="rvpM" rows="2" placeholder="Ucapan untuk pasangan..." style="margin-top:10px;width:100%;border:1px solid #e5d9c4;border-radius:14px;padding:10px 14px;font-size:13px;background:#fffdf9;resize:none"></textarea>
+   <textarea id="rvpM" aria-label="Ucapan untuk pasangan" rows="2" placeholder="Ucapan untuk pasangan..." style="margin-top:10px;width:100%;border:1px solid #e5d9c4;border-radius:14px;padding:10px 14px;font-size:13px;background:#fffdf9;resize:none"></textarea>
    <div class="stk-row" role="group" aria-label="Pilih stiker">
     ${['\u{1F970}','\u{1F60D}','\u{1F62D}','\u{1F389}','\u2728','\u{1F490}','\u{1F64F}','\u2764\uFE0F','\u{1F979}','\u{1F44F}','\u{1F60A}','\u{1F90D}'].map(e=>`<button type="button" class="stk" onclick="pilihStiker('${e}',this)" aria-label="stiker">${e}</button>`).join('')}
    </div>
@@ -3308,6 +3315,13 @@ function boot(draft){
  const timeStr=((form&&form.jamAcara)||draft.event_time||'').slice(0,5);
  const venue=(form.venue||draft.venue||'');
  const alamat=form.alamat||'';
+ /* Pratinjau tautan (WhatsApp/Facebook) memakai judul, keterangan, dan — bila ada —
+    foto cover undangan ini, bukan teks bawaan AsProject. og:image hanya dipasang
+    kalau fotonya URL publik; data: URL (foto lokal pemilik) diabaikan perayap. */
+ const ogD=document.querySelector('meta[property="og:description"]');
+ if(ogD)ogD.content=EV_KICKER[ev]+' '+fullNm+(dateStr?' — '+dateStr:'')+(venue?' di '+venue:'')+' • Undangan digital AsProject.';
+ const ogI=document.querySelector('meta[property="og:image"]');
+ if(ogI){const src=String((d&&d.cover)||'').trim();if(/^https?:\/\//.test(src))ogI.content=src;else ogI.remove()}
  const mapsLink=form.mapsLink&&!/example/i.test(form.mapsLink)?form.mapsLink:'';
 
  const play=setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');

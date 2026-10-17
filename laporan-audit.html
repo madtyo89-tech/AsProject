@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laporan Audit AsProject — 2026-10-16</title>
+<meta name="description" content="Laporan audit menyeluruh repo AsProject: bug yang ditemukan, perbaikannya, hal yang sudah benar, dan saran lanjutan.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#D4AF37; --gold-soft:#F3E6B0; --dark:#161616; --ink:#2b2b2b; --mut:#6b6157;
+  --cream:#FAF6F1; --card:#fff; --line:#efe4d2; --ok:#2f7d5b; --warn:#a9680c; --bad:#b3261e;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);
+  font:15px/1.72 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:28px 18px 72px}
+header.hero{background:linear-gradient(135deg,#1b1b1b,#2c2617 60%,#1b1b1b);color:#fdf8ea;
+  border-radius:26px;padding:34px 28px;box-shadow:0 24px 60px rgba(60,45,10,.24);position:relative;overflow:hidden}
+header.hero:after{content:"";position:absolute;right:-70px;top:-70px;width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,175,55,.45),transparent 65%)}
+.badge{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;background:rgba(212,175,55,.16);border:1px solid rgba(212,175,55,.45);
+  color:var(--gold-soft);border-radius:99px;padding:6px 12px}
+h1{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(28px,5vw,42px);line-height:1.05;margin:16px 0 10px}
+.hero p.sub{margin:0;color:rgba(253,248,234,.82);max-width:70ch;font-size:14.5px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.meta span{font-size:11.5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  border-radius:99px;padding:5px 11px}
+main{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:24px;
+  padding:26px 24px;box-shadow:0 18px 50px rgba(90,70,30,.08)}
+main > *:first-child{margin-top:0}
+h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:24px;margin:34px 0 12px;padding-top:22px;border-top:1px solid var(--line)}
+h2:first-of-type{border-top:0;padding-top:0}
+h3{font-size:16px;margin:22px 0 8px}
+p,li{font-size:14px;color:#3a3730}
+a{color:#8a6d0f}
+code{background:#fbf6ea;border:1px solid var(--line);border-radius:6px;padding:1px 5px;font-size:12.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word}
+pre{background:#14140f;color:#f6efdc;border-radius:16px;padding:14px 16px;overflow:auto}
+pre code{background:none;border:0;color:inherit;font-size:12.5px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:#fbf6ea;font-weight:600}
+tr:nth-child(even) td{background:#fffdf8}
+td:first-child{white-space:nowrap;font-weight:600}
+blockquote{margin:14px 0;padding:10px 16px;border-left:3px solid var(--gold);background:#fffdf5;border-radius:0 12px 12px 0}
+hr{border:0;border-top:1px solid var(--line);margin:26px 0}
+footer{margin-top:22px;text-align:center;font-size:12px;color:var(--mut)}
+@media print{
+  body{background:#fff}
+  header.hero{background:#161616 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  main{box-shadow:none;border:0;padding:0}
+  .meta span{border-color:#555}
+  h2{break-after:avoid}
+  table{font-size:11.5px}
+  table,tr,td,th{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+ <span class="badge">Laporan Audit · AsProject</span>
+ <h1>Pemeriksaan menyeluruh: bug, perbaikan &amp; sisa temuan</h1>
+ <p class="sub">Dokumen pemeriksaan menyeluruh repositori <b>AsProject</b> — undangan digital
+(asproject.my.id). Semua temuan di bawah sudah diverifikasi ulang setelah perbaikan.</p>
+ <div class="meta">
+  <span>Tanggal · 16 Oktober 2026</span>
+  <span>Pemeriksa · 322 ok, 0 masalah</span>
+  <span>Uji · 28 berkas lulus</span>
+  <span>Hasil · 7 bug diperbaiki</span>
+  <span>Cabang · arena/d6b223c7-asproject</span>
+ </div>
+</header>
+<main>
+
+<p>Perintah pemeriksaan yang dijalankan (semua dari akar repo):</p>
+<pre><code class="language-bash">python3 tools/cek-kesehatan.py                     # 322 ok, 0 masalah
+python3 tools/serve.py &amp;                           # emulasi GitHub Pages :8080
+for t in tools/test-*.cjs; do node &quot;$t&quot;; done       # 28 berkas uji, semuanya lulus
+LD_LIBRARY_PATH=… node tools/test-mobile-browser.cjs         # Chromium sungguhan
+LD_LIBRARY_PATH=… node tools/test-button-help.cjs
+LD_LIBRARY_PATH=… node tools/test-template-custom-browser.cjs
+</code></pre>
+<p>Selain itu: pemeriksaan silang seluruh halaman di Chromium (30 halaman HTML), audit
+aksesibilitas <strong>axe-core</strong>, penyisiran ulang rute <code>/u/{slug}</code> &amp; <code>/checkin</code>, uji XSS pada
+<code>?to=</code>, pemeriksaan jumlah <code>node --check</code> untuk setiap blok <code>&lt;script&gt;</code> inline, dan
+pemeriksaan checksum APK di <code>android/releases/</code>.</p>
+<hr>
+<h2>A. Bug yang ditemukan dan sudah diperbaiki</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tingkat</th>
+<th>Gejala (dari sisi pemilik/tamu)</th>
+<th>Akar masalah</th>
+<th>Perbaikan + uji</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Tinggi</td>
+<td>Nama tamu ber-apostrof (mis. <strong>O&#39;Brien</strong>) membuat tombol <strong>QR</strong>, <strong>Copy</strong>, dan <strong>Download QR</strong> di Studio tidak bereaksi. Pesan di konsol: <em>missing ) after argument list</em></td>
+<td>Nama disisipkan ke <code>onclick=&quot;fn(&#39;NAMA&#39;)&quot;</code> hanya dengan <code>esc()</code>. <code>&amp;#39;</code> dikembalikan menjadi apostrof oleh parser HTML → JavaScript rusak</td>
+<td><code>jsEsc()</code> baru (aman untuk atribut <strong>dan</strong> literal string) dipakai di semua tombol bernama/link/no-rek/slug pemilik; <code>tools/test-pesan-wa.cjs</code> + <code>cek-kesehatan.py [30]</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Tinggi</td>
+<td>Di tab <strong>Tamu &amp; QR</strong>, setelah mengetik daftar nama, kartu &quot;Daftar Tamu &amp; Link&quot; tetap <strong>0 tamu</strong>, kartu QR &amp; pratinjau pesan WA basi — nama baru muncul setelah pindah tab</td>
+<td><code>oninput</code> hanya menyimpan + memperbarui pratinjau iframe; daftar hanya digambar ulang oleh <code>render()</code> penuh</td>
+<td><code>refreshTamu()</code> + <code>jadwalRefreshTamu()</code> (jeda 320 ms) memperbarui jumlah, baris, kartu QR, label &amp; pratinjau WA <strong>tanpa</strong> render penuh sehingga kursor pemilik tidak melompat</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Sedang</td>
+<td>Bantuan tombol (tahan jari / F1) kadang muncul, kadang tidak — uji browser jadi flaky</td>
+<td>Handler gulir selalu <code>hide()</code>. Di Studio, <code>focus()</code>/F1 <strong>memicu gulir</strong> (browser menggulir tombol ke dalam layar) → tooltip yang baru dibuat langsung dihapus. Balapan waktu: kadang menang, kadang kalah</td>
+<td><code>place()</code> menghitung ulang posisi saat halaman bergulir; tooltip hanya ditutup bila tombolnya keluar layar; gulir <em>sebelum</em> tooltip muncul tetap membatalkan. Uji baru <code>tools/test-bantuan-tombol.cjs</code> (27 pemeriksaan) — diuji juga terhadap kode lama: 7 pemeriksaan gagal di sana</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Sedang</td>
+<td><code>katalog-demo/undangan-luxury-seal.html</code> <strong>layar kosong</strong> bila <code>unpkg.com</code> diblokir/lambat (<em>React is not defined</em>) — di sekolah/kantor/gawai dengan pemblokir CDN, halaman ini gagal total</td>
+<td>React &amp; ReactDOM diambil dari CDN saat halaman dibuka</td>
+<td>React 18.3.1 UMD (MIT, © Meta) disimpan di <code>assets/react.production.min.js</code> + <code>assets/react-dom.production.min.js</code>, plus pesan kegagalan yang jelas bila berkas hilang</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Sedang</td>
+<td><code>tools/rsvp.sql</code> gagal dijalankan di SQL Editor Supabase</td>
+<td><code>create policy &quot;rsvp_anon_read&quot;</code> ditulis dua kali dan tanpa <code>drop policy if exists</code></td>
+<td>Ditulis ulang idempoten (<code>drop … if exists</code> lalu <code>create</code>) — aman dijalankan berulang; idem untuk <code>tools/checkin.sql</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Rendah</td>
+<td>Tidak ada ikon tab di 24 halaman (master, semua <code>demo/</code>, semua <code>katalog-demo/</code>); 5 halaman ber-<code>lang=&quot;en&quot;</code>; katalog utama tanpa keterangan/pratinjau tautan</td>
+<td>Belum pernah ditambahkan</td>
+<td><code>assets/favicon.svg</code> (latar hitam + monogram emas, konsisten dengan ikon APK) + <code>assets/apple-touch-icon.png</code> dipasang di seluruh 30 halaman; <code>lang=&quot;id&quot;</code>; <code>description</code>, <code>og:*</code>, <code>theme-color</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Rendah</td>
+<td>Nama tamu berisi <code>&lt;</code> (mis. <code>Budi &lt;b&gt;</code>) — <code>esc()</code> Studio tidak meng-escape <code>&gt;</code></td>
+<td><code>esc()</code> hanya menangani <code>&amp;</code>, <code>&lt;</code>, <code>&quot;</code></td>
+<td><code>&gt;</code> ikut di-escape</td>
+</tr>
+</tbody></table>
+<p>Peningkatan aksesibilitas yang menyertai: kolom <strong>nama</strong>, <strong>pilihan kehadiran</strong>, dan
+<strong>ucapan</strong> di kartu RSVP undangan live kini punya <code>aria-label</code> (axe-core semula menandainya
+<code>critical: select-name</code> dan <code>moderate: label</code>).</p>
+<p>Bonus (bukan bug): undangan live sekarang mengisi <strong>og:judul / og:keterangan / og:foto</strong>
+dari data undangan — dulu selalu teks bawaan. <code>og:image</code> hanya dipasang bila fotonya URL
+publik; foto lokal pemilik (<code>data:</code>) diabaikan perayap. Katalog utama juga dapat
+<code>description</code> + <code>og:*</code>.</p>
+<h2>B. Diperiksa dan sudah benar (tidak perlu diubah)</h2>
+<ul>
+<li><strong>Rute tautan</strong>: <code>/u/{slug}</code>, <code>/u/{slug}/?to=…</code> (termasuk nilai ber-<code>&amp;</code>), <code>/checkin</code>,
+<code>/u/{slug}/checkin</code>, dan base path <code>/AsProject/…</code> (github.io project page) semuanya
+mendarat di halaman yang tepat; halaman asing menampilkan 404 ramah.</li>
+<li><strong>XSS</strong>: empat pola serangan lewat <code>?to=</code> (tag <code>&lt;img onerror&gt;</code>, penutup atribut,
+<code>&lt;/div&gt;&lt;script&gt;</code>, <code>&lt;svg onload&gt;</code>) tidak menghasilkan elemen/skrip baru di Chromium.</li>
+<li><strong>Kunci master</strong>: <code>invitation_drafts</code> bisa dibaca siapa pun (memang publik), tetapi ubah
+data di Master hanya lewat <code>k=masterKey</code>; baris tamu di Master memakai indeks
+(<code>onSelectIdx(0)</code>) sehingga aman dari nama ber-apostrof/kutip.</li>
+<li><strong>Android</strong>: checksum APK di <code>android/releases/</code> cocok dengan <code>SHA256SUMS.txt</code>, uji
+jembatan JS lulus (21 pemeriksaan), aturan izin kamera mikrofon ketat, dan workflow CI
+sudah memverifikasi isi + tanda tangan APK.</li>
+<li><strong>Berkas lokal</strong>: seluruh rujukan <code>src</code>/<code>href</code> lokal di 30 halaman ada di disk; tidak ada
+skrip pihak ketiga lagi selain Supabase JS yang memang punya fallback REST.</li>
+<li><strong><code>.nojekyll</code></strong> sudah ada — penting agar berkas <code>demo/_mesin.js</code> &amp; <code>demo/_mesin.css</code>
+(awalan <code>_</code>) tetap disajikan GitHub Pages.</li>
+</ul>
+<h2>C. Tindak lanjut (dikerjakan 2026-10-17)</h2>
+<p>Keenam temuan di bab ini sudah dikerjakan dan diukur ulang dengan alat yang sama.</p>
+<table>
+<thead><tr><th>#</th><th>Temuan awal</th><th>Yang dikerjakan</th><th>Hasil ukur</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Kontras warna di <code>index.html</code>, <code>katalog-demo/*</code>, <code>scan</code>/<code>checkin</code>, undangan live</td>
+<td>Warna digelapkan seminimal mungkin lewat blok <code>[aksesibilitas-c]</code>; <code>opacity:.8</code> pada sublabel tombol mode dinaikkan</td>
+<td><strong>31 halaman: 0 temuan</strong>; <code>master.html?demo=1</code> 62 → 0</td></tr>
+<tr><td>2</td><td>Landmark halaman</td>
+<td><code>main</code> di 31 halaman, <code>aside</code> untuk tautan mengambang, <code>role="region"</code> untuk sampul &amp; panel demo wedding-gold</td>
+<td>axe <strong>region 450 → 0</strong>, tanpa <code>&lt;main&gt;</code> <strong>10 → 0</strong>, tanpa <code>h1</code> <strong>2 → 0</strong></td></tr>
+<tr><td>3</td><td>Belum ada <code>robots.txt</code>/<code>sitemap.xml</code></td>
+<td>Keduanya dibuat; halaman internal ditutup, 25 URL publik didaftarkan</td>
+<td>sitemap valid (25 URL), robots menunjuk <code>https://asproject.my.id/sitemap.xml</code></td></tr>
+<tr><td>4</td><td>Belum ada web app manifest</td>
+<td><code>manifest.webmanifest</code> + ikon 192/512/maskable dari <code>assets/favicon.svg</code>; tautan di 30 halaman</td>
+<td><code>test-manifest-pwa.cjs</code> lulus</td></tr>
+<tr><td>5</td><td><code>rsvp</code> &amp; <code>checkin</code> tanpa pembatas laju</td>
+<td>Tabel <code>rate_limit</code>, fungsi <code>batas_laju()</code>, trigger per IP dan per (slug, tamu)</td>
+<td><code>test-sql-rsvp.cjs</code> 19 lulus; RPC tidak bisa diuji dari sandbox (tanpa jaringan)</td></tr>
+<tr><td>6</td><td>Uji Chromium belum jalan di CI</td>
+<td>Job <code>browser</code> di workflow: server <code>:8080</code> + empat uji</td>
+<td>lulus lokal; <code>test-aksesibilitas.cjs</code> 59 lulus / 0 gagal</td></tr>
+</tbody>
+</table>
+<p>Batas laju: RSVP 12/menit &amp; 60/jam per IP, 30/jam per (slug, tamu); check-in
+30/menit &amp; 200/jam per IP. Bila perlu dilonggarkan:
+<code>drop trigger rsvp_batas_laju_trg on public.rsvp;</code> (idem check-in).
+<code>checkin.sql</code> memakai <code>batas_laju()</code> dari <code>rsvp.sql</code>, jadi jalankan
+<code>rsvp.sql</code> lebih dulu.</p>
+<h3>Sisa temuan tingkat rendah (belum dikerjakan)</h3>
+<ul>
+<li><code>katalog-demo/undangan-wedding-gold.html</code>: 1 <code>label-content-name-mismatch</code> + 4
+<code>label</code> (atribut label belum terhubung ke input).</li>
+<li><code>index.html</code>: 25 <code>button-name</code> + 3 <code>link-name</code> (tombol/tautan ikon tanpa teks alternatif).</li>
+<li><code>katalog-demo/perbandingan-tema.html</code>: <code>heading-order</code> (h3 tanpa h2).</li>
+</ul>
+<p>Ketiganya tidak menghalangi pemakaian; dicatat agar tidak hilang.</p>
+<h2>D. Menjalankan ulang pemeriksaan ini</h2>
+<pre><code class="language-bash">npm install --no-save --package-lock=false jsdom jsqr qrcode-generator pgsql-ast-parser
+python3 tools/cek-kesehatan.py
+node tools/test-sql-rsvp.cjs
+
+# uji browser (butuh Chromium + server lokal)
+npm install --no-save --package-lock=false playwright-core @sparticuz/chromium axe-core
+python3 tools/serve.py 8080 &amp;
+node tools/test-aksesibilitas.cjs
+node tools/test-manifest-pwa.cjs
+</code></pre>
+<p>Workflow <code>.github/workflows/cek-kesehatan.yml</code> menjalankan pemeriksa + seluruh uji
+offline pada setiap push/PR, plus job <strong>browser</strong> berisi empat uji Chromium di atas.
+<code>test-mobile-browser.cjs</code> tetap manual karena peka waktu animasi.</p>
+
+</main>
+<footer>
+ Dibuat otomatis dari <code>LAPORAN-AUDIT-2026-10-16.md</code> ·
+ halaman ini ditandai <code>noindex</code> (dokumen internal, tidak didaftarkan ke mesin pencari).
+</footer>
+</div>
+</body>
+</html>
