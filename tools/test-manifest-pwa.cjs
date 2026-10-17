@@ -1,7 +1,7 @@
 /* Uji manifest PWA: JSON valid, ikon terjangkau & ukurannya sesuai, tag terpasang,
    start_url bisa dibuka, dan seluruh halaman punya tautan manifest. */
 const fs=require('fs'), path=require('path');
-const ROOT='/home/user/AsProject';
+const ROOT=path.resolve(__dirname,'..');
 const {chromium}=require(path.join(ROOT,'node_modules/playwright-core'));
 const m=JSON.parse(fs.readFileSync(path.join(ROOT,'manifest.webmanifest'),'utf8'));
 let gagal=0; const cek=(ok,pesan)=>{console.log((ok?'  ok  ':'  GAGAL ')+pesan); if(!ok)gagal++;};
