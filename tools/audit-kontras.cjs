@@ -28,7 +28,7 @@ function daftarHalaman() {
     const dir = path.join(ROOT, d);
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir).sort()) {
-      if (f.endsWith('.html')) hasil.push(d ? `${d}/${f}` : f);
+      if (f.endsWith('.html') && !/^google.+\.html$/.test(f)) hasil.push(d ? `${d}/${f}` : f);
     }
   }
   return hasil;

@@ -537,16 +537,18 @@ sama sekali terindeks Google**, bukan kalah peringkat. Sebab-sebabnya:
    `og:image` di `index.html` & default `undangan.html` (undangan live tetap
    menimpa dengan foto cover bila ada).
 5. `sitemap.xml` `lastmod` ikut diperbarui.
+6. **Token verifikasi Google Search Console** — meta `google-site-verification`
+   + berkas `google…html` di root (lihat langkah pemilik di bawah).
 
 ### Yang HARUS dilakukan pemilik (tidak bisa dari repo)
 
 1. **Daftar Google Search Console** (search.google.com/search-console) →
    *Tambah properti* → pilih **Prefix URL** `https://asproject.my.id/`.
-2. **Verifikasi** dengan metode *Tag HTML*: Google memberi
-   `<meta name="google-site-verification" content="...">` — tempel di `index.html`
-   (sudah ada komentar penanda di `<head>`), merge & tunggu deploy, lalu klik
-   **Verifikasi** di Search Console. (Alternatif: verifikasi DNS TXT lewat
-   registrar domain — lebih awet, tidak perlu ubah file.)
+2. **Verifikasi** — token Search Console sudah terpasang di repo (2026-10-18):
+   meta tag `google-site-verification` di `<head>` `index.html` **dan** berkas
+   `/googlefku5Lf9fobFfFrM0tS5D20DLpLYw_4Am-pps2HQ1pzw.html` (metode *Tag HTML*
+   maupun *Berkas HTML* sama-sama sah). Setelah deploy, cukup klik **Verifikasi**
+   di Search Console. (Alternatif permanen: DNS TXT lewat registrar domain.)
 3. **Sitemaps** → ketik `sitemap.xml` → **Submit**.
 4. **URL Inspection** pada `https://asproject.my.id/` → **Request Indexing**
    (ulangi untuk `/demo/wedding-premium.html` dst. bila mau lebih cepat).
