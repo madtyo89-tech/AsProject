@@ -507,6 +507,60 @@ memasang `playwright-core`, `@sparticuz/chromium`, dan `axe-core`, menyalakan
 pemeriksaannya bergantung pada waktu animasi (mudah goyah). Di sandbox ini semuanya
 lulus; pemeriksa repo: **383 ok, 0 masalah, 31 catatan**.
 
+## Kenapa belum muncul di Google + persiapan pengindeksan (2026-10-18)
+
+Laporan pemilik: **"kalo cari AsProject.my.id di Google ga ketemu"**. Hasil cek
+(`site:asproject.my.id` di mesin pencari → **0 hasil**): situsnya memang **belum
+sama sekali terindeks Google**, bukan kalah peringkat. Sebab-sebabnya:
+
+| # | Sebab | Sifat |
+| --- | --- | --- |
+| 1 | **Belum didaftarkan ke Google Search Console** — tidak ada token verifikasi & sitemap belum pernah disubmit. Google tidak akan "tahu" situs baru tanpa pendaftaran/backlink | manual (perlu akun Google pemilik) |
+| 2 | **Situs baru & tanpa backlink** — domain baru, belum ada tautan masuk dari situs lain yang bisa ditemukan perayap | butuh waktu + promosi |
+| 3 | **Isi halaman dirender JavaScript** (`<main id="root">` kosong di HTML mentah) — perayap awal Google melihat halaman nyaris kosong | sudah diperbaiki di repo |
+| 4 | **`og:image` berupa SVG** — perayap sosial/Google sering mengabaikan SVG untuk pratinjau; tidak ada JSON-LD/canonical | sudah diperbaiki di repo |
+
+### Yang diubah di repo (bisa langsung terbit)
+
+1. **Fallback SEO statis di `index.html`** — isi `<main id="root">` kini memuat
+   kerangka konten nyata (h1 "Undangan Digital Online untuk Pernikahan, Khitanan,
+   Ulang Tahun & Aqiqah", kategori + tautan demo, fitur, harga, kontak) yang
+   **terbaca tanpa JavaScript**. React tetap mengganti isi `#root` dengan katalog
+   hidup begitu aplikasi termuat (`createRoot().render()`), jadi tampilan pengguna
+   tidak berubah.
+2. **JSON-LD** (`Organization` + `WebSite` + `Service`/`AggregateOffer` Rp49.000–
+   Rp99.000) di `<head>` — sinyal mesin pencari berstruktur.
+3. **`<link rel="canonical">`, `og:url`, `og:site_name`, `og:locale`, twitter card`,
+   `meta robots index,follow`**, plus judul/deskripsi yang memuat kata kunci
+   pencarian ("undangan digital online pernikahan khitanan ulang tahun aqiqah").
+4. **`assets/og-asproject.png`** (1200×630, onyx + emas) menggantikan SVG sebagai
+   `og:image` di `index.html` & default `undangan.html` (undangan live tetap
+   menimpa dengan foto cover bila ada).
+5. `sitemap.xml` `lastmod` ikut diperbarui.
+
+### Yang HARUS dilakukan pemilik (tidak bisa dari repo)
+
+1. **Daftar Google Search Console** (search.google.com/search-console) →
+   *Tambah properti* → pilih **Prefix URL** `https://asproject.my.id/`.
+2. **Verifikasi** dengan metode *Tag HTML*: Google memberi
+   `<meta name="google-site-verification" content="...">` — tempel di `index.html`
+   (sudah ada komentar penanda di `<head>`), merge & tunggu deploy, lalu klik
+   **Verifikasi** di Search Console. (Alternatif: verifikasi DNS TXT lewat
+   registrar domain — lebih awet, tidak perlu ubah file.)
+3. **Sitemaps** → ketik `sitemap.xml` → **Submit**.
+4. **URL Inspection** pada `https://asproject.my.id/` → **Request Indexing**
+   (ulangi untuk `/demo/wedding-premium.html` dst. bila mau lebih cepat).
+5. **Backlink**: pasang tautan `asproject.my.id` di bio Instagram
+   `@asproject.my.id`, Google Business Profile, status WA, dan undangan yang sudah
+   terbit (link `asproject.my.id/u/…` ikut menaikkan otoritas domain).
+6. Tunggu **beberapa hari–2 minggu** untuk pengindeksan pertama; cek berkala dengan
+   pencarian `site:asproject.my.id` (dari 0 hasil → minimal beranda muncul).
+
+Catatan: `master.html`, `scan.html`, `checkin.html` sudah `noindex`/dilarang di
+robots — memang sengaja tidak diindeks. Setelah Search Console aktif, halaman
+**Jangan kirim URL undangan tamu** (`/u/{slug}`) ke *Request Indexing* — itu halaman
+privat tamu.
+
 ## Katalog tema (direset + diisi ulang 2026-10-10)
 
 Katalog lama berisi 72 tema lengkap dengan artwork-nya. Seluruhnya dihapus, lalu diisi
