@@ -73,7 +73,7 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (33 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (34 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
@@ -125,6 +125,10 @@ tidak lagi tertutup bidang warna:
   Kadar alpha disimpan di variabel `--pa/--pb/--pc`: saat **foto penuh**
   pitanya lebih bening (28-46%) supaya wajah mempelai tembus; tanpa foto
   penuh pitanya kembali pekat (50-78%) supaya tetap jelas di atas kartu.
+- Di **mode foto penuh**, pita tidak lagi melintang di tengah foto (tepat di
+  wajah mempelai, dan di layar pendek menimpa nama/tanggal). Pita dipindah ke
+  bagian atas cover (`top:12%`), dibuat lebih tipis (20px & 17px) dan lebih
+  bening (12-24%) sehingga foto dari dada ke atas tetap utuh.
 - Simpul pita juga transparan dan diberi denyut halus
   (`simpulDenyut`, mati saat `prefers-reduced-motion`) sebagai penanda bisa
   diketuk.

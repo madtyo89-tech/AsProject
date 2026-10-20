@@ -234,6 +234,11 @@ async function render(d) {
     undSrc.includes('-webkit-backdrop-filter:blur(1px) saturate(1.12);backdrop-filter:blur(1px) saturate(1.12);') &&
     undSrc.includes('body.elbuka-pita:not(.foto-full) #cover .pemicu .el{--pa:78%;--pb:54%;--pc:70%}') &&
     !undSrc.includes('body.elbuka-pita #cover .pemicu .el{left:0;top:42px;width:100%;height:34px;border-radius:17px;background:linear-gradient(180deg,color-mix'));
+  t('foto penuh: pita dipindah ke atas cover (tidak menutupi wajah/nama)',
+    undSrc.includes('body.elbuka-pita.foto-full #cover .pemicu{top:12%}') &&
+    undSrc.includes('body.elbuka-pita.foto-full #cover .pemicu .el{top:46px;height:20px;border-radius:10px;') &&
+    undSrc.includes('--pa:24%;--pb:12%;--pc:20%;') &&
+    undSrc.includes('body.elbuka-pita.foto-full #cover .pemicu .simpul{top:41px;width:40px;height:40px;'));
   t('foto penuh + panel jendela: panel putih hilang, foto mempelai kelihatan',
     undSrc.includes('body.foto-full #cover .cvband{\n  background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}') &&
     undSrc.includes('body.foto-full #cover .cvband h1,body.foto-full #cover .cvband .amp,') &&
