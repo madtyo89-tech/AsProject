@@ -240,6 +240,22 @@ async function render(d) {
     undSrc.includes('--pa:24%;--pb:12%;--pc:20%;') &&
     undSrc.includes('body.elbuka-pita.foto-full #cover .pemicu .simpul{top:41px;width:40px;height:40px;'));
   /* ------------------------------------------------------------------ *
+   * 7b. Selendang: kain hanya di bagian atas + tembus pandang
+   * ------------------------------------------------------------------ */
+  t('selendang hanya menutup bagian atas (foto & teks cover tetap terlihat)',
+    undSrc.includes('body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0 0 auto 0;') &&
+    undSrc.includes('height:clamp(110px,18dvh,220px);') &&
+    undSrc.includes('clip-path:polygon(0 0,100% 0,100% 86%,78% 100%,52% 88%,26% 99%,0 87%);') &&
+    undSrc.includes('body.elbuka-selendang #cover .pemicu .el2,body.elbuka-selendang #cover .pemicu .simpul{position:absolute;top:0;bottom:auto;'));
+  t('selendang memakai tint tembus pandang + aksen lebih bening saat foto penuh',
+    undSrc.includes('linear-gradient(45deg,transparent 0 20px,color-mix(in srgb,var(--accent-cover,var(--accent,#7a3040)) 38%,rgba(212,175,55,.8)) 20px 21px)') &&
+    undSrc.includes('body.elbuka-selendang.foto-full #cover .pemicu .el{--sa:30%;--sb:26%;--sc:12%;--sd:20%;') &&
+    !undSrc.includes('body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0;background-image:radial-gradient(circle at 30% 18%,color-mix(in srgb,var(--accent-cover,var(--accent,#7a3040)) 70%,#fff)'));
+  t('selendang dibuka dengan menarik kain KE ATAS + teks cover memudar',
+    undSrc.includes('body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-118%) rotateX(16deg) scaleY(1.04);opacity:0}') &&
+    undSrc.includes('body.elbuka-selendang.opened #cover .bdfr{opacity:0;transition:opacity .3s ease}'));
+
+  /* ------------------------------------------------------------------ *
    * 8. Amplop: kartu kaca di tengah foto (bukan menutup seluruh layar)
    * ------------------------------------------------------------------ */
   t('amplop foto penuh tampil sebagai kartu kaca di tengah, bukan full layar',

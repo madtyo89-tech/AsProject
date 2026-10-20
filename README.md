@@ -73,7 +73,7 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (37 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (40 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
@@ -113,6 +113,24 @@ Gaya membuka **Gerbang** sekarang juga memakai **foto mempelai** dan sudah
   menjadi teks hantu di atas konten.
 - Bila undangan tidak punya foto, panel kembali ke gradasi aksen — tidak ada
   bidang kosong.
+
+### Selendang foto (gaya membuka `selendang`)
+
+Dulu kain selendang menutup **100% layar** dengan warna pekat dan `z-index`
+di atas kartu teks. Akibatnya cover tema bergaya selendang (mis. **Islamic
+Neutral**, **Islamic Elegant**) tampak kosong: foto mempelai dan seluruh teks
+(nama, tanggal, countdown) hilang di balik motif songket.
+
+- Kain kini hanya menggantung di **bagian atas** cover
+  (`height:clamp(110px,18dvh,220px)`) dengan hem bergelombang
+  (`clip-path`), jadi foto dan kartu teks di bawahnya tetap terlihat.
+- Motif songket dibuat **tembus pandang** (tint aksen ber-alpha +
+  `backdrop-filter` tipis); di mode foto penuh kadarnya diturunkan lagi
+  (`--sa/--sb/--sc/--sd` = 30/26/12/20%) supaya wajah mempelai di bawah kain
+  masih jelas.
+- Kain dibuka dengan ditarik **ke atas** (`translateY(-118%)`), sesuai
+  petunjuk "geser atas", dan teks cover memudar cepat saat dibuka agar tidak
+  jadi teks hantu di atas isi undangan.
 
 ### Amplop foto (gaya membuka `amplop`)
 

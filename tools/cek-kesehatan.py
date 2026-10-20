@@ -1560,6 +1560,12 @@ def cek_kartu_katalog():
               and "body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .5s ease .9s both}" in live)
     lapor("ok" if amplop else "masalah",
           "undangan.html: amplop foto penuh tampil sebagai kartu kaca di tengah (nama tercetak, teks cover disembunyikan sampai terbuka)")
+    selendang = ("body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0 0 auto 0;" in live
+                 and "height:clamp(110px,18dvh,220px);" in live
+                 and "body.elbuka-selendang.foto-full #cover .pemicu .el{--sa:30%;--sb:26%;--sc:12%;--sd:20%;" in live
+                 and "body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-118%)" in live)
+    lapor("ok" if selendang else "masalah",
+          "undangan.html: selendang hanya menutup bagian atas & tembus pandang, jadi foto + teks cover tetap terlihat")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
         return
