@@ -1396,20 +1396,62 @@ body.elbuka-amplop.foto-full:not(.opened) #cover .geser-hint{display:none}
    muter 90°, shackle terbuka, burst cahaya emas,
    gembok & kunci naik menghilang memperlihatkan isi --- */
 body.elbuka-gembok #cover .pemicu{width:190px;height:260px}
-body.elbuka-gembok #cover .pemicu .el{left:50%;top:52px;width:150px;height:120px;margin-left:-75px;border-radius:10px 10px 16px 16px;background-image:radial-gradient(circle at 30% 28%,rgba(120,60,20,.28),transparent 62%),linear-gradient(135deg,color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 85%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 60%,#8c6d3a) 60%,color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 45%,#5a4320));border:2px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 40%,#4a3208);box-shadow:0 16px 40px rgba(0,0,0,.6),inset 0 2px 5px rgba(255,255,255,.35);z-index:2;transition:transform 1s cubic-bezier(.77,0,.175,1) .8s,opacity .8s ease .8s,box-shadow .3s ease .55s}
-body.elbuka-gembok #cover .pemicu .el::before{content:'';position:absolute;top:-56px;left:50%;width:88px;height:64px;margin-left:-44px;border:13px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 70%,#8c6d3a);border-bottom:0;border-radius:56px 56px 0 0;transform-origin:bottom left;box-shadow:0 5px 15px rgba(0,0,0,.4);transition:transform .6s cubic-bezier(.77,0,.175,1) .7s}
+/* Badan gembok KACA (semua mode): tint aksen ber-alpha (--ga/--gb/--gc) +
+   kilau + blur tipis, jadi teks & foto di baliknya tetap terlihat — gembok
+   tidak lagi menutup nama mempelai dengan bidang emas pekat. */
+body.elbuka-gembok #cover .pemicu .el{--ga:54%;--gb:34%;--gc:46%;
+  left:50%;top:52px;width:150px;height:120px;margin-left:-75px;border-radius:10px 10px 16px 16px;
+  background-image:
+    linear-gradient(156deg,rgba(255,255,255,.36) 0%,rgba(255,255,255,.12) 30%,rgba(255,255,255,0) 58%,rgba(0,0,0,.10) 100%),
+    linear-gradient(160deg,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) var(--ga),transparent),
+      color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) var(--gb),transparent) 56%,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) var(--gc),transparent));
+  -webkit-backdrop-filter:blur(2px) saturate(1.05);backdrop-filter:blur(2px) saturate(1.05);
+  border:2px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 52%,rgba(255,255,255,.45));
+  box-shadow:0 14px 34px rgba(10,6,3,.26),inset 0 1px 1px rgba(255,255,255,.6),inset 0 0 0 1px rgba(255,255,255,.18);
+  z-index:2;transition:transform .95s cubic-bezier(.33,.02,.26,1) 1.25s,opacity .7s ease 1.45s,box-shadow .45s ease .55s;will-change:transform,opacity}
+body.elbuka-gembok #cover .pemicu .el::before{content:'';position:absolute;top:-56px;left:50%;width:88px;height:64px;margin-left:-44px;border:13px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 70%,#8c6d3a);border-bottom:0;border-radius:56px 56px 0 0;transform-origin:bottom left;box-shadow:0 5px 15px rgba(0,0,0,.4);transition:transform .8s cubic-bezier(.34,1.2,.46,1) 1s}
 body.elbuka-gembok #cover .pemicu .el::after{content:'';position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#1a1205;box-shadow:inset 0 3px 10px #000}
 body.elbuka-gembok #cover .pemicu .el2{left:50%;top:calc(50% + 11px);width:9px;height:18px;margin-left:-4.5px;border-radius:0 0 5px 5px;background:#1a1205;z-index:2;transition:opacity .5s ease .9s}
 /* kunci miring di bawah gembok: batang + gigi + kepala */
-body.elbuka-gembok #cover .pemicu .simpul{left:50%;top:188px;width:120px;height:14px;margin-left:-60px;border-radius:7px;background:linear-gradient(90deg,color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 80%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 55%,#5a4320));box-shadow:0 6px 14px rgba(0,0,0,.5);transform:rotate(-30deg);z-index:3;animation:none}
+body.elbuka-gembok #cover .pemicu .simpul{--ka:78%;left:50%;top:188px;width:120px;height:14px;margin-left:-60px;border-radius:7px;
+  background:linear-gradient(90deg,
+    color-mix(in srgb,color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 80%,#fff) var(--ka),transparent),
+    color-mix(in srgb,color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 55%,#5a4320) var(--ka),transparent));
+  box-shadow:0 6px 14px rgba(0,0,0,.5);transform:rotate(-30deg);z-index:3;animation:none;
+  will-change:transform,opacity;backface-visibility:hidden}
 body.elbuka-gembok #cover .pemicu .simpul::before{content:'';position:absolute;left:2px;bottom:-9px;width:34px;height:12px;background:color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 55%,#5a4320);clip-path:polygon(0 0,100% 0,78% 100%,20% 100%)}
-body.elbuka-gembok #cover .pemicu .simpul::after{content:'';position:absolute;right:-26px;top:50%;width:42px;height:42px;margin-top:-21px;border-radius:50%;background:radial-gradient(circle at 38% 32%,color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 92%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 55%,#fff) 45%,color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 35%,#4a3208));border:3px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 45%,#4a3208);box-shadow:inset 0 2px 5px rgba(255,255,255,.4)}
+body.elbuka-gembok #cover .pemicu .simpul::after{content:'';position:absolute;right:-26px;top:50%;width:42px;height:42px;margin-top:-21px;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%,
+    color-mix(in srgb,color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 92%,#fff) var(--ka,100%),transparent),
+    color-mix(in srgb,color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 55%,#fff) var(--ka,100%),transparent) 45%,
+    color-mix(in srgb,color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 35%,#4a3208) var(--ka,100%),transparent));
+  border:3px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 45%,#4a3208);
+  box-shadow:inset 0 2px 5px rgba(255,255,255,.4)}
 body.elbuka-gembok #cover .kt-burst{display:block}
-/* langkah 1-2: kunci naik masuk lubang lalu muter 90° */
-body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.3s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes kunciMasuk{0%{transform:rotate(-30deg)}40%{transform:rotate(-30deg) translateY(-84px)}55%{transform:rotate(60deg) translateY(-84px)}75%{transform:rotate(60deg) translateY(-84px)}100%{transform:rotate(60deg) translateY(-170px) scale(.4);opacity:0}}
-/* langkah 3: shackle terbuka -45° */
-body.elbuka-gembok.opened #cover .pemicu .el::before{transform:translateX(-50%) rotate(-45deg)}
+/* langkah 1-2: kunci terangkat mulus, masuk lubang, lalu DIPUTAR pelan.
+   Tiap segmen punya easing sendiri supaya tidak ada "patahan" gerak, dan
+   kunci baru memudar setelah putarannya benar-benar selesai. */
+body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.75s linear forwards}
+@keyframes kunciMasuk{
+  0%  {transform:translateY(0)     rotate(-30deg) scale(1);
+       animation-timing-function:cubic-bezier(.45,0,.55,1)}
+  16% {transform:translateY(-16px) rotate(-30deg) scale(1.03);
+       animation-timing-function:cubic-bezier(.4,0,.6,1)}
+  42% {transform:translateY(-82px) rotate(-30deg) scale(1);
+       animation-timing-function:cubic-bezier(.32,0,.3,1)}
+  58% {transform:translateY(-84px) rotate(-6deg)  scale(.98);
+       animation-timing-function:cubic-bezier(.35,0,.3,1)}
+  76% {transform:translateY(-84px) rotate(58deg)  scale(.96);
+       animation-timing-function:cubic-bezier(.3,0,.35,1)}
+  86% {transform:translateY(-84px) rotate(64deg)  scale(.95);opacity:1;
+       animation-timing-function:cubic-bezier(.3,0,.4,1)}
+  100%{transform:translateY(-108px) rotate(64deg) scale(.7);opacity:0}}
+/* langkah 3: shackle terbuka -45°, berporos di kaki kanan shackle
+   (dulu transform-origin:bottom left + translateX(-50%) membuatnya
+   terlempar keluar kartu — terlihat "patah" saat cover memudar) */
+body.elbuka-gembok.opened #cover .pemicu .el::before{transform:translateX(-50%) rotate(-46deg)}
 /* langkah 4-5: cahaya dari lubang kunci, gembok naik menghilang */
 body.elbuka-gembok.opened #cover .pemicu .el{box-shadow:0 0 60px 20px rgba(255,215,0,.5),0 16px 40px rgba(0,0,0,.6);transform:translateY(-130px) scale(.55) rotateX(18deg);opacity:0}
 body.elbuka-gembok.opened #cover .pemicu .el2{opacity:0}
@@ -1438,14 +1480,64 @@ body.elbuka-gembok.foto-full #cover .pemicu::after{content:'';position:absolute;
   left:0;right:0;bottom:0;height:46%;z-index:1;pointer-events:none;
   border-radius:0 0 16px 16px;
   background:linear-gradient(180deg,transparent,rgba(12,8,4,.34) 45%,rgba(12,8,4,.68))}
-/* gembok dibesarkan & dinaikkan */
+/* Gembok tanpa foto penuh: jangan menutup nama. Gembok diperkecil,
+   dibuat kaca lebih pekat (tetap terbaca di kertas krem), dan digeser ke
+   bawah kartu teks supaya nama mempelai tidak tertimpa. */
+body.elbuka-gembok:not(.foto-full) #cover .pemicu{width:150px;height:206px}
+body.elbuka-gembok:not(.foto-full) #cover .pemicu .el{
+  --ga:44%;--gb:26%;--gc:36%;
+  width:120px;height:96px;margin-left:-60px;top:40px;
+  -webkit-backdrop-filter:blur(1.2px);backdrop-filter:blur(1.2px)}
+body.elbuka-gembok:not(.foto-full) #cover .pemicu .el::before{
+  top:-44px;width:70px;height:52px;margin-left:-35px;border-width:11px;border-radius:44px 44px 0 0}
+body.elbuka-gembok:not(.foto-full) #cover .pemicu .el::after{width:20px;height:20px;margin:-10px 0 0 -10px}
+body.elbuka-gembok:not(.foto-full) #cover .pemicu .el2{
+  top:calc(40px + 60px);width:7px;height:15px;margin-left:-3.5px}
+body.elbuka-gembok:not(.foto-full) #cover .pemicu .simpul{
+  --ka:62%;top:150px;width:96px;height:11px;margin-left:-48px}
+body.elbuka-gembok:not(.foto-full) #cover .pemicu .simpul::after{width:34px;height:34px;margin-top:-17px;right:-21px}
+body.elbuka-gembok:not(.foto-full) #cover .pemicu .simpul::before{width:27px;height:10px;bottom:-7px}
+/* Tanpa foto penuh, petunjuk "Ketuk gembok" jatuh menimpa paragraf; cover
+   sudah punya "Geser kiri atau ketuk untuk membuka" di bawah, jadi cukup
+   satu petunjuk saja. */
+body.elbuka-gembok:not(.foto-full) #cover .pemicu .p-hint{display:none}
+
+/* Gembok dibesarkan, dinaikkan, dan dibuat KACA: badan gembok tidak lagi
+   bidang emas pekat yang menutup foto — kini kaca ber-alpha rendah
+   (--ga/--gb/--gc) + kilau + blur tipis, jadi foto mempelai tetap terlihat
+   (cuma sedikit diburamkan) dan tidak "kepotong" oleh gembok. */
 body.elbuka-gembok.foto-full #cover .pemicu .el{
+  --ga:26%;--gb:14%;--gc:22%;
   top:15%;height:27%;width:55%;margin-left:-27.5%;
-  border-radius:12px 12px 18px 18px;border-width:3px;z-index:3}
+  border-radius:12px 12px 18px 18px;border-width:2px;z-index:3;
+  border-color:color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 42%,rgba(255,255,255,.5));
+  background-image:
+    linear-gradient(156deg,rgba(255,255,255,.38) 0%,rgba(255,255,255,.12) 30%,rgba(255,255,255,0) 58%,rgba(0,0,0,.10) 100%),
+    linear-gradient(160deg,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) var(--ga),transparent),
+      color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) var(--gb),transparent) 56%,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) var(--gc),transparent));
+  -webkit-backdrop-filter:blur(2.5px) saturate(1.06);backdrop-filter:blur(2.5px) saturate(1.06);
+  box-shadow:0 14px 34px rgba(10,6,3,.3),
+    inset 0 1px 1px rgba(255,255,255,.7),
+    inset 0 0 0 1px color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 40%,transparent)}
+/* shackle juga kaca: tabung emas transparan dengan tepi mengkilat */
 body.elbuka-gembok.foto-full #cover .pemicu .el::before{
   top:-46%;width:56%;height:30%;margin-left:-28%;border-width:16px;
-  border-radius:110px 110px 0 0}
-body.elbuka-gembok.foto-full #cover .pemicu .el::after{width:30px;height:30px;margin:-15px 0 0 -15px}
+  border-radius:110px 110px 0 0;transform-origin:bottom left;
+  border-color:color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 52%,rgba(255,255,255,.42))}
+body.elbuka-gembok.foto-full #cover .pemicu .el::after{width:30px;height:30px;margin:-15px 0 0 -15px;
+  background:radial-gradient(circle at 50% 34%,rgba(26,18,5,.92),rgba(26,18,5,.68) 70%,rgba(26,18,5,.5));
+  box-shadow:inset 0 3px 9px rgba(0,0,0,.6),0 1px 2px rgba(255,255,255,.35)}
+/* Kunci juga KACA: batang & kepalanya tembus (--ka), jadi wajah mempelai di
+   baliknya tetap terlihat — bukan ditutup emas pekat. */
+body.elbuka-gembok.foto-full #cover .pemicu .simpul{
+  --ka:58%;top:44%;width:34%;margin-left:-17%;height:13px;
+  -webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px)}
+body.elbuka-gembok.foto-full #cover .pemicu .simpul::before{background:color-mix(in srgb,
+  color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 55%,#5a4320) var(--ka),transparent)}
+body.elbuka-gembok.foto-full #cover .pemicu .simpul::after{--ka:66%;
+  -webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px)}
 body.elbuka-gembok.foto-full #cover .pemicu .el2{
   top:calc(15% + 19%);width:10px;height:21px;margin-left:-5px;border-radius:0 0 6px 6px}
 /* kunci emas di bawah gembok */
@@ -1464,7 +1556,11 @@ body.elbuka-gembok.foto-full #cover .pemicu .p-hint{top:auto;left:50%;bottom:18p
   opacity:.92;text-shadow:0 1px 8px rgba(0,0,0,.75)}
 /* Teks cover di belakang kartu baru muncul setelah kartu terbuka. */
 body.elbuka-gembok.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}
-body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.4s both}
+body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 2.15s both}
+/* Gembok: tahan cover sedikit lebih lama (sampai 1.55s) supaya seluruh
+   animasi kunci (1.75s: naik → masuk → putar) selesai dulu sebelum cover
+   memudar. Tanpa ini cover sudah hilang di 1.35s dan kuncinya "terpotong". */
+body.elbuka-gembok.opened #cover{transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .5s ease 1.55s,visibility 0s linear 2.05s}
 body.elbuka-gembok.foto-full:not(.opened) #cover .geser-hint{display:none}
 body.elbuka-gembok.opened #cover .pemicu .p-kulit,
 body.elbuka-gembok.opened #cover .pemicu .p-hint{opacity:0;transition:opacity .3s ease}

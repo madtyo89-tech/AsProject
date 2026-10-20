@@ -1569,11 +1569,17 @@ def cek_kartu_katalog():
     lapor("ok" if selendang else "masalah",
           "undangan.html: selendang hanya menutup bagian atas & tembus pandang, jadi foto + teks cover tetap terlihat")
     gembok = ("body.elbuka-gembok.foto-full #cover .pemicu{" in live
-              and "width:min(340px,86%);height:min(440px,64%);" in live
+              and "width:min(340px,86%);height:min(440px,64%)" in live
               and "body.elbuka-gembok.foto-full #cover .pemicu .p-kulit{left:24px;right:24px;" in live
-              and "body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.4s both}" in live)
+              and "body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 2.15s both}" in live)
     lapor("ok" if gembok else "masalah",
           "undangan.html: gembok foto penuh = kartu foto besar berisi nama & tanggal + petunjuk di dalam kartu")
+    gembok_kaca = ("body.elbuka-gembok #cover .pemicu .el{--ga:54%;--gb:34%;--gc:46%;" in live
+                   and "body.elbuka-gembok #cover .pemicu .simpul{--ka:78%;" in live
+                   and "animation:kunciMasuk 1.75s linear forwards" in live
+                   and "opacity .5s ease 1.55s,visibility 0s linear 2.05s}" in live)
+    lapor("ok" if gembok_kaca else "masalah",
+          "undangan.html: gembok kaca (badan & kunci tembus) + animasi kunci per-segmen, cover ditahan sampai kunci selesai")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
         return

@@ -73,7 +73,7 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (43 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (45 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
@@ -131,7 +131,22 @@ foto.
   petunjuk "Ketuk gembok untuk membuka" dipindah **ke dalam kartu** — dulu
   melayang di bawah gembok dan menimpa nama.
 - Teks cover di belakang kartu disembunyikan sampai gembok terbuka.
-- Gembok tanpa foto penuh tidak berubah.
+- **Gemboknya transparan**: badan gembok memakai kaca ber-alpha
+  (`--ga/--gb/--gc` = 54/34/46%, di mode foto penuh 26/14/22%) + kilau +
+  `backdrop-filter` tipis, dan kunci memakai alpha `--ka` (78% / 58%).
+  Jadi foto mempelai di balik gembok tetap terlihat — tidak lagi "kepotong"
+  bidang emas pekat.
+- **Animasi kunci dibuat mulus**: `kunciMasuk` kini 1.75 s dengan easing
+  per-segmen (angkat → naik → masuk lubang → putar 64° → menguar), bukan
+  lagi tiga potongan yang "patah". Cover digeser mundur
+  (`opacity .5s ease 1.55s`, `visibility` 2.05 s) supaya seluruh animasi
+  kunci selesai lebih dulu, dan teks cover baru muncul di 2.15 s.
+- **Shackle** berporos di kaki kiri (`transform-origin:bottom left`) dan
+  membuka `-46°`, jadi tidak terlempar keluar kartu.
+- Gembok tanpa foto penuh: diperkecil (150×206 px), dibuat kaca lebih pekat,
+  digeser ke bawah kartu teks, dan label "Ketuk gembok" disembunyikan
+  (sudah ada petunjuk "Geser kiri atau ketuk" di bawah) supaya tidak
+  menimpa paragraf.
 
 ### Selendang foto (gaya membuka `selendang`)
 

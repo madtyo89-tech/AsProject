@@ -196,6 +196,17 @@ async function render(d) {
     undSrc.includes('body.elbuka-buku #cover .pemicu::before{content:\'\';position:absolute;left:0;') &&
     undSrc.includes('body.elbuka-buku #cover .pemicu::after{content:\'\';position:absolute;top:7px;bottom:7px;right:0;width:7px;') &&
     undSrc.includes('clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)'));
+  t('gembok transparan: badan & kunci memakai kaca ber-alpha, bukan emas pekat',
+    undSrc.includes('body.elbuka-gembok #cover .pemicu .el{--ga:54%;--gb:34%;--gc:46%;') &&
+    undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) var(--ga),transparent),') &&
+    undSrc.includes('body.elbuka-gembok #cover .pemicu .simpul{--ka:78%;') &&
+    undSrc.includes('body.elbuka-gembok.foto-full #cover .pemicu .simpul{\n  --ka:58%;top:44%;width:34%;margin-left:-17%;height:13px;'));
+  t('animasi kunci dipecah per-segmen easing + cover ditahan sampai selesai',
+    undSrc.includes('body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.75s linear forwards}') &&
+    undSrc.includes('animation-timing-function:cubic-bezier(.45,0,.55,1)}') &&
+    undSrc.includes('0%  {transform:translateY(0)     rotate(-30deg) scale(1);') &&
+    undSrc.includes('opacity .5s ease 1.55s,visibility 0s linear 2.05s}') &&
+    undSrc.includes('body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 2.15s both}'));
   t('gembok foto penuh: kartu foto besar + nama tercetak (muat di 330x590)',
     undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop'||BUKA==='gembok')") &&
     undSrc.includes('body.elbuka-gembok.foto-full #cover .pemicu{\n  width:min(340px,86%);height:min(440px,64%);') &&
