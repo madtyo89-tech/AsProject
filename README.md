@@ -73,7 +73,7 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (41 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (42 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
@@ -139,12 +139,14 @@ foto penuh (mis. **Midnight Gold**) akibatnya parah: foto mempelai tertutup
 total dan teks cover yang z-index-nya di bawah amplop ikut hilang — cover
 tampak kosong gelap.
 
-- Di `body.elbuka-amplop.foto-full`, amplop tampil sebagai **kartu kaca
-  transparan** `min(330px, 82%) × min(430px, 62%)` di tengah foto. Lipatan
-  atas & badan amplop memakai tint aksen ber-alpha rendah
-  (`--fa/--fb/--fc` = 30/14/22% dan 26/12/20%) + kilau kaca +
-  `backdrop-filter` sangat tipis, jadi **foto mempelai tembus** di balik
-  amplop, bukan kotak gradasi pekat.
+- Di `body.elbuka-amplop.foto-full`, amplop tampil sebagai **kartu berisi
+  foto** `min(330px, 82%) × min(430px, 62%)` di tengah cover. Foto mempelai
+  (`--fotoSampul`) dicetak langsung sebagai latar kartu (`background-size:
+  cover`), jadi amplopnya memang **berisi foto** — bukan kotak kaca kosong —
+  dan ada bingkai cetak tipis di tepi dalamnya.
+- Lipatan atas & badan amplop memakai tint aksen ber-alpha rendah
+  (`--fa/--fb/--fc` = 26/10/18% dan 20/8/14%) + kilau kaca +
+  `backdrop-filter` sangat tipis, jadi foto di dalam amplop tetap jelas.
 - Di belakang blok nama hanya ada **scrim gradien tipis** (z-index di bawah
   teks, tidak menutupi foto) supaya nama tetap terbaca di foto terang.
 - Nama mempelai + tanggal dicetak di badan amplop (`.p-kulit`, berbagi gaya

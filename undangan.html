@@ -1323,11 +1323,21 @@ body.elbuka-amplop.foto-full #cover .pemicu{
   left:50%;top:50%;transform:translate(-50%,-50%);
   width:min(330px,82%);height:min(430px,62%);
   border-radius:12px;perspective:1500px;
+  /* Foto mempelai DICETAK di dalam amplop: foto menjadi isi kartu amplop
+     (tajam & penuh, bukan sekadar tembus dari latar halaman), jadi amplopnya
+     benar-benar terasa berisi foto — bukan kotak kaca kosong. */
+  background-color:color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 34%,#1a0e08);
+  background-image:var(--fotoSampul,none);
+  background-size:cover;background-position:center 28%;background-repeat:no-repeat;
   box-shadow:0 30px 70px rgba(8,5,3,.6),inset 0 0 0 1px rgba(255,255,255,.32)}
+/* Bingkai cetak tipis di tepi dalam amplop. */
+body.elbuka-amplop.foto-full #cover .pemicu::before{content:'';position:absolute;inset:6px;
+  border-radius:8px;pointer-events:none;z-index:3;
+  box-shadow:inset 0 0 0 1px rgba(255,253,247,.55),inset 0 0 0 4px rgba(255,253,247,.14)}
 /* Amplop KACA: tint aksen ber-alpha rendah (12-30%) + kilau kaca, jadi foto
    mempelai di balik lipatan & badan amplop tetap terlihat. Kadar alpha
    disimpan di variabel --fa/--fb/--fc agar mudah disetel. */
-body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:30%;--fb:14%;--fc:22%;
+body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:26%;--fb:10%;--fc:18%;
   height:52%;
   background-image:
     linear-gradient(180deg,rgba(255,255,255,.26) 0%,rgba(255,255,255,.06) 26%,rgba(255,255,255,0) 55%,rgba(0,0,0,.10) 100%),
@@ -1337,7 +1347,7 @@ body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:30%;--fb:14%;--fc:22%;
       color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fc),transparent));
   -webkit-backdrop-filter:blur(.8px) saturate(1.04);backdrop-filter:blur(.8px) saturate(1.04);
   box-shadow:0 8px 22px rgba(20,10,4,.2),inset 0 0 0 1px rgba(255,255,255,.3)}
-body.elbuka-amplop.foto-full #cover .pemicu .el2{--fa:26%;--fb:12%;--fc:20%;
+body.elbuka-amplop.foto-full #cover .pemicu .el2{--fa:20%;--fb:8%;--fc:14%;
   height:48%;
   background-image:
     linear-gradient(180deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.03) 22%,rgba(0,0,0,.08) 62%,rgba(0,0,0,.20) 100%),

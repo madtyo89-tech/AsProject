@@ -1556,7 +1556,8 @@ def cek_kartu_katalog():
           "undangan.html: gerbang dua panel simetris (lebar 50%, radius & poros mirror) memakai separuh foto yang menyatu")
     amplop = ("body.elbuka-amplop.foto-full #cover .pemicu{" in live
               and "width:min(330px,82%);height:min(430px,62%);" in live
-              and "body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:30%;--fb:14%;--fc:22%;" in live
+              and "body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:26%;--fb:10%;--fc:18%;" in live
+              and "background-image:var(--fotoSampul,none);" in live
               and "body.elbuka-amplop.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}" in live
               and "body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.4s both}" in live)
     lapor("ok" if amplop else "masalah",

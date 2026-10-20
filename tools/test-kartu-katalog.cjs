@@ -261,11 +261,15 @@ async function render(d) {
   t('amplop foto penuh tampil sebagai kartu kaca di tengah, bukan full layar',
     undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu{\n  left:50%;top:50%;transform:translate(-50%,-50%);') &&
     undSrc.includes('width:min(330px,82%);height:min(430px,62%);') &&
-    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:30%;--fb:14%;--fc:22%;'));
+    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:26%;--fb:10%;--fc:18%;'));
+  t('foto mempelai dicetak DI DALAM amplop (bukan kartu kaca kosong)',
+    undSrc.includes('background-image:var(--fotoSampul,none);') &&
+    undSrc.includes('background-size:cover;background-position:center 28%;background-repeat:no-repeat;') &&
+    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu::before{content:\'\';position:absolute;inset:6px;'));
   t('lipatan & badan amplop memakai tint kaca (alpha rendah), bukan gradasi pekat',
     undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fa),transparent),') &&
     undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fb),transparent) 60%,') &&
-    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .el2{--fa:26%;--fb:12%;--fc:20%;') &&
+    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .el2{--fa:20%;--fb:8%;--fc:14%;') &&
     !undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 62%,rgba(255,255,255,.42))'));
   t('nama mempelai + tanggal + petunjuk tercetak di badan amplop',
     undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop')") &&
