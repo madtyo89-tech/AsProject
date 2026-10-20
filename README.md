@@ -73,7 +73,7 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (34 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (37 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
@@ -113,6 +113,27 @@ Gaya membuka **Gerbang** sekarang juga memakai **foto mempelai** dan sudah
   menjadi teks hantu di atas konten.
 - Bila undangan tidak punya foto, panel kembali ke gradasi aksen — tidak ada
   bidang kosong.
+
+### Amplop foto (gaya membuka `amplop`)
+
+Dulu amplop melebar **100% layar** dengan dua bidang gradasi pekat. Di mode
+foto penuh (mis. **Midnight Gold**) akibatnya parah: foto mempelai tertutup
+total dan teks cover yang z-index-nya di bawah amplop ikut hilang — cover
+tampak kosong gelap.
+
+- Di `body.elbuka-amplop.foto-full`, amplop tampil sebagai **kartu kaca**
+  `min(330px, 82%) × min(430px, 62%)` di tengah foto: lipatan atas/bawah
+  memakai aksen transparan + `backdrop-filter`, tepi kartu tetap terlihat,
+  foto dari dada ke atas tetap utuh.
+- Nama mempelai + tanggal dicetak di badan amplop (`.p-kulit`, berbagi gaya
+  dengan buku & gerbang), dan petunjuk "Ketuk amplop untuk membuka" dipindah
+  ke dalam badan amplop.
+- Teks cover di belakangnya disembunyikan selama amplop tertutup. Karena
+  tema VIP memasang animasi masuk `vipZoom` (fill `both`, memegang
+  `opacity:1`), penyembunyian memakai `!important`; saat dibuka teks muncul
+  lewat `@keyframes bdfrAmplop` bertunda 0.9 s (bukan transisi) supaya nama
+  tidak jadi "teks hantu" di atas isi undangan.
+- Amplop tanpa foto penuh tidak berubah (tetap amplop penuh layar).
 
 ### Pita transparan (gaya membuka `pita`)
 

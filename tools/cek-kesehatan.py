@@ -1542,8 +1542,8 @@ def cek_kartu_katalog():
           "undangan.html: mode kartu menyembunyikan pemicu buka + kelas sesi kartu-demo bertahan")
     buku = ("const fotoSampul=fotoUtama?`--fotoSampul:url(" in live
             and "var(--fotoSampul,none)," in live
-            and "const bukuKulit=(BUKA==='buku'||BUKA==='gerbang')" in live
-            and "body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0;pointer-events:none}" in live)
+            and "const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop')" in live
+            and "body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}" in live)
     gerbang = ("body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{top:0;bottom:0;width:50%;" in live
                and "background-position:center,left center,center;transform-origin:left center;" in live
                and "background-position:center,right center,center;transform-origin:right center;" in live
@@ -1554,6 +1554,12 @@ def cek_kartu_katalog():
           "undangan.html: sampul buku & gerbang memakai foto mempelai (--fotoSampul) + judul tercetak + teks cover disembunyikan saat tertutup")
     lapor("ok" if gerbang else "masalah",
           "undangan.html: gerbang dua panel simetris (lebar 50%, radius & poros mirror) memakai separuh foto yang menyatu")
+    amplop = ("body.elbuka-amplop.foto-full #cover .pemicu{" in live
+              and "width:min(330px,82%);height:min(430px,62%);" in live
+              and "body.elbuka-amplop.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}" in live
+              and "body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .5s ease .9s both}" in live)
+    lapor("ok" if amplop else "masalah",
+          "undangan.html: amplop foto penuh tampil sebagai kartu kaca di tengah (nama tercetak, teks cover disembunyikan sampai terbuka)")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
         return

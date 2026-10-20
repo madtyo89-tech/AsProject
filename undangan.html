@@ -1278,7 +1278,7 @@ body.elbuka-buku #cover .pemicu .simpul{left:auto;right:20px;top:0;width:24px;he
   clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);
   box-shadow:0 6px 14px rgba(0,0,0,.32)}
 /* Judul di kulit buku: nama mempelai + tanggal. */
-body.elbuka-buku #cover .pemicu .p-kulit,body.elbuka-gerbang #cover .pemicu .p-kulit{position:absolute;z-index:5;
+body.elbuka-buku #cover .pemicu .p-kulit,body.elbuka-gerbang #cover .pemicu .p-kulit,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit{position:absolute;z-index:5;
   display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center;pointer-events:none;
   color:#fff;font-family:var(--ft);
   text-shadow:0 2px 18px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.55)}
@@ -1286,11 +1286,11 @@ body.elbuka-buku #cover .pemicu .p-kulit{left:22px;right:16px;bottom:56px}
 /* min 120px: di frame pendek (lightbox 390x520 & 17vh=88px) nama tidak
    boleh turun sampai menabrak petunjuk "Ketuk gerbang" di bawahnya. */
 body.elbuka-gerbang #cover .pemicu .p-kulit{left:26px;right:26px;bottom:clamp(120px,17vh,168px)}
-body.elbuka-buku #cover .pemicu .p-kulit-orn,body.elbuka-gerbang #cover .pemicu .p-kulit-orn{font-style:normal;margin-bottom:5px;font-size:11px;letter-spacing:7px;
+body.elbuka-buku #cover .pemicu .p-kulit-orn,body.elbuka-gerbang #cover .pemicu .p-kulit-orn,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-orn{font-style:normal;margin-bottom:5px;font-size:11px;letter-spacing:7px;
   opacity:.9;color:color-mix(in srgb,var(--accent-cover,var(--accent,#D9BE86)) 55%,#fff)}
-body.elbuka-buku #cover .pemicu .p-kulit b,body.elbuka-gerbang #cover .pemicu .p-kulit b{font-size:clamp(16px,5.4vw,21px);line-height:1.12;font-weight:600;letter-spacing:.01em}
-body.elbuka-buku #cover .pemicu .p-kulit-amp,body.elbuka-gerbang #cover .pemicu .p-kulit-amp{font-style:italic;margin:1px 0;font-size:13px;opacity:.9}
-body.elbuka-buku #cover .pemicu .p-kulit em,body.elbuka-gerbang #cover .pemicu .p-kulit em{font-style:normal;margin-top:7px;font-family:var(--fb,inherit);
+body.elbuka-buku #cover .pemicu .p-kulit b,body.elbuka-gerbang #cover .pemicu .p-kulit b,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit b{font-size:clamp(16px,5.4vw,21px);line-height:1.12;font-weight:600;letter-spacing:.01em}
+body.elbuka-buku #cover .pemicu .p-kulit-amp,body.elbuka-gerbang #cover .pemicu .p-kulit-amp,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-amp{font-style:italic;margin:1px 0;font-size:13px;opacity:.9}
+body.elbuka-buku #cover .pemicu .p-kulit em,body.elbuka-gerbang #cover .pemicu .p-kulit em,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit em{font-style:normal;margin-top:7px;font-family:var(--fb,inherit);
   font-size:9px;letter-spacing:.26em;text-transform:uppercase;opacity:.92}
 body.elbuka-buku #cover .kt-burst{display:block}
 /* Buku terbuka dari PUNGGUNGNYA (tepi kiri), bukan berputar di tengah. */
@@ -1311,6 +1311,54 @@ body.elbuka-amplop.opened #cover .pemicu .el{transform:rotateX(-178deg);transiti
 body.elbuka-amplop.opened #cover .pemicu .simpul{transform:translate(-50%,-50%) scale(1.4) rotate(20deg);opacity:0;transition:transform .6s ease,opacity .6s ease .1s}
 body.elbuka-amplop.opened #cover .pemicu .el2{opacity:0;transition:opacity .8s .3s}
 body.elbuka-amplop.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .4s both}
+
+/* --- Amplop + FOTO PENUH (mis. Midnight Gold) ---
+   Dulu amplopnya melebar 100% layar dengan dua bidang gradasi pekat: foto
+   mempelai tertutup seluruhnya dan teks cover (z-index di bawah amplop)
+   ikut hilang — cover tampak kosong. Sekarang amplop tampil sebagai kartu
+   kaca di tengah foto: tepinya terlihat, isi foto tembus, dan nama mempelai
+   + tanggal dicetak di badannya. */
+body.elbuka-amplop #cover .pemicu .p-kulit{display:none}
+body.elbuka-amplop.foto-full #cover .pemicu{
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(330px,82%);height:min(430px,62%);
+  border-radius:12px;perspective:1500px;
+  box-shadow:0 30px 70px rgba(8,5,3,.6),inset 0 0 0 1px rgba(255,255,255,.32)}
+body.elbuka-amplop.foto-full #cover .pemicu .el{height:52%;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 62%,rgba(255,255,255,.42)),
+    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 34%,rgba(20,12,6,.5)));
+  -webkit-backdrop-filter:blur(2px) saturate(1.05);backdrop-filter:blur(2px) saturate(1.05);
+  box-shadow:0 8px 22px rgba(20,10,4,.35),inset 0 0 0 1px rgba(255,255,255,.34)}
+body.elbuka-amplop.foto-full #cover .pemicu .el2{height:48%;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 30%,rgba(18,11,6,.46)),
+    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 22%,rgba(14,9,5,.62)));
+  -webkit-backdrop-filter:blur(2px) saturate(1.05);backdrop-filter:blur(2px) saturate(1.05);
+  border-radius:0 0 12px 12px;
+  box-shadow:inset 0 20px 40px rgba(20,12,6,.28),inset 0 0 0 1px rgba(255,255,255,.22)}
+body.elbuka-amplop.foto-full #cover .pemicu .simpul{width:64px;height:64px;margin-left:-32px;margin-top:-32px}
+body.elbuka-amplop.foto-full #cover .pemicu .p-kulit{left:26px;right:26px;
+  bottom:clamp(56px,9vh,90px);z-index:6}
+body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-orn{display:none}
+/* Petunjuk "Ketuk amplop": bawaan menempel 14px di BAWAH pemicu, dan karena
+   amplop kini kartu di tengah, labelnya jatuh di atas foto gelap — tak
+   terbaca. Dipindah ke dalam badan amplop, di bawah tanggal. */
+body.elbuka-amplop.foto-full #cover .pemicu .p-hint{top:auto;left:50%;bottom:22px;
+  transform:translateX(-50%);z-index:6;color:#fff;font-size:9.5px;letter-spacing:.18em;
+  opacity:.92;text-shadow:0 1px 8px rgba(0,0,0,.7)}
+/* Teks cover di belakang amplop baru muncul setelah amplop selesai terbuka.
+   Tidak bisa pakai transisi: animasi masuk VIP (vipZoom, fill both) memegang
+   opacity:1 dan langsung terlihat begitu kelas .opened dipasang, sehingga nama
+   sempat jadi "teks hantu" di atas isi undangan. Dipakai keyframe bertunda. */
+body.elbuka-amplop.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}
+body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .5s ease .9s both}
+@keyframes bdfrAmplop{from{opacity:0}to{opacity:1}}
+/* Teks cetak di badan amplop + petunjuknya ikut memudar saat amplop dibuka,
+   supaya tidak jadi "teks hantu" di atas isi undangan. */
+body.elbuka-amplop.opened #cover .pemicu .p-kulit,
+body.elbuka-amplop.opened #cover .pemicu .p-hint{opacity:0;transition:opacity .3s ease}
+body.elbuka-amplop.foto-full:not(.opened) #cover .geser-hint{display:none}
 
 /* --- Gembok antik: kunci miring naik masuk lubang,
    muter 90°, shackle terbuka, burst cahaya emas,
@@ -1407,7 +1455,9 @@ body.elbuka-buku #cover .bdfr{transition:opacity .65s ease .1s}
 /* Gerbang: tunda isi cover sampai panel selesai mengayun, supaya nama +
    countdown tidak tembus di atas gerbang yang masih setengah terbuka. */
 body.elbuka-gerbang #cover .bdfr{transition:opacity .55s ease .55s}
-body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0;pointer-events:none}
+/* `!important` perlu: animasi masuk VIP (vipZoom, fill both) memegang
+   opacity:1 dan mengalahkan deklarasi biasa. */
+body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}
 body.elbuka-buku:not(.opened) #cover .geser-hint,body.elbuka-gerbang:not(.opened) #cover .geser-hint{display:none}
 body.elbuka-amplop #cover .pemicu .p-hint::after{content:'Ketuk amplop untuk membuka'}
 body.elbuka-gembok #cover .pemicu .p-hint::after{content:'Ketuk gembok untuk membuka'}
@@ -3973,7 +4023,7 @@ function boot(draft){
  /* Kulit buku & gerbang foto: nama mempelai + tanggal dicetak di sampul, jadi
     terlihat seperti photo-book/gerbang sungguhan — bukan bidang warna kosong
     yang menutupi nama di belakangnya. */
- const bukuKulit=(BUKA==='buku'||BUKA==='gerbang')
+ const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop')
   ?`<span class="p-kulit" aria-hidden="true"><i class="p-kulit-orn">${esc(tplF.deco||'')}</i><b>${esc(titleMain)}</b>${titleSub?`<i class="p-kulit-amp">&amp;</i><b>${esc(titleSub)}</b>`:''}<em>${esc(dateStr||'—')}</em></span>`
   :'';
  h+=`<div class="geser-hint">‹ Geser kiri atau ketuk untuk membuka</div>

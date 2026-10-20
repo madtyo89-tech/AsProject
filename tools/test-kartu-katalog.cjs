@@ -196,12 +196,12 @@ async function render(d) {
     undSrc.includes('body.elbuka-buku #cover .pemicu::before{content:\'\';position:absolute;left:0;') &&
     undSrc.includes('body.elbuka-buku #cover .pemicu::after{content:\'\';position:absolute;top:7px;bottom:7px;right:0;width:7px;') &&
     undSrc.includes('clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)'));
-  t('judul (nama mempelai + tanggal) tercetak di kulit buku & gerbang',
-    undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang')") &&
+  t('judul (nama mempelai + tanggal) tercetak di kulit buku, gerbang & amplop',
+    undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop')") &&
     undSrc.includes('<i class="p-kulit-orn">') &&
     undSrc.includes('${bukuKulit}<span class="p-hint"'));
   t('teks cover di belakang buku/gerbang disembunyikan selama tertutup',
-    undSrc.includes('body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0;pointer-events:none}') &&
+    undSrc.includes('body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}') &&
     undSrc.includes('body.elbuka-buku:not(.opened) #cover .geser-hint,body.elbuka-gerbang:not(.opened) #cover .geser-hint{display:none}'));
   t('buku terbuka dari punggungnya (transform-origin kiri)',
     undSrc.includes('body.elbuka-buku.opened #cover .pemicu{transform-origin:left center;'));
@@ -239,6 +239,20 @@ async function render(d) {
     undSrc.includes('body.elbuka-pita.foto-full #cover .pemicu .el{top:46px;height:20px;border-radius:10px;') &&
     undSrc.includes('--pa:24%;--pb:12%;--pc:20%;') &&
     undSrc.includes('body.elbuka-pita.foto-full #cover .pemicu .simpul{top:41px;width:40px;height:40px;'));
+  /* ------------------------------------------------------------------ *
+   * 8. Amplop: kartu kaca di tengah foto (bukan menutup seluruh layar)
+   * ------------------------------------------------------------------ */
+  t('amplop foto penuh tampil sebagai kartu kaca di tengah, bukan full layar',
+    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu{\n  left:50%;top:50%;transform:translate(-50%,-50%);') &&
+    undSrc.includes('width:min(330px,82%);height:min(430px,62%);') &&
+    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .el{height:52%;'));
+  t('nama mempelai + tanggal + petunjuk tercetak di badan amplop',
+    undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop')") &&
+    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .p-kulit{left:26px;right:26px;') &&
+    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .p-hint{top:auto;left:50%;bottom:22px;'));
+  t('teks cover di belakang amplop disembunyikan (menang atas animasi VIP)',
+    undSrc.includes('body.elbuka-amplop.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}') &&
+    undSrc.includes('body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .5s ease .9s both}'));
   t('foto penuh + panel jendela: panel putih hilang, foto mempelai kelihatan',
     undSrc.includes('body.foto-full #cover .cvband{\n  background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}') &&
     undSrc.includes('body.foto-full #cover .cvband h1,body.foto-full #cover .cvband .amp,') &&
