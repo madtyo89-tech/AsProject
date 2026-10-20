@@ -1343,11 +1343,58 @@ def cek_robots_sitemap():
         lapor("ok" if os.path.exists(rel) else "masalah",
               f"sitemap: {rel} " + ("ada" if os.path.exists(rel) else "TIDAK ADA di repo"))
     peta.setdefault("index.html", "https://asproject.my.id/")
-    for wajib in ("index.html", "undangan.html", "katalog-demo/index.html"):
+    for wajib in ("index.html", "katalog-demo/perbandingan-tema.html",
+                  "demo/wedding-premium.html"):
         lapor("ok" if wajib in peta else "masalah", f"sitemap: memuat {wajib}")
-    for privat in ("master.html", "scan.html", "checkin.html", "404.html", "laporan-audit.html"):
+    for privat in ("master.html", "scan.html", "checkin.html", "404.html",
+                   "laporan-audit.html", "undangan.html", "studio.html",
+                   "katalog-demo/index.html"):
         lapor("ok" if privat not in peta else "masalah",
               f"sitemap: {privat} tidak didaftarkan (halaman privat/utility)")
+
+    # [31b] Setiap halaman publik wajib punya canonical + description sendiri.
+    # Tanpa ini Google melihat 20+ salinan mirip tanpa penanda halaman utama
+    # (penyebab situs baru sulit masuk indeks; lihat README 2026-10-20).
+    tanpa_canonical, tanpa_desc, canonical_salah = [], [], []
+    for rel, url in peta.items():
+        if not os.path.exists(rel):
+            continue
+        isi = baca(rel)
+        m = re.search(r'<link\s+rel="canonical"\s+href="([^"]+)"', isi, re.I)
+        if not m:
+            tanpa_canonical.append(rel)
+        elif m.group(1).rstrip("/") != url.rstrip("/"):
+            canonical_salah.append(f"{rel} → {m.group(1)}")
+        if not re.search(r'<meta\s+name="description"\s+content="[^"]{40,}"', isi, re.I):
+            tanpa_desc.append(rel)
+    lapor("ok" if not tanpa_canonical else "masalah",
+          f"semua {len(peta)} halaman sitemap punya <link rel=canonical>"
+          if not tanpa_canonical else "tanpa canonical: " + ", ".join(tanpa_canonical[:6]))
+    lapor("ok" if not canonical_salah else "masalah",
+          "canonical tiap halaman cocok dengan URL di sitemap"
+          if not canonical_salah else "canonical tidak cocok: " + " | ".join(canonical_salah[:4]))
+    lapor("ok" if not tanpa_desc else "masalah",
+          "semua halaman sitemap punya meta description (≥40 karakter)"
+          if not tanpa_desc else "tanpa description: " + ", ".join(tanpa_desc[:6]))
+
+    # [31c] Nomor WhatsApp contoh (6281234567890) pernah ikut terbit di empat
+    # halaman katalog-demo, jadi pengunjung yang menekan "Chat" tidak sampai ke
+    # pemilik. Berkas di references/ dikecualikan (salinan asli Drive).
+    nyasar = []
+    for akar, _, berkas in os.walk(ROOT):
+        if any(x in akar for x in (os.sep + ".git", os.sep + "references")):
+            continue
+        for nama in berkas:
+            if nama.endswith((".html", ".js", ".cjs", ".xml", ".webmanifest")):  # .md = dokumentasi, boleh menyebut
+                pth = os.path.join(akar, nama)
+                try:
+                    if "6281234567890" in open(pth, encoding="utf-8", errors="ignore").read():
+                        nyasar.append(os.path.relpath(pth, ROOT))
+                except OSError:
+                    pass
+    lapor("ok" if not nyasar else "masalah",
+          "tidak ada nomor WhatsApp contoh (6281234567890) di halaman terbit"
+          if not nyasar else "nomor WA contoh masih ada di: " + ", ".join(nyasar[:6]))
 
 
 # ------------------------------------------- 32. manifest PWA
