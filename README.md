@@ -151,30 +151,32 @@ foto.
 ### Kotak cincin (gaya membuka `kotak`)
 
 Dulu kotak cuma **dua balok cokelat datar** dengan dua lingkaran garis tipis
-yang mengambang — tidak terlihat seperti kotak cincin, dan di frame pendek
-kotaknya menutupi judul/tanggal.
+yang mengambang; percobaan berikutnya membuat tutupnya terbuka sejak awal dan
+teks cover disembunyikan sampai kotaknya hilang.
 
-- Kotak kini **realistis**: badan beludru bertekstur (`repeating-linear-
-  gradient`) dengan bibir depan tebal, bantal beludru di dalamnya (dua lekuk
-  tempat cincin), tutup beludru yang **terbuka separuh**
-  (`rotateX(-26deg)`, poros di engsel bawah), rusuk emas di tepi tutup, dan
-  bayangan alas di bawah kotak.
-- Dua cincin emas: **solitaire** (cincin ber-border gradasi emas + permata
-  brilliant-cut di puncak) dan **band polos** yang sedikit lebih besar &
-  miring ke arah lain. Saat dibuka, muncul cahaya hangat dari dalam kotak
-  dan cincinnya menyala.
-- Saat dibuka: tutup terangkat penuh (`rotateX(-118deg)`) lalu seluruh kotak
-  naik & memudar dalam 0.6 s (mulai 0.42 s) — selesai sebelum isi undangan
-  muncul, jadi tidak ada "kotak hantu" di atas galeri.
-- Skala adaptif `--k`: frame pendek (`max-height:680px`, mis. lightbox
-  330×590) memakai `--k:.72; top:44%`; cover non-foto-penuh `--k:.78;
-  top:38%` supaya judul & tanggal tidak tertutup. Label "Ketuk kotak"
-  disembunyikan di cover non-foto-penuh (sudah ada petunjuk "Geser kiri
-  atau ketuk").
-- Di mode foto penuh, teks cover (nama/tanggal/countdown) disembunyikan
-  selama kotak tertutup — kalau tidak, kotak cincin menimpa nama mempelai
-  (terlihat pada **Telur Emas**) — lalu muncul halus setelah kotak naik
-  (1.35 s).
+- Kotak kini **mulai tertutup** dan **duduk di bagian bawah cover** (bukan di
+  tengah menimpa nama). Nama, "Save The Date", tanggal, dan countdown selalu
+  tampil: `.bdfr` diberi `margin-bottom` (foto penuh
+  `clamp(190px,27vh,238px)`, cover biasa `clamp(170px,25vh,235px)`), dan aturan
+  yang menyembunyikan teks selama kotak tertutup sudah **dihapus**.
+- Bentuknya kotak cincin beludru: tutup berkilau (dome highlight + sisi gelap
+  + garis tenun halus), rusuk emas di tepi bawah tutup, **bibir badan** yang
+  terlihat di bawah tutup, dan **kait emas** kecil di bibir depan.
+  Di dalamnya bantal beludru dengan dua lekuk tempat cincin.
+- Dua cincin emas: **solitaire** (band gradasi emas + permata brilliant-cut)
+  dan **band polos** yang sedikit lebih besar & miring ke arah lain. Keduanya
+  `opacity:0` selama kotak tertutup supaya tidak mengintip lewat celah tutup.
+- Saat diketuk: tutup terangkat ke **atas** mengitari engsel belakang
+  (`transform-origin:50% 0`, `rotateX(-122deg)`, 0.82 s), **cahaya emas**
+  menyala dari bantal (`kotakCahaya`), cincin muncul & menyala. Setelah adegan
+  itu (mulai 0.95 s) seluruh kotak naik & memudar 0.62 s.
+- Cover ditahan lebih lama (`opacity .55s ease 1.32s, visibility 1.88s`) supaya
+  bukaan kotak + cahaya emas sempat terlihat; dulu cover sudah memudar di
+  0.78 s sehingga adegannya nyaris tak tampak.
+- Skala adaptif `--k`: `1` bawaan, `.88` (≤760 px), `.74` (≤680 px, mis.
+  lightbox 330×590), `.64` (≤600 px). Cover non-foto-penuh memakai `--k:.7`
+  dan juga duduk di bawah (`bottom:9%`), label "Ketuk kotak" tetap tampil
+  karena posisinya di atas kotak.
 
 ### Selendang foto (gaya membuka `selendang`)
 

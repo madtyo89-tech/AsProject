@@ -199,23 +199,26 @@ async function render(d) {
   /* ------------------------------------------------------------------ *
    * 7d. Kotak cincin: realistis (tutup miring + 2 cincin + bantal)
    * ------------------------------------------------------------------ */
-  t('kotak cincin realistis: tutup beludru miring + bantal dalam + 2 cincin emas',
-    undSrc.includes('transform:perspective(760px) rotateX(-26deg);') &&
-    undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A87E74)) 64%,#3a1d22),') &&
+  t('kotak cincin realistis: tutup beludru berkilau + bantal dalam + 2 cincin emas',
+    undSrc.includes('transform:perspective(760px) rotateX(0deg);') &&
+    undSrc.includes('radial-gradient(78% 140% at 32% -26%,rgba(255,255,255,.5)') &&
     undSrc.includes("body.elbuka-kotak #cover .pemicu .simpul::before{content:'';position:absolute;left:50%;top:-13px;") &&
     undSrc.includes('clip-path:polygon(50% 0,90% 36%,70% 100%,30% 100%,10% 36%);') &&
     undSrc.includes("body.elbuka-kotak #cover .pemicu .simpul::after{content:'';position:absolute;left:52px;top:-2px;"));
-  t('kotak cincin: ukuran menyesuaikan frame pendek & tidak menutupi judul',
-    undSrc.includes('transform:translate(-50%,-50%) scale(var(--k));') &&
-    undSrc.includes('@media (max-height:680px){ body.elbuka-kotak #cover .pemicu{--k:.72;top:44%} }') &&
-    undSrc.includes('body.elbuka-kotak:not(.foto-full) #cover .pemicu{--k:.78;top:38%}') &&
-    undSrc.includes('body.elbuka-kotak:not(.foto-full) #cover .pemicu .p-hint{display:none}'));
-  t('kotak cincin: teks cover disembunyikan selama kotak tertutup',
-    undSrc.includes('body.elbuka-kotak.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}') &&
-    undSrc.includes('body.elbuka-kotak.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.35s both}'));
-  t('kotak cincin: kotak naik & memudar sebelum isi undangan muncul',
-    undSrc.includes('body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .6s cubic-bezier(.4,0,.2,1) .42s both}') &&
-    undSrc.includes('body.elbuka-kotak.opened #cover .pemicu .el{transform:perspective(760px) rotateX(-118deg)}'));
+  t('kotak cincin: duduk di bawah cover & menyesuaikan frame pendek',
+    undSrc.includes('top:auto;bottom:6%;') &&
+    undSrc.includes('@media (max-height:760px){ body.elbuka-kotak #cover .pemicu{--k:.88} }') &&
+    undSrc.includes('@media (max-height:680px){ body.elbuka-kotak #cover .pemicu{--k:.74} }') &&
+    undSrc.includes('body.elbuka-kotak:not(.foto-full) #cover .pemicu{--k:.7;top:auto;bottom:9%;'));
+  t('kotak cincin: teks cover SELALU tampil (tidak disembunyikan saat tertutup)',
+    undSrc.includes('body.elbuka-kotak.foto-full #cover .bdfr{margin-bottom:clamp(190px,27vh,238px)}') &&
+    !undSrc.includes('body.elbuka-kotak.foto-full:not(.opened) #cover .bdfr{opacity:0') &&
+    undSrc.includes('body.elbuka-kotak.foto-full #cover .std-label{color:#fff;'));
+  t('kotak cincin: tutup terangkat + cahaya emas, cover ditahan sampai adegan selesai',
+    undSrc.includes('body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .62s cubic-bezier(.4,0,.2,1) .95s both}') &&
+    undSrc.includes('transform:perspective(760px) rotateX(-122deg);') &&
+    undSrc.includes('@keyframes kotakCahaya{') &&
+    undSrc.includes('opacity .55s ease 1.32s,visibility 0s linear 1.88s'));
   t('gembok transparan: badan & kunci memakai kaca ber-alpha, bukan emas pekat',
     undSrc.includes('body.elbuka-gembok #cover .pemicu .el{--ga:54%;--gb:34%;--gc:46%;') &&
     undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) var(--ga),transparent),') &&

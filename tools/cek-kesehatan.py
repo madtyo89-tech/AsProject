@@ -1581,12 +1581,15 @@ def cek_kartu_katalog():
     lapor("ok" if gembok_kaca else "masalah",
           "undangan.html: gembok kaca (badan & kunci tembus) + animasi kunci per-segmen, cover ditahan sampai kunci selesai")
     kotak = ("body.elbuka-kotak #cover .pemicu{\n  --k:1;" in live
-             and "transform:perspective(760px) rotateX(-26deg);" in live
+             and "top:auto;bottom:6%;" in live
+             and "transform:perspective(760px) rotateX(0deg);" in live
              and "body.elbuka-kotak #cover .pemicu .simpul::before" in live
              and "clip-path:polygon(50% 0,90% 36%,70% 100%,30% 100%,10% 36%);" in live
-             and "body.elbuka-kotak.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.35s both}" in live)
+             and "body.elbuka-kotak.foto-full #cover .bdfr{margin-bottom:clamp(190px,27vh,238px)}" in live
+             and "body.elbuka-kotak.foto-full:not(.opened) #cover .bdfr{opacity:0" not in live
+             and "body.elbuka-kotak.opened #cover{transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .55s ease 1.32s,visibility 0s linear 1.88s}" in live)
     lapor("ok" if kotak else "masalah",
-          "undangan.html: kotak cincin realistis (tutup beludru miring, bantal, 2 cincin emas) + skala untuk frame pendek")
+          "undangan.html: kotak cincin tertutup di bawah cover + teks selalu tampil + bukaan cahaya emas")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
         return
