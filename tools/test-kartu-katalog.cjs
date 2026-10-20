@@ -229,10 +229,15 @@ async function render(d) {
    * 7. Pita: satin transparan (nama mempelai tidak tertutup)
    * ------------------------------------------------------------------ */
   t('pita memakai tint kaca transparan + backdrop blur, bukan satin pekat',
-    undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 54%,transparent)') &&
+    undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--pb),transparent) 42%') &&
+    undSrc.includes('--pa:46%;--pb:28%;--pc:40%') &&
     undSrc.includes('-webkit-backdrop-filter:blur(1px) saturate(1.12);backdrop-filter:blur(1px) saturate(1.12);') &&
-    undSrc.includes('inset 0 0 0 1px rgba(255,255,255,.38)') &&
+    undSrc.includes('body.elbuka-pita:not(.foto-full) #cover .pemicu .el{--pa:78%;--pb:54%;--pc:70%}') &&
     !undSrc.includes('body.elbuka-pita #cover .pemicu .el{left:0;top:42px;width:100%;height:34px;border-radius:17px;background:linear-gradient(180deg,color-mix'));
+  t('foto penuh + panel jendela: panel putih hilang, foto mempelai kelihatan',
+    undSrc.includes('body.foto-full #cover .cvband{\n  background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}') &&
+    undSrc.includes('body.foto-full #cover .cvband h1,body.foto-full #cover .cvband .amp,') &&
+    undSrc.includes('body.foto-full #cover .cvband .date{background:rgba(18,14,10,.5);border-color:rgba(255,255,255,.3)}'));
   t('label "Ketuk pita" disembunyikan agar tidak menimpa nama/countdown',
     undSrc.includes('body.elbuka-pita #cover .pemicu .p-hint{display:none}') &&
     undSrc.includes('@keyframes simpulDenyut{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}') &&

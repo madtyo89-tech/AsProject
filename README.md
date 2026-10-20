@@ -73,7 +73,7 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (32 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (33 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
@@ -122,6 +122,9 @@ tidak lagi tertutup bidang warna:
 - Dua pita memakai tint aksen ber-alpha (`color-mix(... transparent)`) +
   kilau satin, `backdrop-filter: blur(1px)` tipis, dan garis tepi kaca
   1px — masih berbentuk pita, tapi isi kartu di belakangnya terbaca.
+  Kadar alpha disimpan di variabel `--pa/--pb/--pc`: saat **foto penuh**
+  pitanya lebih bening (28-46%) supaya wajah mempelai tembus; tanpa foto
+  penuh pitanya kembali pekat (50-78%) supaya tetap jelas di atas kartu.
 - Simpul pita juga transparan dan diberi denyut halus
   (`simpulDenyut`, mati saat `prefers-reduced-motion`) sebagai penanda bisa
   diketuk.
@@ -129,6 +132,20 @@ tidak lagi tertutup bidang warna:
   pita selalu menimpa nama/countdown (paling parah di layar 390x844), dulu
   tidak terlihat karena pita pekat. Petunjuk "‹ Geser kiri atau ketuk untuk
   membuka" di kartu tetap tampil.
+
+### Panel "jendela" di mode foto penuh
+
+Cover model `sakura`/`batik` membungkus teksnya dengan panel `.cvband`
+(putih 78% + blur). Panel itu **menutupi foto mempelai** — dan karena mode
+foto penuh mewarnai judul jadi putih, nama malah nyaris tak terbaca di
+atasnya. Sekarang, khusus `body.foto-full`:
+
+- Panel `.cvband` dibuat **tanpa latar** (foto tampil utuh; teks dibantu
+  shadow + scrim gradien bawaan `.foto-full`).
+- Teks di dalamnya dikembalikan putih (`h1`, `.amp`, `.date`, `.kicker`,
+  `.std-label`, `.geser-hint`); `kicker`/`std-label` memakai aksen tema
+  yang dicampur putih, chip tanggal memakai kaca gelap.
+- Cover tanpa foto penuh tetap memakai panel kaca putih seperti semula.
 
 ## Alur membuat undangan di Studio
 
