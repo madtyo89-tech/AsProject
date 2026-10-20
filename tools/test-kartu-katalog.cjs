@@ -186,25 +186,44 @@ async function render(d) {
   /* ------------------------------------------------------------------ *
    * 5. Sampul BUKU memakai foto mempelai
    * ------------------------------------------------------------------ */
-  t('buku punya variabel foto sendiri (--bukuImg), tidak menumpang --bukaImg',
-    undSrc.includes("const bukuImg=fotoUtama?`--bukuImg:url(") &&
-    undSrc.includes("bukaImg,bukuImg].filter(Boolean).join(';')"));
+  t('buku & gerbang punya variabel foto sampul sendiri (--fotoSampul)',
+    undSrc.includes("const fotoSampul=fotoUtama?`--fotoSampul:url(") &&
+    undSrc.includes("bukaImg,fotoSampul].filter(Boolean).join(';')"));
   t('kulit buku memakai foto + scrim gelap agar judul terbaca',
-    undSrc.includes("var(--bukuImg,none),") &&
+    undSrc.includes("var(--fotoSampul,none),") &&
     undSrc.includes('background-size:100% 100%,cover,100% 100%;'));
   t('buku punya punggung, blok halaman, dan pita pembatas',
     undSrc.includes('body.elbuka-buku #cover .pemicu::before{content:\'\';position:absolute;left:0;') &&
     undSrc.includes('body.elbuka-buku #cover .pemicu::after{content:\'\';position:absolute;top:7px;bottom:7px;right:0;width:7px;') &&
     undSrc.includes('clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)'));
-  t('judul (nama mempelai + tanggal) tercetak di kulit buku',
-    undSrc.includes("const bukuKulit=BUKA==='buku'") &&
+  t('judul (nama mempelai + tanggal) tercetak di kulit buku & gerbang',
+    undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang')") &&
     undSrc.includes('<i class="p-kulit-orn">') &&
     undSrc.includes('${bukuKulit}<span class="p-hint"'));
-  t('teks cover di belakang buku disembunyikan selama buku tertutup',
-    undSrc.includes('body.elbuka-buku:not(.opened) #cover .bdfr{opacity:0;pointer-events:none}') &&
-    undSrc.includes('body.elbuka-buku:not(.opened) #cover .geser-hint{display:none}'));
+  t('teks cover di belakang buku/gerbang disembunyikan selama tertutup',
+    undSrc.includes('body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0;pointer-events:none}') &&
+    undSrc.includes('body.elbuka-buku:not(.opened) #cover .geser-hint,body.elbuka-gerbang:not(.opened) #cover .geser-hint{display:none}'));
   t('buku terbuka dari punggungnya (transform-origin kiri)',
     undSrc.includes('body.elbuka-buku.opened #cover .pemicu{transform-origin:left center;'));
+
+  /* ------------------------------------------------------------------ *
+   * 6. Gerbang: dua panel SIMETRIS + foto mempelai
+   * ------------------------------------------------------------------ */
+  t('gerbang: dua panel sama lebar dengan radius & poros yang mirror',
+    undSrc.includes('body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{top:0;bottom:0;width:50%;') &&
+    undSrc.includes('background-position:center,left center,center;transform-origin:left center;') &&
+    undSrc.includes('background-position:center,right center,center;transform-origin:right center;') &&
+    undSrc.includes('border-radius:clamp(56px,15vh,140px) 0 0 0}') &&
+    undSrc.includes('border-radius:0 clamp(56px,15vh,140px) 0 0}'));
+  t('gerbang: tiap panel menampilkan separuh foto (menyatu saat tertutup)',
+    undSrc.includes("var(--fotoSampul,none),") &&
+    undSrc.includes('background-size:100% 100%,200% 100%,100% 100%;'));
+  t('gerbang: nama + tanggal tercetak di panel, hint tetap di dalam layar',
+    undSrc.includes('body.elbuka-gerbang #cover .pemicu .p-kulit{left:26px;right:26px;bottom:clamp(120px,17vh,168px)}') &&
+    undSrc.includes('body.elbuka-gerbang #cover .pemicu .p-hint{top:auto;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));'));
+  t('gerbang: teks cetak memudar saat membuka (tidak jadi teks hantu)',
+    undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .p-kulit,') &&
+    undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .p-hint{opacity:0;transition:opacity .28s ease}'));
 
   /* model minimal + foto penuh tidak boleh menyembunyikan foto */
   t('cvl-minimal hanya menyembunyikan foto bila bukan foto-penuh',

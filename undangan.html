@@ -1128,13 +1128,39 @@ body.elbuka-tirai #cover .pemicu .el2{right:0;transform-origin:right center}
 body.elbuka-tirai.opened #cover .pemicu .el{transform:translateX(-106%) skewX(-10deg);transition:transform 1.2s cubic-bezier(.4,0,.2,1)}
 body.elbuka-tirai.opened #cover .pemicu .el2{transform:translateX(106%) skewX(10deg);transition:transform 1.2s cubic-bezier(.4,0,.2,1)}
 
-/* --- Gerbang: dua daun melengkung penuh --- */
-body.elbuka-gerbang #cover .pemicu{position:absolute;left:0;top:0;transform:none;width:100%;height:100%}
-body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{top:0;bottom:0;width:50.6%;background-image:linear-gradient(165deg,color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 74%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 44%,#241a08));box-shadow:inset 0 0 50px rgba(0,0,0,.35),inset 0 0 0 2px color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 60%,#fff)}
-body.elbuka-gerbang #cover .pemicu .el{left:0;border-radius:0 0 0 260px;transform-origin:left center}
-body.elbuka-gerbang #cover .pemicu .el2{right:0;border-radius:260px 0 0 0;transform-origin:right center}
+/* --- Gerbang foto: dua panel SIMETRIS dari FOTO MEMPELAI (--fotoSampul).
+   Tiap panel menampilkan separuh foto (background 200% lebar: kiri & kanan),
+   jadi saat tertutup keduanya menyatu jadi satu foto utuh. Dulu panelnya
+   hanya gradasi emas dan radius-nya tidak mirror (kiri-bawah 260px vs
+   kiri-atas 260px) sehingga gerbang tampak asimetris/condong. --- */
+body.elbuka-gerbang #cover .pemicu{position:absolute;left:0;top:0;transform:none;width:100%;height:100%;perspective:1200px}
+body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{top:0;bottom:0;width:50%;overflow:hidden;
+  background-image:
+    linear-gradient(180deg,rgba(12,9,6,.08) 0%,rgba(12,9,6,.16) 42%,rgba(12,9,6,.56) 100%),
+    var(--fotoSampul,none),
+    linear-gradient(165deg,color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 74%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 44%,#241a08));
+  background-size:100% 100%,200% 100%,100% 100%;
+  background-repeat:no-repeat,no-repeat,no-repeat;
+  box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 62%,#fff),inset 0 0 70px rgba(10,7,3,.42)}
+/* Separuh foto: panel kiri memakai sisi kiri, panel kanan sisi kanan. */
+body.elbuka-gerbang #cover .pemicu .el{left:0;background-position:center,left center,center;transform-origin:left center;
+  border-radius:clamp(56px,15vh,140px) 0 0 0}
+body.elbuka-gerbang #cover .pemicu .el2{right:0;background-position:center,right center,center;transform-origin:right center;
+  border-radius:0 clamp(56px,15vh,140px) 0 0}
+body.elbuka-gerbang #cover .pemicu .p-kulit-orn{display:none}
+/* Saat gerbang membuka, panel berputar tapi teks cetak tidak ikut — tanpa
+   fade cepat, nama sempat "hantu" di atas konten (terlihat di screenshot). */
+body.elbuka-gerbang.opened #cover .pemicu .p-kulit,
+body.elbuka-gerbang.opened #cover .pemicu .p-hint{opacity:0;transition:opacity .28s ease}
+/* Garis temu di tengah gerbang. */
+body.elbuka-gerbang #cover .pemicu .simpul{left:50%;top:0;bottom:0;width:2px;margin-left:-1px;z-index:5;
+  background:linear-gradient(180deg,transparent,rgba(255,241,206,.8) 16%,#fff 50%,rgba(255,241,206,.8) 84%,transparent);
+  box-shadow:0 0 24px 6px rgba(255,226,150,.4)}
+body.elbuka-gerbang #cover .kt-burst{display:block}
 body.elbuka-gerbang.opened #cover .pemicu .el{transform:perspective(1100px) rotateY(-74deg);transition:transform 1.1s cubic-bezier(.5,0,.2,1)}
 body.elbuka-gerbang.opened #cover .pemicu .el2{transform:perspective(1100px) rotateY(74deg);transition:transform 1.1s cubic-bezier(.5,0,.2,1)}
+body.elbuka-gerbang.opened #cover .pemicu .simpul{opacity:0;transition:opacity .45s}
+body.elbuka-gerbang.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .45s both}
 
 /* --- Pintu: dua daun berpapan + pegangan, berayun 3D.
    Realistis: serat kayu, kusen emas, celah cahaya di
@@ -1154,7 +1180,7 @@ body.elbuka-pintu.opened #cover .pemicu .el2{transform:perspective(1200px) rotat
 body.elbuka-pintu.opened #cover .pemicu .simpul{opacity:0;transition:opacity .5s .75s}
 body.elbuka-pintu.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .5s both}
 
-/* --- Buku foto: sampul memakai FOTO MEMPELAI (--bukuImg), lengkap dengan
+/* --- Buku foto: sampul memakai FOTO MEMPELAI (--fotoSampul), lengkap dengan
    punggung buku, blok halaman, pita pembatas, dan judul tercetak di kulit.
    Sebelumnya buku hanya bidang gradasi kosong yang menutupi nama mempelai. --- */
 body.elbuka-buku #cover .pemicu{width:min(310px,78%);height:min(420px,64%);
@@ -1164,7 +1190,7 @@ body.elbuka-buku #cover .pemicu{width:min(310px,78%);height:min(420px,64%);
   /* lapisan: scrim (teks terbaca) → foto mempelai → gradasi cadangan */
   background-image:
     linear-gradient(180deg,rgba(12,9,6,.04) 0%,rgba(12,9,6,.10) 30%,rgba(12,9,6,.52) 72%,rgba(12,9,6,.80) 100%),
-    var(--bukuImg,none),
+    var(--fotoSampul,none),
     linear-gradient(160deg,color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 64%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 40%,#241a08));
   background-size:100% 100%,cover,100% 100%;
   background-position:center center,center 38%,center center;
@@ -1193,15 +1219,19 @@ body.elbuka-buku #cover .pemicu .simpul{left:auto;right:20px;top:0;width:24px;he
   clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);
   box-shadow:0 6px 14px rgba(0,0,0,.32)}
 /* Judul di kulit buku: nama mempelai + tanggal. */
-body.elbuka-buku #cover .pemicu .p-kulit{position:absolute;left:22px;right:16px;bottom:56px;z-index:5;
+body.elbuka-buku #cover .pemicu .p-kulit,body.elbuka-gerbang #cover .pemicu .p-kulit{position:absolute;z-index:5;
   display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center;pointer-events:none;
   color:#fff;font-family:var(--ft);
   text-shadow:0 2px 18px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.55)}
-body.elbuka-buku #cover .pemicu .p-kulit-orn{font-style:normal;margin-bottom:5px;font-size:11px;letter-spacing:7px;
+body.elbuka-buku #cover .pemicu .p-kulit{left:22px;right:16px;bottom:56px}
+/* min 120px: di frame pendek (lightbox 390x520 & 17vh=88px) nama tidak
+   boleh turun sampai menabrak petunjuk "Ketuk gerbang" di bawahnya. */
+body.elbuka-gerbang #cover .pemicu .p-kulit{left:26px;right:26px;bottom:clamp(120px,17vh,168px)}
+body.elbuka-buku #cover .pemicu .p-kulit-orn,body.elbuka-gerbang #cover .pemicu .p-kulit-orn{font-style:normal;margin-bottom:5px;font-size:11px;letter-spacing:7px;
   opacity:.9;color:color-mix(in srgb,var(--accent-cover,var(--accent,#D9BE86)) 55%,#fff)}
-body.elbuka-buku #cover .pemicu .p-kulit b{font-size:clamp(16px,5.4vw,21px);line-height:1.12;font-weight:600;letter-spacing:.01em}
-body.elbuka-buku #cover .pemicu .p-kulit-amp{font-style:italic;margin:1px 0;font-size:13px;opacity:.9}
-body.elbuka-buku #cover .pemicu .p-kulit em{font-style:normal;margin-top:7px;font-family:var(--fb,inherit);
+body.elbuka-buku #cover .pemicu .p-kulit b,body.elbuka-gerbang #cover .pemicu .p-kulit b{font-size:clamp(16px,5.4vw,21px);line-height:1.12;font-weight:600;letter-spacing:.01em}
+body.elbuka-buku #cover .pemicu .p-kulit-amp,body.elbuka-gerbang #cover .pemicu .p-kulit-amp{font-style:italic;margin:1px 0;font-size:13px;opacity:.9}
+body.elbuka-buku #cover .pemicu .p-kulit em,body.elbuka-gerbang #cover .pemicu .p-kulit em{font-style:normal;margin-top:7px;font-family:var(--fb,inherit);
   font-size:9px;letter-spacing:.26em;text-transform:uppercase;opacity:.92}
 body.elbuka-buku #cover .kt-burst{display:block}
 /* Buku terbuka dari PUNGGUNGNYA (tepi kiri), bukan berputar di tengah. */
@@ -1296,13 +1326,21 @@ body.elbuka-buku #cover .pemicu .p-hint::after{content:'Ketuk buku untuk membuka
    dipaksa putih karena di atas foto var(--ink-fg) bisa gelap. */
 body.elbuka-buku #cover .pemicu .p-hint{top:auto;bottom:22px;left:50%;z-index:9;
   color:#fff;font-size:10.5px;letter-spacing:.2em;opacity:.95;text-shadow:0 1px 8px rgba(0,0,0,.75)}
-/* Sampul buku sudah mencetak nama + tanggal, jadi teks cover di belakangnya
-   (yang dulu bertumpuk dengan buku & countdown) disembunyikan selama buku
-   tertutup, lalu muncul kembali saat buku terbuka. Petunjuk geser generik
-   juga tidak perlu: buku punya petunjuknya sendiri. */
+/* Gerbang menutup seluruh layar: hint bawaan (top:100%+14px) jatuh di luar
+   layar, jadi dipindah ke dalam gerbang. */
+body.elbuka-gerbang #cover .pemicu .p-hint{top:auto;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));
+  z-index:9;color:#fff;font-size:10.5px;letter-spacing:.2em;opacity:.95;
+  text-shadow:0 1px 8px rgba(0,0,0,.8)}
+/* Sampul buku/gerbang sudah mencetak nama + tanggal, jadi teks cover di
+   belakangnya (yang dulu bertumpuk dengan sampul & countdown) disembunyikan
+   selama tertutup, lalu muncul kembali saat dibuka. Petunjuk geser generik
+   juga tidak perlu: keduanya punya petunjuknya sendiri. */
 body.elbuka-buku #cover .bdfr{transition:opacity .65s ease .1s}
-body.elbuka-buku:not(.opened) #cover .bdfr{opacity:0;pointer-events:none}
-body.elbuka-buku:not(.opened) #cover .geser-hint{display:none}
+/* Gerbang: tunda isi cover sampai panel selesai mengayun, supaya nama +
+   countdown tidak tembus di atas gerbang yang masih setengah terbuka. */
+body.elbuka-gerbang #cover .bdfr{transition:opacity .55s ease .55s}
+body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0;pointer-events:none}
+body.elbuka-buku:not(.opened) #cover .geser-hint,body.elbuka-gerbang:not(.opened) #cover .geser-hint{display:none}
 body.elbuka-amplop #cover .pemicu .p-hint::after{content:'Ketuk amplop untuk membuka'}
 body.elbuka-gembok #cover .pemicu .p-hint::after{content:'Ketuk gembok untuk membuka'}
 body.elbuka-kotak #cover .pemicu .p-hint::after{content:'Ketuk kotak untuk membuka'}
@@ -3726,11 +3764,11 @@ function boot(draft){
  /* Bila cover berfoto penuh, panel gaya membuka ikut membawa potongan
     foto yang sama supaya efek pintu/kotak/blinds menyatu dengan foto. */
  const bukaImg=(cvStyle==='full'&&fotoUtama)?`--bukaImg:url('${fotoUtama.replace(/'/g,'%27').replace(/"/g,'%22')}')`:'';
- /* Sampul BUKU selalu memakai foto mempelai (foto cover), apa pun model
-    cover-nya. --bukaImg hanya terisi saat cover "foto penuh", jadi buku butuh
-    variabel sendiri: kalau memakai --bukaImg, tema dengan cover non-penuh
-    (mis. Wabi Sabi) tetap menampilkan buku berwarna polos tanpa foto. */
- const bukuImg=fotoUtama?`--bukuImg:url('${fotoUtama.replace(/'/g,'%27').replace(/"/g,'%22')}')`:'';
+ /* Foto mempelai untuk gaya buka berbasis foto: sampul BUKU dan panel
+    GERBANG. --bukaImg hanya terisi saat cover "foto penuh", jadi keduanya
+    butuh variabel sendiri: kalau menumpang --bukaImg, tema dengan cover
+    non-penuh (mis. Wabi Sabi) menampilkan buku/gerbang polos tanpa foto. */
+ const fotoSampul=fotoUtama?`--fotoSampul:url('${fotoUtama.replace(/'/g,'%27').replace(/"/g,'%22')}')`:'';
  const cpo=(d&&d.coverPos)||{};
  const angkaPos=(v,b)=>{const n=parseFloat(v);return isFinite(n)?Math.min(100,Math.max(0,n)):b};
  const cvZ=(()=>{const n=parseFloat(cpo.z);return isFinite(n)?Math.min(4,Math.max(1,n)):1})();
@@ -3841,7 +3879,7 @@ function boot(draft){
 
  /* ---------- HTML ---------- */
  let h='';
- h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}" style="${[bukaImg,bukuImg].filter(Boolean).join(';')}"><div class="pat" style="${polaCss(patAktif(d,tplF),tplF,1)}"></div><div class="veil"></div><i class="bkl l"></i><i class="bkl r"></i><i class="bkt t"></i><i class="bkt b"></i><span class="kt-burst" aria-hidden="true"><i style="--dx:-70px;--dy:-90px"></i><i style="--dx:60px;--dy:-110px"></i><i style="--dx:-110px;--dy:-40px"></i><i style="--dx:105px;--dy:-55px"></i><i style="--dx:-30px;--dy:-140px"></i><i style="--dx:35px;--dy:-70px"></i></span><i class="bld b1"></i><i class="bld b2"></i><i class="bld b3"></i><i class="bld b4"></i>${cvStyle==='full'
+ h+=`<div id="cover" class="${covOn?'cov':''} ${isWedding?'wedding-cover-shell':''}" style="${[bukaImg,fotoSampul].filter(Boolean).join(';')}"><div class="pat" style="${polaCss(patAktif(d,tplF),tplF,1)}"></div><div class="veil"></div><i class="bkl l"></i><i class="bkl r"></i><i class="bkt t"></i><i class="bkt b"></i><span class="kt-burst" aria-hidden="true"><i style="--dx:-70px;--dy:-90px"></i><i style="--dx:60px;--dy:-110px"></i><i style="--dx:-110px;--dy:-40px"></i><i style="--dx:105px;--dy:-55px"></i><i style="--dx:-30px;--dy:-140px"></i><i style="--dx:35px;--dy:-70px"></i></span><i class="bld b1"></i><i class="bld b2"></i><i class="bld b3"></i><i class="bld b4"></i>${cvStyle==='full'
   ?`<div class="cvlatar"><img src="${esc(fotoUtama)}" alt="Foto ${esc(titleMain)}" loading="eager" onload="fitCoverPhotos()" style="object-position:${cvP.x}% ${cvP.y}%;transform:scale(${cvP.z})"><i class="cvbl tl"></i><i class="cvbl tr"></i><i class="cvbl bl"></i><i class="cvbl br"></i></div>`
   :''}<div class="bdfr ${isWedding?'wedding-invite-card':''}" style="${bdStyle}">${bdCorners}${ORN}<div class="inner">
    <div class="orn ${covOn?'anim-deco':''}" style="${covOn?'animation-delay:200ms':''}">${esc(tplF.deco)}</div>
@@ -3864,10 +3902,10 @@ function boot(draft){
  if(venue)h+=`<div class="host ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+hoD+'ms':''}">${isWedding?'<span class="wi-icon" aria-hidden="true">⌖</span>':''}${esc(venue)}</div>`;
  if(isWedding)h+=`<p class="wedding-note ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(hoD+100)+'ms':''}">Bersama keluarga, dengan penuh kebahagiaan, kami mengundang Anda untuk merayakan hari istimewa kami.</p>`;
  if((()=>{const _tt=targetTime(draft,form);return _tt&&_tt>Date.now()})())h+=`<div class="cdw-mini ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(btD-120)+'ms':''}"><div class="u"><div class="n" id="cdH0">00</div><div class="l">Hari</div></div><div class="u"><div class="n" id="cdM0">00</div><div class="l">Jam</div></div><div class="u"><div class="n" id="cdS0">00</div><div class="l">Menit</div></div><div class="u"><div class="n" id="cdD0">00</div><div class="l">Detik</div></div></div>`;
- /* Kulit buku: nama mempelai + tanggal dicetak di sampul, jadi buku terlihat
-    seperti photo-book sungguhan — bukan bidang warna kosong yang menutupi
-    nama di belakangnya. */
- const bukuKulit=BUKA==='buku'
+ /* Kulit buku & gerbang foto: nama mempelai + tanggal dicetak di sampul, jadi
+    terlihat seperti photo-book/gerbang sungguhan — bukan bidang warna kosong
+    yang menutupi nama di belakangnya. */
+ const bukuKulit=(BUKA==='buku'||BUKA==='gerbang')
   ?`<span class="p-kulit" aria-hidden="true"><i class="p-kulit-orn">${esc(tplF.deco||'')}</i><b>${esc(titleMain)}</b>${titleSub?`<i class="p-kulit-amp">&amp;</i><b>${esc(titleSub)}</b>`:''}<em>${esc(dateStr||'—')}</em></span>`
   :'';
  h+=`<div class="geser-hint">‹ Geser kiri atau ketuk untuk membuka</div>

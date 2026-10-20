@@ -1540,12 +1540,20 @@ def cek_kartu_katalog():
               and "'kartu-demo']" in live)
     lapor("ok" if pemicu else "masalah",
           "undangan.html: mode kartu menyembunyikan pemicu buka + kelas sesi kartu-demo bertahan")
-    buku = ("const bukuImg=fotoUtama?`--bukuImg:url(" in live
-            and "var(--bukuImg,none)," in live
-            and "const bukuKulit=BUKA==='buku'" in live
-            and "body.elbuka-buku:not(.opened) #cover .bdfr{opacity:0;pointer-events:none}" in live)
+    buku = ("const fotoSampul=fotoUtama?`--fotoSampul:url(" in live
+            and "var(--fotoSampul,none)," in live
+            and "const bukuKulit=(BUKA==='buku'||BUKA==='gerbang')" in live
+            and "body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0;pointer-events:none}" in live)
+    gerbang = ("body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{top:0;bottom:0;width:50%;" in live
+               and "background-position:center,left center,center;transform-origin:left center;" in live
+               and "background-position:center,right center,center;transform-origin:right center;" in live
+               and "border-radius:clamp(56px,15vh,140px) 0 0 0}" in live
+               and "border-radius:0 clamp(56px,15vh,140px) 0 0}" in live
+               and "background-size:100% 100%,200% 100%,100% 100%;" in live)
     lapor("ok" if buku else "masalah",
-          "undangan.html: sampul buku memakai foto mempelai (--bukuImg) + judul tercetak + teks cover disembunyikan saat tertutup")
+          "undangan.html: sampul buku & gerbang memakai foto mempelai (--fotoSampul) + judul tercetak + teks cover disembunyikan saat tertutup")
+    lapor("ok" if gerbang else "masalah",
+          "undangan.html: gerbang dua panel simetris (lebar 50%, radius & poros mirror) memakai separuh foto yang menyatu")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
         return

@@ -73,16 +73,16 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (26 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (30 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
 
 Gaya membuka **Buku** kini memakai **foto mempelai** sebagai kulit sampul:
 
-- `--bukuImg` diisi dari `data.cover` untuk **semua** model cover (bukan hanya
-  "foto penuh" seperti `--bukaImg`), lengkap dengan scrim gelap agar nama
-  tetap terbaca di atas foto terang.
+- `--fotoSampul` diisi dari `data.cover` untuk **semua** model cover (bukan
+  hanya "foto penuh" seperti `--bukaImg`), lengkap dengan scrim gelap agar
+  nama tetap terbaca di atas foto terang. Variabel yang sama dipakai gerbang.
 - Kulit buku punya punggung (bayangan kiri), **blok halaman** (garis-garis
   kertas di tepi kanan), dan **pita pembatas** menggantung di tepi atas.
 - Nama mempelai + tanggal dicetak di kulit buku (`.p-kulit`), jadi buku
@@ -92,6 +92,27 @@ Gaya membuka **Buku** kini memakai **foto mempelai** sebagai kulit sampul:
   countdown, tombol) **disembunyikan** agar tidak bertumpuk dengan sampul;
   muncul kembali saat buku terbuka. Petunjuk "Ketuk buku untuk membuka"
   tampil putih di dalam sampul.
+
+### Gerbang foto (gaya membuka `gerbang`)
+
+Gaya membuka **Gerbang** sekarang juga memakai **foto mempelai** dan sudah
+**simetris**:
+
+- Dua panel `.el` / `.el2` sama lebar (`50%`) dan saling **mirror**: keduanya
+  berporos di tepi luar dan ber-radius lengkung di sudut luar-atas
+  (`clamp(56px,15vh,140px)`), jadi gerbang tampak seperti dua daun pintu
+  lengkung — bukan lagi satu sudut bawah melawan satu sudut atas.
+- Tiap panel menampilkan **separuh foto** yang sama
+  (`background-size:200% 100%`; posisi `left`/`right center`), sehingga saat
+  tertutup keduanya menyatu menjadi satu foto utuh dengan garis temu emas di
+  tengah (`.simpul`).
+- Nama mempelai + tanggal dicetak di panel (`.p-kulit`, berbagi gaya dengan
+  buku), petunjuk "Ketuk gerbang untuk membuka" dipindah ke dalam layar
+  (`bottom:calc(88px + env(safe-area-inset-bottom))`) supaya tidak tertimpa
+  kontrol bawah, dan teks cetak memudar cepat saat gerbang membuka agar tidak
+  menjadi teks hantu di atas konten.
+- Bila undangan tidak punya foto, panel kembali ke gradasi aksen — tidak ada
+  bidang kosong.
 
 ## Alur membuat undangan di Studio
 
