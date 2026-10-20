@@ -738,6 +738,7 @@ body.opened .scr-frame .orn-c.br svg{animation-delay:2.6s}
  .scr-frame .orn-c{transition:none!important}
  body.opened .scr-frame .orn-c svg{animation:none!important}
  #cover .bkl,#cover .bkt,.kt-burst i{animation:none!important;opacity:0!important}
+ body.elbuka-pita #cover .pemicu .simpul{animation:none!important}
  body.buka-buku.opened #cover,body.buka-pintu.opened #cover,body.buka-kotak.opened #cover{opacity:0;visibility:hidden;transform:none;transition:opacity .3s ease,visibility 0s .3s}
 }
 
@@ -1109,11 +1110,36 @@ body:not(.opened) #cover .pemicu:hover{filter:brightness(1.07)}
 body:not(.opened) #cover .pemicu:active{transform:translate(-50%,-50%) scale(.95)}
 body:not(.opened).elbuka-pita #cover .pemicu:hover,body:not(.opened).elbuka-buku #cover .pemicu:hover{transform:translate(-50%,-50%) scale(1.05)}
 
-/* --- Pita satin melintang penuh --- */
+/* --- Pita satin melintang penuh (KACA/transparan) ---
+   Pita dulu menutupi total nama mempelai di kartu belakangnya. Sekarang
+   pitanya tembus pandang seperti pita kaca: tint aksen ber-alpha, kilau
+   satin, dan backdrop blur tipis — nama & "&" tetap terbaca di baliknya. */
 body.elbuka-pita #cover .pemicu{width:min(430px,90%);height:150px}
-body.elbuka-pita #cover .pemicu .el{left:0;top:42px;width:100%;height:34px;border-radius:17px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 95%,#fff) 0%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 74%,#fff) 36%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 62%,#40101f) 76%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 46%,#40101f) 100%);box-shadow:0 12px 26px rgba(40,10,25,.42),inset 0 2px 3px rgba(255,255,255,.55),inset 0 -5px 9px rgba(40,10,25,.35)}
-body.elbuka-pita #cover .pemicu .el2{left:0;top:90px;width:100%;height:30px;border-radius:15px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 72%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 42%,#40101f));box-shadow:0 10px 22px rgba(40,10,25,.36),inset 0 2px 3px rgba(255,255,255,.42),inset 0 -4px 8px rgba(40,10,25,.3)}
-body.elbuka-pita #cover .pemicu .simpul{left:50%;top:38px;width:54px;height:54px;margin-left:-27px;border-radius:50%;background:radial-gradient(circle at 35% 28%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 88%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 56%,#fff) 42%,var(--accent-cover,var(--accent,#A65066)));box-shadow:0 7px 18px rgba(40,10,25,.5),inset 0 -5px 9px rgba(40,10,25,.35),inset 0 3px 5px rgba(255,255,255,.5)}
+body.elbuka-pita #cover .pemicu .el{left:0;top:42px;width:100%;height:34px;border-radius:17px;
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,.1) 18%,rgba(255,255,255,0) 42%,rgba(40,10,25,.2) 100%),
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 78%,transparent) 0%,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 54%,transparent) 42%,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 70%,transparent) 100%);
+  -webkit-backdrop-filter:blur(1px) saturate(1.12);backdrop-filter:blur(1px) saturate(1.12);
+  box-shadow:0 10px 22px rgba(40,10,25,.16),inset 0 1px 1px rgba(255,255,255,.85),inset 0 -1px 2px rgba(40,10,25,.3),inset 0 0 0 1px rgba(255,255,255,.38)}
+body.elbuka-pita #cover .pemicu .el2{left:0;top:90px;width:100%;height:30px;border-radius:15px;
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.34) 0%,rgba(255,255,255,.08) 22%,rgba(255,255,255,0) 46%,rgba(40,10,25,.2) 100%),
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 72%,transparent),
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 50%,transparent) 55%,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 66%,transparent));
+  -webkit-backdrop-filter:blur(1px) saturate(1.1);backdrop-filter:blur(1px) saturate(1.1);
+  box-shadow:0 8px 18px rgba(40,10,25,.14),inset 0 1px 1px rgba(255,255,255,.75),inset 0 -1px 2px rgba(40,10,25,.26),inset 0 0 0 1px rgba(255,255,255,.32)}
+body.elbuka-pita #cover .pemicu .simpul{left:50%;top:38px;width:54px;height:54px;margin-left:-27px;border-radius:50%;
+  background:radial-gradient(circle at 35% 26%,
+    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 92%,transparent),
+    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 74%,transparent) 48%,
+    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 62%,transparent));
+  -webkit-backdrop-filter:blur(1px) saturate(1.1);backdrop-filter:blur(1px) saturate(1.1);
+  box-shadow:0 6px 14px rgba(40,10,25,.24),inset 0 -4px 8px rgba(40,10,25,.18),inset 0 2px 4px rgba(255,255,255,.7),inset 0 0 0 1px rgba(255,255,255,.34)}
 body.elbuka-pita #cover .kt-burst{display:block}
 body.elbuka-pita.opened #cover .pemicu .el,body.elbuka-pita.opened #cover .pemicu .simpul{animation:pitaTerbang 1.05s cubic-bezier(.5,.05,.3,1) forwards}
 body.elbuka-pita.opened #cover .pemicu .el2{animation:pitaTerbang 1.05s .07s cubic-bezier(.5,.05,.3,1) forwards}
@@ -1331,6 +1357,15 @@ body.elbuka-buku #cover .pemicu .p-hint{top:auto;bottom:22px;left:50%;z-index:9;
 body.elbuka-gerbang #cover .pemicu .p-hint{top:auto;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));
   z-index:9;color:#fff;font-size:10.5px;letter-spacing:.2em;opacity:.95;
   text-shadow:0 1px 8px rgba(0,0,0,.8)}
+/* Pita: label "Ketuk pita untuk membuka" disembunyikan. Posisinya 14px di
+   bawah pita selalu jatuh di area nama mempelai (di layar 390x844 menimpa
+   "Alya Zahra", di cover cvl-kartu menimpa countdown) — dulu tidak terlihat
+   karena pita pekat menutupinya. Sebagai gantinya simpul pita diberi denyut
+   halus, dan baris "‹ Geser kiri atau ketuk untuk membuka" di kartu tetap
+   memberi tahu tamu bahwa cover bisa diketuk. */
+body.elbuka-pita #cover .pemicu .p-hint{display:none}
+@keyframes simpulDenyut{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+body.elbuka-pita:not(.opened) #cover .pemicu .simpul{animation:simpulDenyut 2.8s ease-in-out infinite}
 /* Sampul buku/gerbang sudah mencetak nama + tanggal, jadi teks cover di
    belakangnya (yang dulu bertumpuk dengan sampul & countdown) disembunyikan
    selama tertutup, lalu muncul kembali saat dibuka. Petunjuk geser generik

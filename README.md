@@ -73,7 +73,7 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (30 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (32 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
@@ -113,6 +113,22 @@ Gaya membuka **Gerbang** sekarang juga memakai **foto mempelai** dan sudah
   menjadi teks hantu di atas konten.
 - Bila undangan tidak punya foto, panel kembali ke gradasi aksen — tidak ada
   bidang kosong.
+
+### Pita transparan (gaya membuka `pita`)
+
+Pita satin sekarang **tembus pandang**, jadi nama mempelai di kartu cover
+tidak lagi tertutup bidang warna:
+
+- Dua pita memakai tint aksen ber-alpha (`color-mix(... transparent)`) +
+  kilau satin, `backdrop-filter: blur(1px)` tipis, dan garis tepi kaca
+  1px — masih berbentuk pita, tapi isi kartu di belakangnya terbaca.
+- Simpul pita juga transparan dan diberi denyut halus
+  (`simpulDenyut`, mati saat `prefers-reduced-motion`) sebagai penanda bisa
+  diketuk.
+- Label "Ketuk pita untuk membuka" disembunyikan: posisinya 14px di bawah
+  pita selalu menimpa nama/countdown (paling parah di layar 390x844), dulu
+  tidak terlihat karena pita pekat. Petunjuk "‹ Geser kiri atau ketuk untuk
+  membuka" di kartu tetap tampil.
 
 ## Alur membuat undangan di Studio
 

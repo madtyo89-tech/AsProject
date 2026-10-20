@@ -225,6 +225,20 @@ async function render(d) {
     undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .p-kulit,') &&
     undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .p-hint{opacity:0;transition:opacity .28s ease}'));
 
+  /* ------------------------------------------------------------------ *
+   * 7. Pita: satin transparan (nama mempelai tidak tertutup)
+   * ------------------------------------------------------------------ */
+  t('pita memakai tint kaca transparan + backdrop blur, bukan satin pekat',
+    undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 54%,transparent)') &&
+    undSrc.includes('-webkit-backdrop-filter:blur(1px) saturate(1.12);backdrop-filter:blur(1px) saturate(1.12);') &&
+    undSrc.includes('inset 0 0 0 1px rgba(255,255,255,.38)') &&
+    !undSrc.includes('body.elbuka-pita #cover .pemicu .el{left:0;top:42px;width:100%;height:34px;border-radius:17px;background:linear-gradient(180deg,color-mix'));
+  t('label "Ketuk pita" disembunyikan agar tidak menimpa nama/countdown',
+    undSrc.includes('body.elbuka-pita #cover .pemicu .p-hint{display:none}') &&
+    undSrc.includes('@keyframes simpulDenyut{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}') &&
+    undSrc.includes('body.elbuka-pita:not(.opened) #cover .pemicu .simpul{animation:simpulDenyut 2.8s ease-in-out infinite}') &&
+    undSrc.includes('body.elbuka-pita #cover .pemicu .simpul{animation:none!important}'));
+
   /* model minimal + foto penuh tidak boleh menyembunyikan foto */
   t('cvl-minimal hanya menyembunyikan foto bila bukan foto-penuh',
     undSrc.includes('body.cvl-minimal:not(.foto-full) #cover .cvf,body.cvl-minimal:not(.foto-full) #cover .cvlatar{display:none}') &&
