@@ -73,8 +73,25 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (18 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (26 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
+
+### Sampul buku (gaya membuka `buku`)
+
+Gaya membuka **Buku** kini memakai **foto mempelai** sebagai kulit sampul:
+
+- `--bukuImg` diisi dari `data.cover` untuk **semua** model cover (bukan hanya
+  "foto penuh" seperti `--bukaImg`), lengkap dengan scrim gelap agar nama
+  tetap terbaca di atas foto terang.
+- Kulit buku punya punggung (bayangan kiri), **blok halaman** (garis-garis
+  kertas di tepi kanan), dan **pita pembatas** menggantung di tepi atas.
+- Nama mempelai + tanggal dicetak di kulit buku (`.p-kulit`), jadi buku
+  terlihat seperti photo-book; animasi buka berporos di **punggung buku**
+  (`transform-origin:left center`).
+- Selama buku tertutup, blok teks cover di belakangnya (`.bdfr` — nama,
+  countdown, tombol) **disembunyikan** agar tidak bertumpuk dengan sampul;
+  muncul kembali saat buku terbuka. Petunjuk "Ketuk buku untuk membuka"
+  tampil putih di dalam sampul.
 
 ## Alur membuat undangan di Studio
 

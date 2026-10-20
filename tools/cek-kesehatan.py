@@ -1540,6 +1540,12 @@ def cek_kartu_katalog():
               and "'kartu-demo']" in live)
     lapor("ok" if pemicu else "masalah",
           "undangan.html: mode kartu menyembunyikan pemicu buka + kelas sesi kartu-demo bertahan")
+    buku = ("const bukuImg=fotoUtama?`--bukuImg:url(" in live
+            and "var(--bukuImg,none)," in live
+            and "const bukuKulit=BUKA==='buku'" in live
+            and "body.elbuka-buku:not(.opened) #cover .bdfr{opacity:0;pointer-events:none}" in live)
+    lapor("ok" if buku else "masalah",
+          "undangan.html: sampul buku memakai foto mempelai (--bukuImg) + judul tercetak + teks cover disembunyikan saat tertutup")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
         return
