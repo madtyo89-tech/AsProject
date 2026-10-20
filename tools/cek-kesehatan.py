@@ -1542,7 +1542,7 @@ def cek_kartu_katalog():
           "undangan.html: mode kartu menyembunyikan pemicu buka + kelas sesi kartu-demo bertahan")
     buku = ("const fotoSampul=fotoUtama?`--fotoSampul:url(" in live
             and "var(--fotoSampul,none)," in live
-            and "const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop')" in live
+            and "const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop'||BUKA==='gembok')" in live
             and "body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}" in live)
     gerbang = ("body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{top:0;bottom:0;width:50%;" in live
                and "background-position:center,left center,center;transform-origin:left center;" in live
@@ -1568,6 +1568,12 @@ def cek_kartu_katalog():
                  and "body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-118%)" in live)
     lapor("ok" if selendang else "masalah",
           "undangan.html: selendang hanya menutup bagian atas & tembus pandang, jadi foto + teks cover tetap terlihat")
+    gembok = ("body.elbuka-gembok.foto-full #cover .pemicu{" in live
+              and "width:min(340px,86%);height:min(440px,64%);" in live
+              and "body.elbuka-gembok.foto-full #cover .pemicu .p-kulit{left:24px;right:24px;" in live
+              and "body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.4s both}" in live)
+    lapor("ok" if gembok else "masalah",
+          "undangan.html: gembok foto penuh = kartu foto besar berisi nama & tanggal + petunjuk di dalam kartu")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
         return

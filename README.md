@@ -73,7 +73,7 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (42 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (43 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
@@ -113,6 +113,25 @@ Gaya membuka **Gerbang** sekarang juga memakai **foto mempelai** dan sudah
   menjadi teks hantu di atas konten.
 - Bila undangan tidak punya foto, panel kembali ke gradasi aksen — tidak ada
   bidang kosong.
+
+### Gembok foto (gaya membuka `gembok`)
+
+Dulu gembok tampil sebagai objek **190 × 260 px** melayang di tengah cover.
+Di layar pendek gemboknya menimpa nama mempelai, dan tidak ada tempat untuk
+foto.
+
+- Di `body.elbuka-gembok.foto-full`, gembok kini berdiri di atas **kartu
+  foto** `min(340px, 86%) × min(440px, 64%)` yang memuat foto mempelai
+  (`--fotoSampul`, posisi `center 12%` supaya wajah muncul di bawah gembok)
+  + bingkai cetak tipis + scrim tipis di belakang nama.
+- Semua ukuran gembok memakai **persen terhadap kartu** (`top:15%`,
+  `height:27%`, `width:55%`; kunci di `top:46%`), jadi tetap proporsional di
+  frame lightbox 330 × 590.
+- Nama mempelai + tanggal tercetak di bawah kartu (`.p-kulit`), dan
+  petunjuk "Ketuk gembok untuk membuka" dipindah **ke dalam kartu** — dulu
+  melayang di bawah gembok dan menimpa nama.
+- Teks cover di belakang kartu disembunyikan sampai gembok terbuka.
+- Gembok tanpa foto penuh tidak berubah.
 
 ### Selendang foto (gaya membuka `selendang`)
 

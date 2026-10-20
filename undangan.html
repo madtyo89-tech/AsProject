@@ -1278,7 +1278,7 @@ body.elbuka-buku #cover .pemicu .simpul{left:auto;right:20px;top:0;width:24px;he
   clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);
   box-shadow:0 6px 14px rgba(0,0,0,.32)}
 /* Judul di kulit buku: nama mempelai + tanggal. */
-body.elbuka-buku #cover .pemicu .p-kulit,body.elbuka-gerbang #cover .pemicu .p-kulit,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit{position:absolute;z-index:5;
+body.elbuka-buku #cover .pemicu .p-kulit,body.elbuka-gerbang #cover .pemicu .p-kulit,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit{position:absolute;z-index:5;
   display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center;pointer-events:none;
   color:#fff;font-family:var(--ft);
   text-shadow:0 2px 18px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.55)}
@@ -1286,11 +1286,11 @@ body.elbuka-buku #cover .pemicu .p-kulit{left:22px;right:16px;bottom:56px}
 /* min 120px: di frame pendek (lightbox 390x520 & 17vh=88px) nama tidak
    boleh turun sampai menabrak petunjuk "Ketuk gerbang" di bawahnya. */
 body.elbuka-gerbang #cover .pemicu .p-kulit{left:26px;right:26px;bottom:clamp(120px,17vh,168px)}
-body.elbuka-buku #cover .pemicu .p-kulit-orn,body.elbuka-gerbang #cover .pemicu .p-kulit-orn,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-orn{font-style:normal;margin-bottom:5px;font-size:11px;letter-spacing:7px;
+body.elbuka-buku #cover .pemicu .p-kulit-orn,body.elbuka-gerbang #cover .pemicu .p-kulit-orn,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-orn,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit-orn{font-style:normal;margin-bottom:5px;font-size:11px;letter-spacing:7px;
   opacity:.9;color:color-mix(in srgb,var(--accent-cover,var(--accent,#D9BE86)) 55%,#fff)}
-body.elbuka-buku #cover .pemicu .p-kulit b,body.elbuka-gerbang #cover .pemicu .p-kulit b,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit b{font-size:clamp(16px,5.4vw,21px);line-height:1.12;font-weight:600;letter-spacing:.01em}
-body.elbuka-buku #cover .pemicu .p-kulit-amp,body.elbuka-gerbang #cover .pemicu .p-kulit-amp,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-amp{font-style:italic;margin:1px 0;font-size:13px;opacity:.9}
-body.elbuka-buku #cover .pemicu .p-kulit em,body.elbuka-gerbang #cover .pemicu .p-kulit em,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit em{font-style:normal;margin-top:7px;font-family:var(--fb,inherit);
+body.elbuka-buku #cover .pemicu .p-kulit b,body.elbuka-gerbang #cover .pemicu .p-kulit b,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit b,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit b{font-size:clamp(16px,5.4vw,21px);line-height:1.12;font-weight:600;letter-spacing:.01em}
+body.elbuka-buku #cover .pemicu .p-kulit-amp,body.elbuka-gerbang #cover .pemicu .p-kulit-amp,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-amp,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit-amp{font-style:italic;margin:1px 0;font-size:13px;opacity:.9}
+body.elbuka-buku #cover .pemicu .p-kulit em,body.elbuka-gerbang #cover .pemicu .p-kulit em,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit em,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit em{font-style:normal;margin-top:7px;font-family:var(--fb,inherit);
   font-size:9px;letter-spacing:.26em;text-transform:uppercase;opacity:.92}
 body.elbuka-buku #cover .kt-burst{display:block}
 /* Buku terbuka dari PUNGGUNGNYA (tepi kiri), bukan berputar di tengah. */
@@ -1414,6 +1414,60 @@ body.elbuka-gembok.opened #cover .pemicu .el::before{transform:translateX(-50%) 
 body.elbuka-gembok.opened #cover .pemicu .el{box-shadow:0 0 60px 20px rgba(255,215,0,.5),0 16px 40px rgba(0,0,0,.6);transform:translateY(-130px) scale(.55) rotateX(18deg);opacity:0}
 body.elbuka-gembok.opened #cover .pemicu .el2{opacity:0}
 body.elbuka-gembok.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .55s both}
+
+/* --- Gembok + FOTO PENUH (mis. Sultan Arsip, Gelap Rimbun) ---
+   Dulu gembok "melayang" 190x260 px di tengah cover: di layar pendek
+   gemboknya menimpa nama mempelai dan tidak ada tempat untuk foto.
+   Sekarang gembok berdiri di atas KARTU FOTO besar yang memuat foto
+   mempelai + nama & tanggal tercetak di bawahnya. Semua ukuran memakai
+   persen terhadap kartu supaya tetap muat di frame lightbox 330x590. */
+body.elbuka-gembok #cover .pemicu .p-kulit{display:none}
+body.elbuka-gembok.foto-full #cover .pemicu{
+  width:min(340px,86%);height:min(440px,64%);
+  border-radius:16px;
+  background-color:color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 34%,#1a1208);
+  background-image:var(--fotoSampul,none);
+  background-size:cover;background-position:center 12%;background-repeat:no-repeat;
+  box-shadow:0 30px 70px rgba(8,5,3,.62),inset 0 0 0 1px rgba(255,255,255,.34)}
+/* bingkai cetak tipis */
+body.elbuka-gembok.foto-full #cover .pemicu::before{content:'';position:absolute;inset:7px;
+  border-radius:11px;pointer-events:none;z-index:1;
+  box-shadow:inset 0 0 0 1px rgba(255,250,240,.5),inset 0 0 0 4px rgba(255,250,240,.12)}
+/* scrim hanya di belakang blok nama */
+body.elbuka-gembok.foto-full #cover .pemicu::after{content:'';position:absolute;
+  left:0;right:0;bottom:0;height:46%;z-index:1;pointer-events:none;
+  border-radius:0 0 16px 16px;
+  background:linear-gradient(180deg,transparent,rgba(12,8,4,.34) 45%,rgba(12,8,4,.68))}
+/* gembok dibesarkan & dinaikkan */
+body.elbuka-gembok.foto-full #cover .pemicu .el{
+  top:15%;height:27%;width:55%;margin-left:-27.5%;
+  border-radius:12px 12px 18px 18px;border-width:3px;z-index:3}
+body.elbuka-gembok.foto-full #cover .pemicu .el::before{
+  top:-46%;width:56%;height:30%;margin-left:-28%;border-width:16px;
+  border-radius:110px 110px 0 0}
+body.elbuka-gembok.foto-full #cover .pemicu .el::after{width:30px;height:30px;margin:-15px 0 0 -15px}
+body.elbuka-gembok.foto-full #cover .pemicu .el2{
+  top:calc(15% + 19%);width:10px;height:21px;margin-left:-5px;border-radius:0 0 6px 6px}
+/* kunci emas di bawah gembok */
+body.elbuka-gembok.foto-full #cover .pemicu .simpul{
+  top:46%;width:37%;height:14px;margin-left:-18.5%;z-index:3}
+body.elbuka-gembok.foto-full #cover .pemicu .simpul::before{width:34px;height:12px}
+body.elbuka-gembok.foto-full #cover .pemicu .simpul::after{right:-28px;width:50px;height:50px;margin-top:-25px}
+/* nama + tanggal tercetak di kartu */
+body.elbuka-gembok.foto-full #cover .pemicu .p-kulit{left:24px;right:24px;
+  bottom:clamp(44px,11%,62px);z-index:6;
+  text-shadow:0 2px 16px rgba(10,6,3,.9),0 1px 4px rgba(10,6,3,.8)}
+body.elbuka-gembok.foto-full #cover .pemicu .p-kulit-orn{display:none}
+/* petunjuk di dalam kartu (dulu melayang di bawah gembok, menimpa nama) */
+body.elbuka-gembok.foto-full #cover .pemicu .p-hint{top:auto;left:50%;bottom:18px;
+  transform:translateX(-50%);z-index:6;color:#fff;font-size:9.5px;letter-spacing:.18em;
+  opacity:.92;text-shadow:0 1px 8px rgba(0,0,0,.75)}
+/* Teks cover di belakang kartu baru muncul setelah kartu terbuka. */
+body.elbuka-gembok.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}
+body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.4s both}
+body.elbuka-gembok.foto-full:not(.opened) #cover .geser-hint{display:none}
+body.elbuka-gembok.opened #cover .pemicu .p-kulit,
+body.elbuka-gembok.opened #cover .pemicu .p-hint{opacity:0;transition:opacity .3s ease}
 
 /* --- Kotak cincin velvet: tutup terangkat ke belakang,
    dua cincin emas bersinar dari dalam kotak --- */
@@ -4086,7 +4140,7 @@ function boot(draft){
  /* Kulit buku & gerbang foto: nama mempelai + tanggal dicetak di sampul, jadi
     terlihat seperti photo-book/gerbang sungguhan — bukan bidang warna kosong
     yang menutupi nama di belakangnya. */
- const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop')
+ const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop'||BUKA==='gembok')
   ?`<span class="p-kulit" aria-hidden="true"><i class="p-kulit-orn">${esc(tplF.deco||'')}</i><b>${esc(titleMain)}</b>${titleSub?`<i class="p-kulit-amp">&amp;</i><b>${esc(titleSub)}</b>`:''}<em>${esc(dateStr||'—')}</em></span>`
   :'';
  h+=`<div class="geser-hint">‹ Geser kiri atau ketuk untuk membuka</div>

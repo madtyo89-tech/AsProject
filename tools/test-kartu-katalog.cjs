@@ -196,8 +196,14 @@ async function render(d) {
     undSrc.includes('body.elbuka-buku #cover .pemicu::before{content:\'\';position:absolute;left:0;') &&
     undSrc.includes('body.elbuka-buku #cover .pemicu::after{content:\'\';position:absolute;top:7px;bottom:7px;right:0;width:7px;') &&
     undSrc.includes('clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)'));
+  t('gembok foto penuh: kartu foto besar + nama tercetak (muat di 330x590)',
+    undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop'||BUKA==='gembok')") &&
+    undSrc.includes('body.elbuka-gembok.foto-full #cover .pemicu{\n  width:min(340px,86%);height:min(440px,64%);') &&
+    undSrc.includes('body.elbuka-gembok.foto-full #cover .pemicu .simpul{\n  top:46%;width:37%;height:14px;margin-left:-18.5%;z-index:3}') &&
+    undSrc.includes('body.elbuka-gembok.foto-full #cover .pemicu .p-kulit{left:24px;right:24px;') &&
+    undSrc.includes('body.elbuka-gembok.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}'));
   t('judul (nama mempelai + tanggal) tercetak di kulit buku, gerbang & amplop',
-    undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop')") &&
+    undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop'||BUKA==='gembok')") &&
     undSrc.includes('<i class="p-kulit-orn">') &&
     undSrc.includes('${bukuKulit}<span class="p-hint"'));
   t('teks cover di belakang buku/gerbang disembunyikan selama tertutup',
@@ -272,7 +278,7 @@ async function render(d) {
     undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .el2{--fa:20%;--fb:8%;--fc:14%;') &&
     !undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 62%,rgba(255,255,255,.42))'));
   t('nama mempelai + tanggal + petunjuk tercetak di badan amplop',
-    undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop')") &&
+    undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop'||BUKA==='gembok')") &&
     undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .p-kulit{left:26px;right:26px;') &&
     undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .p-hint{top:auto;left:50%;bottom:22px;'));
   t('teks cover di belakang amplop disembunyikan (menang atas animasi VIP)',
