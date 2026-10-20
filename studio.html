@@ -443,15 +443,148 @@ const EV_ICON={pernikahan:'💍',khitanan:'🕌',ultah:'🎂',aqiqah:'👶',all:
    adalah index ke array ini). Entri studioOnly:true tetap tersedia di pemilih tema
    dan renderer live, tetapi tidak masuk index.html atau Katalog Harga & Promo. Tema baru
    ditambahkan di AKHIR array dan disinkronkan ke undangan.html. ===== */
-const TPL=[
- {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',harga:49000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'DASAR',deco:'✦ ❖ ✦',pat:'damask',ft:'cormorant',desc:'Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu',layout:'klasik',orn:'klasik',border:'double'},{id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:75000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',badge:'LARIS',deco:'❖ ✦ ❖',pat:'parang',ft:'marcellus',char:'JAWA',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil',layout:'arsip',orn:'batik',border:'frame2'},{id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:75000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',badge:'',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet',layout:'editorial-sage',orn:'geometrik',border:'thin'},{id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:89000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'PREMIUM',deco:'✦ ❖ ✦',pat:'deco',ft:'playfair',char:'GOLD',desc:'Glam soft luxury, emboss gold & black tie vibe',layout:'panggung-emas',orn:'deco',border:'vip-diamond'},{id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:75000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',badge:'',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party',layout:'zigzag-rustic',orn:'mawar',border:'gapdash'},{id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:75000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',badge:'',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan',layout:'poster-ceria',orn:'confetti',border:'dotted'},{id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:79000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',badge:'',deco:'۞ ✦ ۞',pat:'girih',ft:'cinzel',char:'ISLAMI',desc:'Islami elegan dengan ornamen arabesque gold yang halus',layout:'bab-islami',orn:'bulan',border:'filigree'},{id:'kids-party',nama:'Kids Party',ev:'ultah',harga:75000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'LARIS',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Warna-warni happy, balon & confetti buat si kecil',layout:'poster-anak',orn:'kembang-api',border:'dashed'},{id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:85000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',badge:'FAVORIT',deco:'✦ ❀ ✦',pat:'tabur',ft:'dancing',char:'SWEET',desc:'Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya',layout:'kaca-manis',orn:'pita',border:'ribbon-satin'},{id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:79000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',badge:'',deco:'❖ ─ ❖',pat:'marmer',ft:'ebgaramond',char:'ELEGAN',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy',layout:'kaca-dewasa',orn:'zaitun',border:'topbot'},{id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:75000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',badge:'',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',desc:'Lembut biru langit, ilustrasi baby boy yang gemes',layout:'lembut-biru',orn:'awan',border:'halo'},{id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:75000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',badge:'',deco:'✿ ✦ ✿',pat:'renda',ft:'caveat',char:'PUTRI',desc:'Pink blush super lembut buat si putri kecil kesayangan',layout:'lembut-merah',orn:'bunga',border:'pearl-crown'},{id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:75000,g:['#F5F0E6','#E8DFC8','#D4C4A0'],accent:'#7A6D4E',ink:'#6A5F44',badge:'',deco:'۞ ❖ ۞',pat:'damask',ft:'marcellus',char:'ADAB',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat',layout:'bab-netral',orn:'arabesque',border:'corners'},{id:'midnight-gold',nama:'Midnight Gold',ev:'pernikahan',harga:99000,g:['#1E1A15','#2E2419','#4A3A22'],accent:'#D4AF37',ink:'#F2E8D5',badge:'BARU',deco:'✦ ❖ ✦',pat:'sulur',ft:'cinzel',char:'ONYX',desc:'Kemewahan onyx & gold foil — drama elegan untuk malam sakral',layout:'split-midnight',orn:'onyx',border:'onyx-inlay'},{id:'emerald-royal',nama:'Emerald Royal',ev:'pernikahan',harga:95000,g:['#14342B','#1F4D3E','#356B55'],accent:'#D9B86C',ink:'#F0EAD6',badge:'BARU',deco:'❖ ✦ ❖',pat:'botanical',ft:'marcellus',char:'ZAMRUD',desc:'Zamrud pekat beraksen emas kerajaan, anggun & berwibawa',layout:'bab-royal',orn:'botanical',border:'laurel'},{id:'navy-crest',nama:'Navy Crest',ev:'khitanan',harga:85000,g:['#16233F','#223457','#334B76'],accent:'#E7C27D',ink:'#F2ECDC',badge:'BARU',deco:'★ ✦ ★',pat:'ombak',ft:'ebgaramond',char:'BINTANG',desc:'Navy klasik bercrest emas — gagah, sopan, tetap mewah',layout:'split-navy',orn:'mahkota',border:'vip-crown'},{id:'golden-jubilee',nama:'Golden Jubilee',ev:'ultah',harga:89000,g:['#F5E7C8','#E8CF96','#D4AF37'],accent:'#8C6D1F',ink:'#5C4714',badge:'BARU',deco:'✦ ✸ ✦',pat:'deco',ft:'playfair',char:'JUBILE',desc:'Pesta emas champagne buat milestone istimewa — 30, 40, 50 tahun',layout:'zigzag-jubile',orn:'bintang',border:'artdeco'},{id:'pearl-ivory',nama:'Pearl Ivory',ev:'aqiqah',harga:85000,g:['#F8F4EE','#EFE6D8','#E0D2BC'],accent:'#A88B5C',ink:'#5E4E36',badge:'BARU',deco:'✦ ❖ ✦',pat:'renda',ft:'cormorant',char:'MUTIARA',desc:'Lembut mutiara & ivory hangat, elegan menyambut si kecil',layout:'editorial-mutiara',orn:'mutiara',border:'lace-ivory'},
-{id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'botanical',ft:'cormorant',char:'ROSEWOOD',arch:true,studioOnly:true,desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood',layout:'panggung-gerbang',orn:'mawar',border:'gold-leaf'},
-{id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#E8EDD9','#C8D4BE'],accent:'#526A55',ink:'#435348',badge:'GERBANG',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',arch:true,studioOnly:true,desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch',layout:'editorial-mutiara',orn:'mutiara',border:'pearl'},
-{id:'gerbang-midnight-navy',nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'mendung',ft:'playfair',char:'NAVY',arch:true,studioOnly:true,desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis',layout:'split-midnight',orn:'onyx',border:'vip-aurora'},
-{id:'gerbang-khitanan-emerald',nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',badge:'GERBANG',deco:'۞ ✦ ۞',pat:'girih',ft:'cinzel',char:'EMERALD',arch:true,studioOnly:true,desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut',layout:'bab-islami',orn:'arabesque',border:'laurel'},
-{id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'GERBANG',deco:'۞ ❖ ۞',pat:'kawung',ft:'marcellus',char:'NATURAL',arch:true,studioOnly:true,desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung',layout:'lembut-biru',orn:'botanical',border:'halo'},
-{id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'GERBANG',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',arch:true,studioOnly:true,desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch',layout:'poster-anak',orn:'confetti',border:'dotted'}
-];
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template khusus motor baru belum masuk produksi.
+   18 tema publik + 8 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   18 tema publik + 14 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   18 tema publik + 14 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   18 tema publik + 15 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   18 tema publik + 18 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   30 tema publik + 6 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   30 tema publik + 6 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   34 tema publik + 6 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   34 tema publik + 6 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   34 tema publik + 6 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   34 tema publik + 6 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   34 tema publik + 6 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   34 tema publik + 6 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   34 tema publik + 6 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   34 tema publik + 6 Studio-only. */
+const TPL=[ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',harga:49000,g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'DASAR',deco:'✦ ❖ ✦',pat:'damask',ft:'cormorant',desc:'Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu',layout:'klasik',orn:'klasik',border:'double',cover:'amplop',buka:'amplop'}, {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',harga:49000,g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',badge:'LARIS',deco:'❖ ✦ ❖',pat:'parang',ft:'marcellus',char:'JAWA',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil',layout:'arsip',orn:'batik',border:'frame2',cover:'royal',buka:'tirai'}, {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',harga:49000,g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet',layout:'editorial-sage',orn:'geometrik',border:'thin',cover:'minimal',buka:'buku'}, {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',harga:49000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'PREMIUM',deco:'✦ ❖ ✦',pat:'deco',ft:'playfair',char:'GOLD',desc:'Glam soft luxury, emboss gold & black tie vibe',layout:'panggung-emas',orn:'deco',border:'vip-diamond',cover:'royal',buka:'gerbang'}, {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',harga:49000,g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party',layout:'zigzag-rustic',orn:'mawar',border:'gapdash',cover:'sakura',buka:'pita'}, {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',harga:49000,g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan',layout:'poster-ceria',orn:'confetti',border:'dotted',cover:'kartu',buka:'pita'}, {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',harga:49000,g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',deco:'۞ ✦ ۞',pat:'girih',ft:'cinzel',char:'ISLAMI',desc:'Islami elegan dengan ornamen arabesque gold yang halus',layout:'bab-islami',orn:'bulan',border:'filigree',cover:'batik',buka:'selendang'}, {id:'kids-party',nama:'Kids Party',ev:'ultah',harga:49000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'LARIS',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Warna-warni happy, balon & confetti buat si kecil',layout:'poster-anak',orn:'kembang-api',border:'dashed',cover:'ticket',buka:'pita'}, {id:'sweet-17',nama:'Sweet 17',ev:'ultah',harga:49000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',badge:'FAVORIT',deco:'✦ ❀ ✦',pat:'tabur',ft:'dancing',char:'SWEET',desc:'Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya',layout:'kaca-manis',orn:'pita',border:'ribbon-satin',cover:'polaroid',buka:'pita'}, {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',harga:49000,g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',deco:'❖ ─ ❖',pat:'marmer',ft:'ebgaramond',char:'ELEGAN',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy',layout:'kaca-dewasa',orn:'zaitun',border:'topbot',cover:'archive',buka:'pintu'}, {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',harga:49000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',desc:'Lembut biru langit, ilustrasi baby boy yang gemes',layout:'lembut-biru',orn:'awan',border:'halo',cover:'glass',buka:'pita'}, {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',harga:49000,g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',deco:'✿ ✦ ✿',pat:'renda',ft:'caveat',char:'PUTRI',desc:'Pink blush super lembut buat si putri kecil kesayangan',layout:'lembut-merah',orn:'bunga',border:'pearl-crown',cover:'sakura',buka:'pita'}, {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',harga:49000,g:['#F5F2E4','#E7E3CB','#D2CBA8'],accent:'#6E7A52',ink:'#5A5540',deco:'۞ ❖ ۞',pat:'damask',ft:'marcellus',char:'ADAB',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat',layout:'bab-netral',orn:'arabesque',border:'corners',cover:'batik',buka:'selendang'}, {id:'midnight-gold',nama:'Midnight Gold',ev:'pernikahan',harga:49000,g:['#1E1A15','#2E2419','#4A3A22'],accent:'#D4AF37',ink:'#F2E8D5',badge:'BARU',deco:'✦ ❖ ✦',pat:'sulur',ft:'cinzel',char:'ONYX',desc:'Kemewahan onyx & gold foil — drama elegan untuk malam sakral',layout:'split-midnight',orn:'onyx',border:'onyx-inlay',cover:'night',buka:'amplop'}, {id:'emerald-royal',nama:'Emerald Royal',ev:'pernikahan',harga:49000,g:['#14342B','#1F4D3E','#356B55'],accent:'#D9B86C',ink:'#F0EAD6',badge:'BARU',deco:'❖ ✦ ❖',pat:'botanical',ft:'marcellus',char:'ZAMRUD',desc:'Zamrud pekat beraksen emas kerajaan, anggun & berwibawa',layout:'bab-royal',orn:'botanical',border:'laurel',cover:'royal',buka:'gerbang'}, {id:'navy-crest',nama:'Navy Crest',ev:'khitanan',harga:49000,g:['#16233F','#223457','#334B76'],accent:'#E7C27D',ink:'#F2ECDC',badge:'BARU',deco:'★ ✦ ★',pat:'ombak',ft:'ebgaramond',char:'BINTANG',desc:'Navy klasik bercrest emas — gagah, sopan, tetap mewah',layout:'split-navy',orn:'mahkota',border:'vip-crown',cover:'night',buka:'pintu'}, {id:'golden-jubilee',nama:'Golden Jubilee',ev:'ultah',harga:49000,g:['#F5E7C8','#E8CF96','#D4AF37'],accent:'#8C6D1F',ink:'#5C4714',badge:'BARU',deco:'✦ ✸ ✦',pat:'deco',ft:'playfair',char:'JUBILE',desc:'Pesta emas champagne buat milestone istimewa — 30, 40, 50 tahun',layout:'zigzag-jubile',orn:'bintang',border:'artdeco',cover:'ticket',buka:'gerbang'}, {id:'pearl-ivory',nama:'Pearl Ivory',ev:'aqiqah',harga:49000,g:['#FDF9F3','#F6E7E2','#E9D2CE'],accent:'#A87E74',ink:'#5E4E36',badge:'BARU',deco:'✦ ❖ ✦',pat:'renda',ft:'cormorant',char:'MUTIARA',desc:'Lembut mutiara & ivory hangat, elegan menyambut si kecil',layout:'editorial-mutiara',orn:'mutiara',border:'lace-ivory',cover:'kartu',buka:'kotak'},
+ {id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'botanical',ft:'lora',char:'ROSEWOOD',desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood',layout:'panggung-gerbang',orn:'mawar',border:'gold-leaf',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
+ {id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#EEEFE4','#D8DDCB'],accent:'#526A55',ink:'#435348',badge:'GERBANG',deco:'✿ ❋ ✿',pat:'botanical',ft:'ebgaramond',char:'SAGE',desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch',layout:'editorial-mutiara',orn:'mutiara',border:'pearl',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
+ {id:'gerbang-midnight-navy',nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'mendung',ft:'playfair',char:'NAVY',desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis',layout:'split-midnight',orn:'onyx',border:'vip-aurora',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
+ {id:'gerbang-khitanan-emerald',nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',badge:'GERBANG',deco:'۞ ✦ ۞',pat:'girih',ft:'cinzel',char:'EMERALD',desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut',layout:'bab-islami',orn:'arabesque',border:'laurel',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
+ {id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'GERBANG',deco:'۞ ❖ ۞',pat:'kawung',ft:'marcellus',char:'NATURAL',desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung',layout:'lembut-biru',orn:'botanical',border:'halo',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
+ {id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'GERBANG',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch',layout:'poster-anak',orn:'confetti',border:'dotted',cover:'gerbang',buka:'pita',arch:true,studioOnly:true},
+ {id:'noir-kutip',nama:'Noir Kutip',ev:'pernikahan',harga:49000,g:['#1E1A15','#2E2419','#4A3A22'],accent:'#D4AF37',ink:'#F2E8D5',badge:'BARU',deco:'✦ ❖ ✦',pat:'sulur',ft:'cinzel',char:'ONYX',desc:'Kegelapan glamor dengan kutipan besar pembuka dan foto hero',layout:null,orn:'onyx',border:'onyx-inlay',cover:'night',buka:'amplop',kb:{"shell":"editorial","urutan":["quote","guest","doa","profil","harapan","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["kutipBesar","heroFoto"],"cover":"amplop"}},
+ {id:'sultan-arsip',nama:'Sultan Arsip',ev:'pernikahan',harga:49000,g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'BARU',deco:'✦ ❖ ✦',pat:'deco',ft:'playfair',char:'GOLD',desc:'Kerajaan bernomor romawi, sampul segel emas, galeri mengalir',layout:null,orn:'deco',border:'vip-diamond',cover:'archive',buka:'gembok',kb:{"shell":"bab","urutan":["guest","story","timeline","profil","harapan","acara","quote","doa","galeri","menu","party","dresscode","map","gift","bukutamu","amplop","rsvp","closing","ucapan"],"ekstra":["babAngka","galeriStrip"],"cover":"minimal"}},
+ {id:'pop-zigzag',nama:'Pop Zigzag',ev:'ultah',harga:49000,g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'BARU',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Zigzag ceria dengan jam hitung-mundur digital',layout:null,orn:'kembang-api',border:'dashed',cover:'ticket',buka:'pita',kb:{"shell":"zigzag","urutan":["guest","acara","timeline","profil","harapan","galeri","story","quote","doa","menu","party","dresscode","map","gift","bukutamu","rsvp","closing","amplop","ucapan"],"ekstra":["jamFlip"],"cover":"batik"}},
+ {id:'mentari-poster',nama:'Mentari Poster',ev:'ultah',harga:49000,g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',badge:'BARU',deco:'✦ ❀ ✦',pat:'tabur',ft:'dancing',char:'SWEET',desc:'Poster manis dengan galeri mengalir horizontal',layout:null,orn:'pita',border:'ribbon-satin',cover:'foto',buka:'pita',kb:{"shell":"poster","urutan":["guest","doa","profil","harapan","acara","timeline","story","quote","menu","party","dresscode","map","gift","rsvp","closing","bukutamu","galeri","amplop","ucapan"],"ekstra":["galeriStrip"],"cover":"night"}},
+ {id:'damai-kaca',nama:'Damai Kaca',ev:'aqiqah',harga:49000,g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',badge:'BARU',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',desc:'Kaca lembut bayi — galeri menyapa duluan',layout:'kaca-manis',orn:'awan',border:'halo',cover:'glass',buka:'buku'},
+ {id:'telur-emas',nama:'Telur Emas',ev:'pernikahan',harga:49000,g:['#14342B','#1F4D3E','#356B55'],accent:'#D9B86C',ink:'#F0EAD6',badge:'BARU',deco:'❖ ✦ ❖',pat:'botanical',ft:'marcellus',char:'ZAMRUD',desc:'Zamrud terbelah dengan kutipan kecil dan foto hero',layout:null,orn:'botanical',border:'laurel',cover:'royal',buka:'kotak',kb:{"shell":"split","urutan":["guest","story","timeline","profil","harapan","acara","quote","doa","galeri","menu","party","dresscode","map","gift","bukutamu","amplop","rsvp","closing","ucapan"],"ekstra":["heroFoto","kutipBesar"],"cover":"amplop"}},
+ {id:'kopi-jurnal',nama:'Kopi Jurnal',ev:'all',harga:49000,g:['#F7F0E6','#EBDFC9','#D9C7A7'],accent:'#7C5A3A',ink:'#4E3F30',badge:'BARU',deco:'❀ ✦ ❀',pat:'kawung',ft:'ebgaramond',desc:'Jalanan kopi Sunda — hangat, sederhana, otentik',layout:null,orn:'botanical',border:'frame2',cover:'archive',buka:'buku',kb:{"shell":"klasik","urutan":["guest","profil","harapan","acara","timeline","story","doa","quote","menu","party","dresscode","map","gift","galeri","bukutamu","amplop","rsvp","closing","ucapan"],"ekstra":[],"cover":"amplop"}},
+ {id:'mentari-bayi',nama:'Mentari Bayi',ev:'aqiqah',harga:49000,g:['#FFF6E9','#FFE3B3','#FBCF87'],accent:'#C07F2A',ink:'#6B5222',badge:'BARU',deco:'☀ ✦ ☀',pat:'mendung',ft:'marcellus',desc:'Langit pagi lembut menyambut si kecil, galeri menggeser',layout:'lembut-biru',orn:'bintang',border:'halo',cover:'kartu',buka:'pita'},
+ {id:'senja-kencana',nama:'Senja Kencana',ev:'pernikahan',harga:49000,g:['#FFF6EC','#FFD9A8','#F2994A'],accent:'#B4530A',ink:'#5C3A1E',badge:'BARU',deco:'❀ ✦ ❀',pat:'ombak',ft:'marcellus',char:'SENJA',desc:'Senja kencana — apricot & terracotta hangat, kutipan pembuka, mempelai bersebelahan',layout:null,orn:'mawar',border:'laurel',cover:'gerbang',buka:'gerbang',kb:{"shell":"editorial","urutan":["quote","guest","profil","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["kutipBesar","heroFoto"],"cover":"gerbang"}},
+ {id:'sorot-utama',nama:'Sorot Utama',ev:'pernikahan',harga:49000,g:['#FBFAF6','#F2EFE7','#E4DFD2'],accent:'#1B1B1B',ink:'#26231D',badge:'BARU',deco:'✦ — ✦',pat:'damask',ft:'playfair',char:'UTAMA',desc:'Editorial raksasa — nama jadi tipografi besar, asimetris, white space ekstrem',layout:null,orn:'geometrik',border:'thin',cover:'editorial',buka:'pintu',kb:{"shell":"gedung","urutan":["profil","quote","guest","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["heroFoto"],"cover":"night"}},
+ {id:'retro-surya',nama:'Retro Surya',ev:'ultah',harga:49000,g:['#FFEAC2','#F9CE5E','#F09A3E'],accent:'#0E5E50',ink:'#3B2C16',badge:'BARU',deco:'☀ ✦ ☀',pat:'surya',ft:'bebas',char:'SURY',desc:'Retro surya — mustard & teal, font chunky, tanggal raksasa bergaya mid-century',layout:null,orn:'deco',border:'artdeco',cover:'ticket',buka:'pita',kb:{"shell":"retro","urutan":["guest","acara","quote","profil","timeline","story","doa","harapan","menu","party","dresscode","map","galeri","gift","amplop","rsvp","ucapan"],"ekstra":["jamFlip","galeriStrip"],"cover":"batik"}},
+ {id:'gelap-rimbun',nama:'Gelap Rimbun',ev:'pernikahan',harga:49000,g:['#171120','#251A35','#3D2652'],accent:'#D9B36A',ink:'#F5ECDE',badge:'BARU',deco:'❀ ✦ ❀',pat:'rimbun',ft:'cinzel',char:'RIMB',desc:'Gelap rimbun — plum malam berlapis flora, aksen emas, drama botanikal',layout:null,orn:'mawar',border:'gold-leaf',cover:'foto',buka:'gembok',kb:{"shell":"rimbun","urutan":["doa","quote","guest","profil","harapan","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["kutipBesar","navDot"],"cover":"minimal"}},
+ {id:'rimba-tropis',nama:'Rimba Tropis',ev:'pernikahan',harga:49000,g:['#F0F7EE','#D6EAD9','#A9CDB0'],accent:'#1F6B44',ink:'#274A33',badge:'BARU',deco:'❀ ✦ ❀',pat:'monstera',ft:'merriweather',char:'RIMBA',desc:'Rimba tropis — monstera & palem rimbun, hijau segar, cover foto penuh',layout:null,orn:'botanical',border:'laurel',cover:'foto',buka:'gerbang',kb:{"shell":"panggung","urutan":["profil","quote","guest","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["heroFoto"],"cover":"night"}},
+ {id:'kertas-kraft',nama:'Kertas Kraft',ev:'pernikahan',harga:49000,g:['#EFE4D0','#E0CDA6','#C9AE83'],accent:'#7C5230',ink:'#4E3B26',badge:'BARU',deco:'✁ ✦ ✁',pat:'kraft',ft:'caveat',char:'KRAFT',desc:'Kertas kraft bertekstur, tulisan tangan, kesan kraftangan',layout:null,orn:'coretan',border:'gapdash',cover:'archive',buka:'buku',kb:{"shell":"arsip","urutan":["guest","doa","profil","harapan","quote","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["navDot"],"cover":"amplop"}},
+ {id:'wabi-sabi',nama:'Wabi Sabi',ev:'pernikahan',harga:49000,g:['#F1ECE3','#E4DBCB','#CFC0AA'],accent:'#8C7A64',ink:'#57503F',badge:'BARU',deco:'・ ✦ ・',pat:'washi',ft:'cormorant',char:'WABI',desc:'Wabi sabi — ketidaksempurnaan yang tenang, washi & tanah',layout:null,orn:'mutiara',border:'halo',cover:'minimal',buka:'buku',kb:{"shell":"gedung","urutan":["quote","profil","guest","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":[],"cover":"amplop"}},
+ {id:'bunga-kering',nama:'Bunga Kering',ev:'pernikahan',harga:49000,g:['#F4E7D7','#E4C9AE','#CBA37C'],accent:'#9C6B4F',ink:'#5E4634',badge:'BARU',deco:'❀ ✦ ❀',pat:'botanical',ft:'lora',char:'KEMBANG',desc:'Bunga kering — dusty rose & gandum, nostalgi lembut',layout:null,orn:'mawar',border:'pearl',cover:'polaroid',buka:'pita',kb:{"shell":"lembut","urutan":["guest","profil","quote","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["galeriStrip"],"cover":"gerbang"}}];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Nama kerangka (layout) per preset — HARUS sama persis dengan LAYOUTS[id].nama
    di undangan.html; dijaga oleh tools/test-layout-tema.cjs. Studio hanya butuh
    namanya untuk melabeli pemilih tema; bentuk aslinya dirender undangan.html. */
@@ -654,6 +787,14 @@ const ORNAMEN={
  },
 
  /* Mahkota: tiga puncak dengan permata. */
+ /* Garis tangan bebas — coretan organik ala sketsa. */
+ coretan:()=>ornBungkus(
+  ORN_GARIS('M20 16c6-9 16-11 24-6 7 4 8 13 1 16-6 3-15 1-16-6',1.2,.8)+
+  ORN_GARIS('M148 16c-6-9-16-11-24-6-7 4-8 13-1 16-6 3-15 1-16-6',1.2,.8)+
+  ORN_GARIS('M70 15c8-6 18-6 24 0 5 5 4 12-3 13',1.1,.6)+
+  '<circle cx="84" cy="15" r="2" fill="currentColor" opacity=".7"/>'+
+  '<circle cx="30" cy="12" r="1.4" fill="currentColor" opacity=".5"/>'+
+  '<circle cx="138" cy="12" r="1.4" fill="currentColor" opacity=".5"/>'),
  mahkota:()=>ornBungkus(
    '<path d="M68 21l-4-13 9 6 11-11 11 11 9-6-4 13Z" fill="currentColor" opacity=".85"/>'+
    '<rect x="68" y="21" width="32" height="3.4" rx="1.4" fill="currentColor"/>'+
@@ -677,7 +818,8 @@ function ornIdValid(v){return typeof v==='string'&&Object.prototype.hasOwnProper
 const ORN_NAMA={klasik:'Klasik Gulung',botanical:'Botanical',arabesque:'Arabesque',
  deco:'Art Deco',confetti:'Confetti',mutiara:'Mutiara',awan:'Awan',bunga:'Bunga',
  bintang:'Bintang',onyx:'Onyx',batik:'Batik Kawung',mawar:'Mawar',geometrik:'Geometrik',
- 'kembang-api':'Kembang Api',bulan:'Bulan Sabit',pita:'Pita',zaitun:'Zaitun',mahkota:'Mahkota'};
+ 'kembang-api':'Kembang Api',bulan:'Bulan Sabit',pita:'Pita',zaitun:'Zaitun',mahkota:'Mahkota',
+ coretan:'Coretan Tangan'};
 const LAYOUT_NAMA={
  'klasik':'Klasik',
  'arsip':'Arsip Jawa',
@@ -705,7 +847,7 @@ const CUSTOM_TPL_COVER_STYLES=['kotak','oval','lingkaran','arch','polaroid','ema
 const CUSTOM_TPL_COVER_LAYOUTS=['amplop','kartu','foto','gerbang','minimal','batik','sakura','night','ticket','editorial','polaroid','glass','royal','archive','neon'];
 /* Ukuran foto cover & gaya tombol buka — daftar id WAJIB identik dengan undangan.html */
 const CV_UKURAN_ID=['kecil','sedang','besar','jumbo'];
-const BTN_OPEN_ID=['amplop','pil','emas','garis','kaca','pita','cap','daun','kartu','neon','mutiara','royal','minimal'];
+const CARA_BUKA_ID=['pita','tirai','gerbang','pintu','buku','amplop','gembok','kotak','selendang'];
 function customColor(v,fallback){const s=String(v||'').trim();return /^#[0-9a-f]{6}$/i.test(s)?s.toUpperCase():fallback}
 function customAsset(v){const s=String(v||''),parts=s.split('/');return parts[0]==='assets'&&parts.length>1&&parts.slice(1).every(p=>/^[a-z0-9._-]+$/i.test(p))&&!parts.includes('..')?s:''}
 /* ===========================================================================
@@ -807,6 +949,28 @@ const POLA = {
  tabur: {
   n: 'Tabur Kelip', d: 'Bintang kecil tersebar', op: .22, size: '90px 90px',
   svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.3" stroke-linejoin="round"><path d="M22 15C23 20 24 21 29 22C24 23 23 24 22 29C21 24 20 23 15 22C20 21 21 20 22 15Z"/><path d="M66 35C67 39 68 40 72 41C68 42 67 43 66 47C65 43 64 42 60 41C64 40 65 39 66 35Z"/><path d="M40 64C41 69 42 70 47 71C42 72 41 73 40 78C39 73 38 72 33 71C38 70 39 69 40 64Z"/><path d="M78 76C79 79 80 80 83 81C80 82 79 83 78 86C77 83 76 82 73 81C76 80 77 79 78 76Z"/><path d="M10 52C11 55 12 56 15 57C12 58 11 59 10 62C9 59 8 58 5 57C8 56 9 55 10 52Z"/><circle cx="52" cy="14" r="1.4"/><circle cx="14" cy="80" r="1.4"/><circle cx="80" cy="52" r="1.2"/></g></svg>`
+ },
+ /* --- pola kerangka baru: sinar retro & flora berlapis --- */
+ surya: {
+  n: 'Sinar Matahari', d: 'Sembar matahari mid-century', op: 0, size: '',
+  css: t => `background-image:repeating-conic-gradient(from -90deg at 50% -32%,color-mix(in srgb,${t.accent} 13%,transparent) 0deg 5deg,transparent 5deg 24deg);`
+ },
+ rimbun: {
+  n: 'Rimbun Flora', d: 'Helai bunga berlapis', op: 0, size: '',
+  css: t => `background-image:radial-gradient(circle at 18% 22%,color-mix(in srgb,${t.accent} 15%,transparent) 0 3px,transparent 4px),radial-gradient(circle at 78% 14%,color-mix(in srgb,${t.accent} 11%,transparent) 0 2.5px,transparent 3.5px),radial-gradient(circle at 62% 82%,color-mix(in srgb,${t.accent} 13%,transparent) 0 3px,transparent 4px),radial-gradient(circle at 26% 88%,color-mix(in srgb,${t.accent} 9%,transparent) 0 2px,transparent 3px);background-size:150px 150px,120px 120px,170px 170px,130px 130px;`
+ },
+ /* --- pola baru dari riset 2026 --- */
+ monstera: {
+  n: 'Monstera', d: 'Daun monstera tropis', op: 0, size: '',
+  css: t => `background-image:radial-gradient(ellipse 34px 62px at 16% 24%,color-mix(in srgb,${t.accent} 17%,transparent) 0 55%,transparent 72%),radial-gradient(ellipse 34px 62px at 84% 74%,color-mix(in srgb,${t.accent} 14%,transparent) 0 55%,transparent 72%),radial-gradient(ellipse 26px 48px at 72% 18%,color-mix(in srgb,${t.accent} 11%,transparent) 0 55%,transparent 72%);background-size:190px 190px,220px 220px,170px 170px;`
+ },
+ kraft: {
+  n: 'Serat Kraft', d: 'Serat kertas kraft kasar', op: 0, size: '',
+  css: t => `background-image:repeating-linear-gradient(90deg,color-mix(in srgb,${t.accent} 7%,transparent) 0 1px,transparent 1px 5px),repeating-linear-gradient(2deg,color-mix(in srgb,${t.accent} 5%,transparent) 0 1px,transparent 1px 7px),radial-gradient(circle at 30% 60%,color-mix(in srgb,${t.accent} 8%,transparent) 0 1.5px,transparent 2.5px);background-size:120px 120px,180px 90px,90px 90px;`
+ },
+ washi: {
+  n: 'Washi', d: 'Serat kertas washi halus', op: 0, size: '',
+  css: t => `background-image:repeating-linear-gradient(45deg,color-mix(in srgb,${t.accent} 6%,transparent) 0 1px,transparent 1px 11px),repeating-linear-gradient(-45deg,color-mix(in srgb,${t.accent} 5%,transparent) 0 1px,transparent 1px 13px);background-size:140px 140px,160px 160px;`
  }
 };
 const POLA_IDS = Object.keys(POLA);
@@ -853,7 +1017,7 @@ function normalizeTplCustom(items){
   if(CUSTOM_TPL_COVER_LAYOUTS.includes(source.coverLayout))design.coverLayout=source.coverLayout;
   if(CUSTOM_TPL_COVER_STYLES.includes(source.coverStyle))design.coverStyle=source.coverStyle;
   if(CV_UKURAN_ID.includes(source.coverSize))design.coverSize=source.coverSize;
-  if(BTN_OPEN_ID.includes(source.coverBtn))design.coverBtn=source.coverBtn;
+  if(CARA_BUKA_ID.includes(source.buka))design.buka=source.buka;
   if(typeof source.coverStyleExplicit==='boolean')design.coverStyleExplicit=source.coverStyleExplicit;
   if(typeof source.darkMode==='boolean')design.darkMode=source.darkMode;
   if(typeof source.goldOrn==='boolean')design.goldOrn=source.goldOrn;
@@ -873,7 +1037,7 @@ function normalizeTplCustom(items){
 function tplById(id){const key=String(id||'');return TPL.find(t=>t.id===key)||(Array.isArray(state.tplCustom)?state.tplCustom.find(t=>t.id===key):null)||null}
 function tplOf(){return tplById(state.tpl)||TPL[0]}
 function syncDefaultCoverStyle(t){if(!state.coverStyleExplicit)state.coverStyle=t&&t.arch?'arch':'kotak'}
-function tplsFor(ev){const hidden=Array.isArray(state.katalogHide)?state.katalogHide:[];
+function tplsFor(ev){if((state.kategoriHide||[]).includes(ev))return[];const hidden=Array.isArray(state.katalogHide)?state.katalogHide:[];
  return [...TPL,...(Array.isArray(state.tplCustom)?state.tplCustom:[])].filter(t=>(t.ev===ev||t.ev==='all')&&!hidden.includes(t.id))}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
 function patCss(t,skala){return polaCss(t&&t.pat,t,skala)}
@@ -1161,7 +1325,7 @@ function waUrl(teks){return 'https://wa.me/?text='+encodeURIComponent(teks)}
 /* ============ STATE ============ */
 const DEF={
  page:'editor',tab:'info',event:'pernikahan',tpl:'ivory-klasik',accent:'#8A6E4B',tplCustom:[],tplDraftName:'',tplDraftPublic:false,
- fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,darkMode:false,border:'double',orn:'',ornSudut:'bunga4d',katalogHide:[],katalogDel:[],
+ fontTitle:'cormorant',fontBody:'inter',bgType:'gradient',goldOrn:true,darkMode:false,border:'double',orn:'',ornSudut:'bunga4d',katalogHide:[],kategoriHide:[],katalogDel:[],
  form:{namaPria:'',gelarPria:'',namaWanita:'',gelarWanita:'',
   putraPutri:'',putriDari:'',
   namaAnak:'',putraDari:'',umurAnak:'',
@@ -1173,7 +1337,7 @@ const DEF={
   liveAkad:'',liveResepsi:'',
   harapanPria:'',harapanWanita:'',
   ucapanCustom:''},
- musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverLayout:'amplop',coverStyleExplicit:false,coverPos:{x:50,y:50,z:1},coverSize:'sedang',coverBtn:'amplop',fotoPria:'',fotoWanita:'',gallery:[],videoLink:'',
+ musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverLayout:'amplop',coverStyleExplicit:false,coverPos:{x:50,y:50,z:1},coverSize:'sedang',buka:'pita',fotoPria:'',fotoWanita:'',gallery:[],videoLink:'',
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'',
  guestCodes:{},masterKey:'',selGuest:null,showNameQr:true,
@@ -1194,7 +1358,7 @@ const DEF={
  anim:{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up',scrollMix:true,navMode:'scroll',buka:'gilir'},
  floatPrevOn:true,floatPos:null,
  slug:'',customDomain:'',published:false,publishedLink:'',started:false,stage:'editor',
- katalog:TPL.filter(t=>!t.studioOnly).map((t,i)=>({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga+75000,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:340-i*23})),
+ katalog:TPL.filter(t=>!t.studioOnly).map((t,i)=>({id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:t.harga,hargaPromo:t.harga,promoActive:true,badge:t.badge||'',terjual:340-i*23})),
  promo:{diskon:50,tglMulai:'2026-10-01',tglSelesai:'2026-12-31',badgeText:'FLASH SALE 50%'},
  arsip:[],
  search:''};
@@ -1210,7 +1374,7 @@ if(stored.tab==='master'||stored.tab==='domain')stored.tab='terbit'; /* susunan 
  if(!CUSTOM_TPL_COVER_LAYOUTS.includes(state.coverLayout))state.coverLayout='amplop';
  if(!state.coverStyle)state.coverStyle='kotak';
  if(!CV_UKURAN_ID.includes(state.coverSize))state.coverSize='sedang';
- if(!BTN_OPEN_ID.includes(state.coverBtn))state.coverBtn='amplop';
+ if(!CARA_BUKA_ID.includes(state.buka))state.buka='pita';
  /* Migrasi: gaya non-default dari proyek lama dianggap pilihan manual. */
  if(typeof stored.coverStyleExplicit==='boolean')state.coverStyleExplicit=stored.coverStyleExplicit;
  else state.coverStyleExplicit=!!stored.coverStyle&&!['kotak','arch'].includes(stored.coverStyle);
@@ -1223,7 +1387,7 @@ function mergeSlides(s){const out={};Object.keys(DEF.slides).forEach(k=>{out[k]=
 /* migrasi ringan: pastikan template valid, katalog pakai struktur TPL, & musik demo selalu tersedia */
  if(!state.tpl||!tplById(state.tpl))state.tpl=TPL[0].id;
 /* baris katalog bawaan untuk satu tema publik TPL (dipakai saat boot, migrasi, dan Pulihkan Bawaan) */
-function barisKat(t,i){const harga=Number(t.harga)||75000;return{id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:harga+75000,hargaPromo:harga,promoActive:true,badge:t.custom?'CUSTOM':(t.badge||''),terjual:Math.max(0,340-(state.katalog.length+i)*23)}}
+function barisKat(t,i){const harga=Number(t.harga)||49000;return{id:t.id,nama:t.nama,tpl:t.id,ev:t.ev,hargaNormal:harga,hargaPromo:harga,promoActive:true,badge:t.custom?'CUSTOM':(t.badge||''),terjual:Math.max(0,340-(state.katalog.length+i)*23)}}
 /* katalogDel = tema bawaan yang sengaja dihapus pemilik dari katalog (tombstone) */
 if(!Array.isArray(state.katalogDel))state.katalogDel=[];
 state.katalogDel=state.katalogDel.filter(id=>TPL.some(t=>t.id===id&&!t.studioOnly));
@@ -1236,6 +1400,11 @@ else state.katalog=state.katalog.filter(k=>{
 });
 /* Tema publik bawaan otomatis masuk kecuali pernah dihapus. */
 TPL.forEach((t,i)=>{if(!t.studioOnly&&!state.katalogDel.includes(t.id)&&!state.katalog.some(k=>(k.tpl||k.id)===t.id))state.katalog.push(barisKat(t,i))});
+/* Migrasi harga: label harga katalog mengikuti harga template
+   bawaan terkini, supaya perubahan harga di kerangka/template.js
+   tampil juga untuk pemilik yang sudah punya state tersimpan.
+   Baris custom (harga pilihan pemilik) tetap dihormati. */
+state.katalog.forEach(k=>{const t=tplById(k.tpl||k.id);if(t&&!t.custom){k.hargaNormal=t.harga;k.hargaPromo=t.harga}});
 /* Tema custom baru hanya masuk katalog bila checkbox publik dipilih saat disimpan. */
 state.tplCustom.forEach((t,i)=>{if(!t.studioOnly&&!state.katalog.some(k=>(k.tpl||k.id)===t.id))state.katalog.push(barisKat(t,i))});
 /* migrasi border (dulu: toggle dblBorder) & daftar katalog tersembunyi */
@@ -1248,6 +1417,9 @@ if(typeof state.orn!=='string'||(state.orn&&!ORN_NAMA[state.orn]))state.orn='';
 if(typeof state.pat!=='string'||(state.pat&&!POLA[state.pat]))state.pat='';
 if(!Array.isArray(state.katalogHide))state.katalogHide=[];
 state.katalogHide=state.katalogHide.filter(id=>{const t=tplById(id);return !!t&&!t.studioOnly});
+/* Kategori yang disembunyikan pemilik dari pilihan template & katalog. */
+if(!Array.isArray(state.kategoriHide))state.kategoriHide=[];
+state.kategoriHide=state.kategoriHide.filter(ev=>['pernikahan','khitanan','ultah','aqiqah'].includes(ev));
 if(!Array.isArray(state.musicDb))state.musicDb=[];
 state.musicDb=state.musicDb.filter(m=>!m.demo||DEMO_MUSIC.some(d=>d.url===m.url));
 if(state.music&&state.music.demo&&!DEMO_MUSIC.some(d=>d.url===state.music.url)){state.music=null;state.playing=false}
@@ -1255,7 +1427,7 @@ DEMO_MUSIC.forEach(d=>{if(!state.musicDb.some(m=>m.url===d.url))state.musicDb.pu
 /* Signature murah untuk mendeteksi "ada perubahan sejak publish terakhir" tanpa
    ikut menyalin foto base64 (cukup panjangnya saja). */
 function sigHash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h+str.charCodeAt(i))|0;return h.toString(36)+'.'+str.length}
-function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.tplCustom||[],state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.orn||'',state.pat||'',state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,state.coverLayout||'amplop',!!state.coverStyleExplicit,state.coverPos,state.coverSize||'sedang',state.coverBtn||'amplop',(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug].concat(
+function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.tplCustom||[],state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.orn||'',state.pat||'',state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,state.coverLayout||'amplop',!!state.coverStyleExplicit,state.coverPos,state.coverSize||'sedang',state.buka||'pita',(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug].concat(
  /* Teks WA ikut snapshot publish (dibaca Master & undangan live). Hanya teks yang diubah
     pemilik yang dihitung, supaya undangan lama bertemplate bawaan tidak mendadak "berubah". */
  state.waTemplate===WA_TEMPLATE_DEFAULT?[]:[String(state.waTemplate||'')])))}
@@ -1695,10 +1867,17 @@ function applyTplToState(t){if(!t)return false;
  if(d.coverLayout)state.coverLayout=d.coverLayout;
  if(d.coverStyle)state.coverStyle=d.coverStyle;
  if(CV_UKURAN_ID.includes(d.coverSize))state.coverSize=d.coverSize;
- if(BTN_OPEN_ID.includes(d.coverBtn))state.coverBtn=d.coverBtn;
+ if(CARA_BUKA_ID.includes(d.buka))state.buka=d.buka;
  if(typeof d.coverStyleExplicit==='boolean')state.coverStyleExplicit=d.coverStyleExplicit;
  if(typeof d.darkMode==='boolean')state.darkMode=d.darkMode;
  if(typeof d.goldOrn==='boolean')state.goldOrn=d.goldOrn;
+ /* Hint model cover & tombol buka dari tema (field cover/btn,
+    atau kb.cover untuk template kerangka bebas lama). Hanya
+    dipakai bila pemilik belum memilih model lain — field
+    cover/btn tersimpan di draft saat disimpan. */
+ const hintCv=t.cover||(t.kb&&t.kb.cover);
+ if(CV_LAYOUTS.some(c=>c[0]===hintCv)&&state.coverLayout==='amplop')state.coverLayout=hintCv;
+ if(t.buka&&CARA_BUKA_ID.includes(t.buka)&&state.buka==='pita')state.buka=t.buka;
  syncDefaultCoverStyle(t);paksaTier();return true
 }
 function newCustomTplId(){let id;do{id='custom-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7)}while(tplById(id));return id}
@@ -1712,7 +1891,7 @@ function makeCustomTemplate(name,isPublic){
   bg3d:source.bg3d,bgPaper:source.bgPaper,studioOnly:!isPublic,
   desc:'Tema kustom berdasarkan '+source.nama,
   design:{fontBody:state.fontBody,border:state.border,orn:state.orn||'',pat:state.pat||'',ornSudut:state.ornSudut,coverLayout:state.coverLayout||'amplop',
-   coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,coverSize:state.coverSize||'sedang',coverBtn:state.coverBtn||'amplop',darkMode:!!state.darkMode,goldOrn:!!state.goldOrn}}]).slice(-80).find(t=>t.id===id)
+   coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,coverSize:state.coverSize||'sedang',buka:state.buka||'pita',darkMode:!!state.darkMode,goldOrn:!!state.goldOrn}}]).slice(-80).find(t=>t.id===id)
 }
 function saveCustomTemplate(){
  const nama=String(state.tplDraftName||'').trim().slice(0,60);
@@ -1915,23 +2094,19 @@ const CV_UKURAN=[
 function cvSizeId(){return CV_UKURAN_ID.includes(state.coverSize)?state.coverSize:'sedang'}
 function setCvSize(id){if(!CV_UKURAN_ID.includes(id))return;state.coverSize=id;save();render();renderPreview();pvKeCover();notify('Ukuran foto cover: '+(CV_UKURAN.find(u=>u[0]===id)||[])[1])}
 /* 13 gaya tombol "Buka Undangan" — id & nama WAJIB sama dengan CSS btnopen-* di undangan.html */
-const BTN_OPEN_STYLES=[
- ['amplop','Amplop Segel','✉️','Amplop kertas dengan flap + segel lilin (bawaan).'],
- ['pil','Pil Klasik','✉️','Pil gelap mengikuti warna tema — ringkas & tegas.'],
- ['emas','Pil Emas','✉️','Pil gradasi emas berkilau untuk nuansa mewah.'],
- ['garis','Garis Halus','✉️','Pil transparan berbingkai garis warna tema.'],
- ['kaca','Kaca Embun','✉️','Pil kaca buram (glass) lembut di atas cover.'],
- ['pita','Pita Banner','🎀','Banner pita berlekuk dengan huruf kapital.'],
- ['cap','Cap Pos','✉️','Kotak cap pos bergaris putus-putus + bayangan cap.'],
- ['daun','Daun Sage','🍃','Pil hijau daun dengan dua sudut melengkung daun.'],
- ['kartu','Kartu Putih','💌','Kartu putih berbingkai ganda aksen tema.'],
- ['neon','Neon Malam','🌃','Gelap bercahaya neon cyan — kontras di cover terang/gelap.'],
- ['mutiara','Mutiara','🤍','Pil ivory mutiara dengan kilau lembut.'],
- ['royal','Royal Zamrud','👑','Zamrud gelap + huruf emas bergaya kerajaan.'],
- ['minimal','Teks Minimal','→','Tanpa kotak: teks bergaris bawah aksen saja.']
+const CARA_BUKA_STYLES=[
+ ['pita','Pita Saten','🎀','Pita satin melintang di cover — diketuk, terbang terbuka.'],
+ ['tirai','Tirai Teater','🪟','Dua tirai berlipat bergeser ke sisi membuka cover.'],
+ ['gerbang','Gerbang Melengkung','🏛️','Dua daun gerbang berayun terbuka.'],
+ ['pintu','Pintu Berpanel','🚪','Dua daun pintu terbuka berpivot.'],
+ ['buku','Sampul Buku','📖','Sampul buku membalik memperlihatkan isi.'],
+ ['amplop','Amplop Segel','✉️','Amplop besar — flap terangkat, segel lilin pecah.'],
+ ['gembok','Gembok Antik','🔐','Kunci masuk, muter, shackle terbuka, cahaya emas.'],
+ ['kotak','Kotak Cincin','💍','Kotak velvet — tutup terangkat, dua cincin bersinar.'],
+ ['selendang','Selendang Songket','🧵','Kain songket — geser ke atas untuk membuka.']
 ];
-function coverBtnId(){return BTN_OPEN_ID.includes(state.coverBtn)?state.coverBtn:'amplop'}
-function setCoverBtn(id){if(!BTN_OPEN_ID.includes(id))return;state.coverBtn=id;save();render();renderPreview();pvKeCover();notify('Tombol Buka Undangan: '+(BTN_OPEN_STYLES.find(b=>b[0]===id)||[])[1])}
+function bukaId(){return CARA_BUKA_ID.includes(state.buka)?state.buka:'pita'}
+function setBuka(id){if(!CARA_BUKA_ID.includes(id))return;state.buka=id;save();render();renderPreview();pvKeCover();notify('Cara Buka Cover: '+(CARA_BUKA_STYLES.find(b=>b[0]===id)||[])[1])}
 function setCvStyle(id){if(!CV_BENTUK[id])return;state.coverStyle=id;state.coverStyleExplicit=true;save();render();renderPreview();pvKeCover();notify('Gaya foto cover: '+cvNama())}
 function cvTerapkanCrop(im,frame,p){
  const b=frame.getBoundingClientRect(),w=frame.clientWidth||b.width,h=frame.clientHeight||b.height;
@@ -2045,7 +2220,7 @@ async function publish(){
    slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    amplop:JSON.parse(JSON.stringify(state.amplop)),videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href,local:false}:{name:'',url:'',local:false},
-   cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),coverBtn:coverBtnId(),
+   cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),buka:bukaId(),
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),linkMode:state.linkMode||'personal',
    waTemplate:String(state.waTemplate||''),masterKey:state.masterKey||'',savedAt:new Date().toISOString()}};
@@ -2071,7 +2246,7 @@ async function dlUndangan(){
    amplop:JSON.parse(JSON.stringify(state.amplop)),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),coverBtn:coverBtnId(),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
+   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),buka:bukaId(),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],waTemplate:String(state.waTemplate||''),publishedAt:new Date().toISOString()};
   if(JSON.stringify(data).length>1500000){data.gallery=[];
    if(JSON.stringify(data).length>1200000){data.cover='';
@@ -2141,7 +2316,7 @@ function applyDraftData(d,extra){
  if(!state.coverStyleExplicit)syncDefaultCoverStyle(tplOf());
  if(d.coverPos)state.coverPos=Object.assign({x:50,y:50,z:1},d.coverPos);
  state.coverSize=CV_UKURAN_ID.includes(d.coverSize)?d.coverSize:'sedang';
- state.coverBtn=BTN_OPEN_ID.includes(d.coverBtn)?d.coverBtn:'amplop';
+ state.buka=CARA_BUKA_ID.includes(d.buka)?d.buka:'pita';
  if(d.fotoPria!==undefined)state.fotoPria=d.fotoPria||'';
  if(d.fotoWanita!==undefined)state.fotoWanita=d.fotoWanita||'';
  if(Array.isArray(d.gallery))state.gallery=d.gallery.filter(Boolean).slice(0,12);
@@ -2236,6 +2411,8 @@ function pulihkanKat(){const n=state.katalogDel.length;state.katalogDel=[];TPL.f
 function goPage(id){_welcome=false;state.page=id;document.body.classList.remove('studio-nav-open');save();render();window.scrollTo(0,0)}
 function pageActions(judul){return `<div class="editor-actions page-actions"><button class="sm-btn dark" onclick="goPage('editor')" data-help="Kembali ke editor undangan yang sedang dibuat">← Kembali ke Editor</button><a class="sm-btn" href="./" data-help="Keluar dari Studio dan buka halaman utama situs.">← Halaman Utama</a><button class="mobile-menu" aria-expanded="${document.body.classList.contains('studio-nav-open')}" onclick="toggleStudioMenu(this)">☰ Template & Menu</button><span class="flow-status">${judul}</span></div>`}
 function tglKatHide(id){const t=tplById(id);if(!t||t.studioOnly)return;const i=state.katalogHide.indexOf(id);i>=0?state.katalogHide.splice(i,1):state.katalogHide.push(id);save();render()}
+/* Sembunyikan/tampilkan satu kategori acara dari pilihan template & katalog. */
+function tglKatEv(ev){const i=(state.kategoriHide||[]).indexOf(ev);i>=0?state.kategoriHide.splice(i,1):state.kategoriHide.push(ev);save();render();notify((i>=0?'Kategori ditampilkan kembali: ':'Kategori disembunyikan: ')+EV_LABEL[ev])}
 function importCsv(){const i=document.createElement('input');i.type='file';i.accept='.csv,.txt';i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.guestsRaw=String(r.result||'');save();render()};r.readAsText(f)};i.click()}
 function exportCsv(){const blob=new Blob([guests().map(g=>`${g.nama},${g.link}`).join('\n')],{type:'text/csv'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=`tamu-${state.slug}.csv`;a.click()}
 
@@ -2243,7 +2420,7 @@ function exportCsv(){const blob=new Blob([guests().map(g=>`${g.nama},${g.link}`)
 function header(){return ''}
 /* Label kerangka untuk baris pemilih tema. Tema kustom tidak membawa `layout`
    (bentuknya mengikuti tema asal salinannya) jadi dikembalikan '' → tanpa label. */
-function layNama(t){const id=t&&t.layout;return (id&&LAYOUT_NAMA[id])||''}
+function layNama(t){if(t&&t.kb)return 'Kerangka Bebas';const id=t&&t.layout;return (id&&LAYOUT_NAMA[id])||''}
 function barisPilihanTpl(t){
  const id=esc(t.id),nama=esc(t.nama),badge=t.custom?'CUSTOM':(t.badge||''),ikon=esc(t.char||String(t.deco||'✦').split(' ')[0]);
  const utama=`<button class="thbtn ${state.tpl===t.id?'on':''}" onclick="pickTpl('${id}')" data-help="${t.custom?'Terapkan tema kustom ini pada undangan.':`Terapkan template ${nama} beserta warna dan font bawaannya.`}">
@@ -2352,12 +2529,12 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
      <span class="cv-layout-icon" aria-hidden="true">${ic||'⌒'}</span><span class="cv-layout-name">${nama}</span></button>`}).join('')}
   </div>
  </div>
- <div class="card"><h4>🔘 Tombol Buka Undangan <span class="chip" style="margin-left:auto">13 pilihan</span></h4>
-  <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-top:-4px">Pilih gaya tombol <b>Buka Undangan</b> di cover. Tombol selalu tampil tepat di tengah — pratinjau langsung mengikuti pilihan.</div>
-  <div class="bo-grid" role="group" aria-label="Pilih gaya tombol buka undangan">
-   ${BTN_OPEN_STYLES.map(([id,nama,ic,desc])=>{const on=coverBtnId()===id;
-    return `<button type="button" class="bo-btn ${on?'on':''}" aria-label="Pilih tombol ${nama}" aria-pressed="${on}" onclick="setCoverBtn('${id}')" data-help="${esc(desc)}">
-     <span class="bo-sample bo-${id}" aria-hidden="true">${id==='minimal'?'BUKA UNDANGAN →':ic+' Buka Undangan'}</span><span class="bo-name">${nama}</span></button>`}).join('')}
+ <div class="card"><h4>🎬 Cara Buka Cover <span class="chip" style="margin-left:auto">5 elemen</span></h4>
+  <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-top:-4px">Elemen pembuka cover — tanpa tombol. Diketuk atau digeser untuk membuka; pratinjau langsung mengikuti pilihan.</div>
+  <div class="bo-grid" role="group" aria-label="Pilih cara buka cover">
+   ${CARA_BUKA_STYLES.map(([id,nama,ic,desc])=>{const on=bukaId()===id;
+    return `<button type="button" class="bo-btn ${on?'on':''}" aria-label="Pilih cara buka ${nama}" aria-pressed="${on}" onclick="setBuka('${id}')" data-help="${esc(desc)}">
+     <span class="bo-sample" aria-hidden="true">${ic} ${nama}</span><span class="bo-name">Ketuk untuk membuka</span></button>`}).join('')}
   </div>
  </div>
  <div class="card"><h4>🎨 Warna & Font</h4>
@@ -2878,8 +3055,8 @@ function katalog(){return `${pageActions('Katalog Template • '+state.katalog.l
    <div style="font-size:11px;color:var(--mut)">Klik Preview untuk lihat di phone kanan • Edit inline harga & promo • 🗑 untuk menghapus baris</div>
   </div>
   ${state.katalog.length?'':`<div class="kat-empty">Katalog kosong.<br><button class="sm-btn dark" style="margin-top:10px" onclick="pulihkanKat()">↺ Pulihkan Template Bawaan</button></div>`}
-  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const rows=state.katalog.filter(k=>{const te=(tplById(k.tpl||k.id)||TPL[0]).ev;return te===ev||te==='all'});if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template</div>
- ${rows.map(k=>{const t=tplById(k.tpl||k.id)||TPL[0];const hid=state.katalogHide.includes(t.id);return `<div class="kat-row ${hid?'hid':''}" data-kid="${esc(k.id)}">
+  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const katHid=(state.kategoriHide||[]).includes(ev);const rows=state.katalog.filter(k=>{const te=(tplById(k.tpl||k.id)||TPL[0]).ev;return te===ev||te==='all'});if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;justify-content:space-between;gap:8px">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template <button class="sm-btn" style="text-transform:none;letter-spacing:0;font-weight:600" title="Sembunyikan/tampilkan kategori ini" data-help="Sembunyikan kategori ini dari pilihan template & katalog. Baris di bawahnya teredup, bukan dihapus." onclick="tglKatEv('${ev}')">${katHid?'🙈 tersembunyi':'👁️'}</button></div>
+ ${rows.map(k=>{const t=tplById(k.tpl||k.id)||TPL[0];const hid=katHid||state.katalogHide.includes(t.id);return `<div class="kat-row ${hid?'hid':''}" data-kid="${esc(k.id)}">
    <div class="kat-thumb" style="background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});font-size:${t.char?(t.char.length>2?10:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.02em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
    <div class="kat-main">
     <input value="${esc(k.nama)}" aria-label="Nama template" oninput="updKat('${k.id}','nama',this.value)">
@@ -3063,7 +3240,7 @@ function barisUndangan(){
    amplop:JSON.parse(JSON.stringify(state.amplop)),
    slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),coverBtn:coverBtnId(),
+   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),buka:bukaId(),
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),

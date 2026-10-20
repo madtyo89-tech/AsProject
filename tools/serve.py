@@ -37,6 +37,13 @@ class H(http.server.SimpleHTTPRequestHandler):
                 return
         return super().send_error(code, *a, **k)
 
+    def end_headers(self):
+        # Jangan cache: preview selalu menampilkan berkas terkini
+        # (browser & proxy preview cenderung menyimpan salinan lama).
+        self.send_header("Cache-Control", "no-store, max-age=0, must-revalidate")
+        self.send_header("Pragma", "no-cache")
+        super().end_headers()
+
     def log_message(self, *a):
         pass
 
