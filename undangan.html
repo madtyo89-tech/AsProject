@@ -393,6 +393,15 @@ body.embed-buka #coverBack{display:none}
 .cov .anim-word{display:inline-block;animation:uWord .7s cubic-bezier(.22,.8,.36,1) both}
 .cov .anim-deco{transform-origin:center;animation:uDeco .9s cubic-bezier(.22,.8,.36,1) both}
 .cov .anim-pop{animation:uPop .7s cubic-bezier(.22,.8,.36,1) both}
+/* Pemicu buka (#btnOpen) sudah punya transform sendiri: translate(-50%,-50%)
+   untuk gaya di tengah cover, atau transform:none untuk tirai/gerbang/pintu
+   selebar layar. Karena animasi ber-fill `both`, keyframe yang menulis
+   `transform` akan MENIMPA nilai itu terus-menerus — dulu akibatnya buku/amplop
+   bergeser ke kanan (tidak lagi di tengah) dan gerbang/tirai bergeser keluar
+   layar. Animasi masuknya kini memakai properti `scale` yang terpisah dari
+   `transform`, jadi posisi tetap dan efek pop tetap terasa. */
+@keyframes uPopSkala{0%{opacity:0;scale:.5}60%{scale:1.06}100%{opacity:1;scale:1}}
+#cover .pemicu.anim-pop{animation:uPopSkala .7s cubic-bezier(.22,.8,.36,1) both}
 /* 10 efek animasi cover (pilihan state.anim.effect) */
 @keyframes uFade{from{opacity:0}to{opacity:1}}
 @keyframes uRise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
@@ -418,6 +427,7 @@ body.embed-buka #coverBack{display:none}
 .cov .fx-c-curtain{animation:uCurtain .9s cubic-bezier(.22,.8,.36,1) both;transform-origin:50% 0}
 @media (prefers-reduced-motion:reduce){
  .cov .anim-up,.cov .anim-zoom,.cov .anim-word,.cov .anim-deco,.cov .anim-pop{animation:none}
+ #cover .pemicu.anim-pop{animation:none}
  #cover .open{animation:none}
 }
 
@@ -800,6 +810,19 @@ body.musik-on #musikBtn::after{content:'';position:absolute;inset:-4px;border-ra
 .cv-segel>.orn{font-size:26px;letter-spacing:10px}
 .cv-segel .cvstamp{position:absolute;top:-4px;right:-2px;transform:rotate(8deg);border:2px dashed var(--accent-cover);border-radius:8px;padding:6px 9px;text-align:center;opacity:.92;background:color-mix(in srgb,#fff 55%,transparent)}
 .cv-segel .cvstamp .std-label{margin-top:2px}
+/* Perangko tanggal (struktur cover "segel") — anak langsung #cover, menempel di
+   sudut kanan-atas foto. Dijaga kecil dan boleh membungkus supaya tidak
+   menutupi nama mempelai di layar sempit. */
+#cover>.cvstamp{position:absolute;z-index:5;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));
+  max-width:min(64%,232px);transform:rotate(7deg);border:2px dashed var(--accent-cover,#C9A25B);border-radius:8px;
+  padding:6px 8px;text-align:center;opacity:.94;background:color-mix(in srgb,#fff 66%,transparent);
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 8px 22px rgba(20,14,8,.18);pointer-events:none}
+#cover>.cvstamp .std-label{margin-top:0;font-size:12.5px;letter-spacing:.06em;line-height:1.2}
+#cover>.cvstamp .date{margin-top:6px;padding:5px 9px;font-size:10px;line-height:1.35;letter-spacing:.02em;gap:5px;
+  border-radius:8px;white-space:normal;max-width:100%;background:rgba(255,255,255,.72);color:#3b3630;border-color:rgba(0,0,0,.08);backdrop-filter:none;-webkit-backdrop-filter:none}
+@media (prefers-reduced-motion:no-preference){#cover>.cvstamp{animation:cvStampIn .5s cubic-bezier(.22,.8,.36,1) both}}
+@keyframes cvStampIn{from{opacity:0;transform:rotate(7deg) scale(.86)}to{opacity:.94;transform:rotate(7deg) scale(1)}}
+@media (prefers-reduced-motion:reduce){#cover>.cvstamp{animation:none}}
 .cv-jendela .cvf{border-radius:220px 220px 18px 18px/48% 48% 18px 18px;overflow:hidden}
 .cv-jendela .cvband{margin-top:12px;padding:14px 12px 10px;border-radius:16px;background:color-mix(in srgb,var(--card,#fff) 78%,transparent);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 @media (prefers-reduced-motion:reduce){
@@ -832,8 +855,11 @@ body.cvl-kartu #cover .open .env{display:none}
 body.cvl-kartu #cover .open{height:46px;padding:0 26px;border-radius:99px}
 body.cvl-kartu #cover .bdfr{border-width:2px;box-shadow:0 18px 46px rgba(60,44,22,.20)}
 body.cvl-kartu .geser-hint{display:none}
-/* Model cover Minimalis: tanpa foto, tipografi saja. */
-body.cvl-minimal #cover .cvf,body.cvl-minimal #cover .cvlatar{display:none}
+/* Model cover Minimalis: tanpa foto, tipografi saja.
+   KECUALI saat pemilik memilih foto penuh (data.coverStyle='full'): foto
+   memang jadi latar seluruh cover, jadi .cvlatar tidak boleh disembunyikan —
+   dulu sembunyikan foto + bdfr transparan = cover tampak kosong/rusak. */
+body.cvl-minimal:not(.foto-full) #cover .cvf,body.cvl-minimal:not(.foto-full) #cover .cvlatar{display:none}
 body.cvl-minimal #cover .bdfr{background:transparent;border-color:transparent;box-shadow:none}
 /* Model cover Foto Penuh: nama terbaca di atas scrim gelap. */
 body.cvl-foto #cover .bdfr{background:linear-gradient(180deg,rgba(10,8,6,.10),rgba(10,8,6,.62));border-color:transparent;box-shadow:none;color:#fff}
@@ -844,7 +870,7 @@ body.cvl-kartu #cover .open::before,body.cvl-kartu #cover .open::after,
 body.cvl-minimal #cover .open::before,body.cvl-minimal #cover .open::after{display:none}
 body.cvl-kartu #cover .open,body.cvl-minimal #cover .open{flex-direction:row;align-items:center;justify-content:center;height:46px;padding:0 26px;border-radius:99px;margin-top:18px}
 body.cvl-kartu #cover .open .env,body.cvl-minimal #cover .open .env{display:none;position:static;transform:none;opacity:1}
-body.cvl-minimal #cover .orn,body.cvl-minimal #cover .cvf,body.cvl-minimal #cover .cvlatar{display:none}
+body.cvl-minimal:not(.foto-full) #cover .orn,body.cvl-minimal:not(.foto-full) #cover .cvf,body.cvl-minimal:not(.foto-full) #cover .cvlatar{display:none}
 body.cvl-minimal #cover .bdfr{background:transparent;border-color:transparent;box-shadow:none}
 
 /* Sepuluh model tambahan: tiap gaya punya siluet, suasana, dan motifnya sendiri. */
@@ -1201,6 +1227,14 @@ body.elbuka-selendang.opened #cover .pemicu .el2,body.elbuka-selendang.opened #c
 body.elbuka-selendang #cover .geser-hint{font-size:0}
 body.elbuka-selendang #cover .geser-hint::after{content:'↑ Geser atas atau ketuk untuk membuka';font-size:9.5px}
 
+/* Cuplikan kartu katalog: pemicu buka disembunyikan supaya nama, tanggal, dan
+   ornamen cover terlihat. Cover-nya sendiri tetap tampil apa adanya. */
+body.kartu-demo #cover .pemicu{display:none}
+body.kartu-demo #cover .brand{display:none}
+body.kartu-demo #cover .cvcue,body.kartu-demo #cover .geser-hint{display:none}
+body.kartu-demo #cover .vip-btn{display:none}
+body.kartu-demo #coverBack{display:none}
+
 /* Setelah terbuka, elemen tidak bisa diketuk lagi */
 body.opened #cover .pemicu{pointer-events:none}
 /* Hint kata per elemen */
@@ -1209,6 +1243,11 @@ body.elbuka-tirai #cover .pemicu .p-hint::after{content:'Ketuk tirai untuk membu
 body.elbuka-gerbang #cover .pemicu .p-hint::after{content:'Ketuk gerbang untuk membuka'}
 body.elbuka-pintu #cover .pemicu .p-hint::after{content:'Ketuk pintu untuk membuka'}
 body.elbuka-buku #cover .pemicu .p-hint::after{content:'Ketuk buku untuk membuka'}
+/* Petunjuk di buku ikut pindah KE DALAM sampul: hint bawaan duduk di bawah
+   pemicu (top:100%+14px) sehingga untuk buku setinggi 62% layar teksnya jatuh
+   menimpa baris countdown / di luar layar dan terlihat "hilang". */
+body.elbuka-buku #cover .pemicu .p-hint{top:auto;bottom:22px;left:50%;z-index:9;
+  font-size:10.5px;letter-spacing:.2em;opacity:.95;text-shadow:0 1px 8px rgba(0,0,0,.55)}
 body.elbuka-amplop #cover .pemicu .p-hint::after{content:'Ketuk amplop untuk membuka'}
 body.elbuka-gembok #cover .pemicu .p-hint::after{content:'Ketuk gembok untuk membuka'}
 body.elbuka-kotak #cover .pemicu .p-hint::after{content:'Ketuk kotak untuk membuka'}
@@ -2627,6 +2666,13 @@ if(PREVIEW)document.body.classList.add('preview-mode');
 /* demo auto-buka (dipakai hero dinamis index): tampilkan isi undangan langsung,
    tanpa memutar musik — tombol Buka Undangan tidak dipicu */
 if(DEMO&&Q.get('buka')==='1'){document.body.classList.add('opened','embed-buka');}
+/* Mode kartu katalog (undangan.html?demo=1&kartu=1, iframe kecil di index.html):
+   cover ditampilkan UTUH sebagai cuplikan tema. Pemicu buka (tirai, gerbang,
+   amplop, pita, …) adalah lapisan yang menutupi cover; kalau dibiarkan,
+   kartu katalog hanya memperlihatkan kain/gerbangnya saja — bukan undangannya.
+   Ikon 4D & tombol kembali juga tidak relevan di cuplikan statis. */
+const KARTU=DEMO&&Q.get('kartu')==='1';
+if(KARTU)document.body.classList.add('kartu-demo');
 
 /* ---------- tombol kembali ke cover (tampil setelah undangan dibuka) ---------- */
 /* Membalik keadaan "opened": cover pembuka tampil lagi dan tamu bisa menekan
@@ -3517,7 +3563,7 @@ function customThemeFromDraft(id,rows){
    tidak pilihan lama menempel terus dan pilihan cover/tombol/ukuran foto
    baru tidak pernah kelihatan di pratinjau. Kelas keadaan sesi (preview,
    sudah dibuka, dsb.) dipertahankan. */
-const BOOT_KELAS_SESI=['preview-mode','opened','pv-soft','embed-buka'];
+const BOOT_KELAS_SESI=['preview-mode','opened','pv-soft','embed-buka','kartu-demo'];
 function bootBersihkan(){
  const simpan=BOOT_KELAS_SESI.filter(c=>document.body.classList.contains(c));
  document.body.className=simpan.join(' ');
@@ -3758,10 +3804,16 @@ function boot(draft){
  if(venue)h+=`<div class="host ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+hoD+'ms':''}">${isWedding?'<span class="wi-icon" aria-hidden="true">⌖</span>':''}${esc(venue)}</div>`;
  if(isWedding)h+=`<p class="wedding-note ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(hoD+100)+'ms':''}">Bersama keluarga, dengan penuh kebahagiaan, kami mengundang Anda untuk merayakan hari istimewa kami.</p>`;
  if((()=>{const _tt=targetTime(draft,form);return _tt&&_tt>Date.now()})())h+=`<div class="cdw-mini ${covOn?'fx-c-'+CE:''}" style="${covOn?'animation-delay:'+(btD-120)+'ms':''}"><div class="u"><div class="n" id="cdH0">00</div><div class="l">Hari</div></div><div class="u"><div class="n" id="cdM0">00</div><div class="l">Jam</div></div><div class="u"><div class="n" id="cdS0">00</div><div class="l">Menit</div></div><div class="u"><div class="n" id="cdD0">00</div><div class="l">Detik</div></div></div>`;
- h+=`<div class="pemicu ${covOn?'anim-pop':''}" id="btnOpen" role="button" tabindex="0" aria-label="Buka undangan" style="${covOn?'animation-delay:'+btD+'ms':''}"><i class="el"></i><i class="el2"></i><i class="simpul"></i><span class="p-hint" aria-hidden="true"></span></div>
- <div class="geser-hint">‹ Geser kiri atau ketuk untuk membuka</div>
+ h+=`<div class="geser-hint">‹ Geser kiri atau ketuk untuk membuka</div>
  ${isWedding?'<div class="wedding-hint">DETAIL ACARA · RSVP</div>':''}
- </div></div><div class="brand">AsProject • Undangan Digital</div>
+ </div></div>
+ <!-- Pemicu buka (tirai/gerbang/pintu/amplop/pita/…) WAJIB anak langsung #cover,
+      bukan cucu .inner. Gaya full-cover memakai width/height 100%; selama
+      elemen ini berada di dalam .inner (position:relative) persennya dihitung
+      dari kartu teks ±340px, sehingga tirai/gerbang menyusut dan menutupi
+      nama mempelai — itulah tampilan "kacau" pada pratinjau katalog. -->
+ <div class="pemicu ${covOn?'anim-pop':''}" id="btnOpen" role="button" tabindex="0" aria-label="Buka undangan" style="${covOn?'animation-delay:'+btD+'ms':''}"><i class="el"></i><i class="el2"></i><i class="simpul"></i><span class="p-hint" aria-hidden="true"></span></div>
+ <div class="brand">AsProject • Undangan Digital</div>
  <div class="cvcue" aria-hidden="true"><i></i><span>Gulir</span></div></div>`;
 
  /* ---------- KERANGKA: bagian dibangun lebih dulu, lalu disusun menurut layout ----------
@@ -3940,8 +3992,13 @@ function boot(draft){
   }else if(struk==='segel'){
    inner.classList.add('cv-segel');
    const sl=q('.std-label'),dt=q('.date');
-   if(sl&&dt){const st=document.createElement('div');st.className='cvstamp';
-    sl.parentNode.insertBefore(st,sl);st.appendChild(sl);st.appendChild(dt)}
+   /* Perangko tanggal ditempel di SUDUT cover (#cover), bukan di dalam kartu
+      teks. Dulu .cvstamp absolut di dalam .inner sehingga menempel di atas
+      nama mempelai dan menutupinya (terlihat di pratinjau katalog). */
+   const cvEl=document.getElementById('cover');
+   if(sl&&dt&&cvEl){const st=document.createElement('div');st.className='cvstamp';
+    sl.parentNode.insertBefore(st,sl);st.appendChild(sl);st.appendChild(dt);
+    cvEl.insertBefore(st,cvEl.firstChild)}
   }else if(struk==='jendela'){
    inner.classList.add('cv-jendela');
    const kick=q('.kicker');

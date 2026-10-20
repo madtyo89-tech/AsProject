@@ -44,6 +44,38 @@ Catatan:
 - Uji pipeline: `python3 tools/cek-kesehatan.py` dan
   server lokal `python3 tools/serve.py` (emulasi 404-routing Pages, default :8080).
 
+## Pratinjau tema di kartu katalog (2026-10-20)
+
+Kartu katalog di `index.html` menampilkan undangan **asli** (`undangan.html`)
+di dalam iframe. Dulu iframe-nya ikut menyempit selebar kartu (±200 px),
+padahal undangan dirancang untuk lebar HP 390 px, sehingga font `clamp()`
+mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
+
+- `iframe` kartu **selalu digambar 390 px** lalu diperkecil dengan
+  `transform:scale(var(--asp-k))`; `ukurLive()` (dan `ukurHero()` untuk mockup
+  hero) menghitung skala + tinggi iframe dari bingkai `.asp-live`, jadi cover
+  mengalir wajar dan tidak pernah terpotong. Tinggi iframe = tinggi bingkai ÷
+  skala, jadi rasio cover tetap 390×844 seperti di HP.
+- Kartu memakai `undangan.html?demo=1&kartu=1` (cuplikan). Mode `kartu=1`
+  menyembunyikan **pemicu buka** (tirai, gerbang, pintu, amplop, pita,
+  gembok, kotak, selendang, buku) — lapisan itu memang menutupi seluruh cover,
+  jadi tanpa disembunyikan kartu hanya memperlihatkan kain penutupnya.
+  Lightbox "Lihat Demo" dan "Buka Tab Baru" tetap memakai demo penuh yang
+  bisa diketuk.
+- `#btnOpen` (pemicu buka) dipindah menjadi **anak langsung `#cover`**. Gaya
+  full-cover memakai `width/height:100%`; selama elemen ini berada di dalam
+  `.inner` (position:relative) persennya dihitung dari kartu teks ±340 px
+  sehingga gerbang/pintu menyusut dan menutupi nama mempelai.
+- Skeleton cover "segel" (model `minimal` & `archive`): perangko tanggal
+  (`#cover > .cvstamp`) ditempel di sudut kanan-atas cover, bukan absolut di
+  dalam `.inner` yang dulu menimpa nama mempelai.
+- `body.cvl-minimal` hanya menyembunyikan foto cover bila **bukan**
+  `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
+  sebelumnya menghasilkan cover gelap kosong.
+
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (18 pemeriksaan, ikut
+dijalankan CI `cek-kesehatan.yml`).
+
 ## Alur membuat undangan di Studio
 
 - Kunjungan pertama menampilkan **Membuat Undangan**. Nama, tanggal, lokasi,

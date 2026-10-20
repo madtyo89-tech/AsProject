@@ -1431,7 +1431,7 @@ def main():
                cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
                cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman,
                cek_robots_sitemap, cek_manifest_pwa, cek_pembatas_laju,
-               cek_amplop_digital, cek_kerangka_bebas):
+               cek_amplop_digital, cek_kerangka_bebas, cek_kartu_katalog):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
@@ -1516,6 +1516,45 @@ def cek_kerangka_bebas():
           "uji kerangka bebas (7 template, shell/urutan/ekstra/hint cover): "
           + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
           + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
+
+# ------------------------------------------- 36. pratinjau kartu katalog
+def cek_kartu_katalog():
+    """2026-10-20: pemilik melaporkan tampilan katalog "kacau" — judul tema
+    meluber, amplop/gerbang menutupi nama mempelai. Penyebabnya iframe demo di
+    kartu disempitkan selebar kartu (±200 px) padahal undangan dirancang untuk
+    390 px, lalu lapisan pemicu buka menyusut ke ukuran kartu teks. Uji ini
+    menjaga skala iframe, mode cuplikan `kartu=1`, dan struktur pemicu buka.
+    """
+    print("\n[36] Pratinjau tema di kartu katalog (skala 390px + cuplikan)")
+    idx, live = baca("index.html"), baca("undangan.html")
+    skala = (".asp-live iframe{position:absolute;top:0;left:0;width:390px;height:520px;" in idx
+             and "transform-origin:top left;transform:scale(var(--asp-k,.48))" in idx
+             and "function ukurLive(wrap)" in idx
+             and "undangan.html?demo=1&kartu=1&tema=" in idx)
+    lapor("ok" if skala else "masalah",
+          "index.html: iframe kartu digambar 390px lalu diperkecil transform (ukurLive) + cuplikan &kartu=1")
+    pemicu = ("const KARTU=DEMO&&Q.get('kartu')==='1';" in live
+              and "if(KARTU)document.body.classList.add('kartu-demo');" in live
+              and "body.kartu-demo #cover .pemicu{display:none}" in live
+              and "'kartu-demo']" in live)
+    lapor("ok" if pemicu else "masalah",
+          "undangan.html: mode kartu menyembunyikan pemicu buka + kelas sesi kartu-demo bertahan")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
+        return
+    if subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT).returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji kartu katalog dilewati")
+        return
+    r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-kartu-katalog.cjs")],
+                       capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji kartu katalog (9 gaya buka, anak langsung #cover, perangko tanggal): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
 
 if __name__ == "__main__":
     sys.exit(main())
