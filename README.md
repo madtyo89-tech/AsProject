@@ -73,7 +73,7 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (45 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (49 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
@@ -147,6 +147,34 @@ foto.
   digeser ke bawah kartu teks, dan label "Ketuk gembok" disembunyikan
   (sudah ada petunjuk "Geser kiri atau ketuk" di bawah) supaya tidak
   menimpa paragraf.
+
+### Kotak cincin (gaya membuka `kotak`)
+
+Dulu kotak cuma **dua balok cokelat datar** dengan dua lingkaran garis tipis
+yang mengambang — tidak terlihat seperti kotak cincin, dan di frame pendek
+kotaknya menutupi judul/tanggal.
+
+- Kotak kini **realistis**: badan beludru bertekstur (`repeating-linear-
+  gradient`) dengan bibir depan tebal, bantal beludru di dalamnya (dua lekuk
+  tempat cincin), tutup beludru yang **terbuka separuh**
+  (`rotateX(-26deg)`, poros di engsel bawah), rusuk emas di tepi tutup, dan
+  bayangan alas di bawah kotak.
+- Dua cincin emas: **solitaire** (cincin ber-border gradasi emas + permata
+  brilliant-cut di puncak) dan **band polos** yang sedikit lebih besar &
+  miring ke arah lain. Saat dibuka, muncul cahaya hangat dari dalam kotak
+  dan cincinnya menyala.
+- Saat dibuka: tutup terangkat penuh (`rotateX(-118deg)`) lalu seluruh kotak
+  naik & memudar dalam 0.6 s (mulai 0.42 s) — selesai sebelum isi undangan
+  muncul, jadi tidak ada "kotak hantu" di atas galeri.
+- Skala adaptif `--k`: frame pendek (`max-height:680px`, mis. lightbox
+  330×590) memakai `--k:.72; top:44%`; cover non-foto-penuh `--k:.78;
+  top:38%` supaya judul & tanggal tidak tertutup. Label "Ketuk kotak"
+  disembunyikan di cover non-foto-penuh (sudah ada petunjuk "Geser kiri
+  atau ketuk").
+- Di mode foto penuh, teks cover (nama/tanggal/countdown) disembunyikan
+  selama kotak tertutup — kalau tidak, kotak cincin menimpa nama mempelai
+  (terlihat pada **Telur Emas**) — lalu muncul halus setelah kotak naik
+  (1.35 s).
 
 ### Selendang foto (gaya membuka `selendang`)
 

@@ -196,6 +196,26 @@ async function render(d) {
     undSrc.includes('body.elbuka-buku #cover .pemicu::before{content:\'\';position:absolute;left:0;') &&
     undSrc.includes('body.elbuka-buku #cover .pemicu::after{content:\'\';position:absolute;top:7px;bottom:7px;right:0;width:7px;') &&
     undSrc.includes('clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)'));
+  /* ------------------------------------------------------------------ *
+   * 7d. Kotak cincin: realistis (tutup miring + 2 cincin + bantal)
+   * ------------------------------------------------------------------ */
+  t('kotak cincin realistis: tutup beludru miring + bantal dalam + 2 cincin emas',
+    undSrc.includes('transform:perspective(760px) rotateX(-26deg);') &&
+    undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A87E74)) 64%,#3a1d22),') &&
+    undSrc.includes("body.elbuka-kotak #cover .pemicu .simpul::before{content:'';position:absolute;left:50%;top:-13px;") &&
+    undSrc.includes('clip-path:polygon(50% 0,90% 36%,70% 100%,30% 100%,10% 36%);') &&
+    undSrc.includes("body.elbuka-kotak #cover .pemicu .simpul::after{content:'';position:absolute;left:52px;top:-2px;"));
+  t('kotak cincin: ukuran menyesuaikan frame pendek & tidak menutupi judul',
+    undSrc.includes('transform:translate(-50%,-50%) scale(var(--k));') &&
+    undSrc.includes('@media (max-height:680px){ body.elbuka-kotak #cover .pemicu{--k:.72;top:44%} }') &&
+    undSrc.includes('body.elbuka-kotak:not(.foto-full) #cover .pemicu{--k:.78;top:38%}') &&
+    undSrc.includes('body.elbuka-kotak:not(.foto-full) #cover .pemicu .p-hint{display:none}'));
+  t('kotak cincin: teks cover disembunyikan selama kotak tertutup',
+    undSrc.includes('body.elbuka-kotak.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}') &&
+    undSrc.includes('body.elbuka-kotak.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.35s both}'));
+  t('kotak cincin: kotak naik & memudar sebelum isi undangan muncul',
+    undSrc.includes('body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .6s cubic-bezier(.4,0,.2,1) .42s both}') &&
+    undSrc.includes('body.elbuka-kotak.opened #cover .pemicu .el{transform:perspective(760px) rotateX(-118deg)}'));
   t('gembok transparan: badan & kunci memakai kaca ber-alpha, bukan emas pekat',
     undSrc.includes('body.elbuka-gembok #cover .pemicu .el{--ga:54%;--gb:34%;--gc:46%;') &&
     undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) var(--ga),transparent),') &&
