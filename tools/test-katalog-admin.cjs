@@ -89,7 +89,8 @@ function boot() {
   const n0 = w.eval('state.katalog.length');
   const nTPL = w.eval('TPL.filter(t=>!t.studioOnly).length');
   t('katalog: semua tema publik punya baris bawaan; Arch Studio-only dikecualikan', n0 === nTPL, n0 + ' vs ' + nTPL);
-  t('katalog: enam Arch tanpa harga tidak masuk daftar pemasaran', w.eval('TPL.filter(t=>t.studioOnly).length') === 6 && w.eval('TPL.filter(t=>t.studioOnly).every(t=>!Object.prototype.hasOwnProperty.call(t,"harga"))') && w.eval('state.katalog.every(k=>!TPL.find(t=>t.id===k.tpl)?.studioOnly)'));
+  t('katalog: enam Arch tanpa harga tidak masuk daftar pemasaran', w.eval('TPL.filter(t=>t.studioOnly&&t.arch).length') === 6 && w.eval('TPL.filter(t=>t.studioOnly&&t.arch).every(t=>!Object.prototype.hasOwnProperty.call(t,"harga"))') && w.eval('state.katalog.every(k=>!TPL.find(t=>t.id===k.tpl)?.studioOnly)'));
+  t('katalog: tema baru sudah publik, hanya 6 Arch yang tetap Studio-only', w.eval('TPL.filter(t=>t.studioOnly&&!t.arch).length') === 0 && w.eval('TPL.filter(t=>t.studioOnly).length') === 6);
   const activeTpl = w.eval('state.tpl');
   w.eval("state.tpl='gerbang-rosewood';save()");
   const countBeforeStudioOnlyAdd = w.eval('state.katalog.length');

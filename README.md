@@ -5,6 +5,11 @@ asproject.my.id, dihosting GitHub Pages + Supabase.
 
 ## Alur tautan undangan (penting — jangan diurai)
 
+Catatan: sejak 2026-10-18 literal `const TPL=[…]` di `studio.html` &
+`undangan.html` **dibangkitkan** dari `kerangka/` lewat
+`node tools/bangun-tpl.cjs` (lihat **Kerangka template baru** di bawah) —
+jangan edit manual.
+
 1. **Studio** (`studio.html`) → tombol **Publish** menyimpan draft ke
    Supabase tabel `invitation_drafts` (kolom dasar + snapshot jsonb `data`).
 2. Link tamu yang dihasilkan: **`https://asproject.my.id/u/{slug}`**
@@ -200,6 +205,71 @@ tema ("▦ Editorial Sage"), dijaga sinkron dengan `LAYOUTS[id].nama` oleh tes.
 
 Lihat perbedaannya berdampingan di `katalog-demo/perbandingan-tema.html`
 (bangun ulang: `node tools/bikin-perbandingan-tema.cjs`).
+
+## Kerangka template baru: Blok + Token (2026-10-18, prototipe)
+
+Kerangka template lama mengunci warna + layout dalam satu objek `TPL`
+yang disalin ke tiga file (`studio.html`, `undangan.html`, `index.html`).
+Kerangka baru memisah keduanya supaya tema dan layout bisa dipadangkan
+bebas, dan template baru bisa dibuat tanpa menyentuh JavaScript:
+
+- **Token** (`kerangka/token-tema.js`) — palet, font, ornamen, border,
+  pola, deretan dekorasi. 27 token: 24 migrasi (id sama dengan TPL lama)
+  + 3 baru (*Kopi Sunda*, *Langit Pagi*, *Senja Kencana*).
+- **Blok** (`kerangka/registry-blok.js`) — 21 unit konten bernama
+  (sampul, doa, mempelai, …) masing-masing dengan varian.
+- **Template** (`kerangka/template.js`) = token + susunan blok
+  (preset A–E atau array bebas) + varian per blok + ekstra.
+  24 migrasi 1:1 + 8 template baru.
+- **Motor** (`kerangka/motor.js`) — `kompilasiLama()` mengubah template
+  baru menjadi entri TPL lama bila kombinasinya setara (renderer lama
+  tetap bisa memakainya); `renderUndangan()` merender demo mandiri.
+- **Demo** — buka `kerangka-demo.html`: galeri semua template, pratinjau
+  render, panel DNA (token, susunan, varian blok) + JSON kompilasi legacy.
+
+Jaminan keamanan (semua otomatis, `node tools/cek-kerangka.cjs`):
+
+1. Referensi token diverifikasi terhadap registry `FONTS`/`ORNAMEN`/
+   `POLA`/`BORDERS` di `undangan.html` — tidak ada id mengambang.
+2. **Round-trip**: setiap template migrasi dikompilasi mundur dan
+   dibandingkan field demi field dengan entri TPL asli — harus identik,
+   jadi tidak ada tema lama yang berubah tampilannya.
+3. Snapshot `LAYOUTS`/`URUTAN` (`kerangka/layouts-lama.js`) dibandingkan
+   dengan `undangan.html` setiap jalan — tidak ada drift diam-diam.
+4. Uji asap: seluruh 33 template dirender tanpa error.
+
+**Integrasi produksi (2026-10-18):** literal `const TPL=[…]` di
+`studio.html` & `undangan.html` kini **dibangkitkan** dari `kerangka/`
+lewat `node tools/bangun-tpl.cjs` — kerangka/ adalah sumber kebenaran
+tunggal. Yang masuk produksi: 24 tema migrasi (identik field-dem-field,
+dibuktikan round-trip oleh `cek-kerangka.cjs` [6]) + 8 tema baru,
+semuanya bertanda **Studio-only** dulu (pola Gerbang: tersedia di
+pemilih tema Studio, belum di katalog publik `index.html` — bundle
+React minified, disunting terpisah).
+
+Enam template kombinasi bebas (*Noir Kutip*, *Sultan Arsip*, *Pop
+Zigzag*, *Mentari Poster*, *Telur Emas*, *Kopi Jurnal*) merender
+**live** lewat field `kb` di TPL: `layoutOf()` memakai shell &
+susunan dari `kb`, `susunBagian()` mengikuti urutan bebas (kunci
+section sudah diterjemahkan generator ke nama builder lama), dan
+`kb.cover` menjadi hint model cover (dipakai Studio bila pemilik
+belum memilih model lain, tersimpan sebagai `data.coverLayout`).
+Varian blok selain cover (profil side, timeline horizontal, galeri
+slider, …) mengikuti bawaan builder hingga builder mendukung varian.
+
+Jaminan invariansi yang dijaga otomatis:
+- Entry baru **selalu di akhir** array — kolom `theme` di Supabase
+  (index ke array) untuk undangan lama tidak berubah.
+- `cek-kerangka.cjs` [10] memastikan literal TPL di HTML == hasil
+  generator (anti-drift); `cek-kesehatan.py` [11][13] memastikan
+  urutan id studio == undangan dan katalog publik tetap 18 tema.
+- `tools/test-kerangka-bebas.cjs` (jsdom, diikat di cek-kesehatan
+  [35]) merender 6 template kb + 2 kompilasi legacy di renderer
+  live: shell, urutan bebas, penomoran bab, strip galeri, jam
+  flip, foto hero, dan hint cover diverifikasi satu per satu.
+- Alur edit tema: ubah `kerangka/template.js` / `token-tema.js`,
+  jalankan `node tools/bangun-tpl.cjs`, lalu `node tools/cek-kerangka.cjs`
+  dan `python3 tools/cek-kesehatan.py`.
 
 ## Link undangan untuk semua tamu (tanpa nama) di Master & Studio (2026-10-15)
 

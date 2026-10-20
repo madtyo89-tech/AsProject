@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kerangka Template Baru — Blok + Token · AsProject</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Cinzel:wght@400;600&family=Dancing+Script:wght@400;600&family=EB+Garamond:ital@0;1&family=Marcellus&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;600&family=Lora:ital@0;1&family=Pacifico&family=Caveat:wght@400;700&family=Sacramento&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kerangka/kerangka.css">
+<style>
+ :root{--ui-ink:#262626;--ui-mut:#8a8a8a;--ui-line:#e8e4dc;--ui-soft:#faf9f6;--ui-acc:#9a7b32}
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{font-family:'Poppins',system-ui,sans-serif;background:#f6f4ef;color:var(--ui-ink);display:flex;min-height:100vh}
+ /* panel kiri: daftar template */
+ #daftar{width:320px;flex:0 0 320px;border-right:1px solid var(--ui-line);background:#fff;height:100vh;overflow-y:auto;position:sticky;top:0}
+ #daftar header{padding:18px 18px 12px;border-bottom:1px solid var(--ui-line)}
+ #daftar h1{font-size:16px;letter-spacing:-.02em}
+ #daftar p{font-size:11px;color:var(--ui-mut);margin-top:5px;line-height:1.6}
+ .grup{padding:10px 14px 2px;font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ui-acc)}
+ .row{display:flex;align-items:center;gap:11px;padding:10px 14px;cursor:pointer;border-left:3px solid transparent}
+ .row:hover{background:#faf8f3}
+ .row.aktif{border-left-color:var(--ui-acc);background:#faf8f3}
+ .row .chip{flex:0 0 34px;height:34px;border-radius:10px;border:1px solid rgba(0,0,0,.08)}
+ .row .nm{font-size:12.5px;font-weight:600}
+ .row .sub{font-size:10px;color:var(--ui-mut);margin-top:2px}
+ .row .tag{margin-left:auto;font-size:8.5px;font-weight:700;letter-spacing:.08em;padding:2px 6px;border-radius:99px;background:#efe9dc;color:#6b5a3a}
+ .row .tag.baru{background:#9a7b32;color:#fff}
+ .row .tag.lama{background:#e5e5e5;color:#666}
+ /* area kanan: pratinjau + DNA */
+ #main{flex:1;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 330px}
+ #pratinjau{overflow-y:auto;height:100vh;background:#eceae4}
+ #frame{background:#fff;max-width:480px;margin:0 auto;box-shadow:0 0 40px rgba(0,0,0,.08);min-height:100vh}
+ #dna{padding:20px 18px;background:#fff;border-left:1px solid var(--ui-line);height:100vh;overflow-y:auto}
+ #dna h2{font-size:15px;margin-bottom:2px}
+ #dna .desc{font-size:11.5px;color:var(--ui-mut);line-height:1.6;margin-bottom:16px}
+ #dna h3{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ui-acc);margin:16px 0 8px}
+ #dna .pair{display:grid;grid-template-columns:86px 1fr;gap:5px 10px;font-size:11.5px;line-height:1.6}
+ #dna .pair b{color:var(--ui-mut);font-weight:500}
+ #dna .blokline{display:flex;flex-wrap:wrap;gap:5px}
+ #dna .blokchip{font-size:10px;padding:3px 9px;border-radius:99px;border:1px solid var(--ui-line);background:var(--ui-soft)}
+ #dna .blokchip b{color:var(--ui-acc)}
+ #dna pre{background:#1e1a15;color:#e8dfc8;font-size:10px;line-height:1.6;padding:13px;border-radius:12px;overflow-x:auto;white-space:pre-wrap}
+ #dna .notice{font-size:10.5px;line-height:1.6;padding:10px 12px;border-radius:10px;margin-top:6px}
+ #dna .notice.ok{background:#e8f3ea;color:#2c5e3e;border:1px solid #c8e0cd}
+ #dna .notice.warn{background:#fdf3e3;color:#8a6a1f;border:1px solid #ecd9a8}
+ #dna .tombol{display:inline-block;margin-top:6px;font-size:10px;padding:4px 10px;border-radius:99px;background:var(--ui-acc);color:#fff;cursor:pointer}
+ @media(max-width:900px){body{flex-direction:column}#daftar{width:100%;flex:none;height:auto;position:static}#main{grid-template-columns:1fr}#dna{height:auto;border-left:none}}
+</style>
+</head>
+<body>
+<aside id="daftar">
+ <header>
+  <h1>Kerangka Template Baru</h1>
+  <p>BLOK + TOKEN — susunan bebas, tema lepas layout. 24 migrasi + 8 baru. Klik untuk pratinjau.</p>
+ </header>
+ <div id="kelompok"></div>
+</aside>
+<main id="main">
+ <div id="pratinjau"><div id="frame"></div></div>
+ <aside id="dna"></aside>
+</main>
+<script src="kerangka/token-tema.js"></script>
+<script src="kerangka/registry-blok.js"></script>
+<script src="kerangka/layouts-lama.js"></script>
+<script src="kerangka/template.js"></script>
+<script src="kerangka/motor.js"></script>
+<script>
+const kel=new Map([['MIGRASI — tema lama, bentuk identik',[]],['BARU — kombinasi mustahil di kerangka lama',[]]]);
+TEMPLATES.forEach(t=>{kel.get(t.baru?'BARU — kombinasi mustahil di kerangka lama':'MIGRASI — tema lama, bentuk identik').push(t)});
+const daftar=document.getElementById('kelompok');
+for(const[g,list]of kel){
+ const h=document.createElement('div');h.className='grup';h.textContent=g;daftar.appendChild(h);
+ list.forEach(t=>{
+  const tk=TOKEN[t.token];
+  const r=document.createElement('div');r.className='row';r.dataset.id=t.id;
+  r.innerHTML='<span class="chip" style="background:linear-gradient(135deg,'+tk.g.join(',')+')"></span>'+
+   '<span><span class="nm">'+t.nama+'</span><br><span class="sub">'+t.id+' · '+t.shell+' · '+(Array.isArray(t.susunan)?'bebas':t.susunan)+'</span></span>'+
+   '<span class="tag '+(t.baru?'baru':'lama')+'">'+(t.baru?'BARU':'migrasi')+'</span>';
+  r.onclick=()=>pilih(t.id);
+  daftar.appendChild(r);
+ });
+}
+function pilih(id){
+ const t=TEMPLATES.find(x=>x.id===id);
+ document.querySelectorAll('.row').forEach(r=>r.classList.toggle('aktif',r.dataset.id===id));
+ const frame=document.getElementById('frame');
+ frame.innerHTML=renderUndangan(t,DATA_CONTOH);
+ frame.scrollTop=0;document.getElementById('pratinjau').scrollTop=0;
+ const sus=susunanArray(t);
+ const blokLines=sus.map(k=>'<span class="blokchip">'+k+'<b>'+((t.blok&&t.blok[k]&&t.blok[k].varian)||BLOK[k].def)+'</b></span>').join('');
+ const kompilasi=kompilasiLama(t);
+ const note=kompilasi.layout
+  ?'<div class="notice ok">✓ Dapat dikompilasi ke layout lama <b>'+kompilasi.layout+'</b> — renderer undangan.html yang ada bisa langsung memakainya.</div>'
+  :'<div class="notice warn">⚠ Kombinasi shell+susunan+ekstra tidak ada di LAYOUTS lama — khusus motor baru. Ini justru poin kerangka blok: kombinasi bebas.</div>';
+ document.getElementById('dna').innerHTML=
+  '<h2>'+t.nama+'</h2><div class="desc">'+esc(t.desc||'')+'</div>'+
+  '<h3>Token</h3><div class="pair"><b>id</b>'+t.token+'<br><b>font</b>'+(TOKEN[t.token].ft)+'<br><b>ornamen</b>'+(TOKEN[t.token].orn)+'<br><b>pola</b>'+(TOKEN[t.token].pat)+'<br><b>border</b>'+(TOKEN[t.token].border)+'</div>'+
+  '<h3>Susunan ('+sus.length+' blok)</h3><div class="blokline">'+blokLines+'</div>'+
+  '<h3>Shell & ekstra</h3><div class="pair"><b>shell</b>'+t.shell+'<br><b>ekstra</b>'+(t.ekstra.join(', ')||'—')+'<br><b>event</b>'+t.ev+'</div>'+
+  note+
+  '<h3>Kompilasi legacy (TPL)</h3><pre>'+esc(JSON.stringify(kompilasi,null,1))+'</pre>';
+}
+pilih(TEMPLATES[0].id);
+</script>
+</body>
+</html>

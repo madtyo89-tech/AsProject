@@ -72,11 +72,17 @@ for (const s of studioTpl) {
 const pn = (indexHtml.match(/var Pn=\[([\s\S]*?)\],Xm=/) || [, ''])[1];
 const pubIds = [...pn.matchAll(/\{id:\"([a-z0-9-]+)\"/g)].map(m => m[1]);
 const expectedPublic = studioTpl.filter(t => !t.studioOnly).map(t => t.id);
-const archOnly = studioTpl.filter(t => t.studioOnly);
-assert.deepEqual(pubIds, expectedPublic, 'index.html: katalog publik = subset TPL non-Studio-only');
+const archOnly = studioTpl.filter(t => t.studioOnly && t.arch);
+const studioOnlyBaru = studioTpl.filter(t => t.studioOnly && !t.arch);
+/* Katalog publik diurut rapi per kategori (Semua→Pernikahan→Khitanan→
+   Ultah→Aqiqah), jadi bandingkan sebagai HIMPUNAN, bukan urutan. */
+assert.equal(pubIds.length, expectedPublic.length, 'index.html: jumlah tema katalog publik = template non-Studio-only');
+assert.deepEqual([...pubIds].sort(), [...expectedPublic].sort(), 'index.html: katalog publik memakai tema yang sama dengan TPL publik (rapi per kategori)');
 assert.deepEqual(archOnly.map(t => t.id), ['gerbang-rosewood','gerbang-sage-pearl','gerbang-midnight-navy','gerbang-khitanan-emerald','gerbang-aqiqah-natural','gerbang-pesta-ceria'], 'enam tema Gerbang tersedia khusus di Studio');
-assert(archOnly.every(t => t.arch), 'semua tema Studio-only menggunakan penanda arch');
-assert(archOnly.every(t => !t.harga) && liveTpl.filter(t => t.studioOnly).every(t => !t.harga), 'varian Arch tidak membawa harga asumsi di Studio maupun live');
+assert.deepEqual(studioOnlyBaru.map(t => t.id), [], 'dua belas tema baru sudah dipublikasikan ke katalog (pola Gerbang selesai)');
+assert(archOnly.every(t => t.arch), 'semua tema Studio-only Arch memakai penanda arch');
+assert(studioOnlyBaru.every(t => t.harga > 0), 'tema Studio-only baru membawa harga (bukan arch)');
+assert(archOnly.every(t => !t.harga) && liveTpl.filter(t => t.studioOnly && t.arch).every(t => !t.harga), 'varian Arch tidak membawa harga asumsi di Studio maupun live');
 const demoByArch = {
   'gerbang-rosewood':'undangan-wedding-rosewood.html', 'gerbang-sage-pearl':'undangan-wedding-sage-pearl.html',
   'gerbang-midnight-navy':'undangan-wedding-midnight-navy.html', 'gerbang-khitanan-emerald':'undangan-khitanan-emerald.html',
@@ -286,6 +292,6 @@ async function testStudioPreview() {
   try {
     if (JSDOM) { await testLiveExamples(); await testArchLive(); await testCustomTemplateLive(); await testCoverLayoutsLive(); await testStudioPreview(); }
     else console.log('INFO: jsdom unavailable; runtime rendering checks skipped.');
-    console.log(`PASS: ${studioTpl.length} tema selaras Studio/live (${expectedPublic.length} publik, ${archOnly.length} Studio-only); ${wedding.length} tema memakai skin wedding; semua enam Arch diuji di renderer & preview.`);
+    console.log(`PASS: ${studioTpl.length} tema selaras Studio/live (${expectedPublic.length} publik, ${archOnly.length} Studio-only Arch + ${studioOnlyBaru.length} Studio-only baru); ${wedding.length} tema memakai skin wedding; semua enam Arch diuji di renderer & preview.`);
   } catch (error) { console.error(error); process.exitCode = 1; }
 })();

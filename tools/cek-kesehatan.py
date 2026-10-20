@@ -180,7 +180,7 @@ def cek_selector_injeksi():
 def cek_resolusi_demo():
     print("\n[9] Simulasi tombol \"Demo Live\" per tema katalog")
     s = baca("index.html")
-    pn = re.search(r"(?:var|const|let)\s+Pn\s*=\s*\[(.*?)\];", s, re.S)
+    pn = re.search(r"(?:var|const|let)\s+Pn\s*=\s*(\[[\s\S]*?\])\s*[,;]", s, re.S)
     if not pn:
         lapor("masalah", "array tema katalog (Pn) tidak ditemukan")
         return
@@ -504,7 +504,9 @@ def cek_katalog_publik():
     rows = _tpl_rows("studio.html")
     studio_public_ids = [r["id"] for r in rows if not r["studioOnly"]]
     studio_only_ids = [r["id"] for r in rows if r["studioOnly"]]
-    mismatch = pub_ids != studio_public_ids
+    # Katalog publik diurut rapi per kategori (Semua→Pernikahan→Khitanan→
+    # Ultah→Aqiqah), jadi bandingkan sebagai HIMPUNAN, bukan urutan.
+    mismatch = sorted(pub_ids) != sorted(studio_public_ids)
     lapor("ok" if not mismatch else "masalah",
           "index.html: %d tema publik sinkron; %d tema Studio-only tidak dipublikasikan%s" % (
               len(pub_ids), len(studio_only_ids),
@@ -1427,7 +1429,7 @@ def main():
                cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
                cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman,
                cek_robots_sitemap, cek_manifest_pwa, cek_pembatas_laju,
-               cek_amplop_digital):
+               cek_amplop_digital, cek_kerangka_bebas):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
@@ -1480,6 +1482,38 @@ def cek_amplop_digital():
           + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
           + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
 
+
+
+# ------------------------------------------- 35. kerangka template baru
+def cek_kerangka_bebas():
+    """2026-10-18: enam template kombinasi bebas (field kb) merender
+    lewat jalur kerangka di undangan.html — shell dari kb, urutan
+    section bebas, ekstra, dan hint cover. Dijalankan di jsdom."""
+    print("\n[35] Template kerangka bebas (kb) render live")
+    studio, live = baca("studio.html"), baca("undangan.html")
+    s = ("function layoutOf(t){" in live and "if(t&&t.kb)return{shell:t.kb.shell" in live
+         and "const ur=LX.susunan||URUTAN[LX.urutan]||URUTAN.A" in live)
+    lapor("ok" if s else "masalah",
+          "undangan.html: layoutOf & susunBagian membaca kb (shell + susunan bebas)")
+    st = ("const hintCv=t.cover||(t.kb&&t.kb.cover)" in studio
+          and "state.coverLayout=hintCv" in studio
+          and "if(t.buka&&CARA_BUKA_ID.includes(t.buka)" in studio)
+    lapor("ok" if st else "masalah",
+          "studio.html: hint cover & cara buka tema dipakai bila pemilik belum pilih model")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji kerangka bebas dilewati")
+        return
+    if subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT).returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji kerangka bebas dilewati")
+        return
+    r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-kerangka-bebas.cjs")],
+                       capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji kerangka bebas (7 template, shell/urutan/ekstra/hint cover): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
 
 if __name__ == "__main__":
     sys.exit(main())
