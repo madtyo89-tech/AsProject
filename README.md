@@ -73,7 +73,7 @@ mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
   `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
   sebelumnya menghasilkan cover gelap kosong.
 
-Uji regresinya: `node tools/test-kartu-katalog.cjs` (40 pemeriksaan, ikut
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (41 pemeriksaan, ikut
 dijalankan CI `cek-kesehatan.yml`).
 
 ### Sampul buku (gaya membuka `buku`)
@@ -139,18 +139,23 @@ foto penuh (mis. **Midnight Gold**) akibatnya parah: foto mempelai tertutup
 total dan teks cover yang z-index-nya di bawah amplop ikut hilang — cover
 tampak kosong gelap.
 
-- Di `body.elbuka-amplop.foto-full`, amplop tampil sebagai **kartu kaca**
-  `min(330px, 82%) × min(430px, 62%)` di tengah foto: lipatan atas/bawah
-  memakai aksen transparan + `backdrop-filter`, tepi kartu tetap terlihat,
-  foto dari dada ke atas tetap utuh.
+- Di `body.elbuka-amplop.foto-full`, amplop tampil sebagai **kartu kaca
+  transparan** `min(330px, 82%) × min(430px, 62%)` di tengah foto. Lipatan
+  atas & badan amplop memakai tint aksen ber-alpha rendah
+  (`--fa/--fb/--fc` = 30/14/22% dan 26/12/20%) + kilau kaca +
+  `backdrop-filter` sangat tipis, jadi **foto mempelai tembus** di balik
+  amplop, bukan kotak gradasi pekat.
+- Di belakang blok nama hanya ada **scrim gradien tipis** (z-index di bawah
+  teks, tidak menutupi foto) supaya nama tetap terbaca di foto terang.
 - Nama mempelai + tanggal dicetak di badan amplop (`.p-kulit`, berbagi gaya
   dengan buku & gerbang), dan petunjuk "Ketuk amplop untuk membuka" dipindah
   ke dalam badan amplop.
 - Teks cover di belakangnya disembunyikan selama amplop tertutup. Karena
   tema VIP memasang animasi masuk `vipZoom` (fill `both`, memegang
   `opacity:1`), penyembunyian memakai `!important`; saat dibuka teks muncul
-  lewat `@keyframes bdfrAmplop` bertunda 0.9 s (bukan transisi) supaya nama
-  tidak jadi "teks hantu" di atas isi undangan.
+  lewat `@keyframes bdfrAmplop` bertunda **1.4 s** (bukan transisi) — yaitu
+  setelah `body.opened #cover` selesai memudar (visibility 0 di 1.35 s) —
+  supaya nama tidak jadi "teks hantu" di atas isi undangan.
 - Amplop tanpa foto penuh tidak berubah (tetap amplop penuh layar).
 
 ### Pita transparan (gaya membuka `pita`)

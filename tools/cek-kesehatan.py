@@ -1556,10 +1556,11 @@ def cek_kartu_katalog():
           "undangan.html: gerbang dua panel simetris (lebar 50%, radius & poros mirror) memakai separuh foto yang menyatu")
     amplop = ("body.elbuka-amplop.foto-full #cover .pemicu{" in live
               and "width:min(330px,82%);height:min(430px,62%);" in live
+              and "body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:30%;--fb:14%;--fc:22%;" in live
               and "body.elbuka-amplop.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}" in live
-              and "body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .5s ease .9s both}" in live)
+              and "body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.4s both}" in live)
     lapor("ok" if amplop else "masalah",
-          "undangan.html: amplop foto penuh tampil sebagai kartu kaca di tengah (nama tercetak, teks cover disembunyikan sampai terbuka)")
+          "undangan.html: amplop foto penuh = kartu kaca transparan di tengah (foto tembus, nama tercetak, teks cover disembunyikan sampai terbuka)")
     selendang = ("body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0 0 auto 0;" in live
                  and "height:clamp(110px,18dvh,220px);" in live
                  and "body.elbuka-selendang.foto-full #cover .pemicu .el{--sa:30%;--sb:26%;--sc:12%;--sd:20%;" in live

@@ -261,14 +261,19 @@ async function render(d) {
   t('amplop foto penuh tampil sebagai kartu kaca di tengah, bukan full layar',
     undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu{\n  left:50%;top:50%;transform:translate(-50%,-50%);') &&
     undSrc.includes('width:min(330px,82%);height:min(430px,62%);') &&
-    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .el{height:52%;'));
+    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:30%;--fb:14%;--fc:22%;'));
+  t('lipatan & badan amplop memakai tint kaca (alpha rendah), bukan gradasi pekat',
+    undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fa),transparent),') &&
+    undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fb),transparent) 60%,') &&
+    undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .el2{--fa:26%;--fb:12%;--fc:20%;') &&
+    !undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 62%,rgba(255,255,255,.42))'));
   t('nama mempelai + tanggal + petunjuk tercetak di badan amplop',
     undSrc.includes("const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop')") &&
     undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .p-kulit{left:26px;right:26px;') &&
     undSrc.includes('body.elbuka-amplop.foto-full #cover .pemicu .p-hint{top:auto;left:50%;bottom:22px;'));
   t('teks cover di belakang amplop disembunyikan (menang atas animasi VIP)',
     undSrc.includes('body.elbuka-amplop.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}') &&
-    undSrc.includes('body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .5s ease .9s both}'));
+    undSrc.includes('body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.4s both}'));
   t('foto penuh + panel jendela: panel putih hilang, foto mempelai kelihatan',
     undSrc.includes('body.foto-full #cover .cvband{\n  background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}') &&
     undSrc.includes('body.foto-full #cover .cvband h1,body.foto-full #cover .cvband .amp,') &&

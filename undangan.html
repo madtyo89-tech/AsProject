@@ -1324,22 +1324,41 @@ body.elbuka-amplop.foto-full #cover .pemicu{
   width:min(330px,82%);height:min(430px,62%);
   border-radius:12px;perspective:1500px;
   box-shadow:0 30px 70px rgba(8,5,3,.6),inset 0 0 0 1px rgba(255,255,255,.32)}
-body.elbuka-amplop.foto-full #cover .pemicu .el{height:52%;
-  background:linear-gradient(180deg,
-    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 62%,rgba(255,255,255,.42)),
-    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 34%,rgba(20,12,6,.5)));
-  -webkit-backdrop-filter:blur(2px) saturate(1.05);backdrop-filter:blur(2px) saturate(1.05);
-  box-shadow:0 8px 22px rgba(20,10,4,.35),inset 0 0 0 1px rgba(255,255,255,.34)}
-body.elbuka-amplop.foto-full #cover .pemicu .el2{height:48%;
-  background:linear-gradient(180deg,
-    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 30%,rgba(18,11,6,.46)),
-    color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 22%,rgba(14,9,5,.62)));
-  -webkit-backdrop-filter:blur(2px) saturate(1.05);backdrop-filter:blur(2px) saturate(1.05);
+/* Amplop KACA: tint aksen ber-alpha rendah (12-30%) + kilau kaca, jadi foto
+   mempelai di balik lipatan & badan amplop tetap terlihat. Kadar alpha
+   disimpan di variabel --fa/--fb/--fc agar mudah disetel. */
+body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:30%;--fb:14%;--fc:22%;
+  height:52%;
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.26) 0%,rgba(255,255,255,.06) 26%,rgba(255,255,255,0) 55%,rgba(0,0,0,.10) 100%),
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fa),transparent),
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fb),transparent) 60%,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fc),transparent));
+  -webkit-backdrop-filter:blur(.8px) saturate(1.04);backdrop-filter:blur(.8px) saturate(1.04);
+  box-shadow:0 8px 22px rgba(20,10,4,.2),inset 0 0 0 1px rgba(255,255,255,.3)}
+body.elbuka-amplop.foto-full #cover .pemicu .el2{--fa:26%;--fb:12%;--fc:20%;
+  height:48%;
+  background-image:
+    linear-gradient(180deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.03) 22%,rgba(0,0,0,.08) 62%,rgba(0,0,0,.20) 100%),
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fa),transparent),
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fb),transparent) 58%,
+      color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--fc),transparent));
+  -webkit-backdrop-filter:blur(.8px) saturate(1.04);backdrop-filter:blur(.8px) saturate(1.04);
   border-radius:0 0 12px 12px;
-  box-shadow:inset 0 20px 40px rgba(20,12,6,.28),inset 0 0 0 1px rgba(255,255,255,.22)}
-body.elbuka-amplop.foto-full #cover .pemicu .simpul{width:64px;height:64px;margin-left:-32px;margin-top:-32px}
+  box-shadow:inset 0 18px 36px rgba(20,12,6,.16),inset 0 0 0 1px rgba(255,255,255,.22)}
+body.elbuka-amplop.foto-full #cover .pemicu .simpul{width:64px;height:64px;margin-left:-32px;margin-top:-32px;z-index:6}
 body.elbuka-amplop.foto-full #cover .pemicu .p-kulit{left:26px;right:26px;
-  bottom:clamp(56px,9vh,90px);z-index:6}
+  bottom:clamp(56px,9vh,90px);z-index:6;
+  /* Nama dicetak di atas kaca: beri bayangan gelap lembut supaya tetap
+     terbaca walau fotonya terang, tanpa menutupi foto. */
+  text-shadow:0 2px 16px rgba(14,8,4,.9),0 1px 4px rgba(14,8,4,.85)}
+/* Scrim tipis HANYA di belakang blok teks (tidak menutupi foto). */
+body.elbuka-amplop.foto-full #cover .pemicu::after{content:'';position:absolute;
+  left:0;right:0;bottom:0;height:clamp(150px,26vh,230px);z-index:4;pointer-events:none;
+  border-radius:0 0 12px 12px;
+  background:linear-gradient(180deg,transparent,rgba(12,8,5,.30) 42%,rgba(12,8,5,.52))}
 body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-orn{display:none}
 /* Petunjuk "Ketuk amplop": bawaan menempel 14px di BAWAH pemicu, dan karena
    amplop kini kartu di tengah, labelnya jatuh di atas foto gelap — tak
@@ -1352,7 +1371,10 @@ body.elbuka-amplop.foto-full #cover .pemicu .p-hint{top:auto;left:50%;bottom:22p
    opacity:1 dan langsung terlihat begitu kelas .opened dipasang, sehingga nama
    sempat jadi "teks hantu" di atas isi undangan. Dipakai keyframe bertunda. */
 body.elbuka-amplop.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}
-body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .5s ease .9s both}
+/* Tunda sampai cover benar-benar tersembunyi (body.opened #cover:
+   transisi .6s mulai .78s, visibility 0 pada 1.35s). Kalau muncul lebih
+   awal, nama sempat terlihat "hantu" di atas isi undangan. */
+body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.4s both}
 @keyframes bdfrAmplop{from{opacity:0}to{opacity:1}}
 /* Teks cetak di badan amplop + petunjuknya ikut memudar saat amplop dibuka,
    supaya tidak jadi "teks hantu" di atas isi undangan. */
