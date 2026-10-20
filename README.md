@@ -706,6 +706,10 @@ Dua implikasi:
    nomor WA contoh `6281234567890` dilarang muncul lagi di halaman terbit
    (`references/` dikecualikan karena itu salinan asli Drive).
 
+> **Langkah demi langkah lengkapnya** (Search Console, sitemap, Request Indexing,
+> Bing, Google Business Profile, backlink, plus teks siap-tempel untuk bio IG /
+> deskripsi GBP / WhatsApp Business): lihat **[`PANDUAN-INDEXS-GOOGLE.md`](PANDUAN-INDEXS-GOOGLE.md)**.
+
 ### Yang tetap harus dilakukan pemilik (tidak bisa dari repo)
 
 1. Buka **Search Console** → properti `https://asproject.my.id/` → **Verifikasi**
