@@ -1209,7 +1209,9 @@ def cek_kerapian_halaman():
     print("\n[29] Kerapian halaman: ikon tab, bahasa, dan berkas lokal")
     semua = []
     for rel in sorted(os.listdir(ROOT)):
-        if rel.endswith(".html"):
+        # google*.html = berkas verifikasi Google Search Console (isi satu baris
+        # token) — bukan halaman situs, jadi tidak wajib ikon/bahasa/manifest.
+        if rel.endswith(".html") and not rel.startswith("google"):
             semua.append(rel)
     for folder in ("demo", "katalog-demo"):
         for rel in sorted(os.listdir(os.path.join(ROOT, folder))):
@@ -1373,7 +1375,7 @@ def cek_manifest_pwa():
     kurang = []
     for d in ("", "demo", "katalog-demo"):
         for f in sorted(os.listdir(d or ".")):
-            if not f.endswith(".html") or f == "laporan-audit.html":
+            if not f.endswith(".html") or f == "laporan-audit.html" or f.startswith("google"):
                 continue
             rel = f"{d}/{f}" if d else f
             if 'rel="manifest"' not in baca(rel):

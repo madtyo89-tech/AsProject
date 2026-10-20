@@ -33,6 +33,7 @@ let gagal=0; const cek=(ok,pesan)=>{console.log((ok?'  ok  ':'  GAGAL ')+pesan);
   for(const f of daftar){
     const html=fs.readFileSync(path.join(ROOT,f),'utf8');
     if(f==='laporan-audit.html') continue;
+    if(/^google.+\.html$/.test(f)) continue; /* verifikasi Search Console, bukan halaman */
     cek(html.includes('rel="manifest"'),f+': tautan manifest');
   }
   await b.close();
