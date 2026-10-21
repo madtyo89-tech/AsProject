@@ -72,9 +72,17 @@ const assert = require('node:assert/strict');
    const back=page.locator('#coverBack');
    assert.equal(await back.count(),1,'Live invitation offers a back-to-cover button');
    assert(!await back.isVisible(),`Cover button stays hidden before opening at ${width}px`);
-   // Animasi pembuka membuat tombol "tidak stabil" bagi Playwright → picu klik lewat DOM.
-   await page.evaluate(()=>document.getElementById('btnOpen').click());
-   await page.waitForTimeout(1100);
+   // Picu klik lewat DOM karena panel pembuka bergerak. Ukur dari event klik
+   // sampai tombol muncul; delay 1,2 detik sengaja memberi toleransi scheduler.
+   await page.evaluate(()=>{
+    const btn=document.getElementById('btnOpen');
+    window.__coverOpenedAt=null;
+    btn.addEventListener('click',()=>{window.__coverOpenedAt=performance.now()},{once:true});
+    btn.click();
+   });
+   await back.waitFor({state:'visible',timeout:6000});
+   const delayMs=await page.evaluate(()=>performance.now()-window.__coverOpenedAt);
+   assert(delayMs>=1100,`Cover waits about 1.2s before revealing (${Math.round(delayMs)}ms at ${width}px)`);
    assert(await back.isVisible(),`Cover button appears after opening at ${width}px`);
    const backBox=await back.boundingBox();
    assert(backBox.x>=0&&backBox.x+backBox.width<=width+1,`Cover button fits ${width}px`);

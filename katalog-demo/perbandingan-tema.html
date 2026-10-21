@@ -2,22 +2,16 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-<link rel="icon" type="image/png" sizes="192x192" href="../assets/apple-touch-icon.png">
-<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Perbandingan Tema Undangan · AsProject</title>
-  <meta name="description" content="Bandingkan 24 tema undangan AsProject berdampingan: palet warna, font, pola latar, dan diagram kerangka tiap tema dalam satu layar.">
-  <link rel="canonical" href="https://asproject.my.id/katalog-demo/perbandingan-tema.html">
-  <meta name="robots" content="index, follow">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="AsProject">
-  <meta property="og:title" content="Perbandingan Tema Undangan · AsProject">
-  <meta property="og:description" content="Bandingkan 24 tema undangan AsProject berdampingan: palet warna, font, pola latar, dan diagram kerangka tiap tema dalam satu layar.">
-  <meta property="og:url" content="https://asproject.my.id/katalog-demo/perbandingan-tema.html">
-  <meta property="og:image" content="https://asproject.my.id/assets/og-asproject.png">
-  <meta property="og:locale" content="id_ID">
-  <meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Perbandingan teknis tema undangan AsProject. Halaman arsip untuk pratinjau; katalog publik terbaru tersedia di asproject.my.id/katalog/.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://asproject.my.id/katalog-demo/perbandingan-tema.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#faf8f4">
+<script src="../assets/demo-disclaimer.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
@@ -35,6 +29,7 @@ header p{color:var(--muted);margin:0;max-width:70ch}
 .hitung{margin-left:auto;color:var(--muted);font-size:12px}
 main{max-width:1400px;margin:0 auto;padding:22px}
 .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+@media(max-width:344px){.grid{grid-template-columns:minmax(0,1fr)}}
 section.judul{margin:30px 0 14px;font:600 20px/1.2 "Cormorant Garamond",serif;border-bottom:1px solid var(--line);padding-bottom:8px}
 .kartu{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
 .panggung{position:relative;aspect-ratio:3/3.4;overflow:hidden;display:flex;align-items:center;justify-content:center}
@@ -82,17 +77,6 @@ dd.mono{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
 .cvn{position:absolute;right:12px;top:10px;font-size:10px;color:#bdb5a7}
 footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);font-size:12.3px;border-top:1px solid var(--line)}
 </style>
-<!-- [aksesibilitas-c] Warna teks/latar yang gagal rasio kontras WCAG AA (4.5:1) menurut
-     axe-core digantikan versi lebih gelap. Hanya properti color/background-color/opacity
-     yang diubah; tata letak, font, dan gaya lain tidak tersentuh.
-     Rincian lengkap ada di LAPORAN-AUDIT-2026-10-16.md. -->
-<style>
-  /* .cvn — teks #bdb5a7 di latar #ffffff → #7e735f (4.66:1) (rasio 4.66:1) */
-  .cvn{color:#7e735f}
-</style>
-<link rel="manifest" href="/manifest.webmanifest">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="AsProject">
 </head>
 <body>
 <header>
@@ -107,21 +91,21 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
   (10 shell), urutan bagian (varian A–E), dan bagian eksklusif. Blok
   <span class="badge lay">▦ Kerangka</span> di tiap kartu menggambar urutan bagian yang
   benar-benar dirender — bandingkan dua kartu untuk melihat bedanya susunan, bukan cuma palet.
-  18 tema publik memakai 18 kerangka berbeda.</p>
+  34 tema publik memakai 18 kerangka berbeda.</p>
   <p style="margin-top:10px;color:var(--muted);font-size:12.5px">Mockup cover tidak lagi
   menggambar kicker, ornamen (<code>deco</code>), dan label template (<code>chara</code>):
   sejak PR #21 renderer menyembunyikannya di cover. <code>deco</code> tetap dipakai di
   divider dan footer; <code>chara</code> saat ini tidak tampil di mana pun.</p>
 </header>
-<nav class="bilahan" aria-label="Saring tema"><div class="dalam">
+<div class="bilahan"><div class="dalam">
   <span style="font-size:12.5px;color:var(--muted)">Saring:</span>
-  <button data-f="all" aria-pressed="true">Semua (24)</button>
-  <button data-f="pernikahan" aria-pressed="false">💍 Pernikahan (10)</button><button data-f="khitanan" aria-pressed="false">🕌 Khitanan (5)</button><button data-f="ultah" aria-pressed="false">🎂 Ultah Anak (6)</button><button data-f="aqiqah" aria-pressed="false">👶 Aqiqah (6)</button>
+  <button data-f="all" aria-pressed="true">Semua (40)</button>
+  <button data-f="pernikahan" aria-pressed="false">💍 Pernikahan (21)</button><button data-f="khitanan" aria-pressed="false">🕌 Khitanan (6)</button><button data-f="ultah" aria-pressed="false">🎂 Ultah Anak (10)</button><button data-f="aqiqah" aria-pressed="false">👶 Aqiqah (9)</button>
   <button data-f="studio" aria-pressed="false">Studio-only (6)</button>
   <span class="hitung"></span>
-</div></nav>
+</div></div>
 <main>
-  <section class="judul">Tema publik — masuk katalog &amp; daftar harga (18)</section>
+  <section class="judul">Tema publik — masuk katalog &amp; daftar harga (34)</section>
   <div class="grid" id="gPublik">
 <article class="kartu" data-ev="all" data-studio="0">
   <div class="panggung" style="background:linear-gradient(160deg,#FBFAF7 0%,#F0ECE3 52%,#DCD3C3 100%)">
@@ -141,19 +125,19 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="idx">#0</span>
       <h3>Ivory Klasik</h3>
       <span class="badge">DASAR</span>
-      
+
     </div>
     <div class="baris2">
       <span class="ev">✨ Semua Acara</span>
       <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Klasik</span>
         <span class="mono">shell:klasik · urutan A</span></div>
       <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
-      
+
     </div>
     <div class="swatch">
       <i title="#FBFAF7" style="background:#FBFAF7"></i><i title="#F0ECE3" style="background:#F0ECE3"></i><i title="#DCD3C3" style="background:#DCD3C3"></i>
@@ -188,14 +172,14 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="idx">#1</span>
       <h3>Adat Jawa Elegan</h3>
       <span class="badge">LARIS</span>
-      
+
     </div>
     <div class="baris2">
       <span class="ev">💍 Pernikahan</span>
-      <span class="harga">Rp 75.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Nuansa pranakan jawa yang anggun, motif batik halus &amp; gold foil</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Arsip Jawa</span>
         <span class="mono">shell:arsip · urutan A</span></div>
@@ -234,15 +218,15 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
     <div class="baris1">
       <span class="idx">#2</span>
       <h3>Minimalist Sage</h3>
-      
-      
+
+
     </div>
     <div class="baris2">
       <span class="ev">💍 Pernikahan</span>
-      <span class="harga">Rp 75.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Bersih, modern, sage green aesthetic buat couple anti ribet</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Editorial Sage</span>
         <span class="mono">shell:editorial · urutan B</span></div>
@@ -282,14 +266,14 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="idx">#3</span>
       <h3>Luxury Gold</h3>
       <span class="badge">PREMIUM</span>
-      
+
     </div>
     <div class="baris2">
       <span class="ev">💍 Pernikahan</span>
-      <span class="harga">Rp 89.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Glam soft luxury, emboss gold &amp; black tie vibe</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Panggung Emas</span>
         <span class="mono">shell:panggung · urutan C · 4D</span></div>
@@ -328,20 +312,20 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
     <div class="baris1">
       <span class="idx">#4</span>
       <h3>Floral Rustic</h3>
-      
-      
+
+
     </div>
     <div class="baris2">
       <span class="ev">💍 Pernikahan</span>
-      <span class="harga">Rp 75.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Bunga-bunga rustic yang manis, cocok outdoor garden party</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Zigzag Rustic</span>
         <span class="mono">shell:zigzag · urutan A</span></div>
       <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
-      
+
     </div>
     <div class="swatch">
       <i title="#FBE9E7" style="background:#FBE9E7"></i><i title="#F8CFC8" style="background:#F8CFC8"></i><i title="#E8AFA4" style="background:#E8AFA4"></i>
@@ -375,15 +359,15 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
     <div class="baris1">
       <span class="idx">#5</span>
       <h3>Biru Ceria</h3>
-      
-      
+
+
     </div>
     <div class="baris2">
       <span class="ev">🕌 Khitanan</span>
-      <span class="harga">Rp 75.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Ceria &amp; playful buat jagoan yang lagi disunat, tetap sopan</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Poster Ceria</span>
         <span class="mono">shell:poster · urutan D</span></div>
@@ -422,15 +406,15 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
     <div class="baris1">
       <span class="idx">#6</span>
       <h3>Islamic Elegant</h3>
-      
-      
+
+
     </div>
     <div class="baris2">
       <span class="ev">🕌 Khitanan</span>
-      <span class="harga">Rp 79.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Islami elegan dengan ornamen arabesque gold yang halus</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Bab Islami</span>
         <span class="mono">shell:bab · urutan A</span></div>
@@ -470,14 +454,14 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="idx">#7</span>
       <h3>Kids Party</h3>
       <span class="badge">LARIS</span>
-      
+
     </div>
     <div class="baris2">
       <span class="ev">🎂 Ultah Anak</span>
-      <span class="harga">Rp 75.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Warna-warni happy, balon &amp; confetti buat si kecil</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Poster Anak</span>
         <span class="mono">shell:poster · urutan D</span></div>
@@ -517,14 +501,14 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="idx">#8</span>
       <h3>Sweet 17</h3>
       <span class="badge">FAVORIT</span>
-      
+
     </div>
     <div class="baris2">
       <span class="ev">🎂 Ultah Anak</span>
-      <span class="harga">Rp 85.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Kaca Manis</span>
         <span class="mono">shell:kaca · urutan E</span></div>
@@ -563,15 +547,15 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
     <div class="baris1">
       <span class="idx">#9</span>
       <h3>Adult Elegant</h3>
-      
-      
+
+
     </div>
     <div class="baris2">
       <span class="ev">🎂 Ultah Anak</span>
-      <span class="harga">Rp 79.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Mature, minimal, buat ultah ke-30, 40, 50 yang classy</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Kaca Dewasa</span>
         <span class="mono">shell:kaca · urutan B</span></div>
@@ -610,20 +594,20 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
     <div class="baris1">
       <span class="idx">#10</span>
       <h3>Baby Boy</h3>
-      
-      
+
+
     </div>
     <div class="baris2">
       <span class="ev">👶 Aqiqah</span>
-      <span class="harga">Rp 75.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Lembut biru langit, ilustrasi baby boy yang gemes</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Lembut Biru</span>
         <span class="mono">shell:lembut · urutan A</span></div>
       <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
-      
+
     </div>
     <div class="swatch">
       <i title="#E3F2FD" style="background:#E3F2FD"></i><i title="#BBDEFB" style="background:#BBDEFB"></i><i title="#90CAF9" style="background:#90CAF9"></i>
@@ -657,20 +641,20 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
     <div class="baris1">
       <span class="idx">#11</span>
       <h3>Baby Girl</h3>
-      
-      
+
+
     </div>
     <div class="baris2">
       <span class="ev">👶 Aqiqah</span>
-      <span class="harga">Rp 75.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Pink blush super lembut buat si putri kecil kesayangan</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Lembut Merah</span>
         <span class="mono">shell:lembut · urutan E</span></div>
       <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Galeri"><b>2</b>Galeri</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Doa"><b>9</b>Doa</i><i title="Menu"><b>10</b>Menu</i><i title="Panitia"><b>11</b>Panitia</i><i title="Busana"><b>12</b>Busana</i><i title="Peta"><b>13</b>Peta</i><i title="Kado"><b>14</b>Kado</i><i title="Buku Tamu"><b>15</b>Buku Tamu</i><i title="Amplop"><b>16</b>Amplop</i><i title="RSVP"><b>17</b>RSVP</i><i title="Penutup"><b>18</b>Penutup</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
-      
+
     </div>
     <div class="swatch">
       <i title="#FCE4EC" style="background:#FCE4EC"></i><i title="#F8BBD0" style="background:#F8BBD0"></i><i title="#F48FB1" style="background:#F48FB1"></i>
@@ -688,15 +672,15 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
   </div>
 </article>
 <article class="kartu" data-ev="aqiqah" data-studio="0">
-  <div class="panggung" style="background:linear-gradient(160deg,#F5F0E6 0%,#E8DFC8 52%,#D4C4A0 100%)">
-    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%237A6D4E%22%20stroke-opacity%3D%220.2%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%3E%3Cg%20transform%3D%22translate(48%2028)%22%3E%3Cpath%20d%3D%22M0%20-16C6%20-10%208%20-4%208%200C8%206%204%2010%200%2014C-4%2010%20-8%206%20-8%200C-8%20-4%20-6%20-10%200%20-16Z%22%2F%3E%3Cpath%20d%3D%22M8%202C14%200%2018%204%2016%208C14%2011%2010%2010%2010%207%22%2F%3E%3Cpath%20d%3D%22M-8%202C-14%200%20-18%204%20-16%208C-14%2011%20-10%2010%20-10%207%22%2F%3E%3Cpath%20d%3D%22M0%20-20v-4M5%20-18l3-3M-5%20-18l-3-3%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%221.6%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(0%2076)%22%3E%3Cpath%20d%3D%22M0%20-16C6%20-10%208%20-4%208%200C8%206%204%2010%200%2014C-4%2010%20-8%206%20-8%200C-8%20-4%20-6%20-10%200%20-16Z%22%2F%3E%3Cpath%20d%3D%22M8%202C14%200%2018%204%2016%208C14%2011%2010%2010%2010%207%22%2F%3E%3Cpath%20d%3D%22M-8%202C-14%200%20-18%204%20-16%208C-14%2011%20-10%2010%20-10%207%22%2F%3E%3Cpath%20d%3D%22M0%20-20v-4M5%20-18l3-3M-5%20-18l-3-3%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%221.6%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(96%2076)%22%3E%3Cpath%20d%3D%22M0%20-16C6%20-10%208%20-4%208%200C8%206%204%2010%200%2014C-4%2010%20-8%206%20-8%200C-8%20-4%20-6%20-10%200%20-16Z%22%2F%3E%3Cpath%20d%3D%22M8%202C14%200%2018%204%2016%208C14%2011%2010%2010%2010%207%22%2F%3E%3Cpath%20d%3D%22M-8%202C-14%200%20-18%204%20-16%208C-14%2011%20-10%2010%20-10%207%22%2F%3E%3Cpath%20d%3D%22M0%20-20v-4M5%20-18l3-3M-5%20-18l-3-3%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%221.6%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:96px 96px;background-repeat:repeat;"></div>
-    <div class="isi" style="color:#6A5F44">
+  <div class="panggung" style="background:linear-gradient(160deg,#F5F2E4 0%,#E7E3CB 52%,#D2CBA8 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%236E7A52%22%20stroke-opacity%3D%220.2%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%3E%3Cg%20transform%3D%22translate(48%2028)%22%3E%3Cpath%20d%3D%22M0%20-16C6%20-10%208%20-4%208%200C8%206%204%2010%200%2014C-4%2010%20-8%206%20-8%200C-8%20-4%20-6%20-10%200%20-16Z%22%2F%3E%3Cpath%20d%3D%22M8%202C14%200%2018%204%2016%208C14%2011%2010%2010%2010%207%22%2F%3E%3Cpath%20d%3D%22M-8%202C-14%200%20-18%204%20-16%208C-14%2011%20-10%2010%20-10%207%22%2F%3E%3Cpath%20d%3D%22M0%20-20v-4M5%20-18l3-3M-5%20-18l-3-3%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%221.6%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(0%2076)%22%3E%3Cpath%20d%3D%22M0%20-16C6%20-10%208%20-4%208%200C8%206%204%2010%200%2014C-4%2010%20-8%206%20-8%200C-8%20-4%20-6%20-10%200%20-16Z%22%2F%3E%3Cpath%20d%3D%22M8%202C14%200%2018%204%2016%208C14%2011%2010%2010%2010%207%22%2F%3E%3Cpath%20d%3D%22M-8%202C-14%200%20-18%204%20-16%208C-14%2011%20-10%2010%20-10%207%22%2F%3E%3Cpath%20d%3D%22M0%20-20v-4M5%20-18l3-3M-5%20-18l-3-3%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%221.6%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(96%2076)%22%3E%3Cpath%20d%3D%22M0%20-16C6%20-10%208%20-4%208%200C8%206%204%2010%200%2014C-4%2010%20-8%206%20-8%200C-8%20-4%20-6%20-10%200%20-16Z%22%2F%3E%3Cpath%20d%3D%22M8%202C14%200%2018%204%2016%208C14%2011%2010%2010%2010%207%22%2F%3E%3Cpath%20d%3D%22M-8%202C-14%200%20-18%204%20-16%208C-14%2011%20-10%2010%20-10%207%22%2F%3E%3Cpath%20d%3D%22M0%20-20v-4M5%20-18l3-3M-5%20-18l-3-3%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%221.6%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:96px 96px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#5A5540">
       <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
            sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
            aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
            Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
-      <div class="judul" style="font-family:&quot;Marcellus&quot;,serif;color:#7A6D4E">Islamic Neutral</div>
-      <div class="garis" style="background:#7A6D4E"></div>
+      <div class="judul" style="font-family:&quot;Marcellus&quot;,serif;color:#6E7A52">Islamic Neutral</div>
+      <div class="garis" style="background:#6E7A52"></div>
       <div class="tanggal" style="font-family:&quot;Marcellus&quot;,serif">Sabtu, 12 Desember 2026</div>
     </div>
   </div>
@@ -704,15 +688,15 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
     <div class="baris1">
       <span class="idx">#12</span>
       <h3>Islamic Neutral</h3>
-      
-      
+
+
     </div>
     <div class="baris2">
       <span class="ev">👶 Aqiqah</span>
-      <span class="harga">Rp 75.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Gender neutral, kaligrafi doa &amp; nuansa cream hangat</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Bab Netral</span>
         <span class="mono">shell:bab · urutan B</span></div>
@@ -720,9 +704,9 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <div class="ekstra">Ekstra: angka romawi</div>
     </div>
     <div class="swatch">
-      <i title="#F5F0E6" style="background:#F5F0E6"></i><i title="#E8DFC8" style="background:#E8DFC8"></i><i title="#D4C4A0" style="background:#D4C4A0"></i>
-      <i class="aksen" title="aksen #7A6D4E" style="background:#7A6D4E"></i>
-      <i class="tinta" title="tinta #6A5F44" style="background:#6A5F44"></i>
+      <i title="#F5F2E4" style="background:#F5F2E4"></i><i title="#E7E3CB" style="background:#E7E3CB"></i><i title="#D2CBA8" style="background:#D2CBA8"></i>
+      <i class="aksen" title="aksen #6E7A52" style="background:#6E7A52"></i>
+      <i class="tinta" title="tinta #5A5540" style="background:#5A5540"></i>
     </div>
     <dl>
       <div><dt>Font</dt><dd style="font-family:&quot;Marcellus&quot;,serif">marcellus</dd></div>
@@ -752,14 +736,14 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="idx">#13</span>
       <h3>Midnight Gold</h3>
       <span class="badge">BARU</span>
-      
+
     </div>
     <div class="baris2">
       <span class="ev">💍 Pernikahan</span>
-      <span class="harga">Rp 99.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Kemewahan onyx &amp; gold foil — drama elegan untuk malam sakral</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Split Midnight</span>
         <span class="mono">shell:split · urutan B · 4D</span></div>
@@ -799,14 +783,14 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="idx">#14</span>
       <h3>Emerald Royal</h3>
       <span class="badge">BARU</span>
-      
+
     </div>
     <div class="baris2">
       <span class="ev">💍 Pernikahan</span>
-      <span class="harga">Rp 95.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Zamrud pekat beraksen emas kerajaan, anggun &amp; berwibawa</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Bab Royal</span>
         <span class="mono">shell:bab · urutan C</span></div>
@@ -846,14 +830,14 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="idx">#15</span>
       <h3>Navy Crest</h3>
       <span class="badge">BARU</span>
-      
+
     </div>
     <div class="baris2">
       <span class="ev">🕌 Khitanan</span>
-      <span class="harga">Rp 85.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Navy klasik bercrest emas — gagah, sopan, tetap mewah</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Split Navy</span>
         <span class="mono">shell:split · urutan A</span></div>
@@ -893,14 +877,14 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="idx">#16</span>
       <h3>Golden Jubilee</h3>
       <span class="badge">BARU</span>
-      
+
     </div>
     <div class="baris2">
       <span class="ev">🎂 Ultah Anak</span>
-      <span class="harga">Rp 89.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Pesta emas champagne buat milestone istimewa — 30, 40, 50 tahun</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Zigzag Jubilee</span>
         <span class="mono">shell:zigzag · urutan C</span></div>
@@ -923,15 +907,15 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
   </div>
 </article>
 <article class="kartu" data-ev="aqiqah" data-studio="0">
-  <div class="panggung" style="background:linear-gradient(160deg,#F8F4EE 0%,#EFE6D8 52%,#E0D2BC 100%)">
-    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2056%2028%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23A88B5C%22%20stroke-opacity%3D%220.22%22%20stroke-width%3D%221.2%22%3E%3Cpath%20d%3D%22M0%208a14%2014%200%200%200%2028%200a14%2014%200%200%200%2028%200%22%2F%3E%3Cpath%20d%3D%22M6%208a8%208%200%200%200%2016%200M34%208a8%208%200%200%200%2016%200%22%2F%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%2215%22%20r%3D%221.5%22%2F%3E%3Ccircle%20cx%3D%2242%22%20cy%3D%2215%22%20r%3D%221.5%22%2F%3E%3Cpath%20d%3D%22M14%2026v-7M42%2026v-7M0%2026h56%22%20stroke-dasharray%3D%222%203%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:56px 28px;background-repeat:repeat;"></div>
+  <div class="panggung" style="background:linear-gradient(160deg,#FDF9F3 0%,#F6E7E2 52%,#E9D2CE 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2056%2028%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23A87E74%22%20stroke-opacity%3D%220.22%22%20stroke-width%3D%221.2%22%3E%3Cpath%20d%3D%22M0%208a14%2014%200%200%200%2028%200a14%2014%200%200%200%2028%200%22%2F%3E%3Cpath%20d%3D%22M6%208a8%208%200%200%200%2016%200M34%208a8%208%200%200%200%2016%200%22%2F%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%2215%22%20r%3D%221.5%22%2F%3E%3Ccircle%20cx%3D%2242%22%20cy%3D%2215%22%20r%3D%221.5%22%2F%3E%3Cpath%20d%3D%22M14%2026v-7M42%2026v-7M0%2026h56%22%20stroke-dasharray%3D%222%203%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:56px 28px;background-repeat:repeat;"></div>
     <div class="isi" style="color:#5E4E36">
       <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
            sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
            aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
            Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
-      <div class="judul" style="font-family:&quot;Cormorant Garamond&quot;,serif;color:#A88B5C">Pearl Ivory</div>
-      <div class="garis" style="background:#A88B5C"></div>
+      <div class="judul" style="font-family:&quot;Cormorant Garamond&quot;,serif;color:#A87E74">Pearl Ivory</div>
+      <div class="garis" style="background:#A87E74"></div>
       <div class="tanggal" style="font-family:&quot;Cormorant Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
     </div>
   </div>
@@ -940,14 +924,14 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="idx">#17</span>
       <h3>Pearl Ivory</h3>
       <span class="badge">BARU</span>
-      
+
     </div>
     <div class="baris2">
       <span class="ev">👶 Aqiqah</span>
-      <span class="harga">Rp 85.000</span>
+      <span class="harga">Rp 49.000</span>
     </div>
     <p class="desc">Lembut mutiara &amp; ivory hangat, elegan menyambut si kecil</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Editorial Mutiara</span>
         <span class="mono">shell:editorial · urutan E</span></div>
@@ -955,8 +939,8 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <div class="ekstra">Ekstra: pita kutipan</div>
     </div>
     <div class="swatch">
-      <i title="#F8F4EE" style="background:#F8F4EE"></i><i title="#EFE6D8" style="background:#EFE6D8"></i><i title="#E0D2BC" style="background:#E0D2BC"></i>
-      <i class="aksen" title="aksen #A88B5C" style="background:#A88B5C"></i>
+      <i title="#FDF9F3" style="background:#FDF9F3"></i><i title="#F6E7E2" style="background:#F6E7E2"></i><i title="#E9D2CE" style="background:#E9D2CE"></i>
+      <i class="aksen" title="aksen #A87E74" style="background:#A87E74"></i>
       <i class="tinta" title="tinta #5E4E36" style="background:#5E4E36"></i>
     </div>
     <dl>
@@ -966,6 +950,758 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <div><dt>Kerangka</dt><dd>Editorial Mutiara</dd></div>
       <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
       <div><dt>id</dt><dd class="mono">pearl-ivory</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#1E1A15 0%,#2E2419 52%,#4A3A22 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23D4AF37%22%20stroke-opacity%3D%220.18%22%20stroke-width%3D%221.4%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M10%2090C30%2070%2030%2050%2050%2050C70%2050%2070%2030%2090%2010%22%2F%3E%3Cpath%20d%3D%22M50%2050c-8-2-12-8-10-14c6-2%2012%202%2010%2014Z%22%2F%3E%3Cpath%20d%3D%22M50%2050c2%208%208%2012%2014%2010c2-6-2-12-14-10Z%22%2F%3E%3Cpath%20d%3D%22M28%2072c-6%200-10-4-9-9c5-1%209%203%209%209Z%22%2F%3E%3Cpath%20d%3D%22M72%2028c0-6%204-10%209-9c1%205-3%209-9%209Z%22%2F%3E%3Cpath%20d%3D%22M90%2010c4-2%208%200%208%204M10%2090c-4%202-8%200-8-4%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%221.8%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:100px 100px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#F2E8D5">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Cinzel&quot;,serif;color:#D4AF37">Noir Kutip</div>
+      <div class="garis" style="background:#D4AF37"></div>
+      <div class="tanggal" style="font-family:&quot;Cinzel&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#24</span>
+      <h3>Noir Kutip</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Kegelapan glamor dengan kutipan besar pembuka dan foto hero</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#1E1A15" style="background:#1E1A15"></i><i title="#2E2419" style="background:#2E2419"></i><i title="#4A3A22" style="background:#4A3A22"></i>
+      <i class="aksen" title="aksen #D4AF37" style="background:#D4AF37"></i>
+      <i class="tinta" title="tinta #F2E8D5" style="background:#F2E8D5"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cinzel&quot;,serif">cinzel</dd></div>
+      <div><dt>Pola</dt><dd>sulur</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">✦ ❖ ✦</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">noir-kutip</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FFF8E1 0%,#F7E8B0 52%,#D4AF37 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%2040%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%238C6D1F%22%20stroke-opacity%3D%220.2%22%20stroke-width%3D%221.3%22%3E%3Cpath%20d%3D%22M8%2040a32%2032%200%200%201%2064%200%22%2F%3E%3Cpath%20d%3D%22M16%2040a24%2024%200%200%201%2048%200%22%2F%3E%3Cpath%20d%3D%22M24%2040a16%2016%200%200%201%2032%200%22%2F%3E%3Cpath%20d%3D%22M32%2040a8%208%200%200%201%2016%200%22%2F%3E%3Cpath%20d%3D%22M-32%200a32%2032%200%200%201%2064%200%22%2F%3E%3Cpath%20d%3D%22M-24%200a24%2024%200%200%201%2048%200%22%2F%3E%3Cpath%20d%3D%22M-16%200a16%2016%200%200%201%2032%200%22%2F%3E%3Cpath%20d%3D%22M48%200a32%2032%200%200%201%2064%200%22%2F%3E%3Cpath%20d%3D%22M56%200a24%2024%200%200%201%2048%200%22%2F%3E%3Cpath%20d%3D%22M64%200a16%2016%200%200%201%2032%200%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:80px 40px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#6B5724">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Playfair Display&quot;,serif;color:#8C6D1F">Sultan Arsip</div>
+      <div class="garis" style="background:#8C6D1F"></div>
+      <div class="tanggal" style="font-family:&quot;Playfair Display&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#25</span>
+      <h3>Sultan Arsip</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Kerajaan bernomor romawi, sampul segel emas, galeri mengalir</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#FFF8E1" style="background:#FFF8E1"></i><i title="#F7E8B0" style="background:#F7E8B0"></i><i title="#D4AF37" style="background:#D4AF37"></i>
+      <i class="aksen" title="aksen #8C6D1F" style="background:#8C6D1F"></i>
+      <i class="tinta" title="tinta #6B5724" style="background:#6B5724"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Playfair Display&quot;,serif">playfair</dd></div>
+      <div><dt>Pola</dt><dd>deco</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">✦ ❖ ✦</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">sultan-arsip</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="ultah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FFF1C1 0%,#FFE082 52%,#FFB74D 100%)">
+    <div class="pola" style="background-image:radial-gradient(#E5737355 2px,transparent 2.6px),radial-gradient(#64B5F655 2px,transparent 2.6px),radial-gradient(#8BC34A55 2px,transparent 2.6px);background-size:42px 42px,36px 36px,30px 30px;background-position:0 0,12px 20px,22px 8px;"></div>
+    <div class="isi" style="color:#82602B">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Pacifico&quot;,cursive;color:#B87A1A">Pop Zigzag</div>
+      <div class="garis" style="background:#B87A1A"></div>
+      <div class="tanggal" style="font-family:&quot;Pacifico&quot;,cursive">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#26</span>
+      <h3>Pop Zigzag</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">🎂 Ultah Anak</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Zigzag ceria dengan jam hitung-mundur digital</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#FFF1C1" style="background:#FFF1C1"></i><i title="#FFE082" style="background:#FFE082"></i><i title="#FFB74D" style="background:#FFB74D"></i>
+      <i class="aksen" title="aksen #B87A1A" style="background:#B87A1A"></i>
+      <i class="tinta" title="tinta #82602B" style="background:#82602B"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Pacifico&quot;,cursive">pacifico</dd></div>
+      <div><dt>Pola</dt><dd>confetti</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">✸ ★ ✸</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">pop-zigzag</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="ultah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#F9D5E5 0%,#F4A9C4 52%,#E57AA0 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2090%2090%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%239E4A66%22%20stroke-opacity%3D%220.22%22%20stroke-width%3D%221.3%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M22%2015C23%2020%2024%2021%2029%2022C24%2023%2023%2024%2022%2029C21%2024%2020%2023%2015%2022C20%2021%2021%2020%2022%2015Z%22%2F%3E%3Cpath%20d%3D%22M66%2035C67%2039%2068%2040%2072%2041C68%2042%2067%2043%2066%2047C65%2043%2064%2042%2060%2041C64%2040%2065%2039%2066%2035Z%22%2F%3E%3Cpath%20d%3D%22M40%2064C41%2069%2042%2070%2047%2071C42%2072%2041%2073%2040%2078C39%2073%2038%2072%2033%2071C38%2070%2039%2069%2040%2064Z%22%2F%3E%3Cpath%20d%3D%22M78%2076C79%2079%2080%2080%2083%2081C80%2082%2079%2083%2078%2086C77%2083%2076%2082%2073%2081C76%2080%2077%2079%2078%2076Z%22%2F%3E%3Cpath%20d%3D%22M10%2052C11%2055%2012%2056%2015%2057C12%2058%2011%2059%2010%2062C9%2059%208%2058%205%2057C8%2056%209%2055%2010%2052Z%22%2F%3E%3Ccircle%20cx%3D%2252%22%20cy%3D%2214%22%20r%3D%221.4%22%2F%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%2280%22%20r%3D%221.4%22%2F%3E%3Ccircle%20cx%3D%2280%22%20cy%3D%2252%22%20r%3D%221.2%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:90px 90px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#76374C">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Dancing Script&quot;,cursive;color:#9E4A66">Mentari Poster</div>
+      <div class="garis" style="background:#9E4A66"></div>
+      <div class="tanggal" style="font-family:&quot;Dancing Script&quot;,cursive">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#27</span>
+      <h3>Mentari Poster</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">🎂 Ultah Anak</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Poster manis dengan galeri mengalir horizontal</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#F9D5E5" style="background:#F9D5E5"></i><i title="#F4A9C4" style="background:#F4A9C4"></i><i title="#E57AA0" style="background:#E57AA0"></i>
+      <i class="aksen" title="aksen #9E4A66" style="background:#9E4A66"></i>
+      <i class="tinta" title="tinta #76374C" style="background:#76374C"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Dancing Script&quot;,cursive">dancing</dd></div>
+      <div><dt>Pola</dt><dd>tabur</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">✦ ❀ ✦</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">mentari-poster</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="aqiqah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#E3F2FD 0%,#BBDEFB 52%,#90CAF9 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%234A7FB5%22%20stroke-opacity%3D%220.2%22%20stroke-width%3D%221.35%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M24%2012v28M12%2019l24%2014M36%2019%2012%2033M70%2052v32M56%2061l28%2015M84%2061%2056%2076M48%2048l7%207-7%207-7-7Z%22%2F%3E%3Cpath%20d%3D%22m20%2017%204%204%204-4m-16%2012%205-1%201%205m16-5-5-1-1%205m28%2030%204%205%204-5m-16%2013%205-1%201%205m16-5-5-1-1%205%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:96px 96px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#32567B">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Caveat&quot;,cursive;color:#4A7FB5">Damai Kaca</div>
+      <div class="garis" style="background:#4A7FB5"></div>
+      <div class="tanggal" style="font-family:&quot;Caveat&quot;,cursive">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#28</span>
+      <h3>Damai Kaca</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">👶 Aqiqah</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Kaca lembut bayi — galeri menyapa duluan</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Kaca Manis</span>
+        <span class="mono">shell:kaca · urutan E</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Galeri"><b>2</b>Galeri</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Doa"><b>9</b>Doa</i><i title="Menu"><b>10</b>Menu</i><i title="Panitia"><b>11</b>Panitia</i><i title="Busana"><b>12</b>Busana</i><i title="Peta"><b>13</b>Peta</i><i title="Kado"><b>14</b>Kado</i><i title="Buku Tamu"><b>15</b>Buku Tamu</i><i title="Amplop"><b>16</b>Amplop</i><i title="RSVP"><b>17</b>RSVP</i><i title="Penutup"><b>18</b>Penutup</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+      <div class="ekstra">Ekstra: navigasi titik</div>
+    </div>
+    <div class="swatch">
+      <i title="#E3F2FD" style="background:#E3F2FD"></i><i title="#BBDEFB" style="background:#BBDEFB"></i><i title="#90CAF9" style="background:#90CAF9"></i>
+      <i class="aksen" title="aksen #4A7FB5" style="background:#4A7FB5"></i>
+      <i class="tinta" title="tinta #32567B" style="background:#32567B"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Caveat&quot;,cursive">caveat</dd></div>
+      <div><dt>Pola</dt><dd>frost (es)</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">✦ ☁ ✦</dd></div>
+      <div><dt>Kerangka</dt><dd>Kaca Manis</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">damai-kaca</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#14342B 0%,#1F4D3E 52%,#356B55 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23D9B86C%22%20stroke-opacity%3D%220.17%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M14%20108C42%2087%2065%2056%20106%2013%22%2F%3E%3Cpath%20d%3D%22M34%2092C17%2089%2015%2073%2016%2067%2031%2065%2042%2075%2034%2092ZM52%2073C36%2071%2034%2057%2035%2051%2051%2049%2060%2059%2052%2073ZM72%2051C57%2048%2056%2034%2058%2028%2073%2028%2081%2039%2072%2051ZM39%2089C42%2073%2056%2069%2063%2070%2064%2085%2053%2095%2039%2089ZM59%2066C62%2051%2076%2047%2083%2049%2083%2064%2073%2073%2059%2066ZM81%2042C84%2029%2096%2024%20102%2026%20103%2039%2094%2048%2081%2042Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:120px 120px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#F0EAD6">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Marcellus&quot;,serif;color:#D9B86C">Telur Emas</div>
+      <div class="garis" style="background:#D9B86C"></div>
+      <div class="tanggal" style="font-family:&quot;Marcellus&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#29</span>
+      <h3>Telur Emas</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Zamrud terbelah dengan kutipan kecil dan foto hero</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#14342B" style="background:#14342B"></i><i title="#1F4D3E" style="background:#1F4D3E"></i><i title="#356B55" style="background:#356B55"></i>
+      <i class="aksen" title="aksen #D9B86C" style="background:#D9B86C"></i>
+      <i class="tinta" title="tinta #F0EAD6" style="background:#F0EAD6"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Marcellus&quot;,serif">marcellus</dd></div>
+      <div><dt>Pola</dt><dd>botanical</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">❖ ✦ ❖</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">telur-emas</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="all" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#F7F0E6 0%,#EBDFC9 52%,#D9C7A7 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%237C5A3A%22%20stroke-opacity%3D%220.2%22%20stroke-width%3D%221.4%22%3E%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2218%22%2F%3E%3Ccircle%20cx%3D%2264%22%20cy%3D%220%22%20r%3D%2218%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2264%22%20r%3D%2218%22%2F%3E%3Ccircle%20cx%3D%2264%22%20cy%3D%2264%22%20r%3D%2218%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2218%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%223%22%2F%3E%3Cpath%20d%3D%22M32%2014v-5M32%2055v5M14%2032h-5M55%2032h5%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:64px 64px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#4E3F30">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;EB Garamond&quot;,serif;color:#7C5A3A">Kopi Jurnal</div>
+      <div class="garis" style="background:#7C5A3A"></div>
+      <div class="tanggal" style="font-family:&quot;EB Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#30</span>
+      <h3>Kopi Jurnal</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">✨ Semua Acara</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Jalanan kopi Sunda — hangat, sederhana, otentik</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#F7F0E6" style="background:#F7F0E6"></i><i title="#EBDFC9" style="background:#EBDFC9"></i><i title="#D9C7A7" style="background:#D9C7A7"></i>
+      <i class="aksen" title="aksen #7C5A3A" style="background:#7C5A3A"></i>
+      <i class="tinta" title="tinta #4E3F30" style="background:#4E3F30"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;EB Garamond&quot;,serif">ebgaramond</dd></div>
+      <div><dt>Pola</dt><dd>kawung</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">❀ ✦ ❀</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">kopi-jurnal</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="aqiqah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FFF6E9 0%,#FFE3B3 52%,#FBCF87 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23C07F2A%22%20stroke-opacity%3D%220.2%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M14%2040C26%2028%2044%2026%2060%2030C76%2026%2094%2030%20106%2040C94%2050%2076%2054%2060%2050C44%2054%2026%2050%2014%2040Z%22%2F%3E%3Cpath%20d%3D%22M26%2040C36%2033%2048%2032%2060%2035C72%2032%2084%2033%2094%2040C84%2046%2072%2047%2060%2045C48%2047%2036%2046%2026%2040Z%22%2F%3E%3Cpath%20d%3D%22M60%2038c5-1%207%203%203%205c-3%201-5-2-3-4%22%2F%3E%3Cpath%20d%3D%22M18%2088C28%2079%2042%2077%2054%2080C66%2077%2080%2079%2090%2088C80%2095%2066%2097%2054%2094C42%2097%2028%2095%2018%2088Z%22%2F%3E%3Cpath%20d%3D%22M28%2088C36%2083%2046%2082%2054%2084C62%2082%2072%2083%2080%2088C72%2092%2062%2093%2054%2091C46%2093%2036%2092%2028%2088Z%22%2F%3E%3Cpath%20d%3D%22M54%2086c4-1%206%202%203%204c-3%201-4-2-3-3%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:120px 120px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#6B5222">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Marcellus&quot;,serif;color:#C07F2A">Mentari Bayi</div>
+      <div class="garis" style="background:#C07F2A"></div>
+      <div class="tanggal" style="font-family:&quot;Marcellus&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#31</span>
+      <h3>Mentari Bayi</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">👶 Aqiqah</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Langit pagi lembut menyambut si kecil, galeri menggeser</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Lembut Biru</span>
+        <span class="mono">shell:lembut · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#FFF6E9" style="background:#FFF6E9"></i><i title="#FFE3B3" style="background:#FFE3B3"></i><i title="#FBCF87" style="background:#FBCF87"></i>
+      <i class="aksen" title="aksen #C07F2A" style="background:#C07F2A"></i>
+      <i class="tinta" title="tinta #6B5222" style="background:#6B5222"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Marcellus&quot;,serif">marcellus</dd></div>
+      <div><dt>Pola</dt><dd>mendung</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">☀ ✦ ☀</dd></div>
+      <div><dt>Kerangka</dt><dd>Lembut Biru</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">mentari-bayi</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FFF6EC 0%,#FFD9A8 52%,#F2994A 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2060%2030%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23B4530A%22%20stroke-opacity%3D%220.2%22%20stroke-width%3D%221.2%22%3E%3Cg%20transform%3D%22translate(15%2030)%22%3E%3Cpath%20d%3D%22M-15%200a15%2015%200%200%201%2030%200%22%2F%3E%3Cpath%20d%3D%22M-10%200a10%2010%200%200%201%2020%200%22%2F%3E%3Cpath%20d%3D%22M-5%200a5%205%200%200%201%2010%200%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(45%2030)%22%3E%3Cpath%20d%3D%22M-15%200a15%2015%200%200%201%2030%200%22%2F%3E%3Cpath%20d%3D%22M-10%200a10%2010%200%200%201%2020%200%22%2F%3E%3Cpath%20d%3D%22M-5%200a5%205%200%200%201%2010%200%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(0%2015)%22%3E%3Cpath%20d%3D%22M-15%200a15%2015%200%200%201%2030%200%22%2F%3E%3Cpath%20d%3D%22M-10%200a10%2010%200%200%201%2020%200%22%2F%3E%3Cpath%20d%3D%22M-5%200a5%205%200%200%201%2010%200%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(30%2015)%22%3E%3Cpath%20d%3D%22M-15%200a15%2015%200%200%201%2030%200%22%2F%3E%3Cpath%20d%3D%22M-10%200a10%2010%200%200%201%2020%200%22%2F%3E%3Cpath%20d%3D%22M-5%200a5%205%200%200%201%2010%200%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(60%2015)%22%3E%3Cpath%20d%3D%22M-15%200a15%2015%200%200%201%2030%200%22%2F%3E%3Cpath%20d%3D%22M-10%200a10%2010%200%200%201%2020%200%22%2F%3E%3Cpath%20d%3D%22M-5%200a5%205%200%200%201%2010%200%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:60px 30px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#5C3A1E">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Marcellus&quot;,serif;color:#B4530A">Senja Kencana</div>
+      <div class="garis" style="background:#B4530A"></div>
+      <div class="tanggal" style="font-family:&quot;Marcellus&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#32</span>
+      <h3>Senja Kencana</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Senja kencana — apricot &amp; terracotta hangat, kutipan pembuka, mempelai bersebelahan</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#FFF6EC" style="background:#FFF6EC"></i><i title="#FFD9A8" style="background:#FFD9A8"></i><i title="#F2994A" style="background:#F2994A"></i>
+      <i class="aksen" title="aksen #B4530A" style="background:#B4530A"></i>
+      <i class="tinta" title="tinta #5C3A1E" style="background:#5C3A1E"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Marcellus&quot;,serif">marcellus</dd></div>
+      <div><dt>Pola</dt><dd>ombak</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">❀ ✦ ❀</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">senja-kencana</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FBFAF6 0%,#F2EFE7 52%,#E4DFD2 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%231B1B1B%22%20stroke-opacity%3D%220.2%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%3E%3Cg%20transform%3D%22translate(48%2028)%22%3E%3Cpath%20d%3D%22M0%20-16C6%20-10%208%20-4%208%200C8%206%204%2010%200%2014C-4%2010%20-8%206%20-8%200C-8%20-4%20-6%20-10%200%20-16Z%22%2F%3E%3Cpath%20d%3D%22M8%202C14%200%2018%204%2016%208C14%2011%2010%2010%2010%207%22%2F%3E%3Cpath%20d%3D%22M-8%202C-14%200%20-18%204%20-16%208C-14%2011%20-10%2010%20-10%207%22%2F%3E%3Cpath%20d%3D%22M0%20-20v-4M5%20-18l3-3M-5%20-18l-3-3%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%221.6%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(0%2076)%22%3E%3Cpath%20d%3D%22M0%20-16C6%20-10%208%20-4%208%200C8%206%204%2010%200%2014C-4%2010%20-8%206%20-8%200C-8%20-4%20-6%20-10%200%20-16Z%22%2F%3E%3Cpath%20d%3D%22M8%202C14%200%2018%204%2016%208C14%2011%2010%2010%2010%207%22%2F%3E%3Cpath%20d%3D%22M-8%202C-14%200%20-18%204%20-16%208C-14%2011%20-10%2010%20-10%207%22%2F%3E%3Cpath%20d%3D%22M0%20-20v-4M5%20-18l3-3M-5%20-18l-3-3%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%221.6%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(96%2076)%22%3E%3Cpath%20d%3D%22M0%20-16C6%20-10%208%20-4%208%200C8%206%204%2010%200%2014C-4%2010%20-8%206%20-8%200C-8%20-4%20-6%20-10%200%20-16Z%22%2F%3E%3Cpath%20d%3D%22M8%202C14%200%2018%204%2016%208C14%2011%2010%2010%2010%207%22%2F%3E%3Cpath%20d%3D%22M-8%202C-14%200%20-18%204%20-16%208C-14%2011%20-10%2010%20-10%207%22%2F%3E%3Cpath%20d%3D%22M0%20-20v-4M5%20-18l3-3M-5%20-18l-3-3%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%2220%22%20r%3D%221.6%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:96px 96px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#26231D">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Playfair Display&quot;,serif;color:#1B1B1B">Sorot Utama</div>
+      <div class="garis" style="background:#1B1B1B"></div>
+      <div class="tanggal" style="font-family:&quot;Playfair Display&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#33</span>
+      <h3>Sorot Utama</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Editorial raksasa — nama jadi tipografi besar, asimetris, white space ekstrem</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#FBFAF6" style="background:#FBFAF6"></i><i title="#F2EFE7" style="background:#F2EFE7"></i><i title="#E4DFD2" style="background:#E4DFD2"></i>
+      <i class="aksen" title="aksen #1B1B1B" style="background:#1B1B1B"></i>
+      <i class="tinta" title="tinta #26231D" style="background:#26231D"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Playfair Display&quot;,serif">playfair</dd></div>
+      <div><dt>Pola</dt><dd>damask</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">✦ — ✦</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">sorot-utama</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="ultah" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#FFEAC2 0%,#F9CE5E 52%,#F09A3E 100%)">
+    <div class="pola" style="background-image:repeating-conic-gradient(from -90deg at 50% -32%,color-mix(in srgb,#0E5E50 13%,transparent) 0deg 5deg,transparent 5deg 24deg);"></div>
+    <div class="isi" style="color:#3B2C16">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Bebas Neue&quot;,sans-serif;color:#0E5E50">Retro Surya</div>
+      <div class="garis" style="background:#0E5E50"></div>
+      <div class="tanggal" style="font-family:&quot;Bebas Neue&quot;,sans-serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#34</span>
+      <h3>Retro Surya</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">🎂 Ultah Anak</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Retro surya — mustard &amp; teal, font chunky, tanggal raksasa bergaya mid-century</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#FFEAC2" style="background:#FFEAC2"></i><i title="#F9CE5E" style="background:#F9CE5E"></i><i title="#F09A3E" style="background:#F09A3E"></i>
+      <i class="aksen" title="aksen #0E5E50" style="background:#0E5E50"></i>
+      <i class="tinta" title="tinta #3B2C16" style="background:#3B2C16"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Bebas Neue&quot;,sans-serif">bebas</dd></div>
+      <div><dt>Pola</dt><dd>surya</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">☀ ✦ ☀</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">retro-surya</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#171120 0%,#251A35 52%,#3D2652 100%)">
+    <div class="pola" style="background-image:radial-gradient(circle at 18% 22%,color-mix(in srgb,#D9B36A 15%,transparent) 0 3px,transparent 4px),radial-gradient(circle at 78% 14%,color-mix(in srgb,#D9B36A 11%,transparent) 0 2.5px,transparent 3.5px),radial-gradient(circle at 62% 82%,color-mix(in srgb,#D9B36A 13%,transparent) 0 3px,transparent 4px),radial-gradient(circle at 26% 88%,color-mix(in srgb,#D9B36A 9%,transparent) 0 2px,transparent 3px);background-size:150px 150px,120px 120px,170px 170px,130px 130px;"></div>
+    <div class="isi" style="color:#F5ECDE">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Cinzel&quot;,serif;color:#D9B36A">Gelap Rimbun</div>
+      <div class="garis" style="background:#D9B36A"></div>
+      <div class="tanggal" style="font-family:&quot;Cinzel&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#35</span>
+      <h3>Gelap Rimbun</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Gelap rimbun — plum malam berlapis flora, aksen emas, drama botanikal</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#171120" style="background:#171120"></i><i title="#251A35" style="background:#251A35"></i><i title="#3D2652" style="background:#3D2652"></i>
+      <i class="aksen" title="aksen #D9B36A" style="background:#D9B36A"></i>
+      <i class="tinta" title="tinta #F5ECDE" style="background:#F5ECDE"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cinzel&quot;,serif">cinzel</dd></div>
+      <div><dt>Pola</dt><dd>rimbun</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">❀ ✦ ❀</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">gelap-rimbun</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#F0F7EE 0%,#D6EAD9 52%,#A9CDB0 100%)">
+    <div class="pola" style="background-image:radial-gradient(ellipse 34px 62px at 16% 24%,color-mix(in srgb,#1F6B44 17%,transparent) 0 55%,transparent 72%),radial-gradient(ellipse 34px 62px at 84% 74%,color-mix(in srgb,#1F6B44 14%,transparent) 0 55%,transparent 72%),radial-gradient(ellipse 26px 48px at 72% 18%,color-mix(in srgb,#1F6B44 11%,transparent) 0 55%,transparent 72%);background-size:190px 190px,220px 220px,170px 170px;"></div>
+    <div class="isi" style="color:#274A33">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Merriweather&quot;,serif;color:#1F6B44">Rimba Tropis</div>
+      <div class="garis" style="background:#1F6B44"></div>
+      <div class="tanggal" style="font-family:&quot;Merriweather&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#36</span>
+      <h3>Rimba Tropis</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Rimba tropis — monstera &amp; palem rimbun, hijau segar, cover foto penuh</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#F0F7EE" style="background:#F0F7EE"></i><i title="#D6EAD9" style="background:#D6EAD9"></i><i title="#A9CDB0" style="background:#A9CDB0"></i>
+      <i class="aksen" title="aksen #1F6B44" style="background:#1F6B44"></i>
+      <i class="tinta" title="tinta #274A33" style="background:#274A33"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Merriweather&quot;,serif">merriweather</dd></div>
+      <div><dt>Pola</dt><dd>monstera</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">❀ ✦ ❀</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">rimba-tropis</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#EFE4D0 0%,#E0CDA6 52%,#C9AE83 100%)">
+    <div class="pola" style="background-image:repeating-linear-gradient(90deg,color-mix(in srgb,#7C5230 7%,transparent) 0 1px,transparent 1px 5px),repeating-linear-gradient(2deg,color-mix(in srgb,#7C5230 5%,transparent) 0 1px,transparent 1px 7px),radial-gradient(circle at 30% 60%,color-mix(in srgb,#7C5230 8%,transparent) 0 1.5px,transparent 2.5px);background-size:120px 120px,180px 90px,90px 90px;"></div>
+    <div class="isi" style="color:#4E3B26">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Caveat&quot;,cursive;color:#7C5230">Kertas Kraft</div>
+      <div class="garis" style="background:#7C5230"></div>
+      <div class="tanggal" style="font-family:&quot;Caveat&quot;,cursive">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#37</span>
+      <h3>Kertas Kraft</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Kertas kraft bertekstur, tulisan tangan, kesan kraftangan</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#EFE4D0" style="background:#EFE4D0"></i><i title="#E0CDA6" style="background:#E0CDA6"></i><i title="#C9AE83" style="background:#C9AE83"></i>
+      <i class="aksen" title="aksen #7C5230" style="background:#7C5230"></i>
+      <i class="tinta" title="tinta #4E3B26" style="background:#4E3B26"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Caveat&quot;,cursive">caveat</dd></div>
+      <div><dt>Pola</dt><dd>kraft</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">✁ ✦ ✁</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">kertas-kraft</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#F1ECE3 0%,#E4DBCB 52%,#CFC0AA 100%)">
+    <div class="pola" style="background-image:repeating-linear-gradient(45deg,color-mix(in srgb,#8C7A64 6%,transparent) 0 1px,transparent 1px 11px),repeating-linear-gradient(-45deg,color-mix(in srgb,#8C7A64 5%,transparent) 0 1px,transparent 1px 13px);background-size:140px 140px,160px 160px;"></div>
+    <div class="isi" style="color:#57503F">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Cormorant Garamond&quot;,serif;color:#8C7A64">Wabi Sabi</div>
+      <div class="garis" style="background:#8C7A64"></div>
+      <div class="tanggal" style="font-family:&quot;Cormorant Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#38</span>
+      <h3>Wabi Sabi</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Wabi sabi — ketidaksempurnaan yang tenang, washi &amp; tanah</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#F1ECE3" style="background:#F1ECE3"></i><i title="#E4DBCB" style="background:#E4DBCB"></i><i title="#CFC0AA" style="background:#CFC0AA"></i>
+      <i class="aksen" title="aksen #8C7A64" style="background:#8C7A64"></i>
+      <i class="tinta" title="tinta #57503F" style="background:#57503F"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Cormorant Garamond&quot;,serif">cormorant</dd></div>
+      <div><dt>Pola</dt><dd>washi</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">・ ✦ ・</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">wabi-sabi</dd></div>
+    </dl>
+  </div>
+</article>
+<article class="kartu" data-ev="pernikahan" data-studio="0">
+  <div class="panggung" style="background:linear-gradient(160deg,#F4E7D7 0%,#E4C9AE 52%,#CBA37C 100%)">
+    <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%239C6B4F%22%20stroke-opacity%3D%220.17%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M14%20108C42%2087%2065%2056%20106%2013%22%2F%3E%3Cpath%20d%3D%22M34%2092C17%2089%2015%2073%2016%2067%2031%2065%2042%2075%2034%2092ZM52%2073C36%2071%2034%2057%2035%2051%2051%2049%2060%2059%2052%2073ZM72%2051C57%2048%2056%2034%2058%2028%2073%2028%2081%2039%2072%2051ZM39%2089C42%2073%2056%2069%2063%2070%2064%2085%2053%2095%2039%2089ZM59%2066C62%2051%2076%2047%2083%2049%2083%2064%2073%2073%2059%2066ZM81%2042C84%2029%2096%2024%20102%2026%20103%2039%2094%2048%2081%2042Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:120px 120px;background-repeat:repeat;"></div>
+    <div class="isi" style="color:#5E4634">
+      <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
+           sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
+           aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
+           Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
+      <div class="judul" style="font-family:&quot;Lora&quot;,serif;color:#9C6B4F">Bunga Kering</div>
+      <div class="garis" style="background:#9C6B4F"></div>
+      <div class="tanggal" style="font-family:&quot;Lora&quot;,serif">Sabtu, 12 Desember 2026</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="baris1">
+      <span class="idx">#39</span>
+      <h3>Bunga Kering</h3>
+      <span class="badge">BARU</span>
+
+    </div>
+    <div class="baris2">
+      <span class="ev">💍 Pernikahan</span>
+      <span class="harga">Rp 49.000</span>
+    </div>
+    <p class="desc">Bunga kering — dusty rose &amp; gandum, nostalgi lembut</p>
+
+    <div class="kerangka">
+      <div class="kjudul"><span class="badge lay">▦ Klasik</span>
+        <span class="mono">shell:klasik · urutan A</span></div>
+      <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
+
+    </div>
+    <div class="swatch">
+      <i title="#F4E7D7" style="background:#F4E7D7"></i><i title="#E4C9AE" style="background:#E4C9AE"></i><i title="#CBA37C" style="background:#CBA37C"></i>
+      <i class="aksen" title="aksen #9C6B4F" style="background:#9C6B4F"></i>
+      <i class="tinta" title="tinta #5E4634" style="background:#5E4634"></i>
+    </div>
+    <dl>
+      <div><dt>Font</dt><dd style="font-family:&quot;Lora&quot;,serif">lora</dd></div>
+      <div><dt>Pola</dt><dd>botanical</dd></div>
+      <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">❀ ✦ ❀</dd></div>
+      <div><dt>Kerangka</dt><dd>Klasik</dd></div>
+      <div><dt>Cover</dt><dd>kotak (bawaan)</dd></div>
+      <div><dt>id</dt><dd class="mono">bunga-kering</dd></div>
     </dl>
   </div>
 </article></div>
@@ -979,9 +1715,9 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
            sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
            aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
            Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
-      <div class="judul" style="font-family:&quot;Cormorant Garamond&quot;,serif;color:#8A4B56">Gerbang Arch · Rosewood</div>
+      <div class="judul" style="font-family:&quot;Lora&quot;,serif;color:#8A4B56">Gerbang Arch · Rosewood</div>
       <div class="garis" style="background:#8A4B56"></div>
-      <div class="tanggal" style="font-family:&quot;Cormorant Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="tanggal" style="font-family:&quot;Lora&quot;,serif">Sabtu, 12 Desember 2026</div>
     </div>
   </div>
   <div class="meta">
@@ -996,7 +1732,7 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="harga">—</span>
     </div>
     <p class="desc">Bingkai arch berlapis dengan ivory hangat dan aksen rosewood</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Panggung Gerbang</span>
         <span class="mono">shell:panggung · urutan C · 4D</span></div>
@@ -1009,7 +1745,7 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <i class="tinta" title="tinta #5B3540" style="background:#5B3540"></i>
     </div>
     <dl>
-      <div><dt>Font</dt><dd style="font-family:&quot;Cormorant Garamond&quot;,serif">cormorant</dd></div>
+      <div><dt>Font</dt><dd style="font-family:&quot;Lora&quot;,serif">lora</dd></div>
       <div><dt>Pola</dt><dd>botanical</dd></div>
       <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">✦ ❖ ✦</dd></div>
       <div><dt>Kerangka</dt><dd>Panggung Gerbang</dd></div>
@@ -1019,16 +1755,16 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
   </div>
 </article>
 <article class="kartu" data-ev="pernikahan" data-studio="1">
-  <div class="panggung" style="background:linear-gradient(160deg,#FBFAF5 0%,#E8EDD9 52%,#C8D4BE 100%)">
+  <div class="panggung" style="background:linear-gradient(160deg,#FBFAF5 0%,#EEEFE4 52%,#D8DDCB 100%)">
     <div class="pola" style="background-image:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23526A55%22%20stroke-opacity%3D%220.17%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M14%20108C42%2087%2065%2056%20106%2013%22%2F%3E%3Cpath%20d%3D%22M34%2092C17%2089%2015%2073%2016%2067%2031%2065%2042%2075%2034%2092ZM52%2073C36%2071%2034%2057%2035%2051%2051%2049%2060%2059%2052%2073ZM72%2051C57%2048%2056%2034%2058%2028%2073%2028%2081%2039%2072%2051ZM39%2089C42%2073%2056%2069%2063%2070%2064%2085%2053%2095%2039%2089ZM59%2066C62%2051%2076%2047%2083%2049%2083%2064%2073%2073%2059%2066ZM81%2042C84%2029%2096%2024%20102%2026%20103%2039%2094%2048%2081%2042Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E);background-size:120px 120px;background-repeat:repeat;"></div>
     <div class="isi" style="color:#435348">
       <!-- Kicker, ornamen (deco) dan label template (chara) TIDAK digambar di sini:
            sejak PR #21 (commit 5e6bef0) undangan.html menyembunyikannya di cover lewat
            aturan CSS "#cover .inner>.kicker, .chara, .orn { display:none !important }".
            Mockup ini sengaja meniru cover yang benar-benar terlihat oleh tamu. -->
-      <div class="judul" style="font-family:&quot;Cormorant Garamond&quot;,serif;color:#526A55">Gerbang Arch · Sage Pearl</div>
+      <div class="judul" style="font-family:&quot;EB Garamond&quot;,serif;color:#526A55">Gerbang Arch · Sage Pearl</div>
       <div class="garis" style="background:#526A55"></div>
-      <div class="tanggal" style="font-family:&quot;Cormorant Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
+      <div class="tanggal" style="font-family:&quot;EB Garamond&quot;,serif">Sabtu, 12 Desember 2026</div>
     </div>
   </div>
   <div class="meta">
@@ -1043,7 +1779,7 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="harga">—</span>
     </div>
     <p class="desc">Sage lembut, kartu editorial ivory, dan foto berbingkai arch</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Editorial Mutiara</span>
         <span class="mono">shell:editorial · urutan E</span></div>
@@ -1051,12 +1787,12 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <div class="ekstra">Ekstra: pita kutipan</div>
     </div>
     <div class="swatch">
-      <i title="#FBFAF5" style="background:#FBFAF5"></i><i title="#E8EDD9" style="background:#E8EDD9"></i><i title="#C8D4BE" style="background:#C8D4BE"></i>
+      <i title="#FBFAF5" style="background:#FBFAF5"></i><i title="#EEEFE4" style="background:#EEEFE4"></i><i title="#D8DDCB" style="background:#D8DDCB"></i>
       <i class="aksen" title="aksen #526A55" style="background:#526A55"></i>
       <i class="tinta" title="tinta #435348" style="background:#435348"></i>
     </div>
     <dl>
-      <div><dt>Font</dt><dd style="font-family:&quot;Cormorant Garamond&quot;,serif">cormorant</dd></div>
+      <div><dt>Font</dt><dd style="font-family:&quot;EB Garamond&quot;,serif">ebgaramond</dd></div>
       <div><dt>Pola</dt><dd>botanical</dd></div>
       <div><dt>Ornamen</dt><dd class="mono" title="Sejak PR #21 tidak tampil di cover; masih dipakai di divider & footer">✿ ❋ ✿</dd></div>
       <div><dt>Kerangka</dt><dd>Editorial Mutiara</dd></div>
@@ -1090,7 +1826,7 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="harga">—</span>
     </div>
     <p class="desc">Kontras midnight navy dengan champagne dan bingkai arch berlapis</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Split Midnight</span>
         <span class="mono">shell:split · urutan B · 4D</span></div>
@@ -1137,7 +1873,7 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="harga">—</span>
     </div>
     <p class="desc">Khitanan bernuansa emerald, doa islami, dan aksen emas lembut</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Bab Islami</span>
         <span class="mono">shell:bab · urutan A</span></div>
@@ -1184,12 +1920,12 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="harga">—</span>
     </div>
     <p class="desc">Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Lembut Biru</span>
         <span class="mono">shell:lembut · urutan A</span></div>
       <div class="urut"><i title="Tamu"><b>1</b>Tamu</i><i title="Doa"><b>2</b>Doa</i><i title="Nama"><b>3</b>Nama</i><i title="Harapan"><b>4</b>Harapan</i><i title="Acara"><b>5</b>Acara</i><i title="Alur"><b>6</b>Alur</i><i title="Kisah"><b>7</b>Kisah</i><i title="Kutipan"><b>8</b>Kutipan</i><i title="Menu"><b>9</b>Menu</i><i title="Panitia"><b>10</b>Panitia</i><i title="Busana"><b>11</b>Busana</i><i title="Peta"><b>12</b>Peta</i><i title="Kado"><b>13</b>Kado</i><i title="RSVP"><b>14</b>RSVP</i><i title="Penutup"><b>15</b>Penutup</i><i title="Buku Tamu"><b>16</b>Buku Tamu</i><i title="Galeri"><b>17</b>Galeri</i><i title="Amplop"><b>18</b>Amplop</i><i title="Ucapan"><b>19</b>Ucapan</i></div>
-      
+
     </div>
     <div class="swatch">
       <i title="#FCF8F0" style="background:#FCF8F0"></i><i title="#F3E9D4" style="background:#F3E9D4"></i><i title="#E1D1B5" style="background:#E1D1B5"></i>
@@ -1231,7 +1967,7 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
       <span class="harga">—</span>
     </div>
     <p class="desc">Ulang tahun ceria dengan sentuhan editorial, coral, dan arch</p>
-    
+
     <div class="kerangka">
       <div class="kjudul"><span class="badge lay">▦ Poster Anak</span>
         <span class="mono">shell:poster · urutan D</span></div>

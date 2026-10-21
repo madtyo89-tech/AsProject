@@ -35,6 +35,9 @@ HALAMAN = ["index.html", "studio.html", "undangan.html", "404.html",
            "katalog-demo/undangan-wedding-rosewood.html", "katalog-demo/undangan-wedding-sage-pearl.html",
            "katalog-demo/undangan-wedding-midnight-navy.html", "katalog-demo/undangan-khitanan-emerald.html",
            "katalog-demo/undangan-aqiqah-natural.html", "katalog-demo/undangan-ulang-tahun-ceria.html",
+           "katalog/index.html", "harga/index.html", "undangan/pernikahan/index.html",
+           "template/ivory-klasik/index.html", "kebijakan-privasi/index.html",
+           "syarat-ketentuan/index.html", "kebijakan-pengembalian/index.html", "kontak/index.html",
            "master.html", "scan.html"]
 TIPE_JS = ("", "text/javascript", "application/javascript", "module")
 
@@ -187,13 +190,16 @@ def cek_resolusi_demo():
     tema = re.findall(r'\{id:"([^"]+)",name:"([^"]+)",category:"([^"]+)"', pn.group(1))
     i_nama = s.index("var DEMO_BY_NAME")
     i_kat = s.index("var DEMO_BY_CATEGORY", i_nama)
-    # nilai boleh '...' atau "..."; berkas demo boleh di demo/ atau katalog-demo/
-    pol = r"['\"]([^'\"]+)['\"]:\s*['\"]((?:demo|katalog-demo)/[^'\"]+)['\"]"
+    # Demo Live memakai renderer produksi dengan ?tpl=, dan boleh punya fallback
+    # ke demo standalone lama bila nama tidak ada di katalog TPL.
+    rute = r"(?:demo|katalog-demo)/[^'\"]+|undangan\.html\?[^'\"]+"
+    pol = r"['\"]([^'\"]+)['\"]:\s*['\"](" + rute + r")['\"]"
     nama = dict(re.findall(pol, s[i_nama:i_kat]))
     kat_blok = s[i_kat:s.find('var WA_ICON', i_kat) if 'var WA_ICON' in s[i_kat:] else i_kat + 1200]
     kat = {}
-    for k, v in re.findall(r"['\"]([^'\"]+)['\"]:\s*(\[[^\]]*\]|['\"](?:demo|katalog-demo)/[^'\"]+['\"])", kat_blok):
-        kat[k] = re.findall(r"['\"]((?:demo|katalog-demo)/[^'\"]+)['\"]", v) if v.strip().startswith("[") else [v.strip("'\"")]
+    daftar_demo = r"\[[^\]]*\]|['\"](?:" + rute + r")['\"]"
+    for k, v in re.findall(r"['\"]([^'\"]+)['\"]:\s*(" + daftar_demo + r")", kat_blok):
+        kat[k] = re.findall(r"['\"]((?:" + rute + r"))['\"]", v) if v.strip().startswith("[") else [v.strip("'\"")]
     dapat = 0
     for tid, tnama, tkat in tema:
         kandidat = nama.get(tnama) or None
@@ -226,8 +232,11 @@ def cek_anchor():
                 if jalur.startswith(("http", "//", "mailto:")):
                     continue
                 target_file = posixpath.normpath(posixpath.join(dasar, jalur.split("?")[0]))
-                if not os.path.exists(os.path.join(ROOT, target_file)):
+                full_target = os.path.join(ROOT, target_file)
+                if not os.path.exists(full_target):
                     continue                   # sudah dilaporkan cek [1]
+                if os.path.isdir(full_target):
+                    target_file = posixpath.join(target_file, "index.html") if target_file not in (".", "") else "index.html"
                 ids = set(re.findall(r'\sid="([^"]+)"', baca(target_file)))
             punya = frag in ids or frag in RUNTIME_ANCHOR.get(os.path.basename(target_file), set())
             lapor("ok" if punya else "masalah",
@@ -1209,14 +1218,21 @@ def cek_kerapian_halaman():
     print("\n[29] Kerapian halaman: ikon tab, bahasa, dan berkas lokal")
     semua = []
     for rel in sorted(os.listdir(ROOT)):
-        # google*.html = berkas verifikasi Google Search Console (isi satu baris
-        # token) — bukan halaman situs, jadi tidak wajib ikon/bahasa/manifest.
+        # google*.html = berkas verifikasi Search Console, bukan halaman situs.
         if rel.endswith(".html") and not rel.startswith("google"):
             semua.append(rel)
-    for folder in ("demo", "katalog-demo"):
-        for rel in sorted(os.listdir(os.path.join(ROOT, folder))):
-            if rel.endswith(".html"):
-                semua.append(f"{folder}/{rel}")
+    # Public nested pages are generated into these URL families. Walk them
+    # recursively so new product pages cannot silently miss metadata/assets.
+    for folder in ("demo", "katalog-demo", "katalog", "harga", "undangan",
+                   "template", "kebijakan-privasi", "syarat-ketentuan",
+                   "kebijakan-pengembalian", "kontak"):
+        dasar = os.path.join(ROOT, folder)
+        if not os.path.isdir(dasar):
+            continue
+        for akar, _, berkas in os.walk(dasar):
+            for nama in sorted(berkas):
+                if nama.endswith(".html"):
+                    semua.append(os.path.relpath(os.path.join(akar, nama), ROOT))
     tanpa_ikon, salah_bahasa, cdn, rujukan_hilang = [], [], [], []
     for rel in semua:
         html = baca(rel)
@@ -1339,18 +1355,42 @@ def cek_robots_sitemap():
             lapor("masalah", f"sitemap: domain tak dikenal -> {u}")
             continue
         rel = u[len("https://asproject.my.id/"):] or "index.html"
-        peta[rel] = u
-        lapor("ok" if os.path.exists(rel) else "masalah",
-              f"sitemap: {rel} " + ("ada" if os.path.exists(rel) else "TIDAK ADA di repo"))
+        # GitHub Pages serves directory routes from index.html; keep the clean
+        # URL for canonical checks but read the physical file for validation.
+        file_rel = rel + "index.html" if rel.endswith("/") else rel
+        peta[file_rel] = u
+        lapor("ok" if os.path.exists(file_rel) else "masalah",
+              f"sitemap: {rel} " + ("ada" if os.path.exists(file_rel) else "TIDAK ADA di repo"))
     peta.setdefault("index.html", "https://asproject.my.id/")
-    for wajib in ("index.html", "katalog-demo/perbandingan-tema.html",
-                  "demo/wedding-premium.html"):
+    for wajib in ("index.html", "demo/wedding-premium.html", "katalog/index.html",
+                  "harga/index.html", "template/ivory-klasik/index.html",
+                  "kebijakan-privasi/index.html", "syarat-ketentuan/index.html",
+                  "kebijakan-pengembalian/index.html", "kontak/index.html"):
         lapor("ok" if wajib in peta else "masalah", f"sitemap: memuat {wajib}")
+    try:
+        import json
+        routes = json.loads(baca("tools/public-page-urls.json"))
+        sitemap_urls = set(loc)
+        kurang = [route for route in routes
+                  if ("https://asproject.my.id" + (route if route != "/" else "/")) not in sitemap_urls]
+        lapor("ok" if not kurang else "masalah",
+              f"sitemap memuat semua {len(routes)} rute marketing dari tools/public-page-urls.json"
+              if not kurang else "sitemap kurang rute: " + ", ".join(kurang[:6]))
+    except (OSError, ValueError) as e:
+        lapor("masalah", f"tools/public-page-urls.json gagal dibaca: {e}")
     for privat in ("master.html", "scan.html", "checkin.html", "404.html",
                    "laporan-audit.html", "undangan.html", "studio.html",
                    "katalog-demo/index.html"):
         lapor("ok" if privat not in peta else "masalah",
               f"sitemap: {privat} tidak didaftarkan (halaman privat/utility)")
+    arsip_noindex = ["demo/ice-blue.html"] + [
+        f"katalog-demo/{f}" for f in os.listdir(os.path.join(ROOT, "katalog-demo"))
+        if f.endswith(".html")]
+    for rel in sorted(set(arsip_noindex)):
+        isi_arsip = baca(rel)
+        noindex = bool(re.search(r'<meta\s+name="robots"\s+content="noindex', isi_arsip, re.I))
+        lapor("ok" if noindex and rel not in peta else "masalah",
+              f"sitemap: demo arsip {rel} diberi noindex & tidak didaftarkan")
 
     # [31b] Setiap halaman publik wajib punya canonical + description sendiri.
     # Tanpa ini Google melihat 20+ salinan mirip tanpa penanda halaman utama
@@ -1420,11 +1460,20 @@ def cek_manifest_pwa():
         src = i.get("src", "")
         lapor("ok" if os.path.exists(src.lstrip("/")) else "masalah", f"manifest: ikon {src} ada di repo")
     kurang = []
-    for d in ("", "demo", "katalog-demo"):
-        for f in sorted(os.listdir(d or ".")):
+    folders = ("", "demo", "katalog-demo", "katalog", "harga", "undangan", "template",
+               "kebijakan-privasi", "syarat-ketentuan", "kebijakan-pengembalian", "kontak")
+    for d in folders:
+        base = os.path.join(ROOT, d) if d else ROOT
+        if not os.path.isdir(base):
+            continue
+        if not d:
+            kandidat = [(ROOT, f) for f in sorted(os.listdir(ROOT)) if os.path.isfile(os.path.join(ROOT, f))]
+        else:
+            kandidat = [(akar, f) for akar, _, files in os.walk(base) for f in sorted(files)]
+        for akar, f in kandidat:
             if not f.endswith(".html") or f == "laporan-audit.html" or f.startswith("google"):
                 continue
-            rel = f"{d}/{f}" if d else f
+            rel = os.path.relpath(os.path.join(akar, f), ROOT)
             if 'rel="manifest"' not in baca(rel):
                 kurang.append(rel)
     lapor("ok" if not kurang else "masalah",
@@ -1465,6 +1514,40 @@ def cek_pembatas_laju():
         lapor("info", "pgsql-ast-parser belum terpasang — uji parser SQL dilewati")
 
 
+def cek_halaman_publik():
+    """Halaman SEO, katalog, tabel harga, produk per tema, dan halaman kepercayaan."""
+    print("\n[37] Halaman publik, harga, template, FAQ & kepercayaan")
+    for rel in ("tools/bangun-halaman-publik.cjs", "tools/bangun-sitemap.py",
+                "tools/public-page-urls.json", "assets/marketing.css", "assets/marketing.js"):
+        lapor("ok" if os.path.isfile(os.path.join(ROOT, rel)) else "masalah",
+              f"{rel} tersedia")
+    for rel in ("katalog/index.html", "harga/index.html",
+                "undangan/pernikahan/index.html", "undangan/khitanan/index.html",
+                "undangan/ulang-tahun/index.html", "undangan/aqiqah/index.html",
+                "kebijakan-privasi/index.html", "syarat-ketentuan/index.html",
+                "kebijakan-pengembalian/index.html", "kontak/index.html"):
+        lapor("ok" if os.path.isfile(os.path.join(ROOT, rel)) else "masalah",
+              f"halaman publik {rel} ada")
+    try:
+        import json
+        routes = json.loads(baca("tools/public-page-urls.json"))
+        ids = [route.split("/")[2] for route in routes if route.startswith("/template/")]
+        hilang = [tid for tid in ids if not os.path.isfile(os.path.join(ROOT, "template", tid, "index.html"))]
+        lapor("ok" if ids and not hilang else "masalah",
+              f"halaman detail template: {len(ids)-len(hilang)}/{len(ids)} tersedia"
+              + ("" if not hilang else " — hilang: " + ", ".join(hilang[:5])))
+    except Exception as e:
+        lapor("masalah", f"tools/public-page-urls.json tidak dapat dibaca: {e}")
+    if shutil.which("node"):
+        r = subprocess.run(["node", os.path.join(ROOT, "tools/test-public-pages.cjs")],
+                           capture_output=True, text=True, cwd=ROOT)
+        baris = [x.strip() for x in r.stdout.splitlines() if x.strip().startswith("PASS:")]
+        lapor("ok" if r.returncode == 0 else "masalah",
+              "kontrak halaman publik: " + (baris[-1] if baris else (r.stderr.strip() or r.stdout.strip())[-260:]))
+    else:
+        lapor("info", "node tidak tersedia — uji halaman publik dilewati")
+
+
 def main():
     print("=" * 74)
     print("Pemeriksa kesehatan repo AsProject —", os.path.basename(ROOT))
@@ -1478,7 +1561,8 @@ def main():
                cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
                cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman,
                cek_robots_sitemap, cek_manifest_pwa, cek_pembatas_laju,
-               cek_amplop_digital, cek_kerangka_bebas, cek_kartu_katalog):
+               cek_amplop_digital, cek_kerangka_bebas, cek_kartu_katalog,
+               cek_halaman_publik):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")

@@ -18,7 +18,7 @@
     { "src": "assets/ikon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Lihat katalog tema", "short_name": "Katalog", "url": "/katalog-demo/", "icons": [{ "src": "assets/ikon-192.png", "sizes": "192x192" }] },
+    { "name": "Lihat katalog tema", "short_name": "Katalog", "url": "/katalog/", "icons": [{ "src": "assets/ikon-192.png", "sizes": "192x192" }] },
     { "name": "Buat undangan", "short_name": "Studio", "url": "/studio.html", "icons": [{ "src": "assets/ikon-192.png", "sizes": "192x192" }] }
   ]
 }

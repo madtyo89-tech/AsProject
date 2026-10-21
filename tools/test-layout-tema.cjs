@@ -214,7 +214,7 @@ const DRAF_TEMA = [
   t('ivory-klasik: urutan bagian PERSIS sama dengan origin/main',
     JSON.stringify(k.sections) === JSON.stringify(GOLDEN_KLASIK.sections),
     '\n     dapat: ' + JSON.stringify(k.sections) + '\n     harap: ' + JSON.stringify(GOLDEN_KLASIK.sections));
-  t('ivory-klasik: kelas body tidak kehilangan penanda lama',
+  t('ivory-klasik: kelas body memakai kerangka & model buka aktif',
     GOLDEN_KLASIK.body.split(' ').every((c) => k.body.includes(c)),
     'dapat [' + k.body + '] harap memuat [' + GOLDEN_KLASIK.body + ']');
   t('ivory-klasik: TIDAK memasang mesin 4D', k.vip4d === false);
@@ -238,7 +238,7 @@ const DRAF_TEMA = [
   const unu = {};
   for (const [idx, id] of DRAF_TEMA) (unu[tanda(hasil[idx])] = unu[tanda(hasil[idx])] || []).push(id);
   const jumlahBeda = Object.keys(unu).length;
-  t(`18 tema publik menghasilkan ${jumlahBeda} kerangka berbeda (bukan sekadar warna)`,
+  t(`${DRAF_TEMA.length} contoh tema publik menghasilkan ${jumlahBeda} kerangka berbeda (bukan sekadar warna)`,
     jumlahBeda >= 12, Object.entries(unu).map(([s, v]) => v.join('+')).join(' | '));
 
   /* Tema yang layout-nya beda kelas shell-nya harus beda pula. */
@@ -252,7 +252,7 @@ const DRAF_TEMA = [
     Object.values(shellOf).every((s) => s.size === 1 && [...s][0] !== ''),
     JSON.stringify(Object.fromEntries(Object.entries(shellOf).map(([a, b]) => [a, [...b]]))));
   const shells = new Set(Object.values(shellOf).map((s) => [...s][0]));
-  t('minimal 8 shell berbeda dipakai 18 tema publik', shells.size >= 8, [...shells].join(','));
+  t(`minimal 8 shell berbeda dipakai ${DRAF_TEMA.length} contoh tema publik`, shells.size >= 8, [...shells].join(','));
 
 /* ---- 3) bagian eksklusif hanya lahir di preset yang memintanya ---- */
 /* LAYOUTS dibaca dari halaman itu sendiri (bukan di-parse sebagai teks) supaya

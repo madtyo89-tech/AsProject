@@ -8,21 +8,17 @@ Yang tidak bisa dipercepat: Google tetap butuh **3 hari–3 minggu** untuk indek
 
 ---
 
-## Langkah 0 — Merge PR dulu (2 menit)
+## Langkah 0 — Terbitkan perubahan di branch (2 menit)
 
-Perubahan SEO di PR **#32** belum terbit. Selama belum di-merge, sitemap yang
-dilayani `asproject.my.id` **masih versi lama (25 URL, memuat `undangan.html` dan
-`katalog-demo/index.html`)** — sudah dicek 2026-10-20.
-
-Setelah PR di-merge ke `main`, tunggu GitHub Actions/Pages selesai (±2 menit),
-lalu cek di browser:
+Halaman harga, katalog, kategori, detail template, dan kebijakan baru akan tersedia
+di domain setelah perubahan dipublikasikan lewat alur GitHub Pages.
+Setelah publikasi selesai (tunggu Actions/Pages ±2 menit), cek sitemap di browser:
 
 ```
 https://asproject.my.id/sitemap.xml
 ```
 
-Harus berisi **23 URL** dan **tidak ada** `undangan.html`. Kalau masih 25, tunggu
-build Pages lagi (cek tab **Actions** di GitHub).
+Harus berisi **50 URL** (beranda, 5 demo kategori aktif, halaman harga/katalog, 4 kategori, 34 detail template, dan 4 halaman kepercayaan). URL arsip `katalog-demo/` dan `undangan.html` tidak didaftarkan. Kalau jumlah belum 50, tunggu build Pages lagi (cek tab **Actions** di GitHub).
 
 > Verifikasi Google Search Console tetap bisa dilakukan **sekarang**, tidak perlu
 > menunggu merge — berkas verifikasi sudah hidup (dicek 2026-10-20).
@@ -76,7 +72,7 @@ aktif — tidak perlu buru-buru.
 1. Di sidebar kiri: **Indexing → Sitemaps**.
 2. Kotak “Add a new sitemap” sudah berisi `https://asproject.my.id/`.
 3. Ketik `sitemap.xml` → **Submit**.
-4. Status harus **Success** dengan keterangan “Discovered URLs: 23”.
+4. Status harus **Success**; jumlah discovered URL bertambah setelah Google merayapi sitemap berisi 50 rute.
 
 Kalau sebelumnya pernah submit sitemap lama, klik ulang nama `sitemap.xml` →
 **Resubmit** supaya Google membaca komposisi baru (tanpa `undangan.html`).
@@ -91,9 +87,9 @@ Kalau sebelumnya pernah submit sitemap lama, klik ulang nama `sitemap.xml` →
 4. Ulangi untuk **3 halaman saja** (jangan semua):
 
 ```
-https://asproject.my.id/demo/wedding-premium.html
-https://asproject.my.id/katalog-demo/perbandingan-tema.html
-https://asproject.my.id/demo/khitanan-premium.html
+https://asproject.my.id/harga/
+https://asproject.my.id/katalog/
+https://asproject.my.id/undangan/pernikahan/
 ```
 
 Kuota *Request Indexing* terbatas (umumnya sekitar **10 URL per hari** per
@@ -128,7 +124,7 @@ lebih bernilai daripada 20 kali Request Indexing.
 - **Bio** (≤150 karakter, ini versi 140 karakter — sisa 10):
 
   ```
-  Undangan digital pernikahan, khitanan, ultah & aqiqah ✨ 18 tema siap pakai, revisi unlimited, jadi 1 hari. Mulai Rp49rb. Konsultasi gratis 👇
+  Undangan digital pernikahan, khitanan, ultah & aqiqah ✨ 34 tema untuk dicoba. Demo interaktif gratis. Katalog Rp49rb/tema; ketentuan dikonfirmasi sebelum bayar. Konsultasi via WhatsApp 👇
   ```
 - **Link**: `https://asproject.my.id` (pakai satu link saja, jangan Linktree).
 - Setiap caption: sisipkan `asproject.my.id` sebagai teks **dan** tautan di bio.
@@ -154,26 +150,29 @@ lebih bernilai daripada 20 kali Request Indexing.
    ```
    AsProject adalah studio undangan digital online yang berbasis di Bandung dan melayani seluruh Indonesia. Kami membuat undangan pernikahan, khitanan, ulang tahun, dan aqiqah dalam bentuk satu tautan yang mudah dibagikan lewat WhatsApp, lengkap dengan RSVP dan buku tamu digital, hitung mundur hari-H, peta lokasi, galeri foto, musik latar, amplop digital, serta QR check-in tamu.
 
-   Tersedia 18 tema siap pakai dengan revisi unlimited dan pengerjaan 1 hari. Konsultasi gratis setiap hari pukul 09.00-22.00 WIB melalui WhatsApp.
+   Tersedia 34 tema publik dengan demo interaktif. Data katalog mencatat Rp49.000 per tema; kuota tamu/RSVP, masa aktif, watermark, revisi, estimasi pengerjaan, dan pembayaran harus dikonfirmasi tertulis sebelum transaksi.
    ```
-7. **Jam buka**: Senin–Minggu 09.00–22.00.
+7. **Jam buka**: isi sesuai jam operasional yang benar-benar disepakati pemilik. Jam layanan belum dipublikasikan di situs; jangan mengisi 09.00–22.00 tanpa konfirmasi.
 8. **Verifikasi**: Google biasanya meminta **video singkat** (rekam layar/meja
    kerja, tunjukkan alat kerja & akses ke akun bisnis). Siapkan HP dengan kamera;
    proses review bisa 1–7 hari.
-9. Setelah hidup: upload **foto** (logo + 3–5 contoh undangan), lalu minta
-   **review** dari klien lama — review adalah faktor peringkat lokal terkuat.
+9. Setelah hidup: unggah logo dan hanya contoh undangan yang benar-benar dipakai
+   pelanggan serta sudah mendapat izin untuk dipublikasikan. Minta review jujur dari
+   klien setelah layanan selesai; jangan menulis testimoni atas nama pelanggan,
+   membuat angka klien/ulasan tanpa catatan transaksi, atau menyebut demo sebagai
+   hasil acara nyata.
 
 ### 5c. WhatsApp Business
 
 - **About** (≤139 karakter, ini 116):
 
   ```
-  Undangan digital pernikahan, khitanan, ultah & aqiqah • 18 tema • jadi 1 hari • mulai Rp49rb • Bandung, se-Indonesia
+  Undangan digital pernikahan, khitanan, ultah & aqiqah • 34 demo tema • katalog Rp49rb/tema • Bandung, se-Indonesia
   ```
 - **Description** (≤512 karakter, ini 365):
 
   ```
-  AsProject — studio undangan digital online di Bandung, melayani seluruh Indonesia. Undangan pernikahan, khitanan, ulang tahun, dan aqiqah dalam satu tautan: RSVP & buku tamu digital, hitung mundur, peta lokasi, galeri foto, musik latar, amplop digital, dan QR check-in tamu. 18 tema, revisi unlimited, jadi 1 hari, mulai Rp49.000. Konsultasi gratis 09.00-22.00 WIB.
+  AsProject — studio undangan digital di Bandung. Jelajahi 34 tema pernikahan, khitanan, ulang tahun, dan aqiqah serta coba demo interaktif memakai data contoh. Data katalog mencatat harga Rp49.000 per tema. Kuota tamu/RSVP, masa aktif link, watermark, revisi, estimasi pengerjaan, dan metode pembayaran dikonfirmasi tertulis sebelum transaksi. Hubungi kami melalui WhatsApp.
   ```
 - **Business website / catalog link**: `https://asproject.my.id`
 
@@ -195,7 +194,7 @@ lebih bernilai daripada 20 kali Request Indexing.
 
 | Kapan | Yang dicek | Yang diharapkan |
 | --- | --- | --- |
-| H+1 | Search Console → **Sitemaps** | status Success, 23 URL |
+| H+1 | Search Console → **Sitemaps** | status Success; 50 route ditemukan setelah dirayapi |
 | H+2–3 | Search Console → **Indexing → Pages** | beranda masuk “Indexed” atau “Discovered” |
 | H+7 | Google: `site:asproject.my.id` | minimal 1 hasil (beranda) |
 | H+7 | Google: `AsProject undangan digital` | mulai muncul di halaman 1–5 |

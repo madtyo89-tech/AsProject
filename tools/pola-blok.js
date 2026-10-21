@@ -1,10 +1,10 @@
 /* ===========================================================================
    pola-blok.js — registri POLA latar (background pattern) untuk AsProject.
 
-   Blok ini adalah sumber-kebenaran tunggal untuk semua pola latar. Isi file
-   ini ditempel (splice) ke undangan.html DAN studio.html oleh patcher, supaya
-   keduanya selalu identik. Jangan sunting salinan di dalam HTML langsung;
-   sunting file ini lalu jalankan patcher.
+   Blok ini adalah salinan kanonis untuk semua pola latar. Saat registry
+   berubah, salin blok ini utuh ke undangan.html DAN studio.html. Tes
+   tools/test-pola.cjs memastikan ketiga salinan tetap identik; jangan mengubah
+   hanya satu berkas.
 
    Setiap entri: { n: nama tampil, d: keterangan picker, op: opasitas dasar,
                    size: nilai background-size, svg(c,op) ATAU css(t) }.
@@ -97,6 +97,28 @@ const POLA = {
  tabur: {
   n: 'Tabur Kelip', d: 'Bintang kecil tersebar', op: .22, size: '90px 90px',
   svg: (c, op) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90"><g fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1.3" stroke-linejoin="round"><path d="M22 15C23 20 24 21 29 22C24 23 23 24 22 29C21 24 20 23 15 22C20 21 21 20 22 15Z"/><path d="M66 35C67 39 68 40 72 41C68 42 67 43 66 47C65 43 64 42 60 41C64 40 65 39 66 35Z"/><path d="M40 64C41 69 42 70 47 71C42 72 41 73 40 78C39 73 38 72 33 71C38 70 39 69 40 64Z"/><path d="M78 76C79 79 80 80 83 81C80 82 79 83 78 86C77 83 76 82 73 81C76 80 77 79 78 76Z"/><path d="M10 52C11 55 12 56 15 57C12 58 11 59 10 62C9 59 8 58 5 57C8 56 9 55 10 52Z"/><circle cx="52" cy="14" r="1.4"/><circle cx="14" cy="80" r="1.4"/><circle cx="80" cy="52" r="1.2"/></g></svg>`
+ },
+ /* --- pola kerangka baru: sinar retro & flora berlapis --- */
+ surya: {
+  n: 'Sinar Matahari', d: 'Sembar matahari mid-century', op: 0, size: '',
+  css: t => `background-image:repeating-conic-gradient(from -90deg at 50% -32%,color-mix(in srgb,${t.accent} 13%,transparent) 0deg 5deg,transparent 5deg 24deg);`
+ },
+ rimbun: {
+  n: 'Rimbun Flora', d: 'Helai bunga berlapis', op: 0, size: '',
+  css: t => `background-image:radial-gradient(circle at 18% 22%,color-mix(in srgb,${t.accent} 15%,transparent) 0 3px,transparent 4px),radial-gradient(circle at 78% 14%,color-mix(in srgb,${t.accent} 11%,transparent) 0 2.5px,transparent 3.5px),radial-gradient(circle at 62% 82%,color-mix(in srgb,${t.accent} 13%,transparent) 0 3px,transparent 4px),radial-gradient(circle at 26% 88%,color-mix(in srgb,${t.accent} 9%,transparent) 0 2px,transparent 3px);background-size:150px 150px,120px 120px,170px 170px,130px 130px;`
+ },
+ /* --- pola baru dari riset 2026 --- */
+ monstera: {
+  n: 'Monstera', d: 'Daun monstera tropis', op: 0, size: '',
+  css: t => `background-image:radial-gradient(ellipse 34px 62px at 16% 24%,color-mix(in srgb,${t.accent} 17%,transparent) 0 55%,transparent 72%),radial-gradient(ellipse 34px 62px at 84% 74%,color-mix(in srgb,${t.accent} 14%,transparent) 0 55%,transparent 72%),radial-gradient(ellipse 26px 48px at 72% 18%,color-mix(in srgb,${t.accent} 11%,transparent) 0 55%,transparent 72%);background-size:190px 190px,220px 220px,170px 170px;`
+ },
+ kraft: {
+  n: 'Serat Kraft', d: 'Serat kertas kraft kasar', op: 0, size: '',
+  css: t => `background-image:repeating-linear-gradient(90deg,color-mix(in srgb,${t.accent} 7%,transparent) 0 1px,transparent 1px 5px),repeating-linear-gradient(2deg,color-mix(in srgb,${t.accent} 5%,transparent) 0 1px,transparent 1px 7px),radial-gradient(circle at 30% 60%,color-mix(in srgb,${t.accent} 8%,transparent) 0 1.5px,transparent 2.5px);background-size:120px 120px,180px 90px,90px 90px;`
+ },
+ washi: {
+  n: 'Washi', d: 'Serat kertas washi halus', op: 0, size: '',
+  css: t => `background-image:repeating-linear-gradient(45deg,color-mix(in srgb,${t.accent} 6%,transparent) 0 1px,transparent 1px 11px),repeating-linear-gradient(-45deg,color-mix(in srgb,${t.accent} 5%,transparent) 0 1px,transparent 1px 13px);background-size:140px 140px,160px 160px;`
  }
 };
 const POLA_IDS = Object.keys(POLA);

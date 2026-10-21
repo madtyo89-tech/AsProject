@@ -116,6 +116,7 @@ const PAT_LABEL = { '': 'polos', batik: 'batik', botanical: 'botanical', frost: 
    lalu varian studioOnly. */
 const publik = TPL.map((t, i) => ({ t, i })).filter(x => !x.t.studioOnly);
 const internal = TPL.map((t, i) => ({ t, i })).filter(x => x.t.studioOnly);
+const layoutPublik = new Set(publik.map(x => x.t.layout || 'klasik')).size;
 
 function kartu(x) {
   const { t, i } = x;
@@ -189,6 +190,14 @@ const html = `<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Perbandingan Tema Undangan · AsProject</title>
+<meta name="description" content="Perbandingan teknis tema undangan AsProject. Halaman arsip untuk pratinjau; katalog publik terbaru tersedia di asproject.my.id/katalog/.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://asproject.my.id/katalog-demo/perbandingan-tema.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#faf8f4">
+<script src="../assets/demo-disclaimer.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
@@ -206,6 +215,7 @@ header p{color:var(--muted);margin:0;max-width:70ch}
 .hitung{margin-left:auto;color:var(--muted);font-size:12px}
 main{max-width:1400px;margin:0 auto;padding:22px}
 .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+@media(max-width:344px){.grid{grid-template-columns:minmax(0,1fr)}}
 section.judul{margin:30px 0 14px;font:600 20px/1.2 "Cormorant Garamond",serif;border-bottom:1px solid var(--line);padding-bottom:8px}
 .kartu{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
 .panggung{position:relative;aspect-ratio:3/3.4;overflow:hidden;display:flex;align-items:center;justify-content:center}
@@ -267,7 +277,7 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
   (10 shell), urutan bagian (varian A–E), dan bagian eksklusif. Blok
   <span class="badge lay">▦ Kerangka</span> di tiap kartu menggambar urutan bagian yang
   benar-benar dirender — bandingkan dua kartu untuk melihat bedanya susunan, bukan cuma palet.
-  18 tema publik memakai 18 kerangka berbeda.</p>
+  ${publik.length} tema publik memakai ${layoutPublik} kerangka berbeda.</p>
   <p style="margin-top:10px;color:var(--muted);font-size:12.5px">Mockup cover tidak lagi
   menggambar kicker, ornamen (<code>deco</code>), dan label template (<code>chara</code>):
   sejak PR #21 renderer menyembunyikannya di cover. <code>deco</code> tetap dipakai di
@@ -320,5 +330,5 @@ footer{max-width:1400px;margin:0 auto;padding:18px 22px 50px;color:var(--muted);
 </html>
 `;
 
-fs.writeFileSync(OUT, html, 'utf8');
+fs.writeFileSync(OUT, html.replace(/[ \t]+$/gm, ''), 'utf8');
 console.log(`OK  ${path.relative(ROOT, OUT)}  —  ${TPL.length} tema (${publik.length} publik + ${internal.length} studio-only), ${CV_LAYOUTS.length} model cover`);

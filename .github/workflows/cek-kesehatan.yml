@@ -7,8 +7,9 @@ name: Cek Kesehatan Repo (halaman & uji offline)
 #
 # Uji browser (Chromium sungguhan) dijalankan di job terpisah `browser`:
 #   tools/test-button-help.cjs             (tooltip bantuan, 27 pemeriksaan)
-#   tools/test-template-custom-browser.cjs (template kustom + screenshot)
-#   tools/test-manifest-pwa.cjs            (manifest, ikon, tautan 30 halaman)
+#   tools/test-template-custom-browser.cjs (beranda responsif, template kustom + screenshot)
+#   tools/test-public-layout-browser.cjs   (68 rute pemasaran/demo/arsip × 6 lebar layar)
+#   tools/test-manifest-pwa.cjs            (manifest, ikon, tautan seluruh halaman publik)
 #   tools/test-aksesibilitas.cjs           (kontras & landmark axe-core)
 # Server lokal :8080 dinyalakan otomatis lewat tools/serve.py.
 # Uji test-mobile-browser.cjs sengaja tidak dipakai di CI: beberapa
@@ -20,15 +21,23 @@ on:
     paths:
       - '**.html'
       - 'assets/**'
+      - 'kerangka/**'
       - 'tools/**'
       - '*.sql'
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'manifest.webmanifest'
       - '.github/workflows/cek-kesehatan.yml'
   pull_request:
     paths:
       - '**.html'
       - 'assets/**'
+      - 'kerangka/**'
       - 'tools/**'
       - '*.sql'
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'manifest.webmanifest'
       - '.github/workflows/cek-kesehatan.yml'
   workflow_dispatch:
 
@@ -65,7 +74,7 @@ jobs:
           gagal=0
           for t in tools/test-*.cjs; do
             case "$t" in
-              *test-button-help.cjs|*test-mobile-browser.cjs|*test-template-custom-browser.cjs|*test-aksesibilitas.cjs|*test-manifest-pwa.cjs)
+              *test-button-help.cjs|*test-mobile-browser.cjs|*test-template-custom-browser.cjs|*test-public-layout-browser.cjs|*test-aksesibilitas.cjs|*test-manifest-pwa.cjs)
                 echo "== lompati (dijalankan di job browser): $t"; continue;;
             esac
             echo "== $t"
@@ -106,7 +115,7 @@ jobs:
 
       - name: Ekstrak pustaka Chromium (dipakai via LD_LIBRARY_PATH)
         run: |
-          node -e "import('@sparticuz/chromium').then(async m => { await m.default.executablePath(); })"
+          AWS_EXECUTION_ENV=AWS_Lambda_nodejs22.x node -e "import('@sparticuz/chromium').then(async m => { await m.default.executablePath(); })"
           ls /tmp/al2023/lib | head
 
       - name: Uji tooltip bantuan tombol
@@ -116,6 +125,11 @@ jobs:
 
       - name: Uji template kustom (browser)
         run: node tools/test-template-custom-browser.cjs
+        env:
+          LD_LIBRARY_PATH: /tmp/al2023/lib
+
+      - name: Audit layout seluruh halaman publik
+        run: node tools/test-public-layout-browser.cjs
         env:
           LD_LIBRARY_PATH: /tmp/al2023/lib
 

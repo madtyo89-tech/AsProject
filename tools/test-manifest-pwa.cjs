@@ -28,8 +28,16 @@ let gagal=0; const cek=(ok,pesan)=>{console.log((ok?'  ok  ':'  GAGAL ')+pesan);
   const r=await p.goto('http://localhost:8080/manifest.webmanifest',{timeout:15000});
   cek(r&&r.ok(),'manifest terjangkau dari server: '+(r&&r.status()));
   await p.close();
-  /* setiap halaman yang punya <head> harus punya tautan manifest */
-  const daftar=[]; for(const d of ['','demo','katalog-demo']) for(const f of fs.readdirSync(path.join(ROOT,d)).sort()) if(f.endsWith('.html')) daftar.push((d?d+'/':'')+f);
+  /* Semua halaman publik, termasuk URL produk/kategori yang dibuat bersarang,
+     harus punya tautan manifest. */
+  const daftar=[];
+  const roots=['','demo','katalog-demo','katalog','harga','undangan','template','kebijakan-privasi','syarat-ketentuan','kebijakan-pengembalian','kontak'];
+  for(const d of roots){
+    const base=path.join(ROOT,d);
+    if(!fs.existsSync(base))continue;
+    const walk=(dir,recurse=true)=>{for(const ent of fs.readdirSync(dir,{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name))){const full=path.join(dir,ent.name);if(ent.isDirectory()&&recurse)walk(full,true);else if(ent.isFile()&&ent.name.endsWith('.html'))daftar.push(path.relative(ROOT,full));}};
+    walk(base,d!=='');
+  }
   for(const f of daftar){
     const html=fs.readFileSync(path.join(ROOT,f),'utf8');
     if(f==='laporan-audit.html') continue;

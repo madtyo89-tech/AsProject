@@ -104,7 +104,7 @@ async function render(theme, patPemilik) {
   t('blok POLA tertempel utuh di studio.html', studioSrc.includes(blokSrc));
   t('patCss jadi delegasi registri (undangan)', undSrc.includes('function patCss(t,skala){return polaCss(t&&t.pat,t,skala)}'));
   t('patCss jadi delegasi registri (studio)', studioSrc.includes('function patCss(t,skala){return polaCss(t&&t.pat,t,skala)}'));
-  t('registri punya 17 pola', POLA_IDS.length === 17, 'dapat ' + POLA_IDS.length);
+  t('registri punya 22 pola', POLA_IDS.length === 22, 'dapat ' + POLA_IDS.length);
 
   /* ---------- 2. default per tema ---------- */
   t('jumlah tema sinkron', TPL.length === TPL_STUDIO.length);
@@ -155,7 +155,8 @@ async function render(theme, patPemilik) {
   t('bawaan tema dipakai saat tanpa override', rJawa.patAktifIni === 'parang', rJawa.patAktifIni);
   t('override pemilik mengganti pola', rOverride.patAktifIni === 'damask', rOverride.patAktifIni);
   t('override benar-benar mengubah css sampul', rOverride.coverPat !== rJawa.coverPat);
-  t('17 pola menghasilkan css berbeda semua', new Set(rJawa.semuaCss).size === 17);
+  t('semua pola menghasilkan CSS berbeda', new Set(rJawa.semuaCss).size === POLA_IDS.length,
+    new Set(rJawa.semuaCss).size + ' CSS unik dari ' + POLA_IDS.length + ' pola');
 
   console.log('\nRingkasan: ' + ok + ' lulus, ' + fail + ' gagal');
   process.exit(fail ? 1 : 0);

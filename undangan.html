@@ -250,6 +250,10 @@ body.opened #cover{opacity:0;visibility:hidden}
 /* ---------- CONTENT ---------- */
 #content{opacity:0;transition:opacity .8s ease .15s}
 body.opened #content{opacity:1}
+/* Sesudah cover ditekan, tahan tampilan isi sejenak agar animasi cover selesai
+   lebih dulu; kelas ini hanya dipakai oleh buka interaktif, bukan demo auto-open. */
+body.opened.cover-opening #content{opacity:0;transition:none}
+body.opened.cover-opening #coverBack{display:none}
 .wrap{max-width:470px;margin:0 auto;padding:34px 20px 90px;background:
   radial-gradient(rgba(212,175,55,.06) 1.5px,transparent 1.8px);background-size:26px 26px;}
 .card{background:var(--card);border:1px solid #f0e6d6;border-radius:22px;padding:28px 22px;text-align:center;box-shadow:0 16px 40px rgba(90,70,30,.07);margin-bottom:18px}
@@ -859,6 +863,7 @@ body.wedding-cover.opened #cover .open::before,body.foto-full.opened #cover .ope
 body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open::after,body.opened #cover .open::after{transform:translate(-50%,8%) scale(.5);opacity:0}
 body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,4%) scale(.5);opacity:0}
 @media (prefers-reduced-motion:reduce){
+  #content{transition:none!important}
   #cover .open::after{animation:none}
   #cover .open::before,#cover .open::after,#cover .open .env,body.opened #cover{transition:none!important}
   body.opened #cover{transform:none}
@@ -1161,15 +1166,15 @@ body.elbuka-pita #cover .pemicu .simpul{--pa:58%;--pb:38%;--pc:30%;
     color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--pc),transparent));
   -webkit-backdrop-filter:blur(1px) saturate(1.1);backdrop-filter:blur(1px) saturate(1.1);
   box-shadow:0 6px 14px rgba(40,10,25,.24),inset 0 -4px 8px rgba(40,10,25,.18),inset 0 2px 4px rgba(255,255,255,.7),inset 0 0 0 1px rgba(255,255,255,.34)}
-/* Tanpa foto penuh tidak ada foto di balik pita, jadi pita boleh lebih pekat
-   supaya tetap jelas di atas kartu/gradasi tema. */
-body.elbuka-pita:not(.foto-full) #cover .pemicu .el{--pa:78%;--pb:54%;--pc:70%}
-body.elbuka-pita:not(.foto-full) #cover .pemicu .el2{--pa:72%;--pb:50%;--pc:66%}
-body.elbuka-pita:not(.foto-full) #cover .pemicu .simpul{--pa:92%;--pb:74%;--pc:62%}
-/* Foto penuh: pita TIDAK lagi melintang di TENGAH foto — di situ letaknya
-   wajah mempelai (dan di layar pendek menimpa nama/tanggal). Pita dipindah
-   ke bagian atas cover, dibuat lebih tipis, dan lebih bening, jadi ia terbaca
-   sebagai pita yang melilit undangan tanpa menutupi apa pun. */
+/* Pada cover biasa, pita dan simpul dipindah ke area atas yang tidak berisi
+   nama/tanggal/lokasi. Ukurannya diperkecil agar tidak menimpa detail acara
+   (sebelumnya dua pita melintang tepat di atas jam dan venue). */
+body.elbuka-pita:not(.foto-full) #cover .pemicu{top:12%;height:96px}
+body.elbuka-pita:not(.foto-full) #cover .pemicu .el{top:12px;height:22px;border-radius:11px;--pa:55%;--pb:34%;--pc:46%}
+body.elbuka-pita:not(.foto-full) #cover .pemicu .el2{top:42px;height:18px;border-radius:9px;--pa:52%;--pb:32%;--pc:44%}
+body.elbuka-pita:not(.foto-full) #cover .pemicu .simpul{top:3px;width:42px;height:42px;margin-left:-21px;--pa:68%;--pb:46%;--pc:34%}
+/* Foto penuh: pita TIDAK melintang di TENGAH foto — di situ letaknya wajah
+   mempelai. Pita tetap berada di area atas cover dan dibuat lebih tipis. */
 body.elbuka-pita.foto-full #cover .pemicu{top:12%}
 body.elbuka-pita.foto-full #cover .pemicu .el{top:46px;height:20px;border-radius:10px;
   --pa:24%;--pb:12%;--pc:20%;
@@ -1284,7 +1289,7 @@ body.elbuka-buku #cover .pemicu .simpul{left:auto;right:20px;top:0;width:24px;he
   clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);
   box-shadow:0 6px 14px rgba(0,0,0,.32)}
 /* Judul di kulit buku: nama mempelai + tanggal. */
-body.elbuka-buku #cover .pemicu .p-kulit,body.elbuka-gerbang #cover .pemicu .p-kulit,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit{position:absolute;z-index:5;
+body.elbuka-buku #cover .pemicu .p-kulit,body.elbuka-gerbang #cover .pemicu .p-kulit,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit,body.elbuka-amplop:not(.foto-full) #cover .pemicu .p-kulit,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit{position:absolute;z-index:5;
   display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center;pointer-events:none;
   color:#fff;font-family:var(--ft);
   text-shadow:0 2px 18px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.55)}
@@ -1292,11 +1297,11 @@ body.elbuka-buku #cover .pemicu .p-kulit{left:22px;right:16px;bottom:56px}
 /* min 120px: di frame pendek (lightbox 390x520 & 17vh=88px) nama tidak
    boleh turun sampai menabrak petunjuk "Ketuk gerbang" di bawahnya. */
 body.elbuka-gerbang #cover .pemicu .p-kulit{left:26px;right:26px;bottom:clamp(120px,17vh,168px)}
-body.elbuka-buku #cover .pemicu .p-kulit-orn,body.elbuka-gerbang #cover .pemicu .p-kulit-orn,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-orn,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit-orn{font-style:normal;margin-bottom:5px;font-size:11px;letter-spacing:7px;
+body.elbuka-buku #cover .pemicu .p-kulit-orn,body.elbuka-gerbang #cover .pemicu .p-kulit-orn,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-orn,body.elbuka-amplop:not(.foto-full) #cover .pemicu .p-kulit-orn,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit-orn{font-style:normal;margin-bottom:5px;font-size:11px;letter-spacing:7px;
   opacity:.9;color:color-mix(in srgb,var(--accent-cover,var(--accent,#D9BE86)) 55%,#fff)}
-body.elbuka-buku #cover .pemicu .p-kulit b,body.elbuka-gerbang #cover .pemicu .p-kulit b,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit b,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit b{font-size:clamp(16px,5.4vw,21px);line-height:1.12;font-weight:600;letter-spacing:.01em}
-body.elbuka-buku #cover .pemicu .p-kulit-amp,body.elbuka-gerbang #cover .pemicu .p-kulit-amp,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-amp,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit-amp{font-style:italic;margin:1px 0;font-size:13px;opacity:.9}
-body.elbuka-buku #cover .pemicu .p-kulit em,body.elbuka-gerbang #cover .pemicu .p-kulit em,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit em,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit em{font-style:normal;margin-top:7px;font-family:var(--fb,inherit);
+body.elbuka-buku #cover .pemicu .p-kulit b,body.elbuka-gerbang #cover .pemicu .p-kulit b,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit b,body.elbuka-amplop:not(.foto-full) #cover .pemicu .p-kulit b,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit b{font-size:clamp(16px,5.4vw,21px);line-height:1.12;font-weight:600;letter-spacing:.01em}
+body.elbuka-buku #cover .pemicu .p-kulit-amp,body.elbuka-gerbang #cover .pemicu .p-kulit-amp,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit-amp,body.elbuka-amplop:not(.foto-full) #cover .pemicu .p-kulit-amp,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit-amp{font-style:italic;margin:1px 0;font-size:13px;opacity:.9}
+body.elbuka-buku #cover .pemicu .p-kulit em,body.elbuka-gerbang #cover .pemicu .p-kulit em,body.elbuka-amplop.foto-full #cover .pemicu .p-kulit em,body.elbuka-amplop:not(.foto-full) #cover .pemicu .p-kulit em,body.elbuka-gembok.foto-full #cover .pemicu .p-kulit em{font-style:normal;margin-top:7px;font-family:var(--fb,inherit);
   font-size:9px;letter-spacing:.26em;text-transform:uppercase;opacity:.92}
 body.elbuka-buku #cover .kt-burst{display:block}
 /* Buku terbuka dari PUNGGUNGNYA (tepi kiri), bukan berputar di tengah. */
@@ -1308,6 +1313,13 @@ body.elbuka-buku.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .4
 /* --- Amplop besar dengan segel lilin: flap segitiga terangkat
    ke belakang, segel melebar lalu pecah --- */
 body.elbuka-amplop #cover .pemicu{position:absolute;left:0;top:0;transform:none;width:100%;height:100%;perspective:1500px}
+/* Amplop menutup seluruh layar: isi cover di belakang tidak boleh mengintip
+   di sela-sela flap segitiga dan badan amplop. Kertas dasar membuat siluet
+   amplop utuh pada semua layout, termasuk Batik dan Neon. */
+body.elbuka-amplop:not(.foto-full) #cover .pemicu{isolation:isolate;
+  background:repeating-linear-gradient(0deg,rgba(100,72,39,.025) 0 1px,transparent 1px 5px),
+    linear-gradient(145deg,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 16%,#fffaf0),color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 32%,#dfd0b5));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.42),inset 0 0 90px rgba(48,30,10,.14)}
 body.elbuka-amplop #cover .pemicu .el{left:0;top:0;width:100%;height:52%;background:linear-gradient(180deg,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 82%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 58%,#e8ddca));clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:center top;z-index:3;box-shadow:0 6px 18px rgba(40,30,15,.28)}
 body.elbuka-amplop #cover .pemicu .el2{left:0;top:52%;bottom:0;width:100%;background:linear-gradient(180deg,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 52%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 34%,#241a08));z-index:2;box-shadow:inset 0 20px 40px rgba(40,30,15,.22)}
 body.elbuka-amplop #cover .pemicu .simpul{left:50%;top:47%;width:78px;height:78px;margin-left:-39px;margin-top:-39px;border-radius:50%;background:radial-gradient(circle at 38% 30%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 85%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 55%,#fff) 40%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 40%,#3a0f1c) 78%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 28%,#2a0a12));box-shadow:0 8px 22px rgba(30,10,20,.5),inset 0 -5px 10px rgba(0,0,0,.35),inset 0 3px 6px rgba(255,255,255,.45);z-index:4}
@@ -1325,6 +1337,10 @@ body.elbuka-amplop.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out 
    kaca di tengah foto: tepinya terlihat, isi foto tembus, dan nama mempelai
    + tanggal dicetak di badannya. */
 body.elbuka-amplop #cover .pemicu .p-kulit{display:none}
+/* Nama acara dicetak di badan amplop supaya personalisasi tetap terbaca saat
+   amplop tertutup; versi Foto Penuh memakai posisi tersendiri di bawah. */
+body.elbuka-amplop:not(.foto-full) #cover .pemicu .p-kulit{display:flex;left:24px;right:24px;
+  bottom:clamp(108px,14vh,132px);z-index:5;text-shadow:0 2px 16px rgba(35,22,8,.82),0 1px 4px rgba(35,22,8,.72)}
 body.elbuka-amplop.foto-full #cover .pemicu{
   left:50%;top:50%;transform:translate(-50%,-50%);
   width:min(330px,82%);height:min(430px,62%);
@@ -1486,10 +1502,11 @@ body.elbuka-gembok.foto-full #cover .pemicu::after{content:'';position:absolute;
   left:0;right:0;bottom:0;height:46%;z-index:1;pointer-events:none;
   border-radius:0 0 16px 16px;
   background:linear-gradient(180deg,transparent,rgba(12,8,4,.34) 45%,rgba(12,8,4,.68))}
-/* Gembok tanpa foto penuh: jangan menutup nama. Gembok diperkecil,
-   dibuat kaca lebih pekat (tetap terbaca di kertas krem), dan digeser ke
-   bawah kartu teks supaya nama mempelai tidak tertimpa. */
-body.elbuka-gembok:not(.foto-full) #cover .pemicu{width:150px;height:206px}
+/* Gembok tanpa foto penuh: jangan menutup nama atau detail acara. Gembok
+   diperkecil dan ditempatkan di area foto bagian atas; pusat teks di bawahnya
+   tetap bersih. Ukuran tampak sekitar 75 × 103 px, masih nyaman diketuk. */
+body.elbuka-gembok:not(.foto-full) #cover .pemicu{width:150px;height:206px;top:22%;
+  transform:translate(-50%,-50%) scale(.5)}
 body.elbuka-gembok:not(.foto-full) #cover .pemicu .el{
   --ga:44%;--gb:26%;--gc:36%;
   width:120px;height:96px;margin-left:-60px;top:40px;
@@ -1805,8 +1822,9 @@ body.elbuka-selendang.opened #cover .pemicu .el2,body.elbuka-selendang.opened #c
    sempat bertumpuk dengan isi undangan yang sudah muncul di belakang. */
 body.elbuka-selendang #cover .bdfr{transition:opacity .45s ease}
 body.elbuka-selendang.opened #cover .bdfr{opacity:0;transition:opacity .3s ease}
-body.elbuka-selendang #cover .geser-hint{font-size:0}
-body.elbuka-selendang #cover .geser-hint::after{content:'↑ Geser atas atau ketuk untuk membuka';font-size:9.5px}
+/* Hint khusus selendang kini berada di dalam area aman bawah pemicu; hint
+   generik di kartu akan menduplikasi instruksi dan dapat menimpa RSVP. */
+body.elbuka-selendang #cover .geser-hint{display:none}
 
 /* Cuplikan kartu katalog: pemicu buka disembunyikan supaya nama, tanggal, dan
    ornamen cover terlihat. Cover-nya sendiri tetap tampil apa adanya. */
@@ -1835,6 +1853,16 @@ body.elbuka-buku #cover .pemicu .p-hint{top:auto;bottom:22px;left:50%;z-index:9;
 body.elbuka-gerbang #cover .pemicu .p-hint{top:auto;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));
   z-index:9;color:#fff;font-size:10.5px;letter-spacing:.2em;opacity:.95;
   text-shadow:0 1px 8px rgba(0,0,0,.8)}
+/* Tirai, pintu, selendang, dan amplop menutup layar penuh; hint bawaan yang
+   berada di bawah pemicu akan terpotong. Tampilkan di area aman bawah. */
+body.elbuka-tirai #cover .pemicu .p-hint,
+body.elbuka-pintu #cover .pemicu .p-hint,
+body.elbuka-selendang #cover .pemicu .p-hint,
+body.elbuka-amplop:not(.foto-full) #cover .pemicu .p-hint{top:auto;left:50%;bottom:calc(44px + env(safe-area-inset-bottom,0px));
+  z-index:9;color:#fff;font-size:10px;letter-spacing:.16em;opacity:.95;text-shadow:0 1px 8px rgba(0,0,0,.8)}
+body.elbuka-tirai.opened #cover .pemicu .p-hint,
+body.elbuka-pintu.opened #cover .pemicu .p-hint,
+body.elbuka-selendang.opened #cover .pemicu .p-hint{opacity:0;transition:opacity .3s ease}
 /* Pita: label "Ketuk pita untuk membuka" disembunyikan. Posisinya 14px di
    bawah pita selalu jatuh di area nama mempelai (di layar 390x844 menimpa
    "Alya Zahra", di cover cvl-kartu menimpa countdown) — dulu tidak terlihat
@@ -2459,7 +2487,7 @@ const FX_COVER=[
  ['fade','Fade'],['zoom','Zoom'],['rise','Rise'],['drop','Drop'],['blur','Blur'],['pop','Pop'],
  ['flip','Flip 3D'],['slide','Slide'],['swing','Swing'],['elastic','Elastic'],['shimmer','Shimmer Gold'],['curtain','Tirai Royal'],['vip-zoom','VIP Deep Zoom'],['vip-curtain','VIP Curtain']];
 function fxScrollId(AN){const v=AN&&AN.scroll;return FX_SCROLL.some(f=>f[0]===v)?v:'fade-up'}
-function fxBukaId(AN){const v=AN&&AN.anim&&AN.anim.buka;return ['gilir','geser','lipat','turun','zoom','fade','kanan','naik','putar','balik','menyusut','miring','tirai','buku','pintu','kotak','iris','lubang','blinds','jungkit'].includes(v)?v:'gilir'}
+function fxBukaId(AN){const v=AN&&AN.buka;return ['gilir','geser','lipat','turun','zoom','fade','kanan','naik','putar','balik','menyusut','miring','tirai','buku','pintu','kotak','iris','lubang','blinds','jungkit'].includes(v)?v:'gilir'}
 function ornSudutId(v){return ['tanpa','ranting','bunga3d','bunga4d','deco','filigree','girih','damask','mendung'].includes(v)?v:'ranting'}
 /* ===== Ornamen SVG per tema =====
    Deretan simbol Unicode di field deco (mis. "X . X") diganti motif yang
@@ -3108,10 +3136,10 @@ function fontFam(id){return (FONTS.find(f=>f.id===id)||FONTS[0]).fam}
 /* ===========================================================================
    pola-blok.js — registri POLA latar (background pattern) untuk AsProject.
 
-   Blok ini adalah sumber-kebenaran tunggal untuk semua pola latar. Isi file
-   ini ditempel (splice) ke undangan.html DAN studio.html oleh patcher, supaya
-   keduanya selalu identik. Jangan sunting salinan di dalam HTML langsung;
-   sunting file ini lalu jalankan patcher.
+   Blok ini adalah salinan kanonis untuk semua pola latar. Saat registry
+   berubah, salin blok ini utuh ke undangan.html DAN studio.html. Tes
+   tools/test-pola.cjs memastikan ketiga salinan tetap identik; jangan mengubah
+   hanya satu berkas.
 
    Setiap entri: { n: nama tampil, d: keterangan picker, op: opasitas dasar,
                    size: nilai background-size, svg(c,op) ATAU css(t) }.
@@ -3286,9 +3314,11 @@ if(KARTU)document.body.classList.add('kartu-demo');
 /* Membalik keadaan "opened": cover pembuka tampil lagi dan tamu bisa menekan
    "Buka Undangan" sekali lagi. Musik latar sengaja tidak dihentikan. */
 function monogramOf(a,b){const ini=x=>{const w=String(x||'').trim().split(/\s+/).filter(Boolean);return ((w[0]||'')[0]||'')+((w[w.length-1]||'')[0]||'')};return (ini(a)+(b?'·'+ini(b):'')).toUpperCase()}
+let _coverRevealTimer=0;
 function kembaliKeCover(){
  if(!document.body.classList.contains('opened'))return;
- document.body.classList.remove('opened');
+ if(_coverRevealTimer){clearTimeout(_coverRevealTimer);_coverRevealTimer=0}
+ document.body.classList.remove('opened','cover-opening');
  kabariInduk();
 }
 (function(){const b=document.getElementById('coverBack');if(b)b.addEventListener('click',kembaliKeCover)})();
@@ -4294,7 +4324,6 @@ function boot(draft){
     yang lebih besar + tombol amplop klasik). */
  const CV_UKURAN=['kecil','sedang','besar','jumbo'];
  document.body.classList.add('cvsz-'+(CV_UKURAN.indexOf(d&&d.coverSize)>=0?d.coverSize:'sedang'));
- const BTN_OPEN=['amplop','pil','emas','garis','kaca','pita','cap','daun','kartu','neon','mutiara','royal','minimal','gerbang','kado','buku','bunga','batik'];
  const BUKA_IDS=['pita','tirai','gerbang','pintu','buku','amplop','gembok','kotak','selendang'];
  const DB=d&&d.buka, TB=tplF&&tplF.buka;
  const BUKA=BUKA_IDS.indexOf(DB)>=0?DB:(BUKA_IDS.indexOf(TB)>=0?TB:'pita');
@@ -4353,7 +4382,11 @@ function boot(draft){
  const AN=(d&&d.anim)||{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'};
  const RM=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
  const covOn=!!AN.cover&&!RM,txOn=!!AN.text&&!RM,rvOn=!!AN.reveal&&!RM;
- const CE=fxCoverId(AN),SC=fxScrollId(AN);document.body.className=String(document.body.className||'').replace(/\bbuka-\S+/g,'').replace(/\born-\S+/g,'').trim();const EFEK=(BUKA==='tirai'||BUKA==='gerbang'||BUKA==='pintu'||BUKA==='amplop'||BUKA==='gembok'||BUKA==='kotak'||BUKA==='selendang')?'fade':fxBukaId(AN);document.body.classList.add('buka-'+EFEK);document.body.classList.add('orn-'+ornSudutId(d&&d.ornSudut));
+ const CE=fxCoverId(AN),SC=fxScrollId(AN);document.body.className=String(document.body.className||'').replace(/\bbuka-\S+/g,'').replace(/\born-\S+/g,'').trim();
+ /* Tirai/gerbang/pintu/amplop/gembok/kotak/selendang sudah punya animasi fisik
+    sendiri; fade mencegah gerakan kulit cover bertabrakan. Pita & buku tetap
+    memakai efek perpindahan yang dipilih di Studio. */
+ const EFEK=(BUKA==='tirai'||BUKA==='gerbang'||BUKA==='pintu'||BUKA==='amplop'||BUKA==='gembok'||BUKA==='kotak'||BUKA==='selendang')?'fade':fxBukaId(AN);document.body.classList.add('buka-'+EFEK);document.body.classList.add('orn-'+ornSudutId(d&&d.ornSudut));
  const h1d=tplF.char?850:550,dtD=tplF.char?1500:1300,hoD=tplF.char?1650:1450,btD=tplF.char?1800:1600;
  const nW=s=>String(s||'').split(/\s+/).filter(Boolean).length;
  const wspan=(txt,d0)=>{let k=0;return String(txt||'').split(' ').map(word=>{
@@ -4639,7 +4672,17 @@ function boot(draft){
  muatBukuTamu();
 
  /* interaksi */
- function bukaCover(){if(document.body.classList.contains('opened'))return;document.body.classList.add('opened');if(play)play();kabariInduk()}
+ function bukaCover(){
+  const body=document.body;
+  if(body.classList.contains('opened'))return;
+  if(_coverRevealTimer){clearTimeout(_coverRevealTimer);_coverRevealTimer=0}
+  body.classList.add('opened','cover-opening');
+  if(play)play();
+  kabariInduk();
+  const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduceMotion){body.classList.remove('cover-opening');return}
+  _coverRevealTimer=setTimeout(()=>{_coverRevealTimer=0;body.classList.remove('cover-opening')},1200);
+ }
  $('btnOpen').addEventListener('click',bukaCover);
  $('btnOpen').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();bukaCover()}});
  (function(){const cv=document.getElementById('cover');if(!cv)return;
@@ -4938,14 +4981,19 @@ if(DEMO){const _t=(Q.get('tpl')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
   DEMO_DRAFT.data.tpl=_T.id;DEMO_DRAFT.data.accent=_T.accent;
   DEMO_DRAFT.data.fontTitle=_T.ft||DEMO_DRAFT.data.fontTitle;
   const _ev=_T.ev==='all'?'pernikahan':_T.ev;
-  DEMO_DRAFT.data.gallery=({pernikahan:['assets/demo/wedding/01-jawa-elegan.jpg','assets/demo/wedding/02-minimalist-sage.jpg','assets/demo/wedding/03-luxury-gold.jpg'],
-   khitanan:['assets/demo/khitanan/01-islamic-elegant.jpg','assets/demo/khitanan/02-biru-ceria.jpg'],
-   ultah:['assets/demo/ultah/01-kids-party.jpg','assets/demo/ultah/02-sweet-17.jpg','assets/demo/ultah/03-adult-elegant.jpg'],
-   aqiqah:['assets/demo/aqiqah/01-baby-boy.jpg','assets/demo/aqiqah/02-baby-girl.jpg','assets/demo/aqiqah/03-islamic-neutral.jpg']}[_ev]||[]).slice();
-  DEMO_DRAFT.data.cover=({pernikahan:'assets/demo/wedding/02-minimalist-sage.jpg',
+  DEMO_DRAFT.data.gallery=({pernikahan:['assets/demo/wedding/01-jawa-elegan.jpg','assets/demo/wedding/02-minimalist-sage.jpg','assets/demo/wedding/03-luxury-gold.jpg','assets/demo/wedding/04-floral-rustic.jpg'],
+   khitanan:['assets/demo/khitanan/01-islamic-elegant.jpg','assets/demo/khitanan/02-biru-ceria.jpg','assets/demo/khitanan/03-anak-khitan.jpg'],
+   ultah:['assets/demo/ultah/01-kids-party.jpg','assets/demo/ultah/02-sweet-17.jpg','assets/demo/ultah/03-adult-elegant.jpg','assets/demo/ultah/04-anak-ultah.jpg'],
+   aqiqah:['assets/demo/aqiqah/01-baby-boy.jpg','assets/demo/aqiqah/02-baby-girl.jpg','assets/demo/aqiqah/03-islamic-neutral.jpg','assets/demo/aqiqah/04-anak-aqiqah.jpg']}[_ev]||[]).slice();
+  const _coverByTemplate={
+   'jawa-elegan':'assets/demo/wedding/01-jawa-elegan.jpg','minimalist-sage':'assets/demo/wedding/02-minimalist-sage.jpg','luxury-gold':'assets/demo/wedding/03-luxury-gold.jpg','floral-rustic':'assets/demo/wedding/04-floral-rustic.jpg',
+   'biru-ceria':'assets/demo/khitanan/02-biru-ceria.jpg','islamic-elegant':'assets/demo/khitanan/01-islamic-elegant.jpg','navy-crest':'assets/demo/khitanan/03-anak-khitan.jpg',
+   'kids-party':'assets/demo/ultah/01-kids-party.jpg','sweet-17':'assets/demo/ultah/02-sweet-17.jpg','adult-elegant':'assets/demo/ultah/03-adult-elegant.jpg','golden-jubilee':'assets/demo/ultah/04-anak-ultah.jpg',
+   'baby-boy':'assets/demo/aqiqah/01-baby-boy.jpg','baby-girl':'assets/demo/aqiqah/02-baby-girl.jpg','islamic-neutral':'assets/demo/aqiqah/03-islamic-neutral.jpg','pearl-ivory':'assets/demo/aqiqah/04-anak-aqiqah.jpg'};
+  DEMO_DRAFT.data.cover=_coverByTemplate[_T.id]||({pernikahan:'assets/demo/wedding/01-jawa-elegan.jpg',
    khitanan:'assets/demo/khitanan/01-islamic-elegant.jpg',
    ultah:'assets/demo/ultah/01-kids-party.jpg',
-   aqiqah:'assets/demo/aqiqah/01-baby-boy.jpg'}[_ev]||'assets/demo/wedding/02-minimalist-sage.jpg');
+   aqiqah:'assets/demo/aqiqah/01-baby-boy.jpg'}[_ev]||'assets/demo/wedding/01-jawa-elegan.jpg');
   DEMO_DRAFT.data.fotoPria=({pernikahan:'assets/demo/wedding/05-mempelai-pria.jpg',
    khitanan:'assets/demo/khitanan/03-anak-khitan.jpg',
    ultah:'assets/demo/ultah/04-anak-ultah.jpg',

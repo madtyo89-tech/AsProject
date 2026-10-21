@@ -49,7 +49,7 @@ const path = require('node:path');
         `${id}: layout Studio tidak menyebabkan overflow horizontal`);
     }
     assert.equal(await page.evaluate(() => state.coverLayout), 'neon', 'layout terakhir tersimpan aktif');
-    for (const width of [320, 768, 1280]) {
+    for (const width of [320, 360, 390, 430, 768, 1280]) {
       await page.setViewportSize({ width, height: 844 });
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true,
         `pemilih 15 cover tetap responsif pada ${width}px`);
@@ -167,8 +167,42 @@ const path = require('node:path');
       await livePage.waitForFunction(() => document.body.classList.contains('cvl-neon'));
     const liveAccent = await livePage.evaluate(() => document.documentElement.style.getPropertyValue('--accent'));
     assert.equal(liveAccent, theme.accent, 'renderer undangan live menggunakan aksen template kustom');
-    assert.equal(await livePage.locator('#cover .open').count(), 1, 'undangan live tampil dengan cover dan tombol buka');
+    const openTrigger = livePage.locator('#cover #btnOpen');
+    assert.equal(await openTrigger.count(), 1, 'pemicu buka undangan live tampil di cover');
+    assert.equal(await openTrigger.getAttribute('role'), 'button', 'pemicu buka diumumkan sebagai tombol');
+    assert.equal(await openTrigger.getAttribute('aria-label'), 'Buka undangan', 'pemicu buka punya nama aksesibel');
     await livePage.screenshot({ path: path.join(shots, '31-undangan-live-template-kustom.png'), animations: 'disabled' });
+
+    const homePage = await context.newPage();
+    homePage.on('pageerror', e => errors.push(e.message));
+    await homePage.route('**/*', route => route.request().url().startsWith('http://localhost:8080/')
+      ? route.continue() : route.abort());
+    await homePage.setViewportSize({ width: 320, height: 844 });
+    await homePage.goto('http://localhost:8080/index.html', { waitUntil: 'domcontentloaded' });
+    await homePage.waitForFunction(() => document.querySelector('.catalog-grid')
+      && document.querySelector('#asp-home-showcase') && document.querySelector('#asp-public-info'), null, { timeout: 20000 });
+    for (const width of [320, 360, 390, 430, 768, 1280]) {
+      await homePage.setViewportSize({ width, height: 844 });
+      const audit = await homePage.evaluate(() => {
+        const oldTestimonials = document.querySelector('#testimoni');
+        const unsupported = /500\+ klien bahagia|revisi sepuasnya|jadi 1 hari|Jadi dalam 1 hari/i.test(document.body.innerText);
+        const unverifiedBadges = [...document.querySelectorAll('.catalog-art span')]
+          .some(badge => /^(bestseller|terlaris|favorit|\d+(?:\.\d+)?\s*(?:\/\s*5|bintang))$/i.test(badge.textContent.trim()));
+        return {
+          width: innerWidth,
+          documentWidth: document.documentElement.scrollWidth,
+          transparentDemoNote: document.querySelector('#asp-demo')?.innerText.includes('bukan testimoni pelanggan'),
+          testimonialsHidden: !oldTestimonials || getComputedStyle(oldTestimonials).display === 'none',
+          unsupported,
+          unverifiedBadges,
+        };
+      });
+      assert(audit.documentWidth <= width + 1, `homepage has no horizontal overflow at ${width}px (${audit.documentWidth}px)`);
+      assert(audit.transparentDemoNote && audit.testimonialsHidden && !audit.unsupported && !audit.unverifiedBadges,
+        `homepage hides unsupported social proof and discloses demo data at ${width}px`);
+    }
+    await homePage.close();
+    console.log('PASS: homepage fits 320–1280px and labels demo material without unsupported social proof.');
 
     assert.deepEqual(errors, [], 'tidak ada error JavaScript di browser');
     console.log('PASS: kartu simpan Bahasa Indonesia, default Studio-only, tampilan ponsel, simpan dan persistensi lokal.');
