@@ -748,8 +748,10 @@ Ulangi: `node tools/audit-landmark.cjs`.
 - `robots.txt` mengizinkan semua halaman publik, menutup `/master.html`, `/scan.html`,
   `/checkin.html`, dan `/android/` (halaman internal & berkas unduhan), serta menunjuk
   `https://asproject.my.id/sitemap.xml`.
-- `sitemap.xml` berisi 25 URL (beranda, `undangan.html`, 6 demo, 17 halaman katalog);
-  halaman `noindex`, 404, studio, dan laporan audit sengaja tidak didaftarkan.
+- `sitemap.xml` berisi 23 URL (beranda, 6 demo, 16 halaman katalog); halaman
+  `noindex`, 404, studio, `undangan.html`, dan laporan audit sengaja tidak
+  didaftarkan. Perubahan komposisi ini dijelaskan di bagian
+  **Pemeriksaan ulang Google (2026-10-20)** di bawah.
 
 ### Web app manifest (PWA)
 
@@ -849,6 +851,99 @@ Catatan: `master.html`, `scan.html`, `checkin.html` sudah `noindex`/dilarang di
 robots — memang sengaja tidak diindeks. Setelah Search Console aktif, halaman
 **Jangan kirim URL undangan tamu** (`/u/{slug}`) ke *Request Indexing* — itu halaman
 privat tamu.
+
+## Pemeriksaan ulang Google: situs hidup, tapi belum masuk indeks (2026-10-20)
+
+Laporan pemilik: **"di Google masih belum kelihatan link asproject.my.id"**.
+Pemeriksaan langsung dari sandbox pada 2026-10-20 (bukan tebakan):
+
+| Yang diperiksa | Hasil |
+| --- | --- |
+| `https://asproject.my.id/` | **HTTP 200**, judul & isi beranda tampil benar |
+| `http://asproject.my.id/` | dialihkan ke HTTPS (HSTS/`https_enforced: true`) |
+| `robots.txt`, `sitemap.xml` | terambil normal, sitemap XML valid |
+| `/u/satrio-pandu-mahardika` | dirutekan `404.html` → `undangan.html?slug=…` (render "Membuka undangan…") |
+| GitHub Pages build | `built`, selesai 2026-10-20 10:07 WIB, commit `d05326c` |
+| Sertifikat & DNS | `approved` s.d. 2027-01-04; A record ke 185.199.108–111.153 (IP resmi Pages) |
+| Verifikasi Search Console | token `google-site-verification` ada di `index.html` **dan** berkas HTML di akar |
+
+Kesimpulan: **server tidak pernah mati.** Pesan `PAGE_NOT_FOUND` di percakapan
+sebelumnya berasal dari alat penjelajah AI (kode internalnya), bukan dari GitHub
+Pages — 404 milik repo ini berbunyi "Halaman tidak ditemukan — AsProject" dan 404
+GitHub berbunyi "There isn't a GitHub Pages site here". Yang benar-benar terjadi:
+halaman **sudah dirayapi** (Ringkasan AI Google mengutip kalimat dari blok SEO
+statis kita: "studio penyedia undangan digital online … di Bandung … Rp49.000
+hingga Rp99.000"), tetapi **belum masuk indeks** — `site:asproject.my.id` masih
+0 hasil, jadi ini urusan pengindeksan, bukan hosting.
+
+### Temuan penting: hasil #1 untuk "asproject.my.id" milik domain lain
+
+Kueri `asproject.my.id` memunculkan **`aproject.my.id`** (kurang satu huruf *s*)
+berjudul "AProject - Solusi Digital Modern". Saat dicek lewat DoH:
+
+```json
+{"Status":2,"Comment":"Name servers did not respond [exp2.liqu.id. (103.30.147.16)]"}
+```
+
+Artinya domain itu **nameserver-nya tidak menjawab** (mati/parking rusak) —
+jadi hasil tersebut adalah **entri indeks basi**, bukan pesaing yang aktif.
+Dua implikasi:
+
+1. Google memakai domain berhuruf mirip karena belum punya halaman sendiri yang
+   terindeks untuk nama itu → prioritas utama tetap memasukkan beranda ke indeks.
+2. Nama merek rawan ditumpangi domain kembar. Sebaiknya `aproject.my.id` dan
+   varian typo lain dipantau; kalau dipakai pihak lain untuk mengaku AsProject,
+   itu ranah merek/registrar, bukan repo ini.
+
+### Yang diperbaiki di repo kali ini
+
+1. **Nomor WhatsApp contoh masih terbit di 4 halaman sitemap.**
+   `katalog-demo/index.html`, `undangan-khitanan-basic.html`,
+   `undangan-khitanan-premium.html`, dan `undangan-sage.html` masih memakai
+   `6281234567890` — pengunjung yang menekan "Chat WhatsApp" tidak sampai ke
+   pemilik. Semua diganti ke nomor resmi `6285196755675`.
+2. **`canonical` + `description` + Open Graph untuk 23 halaman publik** lewat
+   `tools/pasang-tag-seo.py` (idempoten, bisa dijalankan ulang). Sebelumnya
+   tidak ada satu pun halaman demo/katalog yang punya `canonical`, sehingga
+   Google melihat 20+ salinan mirip tanpa penanda halaman utama.
+3. **`katalog-demo/index.html` dikeluarkan dari sitemap dan diberi `noindex`.**
+   Halaman itu templat landing lama: harga Rp79rb/149rb/299rb, "50+ tema",
+   "25+ tema", "No. 1" — berbeda dari produk yang dijual di `index.html`
+   (18 tema, Rp49.000–Rp99.000, revisi unlimited). Dua daftar harga yang saling
+   bertentangan di satu domain merusak kepercayaan pembeli sekaligus bersaing
+   dengan beranda di hasil pencarian.
+4. **`undangan.html` keluar dari sitemap dan kini `noindex, follow`.**
+   Tanpa `?slug=` halamannya berbunyi "Undangan tidak ditemukan" (soft 404),
+   dan undangan asli memang privat untuk tamu.
+5. **`<meta charset>` `index.html` dipindah ke baris pertama `<head>`** —
+   sebelumnya berada di byte 1051, lewat batas 1024 byte yang disarankan,
+   karena ada router skrip di atasnya.
+6. **Penjaga baru di `tools/cek-kesehatan.py` bagian [31]:** setiap URL di
+   sitemap wajib punya `canonical` yang cocok + `description` ≥40 karakter, dan
+   nomor WA contoh `6281234567890` dilarang muncul lagi di halaman terbit
+   (`references/` dikecualikan karena itu salinan asli Drive).
+
+> **Langkah demi langkah lengkapnya** (Search Console, sitemap, Request Indexing,
+> Bing, Google Business Profile, backlink, plus teks siap-tempel untuk bio IG /
+> deskripsi GBP / WhatsApp Business): lihat **[`PANDUAN-INDEXS-GOOGLE.md`](PANDUAN-INDEXS-GOOGLE.md)**.
+
+### Yang tetap harus dilakukan pemilik (tidak bisa dari repo)
+
+1. Buka **Search Console** → properti `https://asproject.my.id/` → **Verifikasi**
+   (token sudah terpasang sejak 2026-10-18; cukup klik).
+2. **Sitemaps** → submit `sitemap.xml` (23 URL). Kalau pernah submit versi lama,
+   klik **Resubmit** supaya Google membaca komposisi baru.
+3. **URL Inspection** → `https://asproject.my.id/` → **Request Indexing**.
+   Ulangi untuk 2–3 halaman demo terpenting, jangan semua sekaligus.
+4. **Bing Webmaster Tools** juga (Bing dipakai Copilot/ChatGPT search).
+5. **Backlink nyata**: bio Instagram `@asproject.my.id`, Google Business Profile
+   (Bandung), tautan di undangan yang sudah terbit, status WA, katalog eksternal.
+   Ini satu-satunya cara mempercepat otoritas domain baru.
+6. Cek berkala `site:asproject.my.id` (7–14 hari). Dari 0 hasil → minimal beranda.
+
+> Catatan: perubahan ini membantu *kelayakan* indeks, bukan menjamin tanggal
+> masuknya. Untuk domain baru, Google biasanya butuh 1–3 minggu setelah sitemap
+> disubmit dan ada minimal beberapa tautan masuk.
 
 ## Katalog tema (direset + diisi ulang 2026-10-10)
 

@@ -26,7 +26,7 @@ Live* katalog publik; enam demo tambahan di bawah dibuka lewat URL langsung.
 | `undangan-ulang-tahun-ceria.html` | Pesta Ceria · plum & coral | demo tambahan; tidak mengubah routing katalog |
 | `undangan-luxury-seal.html` | *Luxury Invitation No. 001* — artifact React dari sesi Arena, dipulihkan | demo mandiri; tidak di-route katalog |
 | `perbandingan-tema.html` | dibangun `tools/bikin-perbandingan-tema.cjs` | 24 tema berdampingan + 15 model cover |
-| `index.html` | halaman pengantar Drive | daftar 12 tema + tautan ke demo di atas |
+| `index.html` | halaman pengantar Drive | **legacy / `noindex`** — templat landing lama dengan harga & jumlah tema berbeda dari produk; lihat catatan di bawah |
 | `foto-cover.jpg`, `foto-rahma-cover.jpg` | foto contoh | latar cover halaman-halaman di atas |
 
 Enam demo tambahan di tabel tetap menjadi halaman mandiri untuk pratinjau langsung lewat
@@ -34,6 +34,15 @@ URL. Lapisan visual Gerbang Arch juga tersedia sebagai **enam pilihan Studio-onl
 bisa dipilih per kategori dan dipakai saat publish ke renderer live. Tema-tema ini belum
 ditambahkan sebagai listing atau harga baru di katalog publik. Floral Rustic tetap
 menggunakan `undangan-wedding-gold.html`.
+
+> **`index.html` (2026-10-20):** halaman ini templat landing lama — harganya
+> Rp79.000/Rp149.000/Rp299.000 dan menyebut "50+ tema", sedangkan produk yang
+> dijual di `index.html` akar repo adalah 18 tema Rp49.000–Rp99.000 dengan revisi
+> unlimited. Supaya tidak menyesatkan calon pembeli dan tidak bersaing dengan
+> beranda di hasil pencarian, halaman ini kini **`noindex, follow`** dan **tidak
+> didaftarkan** di `sitemap.xml`. Tautan demonya tetap bisa dirayapi. Kalau nanti
+> isinya diselaraskan dengan penawaran sebenarnya, `noindex` boleh dilepas dan
+> URL-nya dikembalikan ke sitemap.
 
 ### Foto lokal untuk enam demo tambahan
 
