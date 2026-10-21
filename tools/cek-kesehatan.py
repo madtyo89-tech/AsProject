@@ -1478,7 +1478,7 @@ def main():
                cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
                cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman,
                cek_robots_sitemap, cek_manifest_pwa, cek_pembatas_laju,
-               cek_amplop_digital, cek_kerangka_bebas):
+               cek_amplop_digital, cek_kerangka_bebas, cek_kartu_katalog):
         fn()
     print("\n" + "=" * 74)
     print(f"Ringkasan: {hitung['ok']} ok, {hitung['masalah']} masalah, {hitung['info']} catatan")
@@ -1563,6 +1563,95 @@ def cek_kerangka_bebas():
           "uji kerangka bebas (7 template, shell/urutan/ekstra/hint cover): "
           + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
           + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
+
+# ------------------------------------------- 36. pratinjau kartu katalog
+def cek_kartu_katalog():
+    """2026-10-20: pemilik melaporkan tampilan katalog "kacau" — judul tema
+    meluber, amplop/gerbang menutupi nama mempelai. Penyebabnya iframe demo di
+    kartu disempitkan selebar kartu (±200 px) padahal undangan dirancang untuk
+    390 px, lalu lapisan pemicu buka menyusut ke ukuran kartu teks. Uji ini
+    menjaga skala iframe, mode cuplikan `kartu=1`, dan struktur pemicu buka.
+    """
+    print("\n[36] Pratinjau tema di kartu katalog (skala 390px + cuplikan)")
+    idx, live = baca("index.html"), baca("undangan.html")
+    skala = (".asp-live iframe{position:absolute;top:0;left:0;width:390px;height:520px;" in idx
+             and "transform-origin:top left;transform:scale(var(--asp-k,.48))" in idx
+             and "function ukurLive(wrap)" in idx
+             and "undangan.html?demo=1&kartu=1&tema=" in idx)
+    lapor("ok" if skala else "masalah",
+          "index.html: iframe kartu digambar 390px lalu diperkecil transform (ukurLive) + cuplikan &kartu=1")
+    pemicu = ("const KARTU=DEMO&&Q.get('kartu')==='1';" in live
+              and "if(KARTU)document.body.classList.add('kartu-demo');" in live
+              and "body.kartu-demo #cover .pemicu{display:none}" in live
+              and "'kartu-demo']" in live)
+    lapor("ok" if pemicu else "masalah",
+          "undangan.html: mode kartu menyembunyikan pemicu buka + kelas sesi kartu-demo bertahan")
+    buku = ("const fotoSampul=fotoUtama?`--fotoSampul:url(" in live
+            and "var(--fotoSampul,none)," in live
+            and "const bukuKulit=(BUKA==='buku'||BUKA==='gerbang'||BUKA==='amplop'||BUKA==='gembok')" in live
+            and "body.elbuka-buku:not(.opened) #cover .bdfr,body.elbuka-gerbang:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}" in live)
+    gerbang = ("body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{top:0;bottom:0;width:50%;" in live
+               and "background-position:center,left center,center;transform-origin:left center;" in live
+               and "background-position:center,right center,center;transform-origin:right center;" in live
+               and "border-radius:clamp(56px,15vh,140px) 0 0 0}" in live
+               and "border-radius:0 clamp(56px,15vh,140px) 0 0}" in live
+               and "background-size:100% 100%,200% 100%,100% 100%;" in live)
+    lapor("ok" if buku else "masalah",
+          "undangan.html: sampul buku & gerbang memakai foto mempelai (--fotoSampul) + judul tercetak + teks cover disembunyikan saat tertutup")
+    lapor("ok" if gerbang else "masalah",
+          "undangan.html: gerbang dua panel simetris (lebar 50%, radius & poros mirror) memakai separuh foto yang menyatu")
+    amplop = ("body.elbuka-amplop.foto-full #cover .pemicu{" in live
+              and "width:min(330px,82%);height:min(430px,62%);" in live
+              and "body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:26%;--fb:10%;--fc:18%;" in live
+              and "background-image:var(--fotoSampul,none);" in live
+              and "body.elbuka-amplop.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}" in live
+              and "body.elbuka-amplop.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 1.4s both}" in live)
+    lapor("ok" if amplop else "masalah",
+          "undangan.html: amplop foto penuh = kartu kaca transparan di tengah (foto tembus, nama tercetak, teks cover disembunyikan sampai terbuka)")
+    selendang = ("body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0 0 auto 0;" in live
+                 and "height:clamp(110px,18dvh,220px);" in live
+                 and "body.elbuka-selendang.foto-full #cover .pemicu .el{--sa:30%;--sb:26%;--sc:12%;--sd:20%;" in live
+                 and "body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-118%)" in live)
+    lapor("ok" if selendang else "masalah",
+          "undangan.html: selendang hanya menutup bagian atas & tembus pandang, jadi foto + teks cover tetap terlihat")
+    gembok = ("body.elbuka-gembok.foto-full #cover .pemicu{" in live
+              and "width:min(340px,86%);height:min(440px,64%)" in live
+              and "body.elbuka-gembok.foto-full #cover .pemicu .p-kulit{left:24px;right:24px;" in live
+              and "body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 2.15s both}" in live)
+    lapor("ok" if gembok else "masalah",
+          "undangan.html: gembok foto penuh = kartu foto besar berisi nama & tanggal + petunjuk di dalam kartu")
+    gembok_kaca = ("body.elbuka-gembok #cover .pemicu .el{--ga:54%;--gb:34%;--gc:46%;" in live
+                   and "body.elbuka-gembok #cover .pemicu .simpul{--ka:78%;" in live
+                   and "animation:kunciMasuk 1.75s linear forwards" in live
+                   and "opacity .5s ease 1.55s,visibility 0s linear 2.05s}" in live)
+    lapor("ok" if gembok_kaca else "masalah",
+          "undangan.html: gembok kaca (badan & kunci tembus) + animasi kunci per-segmen, cover ditahan sampai kunci selesai")
+    kotak = ("body.elbuka-kotak #cover .pemicu{\n  --k:1;" in live
+             and "top:auto;bottom:6%;" in live
+             and "transform:perspective(760px) rotateX(0deg);" in live
+             and "body.elbuka-kotak #cover .pemicu .simpul::before" in live
+             and "clip-path:polygon(50% 0,90% 36%,70% 100%,30% 100%,10% 36%);" in live
+             and "body.elbuka-kotak.foto-full #cover .bdfr{margin-bottom:clamp(190px,27vh,238px)}" in live
+             and "body.elbuka-kotak.foto-full:not(.opened) #cover .bdfr{opacity:0" not in live
+             and "body.elbuka-kotak.opened #cover{transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .55s ease 1.32s,visibility 0s linear 1.88s}" in live)
+    lapor("ok" if kotak else "masalah",
+          "undangan.html: kotak cincin tertutup di bawah cover + teks selalu tampil + bukaan cahaya emas")
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
+        return
+    if subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT).returncode != 0:
+        lapor("info", "jsdom belum terpasang (npm i jsdom) — uji kartu katalog dilewati")
+        return
+    r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-kartu-katalog.cjs")],
+                       capture_output=True, text=True, cwd=ROOT)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji kartu katalog (9 gaya buka, anak langsung #cover, perangko tanggal): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -73,7 +73,12 @@ async function render(coverLayout) {
     segel: !!inner && inner.classList.contains('cv-segel'),
     stamp: !!D.querySelector('#cover .cvstamp .std-label') && !!D.querySelector('#cover .cvstamp .date'),
     jendela: !!inner && inner.classList.contains('cv-jendela'),
-    band: !!D.querySelector('#cover .cvband .kicker') && !!D.querySelector('#cover .cvband #btnOpen'),
+    /* Pemicu buka sengaja TIDAK lagi berada di dalam .inner/.cvband: gaya
+       tirai/gerbang/pintu/amplop memakai width:100%;height:100% dan harus
+       menjadi anak langsung #cover, kalau tidak lapisannya menyusut ke ukuran
+       kartu teks dan menutupi nama mempelai. Pita teks tetap berisi kicker,
+       tombol buka tetap ada di cover. */
+    band: !!D.querySelector('#cover .cvband .kicker') && !!D.querySelector('#cover #btnOpen'),
     btn: !!D.getElementById('btnOpen'),
     tick: !!D.querySelector('.cd-tick'),
   };

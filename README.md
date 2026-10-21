@@ -44,6 +44,223 @@ Catatan:
 - Uji pipeline: `python3 tools/cek-kesehatan.py` dan
   server lokal `python3 tools/serve.py` (emulasi 404-routing Pages, default :8080).
 
+## Pratinjau tema di kartu katalog (2026-10-20)
+
+Kartu katalog di `index.html` menampilkan undangan **asli** (`undangan.html`)
+di dalam iframe. Dulu iframe-nya ikut menyempit selebar kartu (±200 px),
+padahal undangan dirancang untuk lebar HP 390 px, sehingga font `clamp()`
+mentok di ukuran minimum dan judul/amplop meluber keluar bingkai. Sekarang:
+
+- `iframe` kartu **selalu digambar 390 px** lalu diperkecil dengan
+  `transform:scale(var(--asp-k))`; `ukurLive()` (dan `ukurHero()` untuk mockup
+  hero) menghitung skala + tinggi iframe dari bingkai `.asp-live`, jadi cover
+  mengalir wajar dan tidak pernah terpotong. Tinggi iframe = tinggi bingkai ÷
+  skala, jadi rasio cover tetap 390×844 seperti di HP.
+- Kartu memakai `undangan.html?demo=1&kartu=1` (cuplikan). Mode `kartu=1`
+  menyembunyikan **pemicu buka** (tirai, gerbang, pintu, amplop, pita,
+  gembok, kotak, selendang, buku) — lapisan itu memang menutupi seluruh cover,
+  jadi tanpa disembunyikan kartu hanya memperlihatkan kain penutupnya.
+  Lightbox "Lihat Demo" dan "Buka Tab Baru" tetap memakai demo penuh yang
+  bisa diketuk.
+- `#btnOpen` (pemicu buka) dipindah menjadi **anak langsung `#cover`**. Gaya
+  full-cover memakai `width/height:100%`; selama elemen ini berada di dalam
+  `.inner` (position:relative) persennya dihitung dari kartu teks ±340 px
+  sehingga gerbang/pintu menyusut dan menutupi nama mempelai.
+- Skeleton cover "segel" (model `minimal` & `archive`): perangko tanggal
+  (`#cover > .cvstamp`) ditempel di sudut kanan-atas cover, bukan absolut di
+  dalam `.inner` yang dulu menimpa nama mempelai.
+- `body.cvl-minimal` hanya menyembunyikan foto cover bila **bukan**
+  `foto-full` (`:not(.foto-full)`) — kombinasi model minimal + foto penuh
+  sebelumnya menghasilkan cover gelap kosong.
+
+Uji regresinya: `node tools/test-kartu-katalog.cjs` (49 pemeriksaan, ikut
+dijalankan CI `cek-kesehatan.yml`).
+
+### Sampul buku (gaya membuka `buku`)
+
+Gaya membuka **Buku** kini memakai **foto mempelai** sebagai kulit sampul:
+
+- `--fotoSampul` diisi dari `data.cover` untuk **semua** model cover (bukan
+  hanya "foto penuh" seperti `--bukaImg`), lengkap dengan scrim gelap agar
+  nama tetap terbaca di atas foto terang. Variabel yang sama dipakai gerbang.
+- Kulit buku punya punggung (bayangan kiri), **blok halaman** (garis-garis
+  kertas di tepi kanan), dan **pita pembatas** menggantung di tepi atas.
+- Nama mempelai + tanggal dicetak di kulit buku (`.p-kulit`), jadi buku
+  terlihat seperti photo-book; animasi buka berporos di **punggung buku**
+  (`transform-origin:left center`).
+- Selama buku tertutup, blok teks cover di belakangnya (`.bdfr` — nama,
+  countdown, tombol) **disembunyikan** agar tidak bertumpuk dengan sampul;
+  muncul kembali saat buku terbuka. Petunjuk "Ketuk buku untuk membuka"
+  tampil putih di dalam sampul.
+
+### Gerbang foto (gaya membuka `gerbang`)
+
+Gaya membuka **Gerbang** sekarang juga memakai **foto mempelai** dan sudah
+**simetris**:
+
+- Dua panel `.el` / `.el2` sama lebar (`50%`) dan saling **mirror**: keduanya
+  berporos di tepi luar dan ber-radius lengkung di sudut luar-atas
+  (`clamp(56px,15vh,140px)`), jadi gerbang tampak seperti dua daun pintu
+  lengkung — bukan lagi satu sudut bawah melawan satu sudut atas.
+- Tiap panel menampilkan **separuh foto** yang sama
+  (`background-size:200% 100%`; posisi `left`/`right center`), sehingga saat
+  tertutup keduanya menyatu menjadi satu foto utuh dengan garis temu emas di
+  tengah (`.simpul`).
+- Nama mempelai + tanggal dicetak di panel (`.p-kulit`, berbagi gaya dengan
+  buku), petunjuk "Ketuk gerbang untuk membuka" dipindah ke dalam layar
+  (`bottom:calc(88px + env(safe-area-inset-bottom))`) supaya tidak tertimpa
+  kontrol bawah, dan teks cetak memudar cepat saat gerbang membuka agar tidak
+  menjadi teks hantu di atas konten.
+- Bila undangan tidak punya foto, panel kembali ke gradasi aksen — tidak ada
+  bidang kosong.
+
+### Gembok foto (gaya membuka `gembok`)
+
+Dulu gembok tampil sebagai objek **190 × 260 px** melayang di tengah cover.
+Di layar pendek gemboknya menimpa nama mempelai, dan tidak ada tempat untuk
+foto.
+
+- Di `body.elbuka-gembok.foto-full`, gembok kini berdiri di atas **kartu
+  foto** `min(340px, 86%) × min(440px, 64%)` yang memuat foto mempelai
+  (`--fotoSampul`, posisi `center 12%` supaya wajah muncul di bawah gembok)
+  + bingkai cetak tipis + scrim tipis di belakang nama.
+- Semua ukuran gembok memakai **persen terhadap kartu** (`top:15%`,
+  `height:27%`, `width:55%`; kunci di `top:46%`), jadi tetap proporsional di
+  frame lightbox 330 × 590.
+- Nama mempelai + tanggal tercetak di bawah kartu (`.p-kulit`), dan
+  petunjuk "Ketuk gembok untuk membuka" dipindah **ke dalam kartu** — dulu
+  melayang di bawah gembok dan menimpa nama.
+- Teks cover di belakang kartu disembunyikan sampai gembok terbuka.
+- **Gemboknya transparan**: badan gembok memakai kaca ber-alpha
+  (`--ga/--gb/--gc` = 54/34/46%, di mode foto penuh 26/14/22%) + kilau +
+  `backdrop-filter` tipis, dan kunci memakai alpha `--ka` (78% / 58%).
+  Jadi foto mempelai di balik gembok tetap terlihat — tidak lagi "kepotong"
+  bidang emas pekat.
+- **Animasi kunci dibuat mulus**: `kunciMasuk` kini 1.75 s dengan easing
+  per-segmen (angkat → naik → masuk lubang → putar 64° → menguar), bukan
+  lagi tiga potongan yang "patah". Cover digeser mundur
+  (`opacity .5s ease 1.55s`, `visibility` 2.05 s) supaya seluruh animasi
+  kunci selesai lebih dulu, dan teks cover baru muncul di 2.15 s.
+- **Shackle** berporos di kaki kiri (`transform-origin:bottom left`) dan
+  membuka `-46°`, jadi tidak terlempar keluar kartu.
+- Gembok tanpa foto penuh: diperkecil (150×206 px), dibuat kaca lebih pekat,
+  digeser ke bawah kartu teks, dan label "Ketuk gembok" disembunyikan
+  (sudah ada petunjuk "Geser kiri atau ketuk" di bawah) supaya tidak
+  menimpa paragraf.
+
+### Kotak cincin (gaya membuka `kotak`)
+
+Dulu kotak cuma **dua balok cokelat datar** dengan dua lingkaran garis tipis
+yang mengambang; percobaan berikutnya membuat tutupnya terbuka sejak awal dan
+teks cover disembunyikan sampai kotaknya hilang.
+
+- Kotak kini **mulai tertutup** dan **duduk di bagian bawah cover** (bukan di
+  tengah menimpa nama). Nama, "Save The Date", tanggal, dan countdown selalu
+  tampil: `.bdfr` diberi `margin-bottom` (foto penuh
+  `clamp(190px,27vh,238px)`, cover biasa `clamp(170px,25vh,235px)`), dan aturan
+  yang menyembunyikan teks selama kotak tertutup sudah **dihapus**.
+- Bentuknya kotak cincin beludru: tutup berkilau (dome highlight + sisi gelap
+  + garis tenun halus), rusuk emas di tepi bawah tutup, **bibir badan** yang
+  terlihat di bawah tutup, dan **kait emas** kecil di bibir depan.
+  Di dalamnya bantal beludru dengan dua lekuk tempat cincin.
+- Dua cincin emas: **solitaire** (band gradasi emas + permata brilliant-cut)
+  dan **band polos** yang sedikit lebih besar & miring ke arah lain. Keduanya
+  `opacity:0` selama kotak tertutup supaya tidak mengintip lewat celah tutup.
+- Saat diketuk: tutup terangkat ke **atas** mengitari engsel belakang
+  (`transform-origin:50% 0`, `rotateX(-122deg)`, 0.82 s), **cahaya emas**
+  menyala dari bantal (`kotakCahaya`), cincin muncul & menyala. Setelah adegan
+  itu (mulai 0.95 s) seluruh kotak naik & memudar 0.62 s.
+- Cover ditahan lebih lama (`opacity .55s ease 1.32s, visibility 1.88s`) supaya
+  bukaan kotak + cahaya emas sempat terlihat; dulu cover sudah memudar di
+  0.78 s sehingga adegannya nyaris tak tampak.
+- Skala adaptif `--k`: `1` bawaan, `.88` (≤760 px), `.74` (≤680 px, mis.
+  lightbox 330×590), `.64` (≤600 px). Cover non-foto-penuh memakai `--k:.7`
+  dan juga duduk di bawah (`bottom:9%`), label "Ketuk kotak" tetap tampil
+  karena posisinya di atas kotak.
+
+### Selendang foto (gaya membuka `selendang`)
+
+Dulu kain selendang menutup **100% layar** dengan warna pekat dan `z-index`
+di atas kartu teks. Akibatnya cover tema bergaya selendang (mis. **Islamic
+Neutral**, **Islamic Elegant**) tampak kosong: foto mempelai dan seluruh teks
+(nama, tanggal, countdown) hilang di balik motif songket.
+
+- Kain kini hanya menggantung di **bagian atas** cover
+  (`height:clamp(110px,18dvh,220px)`) dengan hem bergelombang
+  (`clip-path`), jadi foto dan kartu teks di bawahnya tetap terlihat.
+- Motif songket dibuat **tembus pandang** (tint aksen ber-alpha +
+  `backdrop-filter` tipis); di mode foto penuh kadarnya diturunkan lagi
+  (`--sa/--sb/--sc/--sd` = 30/26/12/20%) supaya wajah mempelai di bawah kain
+  masih jelas.
+- Kain dibuka dengan ditarik **ke atas** (`translateY(-118%)`), sesuai
+  petunjuk "geser atas", dan teks cover memudar cepat saat dibuka agar tidak
+  jadi teks hantu di atas isi undangan.
+
+### Amplop foto (gaya membuka `amplop`)
+
+Dulu amplop melebar **100% layar** dengan dua bidang gradasi pekat. Di mode
+foto penuh (mis. **Midnight Gold**) akibatnya parah: foto mempelai tertutup
+total dan teks cover yang z-index-nya di bawah amplop ikut hilang — cover
+tampak kosong gelap.
+
+- Di `body.elbuka-amplop.foto-full`, amplop tampil sebagai **kartu berisi
+  foto** `min(330px, 82%) × min(430px, 62%)` di tengah cover. Foto mempelai
+  (`--fotoSampul`) dicetak langsung sebagai latar kartu (`background-size:
+  cover`), jadi amplopnya memang **berisi foto** — bukan kotak kaca kosong —
+  dan ada bingkai cetak tipis di tepi dalamnya.
+- Lipatan atas & badan amplop memakai tint aksen ber-alpha rendah
+  (`--fa/--fb/--fc` = 26/10/18% dan 20/8/14%) + kilau kaca +
+  `backdrop-filter` sangat tipis, jadi foto di dalam amplop tetap jelas.
+- Di belakang blok nama hanya ada **scrim gradien tipis** (z-index di bawah
+  teks, tidak menutupi foto) supaya nama tetap terbaca di foto terang.
+- Nama mempelai + tanggal dicetak di badan amplop (`.p-kulit`, berbagi gaya
+  dengan buku & gerbang), dan petunjuk "Ketuk amplop untuk membuka" dipindah
+  ke dalam badan amplop.
+- Teks cover di belakangnya disembunyikan selama amplop tertutup. Karena
+  tema VIP memasang animasi masuk `vipZoom` (fill `both`, memegang
+  `opacity:1`), penyembunyian memakai `!important`; saat dibuka teks muncul
+  lewat `@keyframes bdfrAmplop` bertunda **1.4 s** (bukan transisi) — yaitu
+  setelah `body.opened #cover` selesai memudar (visibility 0 di 1.35 s) —
+  supaya nama tidak jadi "teks hantu" di atas isi undangan.
+- Amplop tanpa foto penuh tidak berubah (tetap amplop penuh layar).
+
+### Pita transparan (gaya membuka `pita`)
+
+Pita satin sekarang **tembus pandang**, jadi nama mempelai di kartu cover
+tidak lagi tertutup bidang warna:
+
+- Dua pita memakai tint aksen ber-alpha (`color-mix(... transparent)`) +
+  kilau satin, `backdrop-filter: blur(1px)` tipis, dan garis tepi kaca
+  1px — masih berbentuk pita, tapi isi kartu di belakangnya terbaca.
+  Kadar alpha disimpan di variabel `--pa/--pb/--pc`: saat **foto penuh**
+  pitanya lebih bening (28-46%) supaya wajah mempelai tembus; tanpa foto
+  penuh pitanya kembali pekat (50-78%) supaya tetap jelas di atas kartu.
+- Di **mode foto penuh**, pita tidak lagi melintang di tengah foto (tepat di
+  wajah mempelai, dan di layar pendek menimpa nama/tanggal). Pita dipindah ke
+  bagian atas cover (`top:12%`), dibuat lebih tipis (20px & 17px) dan lebih
+  bening (12-24%) sehingga foto dari dada ke atas tetap utuh.
+- Simpul pita juga transparan dan diberi denyut halus
+  (`simpulDenyut`, mati saat `prefers-reduced-motion`) sebagai penanda bisa
+  diketuk.
+- Label "Ketuk pita untuk membuka" disembunyikan: posisinya 14px di bawah
+  pita selalu menimpa nama/countdown (paling parah di layar 390x844), dulu
+  tidak terlihat karena pita pekat. Petunjuk "‹ Geser kiri atau ketuk untuk
+  membuka" di kartu tetap tampil.
+
+### Panel "jendela" di mode foto penuh
+
+Cover model `sakura`/`batik` membungkus teksnya dengan panel `.cvband`
+(putih 78% + blur). Panel itu **menutupi foto mempelai** — dan karena mode
+foto penuh mewarnai judul jadi putih, nama malah nyaris tak terbaca di
+atasnya. Sekarang, khusus `body.foto-full`:
+
+- Panel `.cvband` dibuat **tanpa latar** (foto tampil utuh; teks dibantu
+  shadow + scrim gradien bawaan `.foto-full`).
+- Teks di dalamnya dikembalikan putih (`h1`, `.amp`, `.date`, `.kicker`,
+  `.std-label`, `.geser-hint`); `kicker`/`std-label` memakai aksen tema
+  yang dicampur putih, chip tanggal memakai kaca gelap.
+- Cover tanpa foto penuh tetap memakai panel kaca putih seperti semula.
+
 ## Alur membuat undangan di Studio
 
 - Kunjungan pertama menampilkan **Membuat Undangan**. Nama, tanggal, lokasi,
