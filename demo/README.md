@@ -1,30 +1,30 @@
 # Folder Demo Template
 
 > [!NOTE]
-> **2026-10-10 — katalog tema Studio direset lalu diisi ulang** (1 tema dasar `ivory-klasik`
-> + 12 tema dari Google Drive). 72 tema lama beserta artwork-nya dihapus, jadi halaman demo
-> di folder ini menampilkan palet tema yang **sudah tidak ada** — masih berguna sebagai acuan
-> visual dan untuk menguji mesin tema, tapi jangan dipakai sebagai contoh hasil jualan.
-> Yang ditautkan tombol *Demo Live* di katalog publik sekarang adalah templat jadi di
-> **`katalog-demo/`** (`DEMO_BY_NAME` / `DEMO_BY_CATEGORY` di `index.html` menunjuk ke sana).
+> **Catatan 2026-10-21:** semua halaman di folder ini adalah demo dengan data contoh,
+> bukan testimoni atau bukti bahwa acara pelanggan telah berlangsung. Tema Ice Blue
+> sudah tidak ada di katalog produksi dan halamannya `noindex`. Tema katalog aktif
+> membuka renderer produksi `undangan.html?demo=1&tpl=<id>`; harga dan syarat resmi ada
+> di `/harga/`, bukan di paket contoh pada file demo lama.
 
 
-Folder ini berisi halaman **demo live** yang ditautkan tombol "Demo Live" pada modal
-tema di katalog (`index.html`). Kalau file-nya belum ada, tombolnya tidak ditampilkan
-(tidak akan pernah ada link rusak / 404).
+Folder ini berisi beberapa demo kategori/legacy untuk melihat mesin undangan. Halaman
+produk dan tombol demo untuk setiap tema aktif sekarang dibuat dari renderer produksi
+serta ditautkan melalui `/template/{id}/` dan `/katalog/`. Semua demo mandiri diberi banner
+"data contoh"; jangan memperlakukan teks/harga di demo sebagai penawaran layanan.
 
 | Nama file | Sumber | Ukuran | Status |
 | --- | --- | --- | --- |
-| `ice-blue.html` | **Bikinan ulang** — desain mengikuti template Drive `undangan_online_ice_blue.html` | 58 KB | ✅ aktif |
-| `wedding-premium.html` | **Bikinan ulang** — 4 kulit Pernikahan, palet persis katalog | 58 KB | ✅ aktif |
+| `ice-blue.html` | Demo arsip yang mengikuti referensi Ice Blue lama; bukan tema katalog aktif | 58 KB | noindex |
+| `wedding-premium.html` | **Bikinan ulang** — demo 4 kulit Pernikahan dengan data contoh | 58 KB | demo |
 | `khitanan-premium.html` | **Bikinan ulang** — kulit Islamic Elegant & Biru Ceria (mesin bersama) | kecil | ✅ aktif |
-| `khitanan-basic.html` | **Bikinan ulang** — pengalaman paket Basic (sengaja sederhana) | kecil | ✅ aktif |
+| `khitanan-basic.html` | **Bikinan ulang** — demo tampilan khitanan sederhana (bukan paket harga) | kecil | demo |
 | `ultah-anak.html` | **Bikinan ulang** — 3 kulit: Kids Party, Sweet 17, Adult Elegant (menggantikan rencana PDF) | kecil | ✅ aktif |
 | `aqiqah.html` | **Bikinan ulang** — 3 kulit: Baby Boy, Baby Girl, Islamic Neutral | kecil | ✅ aktif |
 
-Kini **12/12 tema katalog punya tombol Demo Live** dengan kulitnya masing-masing
-(parameter `?tema=`), jadi kartu "Luxury Gold" membuka demo emas gelap, kartu
-"Baby Girl" membuka demo pink blush, dan seterusnya.
+Katalog produksi berisi 34 tema publik. Tombol demo produk aktif memakai renderer
+langsung (`undangan.html?demo=1&tpl=<id>`) supaya palet dan layout sama dengan yang
+akan dilihat tamu; data pada `demo/*.html` hanya contoh standalone/legacy.
 
 ## Kenapa `ice-blue.html` bikinan ulang, bukan file asli Drive?
 
@@ -37,8 +37,8 @@ ditulis ulang dari nol, **setia ke desain template aslinya**:
 - font **Playfair Display** (judul) + **Outfit** (isi)
 - efek *glass* (`bg-white/60` + blur), garis `#BAE6FD`, motif butiran salju ❄
 - data contoh asli: **Rahmad & Lina**, The Ice Blue Hall, Jakarta
-- 3 varian: **Ice Blue Floral** (Best Seller), **Minimalist Frost** (Elegan), **Ocean Breeze** (Baru)
-- harga `Rp 75rb` (coret `Rp 150rb`), "Sekali bayar, aktif selamanya • Garansi 7 hari"
+- 3 varian visual untuk melihat palet dan tata letak (tidak ada label bestseller/ulasan).
+- Harga, garansi, revisi, watermark, dan masa aktif pada demo arsip tidak berlaku sebagai penawaran; rujuk `/harga/` dan konfirmasi ke admin.
 
 Keuntungannya: tanpa React/Tailwind → **58 KB, ±4× lebih ringan**, tidak ada script bawaan
 platform, sudah ber-brand **AsProject.My.Id**, "Dibuat dengan cinta di Bandung.", dan
@@ -69,20 +69,15 @@ Kalau suatu saat file aslinya bisa masuk: timpa `demo/ice-blue.html`, lalu jalan
 
 ## Peta tema → demo
 
-Diatur di `index.html`, blok `/* ---- Konfigurasi ---- */` pada script `aspWaFab`.
-Nilainya boleh string atau **array** — array dicoba berurutan dan dipakai file pertama
-yang benar-benar ada (dicek pakai `HEAD`, hasilnya di-cache), jadi pemetaannya
-menyesuaikan sendiri seiring file masuk.
+Untuk setiap nama template publik, `DEMO_BY_NAME` pada `index.html` menunjuk ke
+renderer produk: `undangan.html?demo=1&tpl=<id>&buka=1`. Data yang tampil di sana
+adalah contoh. Generator `tools/bangun-halaman-publik.cjs` menjaga rute ini sinkron
+dengan `kerangka/template.js`. Halaman standalone di folder ini/katalog-demo hanya
+arsip referensi, diberi banner demo, dan tidak menjadi bukti pelanggan atau sumber harga.
 
-- `DEMO_BY_NAME` — override per nama tema.
-- `DEMO_BY_CATEGORY` — cadangan per kategori chip di kartu.
+- `DEMO_BY_NAME` — renderer live per tema publik.
+- `DEMO_BY_CATEGORY` — demo renderer cadangan per kategori.
 
-```
-Pernikahan  → wedding-premium.html (?tema=... per tema) + ice-blue.html cadangan
-Khitanan    → khitanan-premium.html (?tema=...), cadangan khitanan-basic.html
-Ulang Tahun → ultah-anak.html (?tema=kids-party | sweet-17 | adult-elegant)
-Aqiqah      → aqiqah.html (?tema=baby-boy | baby-girl | islamic-neutral)
-```
 
 ### Mesin bersama (`_mesin.css` + `_mesin.js`)
 
@@ -92,20 +87,14 @@ galeri, ucapan contoh) lalu memuat `_mesin.js`. Menambah kulit baru cukup
 menambah satu entri tema di config — tanpa CSS baru. Halaman wedding & ice-blue
 tetap mandiri (standalone) karena sudah lebih dulu tayang.
 
-## Tema di Studio
+## Status Ice Blue di Studio
 
-`studio.html` punya 3 tema hasil baca template **Ice Blue** (palet, font, dan nama
-variannya diambil dari template aslinya):
-
-| id | nama | palet | harga |
-| --- | --- | --- | --- |
-| `ice-blue` | Ice Blue Floral | `#F0F9FF → #BAE6FD → #7DD3FC`, aksen `#0EA5E9` | 75.000 |
-| `minimalist-frost` | Minimalist Frost | `#FCFEFF → #F0F9FF → #E0F2FE`, aksen `#38BDF8` | 75.000 |
-| `ocean-breeze` | Ocean Breeze | `#BAE6FD → #7DD3FC → #38BDF8`, aksen `#0284C7` | 79.000 |
-
-Template baru di `TPL` otomatis ditambahkan ke `state.katalog` yang sudah tersimpan di
-localStorage (lihat blok migrasi di `studio.html`), jadi tidak perlu reset data Studio.
-Harga 3 varian di halaman demo juga mengikuti angka-angka ini.
+Daftar `ice-blue`, `minimalist-frost`, dan `ocean-breeze` di bawah adalah catatan
+historis dari eksperimen katalog lama; id tersebut tidak termasuk TPL produksi saat ini.
+Harga 75.000/79.000 yang pernah dicantumkan di demo lama **bukan harga AsProject saat
+ini**. Sumber harga template publik yang dipakai sekarang adalah `kerangka/template.js`;
+data katalog saat ini mencatat Rp49.000 per tema. Ketentuan lain harus dikonfirmasi
+sebelum transaksi.
 
 ## Kalau file asli dari Drive masuk
 

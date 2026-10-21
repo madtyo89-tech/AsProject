@@ -58,7 +58,7 @@ input,textarea,select{outline:0}
 .bo-btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.08)}
 .bo-btn.on{border-color:#111;background:#111;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.13)}
 .bo-btn .bo-name{font-size:10px;font-weight:600;line-height:1.3;text-align:center}
-.bo-sample{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 12px;font-size:9.5px;font-weight:700;letter-spacing:.05em;white-space:nowrap;pointer-events:none}
+.bo-sample{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:30px;height:auto;max-width:100%;padding:2px 4px;font-size:9.5px;font-weight:700;letter-spacing:.05em;line-height:1.15;text-align:center;white-space:normal;overflow-wrap:anywhere;pointer-events:none}
 .bo-amplop{border-radius:7px;background:linear-gradient(172deg,#FFFCF5,#F2E3C2);color:#5C4222;border:1px solid rgba(168,130,63,.55);box-shadow:inset 0 8px 0 rgba(240,225,188,.65),0 5px 10px rgba(90,60,20,.22)}
 .bo-pil{border-radius:99px;background:#26332a;color:#fff}
 .bo-emas{border-radius:99px;background:linear-gradient(135deg,#F0D894,#C9A24B 60%,#A8823F);color:#3A2A10;border:1px solid rgba(168,130,63,.7)}
@@ -845,7 +845,7 @@ const LAYOUT_NAMA={
 const CUSTOM_TPL_EVENTS=['pernikahan','khitanan','ultah','aqiqah','all'];
 const CUSTOM_TPL_COVER_STYLES=['kotak','oval','lingkaran','arch','polaroid','emas','kapsul','full','none'];
 const CUSTOM_TPL_COVER_LAYOUTS=['amplop','kartu','foto','gerbang','minimal','batik','sakura','night','ticket','editorial','polaroid','glass','royal','archive','neon'];
-/* Ukuran foto cover & gaya tombol buka — daftar id WAJIB identik dengan undangan.html */
+/* Ukuran foto cover & model cara buka — id renderer harus tetap sinkron. */
 const CV_UKURAN_ID=['kecil','sedang','besar','jumbo'];
 const CARA_BUKA_ID=['pita','tirai','gerbang','pintu','buku','amplop','gembok','kotak','selendang'];
 function customColor(v,fallback){const s=String(v||'').trim();return /^#[0-9a-f]{6}$/i.test(s)?s.toUpperCase():fallback}
@@ -853,10 +853,10 @@ function customAsset(v){const s=String(v||''),parts=s.split('/');return parts[0]
 /* ===========================================================================
    pola-blok.js — registri POLA latar (background pattern) untuk AsProject.
 
-   Blok ini adalah sumber-kebenaran tunggal untuk semua pola latar. Isi file
-   ini ditempel (splice) ke undangan.html DAN studio.html oleh patcher, supaya
-   keduanya selalu identik. Jangan sunting salinan di dalam HTML langsung;
-   sunting file ini lalu jalankan patcher.
+   Blok ini adalah salinan kanonis untuk semua pola latar. Saat registry
+   berubah, salin blok ini utuh ke undangan.html DAN studio.html. Tes
+   tools/test-pola.cjs memastikan ketiga salinan tetap identik; jangan mengubah
+   hanya satu berkas.
 
    Setiap entri: { n: nama tampil, d: keterangan picker, op: opasitas dasar,
                    size: nilai background-size, svg(c,op) ATAU css(t) }.
@@ -2078,7 +2078,7 @@ const CV_LAYOUTS=[
  ['archive','Surat Arsip','📜','Kertas surat bertekstur lawas, garis tinta, dan cap klasik.'],
  ['neon','Neon Kota','🌃','Gaya malam urban dengan cahaya neon kontras dan tombol bercahaya.']
 ];
-/* Pilihan yang mengubah wajah cover (model/gaya/ukuran foto/tombol buka)
+/* Pilihan yang mengubah wajah cover (model, gaya/ukuran foto, atau cara buka)
    membuat pratinjau kembali ke cover — kalau tidak, pilihan barunya tidak
    kelihatan karena pratinjau masih menampilkan isi undangan yang terbuka. */
 function pvKeCover(){document.querySelectorAll('iframe.pv-frame').forEach(f=>{try{const t=f.contentWindow;if(t)t.postMessage({type:'asproject:cover'},'*')}catch(e){}})}
@@ -2093,7 +2093,7 @@ const CV_UKURAN=[
 ];
 function cvSizeId(){return CV_UKURAN_ID.includes(state.coverSize)?state.coverSize:'sedang'}
 function setCvSize(id){if(!CV_UKURAN_ID.includes(id))return;state.coverSize=id;save();render();renderPreview();pvKeCover();notify('Ukuran foto cover: '+(CV_UKURAN.find(u=>u[0]===id)||[])[1])}
-/* 13 gaya tombol "Buka Undangan" — id & nama WAJIB sama dengan CSS btnopen-* di undangan.html */
+/* 9 model elemen pembuka — id & nama harus cocok dengan CSS elbuka-* di undangan.html. */
 const CARA_BUKA_STYLES=[
  ['pita','Pita Saten','🎀','Pita satin melintang di cover — diketuk, terbang terbuka.'],
  ['tirai','Tirai Teater','🪟','Dua tirai berlipat bergeser ke sisi membuka cover.'],
@@ -2529,7 +2529,7 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
      <span class="cv-layout-icon" aria-hidden="true">${ic||'⌒'}</span><span class="cv-layout-name">${nama}</span></button>`}).join('')}
   </div>
  </div>
- <div class="card"><h4>🎬 Cara Buka Cover <span class="chip" style="margin-left:auto">5 elemen</span></h4>
+ <div class="card"><h4>🎬 Cara Buka Cover <span class="chip" style="margin-left:auto">9 model</span></h4>
   <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-top:-4px">Elemen pembuka cover — tanpa tombol. Diketuk atau digeser untuk membuka; pratinjau langsung mengikuti pilihan.</div>
   <div class="bo-grid" role="group" aria-label="Pilih cara buka cover">
    ${CARA_BUKA_STYLES.map(([id,nama,ic,desc])=>{const on=bukaId()===id;
@@ -2599,7 +2599,7 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    </div></div>
   <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
    <div style="font-size:11px;font-weight:600;margin-bottom:2px">🚪 Efek Membuka Cover — pilih 1 dari ${FX_BUKA.length}</div>
-   <div style="font-size:10px;color:var(--mut);margin-bottom:8px">Cara halaman pembuka berpindah ke isi undangan (setelah amplop dibuka).</div>
+   <div style="font-size:10px;color:var(--mut);line-height:1.55;margin-bottom:8px">Efek perpindahan cover setelah elemen pembuka bergerak. Pada Tirai, Gerbang, Pintu, Amplop, Gembok, Kotak, dan Selendang, cover memakai fade agar animasi fisik tidak bertumpuk; Pita dan Buku mengikuti efek pilihan.</div>
    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
    ${FX_BUKA.map(f=>`<button class="fxbtn ${fxBukaId()===f[0]?'on':''}" onclick="setAnim('buka','${f[0]}')"><b>${f[1]}</b><span>${f[2]}</span></button>`).join('')}
    </div></div>

@@ -211,12 +211,10 @@
   }
   function htmlPaket() {
     if (C.paket === "basic") {
-      return '<section class="sek wadah" id="paket"><div class="tengah rv"><span class="eyebrow">Paket Basic</span></div>' +
-        '<h2 class="judul rv">Sederhana, <em>Tapi Lengkap yang Penting</em></h2>' +
-        '<div class="kartu upsell rv"><p style="font-size:14px;color:var(--ink2)">Demo ini sengaja menampilkan pengalaman ' +
-        "paket <b>Basic</b>: satu tema, tanpa galeri foto, hitung mundur, dan amplop digital — sesuai tabel harga di katalog. " +
-        'RSVP, ucapan, peta, dan custom nama tamu tetap jalan.</p><p style="margin-top:10px"><a href="' +
-        (C.premiumHref || "#") + '">Lihat demo paket Premium →</a></p></div></section>';
+      return '<section class="sek wadah" id="paket"><div class="tengah rv"><span class="eyebrow">Demo tampilan</span></div>' +
+        '<h2 class="judul rv">Contoh tema, <em>bukan penawaran paket</em></h2>' +
+        '<div class="kartu upsell rv"><p style="font-size:14px;color:var(--ink2)">Halaman ini menunjukkan satu contoh gaya undangan dengan data dummy. Harga, fitur, batas tamu/RSVP, masa aktif, watermark, revisi, dan estimasi pengerjaan harus dikonfirmasi untuk pesanan yang sebenarnya.</p>' +
+        '<p style="margin-top:10px"><a href="../harga/">Baca harga katalog &amp; ketentuan →</a></p></div></section>';
     }
     if (!on("varian")) return "";
     var ids = Object.keys(C.tema);
@@ -224,18 +222,16 @@
       var t = C.tema[id];
       return '<article class="kartu varian-kartu rv" data-tema="' + id + '" data-nama="' + lolos(t.nama) +
         '" tabindex="0" role="button" aria-pressed="false">' +
-        (t.badge ? '<span class="pita">' + lolos(t.badge) + "</span>" : "") +
         "<h3>" + lolos(t.nama) + '</h3><p class="desk">' + lolos(t.desk || "") + "</p>" +
         '<div class="swatch">' + (t.swatch || []).map(function (w) { return '<i style="background:' + w + '"></i>'; }).join("") + "</div>" +
-        '<div class="harga"><b>Rp ' + Math.round(t.harga / 1000) + "rb</b>" +
-        (t.coret ? "<s>Rp " + Math.round(t.coret / 1000) + "rb</s><em>-50%</em>" : "") + "</div>" +
-        '<p class="catatan-harga">Sekali bayar • Garansi 7 hari • Revisi unlimited</p>' +
-        (t.fitur || []).length ? '<ul class="fitur">' + t.fitur.map(function (f) { return "<li>" + lolos(f) + "</li>"; }).join("") + "</ul>" : "" +
-        '<a class="btn btn-wa btn-kecil wa-tema" style="width:100%" href="#" target="_blank" rel="noopener">Pesan Tema Ini</a></article>';
+        '<div class="harga"><b>Demo tema</b></div>' +
+        '<p class="catatan-harga">Data contoh · bukan harga, garansi, atau testimoni</p>' +
+        ((t.fitur || []).length ? '<ul class="fitur">' + t.fitur.map(function (f) { return "<li>" + lolos(f) + "</li>"; }).join("") + "</ul>" : "") +
+        '<a class="btn btn-wa btn-kecil wa-tema" style="width:100%" href="#" target="_blank" rel="noopener">Tanya tema ini</a></article>';
     }).join("");
-    return '<section class="sek wadah" id="paket"><div class="tengah rv"><span class="eyebrow">Pilih Tema</span></div>' +
-      '<h2 class="judul rv">' + lolos(C.paketJudul || "Beberapa Wajah, Satu Paket") + '</h2><p class="sub rv">' +
-      lolos(C.paketSub || "Ketuk kartu untuk mengganti seluruh tampilan halaman ini langsung.") +
+    return '<section class="sek wadah" id="paket"><div class="tengah rv"><span class="eyebrow">Demo tema</span></div>' +
+      '<h2 class="judul rv">' + lolos(C.paketJudul || "Jelajahi pilihan tampilan") + '</h2><p class="sub rv">' +
+      'Pratinjau memakai data contoh. Harga dan ketentuan layanan ada di <a href="../harga/">halaman harga</a>; konfirmasi rincian sebelum pembayaran.' +
       '</p><div class="varian' + (ids.length === 3 ? " tiga" : "") + '">' + kartu + "</div></section>";
   }
   function htmlPenutup() {
@@ -252,7 +248,7 @@
     return "<footer><div class=wadah><div class=\"foot-grid\"><div class=\"foot-merek\">" +
       '<a class="merk" href="../index.html" style="font-size:20px">AsProject<b>.My.Id</b></a>' +
       "<p>Platform undangan online premium. Bikin momen sakral jadi digital, elegan, dan mudah dibagikan " +
-      'dalam 5 menit. Dibuat dengan cinta di Bandung.</p><div class="sosial">' +
+      'dalam satu tautan. Dibuat dengan cinta di Bandung.</p><div class="sosial">' +
       '<a class="btn-bulat" href="https://instagram.com/asproject.my.id" target="_blank" rel="noopener" aria-label="Instagram">' +
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>' +
       '<a class="btn-bulat" href="mailto:hello@asproject.my.id" aria-label="Email">' +
@@ -260,15 +256,14 @@
       '<a class="btn-bulat" id="waFoot" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">' +
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.6-1.2.1-.2 0-.4 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.7 11.3 11.3 0 0 0 4.3 3.8c1.6.6 2.2.7 3 .6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.2-.2-.4-.3Z"/></svg></a>' +
       '</div></div><div><p class="foot-judul">Bantuan</p><div class="foot-nav">' +
-      '<a href="../index.html#katalog">Harga &amp; Paket</a>' +
-      '<a href="mailto:hello@asproject.my.id?subject=Pertanyaan%20Kebijakan%20Privasi">Kebijakan Privasi</a>' +
-      '<a href="#" id="waBantuan" target="_blank" rel="noopener">WhatsApp Support</a>' +
+      '<a href="../harga/">Harga &amp; Ketentuan</a>' +
+      '<a href="../kebijakan-privasi/">Kebijakan Privasi</a><a href="../syarat-ketentuan/">Syarat &amp; Ketentuan</a><a href="../kebijakan-pengembalian/">Pengembalian</a>' +
+      '<a href="#" id="waBantuan" target="_blank" rel="noopener">WhatsApp AsProject</a>' +
       '<a href="../studio.html">Coba Studio (edit sendiri)</a></div></div>' +
       '<div><p class="foot-judul">Demo Lain</p><div class="foot-nav">' + lain + "</div></div></div>" +
       '<div class="copyright"><span>© 2026 AsProject.My.Id — Undangan Online ' + lolos(C.jenis || "") +
       '. All rights reserved.</span><span>Butuh bantuan? <a href="#" id="waCopy" target="_blank" rel="noopener" ' +
-      'style="color:var(--acc);font-weight:500;text-decoration:underline">Chat WhatsApp Support Premium</a> ' +
-      "&lt; 5 menit</span></div></div></footer>";
+      'style="color:var(--acc);font-weight:500;text-decoration:underline">Hubungi WhatsApp AsProject</a></span></div></div></footer>';
   }
 
   /* ---------------- tema ---------------- */

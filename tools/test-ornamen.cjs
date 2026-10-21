@@ -2,7 +2,7 @@
 /* Uji ornamen SVG per tema.
 
    Memastikan: registry motif lengkap, tiap tema menunjuk motif yang ada,
-   18 tema publik punya 18 motif berbeda, motif benar-benar lahir di DOM
+   tema publik memakai setidaknya 18 motif berbeda, motif benar-benar lahir di DOM
    divider dan footer, fallback ke teks deco tetap jalan, sampul tidak
    ikut berubah (PR #21 sengaja menyembunyikan ornamen di sana), dan
    TPL studio.html sinkron dengan undangan.html.
@@ -44,7 +44,7 @@ const studioSrc = read('studio.html');
 const TPL = eval(potong(undSrc, 'const TPL=[', '[', ']'));
 const TPL_STUDIO = eval(potong(studioSrc, 'const TPL=[', '[', ']'));
 
-function draft(theme, ev, orn, ornSudut, coverLayout) {
+function draft(theme, ev, orn, ornSudut, coverLayout, coverStyle) {
   const acara = ev || 'pernikahan';
   return {
     slug: 'uji-ornamen', name1: 'Satrio', name2: '', theme: theme,
@@ -55,8 +55,9 @@ function draft(theme, ev, orn, ornSudut, coverLayout) {
          tanpa orn tetap menguji jalur bawaan tema */
       orn: orn,
       ornSudut: ornSudut,
-      cover: coverLayout ? 'https://x.test/foto-cover.jpg' : undefined,
+      cover: (coverLayout || coverStyle) ? 'https://x.test/foto-cover.jpg' : undefined,
       coverLayout: coverLayout,
+      coverStyle: coverStyle,
       form: {
         namaPria: 'Satrio', namaWanita: acara === 'pernikahan' ? 'Pandu' : '', tanggalAcara: '2026-11-02',
         jamAcara: '08:00', venue: 'Bendo Gede', zona: 'WIB',
@@ -68,7 +69,7 @@ function draft(theme, ev, orn, ornSudut, coverLayout) {
   };
 }
 
-async function render(theme, ev, orn, ornSudut, coverLayout) {
+async function render(theme, ev, orn, ornSudut, coverLayout, coverStyle) {
   const dom = new JSDOM(undSrc, {
     runScripts: 'dangerously',
     url: 'https://x.test/undangan.html?slug=uji-ornamen',
@@ -88,11 +89,11 @@ async function render(theme, ev, orn, ornSudut, coverLayout) {
   const w = dom.window, D = w.document;
   await sleep(300);
   let err = null;
-  try { w.eval('boot(' + JSON.stringify(draft(theme, ev, orn, ornSudut, coverLayout)) + ')'); } catch (e) { err = e.message; }
+  try { w.eval('boot(' + JSON.stringify(draft(theme, ev, orn, ornSudut, coverLayout, coverStyle)) + ')'); } catch (e) { err = e.message; }
   await sleep(120);
   const divider = [...D.querySelectorAll('.divider')];
   const footer = D.querySelector('.footer .orn');
-  const coverOrn = D.querySelector('#cover .inner > .orn');
+  const coverOrn = D.querySelector('#cover .inner .orn');
   const hasil = {
     err,
     motifAda: w.eval('Object.keys(ORNAMEN)'),
@@ -157,8 +158,8 @@ async function render(theme, ev, orn, ornSudut, coverLayout) {
 
   const publik = TPL.map((x, i) => ({ x, i })).filter((o) => !o.x.studioOnly);
   const unikPublik = new Set(publik.map((o) => o.x.orn));
-  t('18 tema publik memakai 18 motif berbeda (tidak ada kembar)',
-    unikPublik.size === publik.length,
+  t('tema publik memakai setidaknya 18 motif berbeda',
+    unikPublik.size >= 18,
     'dapat ' + unikPublik.size + ' unik dari ' + publik.length + ' tema');
 
   /* ---------- 2. sinkron studio <-> undangan ---------- */
@@ -271,8 +272,8 @@ async function render(theme, ev, orn, ornSudut, coverLayout) {
     t('memilih "tanpa ornamen sudut" menghapus bingkai layar', rTanpa.frameJumlah === 0, rTanpa.frameJumlah + ' sudut');
     /* Cover foto penuh: panel kartu transparan sehamparan foto, ornamen sudut
        sampul tertutup foto — jadi memang ditiadakan, bingkai layar tetap. */
-    const rFull = await render(0, 'pernikahan', undefined, 'deco', 'foto');
-    const rKotak = await render(0, 'pernikahan', undefined, 'deco', 'kotak');
+    const rFull = await render(0, 'pernikahan', undefined, 'deco', undefined, 'full');
+    const rKotak = await render(0, 'pernikahan', undefined, 'deco', undefined, 'kotak');
     t('cover foto penuh: ornamen sudut sampul ditiadakan', rFull.bdfrOrn === 0, rFull.bdfrOrn + ' sudut');
     t('cover foto penuh: bingkai layar tetap 4 sudut', rFull.frameJumlah === 4, rFull.frameJumlah + ' sudut');
     t('cover berfoto gaya kotak: ornamen sudut sampul tetap 4', rKotak.bdfrOrn === 4, rKotak.bdfrOrn + ' sudut');

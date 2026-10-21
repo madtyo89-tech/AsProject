@@ -34,6 +34,17 @@ const HALAMAN = [
   'katalog-demo/undangan-wedding-gold.html',
   'katalog-demo/galeri-kerangka.html',
   'demo/aqiqah.html',
+  'katalog/index.html',
+  'harga/index.html',
+  'undangan/pernikahan/index.html',
+  'undangan/khitanan/index.html',
+  'undangan/ulang-tahun/index.html',
+  'undangan/aqiqah/index.html',
+  'template/ivory-klasik/index.html',
+  'kebijakan-privasi/index.html',
+  'syarat-ketentuan/index.html',
+  'kebijakan-pengembalian/index.html',
+  'kontak/index.html',
 ];
 
 let lulus = 0, gagal = 0;

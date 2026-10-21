@@ -268,12 +268,12 @@ async function render(d) {
   /* ------------------------------------------------------------------ *
    * 7. Pita: satin transparan (nama mempelai tidak tertutup)
    * ------------------------------------------------------------------ */
-  t('pita memakai tint kaca transparan + backdrop blur, bukan satin pekat',
+  t('pita memakai tint aksen semi-transparan + efek satin',
     undSrc.includes('color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) var(--pb),transparent) 42%') &&
     undSrc.includes('--pa:46%;--pb:28%;--pc:40%') &&
     undSrc.includes('-webkit-backdrop-filter:blur(1px) saturate(1.12);backdrop-filter:blur(1px) saturate(1.12);') &&
-    undSrc.includes('body.elbuka-pita:not(.foto-full) #cover .pemicu .el{--pa:78%;--pb:54%;--pc:70%}') &&
-    !undSrc.includes('body.elbuka-pita #cover .pemicu .el{left:0;top:42px;width:100%;height:34px;border-radius:17px;background:linear-gradient(180deg,color-mix'));
+    undSrc.includes('body.elbuka-pita:not(.foto-full) #cover .pemicu .el{top:12px;height:22px;border-radius:11px;--pa:55%;--pb:34%;--pc:46%}') &&
+    undSrc.includes('body.elbuka-pita:not(.foto-full) #cover .pemicu{top:12%;height:96px}'));
   t('foto penuh: pita dipindah ke atas cover (tidak menutupi wajah/nama)',
     undSrc.includes('body.elbuka-pita.foto-full #cover .pemicu{top:12%}') &&
     undSrc.includes('body.elbuka-pita.foto-full #cover .pemicu .el{top:46px;height:20px;border-radius:10px;') &&

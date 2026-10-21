@@ -26,15 +26,17 @@ const t = (name, cond, extra) => {
 const undSrc = read('undangan.html');
 const studioSrc = read('studio.html');
 
-function draft(buka, coverLayout) {
+function draft(buka, coverStyle, physicalBuka = 'pita') {
   return {
     slug: 'uji-buka', name1: 'Satrio', name2: '', theme: 0,
     venue: 'Bendo Gede', event_date: '2026-11-02', event_time: '08:00',
     data: {
       event: 'pernikahan',
       anim: { buka: buka },
-      cover: coverLayout ? 'https://x.test/foto-cover.jpg' : undefined,
-      coverLayout: coverLayout,
+      /* Pemicu fisik dipilih terpisah dari efek perpindahan cover. */
+      buka: physicalBuka,
+      cover: coverStyle ? 'https://x.test/foto-cover.jpg' : undefined,
+      coverStyle: coverStyle,
       form: {
         namaPria: 'Satrio', namaWanita: 'Pandu', tanggalAcara: '2026-11-02',
         jamAcara: '08:00', venue: 'Bendo Gede', zona: 'WIB',
@@ -43,7 +45,7 @@ function draft(buka, coverLayout) {
   };
 }
 
-async function render(buka, coverLayout) {
+async function render(buka, coverStyle, physicalBuka = 'pita') {
   const dom = new JSDOM(undSrc, {
     runScripts: 'dangerously',
     url: 'https://x.test/undangan.html?slug=uji-buka',
@@ -63,11 +65,12 @@ async function render(buka, coverLayout) {
   const w = dom.window, D = w.document;
   await sleep(300);
   let err = null;
-  try { w.eval('boot(' + JSON.stringify(draft(buka, coverLayout)) + ')'); } catch (e) { err = e.message; }
+  try { w.eval('boot(' + JSON.stringify(draft(buka, coverStyle, physicalBuka)) + ')'); } catch (e) { err = e.message; }
   await sleep(120);
   const hasil = {
     err,
     kelasBuka: [...D.body.classList].filter((c) => c.startsWith('buka-')),
+    kelasModel: [...D.body.classList].filter((c) => c.startsWith('elbuka-')),
     panel: D.querySelectorAll('#cover .bkl, #cover .bkt').length,
     burst: D.querySelectorAll('.kt-burst i').length,
     lajur: D.querySelectorAll('#cover .bld').length,
@@ -86,6 +89,25 @@ async function render(buka, coverLayout) {
     studioSrc.includes("['jungkit','Jungkit Drawbridge','cover terjungkit ke belakang dari tepi bawah']];"));
   t('undangan: fxBukaId menerima 20 gaya (termasuk iris/lubang/blinds/jungkit)',
     undSrc.includes("'menyusut','miring','tirai','buku','pintu','kotak','iris','lubang','blinds','jungkit']"));
+  t('undangan: fxBukaId membaca pilihan langsung dari AN.buka',
+    undSrc.includes('function fxBukaId(AN){const v=AN&&AN.buka;'));
+  t('Studio menjelaskan model fisik yang memakai fade agar gerak tidak bertumpuk',
+    studioSrc.includes('cover memakai fade agar animasi fisik tidak bertumpuk'));
+  t('pita cover biasa ditempatkan di area atas, tidak melintang di jam/venue',
+    undSrc.includes('body.elbuka-pita:not(.foto-full) #cover .pemicu{top:12%;height:96px}') &&
+    undSrc.includes('body.elbuka-pita:not(.foto-full) #cover .pemicu .el2{top:42px;height:18px'));
+  t('amplop normal menutup celah dan mencetak nama + tanggal',
+    undSrc.includes('body.elbuka-amplop:not(.foto-full) #cover .pemicu{isolation:isolate;') &&
+    undSrc.includes('body.elbuka-amplop:not(.foto-full) #cover .pemicu .p-kulit{display:flex;'));
+  t('hint tirai/pintu/selendang/amplop berada di dalam viewport',
+    undSrc.includes('body.elbuka-tirai #cover .pemicu .p-hint,') &&
+    undSrc.includes('body.elbuka-selendang #cover .pemicu .p-hint,') &&
+    undSrc.includes('body.elbuka-amplop:not(.foto-full) #cover .pemicu .p-hint{top:auto;'));
+  t('selendang tidak menampilkan hint generik kedua di atas RSVP',
+    undSrc.includes('body.elbuka-selendang #cover .geser-hint{display:none}'));
+  t('gembok biasa diperkecil dan dipindah ke area foto atas, bukan teks tengah',
+    undSrc.includes('body.elbuka-gembok:not(.foto-full) #cover .pemicu{width:150px;height:206px;top:22%;') &&
+    undSrc.includes('transform:translate(-50%,-50%) scale(.5)}'));
   t('studio: FX_BUKA menambah 4 skin berstruktur beda',
     studioSrc.includes("['iris','Iris Diagonal','cover tersibak menyamping lewat potongan diagonal'],") &&
     studioSrc.includes("['lubang','Iris Lingkaran','cover tersedot mengecil ke tengah membentuk bulat'],") &&
@@ -155,7 +177,7 @@ async function render(buka, coverLayout) {
     t('gaya ' + gaya + ': kelas tubuh buka-' + gaya, !r.err && r.kelasBuka.join(',') === 'buka-' + gaya, r.kelasBuka.join(',') + ' err=' + r.err);
     t('gaya ' + gaya + ': lajur blinds lahir di DOM', r.lajur === 4, r.lajur + ' lajur');
   }
-  const rFoto = await render('pintu', 'foto');
+  const rFoto = await render('pintu', 'full');
   const rPolos = await render('pintu');
   t('full foto: panel membawa potongan foto (--bukaImg terisi)',
     !!rFoto.coverStyle && rFoto.coverStyle.includes('--bukaImg:url('), String(rFoto.coverStyle));
@@ -165,6 +187,14 @@ async function render(buka, coverLayout) {
   const rAsing = await render('palsu');
   t('gaya lama tirai tetap jalan', rTirai.kelasBuka.join(',') === 'buka-tirai', rTirai.kelasBuka.join(','));
   t('gaya asing jatuh ke default gilir', rAsing.kelasBuka.join(',') === 'buka-gilir', rAsing.kelasBuka.join(','));
+  const rPhysical = await render('zoom', undefined, 'amplop');
+  t('model Amplop mempertahankan animasi fisik dan meredam transisi ganda',
+    rPhysical.kelasModel.includes('elbuka-amplop') && rPhysical.kelasBuka.join(',') === 'buka-fade',
+    rPhysical.kelasModel.join(',') + ' / ' + rPhysical.kelasBuka.join(','));
+  const rBook = await render('zoom', undefined, 'buku');
+  t('model Buku tetap memakai efek perpindahan yang dipilih',
+    rBook.kelasModel.includes('elbuka-buku') && rBook.kelasBuka.join(',') === 'buka-zoom',
+    rBook.kelasModel.join(',') + ' / ' + rBook.kelasBuka.join(','));
 
   console.log('\nRingkasan: ' + ok + ' lulus, ' + fail + ' gagal');
   process.exit(fail ? 1 : 0);

@@ -74,7 +74,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;background:var(--s
     radial-gradient(560px 460px at 8% 92%,var(--soft),transparent 66%),
     linear-gradient(170deg,var(--bg2),var(--bg) 46%,var(--soft))}
 #sampul.buka{opacity:0;visibility:hidden;pointer-events:none}
-.sampul-isi{max-width:460px;width:100%;position:relative;z-index:1}
+.sampul-isi{max-width:460px;width:100%;min-width:0;position:relative;z-index:1}
 .bingkai{border:1px solid var(--line);border-radius:26px;padding:32px 22px;position:relative;overflow:hidden;
   background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   box-shadow:0 24px 52px -30px rgba(0,0,0,.4)}
@@ -108,6 +108,11 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;background:var(--s
 .btn-bulat.putar svg{animation:aspPutar 4.5s linear infinite}
 @keyframes aspPutar{to{transform:rotate(360deg)}}
 @media (max-width:640px){.chip-demo,.btn-teks{display:none}}
+@media (max-width:380px){
+  .bar-isi{gap:8px;padding-left:12px;padding-right:12px}
+  .bar-kanan{gap:6px}
+  #waBar{width:90px;max-width:90px;padding:8px 10px;font-size:10px;line-height:1.2;text-align:center;white-space:normal}
+}
 
 /* ---------- hero ---------- */
 .hero{padding:64px 0 56px;text-align:center;position:relative}

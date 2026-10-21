@@ -35,14 +35,12 @@ bisa dipilih per kategori dan dipakai saat publish ke renderer live. Tema-tema i
 ditambahkan sebagai listing atau harga baru di katalog publik. Floral Rustic tetap
 menggunakan `undangan-wedding-gold.html`.
 
-> **`index.html` (2026-10-20):** halaman ini templat landing lama — harganya
-> Rp79.000/Rp149.000/Rp299.000 dan menyebut "50+ tema", sedangkan produk yang
-> dijual di `index.html` akar repo adalah 18 tema Rp49.000–Rp99.000 dengan revisi
-> unlimited. Supaya tidak menyesatkan calon pembeli dan tidak bersaing dengan
-> beranda di hasil pencarian, halaman ini kini **`noindex, follow`** dan **tidak
-> didaftarkan** di `sitemap.xml`. Tautan demonya tetap bisa dirayapi. Kalau nanti
-> isinya diselaraskan dengan penawaran sebenarnya, `noindex` boleh dilepas dan
-> URL-nya dikembalikan ke sitemap.
+> **Status saat ini:** halaman `katalog-demo/index.html` adalah pengantar lama dan
+> telah diganti dengan tautan menuju `/katalog/` serta `/harga/`; halaman tetap
+> **`noindex, follow`** dan tidak didaftarkan di sitemap. Halaman-halaman lain di
+> folder `katalog-demo/` adalah demo arsip dengan data contoh, diberi `noindex`, dan
+> tidak mewakili harga/ketentuan saat ini. Katalog SEO aktif ada di `/katalog/` dan
+> halaman detail aktif ada di `/template/{id}/`.
 
 ### Foto lokal untuk enam demo tambahan
 

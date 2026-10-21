@@ -1,0 +1,11 @@
+/* Shared disclosure for standalone invitation previews: these are demo records, not customer work. */
+.ap-demo-disclaimer{position:sticky;top:0;z-index:100000;display:flex;align-items:center;justify-content:center;gap:8px 16px;flex-wrap:wrap;padding:9px 16px;background:#17271f;color:#fff;font:500 12px/1.45 Inter,system-ui,sans-serif;text-align:center;box-shadow:0 5px 18px rgba(0,0,0,.18)}
+.ap-demo-disclaimer strong{color:#f0d28d;font-weight:800;letter-spacing:.03em}
+.ap-demo-disclaimer span{opacity:.9}
+.ap-demo-disclaimer a{color:#f4d795;font-weight:800;text-decoration:underline;text-underline-offset:2px}
+.ap-demo-page .varian-kartu .harga,.ap-demo-page .varian-kartu .catatan-harga{display:none!important}
+.ap-demo-page .varian-kartu .pita{display:none!important}
+.ap-demo-page section#harga,.ap-demo-page #testimoni{display:none!important}
+.ap-demo-page section.relative.overflow-hidden .mt-8.flex.items-center.gap-4,
+.ap-demo-page section.relative.overflow-hidden .mt-8.grid.grid-cols-3{display:none!important}
+@media(max-width:600px){.ap-demo-disclaimer{justify-content:flex-start;text-align:left;font-size:11px;padding:8px 12px}.ap-demo-disclaimer span{flex:1 1 100%}}

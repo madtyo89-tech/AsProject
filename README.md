@@ -363,8 +363,7 @@ Sekarang tiap entri `TPL` membawa `layout:` yang menunjuk satu preset di
 | `ekstra` | bagian eksklusif yang hanya lahir di preset itu |
 | `vip` | menyalakan mesin 4D (parallax 3 lapis + partikel + entrance sinematik) |
 
-**18 tema publik memakai 18 preset berbeda**, jadi tidak ada dua tema yang
-berkerangka sama. Enam varian Gerbang Arch (Studio-only) memakai lima preset yang
+**34 tema publik memakai 18 preset kerangka berbeda** pada katalog saat ini. Enam varian Gerbang Arch (Studio-only) memakai lima preset yang
 sudah ada ditambah `panggung-gerbang`.
 
 Sepuluh shell: `klasik` (kerangka lama, tanpa aturan CSS), `editorial` (majalah
@@ -479,7 +478,7 @@ Jaminan invariansi yang dijaga otomatis:
   (index ke array) untuk undangan lama tidak berubah.
 - `cek-kerangka.cjs` [10] memastikan literal TPL di HTML == hasil
   generator (anti-drift); `cek-kesehatan.py` [11][13] memastikan
-  urutan id studio == undangan dan katalog publik tetap 18 tema.
+  urutan id studio == undangan dan katalog publik tetap sinkron dengan 34 tema publik.
 - `tools/test-kerangka-bebas.cjs` (jsdom, diikat di cek-kesehatan
   [35]) merender 6 template kb + 2 kompilasi legacy di renderer
   live: shell, urutan bebas, penomoran bab, strip galeri, jam
@@ -708,8 +707,8 @@ Uji & pemeriksa yang dikunci bersamanya:
   saat namanya dihapus dari daftar.
 - `python3 tools/cek-kesehatan.py` — bagian **[29] Kerapian halaman** (ikon tab, `lang`,
   tidak ada skrip CDN yang bisa mematikan halaman, semua rujukan berkas lokal ada, og tags)
-  dan **[30] Nama tamu aman di onclick & daftar tamu hidup**; ringkasan sekarang
-  **383 ok, 0 masalah, 31 catatan** (setelah bab C di bawah).
+  dan **[30] Nama tamu aman di onclick & daftar tamu hidup**; pada run 2026-10-17
+  ringkasannya **383 ok, 0 masalah, 31 catatan** (bab C di bawah).
 
 ## Aksesibilitas, mesin pencari, PWA & batas laju (bab C, 2026-10-17)
 
@@ -748,17 +747,18 @@ Ulangi: `node tools/audit-landmark.cjs`.
 - `robots.txt` mengizinkan semua halaman publik, menutup `/master.html`, `/scan.html`,
   `/checkin.html`, dan `/android/` (halaman internal & berkas unduhan), serta menunjuk
   `https://asproject.my.id/sitemap.xml`.
-- `sitemap.xml` berisi 23 URL (beranda, 6 demo, 16 halaman katalog); halaman
-  `noindex`, 404, studio, `undangan.html`, dan laporan audit sengaja tidak
-  didaftarkan. Perubahan komposisi ini dijelaskan di bagian
-  **Pemeriksaan ulang Google (2026-10-20)** di bawah.
+- `sitemap.xml` berisi 50 URL: beranda + 5 demo kategori aktif, halaman katalog dan harga,
+  4 kategori acara, 34 detail tema, serta 4 halaman kepercayaan. Halaman
+  arsip `katalog-demo/`, Ice Blue lama, 404, studio, `undangan.html`,
+  dan laporan audit sengaja tidak didaftarkan. Jalankan `node tools/bangun-halaman-publik.cjs` lalu
+  `python3 tools/bangun-sitemap.py` setelah mengubah daftar template.
 
 ### Web app manifest (PWA)
 
 `manifest.webmanifest`: nama "AsProject — Undangan Digital", `start_url` `/`,
 `display` standalone, warna `#0a0a0a`, ikon 192/512 + maskable 512 (dirender dari
 `assets/favicon.svg`), dan pintasan ke Katalog & Studio. Tautan `<link rel="manifest">`
-dipasang di 30 halaman (kecuali `laporan-audit.html`). Uji:
+dipasang di seluruh 75 halaman HTML publik/internal yang diuji. Uji:
 `node tools/test-manifest-pwa.cjs`.
 
 ### Batas laju RSVP & check-in
@@ -787,14 +787,16 @@ memasang `playwright-core`, `@sparticuz/chromium`, dan `axe-core`, menyalakan
 `tools/serve.py :8080`, lalu menjalankan:
 
 - `tools/test-button-help.cjs` (tooltip bantuan),
-- `tools/test-template-custom-browser.cjs` (template kustom + screenshot),
-- `tools/test-manifest-pwa.cjs` (manifest, ikon, tautan di 30 halaman),
-- `tools/test-aksesibilitas.cjs` — axe-core di 11 halaman (kontras, region,
-  satu `<main>`, satu `h1`, manifest) pada viewport 390×844: **59 lulus, 0 gagal**.
+- `tools/test-template-custom-browser.cjs` (beranda, template kustom, 15 model cover, dan klaim sosial yang dapat dibuktikan),
+- `tools/test-public-layout-browser.cjs` (68 rute pemasaran/demo/arsip × 6 lebar layar: 320–1280 px),
+- `tools/test-manifest-pwa.cjs` (manifest, ikon, tautan di seluruh halaman publik),
+- `tools/test-aksesibilitas.cjs` — axe-core di 22 halaman (kontras, region,
+  satu `<main>`, satu `h1`, manifest) pada viewport 390×844: **114 lulus, 0 gagal**.
 
 `tools/test-mobile-browser.cjs` tetap dijalankan manual karena beberapa
-pemeriksaannya bergantung pada waktu animasi (mudah goyah). Di sandbox ini semuanya
-lulus; pemeriksa repo: **383 ok, 0 masalah, 31 catatan**.
+pemeriksaannya bergantung pada waktu animasi (mudah goyah); run audit ini tetap
+lulus pada 320, 360, 390, 430, 768, dan 1280 px. Pemeriksa repo terakhir:
+**534 ok, 0 masalah, 30 catatan** (2026-10-21).
 
 ## Kenapa belum muncul di Google + persiapan pengindeksan (2026-10-18)
 
@@ -907,11 +909,11 @@ Dua implikasi:
    tidak ada satu pun halaman demo/katalog yang punya `canonical`, sehingga
    Google melihat 20+ salinan mirip tanpa penanda halaman utama.
 3. **`katalog-demo/index.html` dikeluarkan dari sitemap dan diberi `noindex`.**
-   Halaman itu templat landing lama: harga Rp79rb/149rb/299rb, "50+ tema",
-   "25+ tema", "No. 1" — berbeda dari produk yang dijual di `index.html`
-   (18 tema, Rp49.000–Rp99.000, revisi unlimited). Dua daftar harga yang saling
-   bertentangan di satu domain merusak kepercayaan pembeli sekaligus bersaing
-   dengan beranda di hasil pencarian.
+   Halaman itu adalah landing lama dengan paket dan klaim jumlah tema yang tidak
+   sesuai penawaran di repo. Beranda menggunakan harga katalog Rp49.000 per tema
+   dari `kerangka/template.js`; batas tamu, masa aktif, watermark, lingkup revisi,
+   estimasi pengerjaan, dan metode pembayaran harus dikonfirmasi tertulis sebelum
+   transaksi. Klaim testimoni/counter tanpa bukti tidak dipakai sebagai social proof.
 4. **`undangan.html` keluar dari sitemap dan kini `noindex, follow`.**
    Tanpa `?slug=` halamannya berbunyi "Undangan tidak ditemukan" (soft 404),
    dan undangan asli memang privat untuk tamu.
@@ -931,7 +933,7 @@ Dua implikasi:
 
 1. Buka **Search Console** → properti `https://asproject.my.id/` → **Verifikasi**
    (token sudah terpasang sejak 2026-10-18; cukup klik).
-2. **Sitemaps** → submit `sitemap.xml` (23 URL). Kalau pernah submit versi lama,
+2. **Sitemaps** → submit `sitemap.xml` (50 URL). Kalau pernah submit versi lama,
    klik **Resubmit** supaya Google membaca komposisi baru.
 3. **URL Inspection** → `https://asproject.my.id/` → **Request Indexing**.
    Ulangi untuk 2–3 halaman demo terpenting, jangan semua sekaligus.
@@ -947,41 +949,41 @@ Dua implikasi:
 
 ## Katalog tema (direset + diisi ulang 2026-10-10)
 
-Katalog lama berisi 72 tema lengkap dengan artwork-nya. Seluruhnya dihapus, lalu diisi
-ulang dengan **12 tema dari halaman katalog AsProject di Google Drive** (data nama,
-kategori, harga, palet, rating, dan deskripsi diambil apa adanya dari sana). Jadi sekarang:
-**1 tema dasar** `ivory-klasik` / *Ivory Klasik* — `ev:'all'`, selalu di indeks 0 — diikuti
-4 tema pernikahan, 2 khitanan, 3 ulang tahun, dan 3 aqiqah. Yang ikut terhapus bersamanya:
-`assets/tema-3d/` (50 artwork webp), `assets/wedding/` (2 paper art), dan folder
-`templates/` (pipeline isi-manual Python).
+Katalog lama berisi 72 tema lengkap dengan artwork-nya. Pada 2026-10-10 katalog direset
+lalu mulai diisi ulang dari tema AsProject; sejak itu daftar tumbuh. **Per 2026-10-21 ada
+34 tema publik** (termasuk 2 tema umum yang tersedia di semua kategori) dan 6 pilihan
+Gerbang yang hanya tersedia di Studio. Seluruh harga publik pada sumber template saat ini
+adalah **Rp49.000 per tema**. Data rating/ulasan lama tidak dipakai sebagai social proof
+publik. Yang ikut terhapus saat reset: `assets/tema-3d/` dan `assets/wedding/` versi lama.
 
 Tema-tema itu **tidak** membawa artwork (`bg3d`/`bgPaper` kosong), jadi halaman tamu
-memakai gradasi + pola SVG (`pat`) + ornamen (`deco`) dari paletnya. Contoh tampilan
-hidupnya ada di folder **`katalog-demo/`** — templat jadi satu berkas dari Drive yang
-sudah dibersihkan dan di-rebrand ke AsProject (lihat README di folder itu).
+memakai gradasi + pola SVG (`pat`) + ornamen (`deco`) dari paletnya. Demo produk aktif
+menggunakan renderer `undangan.html?demo=1&tpl=<id>` dan halaman detail `/template/<id>/`.
+File standalone di `katalog-demo/` adalah arsip demo, diberi `noindex`, dan tidak menjadi
+listing harga atau portofolio pelanggan.
 
 Mesinnya sengaja **tidak** dihapus dan tetap diuji: skin cover pernikahan
 (`body.wedding-cover`, kartu stationery, paper art), kelas `art3d` untuk tema
 ber-artwork, partikel VIP 4D, penyesuaian kontras, 17 font, 32 border, 34 efek gulir,
 9 gaya foto cover, dan sematan artwork base64 saat *Simpan File HTML*.
 
-Menambah tema = menambah **satu baris di tiga tempat** yang urutannya wajib sama:
+Sumber kebenaran template kini `kerangka/{token-tema,registry-blok,template,motor}.js`.
+Menambah/mengubah template publik:
 
-1. `const TPL` di `studio.html` — lengkap:
-   `id, nama, ev, harga, g[3], accent, ink, badge, tier, char, bg3d, bgPaper, deco, pat, ft, desc`;
-2. `const TPL` di `undangan.html` — `id, nama, ev, g[3], accent, ink, char, bg3d, bgPaper,
-   deco, pat, ft` (tanpa harga/desc/badge);
-3. `var Pn` di `index.html` (katalog publik) — `id, name, category, price, rating, reviews,
-   gradient, accent, description`; tiga warna `gradient:"from-[#…] via-[#…] to-[#…]"`
-   **harus** punya rule CSS `.from-\[#…]` / `.via-\[#…]` / `.to-\[#…]` di berkas yang sama.
+1. Ubah definisi di `kerangka/template.js` (beserta token yang diperlukan).
+2. Jalankan `node tools/bangun-tpl.cjs` untuk menulis `const TPL` di `studio.html` dan
+   `undangan.html`; urutannya dijaga agar indeks tema lama tidak bergeser.
+3. Perbarui data katalog publik `Pn` di `index.html` agar tetap sinkron; jangan menambah
+   angka rating/ulasan tanpa data pelanggan yang dapat diverifikasi.
+4. Jalankan `node tools/bangun-halaman-publik.cjs` untuk membuat katalog, kategori, dan
+   halaman detail masing-masing template. Jalankan `python3 tools/bangun-sitemap.py`
+   sesudahnya agar semua URL bersih masuk sitemap.
+5. Jalankan `python3 tools/cek-kesehatan.py` dan `node tools/test-public-pages.cjs`.
 
-12 tema Drive tadi dipasang dengan aturan yang sama: `ink` dihitung dari aksen tema sendiri
-(nada gelap sewarna, minimum kontras 3:1 terhadap `g[0]` dan `g[2]` — syarat
-`node tools/test-kontras-tema.cjs`), `ev` dipetakan dari kategori (`Pernikahan` →
-`pernikahan`, `Ulang Tahun` → `ultah`), dan tiap nama tema didaftarkan di `DEMO_BY_NAME` /
-`DEMO_BY_CATEGORY` hanya kalau berkas demonya benar-benar ada. Teks jumlah di hero katalog
-(`"18 template"`) dan daftar kategori (`Xm`) ikut berubah — keduanya diperiksa oleh
-`tools/cek-kesehatan.py` bagian [12].
+`ink` mengikuti aksen tema sendiri (uji kontras `node tools/test-kontras-tema.cjs`),
+`ev` dipetakan ke kategori acara, dan demo tiap tema dapat dibuka melalui renderer
+`undangan.html?demo=1&tpl=<id>`. Semua pratinjau demo harus diberi label data contoh; bukan
+portofolio pelanggan.
 
 **Tambahan 2026-10-10 (seri Golden Onyx, +5 tema elegan campuran kategori)** —
 ditaruh di **akhir** array dengan urutan sama di ketiga file:
@@ -1426,3 +1428,34 @@ fitur situs yang sudah berjalan.
 - Hasil tes & keterbatasan: [`android/docs/HASIL-TES-DAN-KETERBATASAN.md`](android/docs/HASIL-TES-DAN-KETERBATASAN.md).
 - Workflow APK otomatis: `.github/workflows/android-apk.yml` (artefak tiap push yang
   menyentuh `android/**`, dan Release saat tag `v*` dipush).
+
+## Halaman publik, harga, dan kepercayaan (2026-10-21)
+
+Halaman statis yang dapat dirayapi kini mencakup `/harga/`, `/katalog/`, empat
+kategori acara, 34 URL detail template `/template/{id}/`, serta kebijakan privasi,
+syarat & ketentuan, pengembalian, dan kontak. Detail template menampilkan preview
+dari renderer `undangan.html?demo=1&tpl=…`, schema `Product`, harga yang tercatat
+pada sumber template, dan CTA ke WhatsApp. Demo diberi label sebagai data contoh;
+bukan bukti bahwa acara tersebut dipakai pelanggan.
+
+Bangun ulang halaman setelah mengubah `kerangka/template.js`:
+
+```bash
+node tools/bangun-tpl.cjs
+node tools/bangun-halaman-publik.cjs
+python3 tools/bangun-sitemap.py
+python3 tools/cek-kesehatan.py
+node tools/test-public-pages.cjs
+```
+
+**Batas fakta yang belum dikonfirmasi oleh pemilik layanan:** data template publik
+mencatat Rp49.000 per tema. Kode tidak menetapkan batas tamu/RSVP, durasi aktif link,
+status watermark, jumlah/jenis revisi, SLA pengerjaan, metode pembayaran, atau aturan
+pengembalian. Halaman publik menandainya secara terbuka dan meminta konfirmasi tertulis;
+isi halaman tersebut perlu diperbarui setelah pemilik menetapkan nilai final.
+
+**Privasi:** konfigurasi `supabase-schema.sql` saat ini memakai policy publik untuk
+membaca, membuat, dan memperbarui `invitation_drafts`. Undangan memang dibagikan lewat
+URL, tetapi akses publik ini bukan otorisasi privat. Halaman privasi menjelaskan batasnya;
+jangan masukkan data rahasia. Pengamanan data tamu yang lebih ketat memerlukan perubahan
+backend/RLS, bukan hanya teks kebijakan.
