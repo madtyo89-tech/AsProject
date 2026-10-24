@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Storyboard Promo AsProject — Reels/TikTok 30 Detik</title>
+<meta name="description" content="Storyboard video promosi AsProject: undangan digital online. 10 scene, 30 detik, vertikal 9:16, gaya ceria playful.">
+<style>
+:root{--bg:#17112e;--card:#221845;--gold:#ffd640;--pink:#ff5d8f;--txt:#fff;--mut:#cfc8f5}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(1100px 700px at 15% -10%,#5b21b6,transparent),radial-gradient(900px 650px at 105% 8%,#be185d,transparent),var(--bg);color:var(--txt)}
+.wrap{max-width:1180px;margin:auto;padding:28px 18px 64px}
+.tag{display:inline-block;background:var(--gold);color:#2d1946;font-weight:800;padding:7px 14px;border-radius:999px;font-size:13px;letter-spacing:.06em}
+h1{font-size:clamp(30px,5vw,52px);line-height:1.05;margin:16px 0 10px}h1 em{color:var(--gold);font-style:normal}
+.sub{color:var(--mut);max-width:720px;line-height:1.6}
+.hero{display:grid;grid-template-columns:340px 1fr;gap:26px;align-items:start;margin:26px 0 10px}
+@media(max-width:860px){.hero{grid-template-columns:1fr}.phone{margin:auto}}
+.phone{width:min(340px,92vw);aspect-ratio:9/16;background:#000;border:6px solid #0f0a24;border-radius:38px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.phone video{width:100%;height:100%;object-fit:cover;display:block}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0}
+.meta div{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:16px;padding:14px}
+.meta b{display:block;font-size:19px}.meta span{color:var(--mut);font-size:13px}
+.btn{display:inline-block;background:var(--pink);color:#fff;text-decoration:none;font-weight:800;padding:13px 20px;border-radius:999px;margin:6px 8px 6px 0}
+.btn.g{background:var(--gold);color:#2d1946}
+h2{margin:36px 0 6px;font-size:26px}.hint{color:var(--mut);margin:0 0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:16px}
+.scene{background:var(--card);border:1px solid rgba(255,255,255,.12);border-radius:20px;overflow:hidden;cursor:pointer;transition:.2s;text-align:left;color:#fff;padding:0;font:inherit;width:100%}
+.scene:hover,.scene.on{transform:translateY(-4px);outline:3px solid var(--gold)}
+.scene img{width:100%;aspect-ratio:9/16;object-fit:cover;display:block}
+.scene .in{padding:12px 14px 16px}.scene .no{color:var(--gold);font-weight:800;font-size:12px;letter-spacing:.08em}
+.scene h3{margin:5px 0 6px;font-size:16px}.scene p{margin:0;color:var(--mut);font-size:13px;line-height:1.5}
+.scene .vo{margin-top:9px;background:rgba(0,0,0,.28);border-radius:10px;padding:8px 10px;font-size:12.5px;color:#fff}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:rgba(255,255,255,.05);border-radius:16px;overflow:hidden}
+th,td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.1);vertical-align:top;text-align:left}th{background:rgba(255,214,64,.16)}
+.foot{color:var(--mut);font-size:13px;margin-top:28px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="tag">STORYBOARD VIDEO PROMOSI</span>
+  <h1>AsProject <em>Reels / TikTok</em><br>30 Detik · Ceria Playful</h1>
+  <p class="sub">Iklan undangan digital online untuk pernikahan, khitanan, ulang tahun &amp; aqiqah. Klik panel scene di bawah untuk melompat ke detik itu di video.</p>
+
+  <div class="hero">
+    <div class="phone"><video id="v" controls playsinline preload="metadata" poster="frames/scene-01.jpg" src="asproject-promo-storyboard-30s.mp4"></video></div>
+    <div>
+      <div class="meta">
+        <div><b>9:16</b><span>Vertikal 1080×1920</span></div>
+        <div><b>10 Scene</b><span>±3 detik per scene</span></div>
+        <div><b>VO + Musik</b><span>Bahasa Indonesia ceria</span></div>
+        <div><b>Rp49.000</b><span>Mulai dari / tema*</span></div>
+      </div>
+      <a class="btn g" href="asproject-promo-clean-30s.mp4" download>⬇ Download MP4 Clean (buat upload)</a>
+      <a class="btn" href="asproject-promo-storyboard-30s.mp4" download>MP4 Versi Storyboard</a>
+      <a class="btn" href="storyboard-contact-sheet.jpg">Lihat Contact Sheet</a>
+      <a class="btn" href="STORYBOARD.md"> Baca Naskah Produksi</a>
+      <p class="sub"><b>Alur cerita:</b> Hook masalah undangan kertas → kenalin AsProject → pilih 34 tema → isi data → fitur seru → tamu buka undangan → amplop/RSVP/peta → sebar satu link → harga → CTA.</p>
+    </div>
+  </div>
+
+  <h2>Panel Storyboard</h2>
+  <p class="hint">Klik panel untuk memutar video dari scene tersebut.</p>
+  <div class="grid" id="grid"></div>
+
+  <h2>Naskah Cepat</h2>
+  <table><thead><tr><th>#</th><th>Scene</th><th>Teks Layar</th><th>Voice Over</th></tr></thead><tbody id="rows"></tbody></table>
+
+  <p class="foot">*Harga katalog Rp49.000/tema; ketentuan dikonfirmasi sebelum pembayaran. Semua foto &amp; screenshot berasal dari aset repo AsProject. Musik: backsound-asproject. Tokoh demo: Rangga Pratama &amp; Alya Zahra, 28 Desember 2026.</p>
+</div>
+<script>
+const S=[
+ ["HOOK","Masih Cetak Undangan Kertas?","Masih cetak undangan kertas? Ribet banget!","Mockup HP undangan kertas dicoret X, sticker MAHAL/RIBET/LAMA."],
+ ["SOLUSI","AsProject — Undangan Digital Online","Kenalin AsProject! Undangan digital online!","Foto mempelai luxury gold masuk HP, confetti jatuh."],
+ ["PILIH TEMA","34 Tema Cantik Siap Pakai!","Tiga puluh empat tema cantik siap pakai!","Grid Pernikahan, Khitanan, Ulang Tahun, Aqiqah pop-in."],
+ ["ISI DATA","Isi Nama, Tanggal & Foto. Jadi Deh!","Isi nama, tanggal, foto. Langsung jadi!","Kartu nama/tanggal/foto melayang di sekeliling HP."],
+ ["FITUR SERU","Countdown, Galeri, Musik & Lainnya!","Ada countdown, galeri, dan musik!","Undangan live + pill fitur bounce bergantian."],
+ ["BUKA UNDANGAN","Tamu Buka… Langsung WOW!","Tamu buka undangan, langsung wow!","Cover amplop berdenyut, sticker KETUK!"],
+ ["FITUR TAMU","Amplop + RSVP + Peta Lokasi","Amplop digital, RSVP, plus peta lokasi!","Tiga kartu fitur besar slide-up berurutan."],
+ ["SEBAR LINK","Publish! Sebar Satu Link Saja","Publish! Sebar satu link lewat WhatsApp!","Pill link asproject.my.id/u/rangga-Alya nge-glow."],
+ ["HARGA","Mulai Rp49.000 / tema","Mulai empat puluh sembilan ribu per tema!","Kartu harga raksasa + tombol coba demo gratis."],
+ ["CTA","Yuk, Buat Sekarang! asproject.my.id","Yuk buat sekarang di AsProject dot my dot id!","Logo AS emas, tombol CTA, hujan confetti."],
+];
+const DUR=[2.8,3.2,2.8,4.0,2.9,2.6,3.3,2.8,2.7,2.9]; // durasi final per scene (total 30.0 detik)
+const v=document.getElementById('v'), g=document.getElementById('grid'), r=document.getElementById('rows');
+let start=0;
+S.forEach((s,i)=>{
+  const t=start; start+=DUR[i];
+  const b=document.createElement('button'); b.className='scene';
+  b.innerHTML=`<img loading="lazy" src="frames/scene-${String(i+1).padStart(2,'0')}.jpg" alt="Scene ${i+1} ${s[0]}"><div class="in"><span class="no">SCENE ${String(i+1).padStart(2,'0')} · ${s[0]}</span><h3>${s[1]}</h3><p>${s[3]}</p><div class="vo">VO: “${s[2]}”</div></div>`;
+  b.onclick=()=>{document.querySelectorAll('.scene').forEach(x=>x.classList.remove('on'));b.classList.add('on');v.currentTime=t;v.play();window.scrollTo({top:0,behavior:'smooth'})};
+  g.appendChild(b);
+  r.innerHTML+=`<tr><td>${i+1}</td><td><b>${s[0]}</b></td><td>${s[1]}</td><td>${s[2]}</td></tr>`;
+});
+</script>
+</body>
+</html>
