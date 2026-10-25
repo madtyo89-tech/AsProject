@@ -9,7 +9,7 @@ pustaka pihak ketiga, dan tanpa satu pun izin**.
 - `minSdk 21` (Android 5.0) → `targetSdk 34` (Android 14)
 - Ukuran APK ±1,6 MB (mayoritas: 2 wallpaper 1080 px + 8 ikon neon)
 - Izin: **nol** — tidak ada INTERNET, lokasi, kontak, mikrofon, maupun penyimpanan
-- Kode: 13 kelas Java, 4 layout XML, drawable + aset wallpaper/ikon
+- Kode: 15 kelas Java, 4 layout XML, drawable + aset wallpaper/ikon
 
 ## APK siap pasang
 
@@ -53,7 +53,9 @@ Skrip build memakai ulang mesin build `android/buildkit/build-apk.sh`
 | **Mengatur tampilan** | Tombol roda gigi kanan atas: jam/tanggal, kolom pencarian, nama aplikasi, jumlah kolom (4/5/6) |
 | **Layar kunci** | Muncul saat beranda dibuka dan setiap layar menyala; geser ke atas untuk membuka. Chip atas menampilkan daya baterai asli |
 | **Wallpaper neon** | Bingkai liquid-chrome di layar kunci (tidak terpotong), sirkuit neon + HUD di beranda. Bisa dimatikan di Pengaturan |
-| **Ikon neon** | Phone, Message, Camera, Settings, Music, Chrome, WhatsApp, Instagram — hanya untuk aplikasi yang benar-benar terpasang |
+| **Ikon neon (semua aplikasi)** | 8 aplikasi populer memakai ikon neon khusus; **semua aplikasi lain** dibuatkan versi neon otomatis dari ikon aslinya (`NeonIconFactory`) — kisi jadi seragam tanpa menyiapkan gambar per aplikasi |
+| **HUD layar kunci (live)** | Panel di bawah layar kunci beranimasi: busur berputar, garis pindai, gelombang, jam berjalan, serta **daya & suhu baterai asli** |
+| **Wallpaper liquid 3D** | Gambar digambar ulang tiap frame lewat mesh 20×34 (gelombang sinus berjalan) + kemiringan `Camera` + kilau melintas |
 | **Kunci sekarang** | Tekan lama area kosong → Kunci layar |
 | **Ikut perubahan aplikasi** | Memasang/mencabut/memperbarui aplikasi langsung menyegarkan kisi tanpa perlu membuka ulang |
 
@@ -75,7 +77,10 @@ launcher/
 │   │   ├── HomeWallpaperView.java       wallpaper sirkuit (mode cover)
 │   │   ├── WallpaperView.java           View penggambar wallpaper
 │   │   ├── WallpaperFigure.java         decode + cache + mode gambar
-│   │   ├── NeonIcons.java               peta paket → ikon neon
+│   │   ├── NeonIcons.java               peta paket → ikon neon khusus
+│   │   ├── NeonIconFactory.java         pembuat ikon neon otomatis (semua aplikasi)
+│   │   ├── HudView.java                 HUD live (Canvas, busur/pindai/gelombang)
+│   │   ├── LiquidWallpaperView.java     wallpaper mesh 3D beranimasi
 │   │   ├── IconLoader.java              ikon + LruCache + topeng squircle
 │   │   ├── AppItem.java                 satu entri aplikasi
 │   │   └── Prefs.java                   SharedPreferences
@@ -100,5 +105,8 @@ launcher/
 | Jam besar / tema | `app/src/main/res/values/styles.xml`, `layout/activity_launcher.xml` |
 | Ikon aplikasi | `python3 launcher/tools/make_icons.py` (ubah skripnya) |
 | Wallpaper | ganti `assets/wallpaper/lock.jpg` & `home.jpg` (JPEG potret, ±1080×2000) |
-| Ikon neon | ganti `res/drawable-nodpi/ic_*.png`, lalu sesuaikan `NeonIcons.java` |
+| Ikon neon khusus | ganti `res/drawable-nodpi/ic_*.png`, lalu sesuaikan `NeonIcons.java` |
+| Warna ikon neon otomatis | `NeonIconFactory` (konstanta `NEON`, `NEON_CORE`, `TILE_TOP/BOTTOM`) |
+| Kecepatan liquid 3D | `LiquidWallpaperView` (`amplitude`, `phase`, `COLS/ROWS`) |
+| Isi HUD | `HudView` (teks & tata letak per baris) |
 | Pratinjau HTML | `python3 launcher/tools/make_preview.py` |

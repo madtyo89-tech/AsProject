@@ -6,7 +6,7 @@ di mana risikonya.
 ## 1. Sudah diverifikasi otomatis
 
 `python3 launcher/tools/verify_apk.py launcher/releases/asproject-launcher-1.0.0-debug.apk`
-→ **50 lulus, 0 peringatan, 0 gagal**.
+→ **52 lulus, 0 peringatan, 0 gagal**.
 
 | Kelompok | Yang diperiksa |
 |----------|----------------|
@@ -15,7 +15,7 @@ di mana risikonya.
 | Peluncur | `provides-component:'launcher'`, kategori **HOME**, **DEFAULT**, **LAUNCHER** pada `LauncherActivity` |
 | Privasi | **nol** `<uses-permission>` (diperiksa lewat `aapt2 dump permissions`), 19 izin terlarang dicek tidak tertanam |
 | Keamanan | `SettingsActivity` `exported=false`, tidak ada aset web, tidak ada placeholder `${applicationId}` |
-| Kode | 13/13 kelas Java ter-dex; string `android.intent.category.LAUNCHER`, `android.intent.action.MAIN`, `launcher_prefs` tertanam |
+| Kode | 15/15 kelas Java ter-dex; string `android.intent.category.LAUNCHER`, `android.intent.action.MAIN`, `launcher_prefs` tertanam |
 | Sumber daya | ikon `ic_launcher.png` di 5 kepadatan + ikon adaptif `mipmap-anydpi-v26` |
 | Aset baru | `assets/wallpaper/lock.jpg` & `home.jpg` ada, 8 ikon neon tertanam (`ic_phone` … `ic_instagram`), tidak ada berkas JS |
 | Tanda tangan | apksigner: v1 ✔, v2 ✔, v3 ✔ |
@@ -50,6 +50,57 @@ Konsekuensi yang harus diketahui:
 - Berkas asli berukuran penuh tidak disimpan di repo (hanya hasil ekstraksi yang
   dipakai APK) agar repositori tetap ringan: total aset baru ±1,4 MB.
 
+## 1c. Ikon neon untuk SEMUA aplikasi, HUD live, dan liquid 3D
+
+### Ikon neon otomatis (`NeonIconFactory`)
+
+Tidak ada gambar per aplikasi. Saat ikon pertama kali dibutuhkan:
+
+1. ikon asli digambar ke bitmap 52 dp dan tiap piksel dihitung luminansinya;
+2. luminans rata-rata area terluar (12%) dipakai sebagai "warna latar" ikon;
+   selisih terhadapnya menjadi intensitas — bentuk/glyph dipertahankan, latar polos
+   dibuang. Bila ikon berlatar terang dengan glyph gelap (mis. Play Store), polaritas
+   dibalik;
+3. bila area yang "menyala" lebih dari 50% (WhatsApp, Chrome, Instagram — bidang
+   warna penuh), ambang dinaikkan supaya hanya garis tepi & detail yang digambar
+   → gaya outline neon, bukan bidang putih;
+4. digambar 3 lapis dengan `BlurMaskFilter` (glow lebar → glow sempit → inti tajam)
+   di atas kaca gelap, ditambah jejak sirkuit deterministik per paket.
+
+Biaya: sekali per ikon (±5–15 ms di perangkat 2020-an; lebih lama di Android 5
+karena blur berbasis CPU), hasilnya disimpan di `LruCache` sehingga tidak dihitung
+ulang selama sesi. Cache dibuang saat aplikasi dipasang/dicabut/diperbarui.
+
+**Batasan yang harus diketahui:** semua ikon memakai warna neon biru yang sama —
+identitas warna merek (hijau WhatsApp, merah YouTube) hilang. Ini memang tujuan
+gaya "sirkuit neon", tetapi berarti ikon tidak lagi membantu membedakan aplikasi
+secepat ikon aslinya. Bisa dimatikan kapan saja di Pengaturan → Ikon.
+
+### HUD layar kunci
+
+| Elemen | Sumber |
+|--------|--------|
+| Jam (`22:51`) | waktu perangkat, diformat ulang tiap detik |
+| `POWER 74%` + sel baterai | `ACTION_BATTERY_CHANGED` (sticky) / `BatteryManager` |
+| `TEMP 22.4°C` | `EXTRA_TEMPERATURE` baterai (bukan suhu CPU) |
+| `BIO-LOCK ARMED`, `SYS STATUS ONLINE`, `SIGNAL LINK OK`, `EST 0.23 ms`, `INTEGRITAS 98.2%` | **dekoratif** — angka EST/INTEGRITAS bergerak halus agar terasa hidup, bukan hasil pengukuran apa pun |
+
+Animasi (busur berputar, garis pindai, gelombang, denyut) digambar di Canvas
+60 fps dan hanya berjalan saat layar kunci terlihat.
+
+### Liquid 3D
+
+`LiquidWallpaperView` menggambar ulang bitmap lewat `drawBitmapMesh` 20×34 simpul
+yang digeser tiga fungsi sinus (amplitudo lebih besar di bagian atas, sehingga
+terasa seperti cairan menumpuk), lalu seluruh mesh dimiringkan dengan `Camera`
+(rotasi X/Y ±1.6°) dan diberi pita kilau `PorterDuff.ADD`. Target 30 fps.
+Wallpaper beranda otomatis berhenti beranimasi saat layar kunci menutupinya.
+
+**Perkiraan beban:** satu frame = satu `drawBitmapMesh` 21×35 simpul + 1 gradien
+kilau. Di perangkat kelas menengah ini ringan, tetapi pada Android 5 (tanpa
+hardware-accelerated mesh penuh) bisa terasa lebih berat. Karena itu ada sakelar
+"Wallpaper liquid bergerak (3D)" dan "HUD layar kunci beranimasi".
+
 ## 2. Belum diuji di perangkat
 
 APK ini dibangun di lingkungan tanpa emulator dan tanpa ponsel fisik, jadi
@@ -82,6 +133,14 @@ adalah hasil pembacaan kode, bukan hasil observasi:
     "BATERAI xx%" yang angkanya **sama** dengan indikator baterai sistem.
 14. Layar kunci: geser sedikit lalu lepas → kembali ke atas (tidak terbuka);
     geser jauh/cepat → terbuka.
+15. **Ikon semua aplikasi**: buka kisi → setiap aplikasi (bukan hanya 8 yang
+    khusus) tampil dengan gaya neon; aplikasi yang baru dipasang juga ikut.
+16. **HUD live**: perhatikan busur berputar & garis pindai; jam di tengah HUD
+    berubah tiap menit; `TEMP` masuk akal (bukan 0.0 atau --).
+17. **Liquid bergerak**: perhatikan tepi cairan di beranda — bergerak halus,
+    tidak "bergetar" atau patah; matikan sakelar animasi → gambar diam.
+18. **Baterai**: dengan HUD + liquid menyala ±10 menit, cek pemakaian baterai di
+    Pengaturan → Baterai. Bila terlalu tinggi, matikan salah satu animasi.
 
 ## 3. Keterbatasan yang diketahui
 
@@ -97,7 +156,9 @@ adalah hasil pembacaan kode, bukan hasil observasi:
 | Ponsel Xiaomi/Oppo/Vivo kadang "mengembalikan" beranda bawaan setelah pembaruan sistem | Batasan ROM, bukan aplikasi: set ulang di Pengaturan → Beranda. |
 | Layar kunci ini **bukan** pengganti lock screen sistem | Android tidak mengizinkan aplikasi biasa menggantikan keyguard (butuh izin/aksesibilitas khusus yang sengaja tidak diminta). Yang ada: layar kunci milik beranda — muncul saat beranda dibuka dan saat layar menyala. Lock screen sistem tetap ada sebelum itu. |
 | Wallpaper hanya mengubah tampilan beranda/layar kunci bawaan aplikasi | Tidak memanggil `WallpaperManager` (butuh izin `SET_WALLPAPER`), jadi wallpaper sistem & wallpaper layar kunci sistem tidak diubah. |
-| Mode layar kunci memakai *contain* | Supaya bingkai liquid-chrome tidak terpotong; di layar sangat lebar/landscape akan ada ruang berwarna gelap di kiri-kanan. |
+| Mode layar kunci memakai *cover* (bawaan) | Dipilih agar panel HUD animasi menyatu dengan gambar; pada rasio layar tak biasa, tepi bingkai bisa sedikit terpotong. Tersedia opsi "bingkai kosong" (tanpa HUD) bila ingin tampilan utuh. |
+| Ikon neon memakai satu warna (biru) | Identitas warna merek hilang; lihat §1c. Bisa dimatikan. |
+| Blur neon memakai CPU di Android lama | Ikon pertama kali muncul bisa terasa 20–40 ms di perangkat 2015; setelah masuk cache tidak ada biaya lagi. |
 
 ## 4. Kenapa tanpa izin sama sekali
 

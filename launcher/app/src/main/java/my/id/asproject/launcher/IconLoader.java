@@ -12,12 +12,15 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.LruCache;
 
-
 /**
  * Memuat ikon aplikasi sekali per sesi, lalu menyimpannya di memori (LruCache).
  *
- * Ikon adaptif (Android 8+) digambar dengan topeng squircle supaya tampil rapi di
- * kisi beranda — sama seperti peluncur bawaan Pixel.
+ * Dua gaya:
+ *   • Neon (bawaan) — 8 aplikasi populer memakai ikon neon buatan tangan
+ *     ({@link NeonIcons}); SEMUA aplikasi lain dibuatkan versi neon otomatis oleh
+ *     {@link NeonIconFactory}, sehingga seluruh kisi seragam.
+ *   • Asli — ikon aplikasi apa adanya; ikon adaptif (Android 8+) dipotong
+ *     squircle supaya rapi di kisi beranda.
  */
 public final class IconLoader {
 
@@ -50,6 +53,10 @@ public final class IconLoader {
         }
     }
 
+    public boolean isNeonEnabled() {
+        return neonEnabled;
+    }
+
     public Bitmap get(AppItem item) {
         Bitmap cached = cache.get(item.key);
         if (cached != null) {
@@ -66,25 +73,20 @@ public final class IconLoader {
     }
 
     private Bitmap render(AppItem item) {
+        Drawable drawable = loadDrawable(item);
+
         if (neonEnabled) {
-            int neonRes = NeonIcons.drawableFor(item.packageName);
-            if (neonRes != 0) {
-                Bitmap neon = renderNeon(neonRes);
+            int handcrafted = NeonIcons.drawableFor(item.packageName);
+            if (handcrafted != 0) {
+                Bitmap neon = renderResource(handcrafted);
                 if (neon != null) {
                     return neon;
                 }
             }
-        }
-        Drawable drawable = null;
-        try {
-            drawable = manager.getActivityIcon(new ComponentName(item.packageName, item.activityName));
-        } catch (PackageManager.NameNotFoundException notFound) {
-            // ikon bawaan sistem dipakai di bawah
-        } catch (RuntimeException ignored) {
-            // idem
-        }
-        if (drawable == null) {
-            drawable = manager.getDefaultActivityIcon();
+            Bitmap generated = NeonIconFactory.create(drawable, sizePx, item.key);
+            if (generated != null) {
+                return generated;
+            }
         }
 
         Bitmap bitmap = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888);
@@ -97,7 +99,22 @@ public final class IconLoader {
         return bitmap;
     }
 
-    private Bitmap renderNeon(int resId) {
+    private Drawable loadDrawable(AppItem item) {
+        Drawable drawable = null;
+        try {
+            drawable = manager.getActivityIcon(new ComponentName(item.packageName, item.activityName));
+        } catch (PackageManager.NameNotFoundException notFound) {
+            // ikon bawaan sistem dipakai di bawah
+        } catch (RuntimeException ignored) {
+            // idem
+        }
+        if (drawable == null) {
+            drawable = manager.getDefaultActivityIcon();
+        }
+        return drawable;
+    }
+
+    private Bitmap renderResource(int resId) {
         try {
             Drawable drawable = context.getResources().getDrawable(resId);
             if (drawable == null) {

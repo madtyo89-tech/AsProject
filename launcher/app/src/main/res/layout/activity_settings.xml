@@ -137,7 +137,41 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/neon_note"
+                android:text="@string/neon_note_all"
+                android:textColor="@color/text_hint"
+                android:textSize="11.5sp" />
+
+            <TextView
+                style="@style/SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/section_motion" />
+
+            <Switch
+                android:id="@+id/switchMotion"
+                style="@style/SettingsSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/liquid_motion" />
+
+            <Switch
+                android:id="@+id/switchHud"
+                style="@style/SettingsSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hud_animation" />
+
+            <Switch
+                android:id="@+id/switchLockFrame"
+                style="@style/SettingsSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lock_frame_only" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/motion_note"
                 android:textColor="@color/text_hint"
                 android:textSize="11.5sp" />
 

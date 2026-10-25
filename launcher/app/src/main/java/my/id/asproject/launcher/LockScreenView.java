@@ -1,6 +1,8 @@
 package my.id.asproject.launcher;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -40,6 +42,8 @@ public final class LockScreenView extends FrameLayout {
     private TextClock clock;
     private TextView dateView;
     private TextView batteryChip;
+    private HudView hud;
+    private LockWallpaperView wallpaper;
 
     private VelocityTracker velocity;
     private float downRawY;
@@ -48,7 +52,12 @@ public final class LockScreenView extends FrameLayout {
     private boolean unlocking;
 
     public LockScreenView(Context context) {
-        super(context);
+        this(context, null);
+    }
+
+    /** Dipakai saat di-inflate dari XML (activity_launcher.xml). */
+    public LockScreenView(Context context, android.util.AttributeSet attrs) {
+        super(context, attrs);
         touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         minVelocity = (int) (900 * getResources().getDisplayMetrics().density);
         unlockFraction = 0.16f;
@@ -59,6 +68,8 @@ public final class LockScreenView extends FrameLayout {
         clock = (TextClock) findViewById(R.id.lockClock);
         dateView = (TextView) findViewById(R.id.lockDate);
         batteryChip = (TextView) findViewById(R.id.chipBattery);
+        hud = (HudView) findViewById(R.id.hud);
+        wallpaper = (LockWallpaperView) findViewById(R.id.lockWallpaper);
     }
 
     public void setListener(Listener listener) {
@@ -76,6 +87,10 @@ public final class LockScreenView extends FrameLayout {
         setAlpha(1f);
         refreshBattery();
         refreshDate();
+        refreshHud();
+        if (wallpaper != null) {
+            wallpaper.setMotionEnabled(true);
+        }
         if (animate) {
             setAlpha(0f);
             content.setTranslationY(dp(28));
@@ -91,6 +106,29 @@ public final class LockScreenView extends FrameLayout {
         setVisibility(GONE);
         content.setTranslationY(0f);
         setAlpha(1f);
+        if (wallpaper != null) {
+            wallpaper.setMotionEnabled(false);
+        }
+    }
+
+    /** Terapkan pilihan tampilan dari Pengaturan. */
+    public void applyPrefs(Prefs prefs) {
+        boolean withHud = prefs.hudAnimation();
+        if (hud != null) {
+            hud.setVisibility(withHud ? View.VISIBLE : View.GONE);
+        }
+        // Beri ruang di bawah agar petunjuk "geser ke atas" tidak tertutup panel HUD
+        // (panel 132dp + margin 18dp + jarak aman 10dp).
+        View root = content;
+        if (root != null) {
+            int side = Math.round(26 * getResources().getDisplayMetrics().density);
+            int bottom = Math.round((withHud ? 160 : 18) * getResources().getDisplayMetrics().density);
+            root.setPadding(side, side, side, bottom);
+        }
+        if (wallpaper != null) {
+            wallpaper.useFrameOnly(prefs.lockFrameOnly());
+            wallpaper.setMotionEnabled(prefs.liquidMotion() && getVisibility() == VISIBLE);
+        }
     }
 
     public boolean isShowingLock() {
@@ -201,6 +239,49 @@ public final class LockScreenView extends FrameLayout {
         batteryChip.setText(getContext().getString(R.string.lock_chip_battery, level));
     }
 
+    /**
+     * Bacaan baterai untuk HUD: persen, status mengisi, dan suhu baterai
+     * (EXTRA_TEMPERATURE, sepersepuluh derajat Celsius). Semua dari siaran sticky
+     * ACTION_BATTERY_CHANGED — tidak memerlukan izin.
+     */
+    public void refreshHud() {
+        int level = -1;
+        boolean charging = false;
+        float temperature = Float.NaN;
+        try {
+            Intent battery = getContext().registerReceiver(null,
+                    new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            if (battery != null) {
+                int raw = battery.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                int scale = battery.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+                if (raw >= 0 && scale > 0) {
+                    level = Math.round(raw * 100f / scale);
+                }
+                int status = battery.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+                charging = status == BatteryManager.BATTERY_STATUS_CHARGING
+                        || status == BatteryManager.BATTERY_STATUS_FULL;
+                int tenths = battery.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, Integer.MIN_VALUE);
+                if (tenths != Integer.MIN_VALUE) {
+                    temperature = tenths / 10f;
+                }
+            }
+        } catch (RuntimeException ignored) {
+            // sebagian ROM menolak siaran sticky; HUD menampilkan "--"
+        }
+        if (level < 0) {
+            BatteryManager manager = (BatteryManager) getContext().getSystemService(Context.BATTERY_SERVICE);
+            if (manager != null) {
+                level = manager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+            }
+        }
+        if (hud != null) {
+            hud.setBattery(level, charging, temperature);
+        }
+        if (level >= 0) {
+            batteryChip.setText(getContext().getString(R.string.lock_chip_battery, level));
+        }
+    }
+
     public void refreshDate() {
         SimpleDateFormat format = new SimpleDateFormat("EEEE, d MMMM yyyy", new Locale("id", "ID"));
         dateView.setText(format.format(new Date()));
@@ -209,4 +290,27 @@ public final class LockScreenView extends FrameLayout {
     private int dp(float value) {
         return Math.round(value * getResources().getDisplayMetrics().density);
     }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        ticker.postDelayed(tick, 1000L);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        ticker.removeCallbacks(tick);
+        super.onDetachedFromWindow();
+    }
+
+    private final android.os.Handler ticker = new android.os.Handler();
+    private final Runnable tick = new Runnable() {
+        @Override
+        public void run() {
+            if (getVisibility() == VISIBLE) {
+                refreshHud();   // sekaligus memperbarui chip baterai di atas
+            }
+            ticker.postDelayed(this, 1000L);
+        }
+    };
 }

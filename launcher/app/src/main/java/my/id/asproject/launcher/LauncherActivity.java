@@ -87,7 +87,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     private boolean receiverRegistered;
     private boolean firstResume = true;
 
-    private View homeWallpaper;
+    private HomeWallpaperView homeWallpaper;
     private View glowLayer;
     private View scrimLayer;
     private LockScreenView lockScreen;
@@ -113,7 +113,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         icons = new IconLoader(this, getResources().getDimensionPixelSize(R.dimen.app_icon_size));
         adapter = new AppGridAdapter(this, icons, prefs.showLabels());
 
-        homeWallpaper = findViewById(R.id.homeWallpaper);
+        homeWallpaper = (HomeWallpaperView) findViewById(R.id.homeWallpaper);
         glowLayer = findViewById(R.id.glowLayer);
         scrimLayer = findViewById(R.id.scrimLayer);
         lockScreen = (LockScreenView) findViewById(R.id.lockScreen);
@@ -123,6 +123,8 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                 hideKeyboard();
                 searchInput.clearFocus();
                 reloadApps();
+                // Wallpaper beranda tidak perlu bergerak selama layar kunci tampil.
+                homeWallpaper.setMotionEnabled(prefs.figureWallpaper() && prefs.liquidMotion());
             }
         });
 
@@ -309,8 +311,11 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     private void applyWallpaper() {
         boolean figure = prefs.figureWallpaper();
         homeWallpaper.setVisibility(figure ? View.VISIBLE : View.GONE);
+        // Wallpaper neon sudah ramai: lapisan emas tambahan tidak perlu.
         glowLayer.setAlpha(figure ? 0f : 1f);
-        scrimLayer.setAlpha(figure ? 0.34f : 1f);
+        scrimLayer.setAlpha(figure ? 0.24f : 1f);
+        homeWallpaper.setMotionEnabled(figure && prefs.liquidMotion());
+        lockScreen.applyPrefs(prefs);
     }
 
     private void showLockScreen(boolean animate) {
@@ -320,6 +325,8 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         searchInput.setText("");
         searchInput.clearFocus();
         hideKeyboard();
+        // Hemat baterai: hentikan animasi wallpaper yang tertutup layar kunci.
+        homeWallpaper.setMotionEnabled(false);
         lockScreen.show(animate);
     }
 

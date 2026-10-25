@@ -25,8 +25,13 @@ import java.io.InputStream;
  */
 public final class WallpaperFigure {
 
-    public static final String ASSET_LOCK = "wallpaper/lock.jpg";
-    public static final String ASSET_HOME = "wallpaper/home.jpg";
+    /** Bingkai liquid-chrome kosong (tanpa HUD). */
+    public static final String ASSET_FRAME = "wallpaper/lock.jpg";
+    /** Liquid chrome + panel HUD (dipakai beranda & layar kunci bawaan). */
+    public static final String ASSET_HUD = "wallpaper/home.jpg";
+    /** Nama lama, dipertahankan agar kode/pengaturan lama tetap jalan. */
+    public static final String ASSET_LOCK = ASSET_FRAME;
+    public static final String ASSET_HOME = ASSET_HUD;
 
     private static final Paint PAINT = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
 

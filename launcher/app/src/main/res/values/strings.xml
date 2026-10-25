@@ -40,7 +40,9 @@
     <string name="section_about">Tentang</string>
     <string name="version_format">AsProject Launcher %1$s</string>
     <string name="about_body">Launcher beranda tanpa iklan, tanpa izin, dan tanpa pelacakan. Semua pengaturan disimpan di perangkat ini saja.</string>
-    <string name="about_message">AsProject Launcher\n\nLauncher beranda ringan untuk Android 5.0 ke atas.\n\n• Tanpa izin apa pun — tidak ada akses internet, lokasi, atau kontak.\n• Jam besar, pencarian instan, dock 5 ikon, sembunyikan aplikasi.\n• Tekan lama ikon untuk opsi; tekan lama area kosong untuk mengganti wallpaper.\n\nasproject.my.id</string>
+    <string name="about_message">AsProject Launcher\n\nLauncher beranda ringan untuk Android 5.0 ke atas.\n\n• Tanpa izin apa pun — tidak ada akses internet, lokasi, atau kontak.\n• Jam besar, pencarian instan, dock 5 ikon, sembunyikan aplikasi.\n• Tekan lama ikon untuk opsi; tekan lama area kosong untuk mengganti wallpaper.
+• HUD menampilkan data asli: jam, daya baterai, dan suhu baterai. Angka
+  "SECURE LINK / EST ms / INTEGRITAS" hanya dekorasi, bukan pengukuran.\n\nasproject.my.id</string>
     <string name="back">Kembali</string>
 
     <!-- Layar kunci -->
@@ -59,5 +61,10 @@
     <string name="lock_note">Layar kunci muncul saat ponsel dibuka. Geser ke atas untuk masuk ke beranda.</string>
     <string name="section_icons">Ikon</string>
     <string name="use_neon_icons">Ikon neon sirkuit</string>
-    <string name="neon_note">Phone, Message, Camera, Settings, Music, Chrome, WhatsApp, Instagram — hanya bila aplikasinya terpasang.</string>
+    <string name="neon_note_all">Semua aplikasi mendapat ikon neon otomatis dari bentuk ikon aslinya; 8 aplikasi populer memakai ikon neon khusus.</string>
+    <string name="section_motion">Animasi</string>
+    <string name="liquid_motion">Wallpaper liquid bergerak (3D)</string>
+    <string name="hud_animation">HUD layar kunci beranimasi</string>
+    <string name="motion_note">Efek 3D dan HUD berjalan 30–60 fps hanya saat layar tampil. Matikan bila baterai terasa lebih cepat habis.</string>
+    <string name="lock_frame_only">Layar kunci pakai bingkai kosong (tanpa HUD)</string>
 </resources>

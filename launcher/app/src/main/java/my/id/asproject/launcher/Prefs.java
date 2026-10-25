@@ -25,6 +25,9 @@ public final class Prefs {
     private static final String KEY_FIGURE_WALLPAPER = "figure_wallpaper";
     private static final String KEY_LOCK_SCREEN = "lock_screen";
     private static final String KEY_NEON_ICONS = "neon_icons";
+    private static final String KEY_HUD_ANIMATION = "hud_animation";
+    private static final String KEY_LIQUID_MOTION = "liquid_motion";
+    private static final String KEY_LOCK_FRAME = "lock_frame_only";
 
     public static final int MIN_COLUMNS = 3;
     public static final int MAX_COLUMNS = 6;
@@ -101,6 +104,33 @@ public final class Prefs {
 
     public void setNeonIcons(boolean enabled) {
         prefs.edit().putBoolean(KEY_NEON_ICONS, enabled).apply();
+    }
+
+    /** HUD layar kunci beranimasi (cincin berputar, garis pindai, gelombang). */
+    public boolean hudAnimation() {
+        return prefs.getBoolean(KEY_HUD_ANIMATION, true);
+    }
+
+    public void setHudAnimation(boolean enabled) {
+        prefs.edit().putBoolean(KEY_HUD_ANIMATION, enabled).apply();
+    }
+
+    /** Wallpaper liquid bergerak (efek 3D). */
+    public boolean liquidMotion() {
+        return prefs.getBoolean(KEY_LIQUID_MOTION, true);
+    }
+
+    public void setLiquidMotion(boolean enabled) {
+        prefs.edit().putBoolean(KEY_LIQUID_MOTION, enabled).apply();
+    }
+
+    /** Layar kunci memakai bingkai kosong (tanpa HUD). */
+    public boolean lockFrameOnly() {
+        return prefs.getBoolean(KEY_LOCK_FRAME, false);
+    }
+
+    public void setLockFrameOnly(boolean frameOnly) {
+        prefs.edit().putBoolean(KEY_LOCK_FRAME, frameOnly).apply();
     }
 
     // ------------------------------------------------------------------ dock
