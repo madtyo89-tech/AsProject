@@ -56,7 +56,19 @@ const TOKEN={
  'rimba-tropis':{nama:'Rimba Tropis',ev:'pernikahan',g:['#F0F7EE','#D6EAD9','#A9CDB0'],accent:'#1F6B44',ink:'#274A33',ft:'merriweather',char:'RIMBA',orn:'botanical',pat:'monstera',border:'laurel',deco:'❀ ✦ ❀',desc:'Rimba tropis — monstera & palem rimbun, hijau segar [BARU]'},
  'kertas-kraft':{nama:'Kertas Kraft',ev:'pernikahan',g:['#EFE4D0','#E0CDA6','#C9AE83'],accent:'#7C5230',ink:'#4E3B26',ft:'caveat',char:'KRAFT',orn:'coretan',pat:'kraft',border:'gapdash',deco:'✁ ✦ ✁',desc:'Kertas kraft bertekstur, tulisan tangan, kesan kraftangan [BARU]'},
  'wabi-sabi':{nama:'Wabi Sabi',ev:'pernikahan',g:['#F1ECE3','#E4DBCB','#CFC0AA'],accent:'#8C7A64',ink:'#57503F',ft:'cormorant',char:'WABI',orn:'mutiara',pat:'washi',border:'halo',deco:'・ ✦ ・',desc:'Wabi sabi — ketidaksempurnaan yang tenang, washi & tanah [BARU]'},
- 'bunga-kering':{nama:'Bunga Kering',ev:'pernikahan',g:['#F4E7D7','#E4C9AE','#CBA37C'],accent:'#9C6B4F',ink:'#5E4634',ft:'lora',char:'KEMBANG',orn:'mawar',pat:'botanical',border:'pearl',deco:'❀ ✦ ❀',desc:'Bunga kering — dusty rose & gandum, nostalgi lembut [BARU]'}
+ 'bunga-kering':{nama:'Bunga Kering',ev:'pernikahan',g:['#F4E7D7','#E4C9AE','#CBA37C'],accent:'#9C6B4F',ink:'#5E4634',ft:'lora',char:'KEMBANG',orn:'mawar',pat:'botanical',border:'pearl',deco:'❀ ✦ ❀',desc:'Bunga kering — dusty rose & gandum, nostalgi lembut [BARU]'},
+
+ /* ---- [BARU] Liquid Glass: satu tema per kategori ----
+    Efek hidupnya (blob Aurora bergerak, tilt 3D gyro/sentuh, kilau
+    specular, aksen dinamis yang bisa diganti tamu) tinggal di
+    assets/liquid-glass.{css,js} dan hanya menyala untuk empat tema
+    Liquid Glass (kelas badan 'tema-liquid' di undangan.html).
+    Tanpa aset itu tema tetap tampil sebagai shell kaca biasa —
+    degrade anggun. */
+ 'liquid-glass':{nama:'Liquid Glass Aurora',ev:'pernikahan',g:['#EFF7FF','#DCEAFF','#C9DBFF'],accent:'#3E5EDD',ink:'#22314F',ft:'montserrat',char:'Aurora',orn:'geometrik',pat:'frost',border:'vip-aurora',deco:'✦ ◇ ✦',studioOnly:true,desc:'Liquid glass pernikahan — kaca cair Aurora 3D dinamis, aksen bisa diganti tamu [BARU]'},
+ 'liquid-glass-khitanan':{nama:'Liquid Glass Khatam',ev:'khitanan',g:['#ECFDF8','#D2F5E7','#C7E8FF'],accent:'#0F766E',ink:'#173F3C',ft:'poppins',char:'KHATAM',orn:'arabesque',pat:'girih',border:'filigree',deco:'۞ ✦ ۞',studioOnly:true,desc:'Liquid glass khitanan — kaca es zamrud Islami 3D dinamis, aksen bisa diganti tamu [BARU]'},
+ 'liquid-glass-ultah':{nama:'Liquid Glass Neon',ev:'ultah',g:['#FFF7ED','#FCE7F3','#DDD6FE'],accent:'#B4237A',ink:'#3B174A',ft:'poppins',char:'NEON',orn:'confetti',pat:'confetti',border:'vip-aurora',deco:'★ ✦ ★',studioOnly:true,desc:'Liquid glass ultah — kaca neon pop 3D dinamis, blob warna-warni dan aksen bisa diganti tamu [BARU]'},
+ 'liquid-glass-aqiqah':{nama:'Liquid Glass Mentari',ev:'aqiqah',g:['#FFF9E9','#DFF6EE','#DCEBFF'],accent:'#2F7E73',ink:'#284856',ft:'poppins',char:'MENTARI',orn:'awan',pat:'frost',border:'halo',deco:'☁ ✦ ☁',studioOnly:true,desc:'Liquid glass aqiqah — kaca mentari lembut 3D dinamis, aksen bisa diganti tamu [BARU]'}
 };
 const TOKEN_IDS=Object.keys(TOKEN);
 if(typeof module!=='undefined')module.exports={TOKEN,TOKEN_IDS};

@@ -487,6 +487,37 @@ Jaminan invariansi yang dijaga otomatis:
   jalankan `node tools/bangun-tpl.cjs`, lalu `node tools/cek-kerangka.cjs`
   dan `python3 tools/cek-kesehatan.py`.
 
+## Tema Liquid Glass per kategori (2026-10-25)
+
+Empat tema kaca cair futuristik, **tepat satu per kategori** (bukan satu
+tema `all`): *Liquid Glass Aurora* (`liquid-glass`, pernikahan),
+*Liquid Glass Khatam* (`liquid-glass-khitanan`), *Liquid Glass Neon*
+(`liquid-glass-ultah`), dan *Liquid Glass Mentari*
+(`liquid-glass-aqiqah`). Keempatnya **Studio-only** dulu mengikuti pola
+rilis tema baru — katalog publik tetap 34 tema, dan posisinya di akhir
+array `TPL` supaya index `theme` undangan lama tidak berubah.
+
+- **Token** terpisah per kategori (palet, font, ornamen, pola sendiri),
+  terkompilasi ke layout kaca lama (`kaca-manis`/`kaca-dewasa`) dan
+  model cover `glass`, jadi renderer lama memakainya tanpa layout baru.
+- **Lapisan efek** tinggal di `assets/liquid-glass.css` +
+  `assets/liquid-glass.js`, hanya menyala untuk id `liquid-glass*`
+  (kelas `tema-liquid` di `undangan.html`, dimount sesudah `#cover`
+  lahir, disebelah mount VIP 4D): blob Aurora cair yang bergerak di
+  balik panel kaca, tilt 3D mengikuti kursor/sentuh/gyro HP, kilau
+  specular mengikuti posisi cahaya, dan **pemilih aksen dinamis**
+  (6 preset; bawaan per kategori; pilihan tamu disimpan di
+  `sessionStorage`). `prefers-reduced-motion` mematikan tilt/animasi;
+  tanpa `backdrop-filter` panel naik opasitasnya; tanpa aset ini tema
+  tetap tampil sebagai shell kaca biasa.
+- **Export mandiri**: Studio menyematkan CSS/JS liquid ke file HTML
+  hasil “Simpan File HTML” hanya bila tema terpilih Liquid Glass.
+- **Uji**: `node tools/test-liquid-glass.cjs` (60 pemeriksaan, ikut
+  loop CI `tools/test-*.cjs`) mengunci tepat-satu-per-kategori,
+  posisi akhir array, dan pemasangan hook-nya; asersi
+  `studioOnlyBaru` di `tools/test-wedding-templates.cjs` kini
+  mengekspektasikan tepat keempat tema ini sebagai staged Studio-only.
+
 ## Link undangan untuk semua tamu (tanpa nama) di Master & Studio (2026-10-15)
 
 - Halaman **master.html** mendapat kartu **🌐 Link Undangan untuk Semua**: satu tautan

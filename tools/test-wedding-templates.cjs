@@ -79,7 +79,7 @@ const studioOnlyBaru = studioTpl.filter(t => t.studioOnly && !t.arch);
 assert.equal(pubIds.length, expectedPublic.length, 'index.html: jumlah tema katalog publik = template non-Studio-only');
 assert.deepEqual([...pubIds].sort(), [...expectedPublic].sort(), 'index.html: katalog publik memakai tema yang sama dengan TPL publik (rapi per kategori)');
 assert.deepEqual(archOnly.map(t => t.id), ['gerbang-rosewood','gerbang-sage-pearl','gerbang-midnight-navy','gerbang-khitanan-emerald','gerbang-aqiqah-natural','gerbang-pesta-ceria'], 'enam tema Gerbang tersedia khusus di Studio');
-assert.deepEqual(studioOnlyBaru.map(t => t.id), [], 'dua belas tema baru sudah dipublikasikan ke katalog (pola Gerbang selesai)');
+assert.deepEqual(studioOnlyBaru.map(t => t.id), ['liquid-glass', 'liquid-glass-khitanan', 'liquid-glass-ultah', 'liquid-glass-aqiqah'], 'selain 4 Liquid Glass staged Studio-only (1 per kategori), tema baru sudah dipublikasikan ke katalog');
 assert(archOnly.every(t => t.arch), 'semua tema Studio-only Arch memakai penanda arch');
 assert(studioOnlyBaru.every(t => t.harga > 0), 'tema Studio-only baru membawa harga (bukan arch)');
 assert(archOnly.every(t => !t.harga) && liveTpl.filter(t => t.studioOnly && t.arch).every(t => !t.harga), 'varian Arch tidak membawa harga asumsi di Studio maupun live');

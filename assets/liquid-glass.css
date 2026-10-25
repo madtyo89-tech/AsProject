@@ -1,0 +1,214 @@
+/* AsProject Liquid Glass — material kaca cair futuristik untuk tema
+   Liquid Glass Aurora (pernikahan), Khatam (khitanan), Neon (ultah),
+   dan Mentari (aqiqah).
+
+   Semua aturan dikunci ke body.tema-liquid; tema lain tidak berubah.
+   Layer .lg-Aurora dan pemilih aksen dibuat oleh assets/liquid-glass.js.
+   Bila JS/CSS tidak termuat, tema tetap tampil sebagai shell kaca biasa.
+*/
+
+body.tema-liquid{
+  --lg-c1:#56ccf2;
+  --lg-c2:#8b7cff;
+  --lg-c3:#f58ab5;
+  --lg-c4:#ffd166;
+  --lg-rx:0deg;
+  --lg-ry:0deg;
+  --lg-mx:50%;
+  --lg-my:0%;
+  --lg-ink-shadow:rgba(34,49,79,.20);
+}
+
+/* Aksen bawaan tiap kategori; pemilih warna tamu bisa menimpanya. */
+body.tema-liquid-glass-khitanan{--lg-c1:#34d399;--lg-c2:#22d3ee;--lg-c3:#a3e635;--lg-c4:#bfdbfe}
+body.tema-liquid-glass-ultah{--lg-c1:#ff6b9d;--lg-c2:#ffb86b;--lg-c3:#a78bfa;--lg-c4:#67e8f9}
+body.tema-liquid-glass-aqiqah{--lg-c1:#fde68a;--lg-c2:#6ee7b7;--lg-c3:#93c5fd;--lg-c4:#fbcfe8}
+
+/* ---------- Aurora: blob cairan di balik kaca ---------- */
+body.tema-liquid .lg-Aurora{
+  position:absolute;inset:-12%;overflow:hidden;pointer-events:none;
+  z-index:0;isolation:isolate;
+}
+body.tema-liquid .lg-Aurora-page{
+  position:fixed;inset:-10%;z-index:0;
+}
+body.tema-liquid #app{position:relative;z-index:1}
+body.tema-liquid .lg-Aurora i{
+  position:absolute;display:block;width:58vmax;height:58vmax;opacity:.58;
+  border-radius:42% 58% 63% 37%/45% 40% 60% 55%;
+  will-change:transform,border-radius;
+}
+body.tema-liquid .lg-Aurora i:nth-child(1){
+  left:-18%;top:-16%;background:radial-gradient(circle at 35% 35%,var(--lg-c1),transparent 66%);
+  animation:lg-cair-a 18s ease-in-out infinite alternate;
+}
+body.tema-liquid .lg-Aurora i:nth-child(2){
+  right:-22%;top:8%;background:radial-gradient(circle at 60% 38%,var(--lg-c2),transparent 67%);
+  animation:lg-cair-b 22s ease-in-out infinite alternate;
+}
+body.tema-liquid .lg-Aurora i:nth-child(3){
+  left:4%;bottom:-24%;background:radial-gradient(circle at 45% 45%,var(--lg-c3),transparent 68%);
+  animation:lg-cair-c 20s ease-in-out infinite alternate;
+}
+body.tema-liquid .lg-Aurora i:nth-child(4){
+  right:2%;bottom:-12%;width:42vmax;height:42vmax;opacity:.45;
+  background:radial-gradient(circle at 45% 45%,var(--lg-c4),transparent 68%);
+  animation:lg-cair-a 16s ease-in-out infinite alternate-reverse;
+}
+@keyframes lg-cair-a{
+  from{transform:translate3d(-3%,-2%,0) scale(1) rotate(0deg);border-radius:42% 58% 63% 37%/45% 40% 60% 55%}
+  to{transform:translate3d(10%,7%,0) scale(1.14) rotate(18deg);border-radius:61% 39% 38% 62%/52% 62% 38% 48%}
+}
+@keyframes lg-cair-b{
+  from{transform:translate3d(4%,5%,0) scale(1.08) rotate(8deg);border-radius:58% 42% 40% 60%/45% 58% 42% 55%}
+  to{transform:translate3d(-11%,-4%,0) scale(.94) rotate(-14deg);border-radius:39% 61% 59% 41%/61% 39% 61% 39%}
+}
+@keyframes lg-cair-c{
+  from{transform:translate3d(2%,4%,0) scale(.96) rotate(-6deg);border-radius:47% 53% 61% 39%/57% 43% 57% 43%}
+  to{transform:translate3d(12%,-8%,0) scale(1.16) rotate(12deg);border-radius:62% 38% 43% 57%/41% 59% 41% 59%}
+}
+
+/* Biarkan blob terlihat melalui latar konten, bukan ditutup warna padat. */
+body.tema-liquid .wrap{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.08) 34%,rgba(255,255,255,.20)),
+    radial-gradient(90% 52% at 12% 0%,rgba(255,255,255,.34),transparent 62%),
+    radial-gradient(80% 55% at 94% 42%,rgba(255,255,255,.20),transparent 64%);
+}
+
+/* ---------- Material kaca ---------- */
+body.tema-liquid .card,
+body.tema-liquid #cover .bdfr{
+  background-color:rgba(255,255,255,.38);
+  background-image:
+    radial-gradient(560px circle at var(--lg-mx) var(--lg-my),rgba(255,255,255,.62),rgba(255,255,255,0) 46%),
+    linear-gradient(145deg,rgba(255,255,255,.66),rgba(255,255,255,.20) 42%,rgba(255,255,255,.40));
+  border:1px solid rgba(255,255,255,.78);
+  border-radius:30px;
+  -webkit-backdrop-filter:blur(20px) saturate(1.65);
+  backdrop-filter:blur(20px) saturate(1.65);
+  box-shadow:
+    0 24px 58px var(--lg-ink-shadow),
+    0 4px 16px rgba(255,255,255,.20),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 1px 0 0 rgba(255,255,255,.36),
+    inset -1px 0 0 rgba(255,255,255,.18),
+    inset 0 -18px 32px rgba(255,255,255,.14);
+}
+
+/* Lapisan konten terluar sedikit mengikuti ruang 3D; cover lebih terasa. */
+body.tema-liquid #cover{perspective:1100px}
+body.tema-liquid #cover .bdfr{
+  transform:perspective(1100px) rotateX(var(--lg-rx)) rotateY(var(--lg-ry)) translateZ(0);
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+body.tema-liquid .card{
+  transform:perspective(1200px) rotateX(calc(var(--lg-rx) * .18)) rotateY(calc(var(--lg-ry) * .18));
+  transform-style:preserve-3d;
+}
+
+/* Garis prisma di tepi atas panel. */
+body.tema-liquid .card::before,
+body.tema-liquid #cover .bdfr::before{
+  content:"";position:absolute;left:18px;right:18px;top:0;height:2px;
+  border-radius:99px;pointer-events:none;opacity:.85;
+  background:linear-gradient(90deg,transparent,var(--lg-c1),rgba(255,255,255,.96),var(--lg-c3),transparent);
+}
+/* Kilau diagonal lembut; --lg-mx digerakkan JS mengikuti sentuh/gyro. */
+body.tema-liquid .card::after,
+body.tema-liquid #cover .bdfr::after{
+  content:"";position:absolute;inset:1px;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.38) 0%,transparent 30%,transparent 72%,rgba(255,255,255,.18) 100%);
+  background-position:var(--lg-mx) var(--lg-my);
+  mix-blend-mode:soft-light;
+}
+
+/* Countdown jadi kubus kaca kecil. */
+body.tema-liquid .cdw .u,
+body.tema-liquid .cdw-mini .u{
+  background:linear-gradient(155deg,rgba(255,255,255,.72),rgba(255,255,255,.26));
+  border:1px solid rgba(255,255,255,.82);
+  border-radius:20px;
+  -webkit-backdrop-filter:blur(14px) saturate(1.5);
+  backdrop-filter:blur(14px) saturate(1.5);
+  box-shadow:0 12px 28px rgba(34,49,79,.16),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -10px 20px rgba(255,255,255,.16);
+}
+
+/* Tombol utama terasa seperti kapsul gel berwarna. */
+body.tema-liquid .btn-gold{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 74%,#fff),var(--accent) 52%,color-mix(in srgb,var(--accent) 78%,#111827));
+  color:#fff;
+  border:1px solid rgba(255,255,255,.72);
+  box-shadow:0 14px 32px color-mix(in srgb,var(--accent) 38%,transparent),inset 0 1px 0 rgba(255,255,255,.88),inset 0 -10px 18px rgba(255,255,255,.16);
+  text-shadow:0 1px 8px rgba(0,0,0,.22);
+}
+
+/* Navigasi titik ikut menjadi rel kaca. */
+body.tema-liquid .lay-navdot{
+  background:rgba(255,255,255,.28);
+  border:1px solid rgba(255,255,255,.62);
+  -webkit-backdrop-filter:blur(16px) saturate(1.5);
+  backdrop-filter:blur(16px) saturate(1.5);
+  box-shadow:0 12px 32px rgba(34,49,79,.16),inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+/* ---------- Pemilih aksen dinamis ---------- */
+body.tema-liquid .lg-dock{
+  position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:130;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  padding:9px 7px;border:1px solid rgba(255,255,255,.72);border-radius:99px;
+  background:linear-gradient(160deg,rgba(255,255,255,.56),rgba(255,255,255,.22));
+  -webkit-backdrop-filter:blur(18px) saturate(1.65);
+  backdrop-filter:blur(18px) saturate(1.65);
+  box-shadow:0 16px 38px rgba(34,49,79,.20),inset 0 1px 0 rgba(255,255,255,.92);
+  transition:opacity .35s ease,transform .35s ease;
+}
+body.tema-liquid.navpager .lg-dock{bottom:calc(124px + env(safe-area-inset-bottom,0px))}
+body.tema-liquid:not(.opened):not(.preview-mode) .lg-dock{
+  opacity:0;pointer-events:none;transform:translateX(12px) scale(.94);
+}
+body.tema-liquid.kartu-demo .lg-dock{display:none}
+body.tema-liquid .lg-dock-label{
+  font-size:8px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-body,var(--ink));opacity:.68;writing-mode:vertical-rl;
+  line-height:1;padding:2px 0 3px;
+}
+body.tema-liquid .lg-swatch{
+  appearance:none;width:30px;height:30px;padding:0;cursor:pointer;
+  border:2px solid rgba(255,255,255,.88);border-radius:50%;
+  box-shadow:0 5px 14px rgba(34,49,79,.20),inset 0 1px 2px rgba(255,255,255,.95),inset 0 -6px 9px rgba(255,255,255,.24);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+body.tema-liquid .lg-swatch:hover{transform:scale(1.1)}
+body.tema-liquid .lg-swatch:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+body.tema-liquid .lg-swatch[aria-pressed="true"]{
+  transform:scale(1.14);
+  box-shadow:0 0 0 3px rgba(255,255,255,.88),0 0 0 5px var(--accent),0 8px 18px rgba(34,49,79,.22);
+}
+@media (max-height:620px){
+  body.tema-liquid .lg-dock{flex-direction:row;bottom:calc(122px + env(safe-area-inset-bottom,0px));padding:7px 9px}
+  body.tema-liquid .lg-dock-label{writing-mode:horizontal-tb;padding:0 2px}
+  body.tema-liquid .lg-swatch{width:26px;height:26px}
+}
+
+/* Konten cover tetap di atas Aurora. */
+body.tema-liquid #cover>.bdfr,
+body.tema-liquid #cover>.pat,
+body.tema-liquid #cover>.veil,
+body.tema-liquid #cover>.brand{position:relative;z-index:2}
+
+/* Pengguna yang meminta gerak dikurangi mendapat kaca statis. */
+@media (prefers-reduced-motion:reduce){
+  body.tema-liquid .lg-Aurora i{animation:none!important}
+  body.tema-liquid #cover .bdfr,
+  body.tema-liquid .card{transform:none!important;will-change:auto}
+  body.tema-liquid .lg-dock,
+  body.tema-liquid .lg-swatch{transition:none}
+}
+
+/* Tanpa backdrop-filter, naikkan opasitas agar teks tetap terbaca. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  body.tema-liquid .card,
+  body.tema-liquid #cover .bdfr{background-color:rgba(255,255,255,.88)}
+}

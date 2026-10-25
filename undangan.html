@@ -2117,6 +2117,8 @@ body.lay-rimbun .lay-navdot{background:rgba(20,14,30,.75);border-color:color-mix
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
 <script src="assets/vip-4d.js"></script>
+<link rel="stylesheet" href="assets/liquid-glass.css">
+<script src="assets/liquid-glass.js"></script>
 <script src="assets/theme-contrast.js"></script>
 <link rel="stylesheet" href="assets/button-help.css">
 <script src="assets/button-help.js" defer></script>
@@ -2237,6 +2239,20 @@ body.lay-rimbun .lay-navdot{background:rgba(20,14,30,.75);border-color:color-mix
    di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
    ekstra,cover} — dirender jalur kerangka di undangan.html.
    34 tema publik + 6 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   34 tema publik + 7 Studio-only. */
+/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
+   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
+   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
+   'theme' di Supabase adalah index ke array ini). Entry baru selalu
+   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
+   ekstra,cover} — dirender jalur kerangka di undangan.html.
+   34 tema publik + 10 Studio-only. */
 const TPL=[ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'DASAR',deco:'✦ ❖ ✦',pat:'damask',ft:'cormorant',desc:'Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu',layout:'klasik',orn:'klasik',border:'double',cover:'amplop',buka:'amplop'}, {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',badge:'LARIS',deco:'❖ ✦ ❖',pat:'parang',ft:'marcellus',char:'JAWA',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil',layout:'arsip',orn:'batik',border:'frame2',cover:'royal',buka:'tirai'}, {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet',layout:'editorial-sage',orn:'geometrik',border:'thin',cover:'minimal',buka:'buku'}, {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'PREMIUM',deco:'✦ ❖ ✦',pat:'deco',ft:'playfair',char:'GOLD',desc:'Glam soft luxury, emboss gold & black tie vibe',layout:'panggung-emas',orn:'deco',border:'vip-diamond',cover:'royal',buka:'gerbang'}, {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party',layout:'zigzag-rustic',orn:'mawar',border:'gapdash',cover:'sakura',buka:'pita'}, {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan',layout:'poster-ceria',orn:'confetti',border:'dotted',cover:'kartu',buka:'pita'}, {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',deco:'۞ ✦ ۞',pat:'girih',ft:'cinzel',char:'ISLAMI',desc:'Islami elegan dengan ornamen arabesque gold yang halus',layout:'bab-islami',orn:'bulan',border:'filigree',cover:'batik',buka:'selendang'}, {id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'LARIS',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Warna-warni happy, balon & confetti buat si kecil',layout:'poster-anak',orn:'kembang-api',border:'dashed',cover:'ticket',buka:'pita'}, {id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',badge:'FAVORIT',deco:'✦ ❀ ✦',pat:'tabur',ft:'dancing',char:'SWEET',desc:'Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya',layout:'kaca-manis',orn:'pita',border:'ribbon-satin',cover:'polaroid',buka:'pita'}, {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',deco:'❖ ─ ❖',pat:'marmer',ft:'ebgaramond',char:'ELEGAN',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy',layout:'kaca-dewasa',orn:'zaitun',border:'topbot',cover:'archive',buka:'pintu'}, {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',desc:'Lembut biru langit, ilustrasi baby boy yang gemes',layout:'lembut-biru',orn:'awan',border:'halo',cover:'glass',buka:'pita'}, {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',deco:'✿ ✦ ✿',pat:'renda',ft:'caveat',char:'PUTRI',desc:'Pink blush super lembut buat si putri kecil kesayangan',layout:'lembut-merah',orn:'bunga',border:'pearl-crown',cover:'sakura',buka:'pita'}, {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F2E4','#E7E3CB','#D2CBA8'],accent:'#6E7A52',ink:'#5A5540',deco:'۞ ❖ ۞',pat:'damask',ft:'marcellus',char:'ADAB',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat',layout:'bab-netral',orn:'arabesque',border:'corners',cover:'batik',buka:'selendang'}, {id:'midnight-gold',nama:'Midnight Gold',ev:'pernikahan',g:['#1E1A15','#2E2419','#4A3A22'],accent:'#D4AF37',ink:'#F2E8D5',badge:'BARU',deco:'✦ ❖ ✦',pat:'sulur',ft:'cinzel',char:'ONYX',desc:'Kemewahan onyx & gold foil — drama elegan untuk malam sakral',layout:'split-midnight',orn:'onyx',border:'onyx-inlay',cover:'night',buka:'amplop'}, {id:'emerald-royal',nama:'Emerald Royal',ev:'pernikahan',g:['#14342B','#1F4D3E','#356B55'],accent:'#D9B86C',ink:'#F0EAD6',badge:'BARU',deco:'❖ ✦ ❖',pat:'botanical',ft:'marcellus',char:'ZAMRUD',desc:'Zamrud pekat beraksen emas kerajaan, anggun & berwibawa',layout:'bab-royal',orn:'botanical',border:'laurel',cover:'royal',buka:'gerbang'}, {id:'navy-crest',nama:'Navy Crest',ev:'khitanan',g:['#16233F','#223457','#334B76'],accent:'#E7C27D',ink:'#F2ECDC',badge:'BARU',deco:'★ ✦ ★',pat:'ombak',ft:'ebgaramond',char:'BINTANG',desc:'Navy klasik bercrest emas — gagah, sopan, tetap mewah',layout:'split-navy',orn:'mahkota',border:'vip-crown',cover:'night',buka:'pintu'}, {id:'golden-jubilee',nama:'Golden Jubilee',ev:'ultah',g:['#F5E7C8','#E8CF96','#D4AF37'],accent:'#8C6D1F',ink:'#5C4714',badge:'BARU',deco:'✦ ✸ ✦',pat:'deco',ft:'playfair',char:'JUBILE',desc:'Pesta emas champagne buat milestone istimewa — 30, 40, 50 tahun',layout:'zigzag-jubile',orn:'bintang',border:'artdeco',cover:'ticket',buka:'gerbang'}, {id:'pearl-ivory',nama:'Pearl Ivory',ev:'aqiqah',g:['#FDF9F3','#F6E7E2','#E9D2CE'],accent:'#A87E74',ink:'#5E4E36',badge:'BARU',deco:'✦ ❖ ✦',pat:'renda',ft:'cormorant',char:'MUTIARA',desc:'Lembut mutiara & ivory hangat, elegan menyambut si kecil',layout:'editorial-mutiara',orn:'mutiara',border:'lace-ivory',cover:'kartu',buka:'kotak'},
  {id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'botanical',ft:'lora',char:'ROSEWOOD',desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood',layout:'panggung-gerbang',orn:'mawar',border:'gold-leaf',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
  {id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#EEEFE4','#D8DDCB'],accent:'#526A55',ink:'#435348',badge:'GERBANG',deco:'✿ ❋ ✿',pat:'botanical',ft:'ebgaramond',char:'SAGE',desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch',layout:'editorial-mutiara',orn:'mutiara',border:'pearl',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
@@ -2259,7 +2275,13 @@ const TPL=[ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',g:['#FBFAF7','#F0ECE
  {id:'rimba-tropis',nama:'Rimba Tropis',ev:'pernikahan',g:['#F0F7EE','#D6EAD9','#A9CDB0'],accent:'#1F6B44',ink:'#274A33',badge:'BARU',deco:'❀ ✦ ❀',pat:'monstera',ft:'merriweather',char:'RIMBA',desc:'Rimba tropis — monstera & palem rimbun, hijau segar, cover foto penuh',layout:null,orn:'botanical',border:'laurel',cover:'foto',buka:'gerbang',kb:{"shell":"panggung","urutan":["profil","quote","guest","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["heroFoto"],"cover":"night"}},
  {id:'kertas-kraft',nama:'Kertas Kraft',ev:'pernikahan',g:['#EFE4D0','#E0CDA6','#C9AE83'],accent:'#7C5230',ink:'#4E3B26',badge:'BARU',deco:'✁ ✦ ✁',pat:'kraft',ft:'caveat',char:'KRAFT',desc:'Kertas kraft bertekstur, tulisan tangan, kesan kraftangan',layout:null,orn:'coretan',border:'gapdash',cover:'archive',buka:'buku',kb:{"shell":"arsip","urutan":["guest","doa","profil","harapan","quote","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["navDot"],"cover":"amplop"}},
  {id:'wabi-sabi',nama:'Wabi Sabi',ev:'pernikahan',g:['#F1ECE3','#E4DBCB','#CFC0AA'],accent:'#8C7A64',ink:'#57503F',badge:'BARU',deco:'・ ✦ ・',pat:'washi',ft:'cormorant',char:'WABI',desc:'Wabi sabi — ketidaksempurnaan yang tenang, washi & tanah',layout:null,orn:'mutiara',border:'halo',cover:'minimal',buka:'buku',kb:{"shell":"gedung","urutan":["quote","profil","guest","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":[],"cover":"amplop"}},
- {id:'bunga-kering',nama:'Bunga Kering',ev:'pernikahan',g:['#F4E7D7','#E4C9AE','#CBA37C'],accent:'#9C6B4F',ink:'#5E4634',badge:'BARU',deco:'❀ ✦ ❀',pat:'botanical',ft:'lora',char:'KEMBANG',desc:'Bunga kering — dusty rose & gandum, nostalgi lembut',layout:null,orn:'mawar',border:'pearl',cover:'polaroid',buka:'pita',kb:{"shell":"lembut","urutan":["guest","profil","quote","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["galeriStrip"],"cover":"gerbang"}}];
+ {id:'bunga-kering',nama:'Bunga Kering',ev:'pernikahan',g:['#F4E7D7','#E4C9AE','#CBA37C'],accent:'#9C6B4F',ink:'#5E4634',badge:'BARU',deco:'❀ ✦ ❀',pat:'botanical',ft:'lora',char:'KEMBANG',desc:'Bunga kering — dusty rose & gandum, nostalgi lembut',layout:null,orn:'mawar',border:'pearl',cover:'polaroid',buka:'pita',kb:{"shell":"lembut","urutan":["guest","profil","quote","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["galeriStrip"],"cover":"gerbang"}},
+ {id:'liquid-glass',nama:'Liquid Glass Aurora',ev:'pernikahan',g:['#EFF7FF','#DCEAFF','#C9DBFF'],accent:'#3E5EDD',ink:'#22314F',badge:'BARU',deco:'✦ ◇ ✦',pat:'frost',ft:'montserrat',char:'Aurora',desc:'Liquid glass pernikahan — kaca cair Aurora 3D dinamis, aksen bisa diganti tamu',layout:'kaca-manis',orn:'geometrik',border:'vip-aurora',cover:'glass',buka:'gerbang',studioOnly:true},
+ {id:'liquid-glass-khitanan',nama:'Liquid Glass Khatam',ev:'khitanan',g:['#ECFDF8','#D2F5E7','#C7E8FF'],accent:'#0F766E',ink:'#173F3C',badge:'BARU',deco:'۞ ✦ ۞',pat:'girih',ft:'poppins',char:'KHATAM',desc:'Liquid glass khitanan — kaca es zamrud Islami 3D dinamis, aksen bisa diganti tamu',layout:'kaca-dewasa',orn:'arabesque',border:'filigree',cover:'glass',buka:'pintu',studioOnly:true},
+ {id:'liquid-glass-ultah',nama:'Liquid Glass Neon',ev:'ultah',g:['#FFF7ED','#FCE7F3','#DDD6FE'],accent:'#B4237A',ink:'#3B174A',badge:'BARU',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'NEON',desc:'Liquid glass ultah — kaca neon pop 3D dinamis, aksen bisa diganti tamu',layout:'kaca-manis',orn:'confetti',border:'vip-aurora',cover:'glass',buka:'gerbang',studioOnly:true},
+ {id:'liquid-glass-aqiqah',nama:'Liquid Glass Mentari',ev:'aqiqah',g:['#FFF9E9','#DFF6EE','#DCEBFF'],accent:'#2F7E73',ink:'#284856',badge:'BARU',deco:'☁ ✦ ☁',pat:'frost',ft:'poppins',char:'MENTARI',desc:'Liquid glass aqiqah — kaca mentari lembut 3D dinamis, aksen bisa diganti tamu',layout:'kaca-manis',orn:'awan',border:'halo',cover:'glass',buka:'buku',studioOnly:true}];
+
+
 
 
 
@@ -4207,7 +4229,8 @@ function bootBersihkan(){
  document.body.className=simpan.join(' ');
  /* Elemen yang ditempel boot() sebelumnya ke <body> (di luar #app) ikut
     dibersihkan supaya tidak menumpuk tiap pratinjau diperbarui. */
- document.querySelectorAll('.nv-bar,.gal-lb,#aspAmbient').forEach(el=>el.remove());
+ document.querySelectorAll('.nv-bar,.gal-lb,#aspAmbient,.lg-Aurora-page,.lg-dock').forEach(el=>el.remove());
+ if(window.AsLiquidGlass){try{window.AsLiquidGlass.unmount()}catch(e){}}
  if(window.__aspCdTimer){clearInterval(window.__aspCdTimer);window.__aspCdTimer=null}
  if(window.__aspMapIO){try{window.__aspMapIO.disconnect()}catch(e){}window.__aspMapIO=null}
 }
@@ -4272,6 +4295,8 @@ function boot(draft){
     punya aturan CSS — jadi output-nya tetap persis seperti sebelum rombakan. */
  const LX=layoutOf(tplF);
  if(isWedding){document.body.classList.add('wedding-cover','theme-'+tplF.id)}
+ /* Liquid Glass (4 tema per kategori): kelas pengait material kaca cair. */
+ if(tplF.id==='liquid-glass'||String(tplF.id||'').indexOf('liquid-glass-')===0)document.body.classList.add('tema-liquid','tema-'+tplF.id);
  if(tplF.arch)document.body.classList.add('gerbang-arch');
  document.body.classList.add('lay-'+LX.shell);
  /* Model cover pembuka: lima model dasar + sepuluh gaya unik dari Studio. */
@@ -4669,6 +4694,9 @@ function boot(draft){
  const vip4dOn=(tplF.tier==='vip'&&window.AsVip4d)||((LX&&LX.vip)&&window.AsVip4d);
  if(vip4dOn){document.body.classList.add('vip4d');
   try{AsVip4d.mount({art:ART||'',deco:tplF.deco||'',part:tplF.part||'gold',scene:tplF.scene||'zoom'})}catch(e){/* efek VIP gagal mount — undangan tetap tampil normal */}}
+ /* Mesin Liquid Glass dimount di sini juga (sesudah #cover lahir): Aurora
+    cair, tilt 3D, dan pemilih aksen dinamis untuk 4 tema Liquid Glass. */
+ if(document.body.classList.contains('tema-liquid')&&window.AsLiquidGlass){try{AsLiquidGlass.mount(tplF.id)}catch(e){/* efek gagal mount — undangan tetap tampil normal */}}
  muatBukuTamu();
 
  /* interaksi */
