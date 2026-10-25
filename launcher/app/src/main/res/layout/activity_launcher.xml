@@ -8,15 +8,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <View
+    <!-- Wallpaper bawaan (sirkuit neon). Bila dimatikan di Pengaturan, view ini
+         disembunyikan dan wallpaper sistem yang tampil (windowShowWallpaper). -->
+    <my.id.asproject.launcher.HomeWallpaperView
+        android:id="@+id/homeWallpaper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg_scrim" />
+        android:layout_height="match_parent" />
 
     <View
+        android:id="@+id/glowLayer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_glow" />
+
+    <View
+        android:id="@+id/scrimLayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_scrim" />
 
     <LinearLayout
         android:id="@+id/content"
@@ -34,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:paddingTop="26dp"
+                android:paddingTop="34dp"
                 android:paddingBottom="12dp">
 
                 <TextClock
@@ -164,4 +173,11 @@
             android:orientation="horizontal"
             android:padding="6dp" />
     </LinearLayout>
+
+    <!-- Layar kunci: menutupi seluruh beranda sampai digeser ke atas. -->
+    <my.id.asproject.launcher.LockScreenView
+        android:id="@+id/lockScreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 </FrameLayout>

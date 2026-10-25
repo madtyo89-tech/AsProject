@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -69,12 +70,27 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         }
     };
 
+    /** Layar menyala → tampilkan layar kunci lagi (seperti ponsel terbangun). */
+    private final BroadcastReceiver screenReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_SCREEN_ON.equals(intent.getAction()) && prefs.lockScreen()) {
+                showLockScreen(true);
+            }
+        }
+    };
+
     private Prefs prefs;
     private AppRepository repository;
     private IconLoader icons;
     private AppGridAdapter adapter;
     private boolean receiverRegistered;
+    private boolean firstResume = true;
 
+    private View homeWallpaper;
+    private View glowLayer;
+    private View scrimLayer;
+    private LockScreenView lockScreen;
     private LinearLayout content;
     private TextClock clockView;
     private TextView dateView;
@@ -97,6 +113,19 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         icons = new IconLoader(this, getResources().getDimensionPixelSize(R.dimen.app_icon_size));
         adapter = new AppGridAdapter(this, icons, prefs.showLabels());
 
+        homeWallpaper = findViewById(R.id.homeWallpaper);
+        glowLayer = findViewById(R.id.glowLayer);
+        scrimLayer = findViewById(R.id.scrimLayer);
+        lockScreen = (LockScreenView) findViewById(R.id.lockScreen);
+        lockScreen.setListener(new LockScreenView.Listener() {
+            @Override
+            public void onUnlocked() {
+                hideKeyboard();
+                searchInput.clearFocus();
+                reloadApps();
+            }
+        });
+
         content = (LinearLayout) findViewById(R.id.content);
         clockView = (TextClock) findViewById(R.id.clock);
         dateView = (TextView) findViewById(R.id.date);
@@ -110,6 +139,8 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         applyEdgeToEdge();
         applyInsets();
         applyVisibility();
+        applyWallpaper();
+        registerScreenReceiver();
 
         grid.setAdapter(adapter);
         grid.setNumColumns(prefs.columns());
@@ -157,7 +188,23 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         clockHandler.removeCallbacks(clockTick);
         clockHandler.postDelayed(clockTick, CLOCK_REFRESH_MS);
         registerPackageReceiver();
+        applyWallpaper();
+        icons.setNeonEnabled(prefs.neonIcons());
         reloadApps();
+        if (firstResume) {
+            firstResume = false;
+            if (prefs.lockScreen()) {
+                showLockScreen(true);
+            }
+        } else if (!prefs.lockScreen() && lockScreen.isShowingLock()) {
+            lockScreen.hideNow();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterScreenReceiver();
     }
 
     @Override
@@ -179,6 +226,9 @@ public final class LauncherActivity extends Activity implements TextWatcher,
 
     @Override
     public void onBackPressed() {
+        if (lockScreen != null && lockScreen.isShowingLock()) {
+            return;   // beranda terkunci: Kembali tidak melakukan apa pun
+        }
         if (searchInput.getText().length() > 0) {
             searchInput.setText("");
             hideKeyboard();
@@ -212,6 +262,28 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         }
     }
 
+    private void registerScreenReceiver() {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(screenReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+            } else {
+                registerReceiver(screenReceiver, filter);
+            }
+        } catch (RuntimeException ignored) {
+            // sebagian ROM menolak penerima layar; layar kunci tetap jalan saat beranda dibuka
+        }
+    }
+
+    private void unregisterScreenReceiver() {
+        try {
+            unregisterReceiver(screenReceiver);
+        } catch (RuntimeException ignored) {
+            // belum terdaftar
+        }
+    }
+
     private void unregisterPackageReceiver() {
         if (!receiverRegistered) {
             return;
@@ -231,6 +303,24 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         clockView.setVisibility(clockVisibility);
         dateView.setVisibility(clockVisibility);
         searchBar.setVisibility(prefs.showSearch() ? View.VISIBLE : View.GONE);
+    }
+
+    /** Wallpaper neon + opasitas lapisan gelap yang menyesuaikan. */
+    private void applyWallpaper() {
+        boolean figure = prefs.figureWallpaper();
+        homeWallpaper.setVisibility(figure ? View.VISIBLE : View.GONE);
+        glowLayer.setAlpha(figure ? 0f : 1f);
+        scrimLayer.setAlpha(figure ? 0.34f : 1f);
+    }
+
+    private void showLockScreen(boolean animate) {
+        if (!prefs.lockScreen()) {
+            return;
+        }
+        searchInput.setText("");
+        searchInput.clearFocus();
+        hideKeyboard();
+        lockScreen.show(animate);
     }
 
     private void applyEdgeToEdge() {
@@ -425,6 +515,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
 
     private void showHomeOptions() {
         String[] actions = {
+                getString(R.string.action_lock_now),
                 getString(R.string.action_wallpaper),
                 getString(R.string.action_settings),
                 getString(R.string.action_about)
@@ -435,8 +526,10 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
-                            chooseWallpaper();
+                            showLockScreen(true);
                         } else if (which == 1) {
+                            chooseWallpaper();
+                        } else if (which == 2) {
                             openSettings();
                         } else {
                             showAbout();

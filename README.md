@@ -1436,8 +1436,14 @@ pengganti layar beranda Android (jam besar, pencarian instan, kisi aplikasi, doc
 5 ikon). Kode sumbernya ada di folder **[`launcher/`](launcher/)**, terpisah penuh
 dari situs dan dari `android/`.
 
-- Paket `my.id.asproject.launcher`, Android 5.0–14, APK ±143 KB, **nol izin**
+- Paket `my.id.asproject.launcher`, Android 5.0–14, APK ±1,6 MB, **nol izin**
   (tanpa internet, lokasi, kontak, atau penyimpanan).
+- Tampilan bawaan: **layar kunci bergaya HUD** (bingkai liquid-chrome, jam neon,
+  chip daya baterai asli, geser ke atas untuk membuka) + **wallpaper sirkuit neon**
+  di beranda + **8 ikon neon** (Phone, Message, Camera, Settings, Music, Chrome,
+  WhatsApp, Instagram) untuk aplikasi yang terpasang. Wallpaper & ikon berasal dari
+  aset yang dikirim pemilik proyek (lihat catatan lisensi di
+  `launcher/docs/HASIL-TES-DAN-KETERBATASAN.md` §1b).
 - APK uji: [`launcher/releases/asproject-launcher-1.0.0-debug.apk`](launcher/releases/asproject-launcher-1.0.0-debug.apk)
   (tanda tangan debug Android; SHA-256 ada di `launcher/releases/SHA256SUMS.txt`).
 - Petunjuk build, kenaikan versi, dan APK rilis dengan keystore sendiri:

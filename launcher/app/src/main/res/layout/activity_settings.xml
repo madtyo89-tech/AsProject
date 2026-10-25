@@ -52,6 +52,99 @@
                 style="@style/SectionLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/section_wallpaper" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="6dp"
+                android:paddingBottom="2dp">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="132dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button"
+                    android:contentDescription="@string/lock_label"
+                    android:padding="4dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/wallpaper_lock_thumb" />
+
+                <Space
+                    android:layout_width="10dp"
+                    android:layout_height="1dp" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="132dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button"
+                    android:contentDescription="@string/section_wallpaper"
+                    android:padding="4dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/wallpaper_home_thumb" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="6dp"
+                android:text="@string/wallpaper_note"
+                android:textColor="@color/text_hint"
+                android:textSize="11.5sp" />
+
+            <Switch
+                android:id="@+id/switchWallpaper"
+                style="@style/SettingsSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/use_figure_wallpaper" />
+
+            <TextView
+                style="@style/SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/section_lock" />
+
+            <Switch
+                android:id="@+id/switchLock"
+                style="@style/SettingsSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_lock_screen" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lock_note"
+                android:textColor="@color/text_hint"
+                android:textSize="11.5sp" />
+
+            <TextView
+                style="@style/SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/section_icons" />
+
+            <Switch
+                android:id="@+id/switchNeon"
+                style="@style/SettingsSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/use_neon_icons" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/neon_note"
+                android:textColor="@color/text_hint"
+                android:textSize="11.5sp" />
+
+            <TextView
+                style="@style/SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/section_appearance" />
 
             <Switch

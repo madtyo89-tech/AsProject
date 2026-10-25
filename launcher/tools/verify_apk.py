@@ -33,6 +33,12 @@ EXPECTED_PACKAGE = "my.id.asproject.launcher"
 EXPECTED_LABEL = "AsProject Launcher"
 REQUIRED_CLASSES = [
     "Lmy/id/asproject/launcher/LauncherActivity;",
+    "Lmy/id/asproject/launcher/LockScreenView;",
+    "Lmy/id/asproject/launcher/WallpaperFigure;",
+    "Lmy/id/asproject/launcher/WallpaperView;",
+    "Lmy/id/asproject/launcher/HomeWallpaperView;",
+    "Lmy/id/asproject/launcher/LockWallpaperView;",
+    "Lmy/id/asproject/launcher/NeonIcons;",
     "Lmy/id/asproject/launcher/SettingsActivity;",
     "Lmy/id/asproject/launcher/AppRepository;",
     "Lmy/id/asproject/launcher/AppGridAdapter;",
@@ -138,8 +144,12 @@ def verify_zip(apk: Path) -> dict:
         dex_names = sorted(n for n in names if n.endswith(".dex"))
         check("berkas DEX ada", bool(dex_names), ", ".join(dex_names))
         check("AndroidManifest.xml ada", "AndroidManifest.xml" in names)
-        check("tidak ada aset web (launcher murni native)",
-              not any(n.startswith("assets/") for n in names))
+        assets = [n for n in names if n.startswith("assets/")]
+        check("wallpaper layar kunci ada (assets/wallpaper/lock.jpg)",
+              "assets/wallpaper/lock.jpg" in names, ", ".join(assets))
+        check("wallpaper beranda ada (assets/wallpaper/home.jpg)",
+              "assets/wallpaper/home.jpg" in names)
+        check("tidak ada aset web/jembatan JS", not any(n.endswith(".js") for n in names))
 
         for density in ICON_DENSITIES:
             icon = f"res/mipmap-{density}/ic_launcher.png"
@@ -170,8 +180,14 @@ def verify_classes(apk: Path, dex_names: list[str]) -> None:
     # Bukti kode benar-benar mencari aplikasi (bukan sekadar daftar kosong).
     for value in (b"android.intent.category.LAUNCHER",
                   b"android.intent.action.MAIN",
-                  b"launcher_prefs"):
+                  b"launcher_prefs",
+                  b"wallpaper/lock.jpg",
+                  b"wallpaper/home.jpg"):
         check(f"string penting tertanam: {value.decode()}", value in blob)
+    check("ikon neon ter-dex (8 ikon sirkuit)",
+          all(name.encode() in blob for name in (
+              "ic_phone", "ic_message", "ic_camera", "ic_settings",
+              "ic_music", "ic_chrome", "ic_whatsapp", "ic_instagram")))
 
 
 def verify_manifest(apk: Path) -> None:

@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.LruCache;
 
+
 /**
  * Memuat ikon aplikasi sekali per sesi, lalu menyimpannya di memori (LruCache).
  *
@@ -20,11 +21,14 @@ import android.util.LruCache;
  */
 public final class IconLoader {
 
+    private final Context context;
     private final PackageManager manager;
     private final LruCache<String, Bitmap> cache;
     private final int sizePx;
+    private boolean neonEnabled;
 
     public IconLoader(Context context, int sizePx) {
+        this.context = context.getApplicationContext();
         this.manager = context.getPackageManager();
         this.sizePx = sizePx;
 
@@ -36,6 +40,14 @@ public final class IconLoader {
                 return Math.max(1, value.getByteCount() / 1024);
             }
         };
+    }
+
+    /** Nyalakan/matikan ikon neon; cache dibuang bila statusnya berubah. */
+    public void setNeonEnabled(boolean enabled) {
+        if (this.neonEnabled != enabled) {
+            this.neonEnabled = enabled;
+            cache.evictAll();
+        }
     }
 
     public Bitmap get(AppItem item) {
@@ -54,6 +66,15 @@ public final class IconLoader {
     }
 
     private Bitmap render(AppItem item) {
+        if (neonEnabled) {
+            int neonRes = NeonIcons.drawableFor(item.packageName);
+            if (neonRes != 0) {
+                Bitmap neon = renderNeon(neonRes);
+                if (neon != null) {
+                    return neon;
+                }
+            }
+        }
         Drawable drawable = null;
         try {
             drawable = manager.getActivityIcon(new ComponentName(item.packageName, item.activityName));
@@ -74,6 +95,22 @@ public final class IconLoader {
         drawable.setBounds(0, 0, sizePx, sizePx);
         drawable.draw(canvas);
         return bitmap;
+    }
+
+    private Bitmap renderNeon(int resId) {
+        try {
+            Drawable drawable = context.getResources().getDrawable(resId);
+            if (drawable == null) {
+                return null;
+            }
+            Bitmap bitmap = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, sizePx, sizePx);
+            drawable.draw(canvas);
+            return bitmap;
+        } catch (RuntimeException error) {
+            return null;
+        }
     }
 
     private Path squircle() {

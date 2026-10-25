@@ -1,14 +1,15 @@
 # AsProject Launcher — beranda Android (APK)
 
 Pengganti **layar beranda** Android: jam besar, pencarian instan, kisi aplikasi,
-dan dock 5 ikon. Dibuat dengan API framework Android saja — **tanpa AndroidX,
-tanpa pustaka pihak ketiga, dan tanpa satu pun izin**.
+dock 5 ikon, **layar kunci bergaya HUD**, plus **wallpaper & 8 ikon neon sirkuit**
+bawaan. Dibuat dengan API framework Android saja — **tanpa AndroidX, tanpa
+pustaka pihak ketiga, dan tanpa satu pun izin**.
 
 - Paket: `my.id.asproject.launcher` · Nama: **AsProject Launcher**
 - `minSdk 21` (Android 5.0) → `targetSdk 34` (Android 14)
-- Ukuran APK ±143 KB
+- Ukuran APK ±1,6 MB (mayoritas: 2 wallpaper 1080 px + 8 ikon neon)
 - Izin: **nol** — tidak ada INTERNET, lokasi, kontak, mikrofon, maupun penyimpanan
-- Kode: 7 kelas Java, 3 layout XML, 9 drawable vektor
+- Kode: 13 kelas Java, 4 layout XML, drawable + aset wallpaper/ikon
 
 ## APK siap pasang
 
@@ -50,6 +51,10 @@ Skrip build memakai ulang mesin build `android/buildkit/build-apk.sh`
 | **Menyembunyikan aplikasi** | Tekan lama ikon → Sembunyikan, atau lewat Pengaturan beranda → Pilih aplikasi… |
 | **Ganti wallpaper** | Tekan lama area kosong beranda → Ganti wallpaper |
 | **Mengatur tampilan** | Tombol roda gigi kanan atas: jam/tanggal, kolom pencarian, nama aplikasi, jumlah kolom (4/5/6) |
+| **Layar kunci** | Muncul saat beranda dibuka dan setiap layar menyala; geser ke atas untuk membuka. Chip atas menampilkan daya baterai asli |
+| **Wallpaper neon** | Bingkai liquid-chrome di layar kunci (tidak terpotong), sirkuit neon + HUD di beranda. Bisa dimatikan di Pengaturan |
+| **Ikon neon** | Phone, Message, Camera, Settings, Music, Chrome, WhatsApp, Instagram — hanya untuk aplikasi yang benar-benar terpasang |
+| **Kunci sekarang** | Tekan lama area kosong → Kunci layar |
 | **Ikut perubahan aplikasi** | Memasang/mencabut/memperbarui aplikasi langsung menyegarkan kisi tanpa perlu membuka ulang |
 
 Detail teknis & keputusan desain: [docs/HASIL-TES-DAN-KETERBATASAN.md](docs/HASIL-TES-DAN-KETERBATASAN.md).
@@ -65,12 +70,21 @@ launcher/
 │   │   ├── SettingsActivity.java        pengaturan beranda
 │   │   ├── AppRepository.java           daftar aplikasi + tebakan isi dock
 │   │   ├── AppGridAdapter.java          adaptor kisi
+│   │   ├── LockScreenView.java          layar kunci + gestur geser-ke-atas
+│   │   ├── LockWallpaperView.java       wallpaper bingkai (mode contain)
+│   │   ├── HomeWallpaperView.java       wallpaper sirkuit (mode cover)
+│   │   ├── WallpaperView.java           View penggambar wallpaper
+│   │   ├── WallpaperFigure.java         decode + cache + mode gambar
+│   │   ├── NeonIcons.java               peta paket → ikon neon
 │   │   ├── IconLoader.java              ikon + LruCache + topeng squircle
 │   │   ├── AppItem.java                 satu entri aplikasi
 │   │   └── Prefs.java                   SharedPreferences
-│   └── res/                             layout, drawable vektor, nilai, ikon mipmap
+│   ├── assets/wallpaper/                lock.jpg + home.jpg (dipakai LockScreenView)
+│   └── res/                             layout, drawable vektor, nilai, ikon mipmap,
+│                                        drawable-nodpi/ic_*.png (8 ikon neon)
 ├── buildkit/build-apk.sh                pembungkus build tanpa Gradle
 ├── tools/make_icons.py                  pembuat ulang ikon PNG (Pillow)
+├── tools/make_preview.py                pembuat docs/pratinjau.html dari aset asli
 ├── tools/verify_apk.py                  verifikasi APK tanpa perangkat
 ├── releases/                            APK uji + SHA-256
 └── docs/BUILD-APK.md                    build, tanda tangan rilis, CI
@@ -85,3 +99,6 @@ launcher/
 | Teks & terjemahan | `app/src/main/res/values/strings.xml` |
 | Jam besar / tema | `app/src/main/res/values/styles.xml`, `layout/activity_launcher.xml` |
 | Ikon aplikasi | `python3 launcher/tools/make_icons.py` (ubah skripnya) |
+| Wallpaper | ganti `assets/wallpaper/lock.jpg` & `home.jpg` (JPEG potret, ±1080×2000) |
+| Ikon neon | ganti `res/drawable-nodpi/ic_*.png`, lalu sesuaikan `NeonIcons.java` |
+| Pratinjau HTML | `python3 launcher/tools/make_preview.py` |

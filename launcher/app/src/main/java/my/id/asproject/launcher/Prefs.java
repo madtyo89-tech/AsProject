@@ -22,6 +22,9 @@ public final class Prefs {
     private static final String KEY_LABELS = "show_labels";
     private static final String KEY_DOCK = "dock";
     private static final String KEY_HIDDEN = "hidden";
+    private static final String KEY_FIGURE_WALLPAPER = "figure_wallpaper";
+    private static final String KEY_LOCK_SCREEN = "lock_screen";
+    private static final String KEY_NEON_ICONS = "neon_icons";
 
     public static final int MIN_COLUMNS = 3;
     public static final int MAX_COLUMNS = 6;
@@ -69,6 +72,35 @@ public final class Prefs {
 
     public void setShowLabels(boolean show) {
         prefs.edit().putBoolean(KEY_LABELS, show).apply();
+    }
+
+    // ------------------------------------------------------------ wallpaper & layar kunci
+
+    /** Wallpaper neon AsProject (bingkai di layar kunci, sirkuit di beranda). */
+    public boolean figureWallpaper() {
+        return prefs.getBoolean(KEY_FIGURE_WALLPAPER, true);
+    }
+
+    public void setFigureWallpaper(boolean enabled) {
+        prefs.edit().putBoolean(KEY_FIGURE_WALLPAPER, enabled).apply();
+    }
+
+    /** Layar kunci bawaan AsProject. */
+    public boolean lockScreen() {
+        return prefs.getBoolean(KEY_LOCK_SCREEN, true);
+    }
+
+    public void setLockScreen(boolean enabled) {
+        prefs.edit().putBoolean(KEY_LOCK_SCREEN, enabled).apply();
+    }
+
+    /** Ikon neon sirkuit untuk aplikasi populer yang terpasang. */
+    public boolean neonIcons() {
+        return prefs.getBoolean(KEY_NEON_ICONS, true);
+    }
+
+    public void setNeonIcons(boolean enabled) {
+        prefs.edit().putBoolean(KEY_NEON_ICONS, enabled).apply();
     }
 
     // ------------------------------------------------------------------ dock

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lapisan gelap untuk layar kunci: atas & bawah lebih pekat, tengah dibiarkan
+     agar bingkai liquid-chrome tetap terlihat. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:centerColor="#66000000"
+        android:endColor="#CC000000"
+        android:startColor="#99000000"
+        android:type="linear" />
+</shape>

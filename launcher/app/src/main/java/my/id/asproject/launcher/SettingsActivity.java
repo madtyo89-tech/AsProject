@@ -50,6 +50,25 @@ public final class SettingsActivity extends Activity implements View.OnClickList
             }
         });
 
+        bindSwitch(R.id.switchWallpaper, prefs.figureWallpaper(), new SwitchAction() {
+            @Override
+            public void onChanged(boolean checked) {
+                prefs.setFigureWallpaper(checked);
+            }
+        });
+        bindSwitch(R.id.switchLock, prefs.lockScreen(), new SwitchAction() {
+            @Override
+            public void onChanged(boolean checked) {
+                prefs.setLockScreen(checked);
+            }
+        });
+        bindSwitch(R.id.switchNeon, prefs.neonIcons(), new SwitchAction() {
+            @Override
+            public void onChanged(boolean checked) {
+                prefs.setNeonIcons(checked);
+            }
+        });
+
         RadioGroup columns = (RadioGroup) findViewById(R.id.columnsGroup);
         columns.check(columnId(prefs.columns()));
         columns.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
