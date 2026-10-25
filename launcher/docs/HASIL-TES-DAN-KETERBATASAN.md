@@ -169,12 +169,35 @@ tinggi baris berbeda efeknya tetap proporsional.
 
 ### Wallpaper sirkuit liquid 3D (`CircuitWallpaperView`)
 
-Papan sirkuit dibuat prosedural sekali ke bitmap (acak-tertentu, seed tetap):
-latar gradien gelap, kisi titik redup, 26 jejak ortogonal (6 di antaranya
-"bertegangan" dan lebih terang), pad di setiap tikungan, 5 chip IC berkaki, dan
-vignette. Bitmap itu lalu diwariskan ke `LiquidWallpaperView` → digambar ulang
-lewat mesh 20×34 + kemiringan `Camera` ±1.6°, lalu ditambahi **denyut cahaya**
-yang berjalan menyusuri 7 jejak (kepala terang + dua titik ekor).
+Kedalaman dibangun dari tiga hal, bukan satu bidang yang diombak:
+
+1. **Tiga bidang terpisah (parallax).** `jauh`, `tengah` (papan utama), dan
+   `dekat` (latar depan sedikit di luar fokus). Tiap bidang punya skala,
+   kemiringan, dan simpangan gelombang sendiri: bidang dekat bergerak ±1,6×
+   lebih liar daripada bidang jauh, jadi mata membaca *ruang*.
+2. **Proyeksi perspektif.** Tiap bidang diwarp ke satu titik hilang di atas
+   layar (rasio lebar baris atas : bawah = 0,55 / 0,46 / 0,36). Jejak yang
+   tadinya ortogonal jadi menyatu ke kejauhan, menyempit & menipis; chip dan
+   pad ikut terforesing pendek. **Jejak "bus" vertikal panjang** sengaja
+   ditambahkan karena garis lurus yang menyatu ke titik hilang adalah penanda
+   3D yang paling kuat. Jarak juga dikabutkan (fog) sehingga bidang jauh
+   memudar.
+3. **Cairan.** Di atasnya, tiap bidang diombak tiga gelombang berjalan + riak
+   halus (simpangan dasar 10 dp, lebih besar di bagian atas), lalu diberi
+   keystone kamera. Yang terpenting: **denyut cahaya, gelembung, dan kilau
+   diproyeksikan lewat `projectLayer()`** — memakai koordinat bidang yang sama
+   — sehingga mereka ikut terombang-ambing mengikuti permukaannya, bukan
+   melayang kaku di atasnya. Denyut kini berjalan menyusuri 9 jejak dengan
+   ekor 6 titik + pijar lebar; 9 gelembung cairan naik perlahan sambil
+   berayun; 4 kilau memanjang dan 2 kolam cahaya menandai permukaan basah.
+
+Seni papannya (acak-tertentu, seed tetap): kisi titik, jejak ortogonal, jejak
+"bertegangan" yang lebih terang, **pin berdiri** di sebagian sambungan, chip IC
+bersisi ekstrusi, dan boket lembut di bidang dekat.
+
+**Hemat kerja:** kisi tiap bidang berbeda kepadatannya — papan utama 20×34,
+bidang jauh 12×20, bidang dekat 14×24 — total ~1.100 segiempat per frame,
+bukan 2.100 bila semuanya seragam.
 
 ### Font tema (`Typefaces`)
 
@@ -185,16 +208,28 @@ ada, jatuh ke `Typeface.MONOSPACE`.
 
 ### Liquid 3D
 
-`LiquidWallpaperView` menggambar ulang bitmap lewat `drawBitmapMesh` 20×34 simpul
-yang digeser tiga fungsi sinus (amplitudo lebih besar di bagian atas, sehingga
-terasa seperti cairan menumpuk), lalu seluruh mesh dimiringkan dengan `Camera`
-(rotasi X/Y ±1.6°) dan diberi pita kilau `PorterDuff.ADD`. Target 30 fps.
-Wallpaper beranda otomatis berhenti beranimasi saat layar kunci menutupinya.
+`LiquidWallpaperView` menggambar ulang tiap bidang lewat `drawBitmapMesh` yang
+simpulnya digeser tiga fungsi sinus + riak halus (amplitudo lebih besar di
+bagian atas, sehingga terasa seperti cairan menumpuk). Setiap simpul lalu
+diputar (rotasi X/Y ±3,2°) dan dibagi jarak kamera — sisi yang menjauh
+menyusut (keystone) — sehingga bidang punya dimensi, bukan sekadar gambar
+miring. Terakhir, satu pita kilau `PorterDuff.ADD` melintas pelan. Target
+30 fps. Wallpaper beranda otomatis berhenti beranimasi saat layar kunci
+menutupinya.
 
-**Perkiraan beban:** satu frame = satu `drawBitmapMesh` 21×35 simpul + 1 gradien
-kilau. Di perangkat kelas menengah ini ringan, tetapi pada Android 5 (tanpa
-hardware-accelerated mesh penuh) bisa terasa lebih berat. Karena itu ada sakelar
-"Wallpaper liquid bergerak (3D)" dan "HUD layar kunci beranimasi".
+Kelas ini kini **berlapis**: turunan dapat mengembalikan lebih dari satu bidang
+(`getLayerCount`, `createLayer`, `layerDepth`, `layerPerspective`,
+`layerAlpha`, `meshCols/meshRows`) dan memakai hook `drawBackdrop`,
+`drawLayerExtras`, `drawExtras`, serta `projectLayer()` untuk menempelkan
+objek pada permukaan cair. Wallpaper foto (beranda) tetap satu bidang datar,
+jadi perilakunya tidak berubah selain ombaknya yang sedikit lebih hidup.
+
+**Perkiraan beban:** satu frame = 3 × `drawBitmapMesh` (total ~1.100
+segiempat) + ~20 sprite (pijar/gelembung/kilau, digambar dari bitmap radial
+yang dibuat sekali, bukan `BlurMaskFilter` per frame) + 1 gradien kilau. Di
+perangkat kelas menengah seharusnya ringan, tetapi pada Android 5 (tanpa
+hardware-accelerated mesh penuh) bisa terasa lebih berat. Karena itu ada
+sakelar "Wallpaper liquid bergerak (3D)" dan "HUD layar kunci beranimasi".
 
 ## 2. Belum diuji di perangkat
 

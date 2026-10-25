@@ -57,7 +57,7 @@ Skrip build memakai ulang mesin build `android/buildkit/build-apk.sh`
 | **Ikon liquid glass sirkuit (semua aplikasi)** | 8 aplikasi populer memakai ikon contoh; **semua aplikasi lain** dibuatkan versi liquid glass otomatis dari ikon aslinya (`NeonIconFactory`): bentuk aplikasi jadi garis neon berongga di atas kaca cair, dengan jejak sirkuit di latar **dan** di dalam glyph — kisi jadi seragam tanpa menyiapkan gambar per aplikasi |
 | **Laci aplikasi + liquid slide bar** | Geser ke atas di beranda → panel kaca cair meluncur dari bawah berisi SEMUA aplikasi, lengkap dengan kolom pencarian. Tepi atasnya beriak seperti cairan (liquid slide bar) dan beranda menyusut/memudar mengikuti gerakan laci |
 | **Efek scroll beranda** | Saat kisi aplikasi digulir, kepala (jam + tanggal) menyusut & memudar; saat laci dibuka, beranda menyusut + wallpaper memperbesar (parallax) |
-| **Wallpaper sirkuit liquid 3D** | Layar kunci memakai papan sirkuit yang digambar prosedural (jejak, pad, chip) lalu diombak `drawBitmapMesh` + kemiringan `Camera`, lengkap dengan denyut cahaya yang berjalan menyusuri jejak |
+| **Wallpaper sirkuit liquid 3D** | Layar kunci memakai **tiga bidang sirkuit** (jauh / tengah / dekat) yang digambar prosedural, diproyeksikan perspektif ke satu titik hilang, lalu diombak `drawBitmapMesh`; tiap bidang bergerak paralaks dengan sendirinya. Denyut cahaya, gelembung, dan kilau diproyeksikan ke koordinat yang sama, jadi ikut terombang-ambing bersama cairannya |
 | **Font tema** | Share Tech Mono (OFL) ikut terpasang, dipakai di seluruh antarmuka |
 | **Ikon baterai lingkaran bersegmen** | Cincin 20 ruas neon dengan aliran cair berjalan + angka persen di tengah; komet berputar saat mengisi daya | Ukuran kecil seperti ikon bilah status, di pojok kanan atas layar kunci: cairan neon beriak setinggi daya + kilat saat mengisi daya. Tidak ada ikon baterai kedua di HUD |
 | **Jam seven segment** | Angka digital neon 7 ruas (ruas padam tetap terlihat redup), titik dua berkedip tiap detik; dipakai di layar kunci dan beranda. Mengikuti format 12/24 jam sistem |
@@ -84,7 +84,7 @@ launcher/
 │   │   ├── HomeWallpaperView.java       wallpaper sirkuit (mode cover)
 │   │   ├── WallpaperFigure.java         decode + cache + mode gambar
 │   │   ├── NeonIcons.java               peta paket → ikon neon khusus
-│   │   ├── CircuitWallpaperView.java    papan sirkuit liquid 3D (layar kunci)
+│   │   ├── CircuitWallpaperView.java    papan sirkuit liquid 3D 3 bidang (layar kunci)
 │   │   ├── AppDrawerView.java           laci aplikasi + gerakan geser
 │   │   ├── LiquidHandleView.java        liquid slide bar (tepi beriak)
 │   │   └── Typefaces.java               font tema (Share Tech Mono)
@@ -92,7 +92,7 @@ launcher/
 │   │   ├── LiquidBatteryView.java       ikon baterai neon (satu-satunya)
 │   │   ├── SevenSegmentClockView.java   jam seven segment neon
 │   │   ├── HudView.java                 HUD live (Canvas, busur/pindai/gelombang)
-│   │   ├── LiquidWallpaperView.java     wallpaper mesh 3D beranimasi
+│   │   ├── LiquidWallpaperView.java     wallpaper mesh 3D berlapis (parallax)
 │   │   ├── IconLoader.java              ikon + LruCache + topeng squircle
 │   │   ├── AppItem.java                 satu entri aplikasi
 │   │   └── Prefs.java                   SharedPreferences
@@ -124,6 +124,7 @@ launcher/
 | Kecepatan liquid 3D | `LiquidWallpaperView` (`amplitude`, `phase`, `COLS/ROWS`) |
 | Isi HUD | `HudView` (teks & tata letak per baris) |
 | Font tema | ganti `app/src/main/assets/fonts/tech_mono.ttf` (atau konstanta `PATH` di `Typefaces`) |
-| Papan sirkuit layar kunci | `CircuitWallpaperView` (`TRACES`, `PULSES`, warna jejak) |
+| Papan sirkuit layar kunci | `CircuitWallpaperView` (`SEED`, jumlah jejak/chip/bus, `LAYER_PERSP`, warna jejak) |
+| Kedalaman & parallax | `layerDepth()`, `layerPerspective()`, `layerAlpha()`, `meshCols()/meshRows()` di `CircuitWallpaperView`; `BASE_AMP`, `CAMERA_DISTANCE`, `PARALLAX_SCALE` di `LiquidWallpaperView` |
 | Laci & slide bar | `AppDrawerView` (ambang buka `0.45`, durasi 260 ms), `LiquidHandleView` (riak & lengkungan) |
 | Pratinjau HTML | `python3 launcher/tools/make_preview.py` |
