@@ -6,7 +6,7 @@ di mana risikonya.
 ## 1. Sudah diverifikasi otomatis
 
 `python3 launcher/tools/verify_apk.py launcher/releases/asproject-launcher-1.0.0-debug.apk`
-→ **54 lulus, 0 peringatan, 0 gagal**.
+→ **58 lulus, 0 peringatan, 0 gagal**.
 
 | Kelompok | Yang diperiksa |
 |----------|----------------|
@@ -15,7 +15,7 @@ di mana risikonya.
 | Peluncur | `provides-component:'launcher'`, kategori **HOME**, **DEFAULT**, **LAUNCHER** pada `LauncherActivity` |
 | Privasi | **nol** `<uses-permission>` (diperiksa lewat `aapt2 dump permissions`), 19 izin terlarang dicek tidak tertanam |
 | Keamanan | `SettingsActivity` `exported=false`, tidak ada aset web, tidak ada placeholder `${applicationId}` |
-| Kode | 17/17 kelas Java ter-dex; string `android.intent.category.LAUNCHER`, `android.intent.action.MAIN`, `launcher_prefs` tertanam |
+| Kode | 21/21 kelas Java ter-dex; string `android.intent.category.LAUNCHER`, `android.intent.action.MAIN`, `launcher_prefs` tertanam |
 | Sumber daya | ikon `ic_launcher.png` di 5 kepadatan + ikon adaptif `mipmap-anydpi-v26` |
 | Aset baru | `assets/wallpaper/lock.jpg` & `home.jpg` ada, 8 ikon neon tertanam (`ic_phone` … `ic_instagram`), tidak ada berkas JS |
 | Tanda tangan | apksigner: v1 ✔, v2 ✔, v3 ✔ |
@@ -140,6 +140,48 @@ Jam layar kunci dan beranda **bukan teks**: tiap angka digambar dari 7 ruas
 
 Catatan: jam di dalam HUD tetap memakai teks monospace (ia bagian dari panel
 data "SECURE MONITOR", bukan jam utama).
+
+### Laci aplikasi + liquid slide bar (`AppDrawerView`, `LiquidHandleView`)
+
+Geser ke atas pada area kosong beranda (fling > 600 px/detik) membuka laci;
+tarik gagang ke bawah, geser ke bawah saat kisi di posisi teratas, atau tombol
+Kembali untuk menutup. Posisi disimpan dalam `progress` 0…1, dan tiap perubahan
+dikirim ke `LauncherActivity.applyDrawerParallax()`:
+
+| Elemen | Efek |
+|--------|------|
+| beranda | skala 1 → 0,90; alpha 1 → 0,55; geser −26 dp |
+| wallpaper beranda | zoom 1 → 1,07 (parallax) |
+| dock | alpha 1 → 0 |
+| panel laci | alpha 0 → 1, skala 0,96 → 1 |
+
+Gagangnya (`LiquidHandleView`) berupa gelombang berjalan 28 segmen: saat laci
+ditarik melebihi batas, tepinya **melengkung** ke bawah (`setStretch`), dan
+setiap kali laci membuka/menutup atau kisi digulir kencang, riaknya dipicu
+(`pulse()`) lalu meredup sendiri.
+
+### Efek scroll beranda
+
+Saat kisi aplikasi digulir, kepala (jam seven segment + tanggal) menyusut 18%,
+memudar, dan naik −18 dp; kolom pencarian ikut memudar. Jarak gulung
+diperkirakan dari baris pertama yang terlihat, jadi pada perangkat dengan
+tinggi baris berbeda efeknya tetap proporsional.
+
+### Wallpaper sirkuit liquid 3D (`CircuitWallpaperView`)
+
+Papan sirkuit dibuat prosedural sekali ke bitmap (acak-tertentu, seed tetap):
+latar gradien gelap, kisi titik redup, 26 jejak ortogonal (6 di antaranya
+"bertegangan" dan lebih terang), pad di setiap tikungan, 5 chip IC berkaki, dan
+vignette. Bitmap itu lalu diwariskan ke `LiquidWallpaperView` → digambar ulang
+lewat mesh 20×34 + kemiringan `Camera` ±1.6°, lalu ditambahi **denyut cahaya**
+yang berjalan menyusuri 7 jejak (kepala terang + dua titik ekor).
+
+### Font tema (`Typefaces`)
+
+`Share Tech Mono` (lisensi OFL-1.1) ikut terpasang di
+`assets/fonts/tech_mono.ttf` (34 KB). Dipasang ke seluruh `TextView` di beranda,
+laci, layar kunci, dan pengaturan lewat penelusuran rekursif; bila berkas tidak
+ada, jatuh ke `Typeface.MONOSPACE`.
 
 ### Liquid 3D
 

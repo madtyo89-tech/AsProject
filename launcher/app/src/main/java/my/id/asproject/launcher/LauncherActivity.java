@@ -18,6 +18,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.KeyEvent;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
@@ -99,6 +101,10 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     private GridView grid;
     private TextView emptyView;
     private LinearLayout dockBar;
+    private AppDrawerView drawer;
+    private View clockHeader;
+    private AppGridAdapter drawerAdapter;
+    private GestureDetector swipeDetector;
 
     // --------------------------------------------------------------- siklus hidup
 
@@ -128,6 +134,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         });
 
         content = (LinearLayout) findViewById(R.id.content);
+        clockHeader = findViewById(R.id.clockHeader);
         clockView = (SevenSegmentClockView) findViewById(R.id.clock);
         dateView = (TextView) findViewById(R.id.date);
         searchBar = (LinearLayout) findViewById(R.id.searchBar);
@@ -136,6 +143,71 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         grid = (GridView) findViewById(R.id.appGrid);
         emptyView = (TextView) findViewById(R.id.emptyView);
         dockBar = (LinearLayout) findViewById(R.id.dockBar);
+
+        drawer = (AppDrawerView) findViewById(R.id.appDrawer);
+        drawerAdapter = new AppGridAdapter(this, icons, prefs.showLabels());
+        drawer.attach(drawerAdapter);
+        drawer.setColumns(prefs.columns());
+        drawer.setListener(new AppDrawerView.Listener() {
+            @Override
+            public void onProgress(float progress) {
+                applyDrawerParallax(progress);
+            }
+
+            @Override
+            public void onOpened() {
+                // Tidak ada yang perlu dilakukan: beranda sudah menyusut.
+            }
+
+            @Override
+            public void onClosed() {
+                applyDrawerParallax(0f);
+            }
+
+            @Override
+            public void onAppClick(AppItem item) {
+                drawer.close();
+                launch(item);
+            }
+
+            @Override
+            public boolean onAppLongClick(AppItem item) {
+                showAppOptions(item);
+                return true;
+            }
+        });
+
+        // Geser ke atas pada area kosong beranda → buka laci aplikasi.
+        swipeDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (e1 == null || e2 == null) {
+                    return false;
+                }
+                float dy = e2.getY() - e1.getY();
+                if (dy < -dp(48) && Math.abs(velocityY) > Math.abs(velocityX) && velocityY < -600f) {
+                    if (drawer != null && !drawer.isOpen()
+                            && !lockScreen.isShowingLock()) {
+                        drawer.open();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+        content.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (drawer != null && drawer.isOpen()) {
+                    return false;
+                }
+                return swipeDetector != null && swipeDetector.onTouchEvent(event);
+            }
+        });
+
+        // Font tema untuk seluruh beranda & laci.
+        Typefaces.apply(this, content);
+        Typefaces.apply(this, drawer);
 
         applyEdgeToEdge();
         applyInsets();
@@ -147,6 +219,17 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         grid.setNumColumns(prefs.columns());
         grid.setOnItemClickListener(this);
         grid.setOnItemLongClickListener(this);
+        grid.setOnScrollListener(new android.widget.AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(android.widget.AbsListView view, int state) {
+            }
+
+            @Override
+            public void onScroll(android.widget.AbsListView view, int firstVisible,
+                                 int visibleCount, int totalCount) {
+                applyHomeScroll(view, firstVisible);
+            }
+        });
 
         searchInput.addTextChangedListener(this);
         searchInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -229,6 +312,10 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     public void onBackPressed() {
         if (lockScreen != null && lockScreen.isShowingLock()) {
             return;   // beranda terkunci: Kembali tidak melakukan apa pun
+        }
+        if (drawer != null && drawer.isOpen()) {
+            drawer.close();
+            return;
         }
         if (searchInput.getText().length() > 0) {
             searchInput.setText("");
@@ -321,6 +408,9 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         if (!prefs.lockScreen()) {
             return;
         }
+        if (drawer != null && drawer.isOpen()) {
+            drawer.close();
+        }
         searchInput.setText("");
         searchInput.clearFocus();
         hideKeyboard();
@@ -352,6 +442,55 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         });
     }
 
+    /**
+     * Efek scroll beranda: saat kisi aplikasi digulir, kepala (jam + tanggal)
+     * menyusut & memudar, dan kolom pencarian ikut memudar — seperti tajuk yang
+     * melipat. Keadaan dipulihkan bila kisi kembali ke posisi paling atas.
+     */
+    private void applyHomeScroll(android.widget.AbsListView view, int firstVisible) {
+        if (clockHeader == null) {
+            return;
+        }
+        float offset = 0f;
+        if (view != null && view.getChildCount() > 0) {
+            // Perkiraan jarak gulung: baris yang lewat + porsi baris terlihat.
+            float row = dp(86);
+            offset = firstVisible * row - view.getChildAt(0).getTop();
+        }
+        float progress = Math.max(0f, Math.min(1f, offset / dp(150)));
+        float scale = 1f - 0.18f * progress;
+        clockHeader.setScaleX(scale);
+        clockHeader.setScaleY(scale);
+        clockHeader.setAlpha(1f - 0.75f * progress);
+        clockHeader.setTranslationY(-dp(18) * progress);
+        if (searchBar != null) {
+            searchBar.setAlpha(1f - 0.85f * progress);
+        }
+    }
+
+    /**
+     * Efek scroll halaman utama saat laci bergerak: beranda menyusut & memudar,
+     * wallpaper sedikit memper besar (parallax), dan dock ikut memudar.
+     */
+    private void applyDrawerParallax(float progress) {
+        if (content != null) {
+            float scale = 1f - 0.10f * progress;
+            content.setScaleX(scale);
+            content.setScaleY(scale);
+            content.setAlpha(1f - 0.45f * progress);
+            content.setTranslationY(-dp(26) * progress);
+            content.setPivotY(getResources().getDisplayMetrics().heightPixels * 0.45f);
+        }
+        if (homeWallpaper != null) {
+            float zoom = 1f + 0.07f * progress;
+            homeWallpaper.setScaleX(zoom);
+            homeWallpaper.setScaleY(zoom);
+        }
+        if (dockBar != null) {
+            dockBar.setAlpha(1f - progress);
+        }
+    }
+
     // -------------------------------------------------------------------- data
 
     private void reloadApps() {
@@ -361,6 +500,18 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         allApps.addAll(installed);
         renderDock();
         applyFilter(searchInput.getText().toString());
+        if (drawer != null) {
+            List<AppItem> forDrawer = new ArrayList<AppItem>();
+            for (int i = 0; i < allApps.size(); i++) {
+                AppItem item = allApps.get(i);
+                if (!prefs.isHidden(item.packageName)) {
+                    forDrawer.add(item);
+                }
+            }
+            drawer.setItems(forDrawer);
+            drawer.setColumns(prefs.columns());
+            drawer.setShowLabels(prefs.showLabels());
+        }
         if (firstVisible > 0) {
             grid.setSelection(firstVisible);
         }

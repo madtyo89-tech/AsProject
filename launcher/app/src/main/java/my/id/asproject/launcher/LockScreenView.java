@@ -42,7 +42,7 @@ public final class LockScreenView extends FrameLayout {
     private TextView dateView;
     private LiquidBatteryView batteryMeter;
     private HudView hud;
-    private LockWallpaperView wallpaper;
+    private CircuitWallpaperView wallpaper;
 
     private VelocityTracker velocity;
     private float downRawY;
@@ -68,7 +68,9 @@ public final class LockScreenView extends FrameLayout {
         dateView = (TextView) findViewById(R.id.lockDate);
         batteryMeter = (LiquidBatteryView) findViewById(R.id.batteryMeter);
         hud = (HudView) findViewById(R.id.hud);
-        wallpaper = (LockWallpaperView) findViewById(R.id.lockWallpaper);
+        wallpaper = (CircuitWallpaperView) findViewById(R.id.lockWallpaper);
+        // Font tema untuk seluruh isi layar kunci.
+        Typefaces.apply(getContext(), this);
     }
 
     public void setListener(Listener listener) {
@@ -125,7 +127,8 @@ public final class LockScreenView extends FrameLayout {
             root.setPadding(side, side, side, bottom);
         }
         if (wallpaper != null) {
-            wallpaper.useFrameOnly(prefs.lockFrameOnly());
+            // Wallpaper sirkuit dibuat prosedural, jadi tidak ada lagi pilihan
+            // "bingkai ber-HUD / bingkai kosong": yang dimatikan cukup panel HUD-nya.
             wallpaper.setMotionEnabled(prefs.liquidMotion() && getVisibility() == VISIBLE);
         }
     }

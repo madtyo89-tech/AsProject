@@ -28,6 +28,8 @@ public final class SettingsActivity extends Activity implements View.OnClickList
         super.onCreate(state);
         setContentView(R.layout.activity_settings);
         prefs = new Prefs(this);
+        // Font tema untuk seluruh halaman pengaturan.
+        Typefaces.apply(this, findViewById(android.R.id.content));
 
         findViewById(R.id.backButton).setOnClickListener(this);
 

@@ -6,7 +6,8 @@
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <my.id.asproject.launcher.LockWallpaperView
+    <!-- Wallpaper layar kunci: papan sirkuit liquid 3D (prosedural, beranimasi). -->
+    <my.id.asproject.launcher.CircuitWallpaperView
         android:id="@+id/lockWallpaper"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -53,12 +54,11 @@
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
-            <!-- Satu-satunya ikon baterai: kecil, neon, seperti di bilah status. -->
+            <!-- Satu-satunya ikon baterai: lingkaran bersegmen, neon. -->
             <my.id.asproject.launcher.LiquidBatteryView
                 android:id="@+id/batteryMeter"
-                android:layout_width="wrap_content"
-                android:layout_height="14dp"
-                android:layout_marginTop="3dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:contentDescription="@string/lock_battery_desc" />
         </LinearLayout>
 

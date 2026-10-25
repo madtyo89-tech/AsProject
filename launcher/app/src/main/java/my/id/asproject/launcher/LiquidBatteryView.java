@@ -3,46 +3,48 @@ package my.id.asproject.launcher;
 import android.content.Context;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.graphics.Shader;
-import android.graphics.Typeface;
+import android.graphics.SweepGradient;
 import android.util.AttributeSet;
 import android.view.View;
 
 /**
- * Satu-satunya ikon baterai di aplikasi ini: ukuran kecil seperti ikon bilah
- * status, warna **neon**, dan isinya tetap **cairan** yang permukaannya beriak
- * mengikuti sisa daya.
+ * Ikon baterai **lingkaran bersegmen** bernuansa neon — satu-satunya ikon
+ * baterai di aplikasi ini.
  *
- * Dulu ada dua penanda baterai (kapsul di layar kunci + 6 sel di HUD). Sekarang
- * cukup satu, di bilah notifikasi/status — sisanya cukup angka di HUD.
+ * Tampilannya:
+ *  • cincin dari 20 segmen (ruas) yang menyala mengikuti sisa daya;
+ *  • ruas yang menyala memakai gradien melingkar neon + glow, ruas kosong
+ *    digambar redup supaya lingkarannya tetap terbaca;
+ *  • ada **aliran cair** berjalan mengelilingi cincin (ruas berkedip pelan
+ *    bergiliran) sehingga terasa "liquid", bukan gauge mati;
+ *  • angka persen di tengah memakai font tema;
+ *  • saat mengisi daya, sebuah "komet" terang berputar mengelilingi cincin.
  *
- * Lapisan: cangkang kaca → ruas kosong redup → cairan neon beriak → garis
- * tegangan permukaan → kilat saat mengisi daya → angka persen.
+ * Semua digambar di Canvas (tanpa OpenGL), aman dari Android 5.0.
  */
 public final class LiquidBatteryView extends View {
 
+    private static final int SEGMENTS = 20;
     private static final int NEON = 0xFF5FD8FF;
-    private static final int NEON_CORE = 0xFFE6FBFF;
-    private static final int GHOST = 0x245FD8FF;      // ruas baterai yang kosong
-    private static final int SHELL_ON = 0xCC5FD8FF;   // garis cangkang
-    private static final int LIQUID_TOP = 0xFF8FE6FF;
-    private static final int LIQUID_BOTTOM = 0xF21F90C8;
+    private static final int NEON_BRIGHT = 0xFFE6FBFF;
+    private static final int GHOST = 0x2A5FD8FF;
 
-    private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint ring = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint ghost = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Path shape = new Path();
+    private final Paint glow = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final RectF box = new RectF();
+    private final Path bolt = new Path();
 
     private int percent = -1;
     private boolean charging;
     private float phase;
     private long lastFrame;
     private boolean running;
-    private String label = "--%";
+    private String label = "--";
 
     public LiquidBatteryView(Context context) {
         this(context, null);
@@ -51,29 +53,34 @@ public final class LiquidBatteryView extends View {
     /** Dipakai saat di-inflate dari XML (view_lock_screen.xml). */
     public LiquidBatteryView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        text.setTypeface(Typeface.MONOSPACE);
-        stroke.setStyle(Paint.Style.STROKE);
+        ring.setStyle(Paint.Style.STROKE);
+        ring.setStrokeCap(Paint.Cap.BUTT);
+        ghost.setStyle(Paint.Style.STROKE);
+        ghost.setStrokeCap(Paint.Cap.BUTT);
+        ghost.setColor(GHOST);
+        text.setTextAlign(Paint.Align.CENTER);
+        text.setTypeface(Typefaces.get(context));
     }
 
     /** Perbarui daya baterai; {@code percent} negatif bila belum diketahui. */
     public void setBattery(int percent, boolean charging) {
         this.percent = percent;
         this.charging = charging;
-        label = (percent < 0 ? "--" : String.valueOf(percent)) + "%";
+        label = percent < 0 ? "--" : String.valueOf(percent);
         invalidate();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         float density = getResources().getDisplayMetrics().density;
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
-            height = Math.round(14 * density);
-        }
+        int fallback = Math.round(30 * density);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY) {
-            text.setTextSize(9.5f * density);
-            width = Math.round(24f * density + 4f * density + text.measureText(label));
+            width = fallback;
+        }
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
+            height = fallback;
         }
         setMeasuredDimension(width, height);
     }
@@ -81,125 +88,90 @@ public final class LiquidBatteryView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float density = getResources().getDisplayMetrics().density;
-        float width = getWidth();
-        float height = getHeight();
-        if (width <= 0f || height <= 0f) {
+        float size = Math.min(getWidth(), getHeight());
+        if (size <= 0f) {
             return;
         }
+        float stroke = Math.max(2f, size * 0.115f);
+        float radius = size / 2f - stroke / 2f - 1f;
+        box.set(getWidth() / 2f - radius, getHeight() / 2f - radius,
+                getWidth() / 2f + radius, getHeight() / 2f + radius);
 
-        // Ukuran cangkang mengikuti tinggi view (ikon bilah status itu kecil).
-        float shellHeight = height;
-        float shellWidth = shellHeight * 2.05f;
-        float radius = Math.max(1.5f, shellHeight * 0.18f);
-        float inset = Math.max(1f, density * 0.9f);
-        RectF shell = new RectF(0f, 0f, shellWidth, shellHeight);
-
-        // 1. Cangkang kaca + ruas kosong redup.
-        fill.setShader(new LinearGradient(0, 0, 0, shellHeight,
-                0x330A1018, 0x66060B12, Shader.TileMode.CLAMP));
-        canvas.drawRoundRect(shell, radius, radius, fill);
-        fill.setShader(null);
-
-        // 2. Kutub baterai (di kanan).
-        float nubWidth = Math.max(1.5f, 1.8f * density);
-        float nubHeight = shellHeight * 0.36f;
-        fill.setColor(SHELL_ON);
-        canvas.drawRoundRect(new RectF(shellWidth + 1f * density,
-                        (shellHeight - nubHeight) / 2f,
-                        shellWidth + 1f * density + nubWidth,
-                        (shellHeight + nubHeight) / 2f),
-                nubWidth / 2f, nubWidth / 2f, fill);
-
-        // 3. Cairan neon setinggi daya, permukaannya beriak.
-        RectF inner = new RectF(shell.left + inset, shell.top + inset,
-                shell.right - inset, shell.bottom - inset);
         float level = percent < 0 ? 0f : Math.min(1f, Math.max(0f, percent / 100f));
+        int filled = Math.round(SEGMENTS * level);
+        float sweep = 360f / SEGMENTS;
+        float gap = sweep * 0.28f;          // celah antar ruas
 
-        if (level > 0.01f) {
-            float surface = inner.bottom - inner.height() * level;
-            float wave = inner.height() * 0.10f;
-            int steps = 10;
+        // Gradien melingkar supaya warna ruas berubah halus mengitari cincin.
+        ring.setShader(new SweepGradient(box.centerX(), box.centerY(),
+                new int[]{NEON, NEON_BRIGHT, NEON},
+                new float[]{0f, 0.5f, 1f}));
+        ring.setStrokeWidth(stroke);
+        ghost.setStrokeWidth(stroke);
 
-            shape.rewind();
-            shape.moveTo(inner.left, inner.bottom);
-            for (int i = 0; i <= steps; i++) {
-                float t = i / (float) steps;
-                float px = inner.left + inner.width() * t;
-                float py = surface + (float) Math.sin(phase * 6.2831853f + t * 4.712389f) * wave;
-                shape.lineTo(px, py);
+        for (int i = 0; i < SEGMENTS; i++) {
+            float start = -90f + i * sweep + gap / 2f;
+            float length = sweep - gap;
+            if (i < filled) {
+                // Aliran cair: terang sedikit bergelombang mengitari cincin.
+                float flow = 0.72f + 0.28f * (float) Math.sin(phase * 6.2831853f - i * 0.55f);
+                ring.setAlpha(Math.round(255 * Math.max(0.45f, flow)));
+                if (flow > 0.9f) {
+                    ring.setMaskFilter(new BlurMaskFilter(stroke * 0.5f, BlurMaskFilter.Blur.NORMAL));
+                } else {
+                    ring.setMaskFilter(null);
+                }
+                canvas.drawArc(box, start, length, false, ring);
+            } else {
+                canvas.drawArc(box, start, length, false, ghost);
             }
-            shape.lineTo(inner.right, inner.bottom);
-            shape.close();
-
-            canvas.save();
-            Path clip = new Path();
-            clip.addRoundRect(inner, radius * 0.6f, radius * 0.6f, Path.Direction.CW);
-            canvas.clipPath(clip);
-            fill.setShader(new LinearGradient(0, surface, 0, inner.bottom,
-                    LIQUID_TOP, LIQUID_BOTTOM, Shader.TileMode.CLAMP));
-            canvas.drawPath(shape, fill);
-            fill.setShader(null);
-
-            // Garis tegangan permukaan.
-            stroke.setStrokeWidth(Math.max(1f, density * 0.6f));
-            stroke.setColor(0xDDEAFBFF);
-            Path surfacePath = new Path();
-            surfacePath.moveTo(inner.left, surface);
-            for (int i = 0; i <= steps; i++) {
-                float t = i / (float) steps;
-                float px = inner.left + inner.width() * t;
-                float py = surface + (float) Math.sin(phase * 6.2831853f + t * 4.712389f) * wave;
-                surfacePath.lineTo(px, py);
-            }
-            canvas.drawPath(surfacePath, stroke);
-            canvas.restore();
-        } else {
-            // Ruas kosong: isi redup seperti LED mati.
-            fill.setColor(GHOST);
-            canvas.drawRoundRect(inner, radius * 0.6f, radius * 0.6f, fill);
         }
+        ring.setMaskFilter(null);
+        ring.setShader(null);
+        ring.setAlpha(255);
 
-        // 4. Garis cangkang neon + glow.
-        stroke.setStrokeWidth(Math.max(1f, density));
-        stroke.setColor(SHELL_ON);
-        stroke.setMaskFilter(new BlurMaskFilter(1.8f * density, BlurMaskFilter.Blur.NORMAL));
-        canvas.drawRoundRect(shell, radius, radius, stroke);
-        stroke.setMaskFilter(null);
-
-        // 5. Kilat saat mengisi daya.
+        // Komet berputar saat mengisi daya.
         if (charging) {
-            drawBolt(canvas, shell);
+            float head = -90f + (phase * 360f);
+            glow.setStyle(Paint.Style.STROKE);
+            glow.setStrokeWidth(stroke);
+            glow.setColor(NEON_BRIGHT);
+            glow.setMaskFilter(new BlurMaskFilter(stroke * 0.9f, BlurMaskFilter.Blur.NORMAL));
+            canvas.drawArc(box, head, 26f, false, glow);
+            glow.setMaskFilter(null);
         }
 
-        // 6. Angka persen.
-        text.setTextSize(9.5f * density);
-        text.setColor(NEON_CORE);
-        text.setShadowLayer(6f * density, 0, 0, NEON);
+        // Angka persen di tengah.
+        float centerY = getHeight() / 2f;
+        if (charging) {
+            drawBolt(canvas, size, centerY - size * 0.30f);
+        }
+        text.setTextSize(size * 0.34f);
+        text.setColor(NEON_BRIGHT);
+        text.setShadowLayer(size * 0.18f, 0, 0, NEON);
         Paint.FontMetrics metrics = text.getFontMetrics();
-        canvas.drawText(label, shellWidth + nubWidth + 4f * density,
-                height / 2f - (metrics.ascent + metrics.descent) / 2f, text);
+        float baseline = centerY - (metrics.ascent + metrics.descent) / 2f;
+        canvas.drawText(label, getWidth() / 2f, baseline, text);
         text.setShadowLayer(0, 0, 0, 0);
     }
 
-    /** Lambang kilat di tengah baterai saat mengisi daya. */
-    private void drawBolt(Canvas canvas, RectF shell) {
-        float cx = shell.centerX();
-        float cy = shell.centerY();
-        float h = shell.height() * 0.66f;
-        Path bolt = new Path();
-        bolt.moveTo(cx + h * 0.16f, cy - h * 0.5f);
-        bolt.lineTo(cx - h * 0.20f, cy + h * 0.06f);
-        bolt.lineTo(cx + h * 0.02f, cy + h * 0.06f);
-        bolt.lineTo(cx - h * 0.14f, cy + h * 0.5f);
-        bolt.lineTo(cx + h * 0.24f, cy - h * 0.04f);
-        bolt.lineTo(cx + h * 0.02f, cy - h * 0.04f);
+    /** Kilat kecil di atas angka saat mengisi daya. */
+    private void drawBolt(Canvas canvas, float size, float centerY) {
+        float h = size * 0.20f;
+        float cx = getWidth() / 2f;
+        bolt.rewind();
+        bolt.moveTo(cx + h * 0.16f, centerY - h * 0.5f);
+        bolt.lineTo(cx - h * 0.20f, centerY + h * 0.06f);
+        bolt.lineTo(cx + h * 0.02f, centerY + h * 0.06f);
+        bolt.lineTo(cx - h * 0.14f, centerY + h * 0.5f);
+        bolt.lineTo(cx + h * 0.24f, centerY - h * 0.04f);
+        bolt.lineTo(cx + h * 0.02f, centerY - h * 0.04f);
         bolt.close();
-        fill.setColor(0xFFEAFBFF);
-        fill.setMaskFilter(new BlurMaskFilter(2.2f * getResources().getDisplayMetrics().density,
-                BlurMaskFilter.Blur.NORMAL));
-        canvas.drawPath(bolt, fill);
-        fill.setMaskFilter(null);
+        glow.setStyle(Paint.Style.FILL);
+        glow.setColor(NEON_BRIGHT);
+        glow.setMaskFilter(new BlurMaskFilter(size * 0.06f, BlurMaskFilter.Blur.NORMAL));
+        canvas.drawPath(bolt, glow);
+        glow.setMaskFilter(null);
     }
 
     // ------------------------------------------------------------ animasi
@@ -239,13 +211,13 @@ public final class LiquidBatteryView extends View {
             float delta = Math.min(0.1f, (now - lastFrame) / 1000f);
             lastFrame = now;
             if (getVisibility() == VISIBLE && getWindowVisibility() == VISIBLE) {
-                phase += delta * 0.35f;
+                phase += delta * (charging ? 0.5f : 0.22f);
                 if (phase > 1f) {
                     phase -= 1f;
                 }
                 invalidate();
             }
-            postDelayed(this, 60L);
+            postDelayed(this, 66L);
         }
     };
 

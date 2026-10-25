@@ -165,6 +165,14 @@
             android:padding="6dp" />
     </LinearLayout>
 
+    <!-- Laci aplikasi: panel kaca cair yang meluncur dari bawah.
+         Disembunyikan sampai dibuka (AppDrawerView.open()). -->
+    <my.id.asproject.launcher.AppDrawerView
+        android:id="@+id/appDrawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <!-- Layar kunci: menutupi seluruh beranda sampai digeser ke atas. -->
     <my.id.asproject.launcher.LockScreenView
         android:id="@+id/lockScreen"

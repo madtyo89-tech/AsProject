@@ -173,7 +173,7 @@ public class LiquidWallpaperView extends View implements Choreographer.FrameCall
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
         // Setengah lebar: cukup tajam untuk digambar ulang tiap frame, memori kecil.
-        bitmap = WallpaperFigure.load(getContext(), asset, Math.max(360, width / 2));
+        bitmap = createBitmap(Math.max(360, width / 2), Math.max(640, height / 2));
         if (bitmap != null) {
             rebuildBaseGrid(width, height);
         }
@@ -251,7 +251,26 @@ public class LiquidWallpaperView extends View implements Choreographer.FrameCall
         canvas.concat(cameraMatrix);
         canvas.drawBitmapMesh(bitmap, COLS, ROWS, verts, 0, null, 0, bitmapPaint);
         drawSheen(canvas, width, height, t);
+        drawExtras(canvas, width, height, t);
         canvas.restoreToCount(save);
+    }
+
+    /**
+     * Sumber gambar yang dipakai mesh. Kelas turunan boleh menggantinya untuk
+     * menggambar wallpaper sendiri (mis. sirkuit yang dibuat prosedural).
+     */
+    protected Bitmap createBitmap(int width, int height) {
+        return asset == null ? null : WallpaperFigure.load(getContext(), asset, width);
+    }
+
+    /** Lapisan tambahan setelah gambar & kilau — kosong secara bawaan. */
+    protected void drawExtras(Canvas canvas, int width, int height, float t) {
+        // bawaan: tidak ada
+    }
+
+    /** Fase animasi saat ini (detik) — dipakai kelas turunan. */
+    protected float getPhase() {
+        return phase;
     }
 
     /** Pita kilau diagonal yang melintas pelan — pantulan krom. */

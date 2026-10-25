@@ -3,6 +3,9 @@
     <string name="app_name">AsProject Launcher</string>
 
     <string name="search_hint">Cari aplikasi</string>
+    <string name="drawer_search_hint">Cari semua aplikasi</string>
+    <string name="clear_search">Kosongkan</string>
+    <string name="drawer_hint">Geser ke atas untuk membuka laci aplikasi</string>
     <string name="empty_search">Tidak ada aplikasi yang cocok</string>
     <string name="no_apps">Belum ada aplikasi yang bisa ditampilkan</string>
     <string name="home_options">Opsi beranda</string>
