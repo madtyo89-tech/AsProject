@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AsProject Launcher</string>
+
+    <string name="search_hint">Cari aplikasi</string>
+    <string name="empty_search">Tidak ada aplikasi yang cocok</string>
+    <string name="no_apps">Belum ada aplikasi yang bisa ditampilkan</string>
+    <string name="home_options">Opsi beranda</string>
+
+    <string name="action_open">Buka</string>
+    <string name="action_add_dock">Taruh di dock</string>
+    <string name="action_remove_dock">Keluarkan dari dock</string>
+    <string name="action_hide">Sembunyikan dari beranda</string>
+    <string name="action_app_info">Info aplikasi</string>
+    <string name="action_wallpaper">Ganti wallpaper</string>
+    <string name="action_settings">Pengaturan beranda</string>
+    <string name="action_about">Tentang</string>
+
+    <string name="dock_added">%1$s ditambahkan ke dock</string>
+    <string name="dock_removed">%1$s dikeluarkan dari dock</string>
+    <string name="dock_full">Dock sudah penuh (maksimal 5 ikon)</string>
+    <string name="app_hidden">%1$s disembunyikan dari beranda</string>
+    <string name="app_unavailable">%1$s tidak bisa dibuka</string>
+    <string name="app_info_unavailable">Info aplikasi tidak tersedia</string>
+    <string name="wallpaper_unavailable">Tidak ada aplikasi wallpaper yang tersedia</string>
+    <string name="choose_wallpaper">Pilih wallpaper</string>
+
+    <string name="settings_title">Pengaturan beranda</string>
+    <string name="section_appearance">Tampilan</string>
+    <string name="show_clock">Jam dan tanggal besar</string>
+    <string name="show_search">Kolom pencarian</string>
+    <string name="show_labels">Nama aplikasi di bawah ikon</string>
+    <string name="section_grid">Kolom ikon</string>
+    <string name="section_dock">Dock</string>
+    <string name="reset_dock">Atur ulang dock</string>
+    <string name="dock_reset">Dock diatur ulang ke bawaan</string>
+    <string name="section_hidden">Aplikasi tersembunyi</string>
+    <string name="pick_hidden">Pilih aplikasi…</string>
+    <string name="hidden_saved">%1$d aplikasi disembunyikan</string>
+    <string name="section_about">Tentang</string>
+    <string name="version_format">AsProject Launcher %1$s</string>
+    <string name="about_body">Launcher beranda tanpa iklan, tanpa izin, dan tanpa pelacakan. Semua pengaturan disimpan di perangkat ini saja.</string>
+    <string name="about_message">AsProject Launcher\n\nLauncher beranda ringan untuk Android 5.0 ke atas.\n\n• Tanpa izin apa pun — tidak ada akses internet, lokasi, atau kontak.\n• Jam besar, pencarian instan, dock 5 ikon, sembunyikan aplikasi.\n• Tekan lama ikon untuk opsi; tekan lama area kosong untuk mengganti wallpaper.\n\nasproject.my.id</string>
+    <string name="back">Kembali</string>
+</resources>

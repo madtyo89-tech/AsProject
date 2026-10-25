@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Semua pengaturan beranda kecil dan aman dicadangkan. -->
+<full-backup-content>
+    <include
+        domain="sharedpref"
+        path="launcher_prefs.xml" />
+</full-backup-content>

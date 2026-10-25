@@ -1,0 +1,15 @@
+# Hasil build APK & alat unduhan (biner besar).
+/out/
+/build/
+/.tools/
+/app/build/
+/.gradle/
+/local.properties
+*.apk
+*.keystore
+*.jks
+*.idsig
+
+# Pengecualian: satu APK debug ikut di-commit sebagai salinan uji (lihat releases/README.md).
+!/releases/asproject-launcher-1.0.0-debug.apk
+!/releases/SHA256SUMS.txt

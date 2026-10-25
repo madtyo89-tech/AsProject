@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pratinjau — AsProject Launcher</title>
+<style>
+  :root{
+    --ink:#0A0A0A; --gold:#D4AF37; --gold-soft:#F0DCA0;
+    --text:#fff; --text2:#B3FFFFFF; --dock:#26FFFFFF;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0; min-height:100vh; background:#131313 radial-gradient(60% 40% at 50% 0%, #2a2214 0%, #131313 70%);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    color:var(--text); display:flex; flex-direction:column; align-items:center;
+    padding:28px 16px 48px; gap:22px;
+  }
+  h1{font-size:17px;font-weight:600;letter-spacing:.02em;margin:0;color:var(--gold-soft)}
+  p.note{margin:0;font-size:12.5px;line-height:1.6;color:#9a9a9a;max-width:560px;text-align:center}
+  .stage{display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+  .caption{font-size:11.5px;color:#8b8b8b;text-align:center;margin-top:10px;letter-spacing:.03em;text-transform:uppercase}
+
+  /* ------------------------------- bingkai ponsel ------------------------------- */
+  .phone{
+    position:relative;width:330px;height:690px;border-radius:38px;overflow:hidden;
+    border:1px solid #2c2c2c;box-shadow:0 24px 60px rgba(0,0,0,.65), 0 0 0 8px #0d0d0d, 0 0 0 9px #262626;
+  }
+  .wall{position:absolute;inset:0;background:
+    radial-gradient(120% 60% at 50% -10%, rgba(212,175,55,.30) 0%, rgba(212,175,55,.06) 45%, transparent 70%),
+    linear-gradient(165deg,#15303a 0%,#0d1b22 40%,#0a0a0a 100%);}
+  .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.78) 0%,rgba(0,0,0,.15) 32%,rgba(0,0,0,.35) 62%,rgba(0,0,0,.80) 100%)}
+  .screen{position:absolute;inset:0;display:flex;flex-direction:column;padding:14px 16px 12px}
+
+  /* bilah status */
+  .status{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:#e8e8e8;letter-spacing:.03em;height:18px}
+  .status .right{display:flex;gap:5px;align-items:center;opacity:.85}
+  .bar{width:3px;background:#e8e8e8;border-radius:1px}
+
+  /* kepala jam */
+  .clockHead{position:relative;padding-top:26px;text-align:center}
+  .clock{font-size:64px;font-weight:200;letter-spacing:-.035em;line-height:1;text-shadow:0 2px 14px rgba(0,0,0,.55)}
+  .date{font-size:13px;color:var(--gold-soft);margin-top:9px;letter-spacing:.04em;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+  .gear{position:absolute;right:-4px;top:2px;width:38px;height:38px;display:grid;place-items:center;opacity:.75}
+  .gear svg{width:19px;height:19px;fill:#dcdcdc}
+
+  /* pencarian */
+  .search{margin-top:16px;height:50px;border-radius:26px;background:rgba(255,255,255,.18);
+    border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;gap:10px;padding:0 16px}
+  .search svg{width:18px;height:18px;fill:#cfcfcf;flex:0 0 auto}
+  .search .hint{font-size:14.5px;color:rgba(255,255,255,.55)}
+
+  /* kisi aplikasi */
+  .grid{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px 2px;align-content:start}
+  .app{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .icon{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;
+    font-size:19px;font-weight:600;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+  .app span{font-size:10.5px;color:#f1f1f1;text-shadow:0 1px 5px rgba(0,0,0,.85);max-width:72px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* isi ikon */
+  .whatsapp{background:linear-gradient(150deg,#4ee07a,#16a34a)}
+  .kamera{background:linear-gradient(150deg,#5b6673,#2b333c)}
+  .galeri{background:linear-gradient(150deg,#ff9a6b,#d1482b)}
+  .chrome{background:linear-gradient(150deg,#8ab4f8,#2563eb)}
+  .gmail{background:linear-gradient(150deg,#ff7a7a,#c62828)}
+  .play{background:linear-gradient(150deg,#7ec8ff,#1565c0)}
+  .spotify{background:linear-gradient(150deg,#3ee07a,#0b8f4d)}
+  .youtube{background:linear-gradient(150deg,#ff6b6b,#b71c1c)}
+  .maps{background:linear-gradient(150deg,#9ae6b4,#1e8e3e)}
+  .drive{background:linear-gradient(150deg,#ffe082,#e6a100)}
+  .calc{background:linear-gradient(150deg,#94a3b8,#334155)}
+  .setelan{background:linear-gradient(150deg,#cfd8dc,#546e7a)}
+
+  .spacer{flex:1}
+
+  /* dock */
+  .dock{height:78px;border-radius:26px;background:var(--dock);border:1px solid rgba(255,255,255,.12);
+    display:flex;align-items:center;justify-content:space-around;padding:0 8px;margin-bottom:6px}
+  .dock .icon{width:52px;height:52px;border-radius:16px}
+
+  /* bilah navigasi */
+  .navbar{height:22px;display:flex;align-items:center;justify-content:center;gap:52px;opacity:.6}
+  .navbar i{display:block;width:14px;height:14px;border:1.6px solid #fff}
+
+  /* ------------------------------- layar pengaturan ------------------------------- */
+  .settings{position:absolute;inset:0;background:var(--ink);display:flex;flex-direction:column;padding:14px 0 0}
+  .bar-top{display:flex;align-items:center;gap:8px;padding:8px 16px 6px}
+  .bar-top svg{width:20px;height:20px;fill:var(--gold-soft)}
+  .bar-top b{font-size:18px;font-weight:600}
+  .sbody{padding:4px 22px 20px;overflow:hidden}
+  .label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);
+    font-weight:600;margin:20px 0 6px}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;font-size:14.5px}
+  .switch{width:42px;height:24px;border-radius:12px;background:#3a3a3a;position:relative;flex:0 0 auto}
+  .switch.on{background:rgba(212,175,55,.35);border:1px solid rgba(212,175,55,.55)}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#c9c9c9}
+  .switch.on::after{left:auto;right:3px;background:var(--gold)}
+  .radios{display:flex;gap:26px;padding:6px 0 2px}
+  .radio{display:flex;align-items:center;gap:8px;font-size:14px}
+  .radio i{width:18px;height:18px;border-radius:50%;border:2px solid #7a7a7a;display:block}
+  .radio.on i{border-color:var(--gold);box-shadow:inset 0 0 0 4px var(--ink), inset 0 0 0 9px var(--gold)}
+  .btn{margin-top:12px;height:46px;border-radius:14px;background:#1A1A1A;border:1px solid rgba(212,175,55,.25);
+    display:grid;place-items:center;font-size:14px;color:var(--gold-soft)}
+  .ver{font-size:13.5px;color:var(--gold-soft);margin-top:2px}
+  .about{font-size:12px;color:#a5a5a5;line-height:1.65;margin-top:8px}
+
+  @media (max-width:760px){ .phone{transform:scale(.92);transform-origin:top center;margin-bottom:-50px} }
+</style>
+</head>
+<body>
+  <h1>Pratinjau tampilan AsProject Launcher</h1>
+  <p class="note">Rekonstruksi HTML dari layout asli (<code>activity_launcher.xml</code> &amp;
+  <code>activity_settings.xml</code>) memakai warna, ukuran, dan urutan elemen yang sama.
+  Bukan tangkapan layar perangkat — ikon aplikasi di bawah ini contoh.</p>
+
+  <div class="stage">
+    <!-- ---------------------------------- BERANDA ---------------------------------- -->
+    <div>
+      <div class="phone">
+        <div class="wall"></div>
+        <div class="scrim"></div>
+        <div class="screen">
+          <div class="status">
+            <span>06:47</span>
+            <span class="right">
+              <span style="font-size:9px;letter-spacing:.06em">4G</span>
+              <span style="display:flex;align-items:flex-end;gap:1.5px;height:9px">
+                <span class="bar" style="height:3px"></span><span class="bar" style="height:5px"></span>
+                <span class="bar" style="height:7px"></span><span class="bar" style="height:9px"></span>
+              </span>
+              <span style="display:inline-block;width:16px;height:8px;border:1px solid #e8e8e8;border-radius:2px;position:relative">
+                <span style="position:absolute;inset:1px;background:#e8e8e8;border-radius:1px;width:11px"></span>
+              </span>
+            </span>
+          </div>
+
+          <div class="clockHead">
+            <div class="clock">06:47</div>
+            <div class="date">Sabtu, 25 Oktober 2026</div>
+            <div class="gear">
+              <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81A.49.49 0 0 0 13.92 2.4h-3.84a.49.49 0 0 0-.47.41L9.25 5.35c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+            </div>
+          </div>
+
+          <div class="search">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+            <span class="hint">Cari aplikasi</span>
+          </div>
+
+          <div class="grid">
+            <div class="app"><div class="icon whatsapp">W</div><span>WhatsApp</span></div>
+            <div class="app"><div class="icon kamera"></div><span>Kamera</span></div>
+            <div class="app"><div class="icon galeri"></div><span>Galeri</span></div>
+            <div class="app"><div class="icon chrome">C</div><span>Chrome</span></div>
+            <div class="app"><div class="icon gmail">M</div><span>Gmail</span></div>
+            <div class="app"><div class="icon play">▶</div><span>Play Store</span></div>
+            <div class="app"><div class="icon spotify">♫</div><span>Spotify</span></div>
+            <div class="app"><div class="icon youtube">▶</div><span>YouTube</span></div>
+            <div class="app"><div class="icon maps">M</div><span>Maps</span></div>
+            <div class="app"><div class="icon drive">D</div><span>Drive</span></div>
+            <div class="app"><div class="icon calc">=</div><span>Kalkulator</span></div>
+            <div class="app"><div class="icon setelan">⚙</div><span>Setelan</span></div>
+          </div>
+
+          <div class="spacer"></div>
+
+          <div class="dock">
+            <div class="app"><div class="icon" style="background:linear-gradient(150deg,#63e6a0,#0f9d58)">✆</div></div>
+            <div class="app"><div class="icon" style="background:linear-gradient(150deg,#8fd3ff,#1a73e8)">✉</div></div>
+            <div class="app"><div class="icon chrome">C</div></div>
+            <div class="app"><div class="icon kamera"></div></div>
+            <div class="app"><div class="icon galeri"></div></div>
+          </div>
+
+          <div class="navbar">
+            <i style="border-width:0;border-top:1.6px solid #fff;border-left:1.6px solid #fff;transform:rotate(-45deg)"></i>
+            <i style="border-radius:50%"></i>
+            <i style="width:12px;height:12px;border-radius:3px"></i>
+          </div>
+        </div>
+      </div>
+      <div class="caption">Beranda — jam, pencarian, kisi, dock</div>
+    </div>
+
+    <!-- --------------------------------- PENGATURAN --------------------------------- -->
+    <div>
+      <div class="phone">
+        <div class="settings">
+          <div class="status" style="padding:0 16px">
+            <span>06:47</span>
+            <span class="right"><span style="font-size:9px;letter-spacing:.06em">4G</span></span>
+          </div>
+          <div class="bar-top">
+            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"/></svg>
+            <b>Pengaturan beranda</b>
+          </div>
+          <div class="sbody">
+            <div class="label">Tampilan</div>
+            <div class="row"><span>Jam dan tanggal besar</span><span class="switch on"></span></div>
+            <div class="row"><span>Kolom pencarian</span><span class="switch on"></span></div>
+            <div class="row"><span>Nama aplikasi di bawah ikon</span><span class="switch on"></span></div>
+
+            <div class="label">Kolom ikon</div>
+            <div class="radios">
+              <span class="radio on"><i></i>4</span>
+              <span class="radio"><i></i>5</span>
+              <span class="radio"><i></i>6</span>
+            </div>
+
+            <div class="label">Dock</div>
+            <div class="btn">Atur ulang dock</div>
+
+            <div class="label">Aplikasi tersembunyi</div>
+            <div class="btn">Pilih aplikasi…</div>
+
+            <div class="label">Tentang</div>
+            <div class="ver">AsProject Launcher 1.0.0</div>
+            <div class="about">Launcher beranda tanpa iklan, tanpa izin, dan tanpa
+              pelacakan. Semua pengaturan disimpan di perangkat ini saja.</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">Pengaturan beranda</div>
+    </div>
+  </div>
+</body>
+</html>

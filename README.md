@@ -1429,6 +1429,25 @@ fitur situs yang sudah berjalan.
 - Workflow APK otomatis: `.github/workflows/android-apk.yml` (artefak tiap push yang
   menyentuh `android/**`, dan Release saat tag `v*` dipush).
 
+## Aplikasi Android (launcher beranda)
+
+Selain pembungkus Studio, repo ini juga memuat **AsProject Launcher** — aplikasi
+pengganti layar beranda Android (jam besar, pencarian instan, kisi aplikasi, dock
+5 ikon). Kode sumbernya ada di folder **[`launcher/`](launcher/)**, terpisah penuh
+dari situs dan dari `android/`.
+
+- Paket `my.id.asproject.launcher`, Android 5.0–14, APK ±143 KB, **nol izin**
+  (tanpa internet, lokasi, kontak, atau penyimpanan).
+- APK uji: [`launcher/releases/asproject-launcher-1.0.0-debug.apk`](launcher/releases/asproject-launcher-1.0.0-debug.apk)
+  (tanda tangan debug Android; SHA-256 ada di `launcher/releases/SHA256SUMS.txt`).
+- Petunjuk build, kenaikan versi, dan APK rilis dengan keystore sendiri:
+  [`launcher/docs/BUILD-APK.md`](launcher/docs/BUILD-APK.md).
+- Hasil tes otomatis & keterbatasan (termasuk checklist uji manual):
+  [`launcher/docs/HASIL-TES-DAN-KETERBATASAN.md`](launcher/docs/HASIL-TES-DAN-KETERBATASAN.md).
+- Verifikasi APK tanpa perangkat: `python3 launcher/tools/verify_apk.py <apk>`
+  (memastikan nol izin, kategori HOME, dan tanda tangan v1/v2/v3).
+- Workflow APK otomatis: `.github/workflows/android-launcher-apk.yml`.
+
 ## Halaman publik, harga, dan kepercayaan (2026-10-21)
 
 Halaman statis yang dapat dirayapi kini mencakup `/harga/`, `/katalog/`, empat
