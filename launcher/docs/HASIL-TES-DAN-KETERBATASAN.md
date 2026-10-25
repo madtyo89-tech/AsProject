@@ -6,7 +6,7 @@ di mana risikonya.
 ## 1. Sudah diverifikasi otomatis
 
 `python3 launcher/tools/verify_apk.py launcher/releases/asproject-launcher-1.0.0-debug.apk`
-→ **52 lulus, 0 peringatan, 0 gagal**.
+→ **53 lulus, 0 peringatan, 0 gagal**.
 
 | Kelompok | Yang diperiksa |
 |----------|----------------|
@@ -15,7 +15,7 @@ di mana risikonya.
 | Peluncur | `provides-component:'launcher'`, kategori **HOME**, **DEFAULT**, **LAUNCHER** pada `LauncherActivity` |
 | Privasi | **nol** `<uses-permission>` (diperiksa lewat `aapt2 dump permissions`), 19 izin terlarang dicek tidak tertanam |
 | Keamanan | `SettingsActivity` `exported=false`, tidak ada aset web, tidak ada placeholder `${applicationId}` |
-| Kode | 15/15 kelas Java ter-dex; string `android.intent.category.LAUNCHER`, `android.intent.action.MAIN`, `launcher_prefs` tertanam |
+| Kode | 16/16 kelas Java ter-dex; string `android.intent.category.LAUNCHER`, `android.intent.action.MAIN`, `launcher_prefs` tertanam |
 | Sumber daya | ikon `ic_launcher.png` di 5 kepadatan + ikon adaptif `mipmap-anydpi-v26` |
 | Aset baru | `assets/wallpaper/lock.jpg` & `home.jpg` ada, 8 ikon neon tertanam (`ic_phone` … `ic_instagram`), tidak ada berkas JS |
 | Tanda tangan | apksigner: v1 ✔, v2 ✔, v3 ✔ |
@@ -57,15 +57,22 @@ Konsekuensi yang harus diketahui:
 Tidak ada gambar per aplikasi. Saat ikon pertama kali dibutuhkan:
 
 1. ikon asli digambar ke bitmap 52 dp dan tiap piksel dihitung luminansinya;
-2. luminans rata-rata area terluar (12%) dipakai sebagai "warna latar" ikon;
-   selisih terhadapnya menjadi intensitas — bentuk/glyph dipertahankan, latar polos
-   dibuang. Bila ikon berlatar terang dengan glyph gelap (mis. Play Store), polaritas
-   dibalik;
-3. bila area yang "menyala" lebih dari 50% (WhatsApp, Chrome, Instagram — bidang
-   warna penuh), ambang dinaikkan supaya hanya garis tepi & detail yang digambar
-   → gaya outline neon, bukan bidang putih;
-4. digambar 3 lapis dengan `BlurMaskFilter` (glow lebar → glow sempit → inti tajam)
-   di atas kaca gelap, ditambah jejak sirkuit deterministik per paket.
+2. **median** terang seluruh tile dipakai sebagai "warna latar" ikon, lalu selisih
+   *mutlak* tiap piksel terhadap median menjadi intensitas. Memakai selisih mutlak
+   berarti glyph yang lebih gelap dari latarnya pun ikut terdeteksi; memakai median
+   (bukan rerata tepi) membuat ikon bidang-warna-penuh — WhatsApp, Chrome,
+   Instagram — tidak berubah menjadi satu cincin raksasa;
+3. tepi terluar (7%) dibuang: potongan ikon sering menyisakan latar tangkapan layar
+   di sekelilingnya, dan itu menghasilkan cincin palsu;
+4. ambang adaptif: hanya **30% piksel paling menonjol** yang dipertahankan, jadi
+   yang digambar adalah *bentuk aplikasi*, bukan kotak penuh;
+5. glyph diubah jadi **garis luar** (outline) lalu digambar sebagai lampu neon —
+   glow lebar → glow sempit → inti tajam (inti digambar dua kali agar terbaca di
+   48 dp) — di atas **kaca cair**: gradien gelap, sapuan diagonal, sorotan atas,
+   kilau bawah, dan tepi terang (rim light);
+6. terakhir, **jejak sirkuit** digambar dua kali: di latar kaca (acak-tertentu per
+   paket) dan **di dalam bentuk glyph** dengan `PorterDuff.Mode.DST_IN`, sehingga
+   motifnya mengikuti bentuk aplikasi, bukan sekadar latar.
 
 Biaya: sekali per ikon (±5–15 ms di perangkat 2020-an; lebih lama di Android 5
 karena blur berbasis CPU), hasilnya disimpan di `LruCache` sehingga tidak dihitung
@@ -87,6 +94,35 @@ secepat ikon aslinya. Bisa dimatikan kapan saja di Pengaturan → Ikon.
 
 Animasi (busur berputar, garis pindai, gelombang, denyut) digambar di Canvas
 60 fps dan hanya berjalan saat layar kunci terlihat.
+
+### Tema liquid glass sirkuit
+
+Satu tema untuk seluruh antarmuka: permukaan **kaca cair** (gradien gelap +
+sorotan atas + sapuan bergerak + rim light) dengan **garis sirkuit neon** di
+atasnya.
+
+| Bagian | Wujud liquid glass-nya |
+|--------|------------------------|
+| Ikon aplikasi (`NeonIconFactory`) | tile kaca, glyph jadi garis neon berongga, jejak sirkuit di latar **dan** di dalam glyph |
+| Meter baterai pojok kanan atas (`LiquidBatteryView`) | kapsul kaca + cairan neon beriak (permukaan beriak fungsi sinus) + kilat saat mengisi daya |
+| Chip status kiri atas (`bg_glass_chip`) | kapsul kaca dengan garis tepi terang |
+| Panel HUD (`HudView.drawPanel`) | kaca cair dengan sapuan terang yang berjalan pelan |
+
+### Meter baterai liquid glass (`LiquidBatteryView`)
+
+Menggantikan chip teks "BATERAI 74%" yang lama. Digambar penuh di Canvas:
+
+1. kapsul kaca: gradien `rgba(36,48,51,.40)` → `rgba(4,7,11,.70)`, sorotan radial
+   di atas, kilau di bawah-kanan, lalu sapuan terang bergerak (satu putaran
+   ±3,6 detik);
+2. dua jejak sirkuit terukir di ujung kapsul (garis siku + pad);
+3. ikon baterai: cangkang kaca + kutub, lalu **cairan neon** setinggi daya dengan
+   permukaan beriak (12 segmen sinus) dan garis tegangan permukaan yang terang;
+4. teks persen monospace dengan glow;
+5. rim light terakhir: terang di atas, redup di bawah.
+
+Animasi berjalan 20 fps dan berhenti saat view tidak terlihat. Saat mengisi daya,
+lambang kilat muncul di tengah baterai.
 
 ### Liquid 3D
 

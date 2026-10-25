@@ -19,6 +19,7 @@ Cara pakai:
 from __future__ import annotations
 
 import base64
+import random
 import io
 from pathlib import Path
 
@@ -68,50 +69,181 @@ def placeholder_icon(letter: str, hue: int, size: int = S) -> Image.Image:
     return image
 
 
-def neonize(icon: Image.Image, size: int = S) -> Image.Image:
-    """Salinan algoritma NeonIconFactory.java (peta cahaya + 3 lapis glow)."""
+def mask_of(icon: Image.Image, size: int = S, inset: float = 0.07,
+            keep: float = 0.30) -> np.ndarray:
+    """Peta intensitas glyph — salinan glyphMask() di NeonIconFactory.java.
+
+    Median terang = warna latar; selisih mutlak terhadapnya = bagian yang
+    menonjol (glyph). Tepi luar dibuang agar potongan ikon tidak memunculkan
+    cincin palsu, lalu hanya 30% piksel paling menonjol yang dipertahankan.
+    """
     pixels = np.asarray(icon.convert("RGBA")).astype(np.float32)
     alpha = pixels[..., 3] / 255.0
     luminance = (0.299 * pixels[..., 0] + 0.587 * pixels[..., 1] + 0.114 * pixels[..., 2]) * alpha
 
-    band = max(2, round(size * 0.12))
-    mask = np.zeros((size, size), bool)
-    mask[:band, :] = True
-    mask[-band:, :] = True
-    mask[:, :band] = True
-    mask[:, -band:] = True
-    border = float(luminance[mask].mean())
+    background = float(np.median(luminance))
+    delta = np.abs(luminance - background)
 
-    lo, hi = round(size * 0.3), round(size * 0.7)
-    center = float(luminance[lo:hi, lo:hi].mean())
-    polarity = -1.0 if center + 6 < border else 1.0
-    delta = (luminance - border) * polarity
-    peak = max(float(delta.max()), 1.0)
-    low, high = peak * 0.20, peak * 0.92
-    if float((delta > low).mean()) > 0.5:
-        low, high = peak * 0.45, peak * 0.97
+    band = round(size * inset)
+    ring = np.ones((size, size), bool)
+    ring[band:size - band, band:size - band] = False
+    delta[ring] = 0.0
+
+    peak = float(delta.max())
+    if peak < 5.0:
+        return alpha.copy()
+
+    active = delta[~ring]
+    strong = delta[delta > peak * 0.12]
+    low = float(np.percentile(strong, 100 - keep * 100)) if strong.size else peak * 0.5
+    high = max(low * 1.15, float(np.percentile(active, 99.5)))
     t = np.clip((delta - low) / max(1e-6, high - low), 0, 1)
-    strength = t * t * (3 - 2 * t)
+    mask = t * t * (3 - 2 * t)
+    mask[ring] = 0.0
+    return mask
 
+
+def outline_of(mask: np.ndarray, size: int = S) -> np.ndarray:
+    """Garis luar glyph — inti gaya neon sirkuit (berongga, bukan siluet)."""
+    left = np.roll(mask, 1, axis=1); left[:, 0] = 0
+    right = np.roll(mask, -1, axis=1); right[:, -1] = 0
+    up = np.roll(mask, 1, axis=0); up[0, :] = 0
+    down = np.roll(mask, -1, axis=0); down[-1, :] = 0
+    low = np.minimum.reduce([mask, left, right, up, down])
+    edge = np.where(mask > 0.12, np.clip((mask - low) * 1.6, 0, 1), 0)
+    if int((edge > 0.05).sum()) < max(16, size * 0.4):
+        return mask * 0.9
+    return np.maximum(np.sqrt(edge), mask * 0.09)
+
+
+def liquid_glass(size: int = S) -> Image.Image:
+    """Kaca cair dasar: gradien gelap + sapuan diagonal + sorotan atas + kilau bawah."""
     glass = Image.new("RGBA", (size, size))
     draw = ImageDraw.Draw(glass)
     for y in range(size):
         f = y / (size - 1)
-        draw.line([(0, y), (size, y)], fill=(int(0x12 + (0x07 - 0x12) * f),
-                                              int(0x18 + (0x0a - 0x18) * f),
-                                              int(0x21 + (0x0f - 0x21) * f), 255))
+        draw.line([(0, y), (size, y)], fill=(int(0x10 + (0x04 - 0x10) * f),
+                                             int(0x18 + (0x07 - 0x18) * f),
+                                             int(0x20 + (0x0B - 0x20) * f), 255))
     tile_mask = Image.new("L", (size, size), 0)
     ImageDraw.Draw(tile_mask).rounded_rectangle([0, 0, size - 1, size - 1],
-                                                radius=int(size * 0.23), fill=255)
+                                                radius=int(size * 0.235), fill=255)
     tile = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     tile.paste(glass, (0, 0), tile_mask)
 
-    glow_source = Image.fromarray((np.clip(strength, 0, 1) * 255).astype(np.uint8), "L")
+    yy, xx = np.mgrid[0:size, 0:size]
+
+    def layer(builder):
+        lay = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        builder(lay)
+        out = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        out.paste(lay, (0, 0), tile_mask)
+        return out
+
+    def sweep(lay):
+        d = ImageDraw.Draw(lay)
+        for i in range(size):
+            t = i / (size - 1)
+            a = int(255 * max(0.0, 0.20 * (1 - t / 0.8)))
+            d.line([(i, 0), (0, i)], fill=(191, 233, 255, max(0, a)))
+
+    def top_glow(lay):
+        arr = np.zeros((size, size, 4), np.uint8)
+        dist = np.sqrt(((xx - size * 0.5) / (size * 0.85)) ** 2
+                       + ((yy + size * 0.12) / (size * 0.85)) ** 2)
+        arr[..., 3] = np.clip((1 - dist) * 255 * 0.26, 0, 255).astype(np.uint8)
+        arr[..., 0] = 232; arr[..., 1] = 251; arr[..., 2] = 255
+        lay.paste(Image.fromarray(arr, "RGBA"), (0, 0))
+
+    def bottom_glow(lay):
+        arr = np.zeros((size, size, 4), np.uint8)
+        dist = np.sqrt(((xx - size * 0.92) / (size * 0.60)) ** 2
+                       + ((yy - size * 1.02) / (size * 0.60)) ** 2)
+        arr[..., 3] = np.clip((1 - dist) * 255 * 0.16, 0, 255).astype(np.uint8)
+        arr[..., 0] = 88; arr[..., 1] = 180; arr[..., 2] = 232
+        lay.paste(Image.fromarray(arr, "RGBA"), (0, 0))
+
+    for builder in (sweep, top_glow, bottom_glow):
+        tile = Image.alpha_composite(tile, layer(builder))
+    return tile, tile_mask
+
+
+def circuit_traces(size: int, seed: int, inside: bool) -> Image.Image:
+    """Jejak sirkuit acak-tertentu; inside=True menempel di latar, False di tepi."""
+    lay = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    rnd = random.Random(seed)
+    count = 4 if inside else 3
+    for _ in range(count):
+        if inside:
+            horizontal = rnd.random() > 0.5
+            lane = size * (0.18 + 0.64 * rnd.random())
+            span = size * (0.22 + 0.30 * rnd.random())
+            center = size * (0.30 + 0.40 * rnd.random())
+            if horizontal:
+                pts = [(center - span, lane), (center, lane), (center, lane + span * 0.55)]
+                x, y = pts[-1]
+            else:
+                pts = [(lane, center - span), (lane, center), (lane + span * 0.55, center)]
+                x, y = pts[-1]
+            d.line(pts, fill=(160, 225, 255, 102), width=max(1, round(size * 0.006)))
+            r = max(1.0, size * 0.009)
+            d.ellipse([x - r, y - r, x + r, y + r], fill=(200, 240, 255, 170))
+        else:
+            horizontal = rnd.random() > 0.5
+            start = size * (0.06 + 0.88 * rnd.random())
+            lane = size * (0.10 + 0.80 * rnd.random())
+            length = size * (0.10 + 0.16 * rnd.random()) * (1 if rnd.random() > 0.5 else -1)
+            if horizontal:
+                y = lane
+                x = size * 0.04 if start < size * 0.5 else size * 0.96
+                pts = [(x, y), (x + length, y)]
+                x += length
+                drop = size * 0.10 * (1 if rnd.random() > 0.5 else -1)
+                pts.append((x, y + drop))
+                y += drop
+            else:
+                x = lane
+                y = size * 0.04 if start < size * 0.5 else size * 0.96
+                pts = [(x, y), (x, y + length)]
+                y += length
+                shift = size * 0.10 * (1 if rnd.random() > 0.5 else -1)
+                pts.append((x + shift, y))
+                x += shift
+            d.line(pts, fill=(169, 232, 255, 90), width=max(1, round(size * 0.011)), joint="curve")
+            r = max(1.0, size * 0.013)
+            d.ellipse([x - r, y - r, x + r, y + r], fill=(191, 239, 255, 190))
+    return lay
+
+
+def neonize(icon: Image.Image, size: int = S, seed: int = 7) -> Image.Image:
+    """Salinan algoritma NeonIconFactory.java: kaca cair + jejak sirkuit + neon."""
+    if icon.size != (size, size):
+        icon = icon.resize((size, size), Image.LANCZOS)
+    mask = mask_of(icon, size)
+    outline = outline_of(mask, size)
+
+    tile, tile_mask = liquid_glass(size)
+
+    # 1. jejak sirkuit latar
+    bg = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    bg.paste(circuit_traces(size, seed, inside=False), (0, 0), tile_mask)
+    tile = Image.alpha_composite(tile, bg)
+
+    # 2. jejak sirkuit di dalam bentuk ikon
+    solid = Image.fromarray(((mask > 0.43) * 255).astype(np.uint8), "L")
+    inner = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    inner.paste(circuit_traces(size, seed + 1, inside=True), (0, 0), solid)
+    tile = Image.alpha_composite(tile, inner)
+
+    # 3. neon tiga lapis (inti digambar dua kali agar terang di ukuran kecil)
+    source = Image.fromarray((np.clip(outline, 0, 1) * 255).astype(np.uint8), "L")
     glow = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    for blur, color, amount in ((size * 0.10, (127, 216, 255), 0.65),
-                                (size * 0.045, (127, 216, 255), 0.9),
-                                (size * 0.010, (230, 249, 255), 1.0)):
-        blurred = glow_source.filter(ImageFilter.GaussianBlur(blur))
+    for blur, color, amount in ((size * 0.055, (95, 207, 255), 0.40),
+                                (size * 0.022, (95, 207, 255), 0.78),
+                                (size * 0.007, (234, 251, 255), 1.00),
+                                (size * 0.007, (234, 251, 255), 1.00)):
+        blurred = source.filter(ImageFilter.GaussianBlur(blur))
         layer = Image.new("RGBA", (size, size), color + (0,))
         layer.putalpha(blurred.point(lambda v: int(v * amount)))
         glow = Image.alpha_composite(glow, layer)
@@ -119,10 +251,12 @@ def neonize(icon: Image.Image, size: int = S) -> Image.Image:
     clipped = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     clipped.paste(glow, (0, 0), tile_mask)
     out = Image.alpha_composite(tile, clipped)
-    ImageDraw.Draw(out).rounded_rectangle([1, 1, size - 2, size - 2],
-                                          radius=int(size * 0.23),
-                                          outline=(127, 216, 255, 120), width=2)
-    return out
+
+    rim = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    ImageDraw.Draw(rim).rounded_rectangle([1, 1, size - 2, size - 2],
+                                          radius=int(size * 0.235),
+                                          outline=(185, 236, 255, 140), width=2)
+    return Image.alpha_composite(out, rim)
 
 
 # --------------------------------------------------------------------- html
@@ -211,9 +345,15 @@ TEMPLATE = r"""<!DOCTYPE html>
     padding:calc(var(--dp)*40) calc(var(--dp)*26) calc(var(--dp)*160)}
   .chips{display:flex;justify-content:space-between;width:100%}
   .chip{font-family:ui-monospace,Menlo,monospace;font-size:calc(var(--dp)*9);letter-spacing:.08em;
-    color:var(--neon-soft);padding:calc(var(--dp)*4) calc(var(--dp)*8);border-radius:calc(var(--dp)*3);
-    border:1px solid rgba(127,216,255,.4);background:rgba(6,12,20,.35);
+    color:var(--neon-soft);padding:calc(var(--dp)*5) calc(var(--dp)*10);border-radius:calc(var(--dp)*13);
+    border:1px solid rgba(191,239,255,.6);
+    background:linear-gradient(180deg,rgba(36,48,51,.60) 0%,rgba(4,7,11,.60) 100%);
+    box-shadow:inset 0 calc(var(--dp)*1) 0 rgba(232,251,255,.28),
+               0 0 calc(var(--dp)*8) rgba(127,216,255,.18);
     text-shadow:0 0 calc(var(--dp)*6) rgba(127,216,255,.45)}
+  /* meter baterai liquid glass, pojok kanan atas */
+  .batt{position:relative;width:calc(var(--dp)*100);height:calc(var(--dp)*26);flex:0 0 auto}
+  .batt canvas{width:100%;height:100%;display:block}
   .brand{margin-top:calc(var(--dp)*30);font-family:ui-monospace,Menlo,monospace;
     font-size:calc(var(--dp)*10);letter-spacing:.42em;color:var(--neon-dim);text-indent:.42em}
   .lock .clock{margin-top:calc(var(--dp)*6);font-size:calc(var(--dp)*78);font-weight:200;
@@ -230,8 +370,14 @@ TEMPLATE = r"""<!DOCTYPE html>
   /* ------------------------------------------------------------------- HUD */
   .hud{position:absolute;left:calc(var(--dp)*10);right:calc(var(--dp)*10);
     bottom:calc(var(--dp)*18);height:calc(var(--dp)*132);z-index:6;border-radius:calc(var(--dp)*9);
-    background:rgba(7,11,18,.94);border:1px solid rgba(127,216,255,.34);overflow:hidden;
+    background:linear-gradient(180deg,rgba(19,27,37,.97) 0%,rgba(4,7,11,.97) 100%);
+    border:1px solid rgba(191,239,255,.55);overflow:hidden;
+    box-shadow:inset 0 calc(var(--dp)*1) 0 rgba(232,251,255,.18);
     font-family:ui-monospace,Menlo,monospace}
+  .hud::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(105deg,transparent 38%,rgba(143,212,255,.10) 50%,transparent 62%);
+    background-size:220% 100%;animation:glassweep 7s linear infinite}
+  @keyframes glassweep{0%{background-position:120% 0}100%{background-position:-120% 0}}
   .hud .hairline{position:absolute;left:calc(var(--dp)*8);right:calc(var(--dp)*8);top:calc(var(--dp)*20);
     height:1px;background:rgba(168,230,255,.2)}
   .hud .scan{position:absolute;top:calc(var(--dp)*2);bottom:calc(var(--dp)*2);width:calc(var(--dp)*68);
@@ -369,7 +515,10 @@ __ICON_CSS__
           <div class="liquid"></div>
           <div class="veil"></div>
           <div class="lockcontent">
-            <div class="chips"><span class="chip">BATERAI 74%</span><span class="chip">SISTEM AKTIF</span></div>
+            <div class="chips">
+              <span class="chip">SISTEM AKTIF</span>
+              <span class="batt"><canvas id="battMeter" width="200" height="52"></canvas></span>
+            </div>
             <div class="brand">ASPROJECT SECURE</div>
             <div class="clock" data-clock data-size="lock">00:00</div>
             <div class="date" data-date>—</div>
@@ -412,7 +561,8 @@ __ICON_CSS__
         </div>
       </div>
       <div class="caption">Layar kunci + HUD live</div>
-      <div class="hint">HUD menampilkan jam (detik berjalan), baterai, dan suhu baterai asli perangkat.</div>
+      <div class="hint">Pojok kanan atas: meter baterai <strong>liquid glass</strong> dengan cairan
+        neon beriak. HUD menampilkan jam (detik berjalan), baterai, dan suhu baterai asli perangkat.</div>
     </div>
 
     <!-- -------------------------------------------------------------- beranda -->
@@ -525,8 +675,154 @@ __ICON_CSS__
     document.getElementById("sbHome").textContent = jam;
   }
 
+  /* ------------------------------------------------------------------
+     Meter baterai liquid glass — salinan LiquidBatteryView.java.
+     Kapsul kaca + cairan neon beriak + kilat saat mengisi daya.
+  ------------------------------------------------------------------ */
+  var canvas = document.getElementById("battMeter");
+  var ctx = canvas ? canvas.getContext("2d") : null;
+  var level = 0.74;       // contoh: 74%
+  var charging = false;
+  var phase = 0;
+  var last = 0;
+
+  function roundRect(c, x, y, w, h, r) {
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r);
+    c.lineTo(x + w, y + h - r); c.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    c.lineTo(x + r, y + h); c.quadraticCurveTo(x, y + h, x, y + h - r);
+    c.lineTo(x, y + r); c.quadraticCurveTo(x, y, x + r, y);
+    c.closePath();
+  }
+
+  function drawBattery(t) {
+    if (!ctx) { return; }
+    var W = canvas.width, H = canvas.height, R = H / 2;
+    ctx.clearRect(0, 0, W, H);
+
+    var glass = ctx.createLinearGradient(0, 0, 0, H);
+    glass.addColorStop(0, "rgba(36,48,51,0.40)");
+    glass.addColorStop(1, "rgba(4,7,11,0.70)");
+
+    ctx.save();
+    roundRect(ctx, 0.5, 0.5, W - 1, H - 1, R); ctx.clip();
+
+    ctx.fillStyle = glass; ctx.fillRect(0, 0, W, H);
+
+    // sorotan atas (kaca membusung)
+    var top = ctx.createRadialGradient(W * 0.42, -H * 0.35, 0, W * 0.42, -H * 0.35, H * 1.15);
+    top.addColorStop(0, "rgba(232,251,255,0.35)");
+    top.addColorStop(1, "rgba(232,251,255,0)");
+    ctx.fillStyle = top; ctx.fillRect(0, 0, W, H);
+
+    // kilau bawah-kanan
+    var under = ctx.createRadialGradient(W * 0.95, H * 1.15, 0, W * 0.95, H * 1.15, H * 0.75);
+    under.addColorStop(0, "rgba(88,180,232,0.18)");
+    under.addColorStop(1, "rgba(88,180,232,0)");
+    ctx.fillStyle = under; ctx.fillRect(0, 0, W, H);
+
+    // sapuan cair
+    var span = W * 2.2, shift = (phase % 1) * span - W * 0.6;
+    var sweep = ctx.createLinearGradient(shift, 0, shift + W * 0.55, H);
+    sweep.addColorStop(0, "rgba(191,233,255,0)");
+    sweep.addColorStop(0.5, "rgba(191,233,255,0.18)");
+    sweep.addColorStop(1, "rgba(191,233,255,0)");
+    ctx.fillStyle = sweep; ctx.fillRect(0, 0, W, H);
+
+    // jejak sirkuit terukir
+    ctx.strokeStyle = "rgba(127,216,255,0.29)"; ctx.lineWidth = 1.6; ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(W * 0.02, H * 0.72); ctx.lineTo(W * 0.02, H * 0.30); ctx.lineTo(W * 0.05, H * 0.30);
+    ctx.moveTo(W * 0.98, H * 0.28); ctx.lineTo(W * 0.98, H * 0.70); ctx.lineTo(W * 0.95, H * 0.70);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(191,239,255,0.6)";
+    ctx.beginPath(); ctx.arc(W * 0.05, H * 0.30, 2, 0, 6.2832); ctx.fill();
+    ctx.beginPath(); ctx.arc(W * 0.95, H * 0.70, 2, 0, 6.2832); ctx.fill();
+
+    // cangkang baterai
+    var bx = 16, bw = 44, bh = 22, by = (H - bh) / 2, br = bh * 0.26;
+    var shellGrad = ctx.createLinearGradient(0, by, 0, by + bh);
+    shellGrad.addColorStop(0, "rgba(10,16,24,0.20)");
+    shellGrad.addColorStop(1, "rgba(6,11,18,0.40)");
+    ctx.fillStyle = shellGrad; roundRect(ctx, bx, by, bw, bh, br); ctx.fill();
+
+    // kutub
+    ctx.fillStyle = "rgba(127,216,255,0.67)";
+    roundRect(ctx, bx + bw + 2.4, by + bh * 0.29, 4, bh * 0.42, 2); ctx.fill();
+
+    // cairan neon dengan permukaan beriak
+    var ix = bx + 2.4, iy = by + 2.4, iw = bw - 4.8, ih = bh - 4.8;
+    var fillH = ih * level, surface = iy + ih - fillH, wave = ih * 0.10;
+    ctx.save();
+    roundRect(ctx, ix, iy, iw, ih, br * 0.62); ctx.clip();
+    var liquid = ctx.createLinearGradient(0, surface, 0, iy + ih);
+    liquid.addColorStop(0, "rgba(143,230,255,1)");
+    liquid.addColorStop(1, "rgba(32,144,200,0.90)");
+    ctx.beginPath();
+    ctx.moveTo(ix, iy + ih);
+    for (var i = 0; i <= 24; i++) {
+      var p = i / 24;
+      ctx.lineTo(ix + iw * p, surface + Math.sin(t * 1.9 + p * 4.712) * wave);
+    }
+    ctx.lineTo(ix + iw, iy + ih);
+    ctx.closePath();
+    ctx.fillStyle = liquid; ctx.fill();
+    ctx.beginPath();
+    for (var j = 0; j <= 24; j++) {
+      var q = j / 24;
+      var px = ix + iw * q, py = surface + Math.sin(t * 1.9 + q * 4.712) * wave;
+      if (j === 0) { ctx.moveTo(px, py); } else { ctx.lineTo(px, py); }
+    }
+    ctx.strokeStyle = "rgba(234,251,255,0.80)"; ctx.lineWidth = 1.4; ctx.stroke();
+    ctx.restore();
+
+    // cangkang luar
+    ctx.strokeStyle = "rgba(127,216,255,0.67)"; ctx.lineWidth = 2;
+    roundRect(ctx, bx, by, bw, bh, br); ctx.stroke();
+
+    if (charging) {
+      var cx = bx + bw / 2, cy = by + bh / 2, bh2 = bh * 0.62;
+      ctx.beginPath();
+      ctx.moveTo(cx + bh2 * 0.16, cy - bh2 * 0.5);
+      ctx.lineTo(cx - bh2 * 0.20, cy + bh2 * 0.06);
+      ctx.lineTo(cx + bh2 * 0.02, cy + bh2 * 0.06);
+      ctx.lineTo(cx - bh2 * 0.14, cy + bh2 * 0.5);
+      ctx.lineTo(cx + bh2 * 0.24, cy - bh2 * 0.04);
+      ctx.lineTo(cx + bh2 * 0.02, cy - bh2 * 0.04);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(234,251,255,0.95)"; ctx.fill();
+    }
+
+    // teks persen
+    ctx.font = "700 20px ui-monospace, Menlo, monospace";
+    ctx.fillStyle = "#EAFBFF";
+    ctx.shadowColor = "rgba(127,216,255,0.6)"; ctx.shadowBlur = 12;
+    ctx.fillText(Math.round(level * 100) + "%", bx + bw + 12, H / 2 + 7);
+    ctx.shadowBlur = 0;
+    ctx.restore();
+
+    // rim light: terang di atas, redup di bawah
+    var rim = ctx.createLinearGradient(0, 0, 0, H);
+    rim.addColorStop(0, "rgba(191,239,255,0.80)");
+    rim.addColorStop(1, "rgba(111,168,192,0.29)");
+    ctx.strokeStyle = rim; ctx.lineWidth = 2;
+    roundRect(ctx, 1, 1, W - 2, H - 2, R); ctx.stroke();
+  }
+
+  function loop(now) {
+    if (!last) { last = now; }
+    var dt = Math.min(0.1, (now - last) / 1000);
+    last = now;
+    phase += dt * 0.28;
+    if (phase > 1) { phase -= 1; }
+    drawBattery(now / 1000);
+    requestAnimationFrame(loop);
+  }
+
   tick();
   setInterval(tick, 1000);
+  if (ctx) { requestAnimationFrame(loop); }
 })();
 </script>
 </body>

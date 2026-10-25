@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
@@ -174,13 +175,37 @@ public final class HudView extends View implements Choreographer.FrameCallback {
     }
 
     private void drawPanel(Canvas canvas, RectF frame) {
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(0xF0070B12);
-        canvas.drawRoundRect(frame, 9f * density, 9f * density, paint);
+        float radius = 9f * density;
+        Path clip = new Path();
+        clip.addRoundRect(frame, radius, radius, Path.Direction.CW);
 
-        stroke.setColor(0x557FD8FF);
+        // Kaca cair: dasar gradien gelap + sorotan atas + sapuan cair pelan.
+        paint.setStyle(Paint.Style.FILL);
+        canvas.save();
+        canvas.clipPath(clip);
+        paint.setShader(new LinearGradient(0, frame.top, 0, frame.bottom,
+                0xF0131B25, 0xF004070B, Shader.TileMode.CLAMP));
+        canvas.drawRect(frame, paint);
+        paint.setShader(new RadialGradient(frame.centerX(),
+                frame.top - frame.height() * 0.35f, frame.height() * 1.1f,
+                0x2EE8FBFF, 0x00000000, Shader.TileMode.CLAMP));
+        canvas.drawRect(frame, paint);
+        float band = frame.width() * 0.55f;
+        float shift = frame.left - band + (phase - (float) Math.floor(phase))
+                * (frame.width() + band * 2f);
+        paint.setShader(new LinearGradient(shift, frame.top, shift + band, frame.bottom,
+                new int[]{0x00000000, 0x1A8FD4FF, 0x00000000},
+                new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
+        canvas.drawRect(frame, paint);
+        paint.setShader(null);
+        canvas.restore();
+
+        // Tepi kaca: rim lebih terang di atas daripada bawah.
+        stroke.setShader(new LinearGradient(0, frame.top, 0, frame.bottom,
+                0x99BFEFFF, 0x446FA8C0, Shader.TileMode.CLAMP));
         stroke.setStrokeWidth(1f * density);
-        canvas.drawRoundRect(frame, 9f * density, 9f * density, stroke);
+        canvas.drawRoundRect(frame, radius, radius, stroke);
+        stroke.setShader(null);
 
         // Garis pemisah tipis di bawah judul.
         stroke.setColor(0x33A8E6FF);

@@ -49,6 +49,7 @@
     <string name="lock_label">ASPROJECT SECURE</string>
     <string name="lock_chip_status">SISTEM AKTIF</string>
     <string name="lock_chip_battery">BATERAI %1$d%%</string>
+    <string name="lock_battery_desc">Daya baterai</string>
     <string name="lock_hint">Geser ke atas untuk membuka</string>
     <string name="action_lock_now">Kunci layar</string>
 

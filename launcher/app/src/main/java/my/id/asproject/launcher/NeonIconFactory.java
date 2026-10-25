@@ -6,6 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
@@ -13,40 +16,40 @@ import android.graphics.drawable.Drawable;
 import java.util.Random;
 
 /**
- * Membuat versi NEON dari ikon aplikasi apa pun, di dalam perangkat.
+ * Pembuat ikon bergaya "liquid glass sirkuit" untuk SEMUA aplikasi.
  *
- * Tidak ada gambar per aplikasi yang perlu disiapkan: bentuk ikon asli diubah
- * menjadi "peta cahaya" lalu digambar ulang sebagai garis neon di atas kaca
- * gelap, sehingga SEMUA aplikasi mendapat gaya yang sama.
+ * Anatomi ikon (meniru paket ikon referensi):
+ *  1. <b>Kaca gelap</b> — tile membulat dengan gradien hampir hitam.
+ *  2. <b>Liquid chrome</b> — sapuan pantulan diagonal + sorotan tepi atas
+ *     (rim light) sehingga permukaan terlihat seperti kaca/cairan, bukan warna datar.
+ *  3. <b>Glyph sirkuit</b> — bentuk asli ikon diubah menjadi garis luar (outline)
+ *     lalu digambar sebagai neon: glow lebar → glow sempit → inti terang.
+ *  4. <b>Jejak sirkuit</b> — garis siku + titik sambung (pad) di sekitar glyph,
+ *     posisinya tetap untuk paket yang sama sehingga tidak "berkedip" antar sesi.
  *
- * Cara kerja:
- *  1. Ikon digambar ke bitmap, lalu tiap piksel dihitung luminansinya.
- *  2. Selisih luminansi terhadap warna latar (cincin terluar ikon) dijadikan
- *     intensitas; ini mempertahankan bentuk/glyph dan membuang latar polos.
- *     Bila ikon berlatar terang dengan glyph gelap, polaritasnya dibalik.
- *  3. Hasilnya digambar beberapa kali dengan BlurMaskFilter (glow lebar →
- *     glow sempit → inti tajam) supaya tampak seperti lampu neon.
- *  4. Ditambah jejak sirkuit kecil yang deterministik per paket, plus bingkai
- *     kaca gelap bergaris neon.
+ * Semua dikerjakan di atas Canvas biasa: tidak butuh OpenGL maupun pustaka luar.
  */
 public final class NeonIconFactory {
 
-    private static final int NEON = 0xFF7FD8FF;
-    private static final int NEON_CORE = 0xFFE6F9FF;
-    private static final int TRACE = 0x4DA8E6FF;
-    private static final int TILE_TOP = 0xFF121821;
-    private static final int TILE_BOTTOM = 0xFF070A0F;
-    private static final int TILE_STROKE = 0x557FD8FF;
+    // Palet neon sirkuit: cyan listrik dengan inti hampir putih.
+    private static final int NEON = 0xFF5FCFFF;
+    private static final int NEON_CORE = 0xFFEAFBFF;
+    private static final int TRACE = 0x66A9E8FF;
+    private static final int PAD = 0xCCBFEFFF;
+
+    // Kaca
+    private static final int GLASS_TOP = 0xFF101820;
+    private static final int GLASS_BOTTOM = 0xFF04070B;
+    private static final int RIM = 0x8FB9ECFF;
 
     private NeonIconFactory() {
     }
 
     /**
      * @param source ikon aplikasi asli
-     * @param size   sisi ikon dalam piksel
-     * @param seed   kunci stabil (mis. "paket/aktivitas") agar jejak sirkuit tidak
-     *               berubah-ubah setiap kali digambar
-     * @return bitmap ikon neon, atau null bila gagal (pemanggil memakai ikon asli)
+     * @param size   sisi ikon dalam piksel (mis. 52 dp dalam px)
+     * @param seed   kunci stabil — biasanya "paket/aktivitas"
+     * @return bitmap ikon, atau null bila gagal (pemanggil memakai ikon asli)
      */
     public static Bitmap create(Drawable source, int size, String seed) {
         if (source == null || size <= 0) {
@@ -55,15 +58,16 @@ public final class NeonIconFactory {
         try {
             Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(output);
-            float radius = size * 0.24f;
+            float radius = size * 0.235f;
 
-            drawGlassTile(canvas, size, radius);
+            drawLiquidGlass(canvas, size, radius);
             drawCircuits(canvas, size, radius, seed);
 
-            Bitmap glow = glyphGlow(source, size);
-            if (glow != null) {
-                drawNeon(canvas, glow, size, radius);
-                glow.recycle();
+            float[] glyph = glyphMask(source, size);
+            if (glyph != null) {
+                float[] outline = outlineOf(glyph, size);
+                drawGlyphCircuits(canvas, glyph, size, radius, seed);
+                drawNeon(canvas, outline, size, radius);
             }
             return output;
         } catch (OutOfMemoryError error) {
@@ -73,111 +77,239 @@ public final class NeonIconFactory {
         }
     }
 
-    // ------------------------------------------------------------------ lapisan
+    // --------------------------------------------------------------- kaca cair
 
-    private static void drawGlassTile(Canvas canvas, int size, float radius) {
-        Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
-        fill.setShader(new LinearGradient(0, 0, size * 0.35f, size,
-                TILE_TOP, TILE_BOTTOM, Shader.TileMode.CLAMP));
+    private static void drawLiquidGlass(Canvas canvas, int size, float radius) {
         RectF box = new RectF(0, 0, size, size);
-        canvas.drawRoundRect(box, radius, radius, fill);
+        Path clip = new Path();
+        clip.addRoundRect(box, radius, radius, Path.Direction.CW);
 
-        // Kilau tipis di sisi atas — memberi kesan kaca.
-        Paint sheen = new Paint(Paint.ANTI_ALIAS_FLAG);
-        sheen.setShader(new LinearGradient(0, 0, 0, size * 0.55f,
-                0x1FFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
-        Path top = new Path();
-        top.addRoundRect(box, radius, radius, Path.Direction.CW);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setShader(new LinearGradient(size * 0.15f, 0, size * 0.55f, size,
+                GLASS_TOP, GLASS_BOTTOM, Shader.TileMode.CLAMP));
+        canvas.drawRoundRect(box, radius, radius, paint);
+
         canvas.save();
-        canvas.clipPath(top);
-        canvas.drawRect(0, 0, size, size * 0.55f, sheen);
+        canvas.clipPath(clip);
+
+        // 1. Pantulan cair: pita diagonal terang melintasi kiri-atas.
+        Paint sweep = new Paint(Paint.ANTI_ALIAS_FLAG);
+        sweep.setShader(new LinearGradient(0, 0, size, size,
+                new int[]{0x33BFE9FF, 0x0F8FD4FF, 0x00000000},
+                new float[]{0f, 0.42f, 0.85f}, Shader.TileMode.CLAMP));
+        canvas.drawRect(box, sweep);
+
+        // 2. Sorotan atas yang lembut — bagian "membusung" kaca.
+        Paint sheen = new Paint(Paint.ANTI_ALIAS_FLAG);
+        sheen.setShader(new RadialGradient(size * 0.5f, -size * 0.12f, size * 0.85f,
+                new int[]{0x40E8FBFF, 0x00000000}, new float[]{0f, 1f}, Shader.TileMode.CLAMP));
+        canvas.drawRect(box, sheen);
+
+        // 3. Kilau bawah-kanan tipis (cermin ganda seperti krom cair).
+        Paint under = new Paint(Paint.ANTI_ALIAS_FLAG);
+        under.setShader(new RadialGradient(size * 0.92f, size * 1.02f, size * 0.6f,
+                new int[]{0x2258B4E8, 0x00000000}, new float[]{0f, 1f}, Shader.TileMode.CLAMP));
+        canvas.drawRect(box, under);
         canvas.restore();
 
-        Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
-        stroke.setStyle(Paint.Style.STROKE);
-        stroke.setStrokeWidth(Math.max(1f, size * 0.012f));
-        stroke.setColor(TILE_STROKE);
-        canvas.drawRoundRect(new RectF(size * 0.006f, size * 0.006f,
-                size - size * 0.006f, size - size * 0.006f), radius, radius, stroke);
+        // 4. Tepi kaca: garis terang dengan intensitas berbeda (atas lebih terang).
+        Paint rim = new Paint(Paint.ANTI_ALIAS_FLAG);
+        rim.setStyle(Paint.Style.STROKE);
+        rim.setStrokeWidth(Math.max(1f, size * 0.014f));
+        rim.setShader(new LinearGradient(0, 0, 0, size,
+                RIM, 0x336FA8C0, Shader.TileMode.CLAMP));
+        float inset = rim.getStrokeWidth() / 2f;
+        canvas.drawRoundRect(new RectF(inset, inset, size - inset, size - inset),
+                radius - inset, radius - inset, rim);
     }
 
-    /** Jejak sirkuit halus; posisinya tetap untuk paket yang sama. */
+    /** Jejak sirkuit + pad; posisi diturunkan dari nama paket (deterministik). */
     private static void drawCircuits(Canvas canvas, int size, float radius, String seed) {
-        Random random = new Random(seed == null ? 0L : seed.hashCode() * 31L);
+        Random random = new Random(seed == null ? 7L : seed.hashCode() * 31L);
+
         Paint trace = new Paint(Paint.ANTI_ALIAS_FLAG);
         trace.setStyle(Paint.Style.STROKE);
-        trace.setStrokeWidth(Math.max(1f, size * 0.01f));
+        trace.setStrokeCap(Paint.Cap.ROUND);
+        trace.setStrokeWidth(Math.max(1f, size * 0.011f));
         trace.setColor(TRACE);
+
+        Paint pad = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pad.setColor(PAD);
 
         Path clip = new Path();
         clip.addRoundRect(new RectF(0, 0, size, size), radius, radius, Path.Direction.CW);
         canvas.save();
         canvas.clipPath(clip);
 
-        int traces = 4;
+        int traces = 3;
         for (int i = 0; i < traces; i++) {
-            float x = size * (0.08f + 0.84f * random.nextFloat());
-            float y = size * (0.08f + 0.84f * random.nextFloat());
+            // Jejak dimulai dari tepi luar menjorok ke dalam, seperti PCB.
+            boolean horizontal = random.nextBoolean();
+            float start = size * (0.06f + 0.88f * random.nextFloat());
+            float lane = size * (0.10f + 0.80f * random.nextFloat());
+            float len = size * (0.10f + 0.16f * random.nextFloat())
+                    * (random.nextBoolean() ? 1f : -1f);
             Path path = new Path();
-            path.moveTo(x, y);
-            int segments = 2 + random.nextInt(2);
-            for (int s = 0; s < segments; s++) {
-                boolean horizontal = random.nextBoolean();
-                float length = size * (0.06f + 0.14f * random.nextFloat()) * (random.nextBoolean() ? 1 : -1);
-                if (horizontal) {
-                    x += length;
-                } else {
-                    y += length;
-                }
-                path.lineTo(x, y);
+            float x;
+            float y;
+            if (horizontal) {
+                y = lane;
+                x = start < size * 0.5f ? size * 0.04f : size * 0.96f;
+                path.moveTo(x, y);
+                path.lineTo(x + len, y);
+                x += len;
+                float drop = size * 0.10f * (random.nextBoolean() ? 1f : -1f);
+                path.lineTo(x, y + drop);
+                y += drop;
+            } else {
+                x = lane;
+                y = start < size * 0.5f ? size * 0.04f : size * 0.96f;
+                path.moveTo(x, y);
+                path.lineTo(x, y + len);
+                y += len;
+                float shift = size * 0.10f * (random.nextBoolean() ? 1f : -1f);
+                path.lineTo(x + shift, y);
+                x += shift;
             }
             canvas.drawPath(path, trace);
-            Paint dot = new Paint(Paint.ANTI_ALIAS_FLAG);
-            dot.setColor(TRACE);
-            canvas.drawCircle(x, y, Math.max(1.2f, size * 0.014f), dot);
+            canvas.drawCircle(x, y, Math.max(1.1f, size * 0.013f), pad);
         }
         canvas.restore();
     }
 
-    private static void drawNeon(Canvas canvas, Bitmap glow, int size, float radius) {
-        // Cahaya dibatasi bentuk kaca: tanpa ini, glow membuat sudut ikon terlihat
-        // kotak terang dan merusak kesan tombol kaca.
+    /**
+     * Jejak sirkuit tipis di DALAM bentuk ikon — potong memakai siluet glyph,
+     * sehingga motifnya mengikuti bentuk aplikasi, bukan sekadar latar.
+     */
+    private static void drawGlyphCircuits(Canvas canvas, float[] mask, int size, float radius,
+                                          String seed) {
+        Bitmap solid = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        int[] pixels = new int[mask.length];
+        boolean any = false;
+        for (int i = 0; i < mask.length; i++) {
+            if (mask[i] > 0.43f) {
+                pixels[i] = 0xFFFFFFFF;
+                any = true;
+            } else {
+                pixels[i] = 0;
+            }
+        }
+        if (!any) {
+            solid.recycle();
+            return;
+        }
+        solid.setPixels(pixels, 0, size, 0, 0, size, size);
+
+        Random random = new Random((seed == null ? 5L : seed.hashCode()) ^ 0x5FD8FFL);
+        Bitmap traces = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas traceCanvas = new Canvas(traces);
+
+        Paint line = new Paint(Paint.ANTI_ALIAS_FLAG);
+        line.setStyle(Paint.Style.STROKE);
+        line.setStrokeCap(Paint.Cap.ROUND);
+        line.setStrokeJoin(Paint.Join.ROUND);
+        line.setStrokeWidth(Math.max(1f, size * 0.006f));
+        line.setColor(0x66A0E1FF);
+
+        Paint pad = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pad.setColor(0x99C8F0FF);
+
+        for (int i = 0; i < 4; i++) {
+            boolean horizontal = random.nextBoolean();
+            float lane = size * (0.18f + 0.64f * random.nextFloat());
+            float span = size * (0.22f + 0.30f * random.nextFloat());
+            float center = size * (0.30f + 0.40f * random.nextFloat());
+            Path path = new Path();
+            float x;
+            float y;
+            if (horizontal) {
+                path.moveTo(center - span, lane);
+                path.lineTo(center, lane);
+                path.lineTo(center, lane + span * 0.55f);
+                x = center;
+                y = lane + span * 0.55f;
+            } else {
+                path.moveTo(lane, center - span);
+                path.lineTo(lane, center);
+                path.lineTo(lane + span * 0.55f, center);
+                x = lane + span * 0.55f;
+                y = center;
+            }
+            traceCanvas.drawPath(path, line);
+            traceCanvas.drawCircle(x, y, Math.max(1f, size * 0.009f), pad);
+        }
+
+        Paint cut = new Paint(Paint.ANTI_ALIAS_FLAG);
+        cut.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        traceCanvas.drawBitmap(solid, 0, 0, cut);
+
+        Path tile = new Path();
+        tile.addRoundRect(new RectF(0, 0, size, size), radius, radius, Path.Direction.CW);
+        canvas.save();
+        canvas.clipPath(tile);
+        canvas.drawBitmap(traces, 0, 0, null);
+        canvas.restore();
+
+        traces.recycle();
+        solid.recycle();
+    }
+
+    // ----------------------------------------------------------------- neon
+
+    private static void drawNeon(Canvas canvas, float[] mask, int size, float radius) {
+        Bitmap glow = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        int[] pixels = new int[mask.length];
+        for (int i = 0; i < mask.length; i++) {
+            int alpha = (int) (Math.min(1f, mask[i]) * 255f);
+            pixels[i] = alpha << 24 | 0x00FFFFFF;
+        }
+        glow.setPixels(pixels, 0, size, 0, 0, size, size);
+
         Path tile = new Path();
         tile.addRoundRect(new RectF(0, 0, size, size), radius, radius, Path.Direction.CW);
         canvas.save();
         canvas.clipPath(tile);
 
-        // 1. Lingkaran cahaya lebar
         Paint wide = new Paint(Paint.ANTI_ALIAS_FLAG);
         wide.setColor(NEON);
-        wide.setAlpha(150);
-        wide.setMaskFilter(new BlurMaskFilter(size * 0.11f, BlurMaskFilter.Blur.NORMAL));
+        wide.setAlpha(102);
+        wide.setMaskFilter(new BlurMaskFilter(size * 0.055f, BlurMaskFilter.Blur.NORMAL));
         canvas.drawBitmap(glow, 0, 0, wide);
 
-        // 2. Cahaya menengah
         Paint mid = new Paint(Paint.ANTI_ALIAS_FLAG);
         mid.setColor(NEON);
-        mid.setAlpha(215);
-        mid.setMaskFilter(new BlurMaskFilter(size * 0.05f, BlurMaskFilter.Blur.NORMAL));
+        mid.setAlpha(199);
+        mid.setMaskFilter(new BlurMaskFilter(size * 0.022f, BlurMaskFilter.Blur.NORMAL));
         canvas.drawBitmap(glow, 0, 0, mid);
 
-        // 3. Inti terang (garis neon sesungguhnya)
         Paint core = new Paint(Paint.ANTI_ALIAS_FLAG);
         core.setColor(NEON_CORE);
         if (size >= 96) {
-            core.setMaskFilter(new BlurMaskFilter(size * 0.012f, BlurMaskFilter.Blur.NORMAL));
+            core.setMaskFilter(new BlurMaskFilter(size * 0.007f, BlurMaskFilter.Blur.NORMAL));
         }
+        // Dua kali: inti lampu neon harus benar-benar terang agar terbaca di 48 dp.
+        canvas.drawBitmap(glow, 0, 0, core);
         canvas.drawBitmap(glow, 0, 0, core);
         canvas.restore();
+        glow.recycle();
     }
 
-    // ------------------------------------------------------------------ masker
+    // ------------------------------------------------------------- masker
 
     /**
-     * Peta intensitas: bagian ikon yang berbeda dari warna latarnya menjadi putih,
-     * latar polos menjadi transparan. Hasilnya bitmap putih dengan alpha.
+     * Peta intensitas glyph.
+     *
+     * Cara kerja (kunci agar ikon "bidang warna penuh" tidak berubah menjadi
+     * cincin blob):
+     *  1. Hitung <b>median</b> terang seluruh tile — itu warna latar ikon.
+     *  2. Selisih mutlak tiap piksel terhadap median = seberapa jauh piksel itu
+     *     "menonjol" dari latar. Jadi glyph yang lebih GELAP pun ikut terdeteksi.
+     *  3. Tepi luar (7%) dibuang: potongan ikon kerap menyisakan latar tangkapan
+     *     layar di sekelilingnya, dan itu menghasilkan cincin palsu.
+     *  4. Ambang adaptif: hanya 30% piksel yang paling menonjol yang dipakai,
+     *     lalu dilembutkan. Hasilnya: bentuk aplikasi, bukan kotak penuh.
      */
-    private static Bitmap glyphGlow(Drawable source, int size) {
+    private static float[] glyphMask(Drawable source, int size) {
         Bitmap icon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas iconCanvas = new Canvas(icon);
         source.setBounds(0, 0, size, size);
@@ -188,97 +320,158 @@ public final class NeonIconFactory {
         icon.recycle();
 
         float[] luminance = new float[pixels.length];
+        float[] alpha = new float[pixels.length];
+        int[] levelHistogram = new int[256];
         for (int i = 0; i < pixels.length; i++) {
             int color = pixels[i];
-            int alpha = (color >>> 24) & 0xFF;
-            int red = (color >> 16) & 0xFF;
-            int green = (color >> 8) & 0xFF;
-            int blue = color & 0xFF;
-            // Luminans persepsi (Rec. 601) — stabil untuk ikon berwarna apa pun.
-            luminance[i] = (0.299f * red + 0.587f * green + 0.114f * blue) * (alpha / 255f);
-            pixels[i] = alpha;
+            int a = (color >>> 24) & 0xFF;
+            alpha[i] = a / 255f;
+            float value = (0.299f * ((color >> 16) & 0xFF)
+                    + 0.587f * ((color >> 8) & 0xFF)
+                    + 0.114f * (color & 0xFF)) * alpha[i];
+            luminance[i] = value;
+            int bin = (int) value;
+            if (bin > 255) {
+                bin = 255;
+            }
+            levelHistogram[bin]++;
         }
+        float background = histogramValue(levelHistogram, pixels.length, 0.5f, 255f);
 
-        float border = borderLuminance(luminance, size);
-        float center = centerLuminance(luminance, size);
-        float polarity = center + 6f < border ? -1f : 1f;
-
+        int band = Math.round(size * 0.07f);
+        float[] delta = new float[pixels.length];
         float peak = 0f;
-        for (int i = 0; i < luminance.length; i++) {
-            float delta = (luminance[i] - border) * polarity;
-            if (delta > peak) {
-                peak = delta;
-            }
-        }
-
-        int[] out = new int[pixels.length];
-        if (peak < 5f) {
-            // Ikon rata / monokrom: pakai kanal alpha saja sebagai bentuk.
-            for (int i = 0; i < pixels.length; i++) {
-                int alpha = (int) (pixels[i] * 0.85f);
-                out[i] = alpha << 24 | 0x00FFFFFF;
-            }
-        } else {
-            float low = peak * 0.20f;
-            float high = peak * 0.92f;
-            // Ikon "blok warna penuh" (WhatsApp/Chrome/Instagram) akan menjadi blob
-            // bila seluruh bidang ikut menyala. Untuk ikon seperti itu ambang
-            // dinaikkan supaya hanya garis tepi & detail yang digambar — hasilnya
-            // gaya outline neon, bukan bidang putih.
-            int covered = 0;
-            for (int i = 0; i < luminance.length; i++) {
-                if ((luminance[i] - border) * polarity > low) {
-                    covered++;
-                }
-            }
-            if (covered > luminance.length * 0.5f) {
-                low = peak * 0.45f;
-                high = peak * 0.97f;
-            }
-            float span = Math.max(1f, high - low);
-            for (int i = 0; i < luminance.length; i++) {
-                float delta = (luminance[i] - border) * polarity;
-                float t = (delta - low) / span;
-                t = t < 0f ? 0f : (t > 1f ? 1f : t);
-                t = t * t * (3f - 2f * t);          // halus (smoothstep)
-                int alpha = (int) (t * 255f);
-                out[i] = alpha << 24 | 0x00FFFFFF;
-            }
-        }
-
-        Bitmap mask = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-        mask.setPixels(out, 0, size, 0, 0, size, size);
-        return mask;
-    }
-
-    /** Rata-rata luminans 12% area terluar (dipakai sebagai "warna latar" ikon). */
-    private static float borderLuminance(float[] luminance, int size) {
-        int band = Math.max(2, Math.round(size * 0.12f));
-        float sum = 0f;
-        int count = 0;
+        int active = 0;
+        int[] deltaHistogram = new int[256];
         for (int y = 0; y < size; y++) {
-            boolean edgeRow = y < band || y >= size - band;
             for (int x = 0; x < size; x++) {
-                if (edgeRow || x < band || x >= size - band) {
-                    sum += luminance[y * size + x];
-                    count++;
+                int i = y * size + x;
+                boolean ring = y < band || y >= size - band || x < band || x >= size - band;
+                if (ring) {
+                    continue;
+                }
+                float d = Math.abs(luminance[i] - background);
+                delta[i] = d;
+                if (d > peak) {
+                    peak = d;
+                }
+                active++;
+            }
+        }
+
+        if (peak < 5f || active == 0) {
+            // Ikon rata / hanya alpha: bentuk = alpha itu sendiri.
+            return alpha;
+        }
+
+        for (int i = 0; i < delta.length; i++) {
+            int bin = (int) (delta[i] / peak * 255f);
+            if (bin > 255) {
+                bin = 255;
+            } else if (bin < 0) {
+                bin = 0;
+            }
+            deltaHistogram[bin]++;
+        }
+
+        // 30% piksel paling menonjol → ambang bawah.
+        int[] strongHistogram = new int[256];
+        int strong = 0;
+        float strongFloor = peak * 0.12f;
+        for (int i = 0; i < delta.length; i++) {
+            if (delta[i] > strongFloor) {
+                int bin = (int) (delta[i] / peak * 255f);
+                if (bin > 255) {
+                    bin = 255;
+                }
+                strongHistogram[bin]++;
+                strong++;
+            }
+        }
+        float low = strong == 0 ? peak * 0.5f
+                : histogramValue(strongHistogram, strong, 0.70f, peak);
+        float high = Math.max(low * 1.15f, histogramValue(deltaHistogram, active, 0.995f, peak));
+
+        float[] out = new float[delta.length];
+        float span = Math.max(1f, high - low);
+        for (int i = 0; i < delta.length; i++) {
+            float t = (delta[i] - low) / span;
+            t = t < 0f ? 0f : (t > 1f ? 1f : t);
+            out[i] = t * t * (3f - 2f * t);
+        }
+        return out;
+    }
+
+    /**
+     * Nilai pada frasi ke-{@code fraction} dari sebuah histogram.
+     * Histogram dipetakan ke 0..{@code max} dalam 256 tangga.
+     */
+    private static float histogramValue(int[] histogram, int total, float fraction, float max) {
+        if (total <= 0) {
+            return 0f;
+        }
+        long target = Math.round(total * fraction);
+        long seen = 0;
+        for (int bin = 0; bin < histogram.length; bin++) {
+            seen += histogram[bin];
+            if (seen >= target) {
+                return max * bin / 255f;
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Ambil garis luar (outline) dari peta glyph — inilah yang membuat ikon terlihat
+     * seperti lampu neon berongga, bukan siluet penuh.
+     *
+     * Bila bentuk aslinya sudah tipis (line art), outline akan habis; dalam kasus
+     * itu glyph asli dipakai dengan intensitas lebih rendah.
+     */
+    private static float[] outlineOf(float[] mask, int size) {
+        int total = mask.length;
+        float[] out = new float[total];
+        int edgeCount = 0;
+        for (int y = 0; y < size; y++) {
+            int row = y * size;
+            for (int x = 0; x < size; x++) {
+                int i = row + x;
+                float center = mask[i];
+                if (center <= 0.12f) {
+                    continue;
+                }
+                float left = x > 0 ? mask[i - 1] : 0f;
+                float right = x < size - 1 ? mask[i + 1] : 0f;
+                float up = y > 0 ? mask[i - size] : 0f;
+                float down = y < size - 1 ? mask[i + size] : 0f;
+                float min = Math.min(center, Math.min(Math.min(left, right), Math.min(up, down)));
+                float edge = (center - min) * 1.6f;
+                if (edge > 1f) {
+                    edge = 1f;
+                }
+                // Akar kuadrat: garis menjadi tegas, tidak sekadar kabut tipis.
+                out[i] = (float) Math.sqrt(edge);
+                if (out[i] > 0.05f) {
+                    edgeCount++;
                 }
             }
         }
-        return count == 0 ? 0f : sum / count;
-    }
 
-    private static float centerLuminance(float[] luminance, int size) {
-        int from = Math.round(size * 0.3f);
-        int to = Math.round(size * 0.7f);
-        float sum = 0f;
-        int count = 0;
-        for (int y = from; y < to; y++) {
-            for (int x = from; x < to; x++) {
-                sum += luminance[y * size + x];
-                count++;
+        // Nyaris tidak ada garis (bentuk aslinya memang line art) → pakai bentuk asli.
+        if (edgeCount < Math.max(16f, size * 0.4f)) {
+            for (int i = 0; i < total; i++) {
+                out[i] = mask[i] * 0.9f;
+            }
+            return out;
+        }
+        // Sedikit isi agar rongga tidak terlihat kosong.
+        for (int i = 0; i < total; i++) {
+            float inner = mask[i] * 0.09f;
+            if (out[i] < inner) {
+                out[i] = inner;
             }
         }
-        return count == 0 ? 0f : sum / count;
+        return out;
     }
+
 }

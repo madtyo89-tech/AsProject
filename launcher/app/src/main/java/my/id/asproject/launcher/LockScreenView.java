@@ -41,7 +41,7 @@ public final class LockScreenView extends FrameLayout {
     private View content;
     private TextClock clock;
     private TextView dateView;
-    private TextView batteryChip;
+    private LiquidBatteryView batteryMeter;
     private HudView hud;
     private LockWallpaperView wallpaper;
 
@@ -67,7 +67,7 @@ public final class LockScreenView extends FrameLayout {
         content = findViewById(R.id.lockContent);
         clock = (TextClock) findViewById(R.id.lockClock);
         dateView = (TextView) findViewById(R.id.lockDate);
-        batteryChip = (TextView) findViewById(R.id.chipBattery);
+        batteryMeter = (LiquidBatteryView) findViewById(R.id.batteryMeter);
         hud = (HudView) findViewById(R.id.hud);
         wallpaper = (LockWallpaperView) findViewById(R.id.lockWallpaper);
     }
@@ -232,11 +232,7 @@ public final class LockScreenView extends FrameLayout {
         if (manager != null) {
             level = manager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
         }
-        if (level < 0) {
-            batteryChip.setText(R.string.lock_chip_status);
-            return;
-        }
-        batteryChip.setText(getContext().getString(R.string.lock_chip_battery, level));
+        batteryMeter.setBattery(level, false);
     }
 
     /**
@@ -277,9 +273,7 @@ public final class LockScreenView extends FrameLayout {
         if (hud != null) {
             hud.setBattery(level, charging, temperature);
         }
-        if (level >= 0) {
-            batteryChip.setText(getContext().getString(R.string.lock_chip_battery, level));
-        }
+        batteryMeter.setBattery(level, charging);
     }
 
     public void refreshDate() {
