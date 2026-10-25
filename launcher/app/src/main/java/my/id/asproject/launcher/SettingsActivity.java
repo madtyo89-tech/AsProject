@@ -83,12 +83,6 @@ public final class SettingsActivity extends Activity implements View.OnClickList
                 prefs.setHudAnimation(checked);
             }
         });
-        bindSwitch(R.id.switchLockFrame, prefs.lockFrameOnly(), new SwitchAction() {
-            @Override
-            public void onChanged(boolean checked) {
-                prefs.setLockFrameOnly(checked);
-            }
-        });
 
         RadioGroup columns = (RadioGroup) findViewById(R.id.columnsGroup);
         columns.check(columnId(prefs.columns()));

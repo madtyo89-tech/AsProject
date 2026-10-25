@@ -8,9 +8,9 @@ tanpa pustaka pihak ketiga, dan tanpa satu pun izin**.
 
 - Paket: `my.id.asproject.launcher` · Nama: **AsProject Launcher**
 - `minSdk 21` (Android 5.0) → `targetSdk 34` (Android 14)
-- Ukuran APK ±1,6 MB (mayoritas: 2 wallpaper 1080 px + 8 ikon neon)
+- Ukuran APK ±1,15 MB (mayoritas: 1 wallpaper 1080 px + 8 ikon neon + font tema)
 - Izin: **nol** — tidak ada INTERNET, lokasi, kontak, mikrofon, maupun penyimpanan
-- Kode: 21 kelas Java, 6 layout XML, drawable + aset wallpaper/ikon & font tema
+- Kode: 20 kelas Java, 5 layout XML, drawable + aset wallpaper/ikon & font tema
 
 ## APK siap pasang
 
@@ -80,7 +80,6 @@ launcher/
 │   │   ├── AppRepository.java           daftar aplikasi + tebakan isi dock
 │   │   ├── AppGridAdapter.java          adaptor kisi
 │   │   ├── LockScreenView.java          layar kunci + gestur geser-ke-atas
-│   │   ├── LockWallpaperView.java       wallpaper bingkai (mode contain)
 │   │   ├── HomeWallpaperView.java       wallpaper sirkuit (mode cover)
 │   │   ├── WallpaperFigure.java         decode + cache + mode gambar
 │   │   ├── NeonIcons.java               peta paket → ikon neon khusus

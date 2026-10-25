@@ -161,12 +161,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/hud_animation" />
 
-            <Switch
-                android:id="@+id/switchLockFrame"
-                style="@style/SettingsSwitch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/lock_frame_only" />
 
             <TextView
                 android:layout_width="match_parent"

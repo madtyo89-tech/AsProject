@@ -15,22 +15,23 @@ import java.io.InputStream;
  * Wallpaper bawaan AsProject ("liquid chrome + sirkuit neon") dan cara menggambarnya.
  *
  * Aset berada di `assets/wallpaper/`:
- *   • lock.jpg — frame liquid-chrome kosong di tengah  → dipakai di layar kunci
- *   • home.jpg — liquid chrome + HUD status di bawah   → dipakai di beranda
+ *   • home.jpg — liquid chrome + HUD status di bawah → dipakai di beranda.
+ *     (Layar kunci tidak lagi memakai berkas gambar: papannya digambar
+ *     prosedural oleh {@code CircuitWallpaperView}.)
  *
  * Dua mode gambar:
  *   • CONTAIN — seluruh gambar terlihat (bingkai tidak terpotong), sisa ruang diisi
- *     warna tepi gambar sehingga menyatu dengan latar gelap. Dipakai untuk layar kunci.
+ *     warna tepi gambar sehingga menyatu dengan latar gelap.
  *   • COVER   — mengisi penuh layar, dipotong di tepi. Dipakai untuk beranda.
  */
 public final class WallpaperFigure {
 
-    /** Bingkai liquid-chrome kosong (tanpa HUD). */
-    public static final String ASSET_FRAME = "wallpaper/lock.jpg";
-    /** Liquid chrome + panel HUD (dipakai beranda & layar kunci bawaan). */
+    /**
+     * Liquid chrome + panel HUD — satu-satunya gambar wallpaper yang masih
+     * dipakai (beranda). Layar kunci kini memakai papan sirkuit prosedural
+     * ({@link CircuitWallpaperView}), jadi tidak ada lagi berkas JPEG untuknya.
+     */
     public static final String ASSET_HUD = "wallpaper/home.jpg";
-    /** Nama lama, dipertahankan agar kode/pengaturan lama tetap jalan. */
-    public static final String ASSET_LOCK = ASSET_FRAME;
     public static final String ASSET_HOME = ASSET_HUD;
 
     private static final Paint PAINT = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);

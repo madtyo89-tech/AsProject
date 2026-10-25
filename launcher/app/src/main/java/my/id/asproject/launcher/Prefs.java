@@ -27,7 +27,6 @@ public final class Prefs {
     private static final String KEY_NEON_ICONS = "neon_icons";
     private static final String KEY_HUD_ANIMATION = "hud_animation";
     private static final String KEY_LIQUID_MOTION = "liquid_motion";
-    private static final String KEY_LOCK_FRAME = "lock_frame_only";
 
     public static final int MIN_COLUMNS = 3;
     public static final int MAX_COLUMNS = 6;
@@ -124,14 +123,7 @@ public final class Prefs {
         prefs.edit().putBoolean(KEY_LIQUID_MOTION, enabled).apply();
     }
 
-    /** Layar kunci memakai bingkai kosong (tanpa HUD). */
-    public boolean lockFrameOnly() {
-        return prefs.getBoolean(KEY_LOCK_FRAME, false);
-    }
 
-    public void setLockFrameOnly(boolean frameOnly) {
-        prefs.edit().putBoolean(KEY_LOCK_FRAME, frameOnly).apply();
-    }
 
     // ------------------------------------------------------------------ dock
 

@@ -289,7 +289,6 @@ def neonize(icon: Image.Image, size: int = S, seed: int = 7) -> Image.Image:
 # --------------------------------------------------------------------- html
 
 def build() -> None:
-    lock = jpeg_b64(WALL / "lock.jpg", 430, 82)
     home = jpeg_b64(WALL / "home.jpg", 430, 82)
 
     classes = []
@@ -299,7 +298,6 @@ def build() -> None:
         classes.append(f".ic-gen-{name}{{background-image:url(\"{png_b64(neonize(placeholder_icon(kind, hue), seed=31 + index * 5).resize((112, 112), Image.LANCZOS))}\")}}")
 
     html = (TEMPLATE
-            .replace("__LOCK__", lock)
             .replace("__HOME__", home)
             .replace("__ICON_CSS__", "\n".join(classes)))
     OUT.write_text(html, encoding="utf-8")
@@ -320,7 +318,6 @@ TEMPLATE = r"""<!DOCTYPE html>
     --ink:#0A0A0A; --gold:#D4AF37; --gold-soft:#F0DCA0;
     --neon:#7FD8FF; --neon-soft:#B3E8FF; --neon-dim:#4FA8D8;
     --text:#fff;
-    --lock:url("__LOCK__");
     --home:url("__HOME__");
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -363,7 +360,6 @@ TEMPLATE = r"""<!DOCTYPE html>
     100%{transform:scale(1.06) translate3d(1.4%,1%,0) rotate(-.2deg)}
   }
   @keyframes sheen{0%{background-position:-140% 0}100%{background-position:240% 0}}
-  .lock .liquid{background-image:var(--home)}
   .home .liquid{background-image:var(--home)}
   .lock .veil,.home .veil{position:absolute;inset:0}
 

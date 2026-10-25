@@ -1,1 +1,1 @@
-5487b0d710859d234c57933d14305c5a1456c46e6ccd26554ae623ee14234967  asproject-launcher-1.0.0-debug.apk
+f092db05521567e6f3cee0c91ac16f45fd09a9eae315e07325ad3ee29b0e9679  asproject-launcher-1.0.0-debug.apk

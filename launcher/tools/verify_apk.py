@@ -45,7 +45,6 @@ REQUIRED_CLASSES = [
     "Lmy/id/asproject/launcher/LiquidHandleView;",
     "Lmy/id/asproject/launcher/Typefaces;",
     "Lmy/id/asproject/launcher/HomeWallpaperView;",
-    "Lmy/id/asproject/launcher/LockWallpaperView;",
     "Lmy/id/asproject/launcher/NeonIcons;",
     "Lmy/id/asproject/launcher/SettingsActivity;",
     "Lmy/id/asproject/launcher/AppRepository;",
@@ -153,8 +152,8 @@ def verify_zip(apk: Path) -> dict:
         check("berkas DEX ada", bool(dex_names), ", ".join(dex_names))
         check("AndroidManifest.xml ada", "AndroidManifest.xml" in names)
         assets = [n for n in names if n.startswith("assets/")]
-        check("wallpaper layar kunci ada (assets/wallpaper/lock.jpg)",
-              "assets/wallpaper/lock.jpg" in names, ", ".join(assets))
+        check("layar kunci prosedural (tanpa assets/wallpaper/lock.jpg)",
+              "assets/wallpaper/lock.jpg" not in names, ", ".join(assets))
         check("wallpaper beranda ada (assets/wallpaper/home.jpg)",
               "assets/wallpaper/home.jpg" in names)
         check("tidak ada aset web/jembatan JS", not any(n.endswith(".js") for n in names))
@@ -189,8 +188,10 @@ def verify_classes(apk: Path, dex_names: list[str]) -> None:
     for value in (b"android.intent.category.LAUNCHER",
                   b"android.intent.action.MAIN",
                   b"launcher_prefs",
-                  b"wallpaper/lock.jpg",
-                  b"wallpaper/home.jpg"):
+                  b"wallpaper/home.jpg",
+                  # wallpaper berlapis (parallax 3D) benar-benar ada di kode
+                  b"getLayerCount", b"createLayer", b"layerPerspective",
+                  b"projectLayer", b"meshCols", b"drawBackdrop"):
         check(f"string penting tertanam: {value.decode()}", value in blob)
     check("ikon neon ter-dex (8 ikon sirkuit)",
           all(name.encode() in blob for name in (

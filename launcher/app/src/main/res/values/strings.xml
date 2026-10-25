@@ -5,7 +5,6 @@
     <string name="search_hint">Cari aplikasi</string>
     <string name="drawer_search_hint">Cari semua aplikasi</string>
     <string name="clear_search">Kosongkan</string>
-    <string name="drawer_hint">Geser ke atas untuk membuka laci aplikasi</string>
     <string name="empty_search">Tidak ada aplikasi yang cocok</string>
     <string name="no_apps">Belum ada aplikasi yang bisa ditampilkan</string>
     <string name="home_options">Opsi beranda</string>
@@ -51,7 +50,6 @@
     <!-- Layar kunci -->
     <string name="lock_label">ASPROJECT SECURE</string>
     <string name="lock_chip_status">SISTEM AKTIF</string>
-    <string name="lock_chip_battery">BATERAI %1$d%%</string>
     <string name="lock_battery_desc">Daya baterai</string>
     <string name="lock_hint">Geser ke atas untuk membuka</string>
     <string name="action_lock_now">Kunci layar</string>
@@ -59,7 +57,7 @@
     <!-- Wallpaper & ikon -->
     <string name="section_wallpaper">Wallpaper</string>
     <string name="use_figure_wallpaper">Pakai wallpaper neon AsProject</string>
-    <string name="wallpaper_note">Bingkai liquid-chrome dipakai di layar kunci, sirkuit neon di beranda.</string>
+    <string name="wallpaper_note">Beranda memakai gambar liquid-chrome + HUD. Layar kunci memakai papan sirkuit liquid 3D yang digambar sendiri (tanpa berkas gambar).</string>
     <string name="section_lock">Layar kunci</string>
     <string name="enable_lock_screen">Aktifkan layar kunci</string>
     <string name="lock_note">Layar kunci muncul saat ponsel dibuka. Geser ke atas untuk masuk ke beranda.</string>
@@ -70,5 +68,4 @@
     <string name="liquid_motion">Wallpaper liquid bergerak (3D)</string>
     <string name="hud_animation">HUD layar kunci beranimasi</string>
     <string name="motion_note">Efek 3D dan HUD berjalan 30–60 fps hanya saat layar tampil. Matikan bila baterai terasa lebih cepat habis.</string>
-    <string name="lock_frame_only">Layar kunci pakai bingkai kosong (tanpa HUD)</string>
 </resources>
