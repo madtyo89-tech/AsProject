@@ -94,6 +94,31 @@ for (const s of [
   'body.tema-liquid-glass-aqiqah', '--lg-rx', '--lg-mx'
 ]) cek(css.includes(s), 'CSS liquid kekurangan: ' + s);
 
+/* Material harus benar-benar tembus pandang: isi panel utama tipis, panel
+   di dalam kartu tidak kembali putih padat, dan fallback tanpa
+   backdrop-filter pun tetap bening (bukan kartu susu ±88%). */
+for (const s of [
+  '--lg-fill:rgba(255,255,255,.035)',
+  '--lg-fill-hi:rgba(255,255,255,.18)',
+  '--lg-fill-mid:rgba(255,255,255,.025)',
+  'body.tema-liquid #cover .wedding-invite-card',
+  'body.tema-liquid .acara',
+  'body.tema-liquid .couple .c',
+  'body.tema-liquid .amp-row',
+  'body.tema-liquid .qrcard',
+  'body.tema-liquid .bt-item',
+  'body.tema-liquid .harapan-kartu',
+  'body.tema-liquid .as-contact',
+  'body.tema-liquid #rvpN',
+  'background-color:rgba(255,255,255,.38)'
+]) cek(css.includes(s), 'CSS liquid kekurangan material bening: ' + s);
+for (const s of [
+  '--lg-fill:rgba(255,255,255,.38)',
+  'rgba(255,255,255,.66)',
+  'linear-gradient(155deg,rgba(255,255,255,.72),rgba(255,255,255,.26))',
+  'background-color:rgba(255,255,255,.88)'
+]) cek(!css.includes(s), 'CSS liquid masih memakai lapisan putih tebal: ' + s);
+
 for (const s of [
   'AsLiquidGlass', 'function mount(', 'function unmount(',
   'sessionStorage', "matchMedia('(prefers-reduced-motion: reduce)')",

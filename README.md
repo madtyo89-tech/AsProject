@@ -507,12 +507,17 @@ array `TPL` supaya index `theme` undangan lama tidak berubah.
   balik panel kaca, tilt 3D mengikuti kursor/sentuh/gyro HP, kilau
   specular mengikuti posisi cahaya, dan **pemilih aksen dinamis**
   (6 preset; bawaan per kategori; pilihan tamu disimpan di
-  `sessionStorage`). `prefers-reduced-motion` mematikan tilt/animasi;
-  tanpa `backdrop-filter` panel naik opasitasnya; tanpa aset ini tema
-  tetap tampil sebagai shell kaca biasa.
+  `sessionStorage`). Material panelnya benar-benar bening — isi putih
+  hanya ±3–18% di atas blur/saturasi latar, dan panel di dalam kartu
+  (acara, amplop, countdown, RSVP, buku tamu, kontak footer) ikut
+  ditipiskan di CSS yang sama supaya tidak kembali putih padat.
+  `prefers-reduced-motion` mematikan tilt/animasi; tanpa
+  `backdrop-filter` panel memakai fallback ±38% agar teks tetap
+  terbaca namun tetap tembus pandang; tanpa aset ini tema tetap tampil
+  sebagai shell kaca biasa.
 - **Export mandiri**: Studio menyematkan CSS/JS liquid ke file HTML
   hasil “Simpan File HTML” hanya bila tema terpilih Liquid Glass.
-- **Uji**: `node tools/test-liquid-glass.cjs` (60 pemeriksaan, ikut
+- **Uji**: `node tools/test-liquid-glass.cjs` (77 pemeriksaan, ikut
   loop CI `tools/test-*.cjs`) mengunci tepat-satu-per-kategori,
   posisi akhir array, dan pemasangan hook-nya; asersi
   `studioOnlyBaru` di `tools/test-wedding-templates.cjs` kini

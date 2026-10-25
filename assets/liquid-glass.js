@@ -16,12 +16,12 @@
   if (window.AsLiquidGlass) return; /* sudah ter-embed (file mandiri) */
 
   var PRESETS = {
-    Aurora:  { nama: 'Aurora',  accent: '#3E5EDD', c: ['#56CCF2', '#8B7CFF', '#F58AB5', '#FFD166'] },
-    zamrud:  { nama: 'Zamrud',  accent: '#0F766E', c: ['#34D399', '#22D3EE', '#A3E635', '#BFDBFE'] },
-    neon:    { nama: 'Neon',    accent: '#B4237A', c: ['#FF6B9D', '#FFB86B', '#A78BFA', '#67E8F9'] },
-    mentari: { nama: 'Mentari', accent: '#2F7E73', c: ['#FDE68A', '#6EE7B7', '#93C5FD', '#FBCFE8'] },
-    nebula:  { nama: 'Nebula',  accent: '#7C3AED', c: ['#A78BFA', '#F472B6', '#60A5FA', '#FDE68A'] },
-    emas:    { nama: 'Emas',    accent: '#A16207', c: ['#F59E0B', '#FDE68A', '#FB923C', '#FBCFE8'] }
+    Aurora:  { nama: 'Aurora',  accent: '#3E5EDD', c: ['#38BDF8', '#818CF8', '#F472B6', '#FACC15'] },
+    zamrud:  { nama: 'Zamrud',  accent: '#0F766E', c: ['#34D399', '#22D3EE', '#84CC16', '#60A5FA'] },
+    neon:    { nama: 'Neon',    accent: '#B4237A', c: ['#FF6B9D', '#FFB86B', '#8B5CF6', '#67E8F9'] },
+    mentari: { nama: 'Mentari', accent: '#2F7E73', c: ['#FBBF24', '#34D399', '#60A5FA', '#F472B6'] },
+    nebula:  { nama: 'Nebula',  accent: '#7C3AED', c: ['#8B5CF6', '#F472B6', '#38BDF8', '#FACC15'] },
+    emas:    { nama: 'Emas',    accent: '#A16207', c: ['#F59E0B', '#FACC15', '#FB923C', '#F9A8D4'] }
   };
   var BAWAAN = {
     'liquid-glass': 'Aurora',
