@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
-import android.widget.TextClock;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -39,7 +38,7 @@ public final class LockScreenView extends FrameLayout {
 
     private Listener listener;
     private View content;
-    private TextClock clock;
+    private SevenSegmentClockView clock;
     private TextView dateView;
     private LiquidBatteryView batteryMeter;
     private HudView hud;
@@ -65,7 +64,7 @@ public final class LockScreenView extends FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.view_lock_screen, this, true);
 
         content = findViewById(R.id.lockContent);
-        clock = (TextClock) findViewById(R.id.lockClock);
+        clock = (SevenSegmentClockView) findViewById(R.id.lockClock);
         dateView = (TextView) findViewById(R.id.lockDate);
         batteryMeter = (LiquidBatteryView) findViewById(R.id.batteryMeter);
         hud = (HudView) findViewById(R.id.hud);

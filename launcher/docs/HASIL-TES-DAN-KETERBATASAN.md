@@ -6,7 +6,7 @@ di mana risikonya.
 ## 1. Sudah diverifikasi otomatis
 
 `python3 launcher/tools/verify_apk.py launcher/releases/asproject-launcher-1.0.0-debug.apk`
-→ **53 lulus, 0 peringatan, 0 gagal**.
+→ **54 lulus, 0 peringatan, 0 gagal**.
 
 | Kelompok | Yang diperiksa |
 |----------|----------------|
@@ -15,7 +15,7 @@ di mana risikonya.
 | Peluncur | `provides-component:'launcher'`, kategori **HOME**, **DEFAULT**, **LAUNCHER** pada `LauncherActivity` |
 | Privasi | **nol** `<uses-permission>` (diperiksa lewat `aapt2 dump permissions`), 19 izin terlarang dicek tidak tertanam |
 | Keamanan | `SettingsActivity` `exported=false`, tidak ada aset web, tidak ada placeholder `${applicationId}` |
-| Kode | 16/16 kelas Java ter-dex; string `android.intent.category.LAUNCHER`, `android.intent.action.MAIN`, `launcher_prefs` tertanam |
+| Kode | 17/17 kelas Java ter-dex; string `android.intent.category.LAUNCHER`, `android.intent.action.MAIN`, `launcher_prefs` tertanam |
 | Sumber daya | ikon `ic_launcher.png` di 5 kepadatan + ikon adaptif `mipmap-anydpi-v26` |
 | Aset baru | `assets/wallpaper/lock.jpg` & `home.jpg` ada, 8 ikon neon tertanam (`ic_phone` … `ic_instagram`), tidak ada berkas JS |
 | Tanda tangan | apksigner: v1 ✔, v2 ✔, v3 ✔ |
@@ -104,25 +104,42 @@ atasnya.
 | Bagian | Wujud liquid glass-nya |
 |--------|------------------------|
 | Ikon aplikasi (`NeonIconFactory`) | tile kaca, glyph jadi garis neon berongga, jejak sirkuit di latar **dan** di dalam glyph |
-| Meter baterai pojok kanan atas (`LiquidBatteryView`) | kapsul kaca + cairan neon beriak (permukaan beriak fungsi sinus) + kilat saat mengisi daya |
+| Ikon baterai pojok kanan atas (`LiquidBatteryView`) | ukuran kecil seperti ikon bilah status: cangkang + cairan neon beriak + kilat saat mengisi daya |
 | Chip status kiri atas (`bg_glass_chip`) | kapsul kaca dengan garis tepi terang |
 | Panel HUD (`HudView.drawPanel`) | kaca cair dengan sapuan terang yang berjalan pelan |
 
-### Meter baterai liquid glass (`LiquidBatteryView`)
+### Ikon baterai neon — cuma satu (`LiquidBatteryView`)
 
-Menggantikan chip teks "BATERAI 74%" yang lama. Digambar penuh di Canvas:
+Dulu ada dua penanda baterai: kapsul di layar kunci **dan** 6 sel di HUD. Atas
+permintaan, sekarang cukup **satu** ikon, di pojok kanan atas (posisi bilah
+notifikasi), dan HUD hanya menampilkan angkanya. Digambar penuh di Canvas:
 
-1. kapsul kaca: gradien `rgba(36,48,51,.40)` → `rgba(4,7,11,.70)`, sorotan radial
-   di atas, kilau di bawah-kanan, lalu sapuan terang bergerak (satu putaran
-   ±3,6 detik);
-2. dua jejak sirkuit terukir di ujung kapsul (garis siku + pad);
-3. ikon baterai: cangkang kaca + kutub, lalu **cairan neon** setinggi daya dengan
-   permukaan beriak (12 segmen sinus) dan garis tegangan permukaan yang terang;
-4. teks persen monospace dengan glow;
-5. rim light terakhir: terang di atas, redup di bawah.
+1. cangkang kaca berukuran `2.05 × tinggi` dengan sudut membulat;
+2. kutub baterai di sisi kanan;
+3. **cairan neon** setinggi daya, permukaannya beriak (10 segmen sinus) dengan
+   garis tegangan permukaan yang terang — bagian "liquid" dari tema;
+4. ruas kosong digambar redup (`GHOST`) saat daya tidak terbaca;
+5. garis cangkang neon dengan glow, kilat saat mengisi daya, lalu angka persen
+   monospace.
 
-Animasi berjalan 20 fps dan berhenti saat view tidak terlihat. Saat mengisi daya,
-lambang kilat muncul di tengah baterai.
+Animasi berjalan ~16 fps dan berhenti saat view tidak terlihat.
+
+### Jam seven segment (`SevenSegmentClockView`)
+
+Jam layar kunci dan beranda **bukan teks**: tiap angka digambar dari 7 ruas
+(a…g) berbentuk segi enam berujung miring, persis papan LED digital.
+
+- ruas menyala: neon `0xFF5FD8FF` + glow `BlurMaskFilter` + inti `0xFFE6FBFF`;
+- ruas padam: `0x1F5FD8FF` — tetap digambar supaya bentuk angkanya terbaca
+  (ciri khas seven segment);
+- titik dua berkedip tiap detik; pembaruan dijadwalkan **tepat pada pergantian
+  detik** (`1000 - millis % 1000`) supaya kedipnya tidak melenceng;
+- mengikuti format 12/24 jam sistem lewat `DateFormat.is24HourFormat()`, dan
+  angka puluhan jam yang nol dikosongkan pada format 12 jam;
+- tidak memakai font apa pun → tampilannya identik di semua perangkat.
+
+Catatan: jam di dalam HUD tetap memakai teks monospace (ia bagian dari panel
+data "SECURE MONITOR", bukan jam utama).
 
 ### Liquid 3D
 

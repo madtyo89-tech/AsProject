@@ -29,7 +29,6 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -92,7 +91,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     private View scrimLayer;
     private LockScreenView lockScreen;
     private LinearLayout content;
-    private TextClock clockView;
+    private SevenSegmentClockView clockView;
     private TextView dateView;
     private LinearLayout searchBar;
     private EditText searchInput;
@@ -129,7 +128,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         });
 
         content = (LinearLayout) findViewById(R.id.content);
-        clockView = (TextClock) findViewById(R.id.clock);
+        clockView = (SevenSegmentClockView) findViewById(R.id.clock);
         dateView = (TextView) findViewById(R.id.date);
         searchBar = (LinearLayout) findViewById(R.id.searchBar);
         searchInput = (EditText) findViewById(R.id.searchInput);

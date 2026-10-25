@@ -342,7 +342,6 @@ public final class NeonIconFactory {
         float[] delta = new float[pixels.length];
         float peak = 0f;
         int active = 0;
-        int[] deltaHistogram = new int[256];
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
                 int i = y * size + x;
@@ -364,33 +363,22 @@ public final class NeonIconFactory {
             return alpha;
         }
 
+        // Ambang berdasar fraksi puncak (BUKAN persentil): glyph yang warnanya
+        // rata — misal huruf putih di atas tile warna — punya nilai delta yang
+        // seragam, dan ambang persentil justru menghapus seluruh isinya.
+        float low = peak * 0.18f;
+        float high = peak * 0.92f;
+        int above = 0;
         for (int i = 0; i < delta.length; i++) {
-            int bin = (int) (delta[i] / peak * 255f);
-            if (bin > 255) {
-                bin = 255;
-            } else if (bin < 0) {
-                bin = 0;
-            }
-            deltaHistogram[bin]++;
-        }
-
-        // 30% piksel paling menonjol → ambang bawah.
-        int[] strongHistogram = new int[256];
-        int strong = 0;
-        float strongFloor = peak * 0.12f;
-        for (int i = 0; i < delta.length; i++) {
-            if (delta[i] > strongFloor) {
-                int bin = (int) (delta[i] / peak * 255f);
-                if (bin > 255) {
-                    bin = 255;
-                }
-                strongHistogram[bin]++;
-                strong++;
+            if (delta[i] > low) {
+                above++;
             }
         }
-        float low = strong == 0 ? peak * 0.5f
-                : histogramValue(strongHistogram, strong, 0.70f, peak);
-        float high = Math.max(low * 1.15f, histogramValue(deltaHistogram, active, 0.995f, peak));
+        // Ikon bidang-warna-penuh: naikkan ambang agar tidak jadi blob/cincin.
+        if (above > active * 0.5f) {
+            low = peak * 0.45f;
+            high = peak * 0.97f;
+        }
 
         float[] out = new float[delta.length];
         float span = Math.max(1f, high - low);
@@ -457,16 +445,16 @@ public final class NeonIconFactory {
             }
         }
 
-        // Nyaris tidak ada garis (bentuk aslinya memang line art) → pakai bentuk asli.
+        // Bentuk akhir = garis luar terang + ISI glyph yang menyala setengah.
+        // Isi ini penting: tanpa itu, ikon berukuran 48 dp tampak "polos"
+        // karena yang tersisa hanya garis setebal satu piksel.
+        float body = 0.5f;
         if (edgeCount < Math.max(16f, size * 0.4f)) {
-            for (int i = 0; i < total; i++) {
-                out[i] = mask[i] * 0.9f;
-            }
-            return out;
+            // Bentuk aslinya memang line art → isi lebih tebal.
+            body = 0.6f;
         }
-        // Sedikit isi agar rongga tidak terlihat kosong.
         for (int i = 0; i < total; i++) {
-            float inner = mask[i] * 0.09f;
+            float inner = mask[i] * body;
             if (out[i] < inner) {
                 out[i] = inner;
             }

@@ -34,7 +34,7 @@ ICONS = APP / "res" / "drawable-nodpi"
 OUT = ROOT / "docs" / "pratinjau.html"
 
 NEON = ["phone", "message", "camera", "settings", "music", "chrome", "whatsapp", "instagram"]
-GENERIC = [("play", "P", 2), ("maps", "M", 0), ("gmail", "G", 1), ("youtube", "Y", 3)]
+GENERIC = [("play", "play", 2), ("maps", "pin", 0), ("gmail", "mail", 1), ("youtube", "tube", 3)]
 FONT_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 S = 192
 
@@ -56,16 +56,40 @@ def png_b64(image: Image.Image) -> str:
     return "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode()
 
 
-def placeholder_icon(letter: str, hue: int, size: int = S) -> Image.Image:
-    """Ikon aplikasi tiruan: tile berwarna + glyph putih (untuk contoh generik)."""
+def placeholder_icon(kind: str, hue: int, size: int = S) -> Image.Image:
+    """Ikon aplikasi tiruan: tile berwarna + glyph putih berbentuk nyata."""
     image = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
     color = {0: (66, 133, 244), 1: (234, 67, 53), 2: (52, 168, 83), 3: (251, 188, 5)}[hue % 4]
     draw.rounded_rectangle([0, 0, size - 1, size - 1], radius=int(size * 0.22), fill=color + (255,))
-    font = ImageFont.truetype(FONT_BOLD, int(size * 0.52))
-    left, top, right, bottom = draw.textbbox((0, 0), letter, font=font)
-    draw.text(((size - (right - left)) / 2 - left, (size - (bottom - top)) / 2 - top),
-              letter, font=font, fill=(255, 255, 255, 255))
+    white = (255, 255, 255, 255)
+    cx = cy = size / 2
+    if kind == "play":                       # segitiga main
+        r = size * 0.26
+        draw.polygon([(cx - r * 0.55, cy - r), (cx - r * 0.55, cy + r), (cx + r, cy)], fill=white)
+    elif kind == "pin":                      # penanda peta
+        r = size * 0.15
+        draw.ellipse([cx - r * 1.5, cy - r * 2.0, cx + r * 1.5, cy + r * 1.0], fill=white)
+        draw.polygon([(cx - r * 1.3, cy + r * 0.4), (cx + r * 1.3, cy + r * 0.4),
+                      (cx, cy + r * 2.1)], fill=white)
+    elif kind == "mail":                     # amplop
+        w, h = size * 0.56, size * 0.38
+        draw.rounded_rectangle([cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2],
+                               radius=int(size * 0.04), fill=white)
+        draw.polygon([(cx - w / 2, cy - h / 2), (cx + w / 2, cy - h / 2), (cx, cy + h * 0.12)],
+                     fill=(66, 133, 244, 255))
+    elif kind == "tube":                     # layar + tombol main
+        w, h = size * 0.60, size * 0.42
+        draw.rounded_rectangle([cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2],
+                               radius=int(size * 0.10), fill=white)
+        r = size * 0.13
+        draw.polygon([(cx - r * 0.5, cy - r * 0.62), (cx - r * 0.5, cy + r * 0.62),
+                      (cx + r * 0.85, cy)], fill=(229, 57, 53, 255))
+    else:                                    # huruf cadangan
+        font = ImageFont.truetype(FONT_BOLD, int(size * 0.52))
+        left, top, right, bottom = draw.textbbox((0, 0), kind, font=font)
+        draw.text(((size - (right - left)) / 2 - left, (size - (bottom - top)) / 2 - top),
+                  kind, font=font, fill=white)
     return image
 
 
@@ -93,10 +117,11 @@ def mask_of(icon: Image.Image, size: int = S, inset: float = 0.07,
     if peak < 5.0:
         return alpha.copy()
 
-    active = delta[~ring]
-    strong = delta[delta > peak * 0.12]
-    low = float(np.percentile(strong, 100 - keep * 100)) if strong.size else peak * 0.5
-    high = max(low * 1.15, float(np.percentile(active, 99.5)))
+    # Ambang berdasar fraksi puncak (BUKAN persentil): glyph yang warnanya rata
+    # punya delta seragam, dan ambang persentil justru menghapus seluruh isinya.
+    low, high = peak * 0.18, peak * 0.92
+    if float((delta > low).mean()) > 0.5:      # ikon bidang-warna-penuh
+        low, high = peak * 0.45, peak * 0.97
     t = np.clip((delta - low) / max(1e-6, high - low), 0, 1)
     mask = t * t * (3 - 2 * t)
     mask[ring] = 0.0
@@ -111,9 +136,11 @@ def outline_of(mask: np.ndarray, size: int = S) -> np.ndarray:
     down = np.roll(mask, -1, axis=0); down[-1, :] = 0
     low = np.minimum.reduce([mask, left, right, up, down])
     edge = np.where(mask > 0.12, np.clip((mask - low) * 1.6, 0, 1), 0)
+    # Bentuk akhir = garis luar terang + ISI glyph menyala setengah. Tanpa isi,
+    # ikon 48 dp tampak "polos" karena yang tersisa hanya garis 1 piksel.
     if int((edge > 0.05).sum()) < max(16, size * 0.4):
-        return mask * 0.9
-    return np.maximum(np.sqrt(edge), mask * 0.09)
+        return np.maximum(mask * 0.6, np.sqrt(edge))
+    return np.maximum(np.sqrt(edge), mask * 0.5)
 
 
 def liquid_glass(size: int = S) -> Image.Image:
@@ -268,8 +295,8 @@ def build() -> None:
     classes = []
     for name in NEON:
         classes.append(f".ic-{name}{{background-image:url(\"{png_b64(Image.open(ICONS / f'ic_{name}.png').convert('RGBA').resize((112, 112), Image.LANCZOS))}\")}}")
-    for name, letter, hue in GENERIC:
-        classes.append(f".ic-gen-{name}{{background-image:url(\"{png_b64(neonize(placeholder_icon(letter, hue)).resize((112, 112), Image.LANCZOS))}\")}}")
+    for index, (name, kind, hue) in enumerate(GENERIC):
+        classes.append(f".ic-gen-{name}{{background-image:url(\"{png_b64(neonize(placeholder_icon(kind, hue), seed=31 + index * 5).resize((112, 112), Image.LANCZOS))}\")}}")
 
     html = (TEMPLATE
             .replace("__LOCK__", lock)
@@ -356,8 +383,8 @@ TEMPLATE = r"""<!DOCTYPE html>
   .batt canvas{width:100%;height:100%;display:block}
   .brand{margin-top:calc(var(--dp)*30);font-family:ui-monospace,Menlo,monospace;
     font-size:calc(var(--dp)*10);letter-spacing:.42em;color:var(--neon-dim);text-indent:.42em}
-  .lock .clock{margin-top:calc(var(--dp)*6);font-size:calc(var(--dp)*78);font-weight:200;
-    letter-spacing:-.035em;line-height:1;text-shadow:0 0 calc(var(--dp)*26) rgba(79,195,247,.55)}
+  .lock .clock{margin-top:calc(var(--dp)*4);height:calc(var(--dp)*72);width:calc(var(--dp)*226);
+    display:block}
   .lock .date{margin-top:calc(var(--dp)*10);font-size:calc(var(--dp)*13);letter-spacing:.06em;color:var(--neon-soft)}
   .grow{flex:1}
   .unlockhint{font-family:ui-monospace,Menlo,monospace;font-size:calc(var(--dp)*11);
@@ -438,8 +465,7 @@ TEMPLATE = r"""<!DOCTYPE html>
   .homecontent{position:absolute;inset:0;display:flex;flex-direction:column;
     padding:calc(var(--dp)*42) calc(var(--dp)*16) calc(var(--dp)*12)}
   .head{position:relative;text-align:center;padding-top:calc(var(--dp)*34)}
-  .home .clock{font-size:calc(var(--dp)*66);font-weight:200;letter-spacing:-.035em;line-height:1;
-    text-shadow:0 calc(var(--dp)*2) calc(var(--dp)*14) rgba(0,0,0,.6),0 0 calc(var(--dp)*22) rgba(79,195,247,.25)}
+  .home .clock{height:calc(var(--dp)*64);width:calc(var(--dp)*201);display:block;margin:0 auto}
   .home .date{margin-top:calc(var(--dp)*6);font-size:calc(var(--dp)*14);letter-spacing:.04em;color:#dff2ff}
   .gear{position:absolute;right:0;top:calc(var(--dp)*-6);width:calc(var(--dp)*44);
     height:calc(var(--dp)*44);display:grid;place-items:center;opacity:.7}
@@ -520,7 +546,7 @@ __ICON_CSS__
               <span class="batt"><canvas id="battMeter" width="200" height="52"></canvas></span>
             </div>
             <div class="brand">ASPROJECT SECURE</div>
-            <div class="clock" data-clock data-size="lock">00:00</div>
+            <canvas class="clock" id="clockLock" width="452" height="144"></canvas>
             <div class="date" data-date>—</div>
             <div class="grow"></div>
             <div class="arrow"><svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg></div>
@@ -577,7 +603,7 @@ __ICON_CSS__
           <div class="veil"></div>
           <div class="homecontent">
             <div class="head">
-              <div class="clock" data-clock data-size="home">00:00</div>
+              <canvas class="clock" id="clockHome" width="452" height="144"></canvas>
               <div class="date" data-date>—</div>
               <div class="gear"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54A.49.49 0 0 0 13.92 2.4h-3.84a.49.49 0 0 0-.47.41L9.25 5.35c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></div>
             </div>
@@ -676,8 +702,81 @@ __ICON_CSS__
   }
 
   /* ------------------------------------------------------------------
-     Meter baterai liquid glass — salinan LiquidBatteryView.java.
-     Kapsul kaca + cairan neon beriak + kilat saat mengisi daya.
+     Jam seven segment — salinan SevenSegmentClockView.java.
+     Tiap angka dari 7 ruas (a..g); ruas padam tetap digambar redup,
+     titik dua berkedip tiap detik.
+  ------------------------------------------------------------------ */
+  var SEG = [126, 48, 109, 121, 51, 91, 95, 112, 127, 123];
+  var NEON = "#5FD8FF", CORE = "#E6FBFF", GHOST = "rgba(95,216,255,0.13)";
+
+  function segPath(c, horizontal, x, y, len, t) {
+    var ch = t / 2;
+    c.beginPath();
+    if (horizontal) {
+      c.moveTo(x + ch, y);
+      c.lineTo(x + len - ch, y); c.lineTo(x + len, y + ch);
+      c.lineTo(x + len - ch, y + t); c.lineTo(x + ch, y + t); c.lineTo(x, y + ch);
+    } else {
+      c.moveTo(x, y + ch);
+      c.lineTo(x + ch, y); c.lineTo(x + t - ch, y); c.lineTo(x + t, y + ch);
+      c.lineTo(x + t, y + len - ch); c.lineTo(x + t - ch, y + len);
+      c.lineTo(x + ch, y + len); c.lineTo(x, y + len - ch);
+    }
+    c.closePath();
+  }
+
+  function drawDigit(c, x, y, value, w, h, t) {
+    var bits = SEG[value] || 0, half = h / 2, ch = t / 2;
+    var segs = [
+      [(bits >> 6) & 1, 1, x, y, w],
+      [(bits >> 0) & 1, 1, x, y + half - t / 2, w],
+      [(bits >> 3) & 1, 1, x, y + h - t, w],
+      [(bits >> 1) & 1, 0, x, y + ch, half - ch],
+      [(bits >> 5) & 1, 0, x + w - t, y + ch, half - ch],
+      [(bits >> 2) & 1, 0, x, y + half, half - ch],
+      [(bits >> 4) & 1, 0, x + w - t, y + half, half - ch]
+    ];
+    for (var i = 0; i < segs.length; i++) {
+      var on = segs[i][0];
+      segPath(c, segs[i][1] === 1, segs[i][2], segs[i][3], segs[i][4], t);
+      if (on) {
+        c.shadowColor = NEON; c.shadowBlur = t * 1.35; c.fillStyle = CORE;
+        c.fill();
+        c.shadowBlur = 0;
+      } else {
+        c.fillStyle = GHOST; c.fill();
+      }
+    }
+  }
+
+  function drawClock(canvas, hours, minutes, colonOn) {
+    if (!canvas) { return; }
+    var c = canvas.getContext("2d");
+    var W = canvas.width, H = canvas.height;
+    c.clearRect(0, 0, W, H);
+    var t = H * 0.115, dw = H * 0.52, sp = t * 1.7, cw = t * 2.4;
+    var total = 4 * dw + cw + 4 * sp;
+    var x = (W - total) / 2, y = (H - H) / 2;
+
+    drawDigit(c, x, y, Math.floor(hours / 10), dw, H, t); x += dw + sp;
+    drawDigit(c, x, y, hours % 10, dw, H, t); x += dw + sp;
+
+    var dot = t * 1.05, cx = x + (cw - dot) / 2;
+    c.fillStyle = colonOn ? NEON : GHOST;
+    c.shadowColor = NEON; c.shadowBlur = colonOn ? t * 1.2 : 0;
+    c.fillRect(cx, H * 0.34 - dot / 2, dot, dot);
+    c.fillRect(cx, H * 0.68 - dot / 2, dot, dot);
+    c.shadowBlur = 0;
+    x += cw + sp;
+
+    drawDigit(c, x, y, Math.floor(minutes / 10), dw, H, t); x += dw + sp;
+    drawDigit(c, x, y, minutes % 10, dw, H, t);
+  }
+
+  /* ------------------------------------------------------------------
+     Ikon baterai neon — salinan LiquidBatteryView.java.
+     Ukurannya kecil seperti ikon bilah status: cangkang + cairan neon
+     beriak + kilat saat mengisi daya + angka persen.
   ------------------------------------------------------------------ */
   var canvas = document.getElementById("battMeter");
   var ctx = canvas ? canvas.getContext("2d") : null;
@@ -698,124 +797,98 @@ __ICON_CSS__
 
   function drawBattery(t) {
     if (!ctx) { return; }
-    var W = canvas.width, H = canvas.height, R = H / 2;
+    var W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
 
-    var glass = ctx.createLinearGradient(0, 0, 0, H);
-    glass.addColorStop(0, "rgba(36,48,51,0.40)");
-    glass.addColorStop(1, "rgba(4,7,11,0.70)");
+    var sh = H * 0.86, sw = sh * 2.05, sy = (H - sh) / 2, sr = Math.max(1.5, sh * 0.18);
+    var inset = Math.max(1, sh * 0.07);
 
-    ctx.save();
-    roundRect(ctx, 0.5, 0.5, W - 1, H - 1, R); ctx.clip();
-
-    ctx.fillStyle = glass; ctx.fillRect(0, 0, W, H);
-
-    // sorotan atas (kaca membusung)
-    var top = ctx.createRadialGradient(W * 0.42, -H * 0.35, 0, W * 0.42, -H * 0.35, H * 1.15);
-    top.addColorStop(0, "rgba(232,251,255,0.35)");
-    top.addColorStop(1, "rgba(232,251,255,0)");
-    ctx.fillStyle = top; ctx.fillRect(0, 0, W, H);
-
-    // kilau bawah-kanan
-    var under = ctx.createRadialGradient(W * 0.95, H * 1.15, 0, W * 0.95, H * 1.15, H * 0.75);
-    under.addColorStop(0, "rgba(88,180,232,0.18)");
-    under.addColorStop(1, "rgba(88,180,232,0)");
-    ctx.fillStyle = under; ctx.fillRect(0, 0, W, H);
-
-    // sapuan cair
-    var span = W * 2.2, shift = (phase % 1) * span - W * 0.6;
-    var sweep = ctx.createLinearGradient(shift, 0, shift + W * 0.55, H);
-    sweep.addColorStop(0, "rgba(191,233,255,0)");
-    sweep.addColorStop(0.5, "rgba(191,233,255,0.18)");
-    sweep.addColorStop(1, "rgba(191,233,255,0)");
-    ctx.fillStyle = sweep; ctx.fillRect(0, 0, W, H);
-
-    // jejak sirkuit terukir
-    ctx.strokeStyle = "rgba(127,216,255,0.29)"; ctx.lineWidth = 1.6; ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(W * 0.02, H * 0.72); ctx.lineTo(W * 0.02, H * 0.30); ctx.lineTo(W * 0.05, H * 0.30);
-    ctx.moveTo(W * 0.98, H * 0.28); ctx.lineTo(W * 0.98, H * 0.70); ctx.lineTo(W * 0.95, H * 0.70);
-    ctx.stroke();
-    ctx.fillStyle = "rgba(191,239,255,0.6)";
-    ctx.beginPath(); ctx.arc(W * 0.05, H * 0.30, 2, 0, 6.2832); ctx.fill();
-    ctx.beginPath(); ctx.arc(W * 0.95, H * 0.70, 2, 0, 6.2832); ctx.fill();
-
-    // cangkang baterai
-    var bx = 16, bw = 44, bh = 22, by = (H - bh) / 2, br = bh * 0.26;
-    var shellGrad = ctx.createLinearGradient(0, by, 0, by + bh);
-    shellGrad.addColorStop(0, "rgba(10,16,24,0.20)");
-    shellGrad.addColorStop(1, "rgba(6,11,18,0.40)");
-    ctx.fillStyle = shellGrad; roundRect(ctx, bx, by, bw, bh, br); ctx.fill();
+    // cangkang kaca
+    var shell = ctx.createLinearGradient(0, sy, 0, sy + sh);
+    shell.addColorStop(0, "rgba(10,16,24,0.20)");
+    shell.addColorStop(1, "rgba(6,11,18,0.40)");
+    ctx.fillStyle = shell; roundRect(ctx, 0, sy, sw, sh, sr); ctx.fill();
 
     // kutub
-    ctx.fillStyle = "rgba(127,216,255,0.67)";
-    roundRect(ctx, bx + bw + 2.4, by + bh * 0.29, 4, bh * 0.42, 2); ctx.fill();
+    var nw = Math.max(1.5, sh * 0.13), nh = sh * 0.36;
+    ctx.fillStyle = "rgba(95,216,255,0.80)";
+    roundRect(ctx, sw + sh * 0.07, sy + (sh - nh) / 2, nw, nh, nw / 2); ctx.fill();
 
-    // cairan neon dengan permukaan beriak
-    var ix = bx + 2.4, iy = by + 2.4, iw = bw - 4.8, ih = bh - 4.8;
-    var fillH = ih * level, surface = iy + ih - fillH, wave = ih * 0.10;
+    // cairan neon beriak
+    var ix = inset, iy = sy + inset, iw = sw - inset * 2, ih = sh - inset * 2;
     ctx.save();
-    roundRect(ctx, ix, iy, iw, ih, br * 0.62); ctx.clip();
-    var liquid = ctx.createLinearGradient(0, surface, 0, iy + ih);
-    liquid.addColorStop(0, "rgba(143,230,255,1)");
-    liquid.addColorStop(1, "rgba(32,144,200,0.90)");
-    ctx.beginPath();
-    ctx.moveTo(ix, iy + ih);
-    for (var i = 0; i <= 24; i++) {
-      var p = i / 24;
-      ctx.lineTo(ix + iw * p, surface + Math.sin(t * 1.9 + p * 4.712) * wave);
-    }
-    ctx.lineTo(ix + iw, iy + ih);
-    ctx.closePath();
-    ctx.fillStyle = liquid; ctx.fill();
-    ctx.beginPath();
-    for (var j = 0; j <= 24; j++) {
-      var q = j / 24;
-      var px = ix + iw * q, py = surface + Math.sin(t * 1.9 + q * 4.712) * wave;
-      if (j === 0) { ctx.moveTo(px, py); } else { ctx.lineTo(px, py); }
-    }
-    ctx.strokeStyle = "rgba(234,251,255,0.80)"; ctx.lineWidth = 1.4; ctx.stroke();
-    ctx.restore();
-
-    // cangkang luar
-    ctx.strokeStyle = "rgba(127,216,255,0.67)"; ctx.lineWidth = 2;
-    roundRect(ctx, bx, by, bw, bh, br); ctx.stroke();
-
-    if (charging) {
-      var cx = bx + bw / 2, cy = by + bh / 2, bh2 = bh * 0.62;
+    roundRect(ctx, ix, iy, iw, ih, sr * 0.6); ctx.clip();
+    if (level > 0.01) {
+      var surface = iy + ih - ih * level, wave = ih * 0.10, steps = 10;
+      var grad = ctx.createLinearGradient(0, surface, 0, iy + ih);
+      grad.addColorStop(0, "rgba(143,230,255,1)");
+      grad.addColorStop(1, "rgba(31,144,200,0.95)");
       ctx.beginPath();
-      ctx.moveTo(cx + bh2 * 0.16, cy - bh2 * 0.5);
-      ctx.lineTo(cx - bh2 * 0.20, cy + bh2 * 0.06);
-      ctx.lineTo(cx + bh2 * 0.02, cy + bh2 * 0.06);
-      ctx.lineTo(cx - bh2 * 0.14, cy + bh2 * 0.5);
-      ctx.lineTo(cx + bh2 * 0.24, cy - bh2 * 0.04);
-      ctx.lineTo(cx + bh2 * 0.02, cy - bh2 * 0.04);
+      ctx.moveTo(ix, iy + ih);
+      for (var i = 0; i <= steps; i++) {
+        var p = i / steps, px = ix + iw * p;
+        ctx.lineTo(px, surface + Math.sin(t * 2.2 + p * 4.712) * wave);
+      }
+      ctx.lineTo(ix + iw, iy + ih);
       ctx.closePath();
-      ctx.fillStyle = "rgba(234,251,255,0.95)"; ctx.fill();
-    }
+      ctx.fillStyle = grad; ctx.fill();
 
-    // teks persen
-    ctx.font = "700 20px ui-monospace, Menlo, monospace";
-    ctx.fillStyle = "#EAFBFF";
-    ctx.shadowColor = "rgba(127,216,255,0.6)"; ctx.shadowBlur = 12;
-    ctx.fillText(Math.round(level * 100) + "%", bx + bw + 12, H / 2 + 7);
-    ctx.shadowBlur = 0;
+      ctx.beginPath();
+      for (var j = 0; j <= steps; j++) {
+        var q = j / steps, sx = ix + iw * q;
+        var syy = surface + Math.sin(t * 2.2 + q * 4.712) * wave;
+        if (j === 0) { ctx.moveTo(sx, syy); } else { ctx.lineTo(sx, syy); }
+      }
+      ctx.strokeStyle = "rgba(234,251,255,0.87)"; ctx.lineWidth = Math.max(1, sh * 0.05);
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = "rgba(95,216,255,0.14)";
+      ctx.fillRect(ix, iy, iw, ih);
+    }
     ctx.restore();
 
-    // rim light: terang di atas, redup di bawah
-    var rim = ctx.createLinearGradient(0, 0, 0, H);
-    rim.addColorStop(0, "rgba(191,239,255,0.80)");
-    rim.addColorStop(1, "rgba(111,168,192,0.29)");
-    ctx.strokeStyle = rim; ctx.lineWidth = 2;
-    roundRect(ctx, 1, 1, W - 2, H - 2, R); ctx.stroke();
+    // garis cangkang neon
+    ctx.strokeStyle = "rgba(95,216,255,0.80)";
+    ctx.shadowColor = NEON; ctx.shadowBlur = sh * 0.16;
+    ctx.lineWidth = Math.max(1, sh * 0.07);
+    roundRect(ctx, 0, sy, sw, sh, sr); ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // kilat saat mengisi daya
+    if (charging) {
+      var cx2 = sw / 2, cy2 = sy + sh / 2, bh = sh * 0.66;
+      ctx.beginPath();
+      ctx.moveTo(cx2 + bh * 0.16, cy2 - bh * 0.5);
+      ctx.lineTo(cx2 - bh * 0.20, cy2 + bh * 0.06);
+      ctx.lineTo(cx2 + bh * 0.02, cy2 + bh * 0.06);
+      ctx.lineTo(cx2 - bh * 0.14, cy2 + bh * 0.5);
+      ctx.lineTo(cx2 + bh * 0.24, cy2 - bh * 0.04);
+      ctx.lineTo(cx2 + bh * 0.02, cy2 - bh * 0.04);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(234,251,255,0.95)";
+      ctx.shadowColor = NEON; ctx.shadowBlur = sh * 0.2;
+      ctx.fill(); ctx.shadowBlur = 0;
+    }
+
+    // angka persen
+    ctx.font = "700 " + Math.round(H * 0.62) + "px ui-monospace, Menlo, monospace";
+    ctx.fillStyle = CORE;
+    ctx.shadowColor = NEON; ctx.shadowBlur = H * 0.3;
+    ctx.fillText(Math.round(level * 100) + "%", sw + nw + H * 0.30, H * 0.74);
+    ctx.shadowBlur = 0;
   }
 
   function loop(now) {
     if (!last) { last = now; }
     var dt = Math.min(0.1, (now - last) / 1000);
     last = now;
-    phase += dt * 0.28;
+    phase += dt * 0.35;
     if (phase > 1) { phase -= 1; }
+
+    var d = new Date();
+    var blink = d.getSeconds() % 2 === 0;
+    drawClock(document.getElementById("clockLock"), d.getHours(), d.getMinutes(), blink);
+    drawClock(document.getElementById("clockHome"), d.getHours(), d.getMinutes(), blink);
     drawBattery(now / 1000);
     requestAnimationFrame(loop);
   }

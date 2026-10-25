@@ -264,17 +264,8 @@ public final class HudView extends View implements Choreographer.FrameCallback {
         value(canvas, percent + "%", x + 58 * density, top + lineHeight * 2,
                 charging ? 0xFFB6FFCF : 0xFFB3E8FF, 8.6f);
 
-        // sel baterai
-        int cells = 6;
-        int filled = batteryPercent < 0 ? 0 : Math.round(batteryPercent / 100f * cells);
-        float cellWidth = 7f * density;
-        float gap = 2f * density;
-        float by = top + lineHeight * 2 + 10f * density;
-        for (int i = 0; i < cells; i++) {
-            paint.setColor(i < filled ? 0xCC7FD8FF : 0x3380A0B0);
-            canvas.drawRect(x + i * (cellWidth + gap), by, x + i * (cellWidth + gap) + cellWidth,
-                    by + 5f * density, paint);
-        }
+        // Catatan: dulu di sini ada 6 sel baterai. Ikon baterai kini hanya satu,
+        // di bilah status (LiquidBatteryView), jadi HUD cukup menampilkan angkanya.
     }
 
     private void drawRightColumn(Canvas canvas, RectF frame) {

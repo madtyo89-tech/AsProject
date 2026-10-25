@@ -53,11 +53,12 @@
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
-            <!-- Indikator baterai liquid glass, pojok kanan atas. -->
+            <!-- Satu-satunya ikon baterai: kecil, neon, seperti di bilah status. -->
             <my.id.asproject.launcher.LiquidBatteryView
                 android:id="@+id/batteryMeter"
-                android:layout_width="100dp"
-                android:layout_height="26dp"
+                android:layout_width="wrap_content"
+                android:layout_height="14dp"
+                android:layout_marginTop="3dp"
                 android:contentDescription="@string/lock_battery_desc" />
         </LinearLayout>
 
@@ -72,22 +73,12 @@
             android:textColor="@color/neon_dim"
             android:textSize="10sp" />
 
-        <TextClock
+        <!-- Jam seven segment neon: ruas menyala + titik dua berkedip. -->
+        <my.id.asproject.launcher.SevenSegmentClockView
             android:id="@+id/lockClock"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:fontFamily="sans-serif-light"
-            android:format12Hour="h:mm"
-            android:format24Hour="HH:mm"
-            android:includeFontPadding="false"
-            android:letterSpacing="-0.035"
-            android:shadowColor="#AA4FC3F7"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="26"
-            android:textColor="@color/text_primary"
-            android:textSize="78sp" />
+            android:layout_height="72dp"
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:id="@+id/lockDate"

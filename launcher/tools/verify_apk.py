@@ -39,6 +39,7 @@ REQUIRED_CLASSES = [
     "Lmy/id/asproject/launcher/HudView;",
     "Lmy/id/asproject/launcher/NeonIconFactory;",
     "Lmy/id/asproject/launcher/LiquidBatteryView;",
+    "Lmy/id/asproject/launcher/SevenSegmentClockView;",
     "Lmy/id/asproject/launcher/HomeWallpaperView;",
     "Lmy/id/asproject/launcher/LockWallpaperView;",
     "Lmy/id/asproject/launcher/NeonIcons;",
