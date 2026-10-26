@@ -10,6 +10,9 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -45,10 +48,13 @@ public final class LockScreenView extends FrameLayout {
     private CircuitWallpaperView wallpaper;
 
     private VelocityTracker velocity;
+    private float downRawX;
     private float downRawY;
     private float lastY;
     private boolean dragging;
     private boolean unlocking;
+    private float unlockProgress;
+    private ValueAnimator unlockAnimator;
 
     public LockScreenView(Context context) {
         this(context, null);
@@ -85,7 +91,17 @@ public final class LockScreenView extends FrameLayout {
         setVisibility(VISIBLE);
         content.setTranslationY(0f);
         content.setAlpha(1f);
+        content.setScaleX(1f);
+        content.setScaleY(1f);
         setAlpha(1f);
+        unlockProgress = 0f;
+        if (wallpaper != null) {
+            wallpaper.setUnlockProgress(0f, -1f, -1f);
+        }
+        if (hud != null) {
+            hud.setAlpha(1f);
+            hud.setScaleY(1f);
+        }
         refreshBattery();
         refreshDate();
         refreshHud();
@@ -106,7 +122,17 @@ public final class LockScreenView extends FrameLayout {
         unlocking = false;
         setVisibility(GONE);
         content.setTranslationY(0f);
+        content.setScaleX(1f);
+        content.setScaleY(1f);
         setAlpha(1f);
+        unlockProgress = 0f;
+        if (unlockAnimator != null) {
+            unlockAnimator.cancel();
+            unlockAnimator = null;
+        }
+        if (wallpaper != null) {
+            wallpaper.setUnlockProgress(0f, -1f, -1f);
+        }
         if (wallpaper != null) {
             wallpaper.setMotionEnabled(false);
         }
@@ -146,6 +172,7 @@ public final class LockScreenView extends FrameLayout {
         }
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                downRawX = event.getRawX();
                 downRawY = event.getRawY();
                 lastY = event.getRawY();
                 dragging = false;
@@ -169,6 +196,11 @@ public final class LockScreenView extends FrameLayout {
                     float offset = Math.min(0f, delta);
                     content.setTranslationY(offset);
                     content.setAlpha(1f - Math.min(0.75f, -offset / (getHeight() * 0.6f)));
+                    // Wallpaper ikut menyergap: makin jauh ditarik, makin liar.
+                    unlockProgress = Math.min(0.6f, -offset / (getHeight() * 0.45f));
+                    if (wallpaper != null) {
+                        wallpaper.setUnlockProgress(unlockProgress, downRawX, downRawY);
+                    }
                 }
                 lastY = event.getRawY();
                 return true;
@@ -199,17 +231,55 @@ public final class LockScreenView extends FrameLayout {
         }
     }
 
+    /** Jalankan efek wallpaper (cairan menyergap) dari nilai sekarang ke tujuan. */
+    private void animateUnlock(final float from, final float to, long duration) {
+        if (unlockAnimator != null) {
+            unlockAnimator.cancel();
+        }
+        unlockAnimator = ValueAnimator.ofFloat(from, to);
+        unlockAnimator.setDuration(duration);
+        unlockAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                unlockProgress = ((Float) animation.getAnimatedValue()).floatValue();
+                if (wallpaper != null) {
+                    wallpaper.setUnlockProgress(unlockProgress, downRawX, downRawY);
+                }
+            }
+        });
+        unlockAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                unlockProgress = to;
+                if (wallpaper != null) {
+                    wallpaper.setUnlockProgress(to, downRawX, downRawY);
+                }
+            }
+        });
+        unlockAnimator.start();
+    }
+
     private void springBack() {
-        content.animate().translationY(0f).alpha(1f).setDuration(180)
+        content.animate().translationY(0f).alpha(1f).scaleX(1f).scaleY(1f).setDuration(180)
                 .setInterpolator(new DecelerateInterpolator()).start();
+        if (unlockProgress > 0f) {
+            animateUnlock(unlockProgress, 0f, 220);
+        }
     }
 
     private void unlock() {
         unlocking = true;
+        // Efek penuh: cairan menyergap, shockwave, dan percikan.
+        animateUnlock(unlockProgress, 1f, 300);
+        if (hud != null) {
+            hud.animate().alpha(0f).scaleY(0.86f).setDuration(160).start();
+        }
         content.animate()
-                .translationY(-getHeight() * 0.45f)
+                .translationY(-getHeight() * 0.55f)
                 .alpha(0f)
-                .setDuration(210)
+                .scaleX(1.08f)
+                .scaleY(1.08f)
+                .setDuration(260)
                 .setInterpolator(new DecelerateInterpolator())
                 .withEndAction(new Runnable() {
                     @Override
@@ -217,7 +287,17 @@ public final class LockScreenView extends FrameLayout {
                         setVisibility(GONE);
                         content.setTranslationY(0f);
                         content.setAlpha(1f);
+                        content.setScaleX(1f);
+                        content.setScaleY(1f);
+                        if (hud != null) {
+                            hud.setAlpha(1f);
+                            hud.setScaleY(1f);
+                        }
                         unlocking = false;
+                        unlockProgress = 0f;
+                        if (wallpaper != null) {
+                            wallpaper.setUnlockProgress(0f, -1f, -1f);
+                        }
                         if (listener != null) {
                             listener.onUnlocked();
                         }

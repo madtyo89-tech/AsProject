@@ -231,6 +231,19 @@ public class LiquidWallpaperView extends View implements Choreographer.FrameCall
         return ROWS;
     }
 
+    /**
+     * Pengali simpangan gelombang. Kelas turunan boleh menaikkannya sesaat
+     * (mis. saat layar kunci dibuka) supaya cairannya "menyergap".
+     */
+    protected float amplitudeScale() {
+        return 1f;
+    }
+
+    /** Zoom tambahan untuk lapis tertentu (1 = normal). */
+    protected float layerZoom(int layer) {
+        return 1f;
+    }
+
     /** Opalitas lapis (0..1) — lapis jauh boleh dibuat lebih redup. */
     protected float layerAlpha(int index) {
         return 1f;
@@ -420,10 +433,11 @@ public class LiquidWallpaperView extends View implements Choreographer.FrameCall
         float[] by = layerBaseY[layer];
         int cols = meshCols[layer];
         int rows = meshRows[layer];
-        float amp = BASE_AMP * density * layerAmp[layer];
+        float amp = BASE_AMP * density * layerAmp[layer] * amplitudeScale();
         float tp = t * (0.85f + layerDepth[layer] * 0.4f) + layerT[layer];
         float cx = width / 2f;
         float cy = height / 2f;
+        float zoom = layerZoom(layer);
         float dist = Math.max(width, height) / CAMERA_DISTANCE;
         float strength = 0.45f + layerDepth[layer];
         float rx = (float) Math.toRadians(tiltX * strength);
@@ -436,7 +450,8 @@ public class LiquidWallpaperView extends View implements Choreographer.FrameCall
             for (int i = 0; i <= cols; i++) {
                 float u = i / (float) cols;
                 displacement(u, v, tp, amp, weight);
-                project3D(bx[j * (cols + 1) + i] + disp[0], by[j] + disp[1],
+                project3D(cx + (bx[j * (cols + 1) + i] + disp[0] - cx) * zoom,
+                        cy + (by[j] + disp[1] - cy) * zoom,
                         cx, cy, dist, rx, ry, verts, index);
                 index += 2;
             }
@@ -534,13 +549,19 @@ public class LiquidWallpaperView extends View implements Choreographer.FrameCall
         float x = x0 + (x1 - x0) * tv;
         float y = by[j0] + (by[j1] - by[j0]) * tv;
 
-        float amp = BASE_AMP * density * layerAmp[layer];
+        float amp = BASE_AMP * density * layerAmp[layer] * amplitudeScale();
         float tp = phase * (0.85f + layerDepth[layer] * 0.4f) + layerT[layer];
         float weight = HEAVY_TOP - (HEAVY_TOP - 0.35f) * v;
         displacement(u, v, tp, amp, weight);
 
+        float cx = getWidth() / 2f;
+        float cy = getHeight() / 2f;
+        float zoom = layerZoom(layer);
+        x = cx + (x + disp[0] - cx) * zoom;
+        y = cy + (y + disp[1] - cy) * zoom;
+
         float strength = 0.45f + layerDepth[layer];
-        project3D(x + disp[0], y + disp[1], getWidth() / 2f, getHeight() / 2f,
+        project3D(x, y, cx, cy,
                 Math.max(getWidth(), getHeight()) / CAMERA_DISTANCE,
                 (float) Math.toRadians(tiltX * strength),
                 (float) Math.toRadians(tiltY * strength), out, 0);

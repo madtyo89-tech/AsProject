@@ -80,6 +80,12 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
 
     private final float[] projected = new float[2];
 
+    /** Progres buka kunci 0..1 (0 = diam) + asal sentuhan, untuk efek dramatis. */
+    private float unlock;
+    private float unlockU = 0.5f;
+    private float unlockV = 0.86f;
+    private static final int SPARKS = 16;
+
     private Bitmap glowSprite;
     private Bitmap bubbleSprite;
     private Bitmap poolSprite;
@@ -97,6 +103,41 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
             bubbleOffset[i] = random.nextFloat();
             bubbleDrift[i] = 0.004f + random.nextFloat() * 0.012f;
         }
+    }
+
+    /**
+     * Nyalakan efek buka kunci. {@code progress} 0..1: cairan menyergap, bidang
+     * memperbesar, gelombang shockwave melebar dari titik sentuh, dan percikan
+     * beterbangan. Koordinat asal dalam piksel view (boleh negatif bila tidak ada).
+     */
+    public void setUnlockProgress(float progress, float originX, float originY) {
+        unlock = Math.max(0f, Math.min(1f, progress));
+        int w = getWidth();
+        int h = getHeight();
+        if (originX >= 0f && w > 0) {
+            unlockU = originX / w;
+        }
+        if (originY >= 0f && h > 0) {
+            unlockV = originY / h;
+        }
+        invalidate();
+    }
+
+    /** Progres efek buka kunci saat ini (0..1). */
+    public float unlockProgress() {
+        return unlock;
+    }
+
+    @Override
+    protected float amplitudeScale() {
+        // Cairan "menyergap" saat dibuka: simpangan naik sampai 3,2×.
+        return 1f + unlock * 2.2f;
+    }
+
+    @Override
+    protected float layerZoom(int layer) {
+        // Bidang dekat memperbesar lebih banyak → kesan menerjang ke penonton.
+        return 1f + unlock * (0.05f + 0.07f * layerDepth(layer));
     }
 
     // ------------------------------------------------------------------ lapis
@@ -515,7 +556,7 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
             }
             int widthPx = Math.max(2, Math.round(pulseWidth.get(i).floatValue()
                     * (width / (float) bitmapWidth(layer))));
-            float r = Math.max(2.2f, widthPx * 1.15f);
+            float r = Math.max(2.2f, widthPx * 1.15f) * (1f + unlock * 1.1f);
 
             // Ekor: beberapa titik memudar di belakang kepala.
             for (int k = 6; k >= 1; k--) {
@@ -539,10 +580,11 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
             if (projectLayer(layer, projected[0] / bitmapWidth(layer),
                     projected[1] / bitmapHeight(layer), projected)) {
                 sprite.setAlpha(255);
-                drawSprite(canvas, glowSprite, projected[0], projected[1], r * 2.6f, r * 2.6f, 0f, sprite);
+                drawSprite(canvas, glowSprite, projected[0], projected[1],
+                        r * (2.6f + unlock * 2.2f), r * (2.6f + unlock * 2.2f), 0f, sprite);
                 core.setStyle(Paint.Style.FILL);
                 core.setColor(0xFFEAFBFF);
-                canvas.drawCircle(projected[0], projected[1], r * 0.62f, core);
+                canvas.drawCircle(projected[0], projected[1], r * (0.62f + unlock * 0.35f), core);
             }
         }
         sprite.setAlpha(255);
@@ -613,6 +655,66 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
         }
         sprite.setAlpha(255);
         addSprite.setAlpha(255);
+        if (unlock > 0f) {
+            drawUnlock(canvas, width, height);
+        }
+    }
+
+    /**
+     * Efek buka kunci: **sapuan terang** naik dari bawah, **gelombang
+     * shockwave** melebar dari titik sentuh, dan **percikan** neon yang
+     * beterbangan. Semuanya additive, jadi hanya menambah cahaya.
+     */
+    private void drawUnlock(Canvas canvas, int width, int height) {
+        float p = unlock;
+        float ease = p * p * (3f - 2f * p);              // smoothstep
+        float fade = 1f - p;
+
+        // 1. Sapuan terang yang naik melewati layar.
+        float band = height * 0.55f;
+        float center = height * (1.25f - ease * 1.9f);
+        Paint paint = addSprite;
+        paint.setShader(new LinearGradient(0, center - band, 0, center + band,
+                new int[]{0x00000000, 0x668FE6FF, 0x00000000},
+                new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
+        paint.setAlpha(Math.round(190f * (float) Math.sin(Math.PI * p)));
+        canvas.drawRect(0, 0, width, height, paint);
+        paint.setShader(null);
+
+        // 2. Shockwave: dua cincin yang melebar dari titik sentuh.
+        float ox = unlockU * width;
+        float oy = unlockV * height;
+        float reach = (float) Math.hypot(width, height) * 1.15f;
+        Paint ring = core;
+        ring.setStyle(Paint.Style.STROKE);
+        for (int k = 0; k < 2; k++) {
+            float rp = Math.max(0f, ease * (1f + k * 0.55f) - k * 0.30f);
+            if (rp <= 0f) {
+                continue;
+            }
+            float radius = reach * rp;
+            float alpha = (1f - rp) * (1f - rp) * (k == 0 ? 210f : 120f);
+            ring.setStrokeWidth(Math.max(1f, width * (0.014f - k * 0.004f) * (1f - rp * 0.6f)));
+            ring.setColor(0x8FE6FF);
+            ring.setAlpha(Math.round(alpha));
+            canvas.drawCircle(ox, oy, radius, ring);
+        }
+        ring.setAlpha(255);
+        ring.setStyle(Paint.Style.FILL);
+
+        // 3. Percikan: melesat dari titik sentuh, melambat sambil meredup.
+        for (int i = 0; i < SPARKS; i++) {
+            float seed = i * 12.9898f;
+            float angle = (float) (seed % 6.2832f) + (i % 2 == 0 ? 0.4f : -0.4f);
+            float speed = 0.55f + (i % 5) * 0.16f;
+            float spread = width * speed * ease;
+            float sx = ox + (float) Math.cos(angle) * spread;
+            float sy = oy + (float) Math.sin(angle) * spread - height * 0.55f * ease * ease;
+            float size = width * (0.020f + (i % 3) * 0.006f) * (1f - ease * 0.55f);
+            sprite.setAlpha(Math.round(230f * fade * (0.5f + 0.5f * (i % 4) / 3f)));
+            drawSprite(canvas, glowSprite, sx, sy, size, size, 0f, sprite);
+        }
+        sprite.setAlpha(255);
     }
 
     // ------------------------------------------------------------------ sprite

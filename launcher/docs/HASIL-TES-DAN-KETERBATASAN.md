@@ -199,6 +199,30 @@ bersisi ekstrusi, dan boket lembut di bidang dekat.
 bidang jauh 12×20, bidang dekat 14×24 — total ~1.100 segiempat per frame,
 bukan 2.100 bila semuanya seragam.
 
+### Efek buka kunci (`LockScreenView` + `CircuitWallpaperView.setUnlockProgress`)
+
+Geser ke atas memberi umpan balik bertahap: konten mengikuti jari sambil
+memudar (maksimal 75%), dan wallpaper ikut "menyergap" — simpangan ombak naik
+bertahap sampai 0,6 progres. Saat lepas pada ambang (>16% tinggi atau
+kecepatan >900 dp/s), `ValueAnimator` 300 ms menggerakkan progres ke 1,0
+bersamaan dengan animasi konten (geser −55% tinggi, skala 1,08, memudar) dan
+HUD yang memipih (skala Y 0,86).
+
+Di dalam wallpaper, progres itu memicu empat hal:
+
+| Efek | Cara |
+|------|------|
+| cairan menyergap | `amplitudeScale()` 1 → 3,2×; `layerZoom()` 1 → 1,05…1,12 (bidang dekat paling besar) |
+| sapuan terang | pita gradien linear setinggi 55% layar yang naik dari bawah ke atas memakai `PorterDuff.ADD`, terang di tengah siklus (`sin(π·p)`) |
+| gelombang shockwave | dua cincin neon melebar dari titik sentuh, tebal & alfa mengecil kuadratik |
+| percikan | 16 titik pijar melesat dari titik sentuh dengan arah & kecepatan tetap, melambat lalu meredup |
+
+Semuanya additive dan memakai sprite radial yang dibuat sekali — tidak ada
+alokasi per frame.
+
+Pratinjau HTML bisa memutarnya: **ketuk layar kunci** (atau tombol *Coba efek
+buka kunci* di bawahnya).
+
 ### Font tema (`Typefaces`)
 
 `Share Tech Mono` (lisensi OFL-1.1) ikut terpasang di

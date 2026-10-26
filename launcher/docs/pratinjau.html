@@ -28,6 +28,11 @@
   .stage{display:flex;gap:36px;flex-wrap:wrap;justify-content:center;align-items:flex-start;margin-top:8px}
   .col{display:flex;flex-direction:column;align-items:center}
   .caption{margin-top:12px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#7d8890}
+  #unlockDemo{margin-left:10px;font:inherit;letter-spacing:.12em;text-transform:uppercase;
+    color:#bfe9ff;background:rgba(20,32,44,.7);border:1px solid rgba(127,216,255,.55);
+    border-radius:999px;padding:4px 10px;cursor:pointer}
+  #unlockDemo:hover{background:rgba(30,52,70,.85);box-shadow:0 0 12px rgba(127,216,255,.35)}
+  .lock{cursor:pointer}
   .hint{margin-top:5px;font-size:11px;color:#5f6a72;max-width:340px;text-align:center;line-height:1.55}
 
   .phone{position:relative;width:360px;height:780px;border-radius:34px;overflow:hidden;
@@ -72,6 +77,11 @@
   /* ------------------------------------------------------------- layar kunci */
   .lock{position:absolute;inset:0;z-index:5}
   .lock .veil{background:linear-gradient(180deg,rgba(0,0,0,.58) 0%,rgba(0,0,0,.22) 26%,rgba(0,0,0,.4) 66%,rgba(0,0,0,.78) 100%)}
+  .lock{transition:none}
+  .lockcontent{transition:transform .30s cubic-bezier(.22,.7,.28,1),opacity .26s ease-in}
+  .lock.unlocking .lockcontent{transform:translateY(-55%) scale(1.08);opacity:0}
+  .lock.unlocking .hud{opacity:0;transform:scaleY(.86)}
+  .lock .hud{transition:opacity .18s ease-in,transform .18s ease-in}
   .lockcontent{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
     padding:calc(var(--dp)*40) calc(var(--dp)*26) calc(var(--dp)*160)}
   .chips{display:flex;justify-content:space-between;width:100%}
@@ -252,7 +262,7 @@
           <span class="right"><span class="sig">4G</span>
             <span class="bars"><i style="height:3px"></i><i style="height:5px"></i><i style="height:7px"></i><i style="height:9px"></i></span>
             <span class="batt"></span></span></div>
-        <div class="lock">
+        <div class="lock" id="lockPanel">
           <canvas class="circuit" id="lockCircuit" width="360" height="780"></canvas>
           <div class="veil"></div>
           <div class="lockcontent">
@@ -265,7 +275,7 @@
             <div class="date" data-date>—</div>
             <div class="grow"></div>
             <div class="arrow"><svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg></div>
-            <div class="unlockhint">GESER KE ATAS UNTUK MEMBUKA</div>
+            <div class="unlockhint">KETUK ATAU GESER KE ATAS UNTUK MEMBUKA</div>
           </div>
 
           <div class="hud">
@@ -301,7 +311,9 @@
           </div>
         </div>
       </div>
-      <div class="caption">Layar kunci + HUD live</div>
+      <div class="caption">Layar kunci + HUD live
+        <button id="unlockDemo" type="button">Coba efek buka kunci</button>
+      </div>
       <div class="hint">Pojok kanan atas: meter baterai <strong>liquid glass</strong> dengan cairan
         neon beriak. HUD menampilkan jam (detik berjalan), baterai, dan suhu baterai asli perangkat.</div>
     </div>
@@ -556,6 +568,7 @@
   var BUBBLES = 9, GLINTS = 4;
 
   var circuit = null;
+  var unlockDemo = { t0: -1, p: 0, u: 0.5, v: 0.86 };
   var pulses = [];
   var sprites = null;
   var bubbleU = [], bubbleR = [], bubbleSpeed = [], bubbleOffset = [], bubbleDrift = [];
@@ -808,6 +821,8 @@
   function layerFrame(L) {
     var depth = LAYER_DEPTH[L], strength = 0.45 + depth;
     return {
+      zoom: 1 + unlockDemo.p * (0.05 + 0.07 * depth),
+      surge: 1 + unlockDemo.p * 2.2,
       rx: Math.sin(frame.t * 0.33) * 3.2 * strength * Math.PI / 180,
       ry: Math.cos(frame.t * 0.27) * 2.6 * strength * Math.PI / 180,
       dist: Math.max(frame.w, frame.h) / CAMERA_DISTANCE,
@@ -852,8 +867,11 @@
     var x1 = g.bx[j1 * W + i0] + (g.bx[j1 * W + i1] - g.bx[j1 * W + i0]) * tu;
     var x = x0 + (x1 - x0) * tv;
     var y = g.by[j0] + (g.by[j1] - g.by[j0]) * tv;
-    var d = waveAt(u, v, f.tp, f.amp, HEAVY_TOP - (HEAVY_TOP - 0.35) * v);
-    var p = project3D(x + d[0], y + d[1], frame.w / 2, frame.h / 2, f.dist, f.rx, f.ry);
+    var d = waveAt(u, v, f.tp * 1, f.amp * f.surge, HEAVY_TOP - (HEAVY_TOP - 0.35) * v);
+    var cx = frame.w / 2, cy = frame.h / 2, z = f.zoom;
+    x = cx + (x + d[0] - cx) * z;
+    y = cy + (y + d[1] - cy) * z;
+    var p = project3D(x, y, cx, cy, f.dist, f.rx, f.ry);
     out[0] = p[0]; out[1] = p[1];
     return true;
   }
@@ -941,7 +959,7 @@
       var p = pulses[i];
       if (p.layer !== L) { continue; }
       var head = (t * p.speed + p.offset) % 1;
-      var r = Math.max(2.2, p.width * 1.15);
+      var r = Math.max(2.2, p.width * 1.15) * (1 + unlockDemo.p * 1.1);
       for (var k = 6; k >= 1; k--) {
         var q = head - k * 0.014;
         if (q < 0) { q += 1; }
@@ -953,9 +971,10 @@
       }
       pointAlong(p.pts, head, tmpPt);
       if (projectLayer(L, tmpPt[0] / p.artW, tmpPt[1] / p.artH, tmpPt)) {
-        drawSprite(c, sprites.glow, tmpPt[0], tmpPt[1], r * 2.6, r * 2.6, 0, 1, true);
+        var gr = r * (2.6 + unlockDemo.p * 2.2);
+        drawSprite(c, sprites.glow, tmpPt[0], tmpPt[1], gr, gr, 0, 1, true);
         c.fillStyle = "#EAFBFF";
-        c.beginPath(); c.arc(tmpPt[0], tmpPt[1], r * 0.62, 0, 6.2832); c.fill();
+        c.beginPath(); c.arc(tmpPt[0], tmpPt[1], r * (0.62 + unlockDemo.p * 0.35), 0, 6.2832); c.fill();
       }
     }
   }
@@ -994,6 +1013,27 @@
       var br = w * bubbleR[b] * (0.7 + 0.5 * fade);
       drawSprite(c, sprites.bubble, tmpPt[0], tmpPt[1], br, br, 0,
         0.75 * fade, true);
+    }
+  }
+
+  /* Demo efek buka kunci: ketuk layar kunci (atau tombolnya) untuk memicu. */
+  function unlockTick(now) {
+    if (unlockDemo.t0 < 0) { unlockDemo.p = 0; return; }
+    var e = now - unlockDemo.t0;
+    if (e < 320) { unlockDemo.p = e / 320; }
+    else if (e < 900) { unlockDemo.p = 1; }
+    else if (e < 1200) { unlockDemo.p = 1 - (e - 900) / 300; }
+    else { unlockDemo.p = 0; unlockDemo.t0 = -1; }
+  }
+
+  function playUnlock(u, v) {
+    unlockDemo.t0 = (window.performance && performance.now) ? performance.now() : Date.now();
+    unlockDemo.u = (u === undefined) ? 0.5 : u;
+    unlockDemo.v = (v === undefined) ? 0.86 : v;
+    var panel = document.getElementById("lockPanel");
+    if (panel && panel.classList) {
+      panel.classList.add("unlocking");
+      setTimeout(function () { panel.classList.remove("unlocking"); }, 1150);
     }
   }
 
@@ -1042,9 +1082,10 @@
         var weight = HEAVY_TOP - (HEAVY_TOP - 0.35) * v;
         for (var i2 = 0; i2 <= MESH_COLS; i2++) {
           var u = i2 / MESH_COLS;
-          var d = waveAt(u, v, f.tp, f.amp, weight);
-          pts.push(project3D(g.bx[j * W + i2] + d[0], g.by[j] + d[1],
-            w / 2, h / 2, f.dist, f.rx, f.ry));
+          var d = waveAt(u, v, f.tp, f.amp * f.surge, weight);
+          var bx = w / 2 + (g.bx[j * W + i2] + d[0] - w / 2) * f.zoom;
+          var by = h / 2 + (g.by[j] + d[1] - h / 2) * f.zoom;
+          pts.push(project3D(bx, by, w / 2, h / 2, f.dist, f.rx, f.ry));
         }
       }
       c.save();
@@ -1054,6 +1095,46 @@
       drawPulses(c, L, t);
     }
     drawFluid(c, t);
+    if (unlockDemo.p > 0) { drawUnlock(c, w, h, t); }
+  }
+
+  /* ------------------------------------------------- efek buka kunci (salinan
+     CircuitWallpaperView.drawUnlock): sapuan terang naik dari bawah, dua
+     cincin shockwave melebar dari titik sentuh, dan percikan neon beterbangan. */
+  function drawUnlock(c, w, h, t) {
+    var p = unlockDemo.p, ease = p * p * (3 - 2 * p), fade = 1 - p;
+    c.save();
+    c.globalCompositeOperation = "lighter";
+
+    var band = h * 0.55, center = h * (1.25 - ease * 1.9);
+    var g = c.createLinearGradient(0, center - band, 0, center + band);
+    g.addColorStop(0, "rgba(143,230,255,0)");
+    g.addColorStop(0.5, "rgba(143,230,255,0.40)");
+    g.addColorStop(1, "rgba(143,230,255,0)");
+    c.globalAlpha = Math.max(0, 0.75 * Math.sin(Math.PI * p));
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+
+    var ox = unlockDemo.u * w, oy = unlockDemo.v * h;
+    var reach = Math.sqrt(w * w + h * h) * 1.15;
+    for (var k = 0; k < 2; k++) {
+      var rp = Math.max(0, ease * (1 + k * 0.55) - k * 0.30);
+      if (rp <= 0) { continue; }
+      c.globalAlpha = Math.max(0, (1 - rp) * (1 - rp) * (k === 0 ? 0.82 : 0.47));
+      c.strokeStyle = "#8FE6FF";
+      c.lineWidth = Math.max(1, w * (0.014 - k * 0.004) * (1 - rp * 0.6));
+      c.beginPath(); c.arc(ox, oy, reach * rp, 0, 6.2832); c.stroke();
+    }
+
+    for (var i = 0; i < 16; i++) {
+      var angle = (i * 12.9898) % 6.2832 + (i % 2 === 0 ? 0.4 : -0.4);
+      var speed = 0.55 + (i % 5) * 0.16, spread = w * speed * ease;
+      var sx = ox + Math.cos(angle) * spread;
+      var sy = oy + Math.sin(angle) * spread - h * 0.55 * ease * ease;
+      var size = w * (0.020 + (i % 3) * 0.006) * (1 - ease * 0.55);
+      drawSprite(c, sprites.glow, sx, sy, size, size, 0,
+        0.9 * fade * (0.5 + 0.5 * (i % 4) / 3), true);
+    }
+    c.restore();
   }
 
   function pointAlong(pts, p, out) {
@@ -1187,6 +1268,7 @@
 
     var d = new Date();
     var blink = d.getSeconds() % 2 === 0;
+    unlockTick(now);
     drawCircuit(document.getElementById("lockCircuit"), now / 1000);
     drawClock(document.getElementById("clockLock"), d.getHours(), d.getMinutes(), blink);
     drawClock(document.getElementById("clockHome"), d.getHours(), d.getMinutes(), blink);
@@ -1196,6 +1278,18 @@
     drawHandle("drawerHandle", now / 1000, 0, 0.6);
     requestAnimationFrame(loop);
   }
+
+  var lockPanel = document.getElementById("lockPanel");
+  if (lockPanel) {
+    lockPanel.addEventListener("click", function (ev) {
+      var box = lockPanel.getBoundingClientRect();
+      playUnlock(
+        Math.max(0, Math.min(1, (ev.clientX - box.left) / Math.max(1, box.width))),
+        Math.max(0, Math.min(1, (ev.clientY - box.top) / Math.max(1, box.height))));
+    });
+  }
+  var demoBtn = document.getElementById("unlockDemo");
+  if (demoBtn) { demoBtn.addEventListener("click", function () { playUnlock(0.5, 0.86); }); }
 
   tick();
   setInterval(tick, 1000);
