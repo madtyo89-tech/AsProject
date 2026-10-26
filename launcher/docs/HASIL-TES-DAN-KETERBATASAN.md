@@ -384,6 +384,31 @@ semacam ini. Dua perbaikan tambahan dilakukan:
    masih tetap macet, itu berarti dugaan ini salah dan penyebabnya ada di
    tempat lain yang belum teraudit.
 
+**Masih macet juga setelah perbaikan animasi di atas** ("masih sama seperti
+tadi", tanpa dialog `CrashLog` yang terlihat). Ini jadi petunjuk kuat bahwa
+dugaan "animasi terlalu berat" SALAH, dan yang terjadi kemungkinan besar
+adalah **crash berulang di titik yang sama setiap kali**, bukan
+performa-terkait — dan dialog `CrashLog` mungkin tidak sempat dilihat
+pengguna kalau jendelanya belum sempat menggambar satu frame pun sebelum
+proses mati lagi. Audit ulang menemukan: **`AppWidgetHost.startListening()`
+dan `stopListening()` dipanggil di SETIAP `onResume()`/`onPause()` tanpa
+try/catch sama sekali** — padahal ini panggilan Binder ke layanan sistem
+widget, dan di banyak ROM vendor dilaporkan bisa melempar `RuntimeException`
+(membungkus `TransactionTooLargeException` atau `DeadObjectException`) kalau
+layanan widgetnya bermasalah/lambat. AOSP Launcher3 sendiri membungkus
+panggilan ini dengan try/catch persis karena alasan ini. Karena dipanggil di
+SETIAP `onResume()` (yaitu SETIAP KALI aplikasi dibuka/kembali ke depan),
+kalau ini penyebabnya maka aplikasi akan crash di titik yang sama persis
+setiap kali — cocok dengan laporan "selalu macet, tidak pernah berhasil,
+sama terus dari awal".
+
+**Perbaikan:** `startListening()`/`stopListening()` sekarang dibungkus
+try/catch(RuntimeException) lewat `safeStartListening()`/`safeStopListening()`;
+konstruksi `AppWidgetManager`/`AppWidgetHost` di `onCreate()` juga dibungkus
+try/catch — kalau gagal, keduanya diset `null` dan semua pemakai
+(`restoreWidgets()`, `showWidgetPicker()`) diberi penjaga null supaya
+beranda tetap bisa dibuka tanpa fitur widget alih-alih crash.
+
 ## 2. Status uji di perangkat
 
 Sebagian besar APK ini masih dibangun & diverifikasi lewat pemeriksaan

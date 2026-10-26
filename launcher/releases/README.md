@@ -30,29 +30,28 @@ APK yang ditandatangani kunci yang sama. Untuk APK rilis, lihat
 SHA-256 APK saat ini:
 
 ```
-38c1fd6f92f9c2f966db7f18b3858dbe7079f3f61ed4c255161fb12adf615261
+8d6b36c509964e61dd3f8a25edf5fa2e382c0c7774660511c71546af6c880031
 ```
 
 ## Perbaikan terbaru (penting)
 
-Dilaporkan masih macet (ANR) di **Vivo Y50** (Snapdragon 665, Android
-10/11) bahkan setelah pemindaian aplikasi dipindah ke thread latar
-belakang. Dugaan kuat berikutnya: perangkat ini kelas menengah-bawah rilis
-2020, dan animasi Canvas berat (liquid wallpaper 3D + HUD berputar) yang
-berjalan terus-menerus di thread utama sejak layar pertama dibuka mungkin
-terlalu berat untuk GPU/CPU-nya.
+Masih dilaporkan macet di **Vivo Y50** walau sudah dicoba dua perbaikan
+sebelumnya. Audit kode ditemukan **satu titik lagi yang belum pernah
+dibungkus try/catch**: `AppWidgetHost.startListening()`/`stopListening()`
+dipanggil di SETIAP `onResume()`/`onPause()` tanpa pengaman — padahal ini
+panggilan Binder ke layanan sistem yang dilaporkan bisa melempar
+`RuntimeException` (membungkus `TransactionTooLargeException` /
+`DeadObjectException`) di berbagai ROM vendor kalau layanan widgetnya
+bermasalah. Launcher resmi (AOSP Launcher3) sendiri membungkus panggilan
+ini dengan try/catch untuk alasan yang sama. Kalau ini penyebabnya,
+aplikasi akan crash di SETIAP `onResume()` — yaitu tiap kali dibuka —
+cocok dengan gejala "selalu macet sejak awal, tidak pernah berhasil".
 
 **Perubahan di build ini:**
-- **Nilai bawaan animasi berat sekarang otomatis dimatikan di HP yang
-  terdeteksi kelas menengah-bawah/lama** (heuristik: `isLowRamDevice()` atau
-  Android ≤ 11 / API ≤ 30) — animasi liquid motion & HUD berputar tidak
-  menyala otomatis di pemasangan baru pada perangkat seperti itu. Ikon neon,
-  jam, dan layar kunci tetap tampil seperti biasa, hanya animasinya yang
-  diam di awal. Bisa dinyalakan manual lewat Pengaturan kalau ternyata
-  perangkatnya lancar-lancar saja.
-- Pencatat crash darurat (`CrashLog`) sekarang dicek **sedini mungkin** di
-  `onCreate()` (bukan di akhir), supaya tetap sempat tampil walau aplikasi
-  crash berulang sebelum sempat selesai memuat.
+- `AppWidgetHost.startListening()`/`stopListening()` dan konstruksi
+  `AppWidgetManager`/`AppWidgetHost` di `onCreate()` sekarang dibungkus
+  try/catch — kalau gagal, fitur widget sekadar tidak tersedia, beranda
+  tetap bisa dibuka.
 
 Jika sebelumnya pernah mengalami notifikasi "AsProject Launcher mengalami
 macet", pasang ulang APK ini (uninstall dulu yang lama) dan coba lagi.

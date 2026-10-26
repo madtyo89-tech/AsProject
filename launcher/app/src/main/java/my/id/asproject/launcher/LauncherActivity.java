@@ -141,8 +141,21 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         Accent.configure(prefs.accentStyle());
         repository = new AppRepository(this);
         icons = new IconLoader(this, prefs, getResources().getDimensionPixelSize(R.dimen.app_icon_size));
-        widgetManager = android.appwidget.AppWidgetManager.getInstance(this);
-        widgetHost = new android.appwidget.AppWidgetHost(this, WIDGET_HOST_ID);
+        // Dibungkus try/catch: membuat host/manager widget adalah panggilan
+        // Binder ke layanan sistem, dan dilaporkan bisa gagal/melempar
+        // RuntimeException di sebagian ROM vendor. Kalau gagal, fitur widget
+        // sekadar tidak tersedia -- beranda tetap harus bisa dibuka.
+        android.appwidget.AppWidgetManager tempWidgetManager = null;
+        android.appwidget.AppWidgetHost tempWidgetHost = null;
+        try {
+            tempWidgetManager = android.appwidget.AppWidgetManager.getInstance(this);
+            tempWidgetHost = new android.appwidget.AppWidgetHost(this, WIDGET_HOST_ID);
+        } catch (RuntimeException error) {
+            tempWidgetManager = null;
+            tempWidgetHost = null;
+        }
+        widgetManager = tempWidgetManager;
+        widgetHost = tempWidgetHost;
         widgetScroll = (HorizontalScrollView) findViewById(R.id.widgetScroll);
         widgetArea = (LinearLayout) findViewById(R.id.widgetArea);
         adapter = new AppGridAdapter(this, icons, prefs.showLabels());
@@ -303,7 +316,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         grid.setNumColumns(prefs.columns());
         showDate();
         if (widgetHost != null) {
-            widgetHost.startListening();
+            safeStartListening();
         }
         clockHandler.removeCallbacks(clockTick);
         clockHandler.postDelayed(clockTick, CLOCK_REFRESH_MS);
@@ -334,7 +347,33 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         clockHandler.removeCallbacks(clockTick);
         unregisterPackageReceiver();
         if (widgetHost != null) {
+            safeStopListening();
+        }
+    }
+
+    /**
+     * {@code AppWidgetHost.startListening()} dilaporkan bisa melempar
+     * RuntimeException (mis. membungkus {@code TransactionTooLargeException}
+     * atau {@code DeadObjectException}) di berbagai ROM vendor kalau layanan
+     * widget sistemnya sedang bermasalah/lambat merespons Binder — ini
+     * dipanggil di SETIAP {@code onResume()}, jadi kalau terjadi, aplikasi
+     * akan crash berulang tiap kali dibuka. Launcher resmi (AOSP Launcher3)
+     * juga membungkusnya dengan try/catch untuk alasan yang sama.
+     */
+    private void safeStartListening() {
+        try {
+            widgetHost.startListening();
+        } catch (RuntimeException error) {
+            // Widget yang sudah ada mungkin tidak ter-refresh kali ini, tapi
+            // beranda tetap harus jalan.
+        }
+    }
+
+    private void safeStopListening() {
+        try {
             widgetHost.stopListening();
+        } catch (RuntimeException ignored) {
+            // sudah berhenti / layanan sistem menolak — tidak masalah
         }
     }
 
@@ -975,6 +1014,10 @@ public final class LauncherActivity extends Activity implements TextWatcher,
      * {@code ACTION_APPWIDGET_PICK} tidak tersedia konsisten di semua ROM.
      */
     private void showWidgetPicker() {
+        if (widgetManager == null || widgetHost == null) {
+            toast(getString(R.string.no_widgets));
+            return;
+        }
         final List<android.appwidget.AppWidgetProviderInfo> providers =
                 widgetManager.getInstalledProviders();
         if (providers.isEmpty()) {
@@ -1142,6 +1185,12 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     /** Pulihkan widget yang sudah ditempel dari sesi sebelumnya. */
     private void restoreWidgets() {
         widgetArea.removeAllViews();
+        if (widgetManager == null || widgetHost == null) {
+            // Host/manager widget gagal dibuat (lihat onCreate) -- lewati
+            // saja, beranda tetap harus bisa dipakai tanpa fitur widget.
+            widgetScroll.setVisibility(View.GONE);
+            return;
+        }
         List<Integer> ids = prefs.widgetIds();
         boolean any = false;
         for (int i = 0; i < ids.size(); i++) {
