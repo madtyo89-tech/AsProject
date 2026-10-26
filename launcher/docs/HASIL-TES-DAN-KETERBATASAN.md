@@ -6,7 +6,7 @@ di mana risikonya.
 ## 1. Sudah diverifikasi otomatis
 
 `python3 launcher/tools/verify_apk.py launcher/releases/asproject-launcher-1.0.0-debug.apk`
-→ **67 lulus, 0 peringatan, 0 gagal**.
+→ **72 lulus, 0 peringatan, 0 gagal**.
 
 | Kelompok | Yang diperiksa |
 |----------|----------------|
@@ -316,11 +316,41 @@ perangkat kelas menengah seharusnya ringan, tetapi pada Android 5 (tanpa
 hardware-accelerated mesh penuh) bisa terasa lebih berat. Karena itu ada
 sakelar "Wallpaper liquid bergerak (3D)" dan "HUD layar kunci beranimasi".
 
-## 2. Belum diuji di perangkat
+## 1d. Bug macet (ANR) di HP nyata — ditemukan & diperbaiki
 
-APK ini dibangun di lingkungan tanpa emulator dan tanpa ponsel fisik, jadi
-**belum ada satu pun uji interaksi nyata**. Semua perilaku runtime di bawah ini
-adalah hasil pembacaan kode, bukan hasil observasi:
+**26 Okt 2026**: APK ini pertama kali dipasang & dijadikan beranda bawaan di
+HP fisik (Vivo, Funtouch/OriginOS). Tak lama setelah itu, sistem "Mesin
+Pintar" Vivo menampilkan notifikasi *"'AsProject Launcher' mengalami
+macet"* (ANR generik, tanpa stack trace) dan layar beranda sempat kosong/abu-abu.
+
+**Akar masalah (ditemukan lewat audit kode, bukan logcat — sandbox ini tidak
+punya akses ADB ke perangkat fisik):** `reloadApps()` di `LauncherActivity`
+memanggil `PackageManager.queryIntentActivities()` + memuat nama/label
+**setiap** aplikasi terpasang, **secara sinkron di thread utama**, dan ini
+dipanggil **setiap kali beranda muncul kembali** (`onResume()` — termasuk tiap
+kali layar dinyalakan atau kembali dari aplikasi lain). Di lingkungan
+pengembangan (emulator/sandbox nyaris tanpa aplikasi terpasang) ini cepat
+sekali sehingga tidak pernah ketahuan. Di HP Vivo nyata dengan ratusan
+aplikasi bawaan (dua toko aplikasi, bloatware vendor, dst.) + beban sistem
+ekstra tepat setelah mengganti launcher default, pemindaian ini bisa cukup
+lambat untuk memicu detektor ANR sistem.
+
+**Perbaikan:** pemindaian `PackageManager` sekarang dijalankan di **thread
+latar belakang** (`reloadApps()` di `LauncherActivity`, dan `pickHiddenApps()`
+di `SettingsActivity`); hasilnya baru diterapkan ke tampilan lewat `Handler`
+di thread utama, dengan penjaga sederhana supaya pemindaian yang
+tumpang-tindih (mis. layar berkedip nyala/mati) tidak menumpuk thread. Ini
+adalah **perbaikan berbasis audit kode** — belum bisa diverifikasi ulang di
+sandbox ini (tidak ada ADB/emulator), jadi **mohon dites ulang di HP yang
+sama** setelah memasang APK baru ini.
+
+## 2. Status uji di perangkat
+
+Sebagian besar APK ini masih dibangun & diverifikasi lewat pemeriksaan
+statis (`verify_apk.py`) dan simulasi pratinjau berbasis JS — **bukan**
+menjalankan APK sungguhan — kecuali satu kali uji nyata di atas (yang
+menemukan bug ANR). Semua perilaku runtime di bawah ini masih berupa hasil
+pembacaan kode, bukan hasil observasi, kecuali disebutkan lain:
 
 - tampilan jam mengikuti format 12/24 jam sistem (`TextClock`);
 - penyaringan kisi saat mengetik;

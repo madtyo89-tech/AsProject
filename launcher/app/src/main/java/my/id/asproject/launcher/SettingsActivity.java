@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
@@ -182,8 +184,33 @@ public final class SettingsActivity extends Activity implements View.OnClickList
         }
     }
 
+    /**
+     * Memindai PackageManager bisa lambat di HP dengan banyak aplikasi bawaan
+     * (ROM vendor semacam Vivo/Oppo/Xiaomi) — dijalankan di thread latar
+     * supaya tombol "Pilih aplikasi…" tidak membekukan Pengaturan sejenak.
+     */
     private void pickHiddenApps() {
-        final List<AppItem> apps = new AppRepository(this).loadApps();
+        final Toast loading = Toast.makeText(this, R.string.pick_hidden, Toast.LENGTH_SHORT);
+        loading.show();
+        final Handler mainHandler = new Handler(Looper.getMainLooper());
+        new Thread("AsProjectHiddenAppScan") {
+            @Override
+            public void run() {
+                final List<AppItem> apps = new AppRepository(SettingsActivity.this).loadApps();
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        loading.cancel();
+                        if (!isFinishing() && !isDestroyed()) {
+                            showHiddenAppsDialog(apps);
+                        }
+                    }
+                });
+            }
+        }.start();
+    }
+
+    private void showHiddenAppsDialog(final List<AppItem> apps) {
         final String[] labels = new String[apps.size()];
         final boolean[] checked = new boolean[apps.size()];
         for (int i = 0; i < apps.size(); i++) {

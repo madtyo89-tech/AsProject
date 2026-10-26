@@ -93,6 +93,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     private AppGridAdapter adapter;
     private boolean receiverRegistered;
     private boolean firstResume = true;
+    private volatile boolean appScanInFlight;
 
     private HomeWallpaperView homeWallpaper;
     private View glowLayer;
@@ -551,9 +552,44 @@ public final class LauncherActivity extends Activity implements TextWatcher,
 
     // -------------------------------------------------------------------- data
 
+    /**
+     * Memindai daftar aplikasi terpasang ({@code PackageManager.queryIntentActivities}
+     * + muat nama tiap aplikasi) itu BISA lambat di HP dengan banyak aplikasi
+     * bawaan (umum di ROM vendor seperti Vivo/Oppo/Xiaomi — bisa 150–300+
+     * aplikasi). Dulu ini dipanggil langsung di thread utama setiap
+     * {@code onResume()}, yang bisa memblokir UI cukup lama sampai sistem
+     * menganggap aplikasi macet (ANR). Sekarang pemindaiannya jalan di thread
+     * latar belakang; thread utama cuma dipakai untuk menata ulang tampilan
+     * setelah hasilnya siap.
+     */
     private void reloadApps() {
-        int firstVisible = grid.getFirstVisiblePosition();
-        List<AppItem> installed = repository.loadApps();
+        if (appScanInFlight) {
+            // Sudah ada pemindaian berjalan (mis. onResume beruntun saat layar
+            // berkedip menyala/mati) — biarkan itu selesai, jangan tumpuk thread.
+            return;
+        }
+        appScanInFlight = true;
+        final int firstVisible = grid.getFirstVisiblePosition();
+        new Thread("AsProjectAppScan") {
+            @Override
+            public void run() {
+                final List<AppItem> installed = repository.loadApps();
+                clockHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        appScanInFlight = false;
+                        if (isFinishing() || isDestroyed()) {
+                            return;
+                        }
+                        applyLoadedApps(installed, firstVisible);
+                    }
+                });
+            }
+        }.start();
+    }
+
+    /** Dipanggil di thread utama setelah {@link #reloadApps()} selesai memindai. */
+    private void applyLoadedApps(List<AppItem> installed, int firstVisible) {
         allApps.clear();
         allApps.addAll(installed);
         renderDock();

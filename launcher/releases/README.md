@@ -30,5 +30,15 @@ APK yang ditandatangani kunci yang sama. Untuk APK rilis, lihat
 SHA-256 APK saat ini:
 
 ```
-b03fbb753527cd73b7d4e2ce648bc21f8c81dbf69fa7e51b706cf61d348a457a
+024c6430ae0a14584f70a31624d9651ebe079f92ec24e7c844688580f5d41db4
 ```
+
+## Perbaikan terbaru (penting)
+
+Build ini memperbaiki **bug macet (ANR)** yang bisa muncul tak lama setelah
+AsProject dipasang sebagai launcher default di HP dengan banyak aplikasi
+terpasang (umum di ROM vendor seperti Vivo/Oppo/Xiaomi): pemindaian daftar
+aplikasi (`PackageManager`) yang sebelumnya berjalan di thread utama setiap
+kali beranda muncul kembali, sekarang dipindah ke thread latar belakang.
+Jika sebelumnya pernah mengalami notifikasi "AsProject Launcher mengalami
+macet", pasang ulang APK ini dan coba lagi.
