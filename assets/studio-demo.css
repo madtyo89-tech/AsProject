@@ -1,0 +1,39 @@
+/* Ephemeral public Studio playground */
+.ap-studio-demo{max-width:1180px;margin:0 auto;padding:clamp(18px,4vw,42px) clamp(14px,3vw,26px) 64px;color:#28271f}
+.ap-studio-demo [hidden]{display:none!important}
+.ap-studio-demo-heading{max-width:790px;margin:0 auto 20px;text-align:center}
+.ap-studio-demo-heading h1{margin:7px 0 10px;color:#183629;font:600 clamp(34px,6vw,54px)/1.08 Georgia,"Times New Roman",serif;letter-spacing:-.035em}
+.ap-studio-demo-heading>p:last-child{max-width:680px;margin:0 auto;color:#6c6255;font-size:15px;line-height:1.7}
+.ap-studio-demo .ap-eyebrow{color:#866327;font-size:10px;font-weight:850;letter-spacing:.15em;text-transform:uppercase}
+.ap-studio-demo-notice{display:flex;align-items:flex-start;gap:13px;max-width:900px;margin:0 auto 22px;padding:15px 18px;border:1px solid #e5d6b8;border-radius:16px;background:#fff9ec;color:#654c20}
+.ap-studio-demo-notice>span{font-size:20px}
+.ap-studio-demo-notice strong{font-size:13px}
+.ap-studio-demo-notice p{margin:3px 0 0;color:#746548;font-size:12px;line-height:1.55}
+.ap-studio-demo-layout{display:grid;grid-template-columns:minmax(290px,.76fr) minmax(0,1.24fr);align-items:start;gap:20px}
+.ap-studio-demo-form,.ap-studio-demo-preview{min-width:0;padding:clamp(17px,2.6vw,25px);border:1px solid #e8dfd1;border-radius:22px;background:#fffefa;box-shadow:0 14px 38px rgba(49,36,18,.07)}
+.ap-demo-card-heading,.ap-demo-preview-heading{display:flex;align-items:center;gap:12px;margin-bottom:19px}
+.ap-demo-card-heading h2,.ap-demo-preview-heading h2{margin:0;color:#183629;font:600 20px/1.2 Georgia,"Times New Roman",serif}
+.ap-demo-card-heading p,.ap-demo-preview-heading p{margin:4px 0 0;color:#7a7163;font-size:11px;line-height:1.5}
+.ap-demo-number{width:35px;height:35px;flex:none;display:grid;place-items:center;border-radius:12px;background:#f2eadc;color:#78571e;font-size:11px;font-weight:850}
+.ap-studio-demo-form form{display:grid;gap:12px}
+.ap-demo-field{min-width:0;display:grid;gap:6px;color:#51473a;font-size:11px;font-weight:750}
+.ap-demo-field input,.ap-demo-field select,.ap-demo-field textarea{width:100%;min-width:0;min-height:43px;padding:10px 12px;border:1px solid #ded4c3;border-radius:11px;background:#fff;color:#28271f;font:500 13px/1.4 Inter,ui-sans-serif,system-ui,sans-serif}
+.ap-demo-field textarea{resize:vertical}
+.ap-demo-field input:focus,.ap-demo-field select:focus,.ap-demo-field textarea:focus{outline:3px solid rgba(171,124,45,.17);border-color:#a98548}
+.ap-demo-name-grid,.ap-demo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.ap-demo-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:5px}
+.ap-demo-actions .ap-btn{min-height:42px;padding:10px 14px;font-size:11px;cursor:pointer}
+.ap-demo-status{min-height:20px;margin:13px 0 0;color:#776b59;font-size:11px;line-height:1.5}
+.ap-demo-preview-heading{margin-bottom:13px}
+.ap-demo-live{display:inline-flex;align-items:center;gap:6px;margin-left:auto;padding:6px 9px;border-radius:999px;background:#edf5ef;color:#305d40;font-size:9px;font-weight:850;letter-spacing:.1em}
+.ap-demo-live i{width:7px;height:7px;border-radius:50%;background:#42a66a;box-shadow:0 0 0 3px rgba(66,166,106,.13)}
+.ap-demo-frame{height:min(76vh,790px);min-height:590px;overflow:hidden;border:1px solid #e2d8c8;border-radius:16px;background:#f5f0e7}
+.ap-demo-frame iframe{width:100%;height:100%;border:0;background:#fff}
+.ap-demo-preview-note{margin:10px 0 0;color:#817766;font-size:10px;line-height:1.55}
+.ap-studio-demo-foot{margin:22px 0 0;padding:clamp(19px,3vw,28px);border:1px solid #e8dfd1;border-radius:20px;background:linear-gradient(135deg,#fffefa,#f3ecdf);text-align:center}
+.ap-studio-demo-foot h2{margin:0;color:#183629;font:600 24px Georgia,"Times New Roman",serif}
+.ap-studio-demo-foot>p{margin:7px 0 15px;color:#6c6255;font-size:12px;line-height:1.6}
+.ap-studio-demo-foot .ap-actions{justify-content:center}
+@media(max-width:820px){.ap-studio-demo-layout{grid-template-columns:1fr}.ap-demo-frame{height:min(80vh,790px);min-height:570px}}
+@media(max-width:480px){.ap-studio-demo{padding-inline:12px}.ap-studio-demo-form,.ap-studio-demo-preview{padding:15px;border-radius:17px}.ap-demo-name-grid,.ap-demo-grid{grid-template-columns:1fr;gap:10px}.ap-demo-actions{display:grid;grid-template-columns:1fr}.ap-demo-actions .ap-btn{width:100%}.ap-demo-frame{height:75vh;min-height:520px}.ap-demo-preview-heading{gap:8px}.ap-demo-preview-heading h2{font-size:18px}}
+@media(prefers-reduced-motion:reduce){.ap-studio-demo *{scroll-behavior:auto!important}}
