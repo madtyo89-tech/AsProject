@@ -171,6 +171,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         drawerAdapter = new AppGridAdapter(this, icons, prefs.showLabels());
         drawer.attach(drawerAdapter);
         drawer.setColumns(prefs.columns());
+        drawer.setHandleStyle(prefs.slideBarStyle());
         drawer.setListener(new AppDrawerView.Listener() {
             @Override
             public void onProgress(float progress) {
@@ -565,6 +566,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
             drawer.setItems(forDrawer);
             drawer.setColumns(prefs.columns());
             drawer.setShowLabels(prefs.showLabels());
+            drawer.setHandleStyle(prefs.slideBarStyle());
         }
         if (firstVisible > 0) {
             grid.setSelection(firstVisible);

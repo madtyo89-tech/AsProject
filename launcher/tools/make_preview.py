@@ -534,6 +534,16 @@ TEMPLATE = r"""<!DOCTYPE html>
   .thumbs div{flex:1;height:calc(var(--dp)*118);border-radius:calc(var(--dp)*14);
     border:1px solid rgba(212,175,55,.25);background-position:center;background-size:cover}
   .small{font-size:calc(var(--dp)*11);color:#9aa4ab;line-height:1.55;padding-top:calc(var(--dp)*4)}
+  .handle-preview{width:100%;height:calc(var(--dp)*52);border-radius:calc(var(--dp)*10);
+    overflow:hidden;border:1px solid rgba(212,175,55,.25);background:#0a0f16}
+  .handle-preview canvas{width:100%;height:100%;display:block}
+  .radio-row{display:flex;align-items:center;gap:calc(var(--dp)*10);padding:calc(var(--dp)*8) 0;
+    font-size:calc(var(--dp)*13.5);cursor:pointer}
+  .radio-dot{width:calc(var(--dp)*16);height:calc(var(--dp)*16);border-radius:50%;flex:0 0 auto;
+    border:1px solid rgba(212,175,55,.55);position:relative}
+  .radio-row.sel .radio-dot{border-color:var(--neon)}
+  .radio-row.sel .radio-dot::after{content:"";position:absolute;inset:calc(var(--dp)*3);
+    border-radius:50%;background:var(--neon)}
 
 __ICON_CSS__
 
@@ -739,6 +749,16 @@ __ICON_CSS__
             <div class="label">Animasi</div>
             <div class="row"><span>Wallpaper liquid bergerak (3D)</span><span class="sw on"></span></div>
             <div class="row"><span>HUD layar kunci beranimasi</span><span class="sw on"></span></div>
+
+            <div class="label">Slide bar laci</div>
+            <div class="handle-preview"><canvas id="settingsHandle" width="600" height="104"></canvas></div>
+            <div id="slideBarChoices">
+              <div class="radio-row sel" data-style="ombak"><span class="radio-dot"></span><span>Ombak cair</span></div>
+              <div class="radio-row" data-style="pil"><span class="radio-dot"></span><span>Pil neon berdenyut</span></div>
+              <div class="radio-row" data-style="titik"><span class="radio-dot"></span><span>Titik sirkuit berjalan</span></div>
+              <div class="radio-row" data-style="sirkuit"><span class="radio-dot"></span><span>Sirkuit zigzag</span></div>
+            </div>
+            <div class="small">Sentuh pratinjau untuk memicu riak. Pilihan ini mengubah gagang tarik laci aplikasi di beranda.</div>
 
             <div class="label">Tampilan</div>
             <div class="row"><span>Jam dan tanggal besar</span><span class="sw on"></span></div>
@@ -1464,6 +1484,7 @@ __ICON_CSS__
   var charging = false;
   var phase = 0;
   var last = 0;
+  var settingsPulseAt = -10;
 
   function drawBatteryRing() {
     if (!ctx) { return; }
@@ -1511,15 +1532,32 @@ __ICON_CSS__
   }
 
   /* ------------------------------------------------------------------
-     Liquid slide bar — salinan LiquidHandleView.java.
+     Liquid slide bar — salinan LiquidHandleView.java, 4 gaya kustomisasi.
      Tepi atas beriak; melengkung ke bawah saat laci ditarik (stretch).
   ------------------------------------------------------------------ */
-  function drawHandle(canvasId, t, stretch, ripple) {
+  var handleStyle = "ombak";
+
+  function drawHandle(canvasId, t, stretch, ripple, style) {
     var cv = document.getElementById(canvasId);
     if (!cv) { return; }
     var c = cv.getContext("2d");
     var w = cv.width, h = cv.height;
     c.clearRect(0, 0, w, h);
+    var mode = style || "ombak";
+    var travel = ((t * 0.55) % 1 + 1) % 1;
+
+    if (mode === "pil") {
+      drawHandlePill(c, w, h, t, stretch, ripple);
+    } else if (mode === "titik") {
+      drawHandleDots(c, w, h, travel, stretch, ripple);
+    } else if (mode === "sirkuit") {
+      drawHandleTrace(c, w, h, travel, stretch, ripple);
+    } else {
+      drawHandleLiquid(c, w, h, t, stretch, ripple);
+    }
+  }
+
+  function drawHandleLiquid(c, w, h, t, stretch, ripple) {
     var base = h * 0.42, amp = h * 0.16 * (0.35 + 0.65 * ripple), sag = h * 0.55 * stretch;
 
     function surfaceY(x) {
@@ -1554,6 +1592,98 @@ __ICON_CSS__
     c.fill();
   }
 
+  function drawHandlePill(c, w, h, t, stretch, ripple) {
+    var topBase = h * 0.30, bow = h * 0.50 * stretch;
+    c.beginPath();
+    c.moveTo(0, h); c.lineTo(0, topBase);
+    c.quadraticCurveTo(w / 2, topBase + bow, w, topBase);
+    c.lineTo(w, h); c.closePath();
+    var grad = c.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, "#1A2632"); grad.addColorStop(1, "#070B12");
+    c.fillStyle = grad; c.fill();
+
+    c.beginPath();
+    c.moveTo(0, topBase);
+    c.quadraticCurveTo(w / 2, topBase + bow, w, topBase);
+    c.strokeStyle = "rgba(95,216,255,0.53)";
+    c.lineWidth = Math.max(1, h * 0.045);
+    c.shadowColor = "#5FD8FF"; c.shadowBlur = h * 0.18;
+    c.stroke(); c.shadowBlur = 0;
+
+    var breathe = 0.5 + 0.5 * Math.sin(t * 12.566371);
+    var glow = Math.max(breathe * 0.6, ripple - 0.35);
+    var pillW = w * (0.20 + 0.08 * glow), pillH = Math.max(2, h * (0.11 + 0.035 * glow));
+    c.fillStyle = "rgba(127,216,255," + (0.75 + 0.25 * glow) + ")";
+    c.beginPath();
+    if (c.roundRect) { c.roundRect((w - pillW) / 2, h * 0.62 - pillH / 2, pillW, pillH, pillH / 2); }
+    else { c.rect((w - pillW) / 2, h * 0.62 - pillH / 2, pillW, pillH); }
+    c.fill();
+  }
+
+  function drawHandleDots(c, w, h, travel, stretch, ripple) {
+    var lane = h * 0.5 - h * 0.20 * stretch;
+    c.strokeStyle = "rgba(95,216,255,0.25)";
+    c.lineWidth = Math.max(1, h * 0.035);
+    c.beginPath(); c.moveTo(w * 0.06, lane); c.lineTo(w * 0.94, lane); c.stroke();
+
+    var boost = Math.max(stretch, Math.max(0, ripple - 0.35) / 0.65);
+    var dotR = Math.max(2, h * 0.095);
+    var count = 9;
+    for (var i = 0; i < count; i++) {
+      var u = (i + 0.5) / count;
+      var x = w * (0.06 + u * 0.88);
+      var dist = Math.abs(u - travel);
+      dist = Math.min(dist, 1 - dist);
+      var glow = Math.max(0, 1 - dist * 7);
+      glow = Math.max(glow, boost * 0.85);
+      c.fillStyle = "rgba(127,216,255," + (0.3 + 0.65 * glow) + ")";
+      c.shadowColor = "#5FD8FF"; c.shadowBlur = h * 0.2 * glow;
+      c.beginPath(); c.arc(x, lane, dotR * (0.65 + 0.6 * glow), 0, Math.PI * 2); c.fill();
+    }
+    c.shadowBlur = 0;
+  }
+
+  function drawHandleTrace(c, w, h, travel, stretch, ripple) {
+    var drop = h * (0.22 + 0.14 * stretch), midY = h * 0.40;
+    var xs = [w * 0.06, w * 0.32, w * 0.32, w * 0.68, w * 0.68, w * 0.94];
+    var ys = [midY, midY, midY + drop, midY + drop, midY, midY];
+
+    c.strokeStyle = "rgba(95,216,255,0.35)";
+    c.lineWidth = Math.max(1, h * 0.05);
+    c.beginPath(); c.moveTo(xs[0], ys[0]);
+    for (var i = 1; i < xs.length; i++) { c.lineTo(xs[i], ys[i]); }
+    c.stroke();
+
+    c.fillStyle = "rgba(127,216,255,0.65)";
+    for (var p = 1; p < xs.length - 1; p++) {
+      c.beginPath(); c.arc(xs[p], ys[p], Math.max(1.6, h * 0.085), 0, Math.PI * 2); c.fill();
+    }
+
+    var segLen = [], total = 0;
+    for (var s = 0; s < xs.length - 1; s++) {
+      var len = Math.hypot(xs[s + 1] - xs[s], ys[s + 1] - ys[s]);
+      segLen.push(len); total += len;
+    }
+    var dtravel = travel * total, acc = 0, px = xs[0], py = ys[0];
+    for (var k = 0; k < segLen.length; k++) {
+      var end = acc + segLen[k];
+      if (dtravel <= end || k === segLen.length - 1) {
+        var tt = segLen[k] <= 0 ? 0 : Math.max(0, Math.min(1, (dtravel - acc) / segLen[k]));
+        px = xs[k] + (xs[k + 1] - xs[k]) * tt;
+        py = ys[k] + (ys[k + 1] - ys[k]) * tt;
+        break;
+      }
+      acc = end;
+    }
+    var glowR = h * (0.17 + 0.08 * ripple);
+    c.fillStyle = "rgba(127,216,255,0.55)";
+    c.shadowColor = "#5FD8FF"; c.shadowBlur = glowR;
+    c.beginPath(); c.arc(px, py, glowR, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#EAFBFF";
+    c.beginPath(); c.arc(px, py, Math.max(2, glowR * 0.45), 0, Math.PI * 2); c.fill();
+    c.shadowBlur = 0;
+  }
+
   function loop(now) {
     if (!last) { last = now; }
     var dt = Math.min(0.1, (now - last) / 1000);
@@ -1569,8 +1699,10 @@ __ICON_CSS__
     drawClock(document.getElementById("clockHome"), d.getHours(), d.getMinutes(), blink);
     drawClock(document.getElementById("clockDrawer"), d.getHours(), d.getMinutes(), blink);
     drawBatteryRing();
-    drawHandle("homeSlideBar", now / 1000, 0, 0.35);
-    drawHandle("drawerHandle", now / 1000, 0, 0.6);
+    var settingsRipple = Math.min(1, 0.35 + 0.65 * Math.max(0, 1 - (now / 1000 - settingsPulseAt) * 1.1));
+    drawHandle("homeSlideBar", now / 1000, 0, 0.35, handleStyle);
+    drawHandle("drawerHandle", now / 1000, 0, 0.6, handleStyle);
+    drawHandle("settingsHandle", now / 1000, 0, settingsRipple, handleStyle);
     requestAnimationFrame(loop);
   }
 
@@ -1585,6 +1717,23 @@ __ICON_CSS__
   }
   var demoBtn = document.getElementById("unlockDemo");
   if (demoBtn) { demoBtn.addEventListener("click", function () { playUnlock(0.5, 0.86); }); }
+
+  var slideBarChoices = document.getElementById("slideBarChoices");
+  if (slideBarChoices) {
+    var rows = slideBarChoices.querySelectorAll(".radio-row");
+    for (var ri = 0; ri < rows.length; ri++) {
+      rows[ri].addEventListener("click", function () {
+        for (var rj = 0; rj < rows.length; rj++) { rows[rj].classList.remove("sel"); }
+        this.classList.add("sel");
+        handleStyle = this.getAttribute("data-style");
+        settingsPulseAt = performance.now() / 1000;
+      });
+    }
+  }
+  var settingsHandleCanvas = document.getElementById("settingsHandle");
+  if (settingsHandleCanvas) {
+    settingsHandleCanvas.addEventListener("click", function () { settingsPulseAt = performance.now() / 1000; });
+  }
 
   tick();
   setInterval(tick, 1000);

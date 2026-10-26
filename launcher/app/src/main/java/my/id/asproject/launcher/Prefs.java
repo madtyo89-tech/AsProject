@@ -29,6 +29,7 @@ public final class Prefs {
     private static final String KEY_NEON_ICONS = "neon_icons";
     private static final String KEY_HUD_ANIMATION = "hud_animation";
     private static final String KEY_LIQUID_MOTION = "liquid_motion";
+    private static final String KEY_SLIDE_BAR_STYLE = "slide_bar_style";
     private static final String KEY_FOLDERS = "folders";
     private static final String KEY_ICON_STYLE = "icon_style_";
     private static final String KEY_WIDGET_IDS = "widget_ids";
@@ -128,6 +129,17 @@ public final class Prefs {
         prefs.edit().putBoolean(KEY_LIQUID_MOTION, enabled).apply();
     }
 
+    /**
+     * Gaya liquid slide bar (gagang laci): {@code "ombak"} (bawaan),
+     * {@code "pil"}, {@code "titik"}, atau {@code "sirkuit"}.
+     */
+    public String slideBarStyle() {
+        return prefs.getString(KEY_SLIDE_BAR_STYLE, "ombak");
+    }
+
+    public void setSlideBarStyle(String style) {
+        prefs.edit().putString(KEY_SLIDE_BAR_STYLE, style == null ? "ombak" : style).apply();
+    }
 
 
     // ---------------------------------------------------------------- folder

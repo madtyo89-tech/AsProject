@@ -82,4 +82,11 @@
     <string name="liquid_motion">Wallpaper liquid bergerak (3D)</string>
     <string name="hud_animation">HUD layar kunci beranimasi</string>
     <string name="motion_note">Efek 3D dan HUD berjalan 30–60 fps hanya saat layar tampil. Matikan bila baterai terasa lebih cepat habis.</string>
+
+    <string name="section_slidebar">Slide bar laci</string>
+    <string name="slide_bar_note">Pilih gaya gagang tarik laci aplikasi. Pratinjau di atas bergerak persis seperti di laci sungguhan — sentuh untuk memicu riaknya.</string>
+    <string name="slide_bar_ombak">Ombak cair</string>
+    <string name="slide_bar_pil">Pil neon berdenyut</string>
+    <string name="slide_bar_titik">Titik sirkuit berjalan</string>
+    <string name="slide_bar_sirkuit">Sirkuit zigzag</string>
 </resources>

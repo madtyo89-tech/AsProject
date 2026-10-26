@@ -93,6 +93,27 @@ public final class SettingsActivity extends Activity implements View.OnClickList
             }
         });
 
+        final LiquidHandleView slideBarPreview = (LiquidHandleView) findViewById(R.id.slideBarPreview);
+        slideBarPreview.setStyle(prefs.slideBarStyle());
+        slideBarPreview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                slideBarPreview.pulse();
+            }
+        });
+
+        RadioGroup slideBarGroup = (RadioGroup) findViewById(R.id.slideBarGroup);
+        slideBarGroup.check(slideBarId(prefs.slideBarStyle()));
+        slideBarGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                String style = slideBarStyleFor(checkedId);
+                prefs.setSlideBarStyle(style);
+                slideBarPreview.setStyle(style);
+                slideBarPreview.pulse();
+            }
+        });
+
         Button resetDock = (Button) findViewById(R.id.resetDock);
         resetDock.setOnClickListener(this);
         Button pickHidden = (Button) findViewById(R.id.pickHidden);
@@ -181,6 +202,32 @@ public final class SettingsActivity extends Activity implements View.OnClickList
             return 6;
         }
         return 4;
+    }
+
+    private int slideBarId(String style) {
+        if ("pil".equals(style)) {
+            return R.id.stylePil;
+        }
+        if ("titik".equals(style)) {
+            return R.id.styleTitik;
+        }
+        if ("sirkuit".equals(style)) {
+            return R.id.styleSirkuit;
+        }
+        return R.id.styleOmbak;
+    }
+
+    private String slideBarStyleFor(int checkedId) {
+        if (checkedId == R.id.stylePil) {
+            return "pil";
+        }
+        if (checkedId == R.id.styleTitik) {
+            return "titik";
+        }
+        if (checkedId == R.id.styleSirkuit) {
+            return "sirkuit";
+        }
+        return "ombak";
     }
 
     private String versionName() {

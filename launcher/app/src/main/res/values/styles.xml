@@ -63,4 +63,14 @@
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:buttonTint">@color/gold</item>
     </style>
+
+    <style name="SlideBarChoice">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingBottom">9dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:buttonTint">@color/gold</item>
+    </style>
 </resources>

@@ -182,6 +182,13 @@ public final class AppDrawerView extends FrameLayout {
         }
     }
 
+    /** Terapkan gaya liquid slide bar yang dipilih pengguna di Pengaturan. */
+    public void setHandleStyle(String style) {
+        if (handle != null) {
+            handle.setStyle(style);
+        }
+    }
+
     private void applyFilter(String query) {
         if (adapter == null) {
             return;

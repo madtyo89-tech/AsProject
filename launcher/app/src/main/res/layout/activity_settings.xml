@@ -173,6 +173,59 @@
                 style="@style/SectionLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/section_slidebar" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_button"
+                android:padding="4dp">
+
+                <my.id.asproject.launcher.LiquidHandleView
+                    android:id="@+id/slideBarPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+
+            <RadioGroup
+                android:id="@+id/slideBarGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="4dp">
+
+                <RadioButton
+                    android:id="@+id/styleOmbak"
+                    style="@style/SlideBarChoice"
+                    android:text="@string/slide_bar_ombak" />
+
+                <RadioButton
+                    android:id="@+id/stylePil"
+                    style="@style/SlideBarChoice"
+                    android:text="@string/slide_bar_pil" />
+
+                <RadioButton
+                    android:id="@+id/styleTitik"
+                    style="@style/SlideBarChoice"
+                    android:text="@string/slide_bar_titik" />
+
+                <RadioButton
+                    android:id="@+id/styleSirkuit"
+                    style="@style/SlideBarChoice"
+                    android:text="@string/slide_bar_sirkuit" />
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/slide_bar_note"
+                android:textColor="@color/text_hint"
+                android:textSize="11.5sp" />
+
+            <TextView
+                style="@style/SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/section_appearance" />
 
             <Switch
