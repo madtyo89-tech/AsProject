@@ -2,7 +2,7 @@
 
 | Berkas | Ukuran | Keterangan |
 |--------|--------|------------|
-| `asproject-launcher-1.0.0-debug.apk` | ±1,6 MB | APK uji, ditandatangani kunci **debug** Android |
+| `asproject-launcher-1.0.1-debug.apk` | ±1,2 MB | APK uji, ditandatangani kunci **debug** Android |
 | `SHA256SUMS.txt` | — | Sidik jari SHA-256 berkas di atas |
 
 ## Memasang
@@ -30,8 +30,16 @@ APK yang ditandatangani kunci yang sama. Untuk APK rilis, lihat
 SHA-256 APK saat ini:
 
 ```
-41d541149bb851cc08c2fd7a76971e4bada88b6c96dcee1f2212e8ad763cbc2c
+229311cd9ecb4e0f2b3f03fa66c777952ef5071cf45fff767651ff7b649af7ea
 ```
+
+## Versi
+
+`versionCode 2` / `versionName 1.0.1` — dinaikkan dari `1.0.0` supaya tiap
+pemasangan ulang dikenali Android sebagai **pembaruan** (tidak perlu
+uninstall manual dulu), dan supaya versi yang terpasang bisa dicek lewat
+**Pengaturan → Aplikasi → AsProject Launcher → lihat versi**. Build-build uji
+sebelumnya (sebelum perbaikan ANR ini) semuanya masih memakai `1.0.0`.
 
 ## Perbaikan terbaru (penting)
 

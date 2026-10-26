@@ -94,7 +94,7 @@ jobs:
       - name: Periksa APK (izin spidometer, kategori HOME, tanda tangan)
         run: |
           set -euo pipefail
-          APK="launcher/out/asproject-launcher-1.0.0-debug.apk"
+          APK="$(ls launcher/out/asproject-launcher-*-debug.apk | head -1)"
           SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
           AAPT2="$(ls -d "$SDK_ROOT"/build-tools/*/aapt2 2>/dev/null | sort -V | tail -1 || true)"
           APKSIGNER_JAR="$(ls "$SDK_ROOT"/build-tools/*/lib/apksigner.jar 2>/dev/null | sort -V | tail -1 || true)"
@@ -106,7 +106,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts
-          cp launcher/out/asproject-launcher-1.0.0-debug.apk artifacts/
+          cp launcher/out/asproject-launcher-*-debug.apk artifacts/
           ( cd artifacts && sha256sum ./*.apk > SHA256SUMS.txt && cat SHA256SUMS.txt )
 
       - name: Bangun APK rilis dengan keystore Anda (bila rahasia diisi)

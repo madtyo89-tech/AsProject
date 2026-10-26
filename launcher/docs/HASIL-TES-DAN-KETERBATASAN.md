@@ -5,7 +5,7 @@ di mana risikonya.
 
 ## 1. Sudah diverifikasi otomatis
 
-`python3 launcher/tools/verify_apk.py launcher/releases/asproject-launcher-1.0.0-debug.apk`
+`python3 launcher/tools/verify_apk.py launcher/releases/asproject-launcher-1.0.1-debug.apk`
 → **72 lulus, 0 peringatan, 0 gagal**.
 
 | Kelompok | Yang diperiksa |
