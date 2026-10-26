@@ -138,12 +138,20 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         // baris yang sama kembali gagal. Dialog bikin Window-nya sendiri,
         // jadi tidak perlu menunggu setContentView() selesai.
         showPendingCrashIfAny();
+        // Dicek sebelum tahap mana pun di bawah ini mulai menulis checkpoint
+        // baru -- lihat StartupTrace untuk kenapa ini perlu (mendiagnosis
+        // hang/ANR MURNI yang tidak melempar exception apa pun, jadi tidak
+        // bisa tertangkap oleh showPendingCrashIfAny() di atas).
+        showPendingHangIfAny();
+        StartupTrace.mark(this, "onCreate:sebelum setContentView");
         setContentView(R.layout.activity_launcher);
+        StartupTrace.mark(this, "onCreate:sesudah setContentView");
 
         prefs = new Prefs(this);
         Accent.configure(prefs.accentStyle());
         repository = new AppRepository(this);
         icons = new IconLoader(this, prefs, getResources().getDimensionPixelSize(R.dimen.app_icon_size));
+        StartupTrace.mark(this, "onCreate:sesudah Prefs/AppRepository/IconLoader");
         // Dibungkus try/catch: membuat host/manager widget adalah panggilan
         // Binder ke layanan sistem, dan dilaporkan bisa gagal/melempar
         // RuntimeException di sebagian ROM vendor. Kalau gagal, fitur widget
@@ -159,6 +167,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         }
         widgetManager = tempWidgetManager;
         widgetHost = tempWidgetHost;
+        StartupTrace.mark(this, "onCreate:sesudah AppWidgetManager/AppWidgetHost");
         widgetScroll = (HorizontalScrollView) findViewById(R.id.widgetScroll);
         widgetArea = (LinearLayout) findViewById(R.id.widgetArea);
         adapter = new AppGridAdapter(this, icons, prefs.showLabels());
@@ -177,6 +186,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                 homeWallpaper.setMotionEnabled(prefs.figureWallpaper() && prefs.liquidMotion());
             }
         });
+        StartupTrace.mark(this, "onCreate:sesudah setup LockScreenView");
 
         content = (LinearLayout) findViewById(R.id.content);
         clockHeader = findViewById(R.id.clockHeader);
@@ -188,6 +198,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         grid = (GridView) findViewById(R.id.appGrid);
         emptyView = (TextView) findViewById(R.id.emptyView);
         dockBar = (LinearLayout) findViewById(R.id.dockBar);
+        StartupTrace.mark(this, "onCreate:sesudah findViewById beranda utama");
 
         drawer = (AppDrawerView) findViewById(R.id.appDrawer);
         drawerAdapter = new AppGridAdapter(this, icons, prefs.showLabels());
@@ -222,6 +233,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                 return true;
             }
         });
+        StartupTrace.mark(this, "onCreate:sesudah setup AppDrawerView");
 
         // Geser ke atas pada area kosong beranda → buka laci aplikasi.
         swipeDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
@@ -250,16 +262,19 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                 return swipeDetector != null && swipeDetector.onTouchEvent(event);
             }
         });
+        StartupTrace.mark(this, "onCreate:sesudah setup gesture swipe");
 
         // Font tema untuk seluruh beranda & laci.
         Typefaces.apply(this, content);
         Typefaces.apply(this, drawer);
+        StartupTrace.mark(this, "onCreate:sesudah Typefaces.apply");
 
         applyEdgeToEdge();
         applyInsets();
         applyVisibility();
         applyWallpaper();
         registerScreenReceiver();
+        StartupTrace.mark(this, "onCreate:sesudah applyWallpaper/applyInsets/registerScreenReceiver");
 
         grid.setAdapter(adapter);
         grid.setNumColumns(prefs.columns());
@@ -306,28 +321,35 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                 return true;
             }
         });
+        StartupTrace.mark(this, "onCreate:sesudah pasang semua listener klik/geser");
 
         restoreWidgets();
+        StartupTrace.mark(this, "onCreate:sesudah restoreWidgets (onCreate selesai)");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        StartupTrace.mark(this, "onResume:mulai");
         Accent.configure(prefs.accentStyle());
         applyVisibility();
         adapter.setShowLabels(prefs.showLabels());
         grid.setNumColumns(prefs.columns());
         showDate();
+        StartupTrace.mark(this, "onResume:sesudah applyVisibility/adapter/showDate");
         if (widgetHost != null) {
             safeStartListening();
         }
+        StartupTrace.mark(this, "onResume:sesudah safeStartListening widget");
         clockHandler.removeCallbacks(clockTick);
         clockHandler.postDelayed(clockTick, CLOCK_REFRESH_MS);
         registerPackageReceiver();
         applyWallpaper();
         icons.applyAccent(prefs.accentStyle());
         icons.setNeonEnabled(prefs.neonIcons());
+        StartupTrace.mark(this, "onResume:sesudah applyWallpaper/icons.applyAccent");
         reloadApps();
+        StartupTrace.mark(this, "onResume:sesudah memicu reloadApps (thread baru)");
         if (firstResume) {
             firstResume = false;
             if (prefs.lockScreen()) {
@@ -336,6 +358,9 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         } else if (!prefs.lockScreen() && lockScreen.isShowingLock()) {
             lockScreen.hideNow();
         }
+        // onResume() berhasil sampai akhir: tidak ada apa pun untuk
+        // dilaporkan pada peluncuran berikutnya.
+        StartupTrace.markDone(this);
     }
 
     @Override
@@ -1340,6 +1365,50 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                         if (clipboard != null) {
                             clipboard.setPrimaryClip(
                                     android.content.ClipData.newPlainText("asproject_crash", trace));
+                            toast("Disalin ke papan klip");
+                        }
+                    }
+                })
+                .setNegativeButton("Tutup", null)
+                .setCancelable(true)
+                .show();
+    }
+
+    /**
+     * Lihat {@link StartupTrace}: ini menangkap kasus yang TIDAK bisa
+     * ditangkap {@link #showPendingCrashIfAny()} -- hang/ANR murni yang
+     * tidak melempar exception apa pun, jadi peluncuran sebelumnya
+     * berhenti di tengah {@code onCreate()}/{@code onResume()} tanpa
+     * pernah mencapai {@code StartupTrace.markDone()}.
+     */
+    private void showPendingHangIfAny() {
+        final String step = StartupTrace.lastStep(this);
+        if (step == null || step.length() == 0) {
+            return;
+        }
+        final long when = StartupTrace.lastTime(this);
+        // Jangan diulang-ulang: kalau sekarang ternyata berhasil sampai
+        // akhir, tidak ada lagi yang perlu dilaporkan nanti.
+        StartupTrace.markDone(this);
+        final String whenText = when > 0
+                ? new SimpleDateFormat("dd MMM HH:mm:ss", Locale.getDefault()).format(new Date(when))
+                : "?";
+        final String message = "Peluncuran sebelumnya (" + whenText + ") TIDAK PERNAH SELESAI "
+                + "mulai. Checkpoint TERAKHIR yang sempat tercatat, tepat sebelum macetnya "
+                + "terjadi:\n\n" + step + "\n\nTidak ada error/exception yang tercatat sama "
+                + "sekali untuk peluncuran itu -- ini kemungkinan besar ANR murni (hang), bukan "
+                + "crash. Mohon foto layar ini / salin teksnya dan kirim ke pengembang.";
+        new AlertDialog.Builder(this)
+                .setTitle("AsProject macet di tengah proses mulai")
+                .setMessage(message)
+                .setPositiveButton("Salin teks", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)
+                                getSystemService(Context.CLIPBOARD_SERVICE);
+                        if (clipboard != null) {
+                            clipboard.setPrimaryClip(
+                                    android.content.ClipData.newPlainText("asproject_hang", message));
                             toast("Disalin ke papan klip");
                         }
                     }

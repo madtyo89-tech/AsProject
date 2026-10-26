@@ -2,7 +2,7 @@
 
 | Berkas | Ukuran | Keterangan |
 |--------|--------|------------|
-| `asproject-launcher-1.0.1-debug.apk` | ±1,2 MB | APK uji, ditandatangani kunci **debug** Android |
+| `asproject-launcher-1.0.2-debug.apk` | ±1,2 MB | APK uji, ditandatangani kunci **debug** Android |
 | `SHA256SUMS.txt` | — | Sidik jari SHA-256 berkas di atas |
 
 ## Memasang
@@ -30,16 +30,42 @@ APK yang ditandatangani kunci yang sama. Untuk APK rilis, lihat
 SHA-256 APK saat ini:
 
 ```
-229311cd9ecb4e0f2b3f03fa66c777952ef5071cf45fff767651ff7b649af7ea
+e1e51b285e0bb648fb183b21656ae7d6eba2b6a1541bdbf7c52b77798d38dba1
 ```
 
 ## Versi
 
-`versionCode 2` / `versionName 1.0.1` — dinaikkan dari `1.0.0` supaya tiap
+`versionCode 3` / `versionName 1.0.2` — dinaikkan tiap build uji ANR supaya
 pemasangan ulang dikenali Android sebagai **pembaruan** (tidak perlu
 uninstall manual dulu), dan supaya versi yang terpasang bisa dicek lewat
-**Pengaturan → Aplikasi → AsProject Launcher → lihat versi**. Build-build uji
-sebelumnya (sebelum perbaikan ANR ini) semuanya masih memakai `1.0.0`.
+**Pengaturan → Aplikasi → AsProject Launcher → lihat versi**.
+
+## Build ini: pelacak checkpoint startup (StartupTrace)
+
+Build sebelumnya (`1.0.1`, checkpoint dialog crash dipindah ke awal
+`onCreate()`) sudah dicoba di Vivo Y50 dan **gagal** — macetnya masih
+identik dan dialog crash (`CrashLog`) tetap tidak pernah muncul. Ini
+mengonfirmasi dugaan: ini kemungkinan besar **ANR murni (hang tanpa
+exception)**, bukan crash — dan `CrashLog` memang tidak dirancang untuk
+menangkap hang murni (tidak ada apa pun yang "dilempar" untuk dicatat).
+
+Build ini menambahkan mekanisme baru, `StartupTrace`: puluhan "checkpoint"
+ditulis satu per satu ke penyimpanan lokal (synchronous, bukan `apply()`)
+di sepanjang `onCreate()`/`onResume()`, TEPAT sebelum setiap tahap
+berisiko (setContentView, inisialisasi widget host, setup drawer, apply
+font tema, apply wallpaper, dst). Begitu seluruh proses mulai selesai
+dengan selamat, checkpoint-nya dihapus. Kalau peluncuran berikutnya
+ternyata masih menemukan checkpoint tersisa, itu bukti peluncuran
+sebelumnya tidak pernah selesai mulai — dan nama checkpoint terakhir yang
+tersimpan menunjuk PERSIS ke baris kode sebelum macetnya terjadi.
+
+**Build ini murni untuk diagnosis** (belum ada perbaikan baru terhadap
+hang-nya sendiri). Kalau sesudah dipasang launcher tetap macet seperti
+biasa, tolong **buka lagi aplikasinya (atau restart HP)** setelah macet
+itu — dialog baru "AsProject macet di tengah proses mulai" seharusnya
+muncul di peluncuran berikutnya dengan nama checkpoint terakhir. Foto
+layar dialog itu dan kirim ke pengembang; itu akan menunjukkan baris kode
+persis mana yang harus diperbaiki.
 
 ## Perbaikan terbaru (penting)
 

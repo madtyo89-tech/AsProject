@@ -1447,7 +1447,7 @@ dari situs dan dari `android/`.
   WhatsApp, Instagram) untuk aplikasi yang terpasang. Wallpaper & ikon berasal dari
   aset yang dikirim pemilik proyek (lihat catatan lisensi di
   `launcher/docs/HASIL-TES-DAN-KETERBATASAN.md` §1b).
-- APK uji: [`launcher/releases/asproject-launcher-1.0.1-debug.apk`](launcher/releases/asproject-launcher-1.0.1-debug.apk)
+- APK uji: [`launcher/releases/asproject-launcher-1.0.2-debug.apk`](launcher/releases/asproject-launcher-1.0.2-debug.apk)
   (tanda tangan debug Android; SHA-256 ada di `launcher/releases/SHA256SUMS.txt`).
 - Petunjuk build, kenaikan versi, dan APK rilis dengan keystore sendiri:
   [`launcher/docs/BUILD-APK.md`](launcher/docs/BUILD-APK.md).
