@@ -115,13 +115,13 @@ public final class LiquidHandleView extends View {
         path.close();
 
         fill.setShader(new LinearGradient(0, 0, 0, height,
-                0xE61A2632, 0xF2070B12, Shader.TileMode.CLAMP));
+                Accent.shift(0xE61A2632), Accent.shift(0xF2070B12), Shader.TileMode.CLAMP));
         canvas.drawPath(path, fill);
         fill.setShader(null);
 
         // Garis tepi neon mengikuti gelombang.
         edge.setStrokeWidth(Math.max(1f, height * 0.055f));
-        edge.setColor(0xB35FD8FF);
+        edge.setColor(Accent.shift(0xB35FD8FF));
         Path edgePath = new Path();
         edgePath.moveTo(0f, surfaceY(0f, width, base, amp, sag));
         for (int i = 1; i <= STEPS; i++) {
@@ -135,7 +135,7 @@ public final class LiquidHandleView extends View {
         float pillHeight = Math.max(2f, height * 0.10f);
         float left = (width - pillWidth) / 2f;
         float top = height * 0.62f - pillHeight / 2f;
-        pill.setColor(0xCC7FD8FF);
+        pill.setColor(Accent.shift(0xCC7FD8FF));
         canvas.drawRoundRect(left, top, left + pillWidth, top + pillHeight,
                 pillHeight / 2f, pillHeight / 2f, pill);
     }
@@ -166,7 +166,7 @@ public final class LiquidHandleView extends View {
         path.lineTo(width, height);
         path.close();
         fill.setShader(new LinearGradient(0, 0, 0, height,
-                0xE61A2632, 0xF2070B12, Shader.TileMode.CLAMP));
+                Accent.shift(0xE61A2632), Accent.shift(0xF2070B12), Shader.TileMode.CLAMP));
         canvas.drawPath(path, fill);
         fill.setShader(null);
 
@@ -174,7 +174,7 @@ public final class LiquidHandleView extends View {
         edgePath.moveTo(0f, topBase);
         edgePath.quadTo(width / 2f, topBase + bow, width, topBase);
         edge.setStrokeWidth(Math.max(1f, height * 0.045f));
-        edge.setColor(0x885FD8FF);
+        edge.setColor(Accent.shift(0x885FD8FF));
         canvas.drawPath(edgePath, edge);
 
         // Napas pelan + kilau tambahan saat pulse() dipicu.
@@ -184,7 +184,7 @@ public final class LiquidHandleView extends View {
         float pillHeight = Math.max(2f, height * (0.11f + 0.035f * glow));
         float left = (width - pillWidth) / 2f;
         float top = height * 0.62f - pillHeight / 2f;
-        pill.setColor(0xCC7FD8FF);
+        pill.setColor(Accent.shift(0xCC7FD8FF));
         pill.setAlpha(Math.round(190 + 65 * glow));
         canvas.drawRoundRect(left, top, left + pillWidth, top + pillHeight,
                 pillHeight / 2f, pillHeight / 2f, pill);
@@ -198,7 +198,7 @@ public final class LiquidHandleView extends View {
         float lane = height * 0.5f - height * 0.20f * stretch;
 
         edge.setStrokeWidth(Math.max(1f, height * 0.035f));
-        edge.setColor(0x405FD8FF);
+        edge.setColor(Accent.shift(0x405FD8FF));
         canvas.drawLine(width * 0.06f, lane, width * 0.94f, lane, edge);
 
         float chase = phase % 1f;
@@ -211,7 +211,7 @@ public final class LiquidHandleView extends View {
             dist = Math.min(dist, 1f - dist);
             float glow = Math.max(0f, 1f - dist * 7f);
             glow = Math.max(glow, boost * 0.85f);
-            pill.setColor(0xFF7FD8FF);
+            pill.setColor(Accent.shift(0xFF7FD8FF));
             pill.setAlpha(Math.round(80 + 170 * glow));
             canvas.drawCircle(x, lane, dotR * (0.65f + 0.6f * glow), pill);
         }
@@ -234,10 +234,10 @@ public final class LiquidHandleView extends View {
             trace.lineTo(xs[i], ys[i]);
         }
         edge.setStrokeWidth(Math.max(1f, height * 0.05f));
-        edge.setColor(0x5A5FD8FF);
+        edge.setColor(Accent.shift(0x5A5FD8FF));
         canvas.drawPath(trace, edge);
 
-        pill.setColor(0xAA7FD8FF);
+        pill.setColor(Accent.shift(0xAA7FD8FF));
         for (int i = 1; i < xs.length - 1; i++) {
             canvas.drawCircle(xs[i], ys[i], Math.max(1.6f, height * 0.085f), pill);
         }
@@ -263,9 +263,9 @@ public final class LiquidHandleView extends View {
             acc = end;
         }
         float glowR = height * (0.17f + 0.08f * ripple);
-        pill.setColor(0x885FD8FF);
+        pill.setColor(Accent.shift(0x885FD8FF));
         canvas.drawCircle(px, py, glowR, pill);
-        pill.setColor(0xFFEAFBFF);
+        pill.setColor(Accent.shift(0xFFEAFBFF));
         canvas.drawCircle(px, py, Math.max(2f, glowR * 0.45f), pill);
         pill.setAlpha(255);
     }

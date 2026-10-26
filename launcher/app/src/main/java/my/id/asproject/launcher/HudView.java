@@ -184,17 +184,17 @@ public final class HudView extends View implements Choreographer.FrameCallback {
         canvas.save();
         canvas.clipPath(clip);
         paint.setShader(new LinearGradient(0, frame.top, 0, frame.bottom,
-                0xF0131B25, 0xF004070B, Shader.TileMode.CLAMP));
+                Accent.shift(0xF0131B25), Accent.shift(0xF004070B), Shader.TileMode.CLAMP));
         canvas.drawRect(frame, paint);
         paint.setShader(new RadialGradient(frame.centerX(),
                 frame.top - frame.height() * 0.35f, frame.height() * 1.1f,
-                0x2EE8FBFF, 0x00000000, Shader.TileMode.CLAMP));
+                Accent.shift(0x2EE8FBFF), Accent.shift(0x00000000), Shader.TileMode.CLAMP));
         canvas.drawRect(frame, paint);
         float band = frame.width() * 0.55f;
         float shift = frame.left - band + (phase - (float) Math.floor(phase))
                 * (frame.width() + band * 2f);
         paint.setShader(new LinearGradient(shift, frame.top, shift + band, frame.bottom,
-                new int[]{0x00000000, 0x1A8FD4FF, 0x00000000},
+                new int[]{Accent.shift(0x00000000), Accent.shift(0x1A8FD4FF), Accent.shift(0x00000000)},
                 new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
         canvas.drawRect(frame, paint);
         paint.setShader(null);
@@ -202,20 +202,20 @@ public final class HudView extends View implements Choreographer.FrameCallback {
 
         // Tepi kaca: rim lebih terang di atas daripada bawah.
         stroke.setShader(new LinearGradient(0, frame.top, 0, frame.bottom,
-                0x99BFEFFF, 0x446FA8C0, Shader.TileMode.CLAMP));
+                Accent.shift(0x99BFEFFF), Accent.shift(0x446FA8C0), Shader.TileMode.CLAMP));
         stroke.setStrokeWidth(1f * density);
         canvas.drawRoundRect(frame, radius, radius, stroke);
         stroke.setShader(null);
 
         // Garis pemisah tipis di bawah judul.
-        stroke.setColor(0x33A8E6FF);
+        stroke.setColor(Accent.shift(0x33A8E6FF));
         canvas.drawLine(frame.left + 8 * density, frame.top + 20 * density,
                 frame.right - 8 * density, frame.top + 20 * density, stroke);
     }
 
     private void drawCorners(Canvas canvas, RectF frame) {
         float arm = 12f * density;
-        stroke.setColor(0xCC7FD8FF);
+        stroke.setColor(Accent.shift(0xCC7FD8FF));
         stroke.setStrokeWidth(1.6f * density);
         // kiri atas
         canvas.drawLine(frame.left, frame.top, frame.left + arm, frame.top, stroke);
@@ -236,7 +236,7 @@ public final class HudView extends View implements Choreographer.FrameCallback {
         float travel = (float) ((Math.sin(phase * 1.8f) + 1f) / 2f);
         float x = frame.left + 10 * density + travel * (frame.width() - 20 * density);
         paint.setShader(new LinearGradient(x - 34 * density, 0, x + 34 * density, 0,
-                new int[]{0x00000000, 0x557FD8FF, 0x00000000},
+                new int[]{Accent.shift(0x00000000), Accent.shift(0x557FD8FF), Accent.shift(0x00000000)},
                 new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
         canvas.drawRect(x - 34 * density, frame.top + 2 * density,
                 x + 34 * density, frame.bottom - 2 * density, paint);
@@ -248,21 +248,21 @@ public final class HudView extends View implements Choreographer.FrameCallback {
         float top = frame.top + 30 * density;
         float lineHeight = 15f * density;
 
-        label(canvas, "SYS STATUS", x, top, 0x99A8C7D8, 7.6f);
-        value(canvas, "ONLINE", x + 58 * density, top, 0xFFB3E8FF, 8.6f);
+        label(canvas, "SYS STATUS", x, top, Accent.shift(0x99A8C7D8), 7.6f);
+        value(canvas, "ONLINE", x + 58 * density, top, Accent.shift(0xFFB3E8FF), 8.6f);
 
         // titik status berkedip
         boolean on = ((int) (phase * 2f)) % 2 == 0;
-        paint.setColor(on ? 0xFF7FD8FF : 0x3360A0C0);
+        paint.setColor(on ? Accent.shift(0xFF7FD8FF) : Accent.shift(0x3360A0C0));
         canvas.drawCircle(x + 50 * density, top + 1.2f * density, 2.6f * density, paint);
 
-        label(canvas, "BIO-LOCK", x, top + lineHeight, 0x99A8C7D8, 7.6f);
-        value(canvas, "ARMED", x + 58 * density, top + lineHeight, 0xFFB3E8FF, 8.6f);
+        label(canvas, "BIO-LOCK", x, top + lineHeight, Accent.shift(0x99A8C7D8), 7.6f);
+        value(canvas, "ARMED", x + 58 * density, top + lineHeight, Accent.shift(0xFFB3E8FF), 8.6f);
 
-        label(canvas, "POWER", x, top + lineHeight * 2, 0x99A8C7D8, 7.6f);
+        label(canvas, "POWER", x, top + lineHeight * 2, Accent.shift(0x99A8C7D8), 7.6f);
         String percent = batteryPercent < 0 ? "--" : String.valueOf(batteryPercent);
         value(canvas, percent + "%", x + 58 * density, top + lineHeight * 2,
-                charging ? 0xFFB6FFCF : 0xFFB3E8FF, 8.6f);
+                charging ? Accent.shift(0xFFB6FFCF) : Accent.shift(0xFFB3E8FF), 8.6f);
 
         // Catatan: dulu di sini ada 6 sel baterai. Ikon baterai kini hanya satu,
         // di bilah status (LiquidBatteryView), jadi HUD cukup menampilkan angkanya.
@@ -276,14 +276,14 @@ public final class HudView extends View implements Choreographer.FrameCallback {
         // Label ditaruh cukup jauh dari nilai (kanan) agar tidak bertumpuk pada
         // lebar layar kecil; "INTEGRITY" disingkat supaya tetap muat.
         float labelX = right - 62 * density;
-        textRight(canvas, "TEMP", labelX, top, 0x99A8C7D8, 7.6f);
-        textRight(canvas, temperatureText + "\u00B0C", right, top, 0xFFB3E8FF, 8.6f);
+        textRight(canvas, "TEMP", labelX, top, Accent.shift(0x99A8C7D8), 7.6f);
+        textRight(canvas, temperatureText + "\u00B0C", right, top, Accent.shift(0xFFB3E8FF), 8.6f);
 
-        textRight(canvas, "SIGNAL", labelX, top + lineHeight, 0x99A8C7D8, 7.6f);
-        textRight(canvas, "LINK OK", right, top + lineHeight, 0xFFB3E8FF, 8.6f);
+        textRight(canvas, "SIGNAL", labelX, top + lineHeight, Accent.shift(0x99A8C7D8), 7.6f);
+        textRight(canvas, "LINK OK", right, top + lineHeight, Accent.shift(0xFFB3E8FF), 8.6f);
 
-        textRight(canvas, "INTEGR", labelX, top + lineHeight * 2, 0x99A8C7D8, 7.6f);
-        textRight(canvas, integrityText, right, top + lineHeight * 2, 0xFFB3E8FF, 8.6f);
+        textRight(canvas, "INTEGR", labelX, top + lineHeight * 2, Accent.shift(0x99A8C7D8), 7.6f);
+        textRight(canvas, integrityText, right, top + lineHeight * 2, Accent.shift(0xFFB3E8FF), 8.6f);
     }
 
     /** Cincin tengah: busur berputar + jam besar + latensi. */
@@ -293,51 +293,51 @@ public final class HudView extends View implements Choreographer.FrameCallback {
         float radius = 34f * density;
 
         stroke.setStrokeWidth(1.2f * density);
-        stroke.setColor(0x336FA8C0);
+        stroke.setColor(Accent.shift(0x336FA8C0));
         canvas.drawCircle(cx, cy, radius, stroke);
 
-        stroke.setColor(0x557FD8FF);
+        stroke.setColor(Accent.shift(0x557FD8FF));
         stroke.setStrokeWidth(1.6f * density);
         canvas.drawCircle(cx, cy, radius * 0.78f, stroke);
 
         // Busur berputar (arah berbeda-beda)
         RectF arc = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
         stroke.setStrokeWidth(2.2f * density);
-        stroke.setColor(0xDD7FD8FF);
+        stroke.setColor(Accent.shift(0xDD7FD8FF));
         float startA = (phase * 90f) % 360f;
         canvas.drawArc(arc, startA, 52f, false, stroke);
 
         RectF inner = new RectF(cx - radius * 0.78f, cy - radius * 0.78f,
                 cx + radius * 0.78f, cy + radius * 0.78f);
         stroke.setStrokeWidth(2f * density);
-        stroke.setColor(0xAA4FA8D8);
+        stroke.setColor(Accent.shift(0xAA4FA8D8));
         float startB = 360f - (phase * 130f) % 360f;
         canvas.drawArc(inner, startB, 34f, false, stroke);
 
         // titik orbit
         double angle = phase * 1.4f;
-        paint.setColor(0xFFB3E8FF);
+        paint.setColor(Accent.shift(0xFFB3E8FF));
         canvas.drawCircle(cx + (float) Math.cos(angle) * radius,
                 cy + (float) Math.sin(angle) * radius, 2.2f * density, paint);
 
         // denyut halus
         float pulse = 1f + 0.06f * (float) Math.sin(phase * 4f);
         stroke.setStrokeWidth(1f * density);
-        stroke.setColor(0x557FD8FF);
+        stroke.setColor(Accent.shift(0x557FD8FF));
         canvas.drawCircle(cx, cy, radius * 0.62f * pulse, stroke);
 
         // Jam — diperbarui tiap detik (bukan tiap frame) agar hemat CPU.
         text.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
-        text.setColor(0xFFE9FBFF);
+        text.setColor(Accent.shift(0xFFE9FBFF));
         text.setTextSize(19f * density);
         text.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(clockText, cx, cy + 3f * density, text);
         text.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL));
 
-        text.setColor(0x99A8C7D8);
+        text.setColor(Accent.shift(0x99A8C7D8));
         text.setTextSize(6.6f * density);
         canvas.drawText("SECURE LINK", cx, cy + 13f * density, text);
-        text.setColor(0xFFB3E8FF);
+        text.setColor(Accent.shift(0xFFB3E8FF));
         text.setTextSize(7.4f * density);
         canvas.drawText(latencyText, cx, cy + 22f * density, text);
         text.setTextAlign(Paint.Align.LEFT);
@@ -353,7 +353,7 @@ public final class HudView extends View implements Choreographer.FrameCallback {
             float amp = 3f + 9f * Math.abs((float) Math.sin(phase * 3.2f + i * 0.7f)
                     * (float) Math.cos(phase * 1.1f + i * 0.35f));
             float x = frame.left + 12 * density + i * step;
-            paint.setColor(i % 3 == 0 ? 0xCC7FD8FF : 0x777FD8FF);
+            paint.setColor(i % 3 == 0 ? Accent.shift(0xCC7FD8FF) : Accent.shift(0x777FD8FF));
             canvas.drawRect(x, baseY - amp * density, x + step * 0.45f, baseY, paint);
         }
     }

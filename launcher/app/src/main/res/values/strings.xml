@@ -72,6 +72,13 @@
     <string name="section_wallpaper">Wallpaper</string>
     <string name="use_figure_wallpaper">Pakai wallpaper neon AsProject</string>
     <string name="wallpaper_note">Beranda memakai gambar liquid-chrome + HUD. Layar kunci memakai papan sirkuit liquid 3D yang digambar sendiri (tanpa berkas gambar).</string>
+    <string name="section_accent">Warna aksen</string>
+    <string name="accent_biru">Biru</string>
+    <string name="accent_hijau">Hijau</string>
+    <string name="accent_ungu">Ungu</string>
+    <string name="accent_pink">Pink</string>
+    <string name="accent_note">Berlaku sekaligus di ikon neon, HUD, baterai, jam, wallpaper sirkuit, dan slide bar. 8 ikon aplikasi populer (bawaan dari gambar asli) tidak ikut berganti warna.</string>
+
     <string name="section_lock">Layar kunci</string>
     <string name="enable_lock_screen">Aktifkan layar kunci</string>
     <string name="lock_note">Layar kunci muncul saat ponsel dibuka. Geser ke atas untuk masuk ke beranda.</string>

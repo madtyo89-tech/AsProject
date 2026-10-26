@@ -90,6 +90,7 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
     private Bitmap bubbleSprite;
     private Bitmap poolSprite;
     private boolean spritesReady;
+    private String spritesAccent;
 
     public CircuitWallpaperView(Context context, AttributeSet attrs) {
         super(context, null, true);
@@ -185,13 +186,13 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
     protected void drawBackdrop(Canvas canvas, int width, int height) {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setShader(new LinearGradient(0, 0, 0, height,
-                0xFF04080F, 0xFF070E18, Shader.TileMode.CLAMP));
+                Accent.shift(0xFF04080F), Accent.shift(0xFF070E18), Shader.TileMode.CLAMP));
         canvas.drawRect(0, 0, width, height, paint);
         paint.setShader(null);
         // Cahaya kejauhan di sekitar titik hilang (atas tengah).
         float r = Math.max(width, height) * 0.55f;
         paint.setShader(new RadialGradient(width * 0.5f, -height * 0.05f, r,
-                0x334FC3F7, 0x00000000, Shader.TileMode.CLAMP));
+                Accent.shift(0x334FC3F7), Accent.shift(0x00000000), Shader.TileMode.CLAMP));
         canvas.drawRect(0, 0, width, height, paint);
         paint.setShader(null);
     }
@@ -228,29 +229,29 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
     /** Bidang jauh: jejak kecil, redup, dan dikabutkan oleh jarak. */
     private void drawFar(Canvas canvas, int w, int h, Random random) {
         float unit = w / 26f;
-        dots(canvas, w, h, w / 34f, 0x10BFE9FF, w * 0.0013f);
-        busLines(canvas, w, h, random, 8, w * 0.0022f, 0x3A4FC3F7, 0x3A7FD8FF, 0f, 1f);
+        dots(canvas, w, h, w / 34f, Accent.shift(0x10BFE9FF), w * 0.0013f);
+        busLines(canvas, w, h, random, 8, w * 0.0022f, Accent.shift(0x3A4FC3F7), Accent.shift(0x3A7FD8FF), 0f, 1f);
         for (int i = 0; i < 18; i++) {
             float[] path = randomPath(random, w, h, unit, 0f, 1f, 3, 5);
-            stroke(canvas, path, Math.max(0.6f, w * 0.0018f), 0x324FC3F7);
+            stroke(canvas, path, Math.max(0.6f, w * 0.0018f), Accent.shift(0x324FC3F7));
             if (i < 7) {
-                cornerPads(canvas, path, Math.max(0.8f, w * 0.0024f), 0x40B3E8FF);
+                cornerPads(canvas, path, Math.max(0.8f, w * 0.0024f), Accent.shift(0x40B3E8FF));
             }
         }
         for (int i = 0; i < 3; i++) {
             float cw = unit * (1.2f + random.nextFloat());
             float left = random.nextFloat() * (w - cw);
             float top = (0.10f + random.nextFloat() * 0.7f) * h;
-            drawChip(canvas, left, top, cw, cw * 0.5f, 0.10f, 0x2A7FD8FF, 0x180A1018, w * 0.0016f);
+            drawChip(canvas, left, top, cw, cw * 0.5f, 0.10f, Accent.shift(0x2A7FD8FF), Accent.shift(0x180A1018), w * 0.0016f);
         }
-        fog(canvas, w, h, 0.40f, 0xA8060B12);
+        fog(canvas, w, h, 0.40f, Accent.shift(0xA8060B12));
     }
 
     /** Bidang tengah: papan utama — jejak, pad, pin berdiri, dan chip menonjol. */
     private void drawMid(Canvas canvas, int w, int h, Random random) {
         float unit = w / 16f;
-        dots(canvas, w, h, w / 20f, 0x14BFE9FF, w * 0.0016f);
-        busLines(canvas, w, h, random, 5, w * 0.0034f, 0x554FC3F7, 0x7FB3E8FF, 0f, 1f);
+        dots(canvas, w, h, w / 20f, Accent.shift(0x14BFE9FF), w * 0.0016f);
+        busLines(canvas, w, h, random, 5, w * 0.0034f, Accent.shift(0x554FC3F7), Accent.shift(0x7FB3E8FF), 0f, 1f);
 
         int pulses = 0;
         for (int i = 0; i < 26; i++) {
@@ -258,15 +259,15 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
             float strokeWidth = Math.max(1f, w * (power ? 0.0058f : 0.0030f));
             float[] path = randomPath(random, w, h, unit, 0.02f, 1f, 3, 6);
             // Jejak biasa: dua tarikan (pijar redup + inti) supaya tampak menyala.
-            stroke(canvas, path, strokeWidth * 2.1f, power ? 0x2A4FC3F7 : 0x184FC3F7);
-            stroke(canvas, path, strokeWidth, power ? 0x7A4FC3F7 : 0x404FC3F7);
+            stroke(canvas, path, strokeWidth * 2.1f, power ? Accent.shift(0x2A4FC3F7) : Accent.shift(0x184FC3F7));
+            stroke(canvas, path, strokeWidth, power ? Accent.shift(0x7A4FC3F7) : Accent.shift(0x404FC3F7));
             if (power) {
-                stroke(canvas, path, strokeWidth * 0.35f, 0xBFE6FBFF);
+                stroke(canvas, path, strokeWidth * 0.35f, Accent.shift(0xBFE6FBFF));
             }
-            cornerPads(canvas, path, strokeWidth * 1.35f, power ? 0x99B3E8FF : 0x667FD8FF);
+            cornerPads(canvas, path, strokeWidth * 1.35f, power ? Accent.shift(0x99B3E8FF) : Accent.shift(0x667FD8FF));
             if (power) {
                 // Pin berdiri: garis vertikal pendek + kepala terang → kesan 3D.
-                risers(canvas, path, h * 0.020f, strokeWidth * 0.8f, 0x8FBFE9FF);
+                risers(canvas, path, h * 0.020f, strokeWidth * 0.8f, Accent.shift(0x8FBFE9FF));
             }
             if (power && pulses < PULSES_MID) {
                 addPulse(LAYER_MID, path, random, strokeWidth);
@@ -279,9 +280,9 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
             float ch = cw * (0.44f + random.nextFloat() * 0.26f);
             float left = random.nextFloat() * (w - cw);
             float top = (0.12f + random.nextFloat() * 0.7f) * h;
-            drawChip(canvas, left, top, cw, ch, 0.16f, 0x6E7FD8FF, 0x2E0A1018, w * 0.0026f);
+            drawChip(canvas, left, top, cw, ch, 0.16f, Accent.shift(0x6E7FD8FF), Accent.shift(0x2E0A1018), w * 0.0026f);
         }
-        fog(canvas, w, h, 0.30f, 0x99060B12);
+        fog(canvas, w, h, 0.30f, Accent.shift(0x99060B12));
     }
 
     /**
@@ -291,16 +292,16 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
      */
     private void drawNear(Canvas canvas, int w, int h, Random random) {
         float unit = w / 7f;
-        busLines(canvas, w, h, random, 3, w * 0.010f, 0x5A4FC3F7, 0x99BFE9FF, 0.5f, 1.2f);
-        hBusLines(canvas, w, h, random, 2, w * 0.009f, 0x504FC3F7, 0x7AE6FBFF, 0x99BFE9FF, 0.84f, 1.16f);
+        busLines(canvas, w, h, random, 3, w * 0.010f, Accent.shift(0x5A4FC3F7), Accent.shift(0x99BFE9FF), 0.5f, 1.2f);
+        hBusLines(canvas, w, h, random, 2, w * 0.009f, Accent.shift(0x504FC3F7), Accent.shift(0x7AE6FBFF), Accent.shift(0x99BFE9FF), 0.84f, 1.16f);
         for (int i = 0; i < 7; i++) {
             float strokeWidth = Math.max(2f, w * (0.010f + random.nextFloat() * 0.008f));
             float[] path = randomPath(random, w, h, unit, 0.55f, 1.25f, 2, 4);
-            stroke(canvas, path, strokeWidth * 2.6f, 0x184FC3F7);
-            stroke(canvas, path, strokeWidth, 0x5A4FC3F7);
-            stroke(canvas, path, strokeWidth * 0.34f, 0x9AE6FBFF);
-            cornerPads(canvas, path, strokeWidth * 1.5f, 0xB3BFE9FF);
-            risers(canvas, path, h * 0.035f, strokeWidth * 0.9f, 0x99BFE9FF);
+            stroke(canvas, path, strokeWidth * 2.6f, Accent.shift(0x184FC3F7));
+            stroke(canvas, path, strokeWidth, Accent.shift(0x5A4FC3F7));
+            stroke(canvas, path, strokeWidth * 0.34f, Accent.shift(0x9AE6FBFF));
+            cornerPads(canvas, path, strokeWidth * 1.5f, Accent.shift(0xB3BFE9FF));
+            risers(canvas, path, h * 0.035f, strokeWidth * 0.9f, Accent.shift(0x99BFE9FF));
             if (i < PULSES_NEAR) {
                 addPulse(LAYER_NEAR, path, random, strokeWidth * 1.25f);
             }
@@ -312,7 +313,7 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
             float cy = (0.6f + random.nextFloat() * 0.55f) * h;
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setShader(new RadialGradient(cx, cy, r,
-                    new int[]{0x223A6E8F, 0x142A5470, 0x00000000},
+                    new int[]{Accent.shift(0x223A6E8F), Accent.shift(0x142A5470), Accent.shift(0x00000000)},
                     new float[]{0f, 0.55f, 1f}, Shader.TileMode.CLAMP));
             canvas.drawCircle(cx, cy, r, paint);
             paint.setShader(null);
@@ -426,7 +427,7 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
             float py = pts[2 + i * 2];
             pad.setColor(color);
             canvas.drawCircle(px, py, radius, pad);
-            pad.setColor(0x22EAFBFF);
+            pad.setColor(Accent.shift(0x22EAFBFF));
             canvas.drawCircle(px, py, radius * 0.42f, pad);
         }
     }
@@ -441,7 +442,7 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
             core.setColor(color);
             canvas.drawRect(px - width * 0.5f, py - length, px + width * 0.5f, py, core);
             canvas.drawCircle(px, py - length, width * 0.95f, core);
-            core.setColor(0x33EAFBFF);
+            core.setColor(Accent.shift(0x33EAFBFF));
             canvas.drawCircle(px, py - length, width * 2.2f, core);
         }
     }
@@ -461,10 +462,10 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
         side.lineTo(left + cw, top - lift);
         side.lineTo(left + cw, top);
         side.close();
-        chip.setColor(0x3A16222E);
+        chip.setColor(Accent.shift(0x3A16222E));
         canvas.drawPath(side, chip);
         // Tutup.
-        chip.setColor(0x2A0C1420);
+        chip.setColor(Accent.shift(0x2A0C1420));
         canvas.drawRoundRect(new RectF(left, top - lift, left + cw, top - lift + ch * 0.9f),
                 ch * 0.12f, ch * 0.12f, chip);
         chip.setStyle(Paint.Style.STROKE);
@@ -500,7 +501,7 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
             return;
         }
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setShader(new LinearGradient(0, 0, 0, h * amount, color, 0x00000000,
+        paint.setShader(new LinearGradient(0, 0, 0, h * amount, color, Accent.shift(0x00000000),
                 Shader.TileMode.CLAMP));
         canvas.drawRect(0, 0, w, h * amount, paint);
         paint.setShader(null);
@@ -583,7 +584,7 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
                 drawSprite(canvas, glowSprite, projected[0], projected[1],
                         r * (2.6f + unlock * 2.2f), r * (2.6f + unlock * 2.2f), 0f, sprite);
                 core.setStyle(Paint.Style.FILL);
-                core.setColor(0xFFEAFBFF);
+                core.setColor(Accent.shift(0xFFEAFBFF));
                 canvas.drawCircle(projected[0], projected[1], r * (0.62f + unlock * 0.35f), core);
             }
         }
@@ -675,7 +676,7 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
         float center = height * (1.25f - ease * 1.9f);
         Paint paint = addSprite;
         paint.setShader(new LinearGradient(0, center - band, 0, center + band,
-                new int[]{0x00000000, 0x668FE6FF, 0x00000000},
+                new int[]{Accent.shift(0x00000000), Accent.shift(0x668FE6FF), Accent.shift(0x00000000)},
                 new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
         paint.setAlpha(Math.round(190f * (float) Math.sin(Math.PI * p)));
         canvas.drawRect(0, 0, width, height, paint);
@@ -695,7 +696,7 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
             float radius = reach * rp;
             float alpha = (1f - rp) * (1f - rp) * (k == 0 ? 210f : 120f);
             ring.setStrokeWidth(Math.max(1f, width * (0.014f - k * 0.004f) * (1f - rp * 0.6f)));
-            ring.setColor(0x8FE6FF);
+            ring.setColor(Accent.shift(0xFF8FE6FF));
             ring.setAlpha(Math.round(alpha));
             canvas.drawCircle(ox, oy, radius, ring);
         }
@@ -720,20 +721,23 @@ public final class CircuitWallpaperView extends LiquidWallpaperView {
     // ------------------------------------------------------------------ sprite
 
     private void ensureSprites() {
-        if (spritesReady) {
+        // Bitmap sprite "membakar" warna aksen saat dibuat; bangun ulang bila
+        // pengguna mengganti aksen (mis. kembali dari Pengaturan).
+        if (spritesReady && Accent.current().equals(spritesAccent)) {
             return;
         }
         int size = 128;
         glowSprite = radial(size,
-                new int[]{0xE68FE6FF, 0x805FD8FF, 0x1A4FC3F7, 0x00000000},
+                new int[]{Accent.shift(0xE68FE6FF), Accent.shift(0x805FD8FF), Accent.shift(0x1A4FC3F7), Accent.shift(0x00000000)},
                 new float[]{0f, 0.22f, 0.55f, 1f});
         bubbleSprite = radial(size,
-                new int[]{0x00000000, 0x0A5FD8FF, 0x66BFE9FF, 0xCCEAFBFF, 0x00000000},
+                new int[]{Accent.shift(0x00000000), Accent.shift(0x0A5FD8FF), Accent.shift(0x66BFE9FF), Accent.shift(0xCCEAFBFF), Accent.shift(0x00000000)},
                 new float[]{0f, 0.55f, 0.78f, 0.90f, 1f});
         poolSprite = radial(size,
-                new int[]{0x666FCFFF, 0x2A4FC3F7, 0x00000000},
+                new int[]{Accent.shift(0x666FCFFF), Accent.shift(0x2A4FC3F7), Accent.shift(0x00000000)},
                 new float[]{0f, 0.45f, 1f});
         spritesReady = glowSprite != null && bubbleSprite != null && poolSprite != null;
+        spritesAccent = Accent.current();
     }
 
     private static Bitmap radial(int size, int[] colors, float[] stops) {

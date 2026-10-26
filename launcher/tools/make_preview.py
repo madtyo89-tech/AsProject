@@ -544,6 +544,14 @@ TEMPLATE = r"""<!DOCTYPE html>
   .radio-row.sel .radio-dot{border-color:var(--neon)}
   .radio-row.sel .radio-dot::after{content:"";position:absolute;inset:calc(var(--dp)*3);
     border-radius:50%;background:var(--neon)}
+  .swatch-row{display:flex;gap:calc(var(--dp)*10);padding:calc(var(--dp)*6) 0}
+  .swatch-item{display:flex;flex-direction:column;align-items:center;gap:calc(var(--dp)*5);
+    flex:1;cursor:pointer;font-size:calc(var(--dp)*11);color:#9aa4ab;
+    border-radius:calc(var(--dp)*10);padding:calc(var(--dp)*6) 0;border:1px solid transparent}
+  .swatch-dot{width:calc(var(--dp)*26);height:calc(var(--dp)*26);border-radius:50%;
+    border:2px solid rgba(255,255,255,.25)}
+  .swatch-item.sel{color:var(--text,#fff);border-color:rgba(212,175,55,.4)}
+  .swatch-item.sel .swatch-dot{border-color:#fff}
 
 __ICON_CSS__
 
@@ -738,6 +746,15 @@ __ICON_CSS__
             </div>
             <div class="row"><span>Pakai wallpaper neon AsProject</span><span class="sw on"></span></div>
 
+            <div class="label">Warna aksen</div>
+            <div id="accentChoices" class="swatch-row">
+              <div class="swatch-item sel" data-accent="biru"><span class="swatch-dot" style="background:#5FD7FF"></span><span>Biru</span></div>
+              <div class="swatch-item" data-accent="hijau"><span class="swatch-dot" style="background:#5FFF94"></span><span>Hijau</span></div>
+              <div class="swatch-item" data-accent="ungu"><span class="swatch-dot" style="background:#BC5FFF"></span><span>Ungu</span></div>
+              <div class="swatch-item" data-accent="pink"><span class="swatch-dot" style="background:#FF5FB4"></span><span>Pink</span></div>
+            </div>
+            <div class="small">Berlaku di ikon neon, HUD, baterai, jam, wallpaper sirkuit, dan slide bar sekaligus. 8 ikon aplikasi populer tidak ikut berganti warna.</div>
+
             <div class="label">Layar kunci</div>
             <div class="row"><span>Aktifkan layar kunci</span><span class="sw on"></span></div>
             <div class="row"><span>Bingkai kosong (tanpa HUD)</span><span class="sw"></span></div>
@@ -799,7 +816,6 @@ __ICON_CSS__
      titik dua berkedip tiap detik.
   ------------------------------------------------------------------ */
   var SEG = [126, 48, 109, 121, 51, 91, 95, 112, 127, 123];
-  var NEON = "#5FD8FF", CORE = "#E6FBFF", GHOST = "rgba(95,216,255,0.13)";
 
   function segPath(c, horizontal, x, y, len, t) {
     var ch = t / 2;
@@ -832,11 +848,11 @@ __ICON_CSS__
       var on = segs[i][0];
       segPath(c, segs[i][1] === 1, segs[i][2], segs[i][3], segs[i][4], t);
       if (on) {
-        c.shadowColor = NEON; c.shadowBlur = t * 1.35; c.fillStyle = CORE;
+        c.shadowColor = ACC.hex(ACC.hex("#5FD8FF")); c.shadowBlur = t * 1.35; c.fillStyle = ACC.hex(ACC.hex("#E6FBFF"));
         c.fill();
         c.shadowBlur = 0;
       } else {
-        c.fillStyle = GHOST; c.fill();
+        c.fillStyle = ACC.rgba(95, 216, 255, 0.13); c.fill();
       }
     }
   }
@@ -854,8 +870,8 @@ __ICON_CSS__
     drawDigit(c, x, y, hours % 10, dw, H, t); x += dw + sp;
 
     var dot = t * 1.05, cx = x + (cw - dot) / 2;
-    c.fillStyle = colonOn ? NEON : GHOST;
-    c.shadowColor = NEON; c.shadowBlur = colonOn ? t * 1.2 : 0;
+    c.fillStyle = colonOn ? ACC.hex(ACC.hex("#5FD8FF")) : ACC.rgba(95, 216, 255, 0.13);
+    c.shadowColor = ACC.hex(ACC.hex("#5FD8FF")); c.shadowBlur = colonOn ? t * 1.2 : 0;
     c.fillRect(cx, H * 0.34 - dot / 2, dot, dot);
     c.fillRect(cx, H * 0.68 - dot / 2, dot, dot);
     c.shadowBlur = 0;
@@ -904,8 +920,8 @@ __ICON_CSS__
   function col(argb, mul) {
     var a = ((argb >>> 24) & 255) / 255;
     if (mul !== undefined) { a *= mul; }
-    return "rgba(" + ((argb >>> 16) & 255) + "," + ((argb >>> 8) & 255) + "," +
-      (argb & 255) + "," + a.toFixed(3) + ")";
+    var rgb = ACC.shiftRgb((argb >>> 16) & 255, (argb >>> 8) & 255, argb & 255);
+    return "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + a.toFixed(3) + ")";
   }
 
   /* ------------------------------------------------------- seni papan per bidang */
@@ -987,7 +1003,7 @@ __ICON_CSS__
   function fogTop(c, w, h, amount, color) {
     if (amount <= 0) { return; }
     var g = c.createLinearGradient(0, 0, 0, h * amount);
-    g.addColorStop(0, col(color)); g.addColorStop(1, "rgba(0,0,0,0)");
+    g.addColorStop(0, col(color)); g.addColorStop(1, ACC.rgba(0, 0, 0, 0));
     c.fillStyle = g; c.fillRect(0, 0, w, h * amount);
   }
 
@@ -1105,7 +1121,7 @@ __ICON_CSS__
       var r = w * (0.10 + rnd() * 0.16), cx = rnd() * w, cy = (0.6 + rnd() * 0.55) * h;
       var g = c.createRadialGradient(cx, cy, 0, cx, cy, r);
       g.addColorStop(0, col(0x223A6E8F)); g.addColorStop(0.55, col(0x142A5470));
-      g.addColorStop(1, "rgba(0,0,0,0)");
+      g.addColorStop(1, ACC.rgba(0, 0, 0, 0));
       c.fillStyle = g; c.beginPath(); c.arc(cx, cy, r, 0, 6.2832); c.fill();
     }
   }
@@ -1195,13 +1211,13 @@ __ICON_CSS__
 
   function buildSprites() {
     sprites = {
-      glow: radialSprite([[0, "rgba(143,230,255,0.90)"], [0.22, "rgba(95,216,255,0.50)"],
-        [0.55, "rgba(79,195,247,0.10)"], [1, "rgba(79,195,247,0)"]]),
-      bubble: radialSprite([[0, "rgba(95,216,255,0)"], [0.55, "rgba(95,216,255,0.05)"],
-        [0.78, "rgba(191,233,255,0.40)"], [0.90, "rgba(234,251,255,0.80)"],
-        [1, "rgba(234,251,255,0)"]]),
-      pool: radialSprite([[0, "rgba(111,207,255,0.40)"], [0.45, "rgba(79,195,247,0.16)"],
-        [1, "rgba(79,195,247,0)"]])
+      glow: radialSprite([[0, ACC.rgba(143, 230, 255, 0.90)], [0.22, ACC.rgba(95, 216, 255, 0.50)],
+        [0.55, ACC.rgba(79, 195, 247, 0.10)], [1, ACC.rgba(79, 195, 247, 0)]]),
+      bubble: radialSprite([[0, ACC.rgba(95, 216, 255, 0)], [0.55, ACC.rgba(95, 216, 255, 0.05)],
+        [0.78, ACC.rgba(191, 233, 255, 0.40)], [0.90, ACC.rgba(234, 251, 255, 0.80)],
+        [1, ACC.rgba(234, 251, 255, 0)]]),
+      pool: radialSprite([[0, ACC.rgba(111, 207, 255, 0.40)], [0.45, ACC.rgba(79, 195, 247, 0.16)],
+        [1, ACC.rgba(79, 195, 247, 0)]])
     };
   }
 
@@ -1231,11 +1247,11 @@ __ICON_CSS__
 
   function drawBackdrop(c, w, h) {
     var g = c.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, "#04080F"); g.addColorStop(1, "#070E18");
+    g.addColorStop(0, ACC.hex("#04080F")); g.addColorStop(1, ACC.hex("#070E18"));
     c.fillStyle = g; c.fillRect(0, 0, w, h);
     var r = Math.max(w, h) * 0.55;
     var g2 = c.createRadialGradient(w * 0.5, -h * 0.05, 0, w * 0.5, -h * 0.05, r);
-    g2.addColorStop(0, "rgba(79,195,247,0.20)"); g2.addColorStop(1, "rgba(79,195,247,0)");
+    g2.addColorStop(0, ACC.rgba(79, 195, 247, 0.20)); g2.addColorStop(1, ACC.rgba(79, 195, 247, 0));
     c.fillStyle = g2; c.fillRect(0, 0, w, h);
   }
 
@@ -1288,7 +1304,7 @@ __ICON_CSS__
       if (projectLayer(L, tmpPt[0] / p.artW, tmpPt[1] / p.artH, tmpPt)) {
         var gr = r * (2.6 + unlockDemo.p * 2.2);
         drawSprite(c, sprites.glow, tmpPt[0], tmpPt[1], gr, gr, 0, 1, true);
-        c.fillStyle = "#EAFBFF";
+        c.fillStyle = ACC.hex("#EAFBFF");
         c.beginPath(); c.arc(tmpPt[0], tmpPt[1], r * (0.62 + unlockDemo.p * 0.35), 0, 6.2832); c.fill();
       }
     }
@@ -1356,7 +1372,7 @@ __ICON_CSS__
     if (!canvas) { return; }
     var w = canvas.width, h = canvas.height;
     var c = canvas.getContext("2d");
-    if (!circuit || circuit.w !== w || circuit.h !== h) {
+    if (!circuit || circuit.w !== w || circuit.h !== h || circuit.accent !== ACC.current()) {
       pulses = [];
       var layers = [];
       for (var i = 0; i < 3; i++) {
@@ -1374,7 +1390,7 @@ __ICON_CSS__
           geom: buildGeom(w, h, LAYER_DEPTH[i], LAYER_PERSP[i])
         });
       }
-      circuit = { w: w, h: h, layers: layers };
+      circuit = { w: w, h: h, layers: layers, accent: ACC.current() };
       buildSprites();
       var brnd = makeRandom(SEED + 31);
       for (var b = 0; b < BUBBLES; b++) {
@@ -1423,9 +1439,9 @@ __ICON_CSS__
 
     var band = h * 0.55, center = h * (1.25 - ease * 1.9);
     var g = c.createLinearGradient(0, center - band, 0, center + band);
-    g.addColorStop(0, "rgba(143,230,255,0)");
-    g.addColorStop(0.5, "rgba(143,230,255,0.40)");
-    g.addColorStop(1, "rgba(143,230,255,0)");
+    g.addColorStop(0, ACC.rgba(143, 230, 255, 0));
+    g.addColorStop(0.5, ACC.rgba(143, 230, 255, 0.40));
+    g.addColorStop(1, ACC.rgba(143, 230, 255, 0));
     c.globalAlpha = Math.max(0, 0.75 * Math.sin(Math.PI * p));
     c.fillStyle = g; c.fillRect(0, 0, w, h);
 
@@ -1435,7 +1451,7 @@ __ICON_CSS__
       var rp = Math.max(0, ease * (1 + k * 0.55) - k * 0.30);
       if (rp <= 0) { continue; }
       c.globalAlpha = Math.max(0, (1 - rp) * (1 - rp) * (k === 0 ? 0.82 : 0.47));
-      c.strokeStyle = "#8FE6FF";
+      c.strokeStyle = ACC.hex("#8FE6FF");
       c.lineWidth = Math.max(1, w * (0.014 - k * 0.004) * (1 - rp * 0.6));
       c.beginPath(); c.arc(ox, oy, reach * rp, 0, 6.2832); c.stroke();
     }
@@ -1486,6 +1502,77 @@ __ICON_CSS__
   var last = 0;
   var settingsPulseAt = -10;
 
+  /* ------------------------------------------------------------------
+     Warna aksen global — salinan Accent.java. Semua warna neon di berkas
+     ini ditulis dalam keluarga cyan dasar (hue ~195 deg); ACC.hex/ACC.rgba
+     memutar hue ke aksen pilihan sambil mempertahankan S/V & alpha asli.
+  ------------------------------------------------------------------ */
+  var ACC = (function () {
+    var BASE_HUE = 195;
+    var hueShift = 0;
+
+    function hueFor(style) {
+      if (style === "hijau") { return 140; }
+      if (style === "ungu") { return 275; }
+      if (style === "pink") { return 328; }
+      return BASE_HUE;
+    }
+
+    var currentStyle = "biru";
+    function configure(style) { currentStyle = style || "biru"; hueShift = hueFor(currentStyle) - BASE_HUE; }
+    function current() { return currentStyle; }
+
+    function rgbToHsv(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      var max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+      var h = 0;
+      if (d !== 0) {
+        if (max === r) { h = ((g - b) / d) % 6; }
+        else if (max === g) { h = (b - r) / d + 2; }
+        else { h = (r - g) / d + 4; }
+        h *= 60; if (h < 0) { h += 360; }
+      }
+      var s = max === 0 ? 0 : d / max;
+      return [h, s, max];
+    }
+
+    function hsvToRgb(h, s, v) {
+      var c = v * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = v - c, r, g, b;
+      if (h < 60) { r = c; g = x; b = 0; }
+      else if (h < 120) { r = x; g = c; b = 0; }
+      else if (h < 180) { r = 0; g = c; b = x; }
+      else if (h < 240) { r = 0; g = x; b = c; }
+      else if (h < 300) { r = x; g = 0; b = c; }
+      else { r = c; g = 0; b = x; }
+      return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+    }
+
+    function shiftRgb(r, g, b) {
+      if (hueShift === 0) { return [r, g, b]; }
+      var hsv = rgbToHsv(r, g, b);
+      hsv[0] = (hsv[0] + hueShift + 360) % 360;
+      return hsvToRgb(hsv[0], hsv[1], hsv[2]);
+    }
+
+    function hex(h) {
+      var n = parseInt(h.slice(1), 16);
+      var rgb = shiftRgb((n >> 16) & 255, (n >> 8) & 255, n & 255);
+      return "#" + rgb.map(function (v) { return ("0" + v.toString(16)).slice(-2); }).join("");
+    }
+
+    function rgba(r, g, b, a) {
+      var rgb = shiftRgb(r, g, b);
+      return "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + a + ")";
+    }
+
+    function rgbaPrefix(r, g, b) {
+      var rgb = shiftRgb(r, g, b);
+      return "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ",";
+    }
+
+    return { configure: configure, current: current, hex: hex, rgba: rgba, rgbaPrefix: rgbaPrefix, shiftRgb: shiftRgb };
+  })();
+
   function drawBatteryRing() {
     if (!ctx) { return; }
     var W = canvas.width, H = canvas.height;
@@ -1502,13 +1589,13 @@ __ICON_CSS__
       ctx.arc(cx, cy, r, start, end);
       if (i < filled) {
         var flow = 0.72 + 0.28 * Math.sin(phase * 6.2832 - i * 0.55);
-        ctx.strokeStyle = "rgba(95,216,255," + Math.max(0.45, flow).toFixed(3) + ")";
+        ctx.strokeStyle = ACC.rgbaPrefix(95, 216, 255) + Math.max(0.45, flow).toFixed(3) + ")";
         ctx.lineWidth = stroke;
-        if (flow > 0.9) { ctx.shadowColor = "#5FD8FF"; ctx.shadowBlur = stroke * 0.9; }
+        if (flow > 0.9) { ctx.shadowColor = ACC.hex("#5FD8FF"); ctx.shadowBlur = stroke * 0.9; }
         ctx.stroke();
         ctx.shadowBlur = 0;
       } else {
-        ctx.strokeStyle = "rgba(95,216,255,0.16)";
+        ctx.strokeStyle = ACC.rgba(95, 216, 255, 0.16);
         ctx.lineWidth = stroke;
         ctx.stroke();
       }
@@ -1518,13 +1605,13 @@ __ICON_CSS__
       var headA = (-90 + phase * 360) * Math.PI / 180;
       ctx.beginPath();
       ctx.arc(cx, cy, r, headA, headA + 26 * Math.PI / 180);
-      ctx.strokeStyle = "#E6FBFF"; ctx.lineWidth = stroke;
-      ctx.shadowColor = "#5FD8FF"; ctx.shadowBlur = stroke * 1.4;
+      ctx.strokeStyle = ACC.hex("#E6FBFF"); ctx.lineWidth = stroke;
+      ctx.shadowColor = ACC.hex("#5FD8FF"); ctx.shadowBlur = stroke * 1.4;
       ctx.stroke(); ctx.shadowBlur = 0;
     }
 
-    ctx.fillStyle = "#E6FBFF";
-    ctx.shadowColor = "#5FD8FF"; ctx.shadowBlur = size * 0.18;
+    ctx.fillStyle = ACC.hex("#E6FBFF");
+    ctx.shadowColor = ACC.hex("#5FD8FF"); ctx.shadowBlur = size * 0.18;
     ctx.font = "700 " + Math.round(size * 0.34) + "px 'TechMono', ui-monospace, monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText(String(Math.round(level * 100)), cx, cy);
@@ -1573,19 +1660,19 @@ __ICON_CSS__
     for (var i = 1; i <= 28; i++) { var x = w * i / 28; c.lineTo(x, surfaceY(x)); }
     c.lineTo(w, h); c.closePath();
     var grad = c.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, "#1A2632"); grad.addColorStop(1, "#070B12");
+    grad.addColorStop(0, ACC.hex("#1A2632")); grad.addColorStop(1, ACC.hex("#070B12"));
     c.fillStyle = grad; c.fill();
 
     c.beginPath();
     c.moveTo(0, surfaceY(0));
     for (var j = 1; j <= 28; j++) { var x2 = w * j / 28; c.lineTo(x2, surfaceY(x2)); }
-    c.strokeStyle = "rgba(95,216,255,0.72)";
+    c.strokeStyle = ACC.rgba(95, 216, 255, 0.72);
     c.lineWidth = Math.max(1, h * 0.06);
-    c.shadowColor = "#5FD8FF"; c.shadowBlur = h * 0.25;
+    c.shadowColor = ACC.hex("#5FD8FF"); c.shadowBlur = h * 0.25;
     c.stroke(); c.shadowBlur = 0;
 
     var pillW = Math.min(w * 0.24, h * 2.6), pillH = Math.max(2, h * 0.10);
-    c.fillStyle = "rgba(127,216,255,0.80)";
+    c.fillStyle = ACC.rgba(127, 216, 255, 0.80);
     c.beginPath();
     if (c.roundRect) { c.roundRect((w - pillW) / 2, h * 0.62 - pillH / 2, pillW, pillH, pillH / 2); }
     else { c.rect((w - pillW) / 2, h * 0.62 - pillH / 2, pillW, pillH); }
@@ -1599,21 +1686,21 @@ __ICON_CSS__
     c.quadraticCurveTo(w / 2, topBase + bow, w, topBase);
     c.lineTo(w, h); c.closePath();
     var grad = c.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, "#1A2632"); grad.addColorStop(1, "#070B12");
+    grad.addColorStop(0, ACC.hex("#1A2632")); grad.addColorStop(1, ACC.hex("#070B12"));
     c.fillStyle = grad; c.fill();
 
     c.beginPath();
     c.moveTo(0, topBase);
     c.quadraticCurveTo(w / 2, topBase + bow, w, topBase);
-    c.strokeStyle = "rgba(95,216,255,0.53)";
+    c.strokeStyle = ACC.rgba(95, 216, 255, 0.53);
     c.lineWidth = Math.max(1, h * 0.045);
-    c.shadowColor = "#5FD8FF"; c.shadowBlur = h * 0.18;
+    c.shadowColor = ACC.hex("#5FD8FF"); c.shadowBlur = h * 0.18;
     c.stroke(); c.shadowBlur = 0;
 
     var breathe = 0.5 + 0.5 * Math.sin(t * 12.566371);
     var glow = Math.max(breathe * 0.6, ripple - 0.35);
     var pillW = w * (0.20 + 0.08 * glow), pillH = Math.max(2, h * (0.11 + 0.035 * glow));
-    c.fillStyle = "rgba(127,216,255," + (0.75 + 0.25 * glow) + ")";
+    c.fillStyle = ACC.rgbaPrefix(127, 216, 255) + (0.75 + 0.25 * glow) + ")";
     c.beginPath();
     if (c.roundRect) { c.roundRect((w - pillW) / 2, h * 0.62 - pillH / 2, pillW, pillH, pillH / 2); }
     else { c.rect((w - pillW) / 2, h * 0.62 - pillH / 2, pillW, pillH); }
@@ -1622,7 +1709,7 @@ __ICON_CSS__
 
   function drawHandleDots(c, w, h, travel, stretch, ripple) {
     var lane = h * 0.5 - h * 0.20 * stretch;
-    c.strokeStyle = "rgba(95,216,255,0.25)";
+    c.strokeStyle = ACC.rgba(95, 216, 255, 0.25);
     c.lineWidth = Math.max(1, h * 0.035);
     c.beginPath(); c.moveTo(w * 0.06, lane); c.lineTo(w * 0.94, lane); c.stroke();
 
@@ -1636,8 +1723,8 @@ __ICON_CSS__
       dist = Math.min(dist, 1 - dist);
       var glow = Math.max(0, 1 - dist * 7);
       glow = Math.max(glow, boost * 0.85);
-      c.fillStyle = "rgba(127,216,255," + (0.3 + 0.65 * glow) + ")";
-      c.shadowColor = "#5FD8FF"; c.shadowBlur = h * 0.2 * glow;
+      c.fillStyle = ACC.rgbaPrefix(127, 216, 255) + (0.3 + 0.65 * glow) + ")";
+      c.shadowColor = ACC.hex("#5FD8FF"); c.shadowBlur = h * 0.2 * glow;
       c.beginPath(); c.arc(x, lane, dotR * (0.65 + 0.6 * glow), 0, Math.PI * 2); c.fill();
     }
     c.shadowBlur = 0;
@@ -1648,13 +1735,13 @@ __ICON_CSS__
     var xs = [w * 0.06, w * 0.32, w * 0.32, w * 0.68, w * 0.68, w * 0.94];
     var ys = [midY, midY, midY + drop, midY + drop, midY, midY];
 
-    c.strokeStyle = "rgba(95,216,255,0.35)";
+    c.strokeStyle = ACC.rgba(95, 216, 255, 0.35);
     c.lineWidth = Math.max(1, h * 0.05);
     c.beginPath(); c.moveTo(xs[0], ys[0]);
     for (var i = 1; i < xs.length; i++) { c.lineTo(xs[i], ys[i]); }
     c.stroke();
 
-    c.fillStyle = "rgba(127,216,255,0.65)";
+    c.fillStyle = ACC.rgba(127, 216, 255, 0.65);
     for (var p = 1; p < xs.length - 1; p++) {
       c.beginPath(); c.arc(xs[p], ys[p], Math.max(1.6, h * 0.085), 0, Math.PI * 2); c.fill();
     }
@@ -1676,10 +1763,10 @@ __ICON_CSS__
       acc = end;
     }
     var glowR = h * (0.17 + 0.08 * ripple);
-    c.fillStyle = "rgba(127,216,255,0.55)";
-    c.shadowColor = "#5FD8FF"; c.shadowBlur = glowR;
+    c.fillStyle = ACC.rgba(127, 216, 255, 0.55);
+    c.shadowColor = ACC.hex("#5FD8FF"); c.shadowBlur = glowR;
     c.beginPath(); c.arc(px, py, glowR, 0, Math.PI * 2); c.fill();
-    c.fillStyle = "#EAFBFF";
+    c.fillStyle = ACC.hex("#EAFBFF");
     c.beginPath(); c.arc(px, py, Math.max(2, glowR * 0.45), 0, Math.PI * 2); c.fill();
     c.shadowBlur = 0;
   }
@@ -1733,6 +1820,19 @@ __ICON_CSS__
   var settingsHandleCanvas = document.getElementById("settingsHandle");
   if (settingsHandleCanvas) {
     settingsHandleCanvas.addEventListener("click", function () { settingsPulseAt = performance.now() / 1000; });
+  }
+
+  var accentChoices = document.getElementById("accentChoices");
+  if (accentChoices) {
+    var swatches = accentChoices.querySelectorAll(".swatch-item");
+    for (var si = 0; si < swatches.length; si++) {
+      swatches[si].addEventListener("click", function () {
+        for (var sj = 0; sj < swatches.length; sj++) { swatches[sj].classList.remove("sel"); }
+        this.classList.add("sel");
+        ACC.configure(this.getAttribute("data-accent"));
+        settingsPulseAt = performance.now() / 1000;
+      });
+    }
   }
 
   tick();

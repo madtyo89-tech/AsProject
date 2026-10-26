@@ -200,14 +200,14 @@ public final class SevenSegmentClockView extends View {
         segment.close();
 
         if (on) {
-            glow.setColor(ON);
+            glow.setColor(Accent.shift(ON));
             glow.setMaskFilter(new BlurMaskFilter(t * 1.35f, BlurMaskFilter.Blur.NORMAL));
             canvas.drawPath(segment, glow);
             glow.setMaskFilter(null);
-            fill.setColor(ON_CORE);
+            fill.setColor(Accent.shift(ON_CORE));
             canvas.drawPath(segment, fill);
         } else {
-            fill.setColor(OFF);
+            fill.setColor(Accent.shift(OFF));
             canvas.drawPath(segment, fill);
         }
     }
@@ -218,7 +218,7 @@ public final class SevenSegmentClockView extends View {
         float cx = x + (w - dot) / 2f;
         float top = y + h * 0.34f - dot / 2f;
         float bottom = y + h * 0.68f - dot / 2f;
-        colonPaint.setColor(colonOn ? ON : OFF);
+        colonPaint.setColor(colonOn ? Accent.shift(ON) : Accent.shift(OFF));
         if (colonOn) {
             colonPaint.setMaskFilter(new BlurMaskFilter(t * 1.2f, BlurMaskFilter.Blur.NORMAL));
         }

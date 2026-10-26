@@ -133,6 +133,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         setContentView(R.layout.activity_launcher);
 
         prefs = new Prefs(this);
+        Accent.configure(prefs.accentStyle());
         repository = new AppRepository(this);
         icons = new IconLoader(this, prefs, getResources().getDimensionPixelSize(R.dimen.app_icon_size));
         widgetManager = android.appwidget.AppWidgetManager.getInstance(this);
@@ -291,6 +292,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     @Override
     protected void onResume() {
         super.onResume();
+        Accent.configure(prefs.accentStyle());
         applyVisibility();
         adapter.setShowLabels(prefs.showLabels());
         grid.setNumColumns(prefs.columns());
@@ -302,6 +304,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         clockHandler.postDelayed(clockTick, CLOCK_REFRESH_MS);
         registerPackageReceiver();
         applyWallpaper();
+        icons.applyAccent(prefs.accentStyle());
         icons.setNeonEnabled(prefs.neonIcons());
         reloadApps();
         if (firstResume) {

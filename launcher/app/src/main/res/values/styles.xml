@@ -64,6 +64,16 @@
         <item name="android:buttonTint">@color/gold</item>
     </style>
 
+    <style name="AccentChoice">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">12.5sp</item>
+    </style>
+
     <style name="SlideBarChoice">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

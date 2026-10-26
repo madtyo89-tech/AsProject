@@ -15,4 +15,11 @@
     <color name="surface_stroke">#33D4AF37</color>
     <color name="icon_background">#0A0A0A</color>
     <color name="nav_bar_scrim">#66000000</color>
+
+    <!-- Pratinjau warna aksen (Pengaturan → Warna aksen); harus cocok persis
+         dengan Accent.java (hue dipertahankan sama, S/V dasar dari #5FD8FF). -->
+    <color name="accent_biru">#5FD7FF</color>
+    <color name="accent_hijau">#5FFF94</color>
+    <color name="accent_ungu">#BC5FFF</color>
+    <color name="accent_pink">#FF5FB4</color>
 </resources>

@@ -57,7 +57,7 @@ public final class LiquidBatteryView extends View {
         ring.setStrokeCap(Paint.Cap.BUTT);
         ghost.setStyle(Paint.Style.STROKE);
         ghost.setStrokeCap(Paint.Cap.BUTT);
-        ghost.setColor(GHOST);
+        ghost.setColor(Accent.shift(GHOST));
         text.setTextAlign(Paint.Align.CENTER);
         text.setTypeface(Typefaces.get(context));
     }
@@ -104,10 +104,11 @@ public final class LiquidBatteryView extends View {
 
         // Gradien melingkar supaya warna ruas berubah halus mengitari cincin.
         ring.setShader(new SweepGradient(box.centerX(), box.centerY(),
-                new int[]{NEON, NEON_BRIGHT, NEON},
+                new int[]{Accent.shift(NEON), Accent.shift(NEON_BRIGHT), Accent.shift(NEON)},
                 new float[]{0f, 0.5f, 1f}));
         ring.setStrokeWidth(stroke);
         ghost.setStrokeWidth(stroke);
+        ghost.setColor(Accent.shift(GHOST));
 
         for (int i = 0; i < SEGMENTS; i++) {
             float start = -90f + i * sweep + gap / 2f;
@@ -135,7 +136,7 @@ public final class LiquidBatteryView extends View {
             float head = -90f + (phase * 360f);
             glow.setStyle(Paint.Style.STROKE);
             glow.setStrokeWidth(stroke);
-            glow.setColor(NEON_BRIGHT);
+            glow.setColor(Accent.shift(NEON_BRIGHT));
             glow.setMaskFilter(new BlurMaskFilter(stroke * 0.9f, BlurMaskFilter.Blur.NORMAL));
             canvas.drawArc(box, head, 26f, false, glow);
             glow.setMaskFilter(null);
@@ -147,8 +148,8 @@ public final class LiquidBatteryView extends View {
             drawBolt(canvas, size, centerY - size * 0.30f);
         }
         text.setTextSize(size * 0.34f);
-        text.setColor(NEON_BRIGHT);
-        text.setShadowLayer(size * 0.18f, 0, 0, NEON);
+        text.setColor(Accent.shift(NEON_BRIGHT));
+        text.setShadowLayer(size * 0.18f, 0, 0, Accent.shift(NEON));
         Paint.FontMetrics metrics = text.getFontMetrics();
         float baseline = centerY - (metrics.ascent + metrics.descent) / 2f;
         canvas.drawText(label, getWidth() / 2f, baseline, text);
@@ -168,7 +169,7 @@ public final class LiquidBatteryView extends View {
         bolt.lineTo(cx + h * 0.02f, centerY - h * 0.04f);
         bolt.close();
         glow.setStyle(Paint.Style.FILL);
-        glow.setColor(NEON_BRIGHT);
+        glow.setColor(Accent.shift(NEON_BRIGHT));
         glow.setMaskFilter(new BlurMaskFilter(size * 0.06f, BlurMaskFilter.Blur.NORMAL));
         canvas.drawPath(bolt, glow);
         glow.setMaskFilter(null);

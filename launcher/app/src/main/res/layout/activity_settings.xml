@@ -105,6 +105,50 @@
                 style="@style/SectionLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/section_accent" />
+
+            <RadioGroup
+                android:id="@+id/accentGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/accentBiru"
+                    style="@style/AccentChoice"
+                    android:buttonTint="@color/accent_biru"
+                    android:text="@string/accent_biru" />
+
+                <RadioButton
+                    android:id="@+id/accentHijau"
+                    style="@style/AccentChoice"
+                    android:buttonTint="@color/accent_hijau"
+                    android:text="@string/accent_hijau" />
+
+                <RadioButton
+                    android:id="@+id/accentUngu"
+                    style="@style/AccentChoice"
+                    android:buttonTint="@color/accent_ungu"
+                    android:text="@string/accent_ungu" />
+
+                <RadioButton
+                    android:id="@+id/accentPink"
+                    style="@style/AccentChoice"
+                    android:buttonTint="@color/accent_pink"
+                    android:text="@string/accent_pink" />
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/accent_note"
+                android:textColor="@color/text_hint"
+                android:textSize="11.5sp" />
+
+            <TextView
+                style="@style/SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/section_lock" />
 
             <Switch

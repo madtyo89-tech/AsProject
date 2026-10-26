@@ -60,6 +60,7 @@ Skrip build memakai ulang mesin build `android/buildkit/build-apk.sh`
 | **Widget di beranda** | Tekan lama area kosong → *Tambah widget…* — daftar seluruh widget sistem (dari semua aplikasi terpasang), ditempel sebagai kartu kaca cair yang bisa digeser mendatar. Dipasang lewat `AppWidgetHost` + `bindAppWidgetIdIfAllowed` — **tanpa izin apa pun** di manifest |
 | **Laci aplikasi + liquid slide bar** | Geser ke atas di beranda → panel kaca cair meluncur dari bawah berisi SEMUA aplikasi, lengkap dengan kolom pencarian. Tepi atasnya beriak seperti cairan (liquid slide bar) dan beranda menyusut/memudar mengikuti gerakan laci |
 | **Kustomisasi slide bar (4 gaya)** | Pengaturan → *Slide bar laci*, dengan pratinjau langsung: **Ombak cair** (bawaan), **Pil neon berdenyut**, **Titik sirkuit berjalan** (lampu kejar), atau **Sirkuit zigzag** (jejak PCB + pulsa berjalan). Semuanya tetap merespons tarikan dan buka/tutup laci |
+| **Warna aksen (4 pilihan)** | Pengaturan → *Warna aksen*: **Biru** (bawaan), **Hijau**, **Ungu**, atau **Pink** — memutar hue semua warna neon sekaligus (ikon otomatis, HUD, baterai, jam, wallpaper sirkuit, slide bar) lewat `Accent.shift()`, tanpa mengubah kecerahan/transparansi yang sudah dirancang. 8 ikon aplikasi populer (dari gambar asli yang diunggah) tetap warna aslinya |
 | **Efek buka kunci dramatis** | Saat digeser, papan sirkuit ikut menyergap (simpangan ombak naik 3,2×, bidang memperbesar). Saat lepas: sapuan terang naik dari bawah, dua cincin shockwave melebar dari titik sentuh, percikan neon beterbangan, HUD memipih, dan konten melesat ke atas (300 ms) |
 | **Efek scroll beranda** | Saat kisi aplikasi digulir, kepala (jam + tanggal) menyusut & memudar; saat laci dibuka, beranda menyusut + wallpaper memperbesar (parallax) |
 | **Wallpaper sirkuit liquid 3D** | Layar kunci memakai **tiga bidang sirkuit** (jauh / tengah / dekat) yang digambar prosedural, diproyeksikan perspektif ke satu titik hilang, lalu diombak `drawBitmapMesh`; tiap bidang bergerak paralaks dengan sendirinya. Denyut cahaya, gelembung, dan kilau diproyeksikan ke koordinat yang sama, jadi ikut terombang-ambing bersama cairannya |
@@ -92,6 +93,7 @@ launcher/
 │   │   ├── CircuitWallpaperView.java    papan sirkuit liquid 3D 3 bidang (layar kunci)
 │   │   ├── AppDrawerView.java           laci aplikasi + gerakan geser
 │   │   ├── LiquidHandleView.java        liquid slide bar (4 gaya: ombak/pil/titik/sirkuit)
+│   │   ├── Accent.java                  warna aksen global (putar hue: biru/hijau/ungu/pink)
 │   │   └── Typefaces.java               font tema (Share Tech Mono)
 │   │   ├── NeonIconFactory.java         pembuat ikon liquid glass otomatis (semua aplikasi)
 │   │   ├── LiquidBatteryView.java       ikon baterai neon (satu-satunya)
@@ -132,4 +134,5 @@ launcher/
 | Papan sirkuit layar kunci | `CircuitWallpaperView` (`SEED`, jumlah jejak/chip/bus, `LAYER_PERSP`, warna jejak) |
 | Kedalaman & parallax | `layerDepth()`, `layerPerspective()`, `layerAlpha()`, `meshCols()/meshRows()` di `CircuitWallpaperView`; `BASE_AMP`, `CAMERA_DISTANCE`, `PARALLAX_SCALE` di `LiquidWallpaperView` |
 | Laci & slide bar | `AppDrawerView` (ambang buka `0.45`, durasi 260 ms), `LiquidHandleView` (riak & lengkungan, 4 gaya via `setStyle()`) |
+| Warna aksen | `Accent.java` (`hueFor()` — tambah/ubah preset biru/hijau/ungu/pink), dipanggil lewat `Accent.shift(argb)` di tiap warna neon |
 | Pratinjau HTML | `python3 launcher/tools/make_preview.py` |

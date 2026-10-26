@@ -28,6 +28,7 @@ public final class SettingsActivity extends Activity implements View.OnClickList
         super.onCreate(state);
         setContentView(R.layout.activity_settings);
         prefs = new Prefs(this);
+        Accent.configure(prefs.accentStyle());
         // Font tema untuk seluruh halaman pengaturan.
         Typefaces.apply(this, findViewById(android.R.id.content));
 
@@ -94,6 +95,20 @@ public final class SettingsActivity extends Activity implements View.OnClickList
         });
 
         final LiquidHandleView slideBarPreview = (LiquidHandleView) findViewById(R.id.slideBarPreview);
+
+        RadioGroup accentGroup = (RadioGroup) findViewById(R.id.accentGroup);
+        accentGroup.check(accentId(prefs.accentStyle()));
+        accentGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                String style = accentStyleFor(checkedId);
+                prefs.setAccentStyle(style);
+                Accent.configure(style);
+                slideBarPreview.invalidate();
+                slideBarPreview.pulse();
+            }
+        });
+
         slideBarPreview.setStyle(prefs.slideBarStyle());
         slideBarPreview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,6 +217,32 @@ public final class SettingsActivity extends Activity implements View.OnClickList
             return 6;
         }
         return 4;
+    }
+
+    private int accentId(String style) {
+        if ("hijau".equals(style)) {
+            return R.id.accentHijau;
+        }
+        if ("ungu".equals(style)) {
+            return R.id.accentUngu;
+        }
+        if ("pink".equals(style)) {
+            return R.id.accentPink;
+        }
+        return R.id.accentBiru;
+    }
+
+    private String accentStyleFor(int checkedId) {
+        if (checkedId == R.id.accentHijau) {
+            return "hijau";
+        }
+        if (checkedId == R.id.accentUngu) {
+            return "ungu";
+        }
+        if (checkedId == R.id.accentPink) {
+            return "pink";
+        }
+        return "biru";
     }
 
     private int slideBarId(String style) {

@@ -136,7 +136,7 @@ public final class NeonIconFactory {
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setShader(new LinearGradient(size * 0.15f, 0, size * 0.55f, size,
-                GLASS_TOP, GLASS_BOTTOM, Shader.TileMode.CLAMP));
+                Accent.shift(GLASS_TOP), Accent.shift(GLASS_BOTTOM), Shader.TileMode.CLAMP));
         canvas.drawPath(tile, paint);
 
         canvas.save();
@@ -145,20 +145,20 @@ public final class NeonIconFactory {
         // 1. Pantulan cair: pita diagonal terang melintasi kiri-atas.
         Paint sweep = new Paint(Paint.ANTI_ALIAS_FLAG);
         sweep.setShader(new LinearGradient(0, 0, size, size,
-                new int[]{0x33BFE9FF, 0x0F8FD4FF, 0x00000000},
+                new int[]{Accent.shift(0x33BFE9FF), Accent.shift(0x0F8FD4FF), Accent.shift(0x00000000)},
                 new float[]{0f, 0.42f, 0.85f}, Shader.TileMode.CLAMP));
         canvas.drawRect(box, sweep);
 
         // 2. Sorotan atas yang lembut — bagian "membusung" kaca.
         Paint sheen = new Paint(Paint.ANTI_ALIAS_FLAG);
         sheen.setShader(new RadialGradient(size * 0.5f, -size * 0.12f, size * 0.85f,
-                new int[]{0x40E8FBFF, 0x00000000}, new float[]{0f, 1f}, Shader.TileMode.CLAMP));
+                new int[]{Accent.shift(0x40E8FBFF), Accent.shift(0x00000000)}, new float[]{0f, 1f}, Shader.TileMode.CLAMP));
         canvas.drawRect(box, sheen);
 
         // 3. Kilau bawah-kanan tipis (cermin ganda seperti krom cair).
         Paint under = new Paint(Paint.ANTI_ALIAS_FLAG);
         under.setShader(new RadialGradient(size * 0.92f, size * 1.02f, size * 0.6f,
-                new int[]{0x2258B4E8, 0x00000000}, new float[]{0f, 1f}, Shader.TileMode.CLAMP));
+                new int[]{Accent.shift(0x2258B4E8), Accent.shift(0x00000000)}, new float[]{0f, 1f}, Shader.TileMode.CLAMP));
         canvas.drawRect(box, under);
         canvas.restore();
 
@@ -167,7 +167,7 @@ public final class NeonIconFactory {
         rim.setStyle(Paint.Style.STROKE);
         rim.setStrokeWidth(Math.max(1f, size * 0.014f));
         rim.setShader(new LinearGradient(0, 0, 0, size,
-                RIM, 0x336FA8C0, Shader.TileMode.CLAMP));
+                Accent.shift(RIM), Accent.shift(0x336FA8C0), Shader.TileMode.CLAMP));
         canvas.drawPath(tile, rim);
     }
 
@@ -179,10 +179,10 @@ public final class NeonIconFactory {
         trace.setStyle(Paint.Style.STROKE);
         trace.setStrokeCap(Paint.Cap.ROUND);
         trace.setStrokeWidth(Math.max(1f, size * 0.011f));
-        trace.setColor(TRACE);
+        trace.setColor(Accent.shift(TRACE));
 
         Paint pad = new Paint(Paint.ANTI_ALIAS_FLAG);
-        pad.setColor(PAD);
+        pad.setColor(Accent.shift(PAD));
 
         canvas.save();
         canvas.clipPath(tile);
@@ -234,7 +234,7 @@ public final class NeonIconFactory {
         boolean any = false;
         for (int i = 0; i < mask.length; i++) {
             if (mask[i] > 0.43f) {
-                pixels[i] = 0xFFFFFFFF;
+                pixels[i] = Accent.shift(0xFFFFFFFF);
                 any = true;
             } else {
                 pixels[i] = 0;
@@ -255,10 +255,10 @@ public final class NeonIconFactory {
         line.setStrokeCap(Paint.Cap.ROUND);
         line.setStrokeJoin(Paint.Join.ROUND);
         line.setStrokeWidth(Math.max(1f, size * 0.006f));
-        line.setColor(0x66A0E1FF);
+        line.setColor(Accent.shift(0x66A0E1FF));
 
         Paint pad = new Paint(Paint.ANTI_ALIAS_FLAG);
-        pad.setColor(0x99C8F0FF);
+        pad.setColor(Accent.shift(0x99C8F0FF));
 
         for (int i = 0; i < 4; i++) {
             boolean horizontal = random.nextBoolean();
@@ -313,19 +313,19 @@ public final class NeonIconFactory {
         canvas.clipPath(tile);
 
         Paint wide = new Paint(Paint.ANTI_ALIAS_FLAG);
-        wide.setColor(NEON);
+        wide.setColor(Accent.shift(NEON));
         wide.setAlpha(102);
         wide.setMaskFilter(new BlurMaskFilter(size * 0.055f, BlurMaskFilter.Blur.NORMAL));
         canvas.drawBitmap(glow, 0, 0, wide);
 
         Paint mid = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mid.setColor(NEON);
+        mid.setColor(Accent.shift(NEON));
         mid.setAlpha(199);
         mid.setMaskFilter(new BlurMaskFilter(size * 0.022f, BlurMaskFilter.Blur.NORMAL));
         canvas.drawBitmap(glow, 0, 0, mid);
 
         Paint core = new Paint(Paint.ANTI_ALIAS_FLAG);
-        core.setColor(NEON_CORE);
+        core.setColor(Accent.shift(NEON_CORE));
         if (size >= 96) {
             core.setMaskFilter(new BlurMaskFilter(size * 0.007f, BlurMaskFilter.Blur.NORMAL));
         }

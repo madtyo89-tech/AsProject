@@ -255,7 +255,7 @@ public class LiquidWallpaperView extends View implements Choreographer.FrameCall
      * di sudut-sudut yang tidak terjangkau bidang.
      */
     protected void drawBackdrop(Canvas canvas, int width, int height) {
-        canvas.drawColor(0xFF04070B);
+        canvas.drawColor(Accent.shift(0xFF04070B));
     }
 
     /** Bitmap lapis ke-{@code index} (dipakai kelas turunan untuk ukuran & hitungan). */
@@ -574,7 +574,7 @@ public class LiquidWallpaperView extends View implements Choreographer.FrameCall
         float centerX = width * (-0.35f + 1.7f * travel);
         float band = width * 0.55f;
         sheenPaint.setShader(new LinearGradient(centerX - band, 0, centerX + band, height,
-                new int[]{0x00000000, 0x14BFE9FF, 0x00000000},
+                new int[]{Accent.shift(0x00000000), Accent.shift(0x14BFE9FF), Accent.shift(0x00000000)},
                 new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
         canvas.drawRect(0, 0, width, height, sheenPaint);
     }

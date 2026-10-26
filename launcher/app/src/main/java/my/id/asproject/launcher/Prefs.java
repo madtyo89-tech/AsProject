@@ -30,6 +30,7 @@ public final class Prefs {
     private static final String KEY_HUD_ANIMATION = "hud_animation";
     private static final String KEY_LIQUID_MOTION = "liquid_motion";
     private static final String KEY_SLIDE_BAR_STYLE = "slide_bar_style";
+    private static final String KEY_ACCENT_STYLE = "accent_style";
     private static final String KEY_FOLDERS = "folders";
     private static final String KEY_ICON_STYLE = "icon_style_";
     private static final String KEY_WIDGET_IDS = "widget_ids";
@@ -139,6 +140,19 @@ public final class Prefs {
 
     public void setSlideBarStyle(String style) {
         prefs.edit().putString(KEY_SLIDE_BAR_STYLE, style == null ? "ombak" : style).apply();
+    }
+
+    /**
+     * Warna aksen neon global: {@code "biru"} (bawaan), {@code "hijau"},
+     * {@code "ungu"}, atau {@code "pink"}. Berlaku di ikon, HUD, baterai,
+     * jam, wallpaper sirkuit, dan slide bar sekaligus.
+     */
+    public String accentStyle() {
+        return prefs.getString(KEY_ACCENT_STYLE, "biru");
+    }
+
+    public void setAccentStyle(String style) {
+        prefs.edit().putString(KEY_ACCENT_STYLE, style == null ? "biru" : style).apply();
     }
 
 

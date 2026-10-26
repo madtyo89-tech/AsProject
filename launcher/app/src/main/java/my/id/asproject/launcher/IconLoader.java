@@ -37,6 +37,7 @@ public final class IconLoader {
     private final LruCache<String, Bitmap> cache;
     private final int sizePx;
     private boolean neonEnabled;
+    private String accentKey = "biru";
 
     public IconLoader(Context context, Prefs prefs, int sizePx) {
         this.context = context.getApplicationContext();
@@ -64,6 +65,15 @@ public final class IconLoader {
 
     public boolean isNeonEnabled() {
         return neonEnabled;
+    }
+
+    /** Ikon neon dibuat dengan warna aksen "dibakar" ke bitmap; buang cache bila berganti. */
+    public void applyAccent(String style) {
+        String value = style == null ? "biru" : style;
+        if (!value.equals(accentKey)) {
+            accentKey = value;
+            cache.evictAll();
+        }
     }
 
     public Bitmap get(AppItem item) {
