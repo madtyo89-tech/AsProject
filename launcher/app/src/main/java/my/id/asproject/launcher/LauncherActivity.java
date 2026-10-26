@@ -19,6 +19,7 @@ import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -37,6 +38,7 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -115,7 +117,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
 
         prefs = new Prefs(this);
         repository = new AppRepository(this);
-        icons = new IconLoader(this, getResources().getDimensionPixelSize(R.dimen.app_icon_size));
+        icons = new IconLoader(this, prefs, getResources().getDimensionPixelSize(R.dimen.app_icon_size));
         adapter = new AppGridAdapter(this, icons, prefs.showLabels());
 
         homeWallpaper = (HomeWallpaperView) findViewById(R.id.homeWallpaper);
@@ -519,14 +521,22 @@ public final class LauncherActivity extends Activity implements TextWatcher,
 
     private void applyFilter(String query) {
         String needle = normalise(query);
-        List<AppItem> visible = new ArrayList<AppItem>();
-        for (int i = 0; i < allApps.size(); i++) {
-            AppItem item = allApps.get(i);
-            if (prefs.isHidden(item.packageName)) {
-                continue;
-            }
-            if (needle.length() == 0 || normalise(item.label).contains(needle)) {
-                visible.add(item);
+        List<AppItem> visible;
+        if (needle.length() == 0) {
+            // Tanpa pencarian: kisi biasa dengan folder dikelompokkan.
+            visible = HomeModel.build(allApps, prefs);
+        } else {
+            // Mencari: tampilkan aplikasi yang cocok apa adanya (folder dibongkar
+            // sementara) supaya aplikasi di dalam folder tetap bisa ditemukan.
+            visible = new ArrayList<AppItem>();
+            for (int i = 0; i < allApps.size(); i++) {
+                AppItem item = allApps.get(i);
+                if (prefs.isHidden(item.packageName)) {
+                    continue;
+                }
+                if (normalise(item.label).contains(needle)) {
+                    visible.add(item);
+                }
             }
         }
         adapter.setItems(visible);
@@ -537,6 +547,130 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         }
         emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
         grid.setVisibility(empty ? View.GONE : View.VISIBLE);
+    }
+
+    /** Panel sederhana: kisi aplikasi anggota folder, bisa diketuk langsung. */
+    private void showFolder(final AppItem folder) {
+        View view = LayoutInflater.from(this).inflate(R.layout.view_folder, null);
+        GridView folderGrid = (GridView) view.findViewById(R.id.folderGrid);
+        TextView title = (TextView) view.findViewById(R.id.folderTitle);
+        title.setText(folder.label);
+        AppGridAdapter folderAdapter = new AppGridAdapter(this, icons, prefs.showLabels());
+        folderAdapter.setItems(folder.members);
+        folderGrid.setNumColumns(Math.min(4, Math.max(2, folder.members.size())));
+        folderGrid.setAdapter(folderAdapter);
+        Typefaces.apply(this, view);
+
+        final AlertDialog dialog = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_NoActionBar)
+                .setView(view)
+                .create();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        folderGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                dialog.dismiss();
+                launch(folder.members.get(position));
+            }
+        });
+        folderGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+                dialog.dismiss();
+                showAppOptions(folder.members.get(position));
+                return true;
+            }
+        });
+        dialog.show();
+    }
+
+    private void showFolderOptions(final AppItem folder) {
+        new AlertDialog.Builder(this)
+                .setTitle(folder.label)
+                .setItems(new String[]{
+                        getString(R.string.action_open),
+                        getString(R.string.action_ungroup)
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            showFolder(folder);
+                        } else {
+                            LinkedHashMap<String, List<String>> folders = prefs.folders();
+                            folders.remove(folder.label);
+                            prefs.saveFolders(folders);
+                            reloadApps();
+                            toast(getString(R.string.folder_ungrouped, folder.label));
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    /** Tawarkan: taruh aplikasi ke folder yang sudah ada, atau buat folder baru. */
+    private void showGroupDialog(final AppItem item) {
+        final LinkedHashMap<String, List<String>> folders = prefs.folders();
+        final List<String> names = new ArrayList<String>(folders.keySet());
+        String[] options = new String[names.size() + 1];
+        for (int i = 0; i < names.size(); i++) {
+            options[i] = names.get(i);
+        }
+        options[names.size()] = getString(R.string.new_folder);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.action_group)
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which < names.size()) {
+                            addToFolder(folders, names.get(which), item);
+                        } else {
+                            promptNewFolder(folders, item);
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void promptNewFolder(final LinkedHashMap<String, List<String>> folders, final AppItem item) {
+        final EditText input = new EditText(this);
+        input.setHint(R.string.folder_name_hint);
+        input.setSingleLine(true);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.new_folder)
+                .setView(input)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String name = input.getText().toString().trim();
+                        if (name.length() == 0) {
+                            name = item.label;
+                        }
+                        while (folders.containsKey(name)) {
+                            name = name + " ";
+                        }
+                        addToFolder(folders, name, item);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void addToFolder(LinkedHashMap<String, List<String>> folders, String name, AppItem item) {
+        List<String> members = folders.get(name);
+        if (members == null) {
+            members = new ArrayList<String>();
+            folders.put(name, members);
+        }
+        if (!members.contains(item.key)) {
+            members.add(item.key);
+        }
+        prefs.saveFolders(folders);
+        reloadApps();
+        toast(getString(R.string.added_to_folder, item.label, name));
     }
 
     private void renderDock() {
@@ -632,6 +766,8 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         String[] actions = {
                 getString(R.string.action_open),
                 getString(inDock ? R.string.action_remove_dock : R.string.action_add_dock),
+                getString(R.string.action_group),
+                getString(R.string.action_icon_style),
                 getString(R.string.action_hide),
                 getString(R.string.action_app_info)
         };
@@ -645,12 +781,47 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                         } else if (which == 1) {
                             toggleDock(item, inDock);
                         } else if (which == 2) {
+                            showGroupDialog(item);
+                        } else if (which == 3) {
+                            showIconStyleDialog(item);
+                        } else if (which == 4) {
                             prefs.setHidden(item.packageName, true);
                             reloadApps();
                             toast(getString(R.string.app_hidden, item.label));
                         } else {
                             openAppInfo(item.packageName);
                         }
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    /** Pilih bentuk tile ikon untuk satu aplikasi: squircle, lingkaran, kotak, segi delapan. */
+    private void showIconStyleDialog(final AppItem item) {
+        final String[] keys = {"auto", "cincin", "sudut", "hexa"};
+        String[] labels = {
+                getString(R.string.icon_style_auto),
+                getString(R.string.icon_style_circle),
+                getString(R.string.icon_style_square),
+                getString(R.string.icon_style_octagon)
+        };
+        int current = 0;
+        for (int i = 0; i < keys.length; i++) {
+            if (keys[i].equals(prefs.iconStyle(item.key))) {
+                current = i;
+                break;
+            }
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.action_icon_style)
+                .setSingleChoiceItems(labels, current, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        prefs.setIconStyle(item.key, keys[which]);
+                        icons.clear();
+                        reloadApps();
+                        dialog.dismiss();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
@@ -760,13 +931,26 @@ public final class LauncherActivity extends Activity implements TextWatcher,
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        launch(adapter.getItem(position));
+        openOrLaunch(adapter.getItem(position));
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        showAppOptions(adapter.getItem(position));
+        if (adapter.getItem(position).folder) {
+            showFolderOptions(adapter.getItem(position));
+        } else {
+            showAppOptions(adapter.getItem(position));
+        }
         return true;
+    }
+
+    /** Ketuk entri beranda: buka folder, atau luncurkan aplikasi. */
+    private void openOrLaunch(AppItem item) {
+        if (item.folder) {
+            showFolder(item);
+        } else {
+            launch(item);
+        }
     }
 
     // -------------------------------------------------------------------- util

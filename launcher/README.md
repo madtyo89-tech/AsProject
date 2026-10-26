@@ -10,7 +10,7 @@ tanpa pustaka pihak ketiga, dan tanpa satu pun izin**.
 - `minSdk 21` (Android 5.0) → `targetSdk 34` (Android 14)
 - Ukuran APK ±1,15 MB (mayoritas: 1 wallpaper 1080 px + 8 ikon neon + font tema)
 - Izin: **nol** — tidak ada INTERNET, lokasi, kontak, mikrofon, maupun penyimpanan
-- Kode: 20 kelas Java, 5 layout XML, drawable + aset wallpaper/ikon & font tema
+- Kode: 21 kelas Java, 6 layout XML, drawable + aset wallpaper/ikon & font tema
 
 ## APK siap pasang
 
@@ -55,6 +55,8 @@ Skrip build memakai ulang mesin build `android/buildkit/build-apk.sh`
 | **Layar kunci** | Muncul saat beranda dibuka dan setiap layar menyala; geser ke atas untuk membuka. Pojok kanan atas: **satu ikon baterai neon** seperti di bilah status |
 | **Wallpaper neon** | Bingkai liquid-chrome di layar kunci (tidak terpotong), sirkuit neon + HUD di beranda. Bisa dimatikan di Pengaturan |
 | **Ikon liquid glass sirkuit (semua aplikasi)** | 8 aplikasi populer memakai ikon contoh; **semua aplikasi lain** dibuatkan versi liquid glass otomatis dari ikon aslinya (`NeonIconFactory`): bentuk aplikasi jadi garis neon berongga di atas kaca cair, dengan jejak sirkuit di latar **dan** di dalam glyph — kisi jadi seragam tanpa menyiapkan gambar per aplikasi |
+| **Bentuk ikon per aplikasi** | Tekan lama ikon → *Ganti bentuk ikon…* — pilih squircle (bawaan), lingkaran, kotak tegas, atau segi delapan; tersimpan per aplikasi |
+| **Folder** | Tekan lama ikon → *Kelompokkan ke folder…* — gabung beberapa aplikasi jadi satu folder; ikon folder menampilkan mini-kisi 2×2 dari anggotanya; ketuk untuk membuka panel kaca cair berisi semuanya |
 | **Laci aplikasi + liquid slide bar** | Geser ke atas di beranda → panel kaca cair meluncur dari bawah berisi SEMUA aplikasi, lengkap dengan kolom pencarian. Tepi atasnya beriak seperti cairan (liquid slide bar) dan beranda menyusut/memudar mengikuti gerakan laci |
 | **Efek buka kunci dramatis** | Saat digeser, papan sirkuit ikut menyergap (simpangan ombak naik 3,2×, bidang memperbesar). Saat lepas: sapuan terang naik dari bawah, dua cincin shockwave melebar dari titik sentuh, percikan neon beterbangan, HUD memipih, dan konten melesat ke atas (300 ms) |
 | **Efek scroll beranda** | Saat kisi aplikasi digulir, kepala (jam + tanggal) menyusut & memudar; saat laci dibuka, beranda menyusut + wallpaper memperbesar (parallax) |
@@ -79,6 +81,7 @@ launcher/
 │   │   ├── LauncherActivity.java        beranda: jam, cari, kisi, dock, dialog
 │   │   ├── SettingsActivity.java        pengaturan beranda
 │   │   ├── AppRepository.java           daftar aplikasi + tebakan isi dock
+│   │   ├── HomeModel.java               gabungkan aplikasi + folder untuk kisi beranda
 │   │   ├── AppGridAdapter.java          adaptor kisi
 │   │   ├── LockScreenView.java          layar kunci + gestur geser-ke-atas
 │   │   ├── HomeWallpaperView.java       wallpaper sirkuit (mode cover)
@@ -94,7 +97,7 @@ launcher/
 │   │   ├── HudView.java                 HUD live (Canvas, busur/pindai/gelombang)
 │   │   ├── LiquidWallpaperView.java     wallpaper mesh 3D berlapis (parallax)
 │   │   ├── IconLoader.java              ikon + LruCache + topeng squircle
-│   │   ├── AppItem.java                 satu entri aplikasi
+│   │   ├── AppItem.java                 satu entri beranda (aplikasi ATAU folder)
 │   │   └── Prefs.java                   SharedPreferences
 │   ├── assets/wallpaper/                lock.jpg + home.jpg (dipakai LockScreenView)
 │   └── res/                             layout, drawable vektor, nilai, ikon mipmap,

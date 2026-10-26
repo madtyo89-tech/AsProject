@@ -17,6 +17,17 @@
     <string name="action_wallpaper">Ganti wallpaper</string>
     <string name="action_settings">Pengaturan beranda</string>
     <string name="action_about">Tentang</string>
+    <string name="action_group">Kelompokkan ke folder…</string>
+    <string name="action_ungroup">Bongkar folder</string>
+    <string name="action_icon_style">Ganti bentuk ikon…</string>
+    <string name="new_folder">Folder baru…</string>
+    <string name="folder_name_hint">Nama folder</string>
+    <string name="added_to_folder">%1$s ditambahkan ke folder “%2$s”</string>
+    <string name="folder_ungrouped">Folder “%1$s” dibongkar</string>
+    <string name="icon_style_auto">Otomatis (squircle)</string>
+    <string name="icon_style_circle">Lingkaran</string>
+    <string name="icon_style_square">Kotak tegas</string>
+    <string name="icon_style_octagon">Segi delapan</string>
 
     <string name="dock_added">%1$s ditambahkan ke dock</string>
     <string name="dock_removed">%1$s dikeluarkan dari dock</string>

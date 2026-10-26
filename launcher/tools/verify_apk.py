@@ -52,6 +52,7 @@ REQUIRED_CLASSES = [
     "Lmy/id/asproject/launcher/AppItem;",
     "Lmy/id/asproject/launcher/IconLoader;",
     "Lmy/id/asproject/launcher/Prefs;",
+    "Lmy/id/asproject/launcher/HomeModel;",
 ]
 ICON_DENSITIES = ["mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"]
 

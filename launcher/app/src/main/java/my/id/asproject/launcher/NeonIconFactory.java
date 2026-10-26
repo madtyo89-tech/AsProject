@@ -19,7 +19,9 @@ import java.util.Random;
  * Pembuat ikon bergaya "liquid glass sirkuit" untuk SEMUA aplikasi.
  *
  * Anatomi ikon (meniru paket ikon referensi):
- *  1. <b>Kaca gelap</b> — tile membulat dengan gradien hampir hitam.
+ *  1. <b>Kaca gelap</b> — tile dengan gradien hampir hitam, bentuknya bisa
+ *     dipilih per aplikasi ({@code style}: squircle/lingkaran/kotak tegas/segi
+ *     delapan) lewat {@link Prefs#iconStyle}.
  *  2. <b>Liquid chrome</b> — sapuan pantulan diagonal + sorotan tepi atas
  *     (rim light) sehingga permukaan terlihat seperti kaca/cairan, bukan warna datar.
  *  3. <b>Glyph sirkuit</b> — bentuk asli ikon diubah menjadi garis luar (outline)
@@ -45,29 +47,36 @@ public final class NeonIconFactory {
     private NeonIconFactory() {
     }
 
+    /** Ikon neon dengan bentuk tile bawaan (squircle). */
+    public static Bitmap create(Drawable source, int size, String seed) {
+        return create(source, size, seed, "auto");
+    }
+
     /**
      * @param source ikon aplikasi asli
      * @param size   sisi ikon dalam piksel (mis. 52 dp dalam px)
      * @param seed   kunci stabil — biasanya "paket/aktivitas"
+     * @param style  bentuk tile: "auto" (squircle), "cincin" (lingkaran),
+     *               "sudut" (kotak tegas), "hexa" (segi delapan)
      * @return bitmap ikon, atau null bila gagal (pemanggil memakai ikon asli)
      */
-    public static Bitmap create(Drawable source, int size, String seed) {
+    public static Bitmap create(Drawable source, int size, String seed, String style) {
         if (source == null || size <= 0) {
             return null;
         }
         try {
             Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(output);
-            float radius = size * 0.235f;
+            Path tile = tilePath(size, style);
 
-            drawLiquidGlass(canvas, size, radius);
-            drawCircuits(canvas, size, radius, seed);
+            drawLiquidGlass(canvas, size, tile);
+            drawCircuits(canvas, size, tile, seed);
 
             float[] glyph = glyphMask(source, size);
             if (glyph != null) {
                 float[] outline = outlineOf(glyph, size);
-                drawGlyphCircuits(canvas, glyph, size, radius, seed);
-                drawNeon(canvas, outline, size, radius);
+                drawGlyphCircuits(canvas, glyph, size, tile, seed);
+                drawNeon(canvas, outline, size, tile);
             }
             return output;
         } catch (OutOfMemoryError error) {
@@ -77,20 +86,61 @@ public final class NeonIconFactory {
         }
     }
 
+    // ------------------------------------------------------------ bentuk tile
+
+    /** Bentuk tile dipilih per aplikasi: variasi ini membuat beranda tidak monoton. */
+    static Path tilePath(int size, String style) {
+        Path path = new Path();
+        RectF box = new RectF(0, 0, size, size);
+        if ("cincin".equals(style)) {
+            path.addOval(box, Path.Direction.CW);
+        } else if ("sudut".equals(style)) {
+            float r = size * 0.06f;
+            path.addRoundRect(box, r, r, Path.Direction.CW);
+        } else if ("hexa".equals(style)) {
+            addOctagon(path, box);
+        } else {
+            float r = size * 0.235f;
+            path.addRoundRect(box, r, r, Path.Direction.CW);
+        }
+        return path;
+    }
+
+    /** Segi delapan beraturan yang muat pas di {@code box} — dipakai gaya "hexa". */
+    static void addOctagon(Path path, RectF box) {
+        float w = box.width();
+        float h = box.height();
+        float cut = Math.min(w, h) * 0.29f;
+        path.moveTo(box.left + cut, box.top);
+        path.lineTo(box.right - cut, box.top);
+        path.lineTo(box.right, box.top + cut);
+        path.lineTo(box.right, box.bottom - cut);
+        path.lineTo(box.right - cut, box.bottom);
+        path.lineTo(box.left + cut, box.bottom);
+        path.lineTo(box.left, box.bottom - cut);
+        path.lineTo(box.left, box.top + cut);
+        path.close();
+    }
+
+    /** Tile kaca cair kosong (tanpa glyph) — dasar ikon folder. */
+    public static void drawFolderShell(Canvas canvas, int size) {
+        Path tile = tilePath(size, "sudut");
+        drawLiquidGlass(canvas, size, tile);
+        drawCircuits(canvas, size, tile, "folder");
+    }
+
     // --------------------------------------------------------------- kaca cair
 
-    private static void drawLiquidGlass(Canvas canvas, int size, float radius) {
+    private static void drawLiquidGlass(Canvas canvas, int size, Path tile) {
         RectF box = new RectF(0, 0, size, size);
-        Path clip = new Path();
-        clip.addRoundRect(box, radius, radius, Path.Direction.CW);
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setShader(new LinearGradient(size * 0.15f, 0, size * 0.55f, size,
                 GLASS_TOP, GLASS_BOTTOM, Shader.TileMode.CLAMP));
-        canvas.drawRoundRect(box, radius, radius, paint);
+        canvas.drawPath(tile, paint);
 
         canvas.save();
-        canvas.clipPath(clip);
+        canvas.clipPath(tile);
 
         // 1. Pantulan cair: pita diagonal terang melintasi kiri-atas.
         Paint sweep = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -118,13 +168,11 @@ public final class NeonIconFactory {
         rim.setStrokeWidth(Math.max(1f, size * 0.014f));
         rim.setShader(new LinearGradient(0, 0, 0, size,
                 RIM, 0x336FA8C0, Shader.TileMode.CLAMP));
-        float inset = rim.getStrokeWidth() / 2f;
-        canvas.drawRoundRect(new RectF(inset, inset, size - inset, size - inset),
-                radius - inset, radius - inset, rim);
+        canvas.drawPath(tile, rim);
     }
 
     /** Jejak sirkuit + pad; posisi diturunkan dari nama paket (deterministik). */
-    private static void drawCircuits(Canvas canvas, int size, float radius, String seed) {
+    private static void drawCircuits(Canvas canvas, int size, Path tile, String seed) {
         Random random = new Random(seed == null ? 7L : seed.hashCode() * 31L);
 
         Paint trace = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -136,10 +184,8 @@ public final class NeonIconFactory {
         Paint pad = new Paint(Paint.ANTI_ALIAS_FLAG);
         pad.setColor(PAD);
 
-        Path clip = new Path();
-        clip.addRoundRect(new RectF(0, 0, size, size), radius, radius, Path.Direction.CW);
         canvas.save();
-        canvas.clipPath(clip);
+        canvas.clipPath(tile);
 
         int traces = 3;
         for (int i = 0; i < traces; i++) {
@@ -181,7 +227,7 @@ public final class NeonIconFactory {
      * Jejak sirkuit tipis di DALAM bentuk ikon — potong memakai siluet glyph,
      * sehingga motifnya mengikuti bentuk aplikasi, bukan sekadar latar.
      */
-    private static void drawGlyphCircuits(Canvas canvas, float[] mask, int size, float radius,
+    private static void drawGlyphCircuits(Canvas canvas, float[] mask, int size, Path tile,
                                           String seed) {
         Bitmap solid = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         int[] pixels = new int[mask.length];
@@ -243,8 +289,6 @@ public final class NeonIconFactory {
         cut.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
         traceCanvas.drawBitmap(solid, 0, 0, cut);
 
-        Path tile = new Path();
-        tile.addRoundRect(new RectF(0, 0, size, size), radius, radius, Path.Direction.CW);
         canvas.save();
         canvas.clipPath(tile);
         canvas.drawBitmap(traces, 0, 0, null);
@@ -256,7 +300,7 @@ public final class NeonIconFactory {
 
     // ----------------------------------------------------------------- neon
 
-    private static void drawNeon(Canvas canvas, float[] mask, int size, float radius) {
+    private static void drawNeon(Canvas canvas, float[] mask, int size, Path tile) {
         Bitmap glow = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         int[] pixels = new int[mask.length];
         for (int i = 0; i < mask.length; i++) {
@@ -265,8 +309,6 @@ public final class NeonIconFactory {
         }
         glow.setPixels(pixels, 0, size, 0, 0, size, size);
 
-        Path tile = new Path();
-        tile.addRoundRect(new RectF(0, 0, size, size), radius, radius, Path.Direction.CW);
         canvas.save();
         canvas.clipPath(tile);
 

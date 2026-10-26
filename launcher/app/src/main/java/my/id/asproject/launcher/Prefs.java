@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -27,6 +29,8 @@ public final class Prefs {
     private static final String KEY_NEON_ICONS = "neon_icons";
     private static final String KEY_HUD_ANIMATION = "hud_animation";
     private static final String KEY_LIQUID_MOTION = "liquid_motion";
+    private static final String KEY_FOLDERS = "folders";
+    private static final String KEY_ICON_STYLE = "icon_style_";
 
     public static final int MIN_COLUMNS = 3;
     public static final int MAX_COLUMNS = 6;
@@ -124,6 +128,76 @@ public final class Prefs {
     }
 
 
+
+    // ---------------------------------------------------------------- folder
+
+    /**
+     * Daftar folder beranda: nama → kunci aplikasi anggotanya.
+     * Disimpan satu baris per folder: {@code nama<TAB>kunci1,kunci2}.
+     */
+    public LinkedHashMap<String, List<String>> folders() {
+        LinkedHashMap<String, List<String>> folders = new LinkedHashMap<String, List<String>>();
+        String raw = prefs.getString(KEY_FOLDERS, "");
+        if (raw == null || raw.length() == 0) {
+            return folders;
+        }
+        String[] lines = raw.split("\n");
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].length() == 0) {
+                continue;
+            }
+            String[] parts = lines[i].split("\t", -1);
+            if (parts.length < 2 || parts[0].length() == 0) {
+                continue;
+            }
+            List<String> members = new ArrayList<String>();
+            String[] keys = parts[1].split(",");
+            for (int k = 0; k < keys.length; k++) {
+                String name = keys[k].trim();
+                if (name.length() > 0 && !members.contains(name)) {
+                    members.add(name);
+                }
+            }
+            folders.put(parts[0], members);
+        }
+        return folders;
+    }
+
+    /** Simpan seluruh peta folder (menggantikan isi sebelumnya). */
+    public void saveFolders(LinkedHashMap<String, List<String>> folders) {
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, List<String>> entry : folders.entrySet()) {
+            if (entry.getKey().length() == 0 || entry.getValue().isEmpty()) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append('\n');
+            }
+            builder.append(entry.getKey()).append('\t');
+            for (int i = 0; i < entry.getValue().size(); i++) {
+                if (i > 0) {
+                    builder.append(',');
+                }
+                builder.append(entry.getValue().get(i));
+            }
+        }
+        prefs.edit().putString(KEY_FOLDERS, builder.toString()).apply();
+    }
+
+    // --------------------------------------------------------------- ikon
+
+    /** Gaya ikon per aplikasi: "auto", "asli", "cincin", "hexa", atau "sudut". */
+    public String iconStyle(String key) {
+        return prefs.getString(KEY_ICON_STYLE + key, "auto");
+    }
+
+    public void setIconStyle(String key, String style) {
+        if (style == null || style.equals("auto")) {
+            prefs.edit().remove(KEY_ICON_STYLE + key).apply();
+        } else {
+            prefs.edit().putString(KEY_ICON_STYLE + key, style).apply();
+        }
+    }
 
     // ------------------------------------------------------------------ dock
 

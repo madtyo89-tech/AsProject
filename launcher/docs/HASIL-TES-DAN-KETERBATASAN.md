@@ -6,7 +6,7 @@ di mana risikonya.
 ## 1. Sudah diverifikasi otomatis
 
 `python3 launcher/tools/verify_apk.py launcher/releases/asproject-launcher-1.0.0-debug.apk`
-→ **62 lulus, 0 peringatan, 0 gagal**.
+→ **63 lulus, 0 peringatan, 0 gagal**.
 
 | Kelompok | Yang diperiksa |
 |----------|----------------|
@@ -15,7 +15,7 @@ di mana risikonya.
 | Peluncur | `provides-component:'launcher'`, kategori **HOME**, **DEFAULT**, **LAUNCHER** pada `LauncherActivity` |
 | Privasi | **nol** `<uses-permission>` (diperiksa lewat `aapt2 dump permissions`), 19 izin terlarang dicek tidak tertanam |
 | Keamanan | `SettingsActivity` `exported=false`, tidak ada aset web, tidak ada placeholder `${applicationId}` |
-| Kode | 20/20 kelas Java ter-dex; string `android.intent.category.LAUNCHER`, `android.intent.action.MAIN`, `launcher_prefs` tertanam |
+| Kode | 21/21 kelas Java ter-dex; string `android.intent.category.LAUNCHER`, `android.intent.action.MAIN`, `launcher_prefs` tertanam |
 | Sumber daya | ikon `ic_launcher.png` di 5 kepadatan + ikon adaptif `mipmap-anydpi-v26` |
 | Aset baru | `assets/wallpaper/lock.jpg` & `home.jpg` ada, 8 ikon neon tertanam (`ic_phone` … `ic_instagram`), tidak ada berkas JS |
 | Tanda tangan | apksigner: v1 ✔, v2 ✔, v3 ✔ |
@@ -222,6 +222,30 @@ alokasi per frame.
 
 Pratinjau HTML bisa memutarnya: **ketuk layar kunci** (atau tombol *Coba efek
 buka kunci* di bawahnya).
+
+### Folder & bentuk ikon per aplikasi (`HomeModel`, `AppItem.folder`, `NeonIconFactory.tilePath`)
+
+Folder disimpan di `Prefs` sebagai baris teks `nama<TAB>kunci1,kunci2,…` —
+tidak perlu tabel database. `HomeModel.build()` menggabungkan daftar aplikasi
+dari `AppRepository` dengan folder itu setiap kali beranda dimuat ulang:
+anggota yang sudah dicopot otomatis hilang dari folder, dan folder yang
+akhirnya kosong ikut dibuang (lalu disimpan ulang, supaya pengaturan tidak
+menumpuk sampah). Saat mencari, folder "dibongkar" sementara — hasil pencarian
+menampilkan aplikasi aslinya satu per satu, supaya aplikasi di dalam folder
+tetap bisa ditemukan.
+
+Ikon folder bukan simbol generik: `IconLoader.renderFolder()` menggambar kaca
+cair sirkuit kosong (`NeonIconFactory.drawFolderShell`) lalu menempelkan
+mini-kisi 2×2 dari ikon anggotanya (maksimal 4) — jadi isinya kelihatan
+sekilas tanpa harus dibuka. Dialognya sendiri (`view_folder.xml`) memakai
+`GridView` kecil di atas panel kaca cair (`bg_folder_glass`), dan setiap
+anggotanya bisa langsung diketuk atau ditekan-lama untuk opsi.
+
+Bentuk tile ikon tidak lagi tunggal: `NeonIconFactory.tilePath()` punya empat
+pilihan — squircle (bawaan), lingkaran, kotak bersudut tegas, dan segi delapan
+— disimpan per aplikasi lewat `Prefs.iconStyle(key)`. Semua lapisan ikon (kaca,
+sapuan, rim light, jejak sirkuit, glow neon) memakai `Path` yang sama, jadi
+bentuknya konsisten di setiap lapis, bukan cuma pada clip terluar.
 
 ### Font tema (`Typefaces`)
 
