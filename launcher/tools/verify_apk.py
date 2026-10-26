@@ -6,7 +6,9 @@ Yang diperiksa:
   * struktur ZIP & syarat Android 11+ (resources.arsc tidak terkompresi + selaras 4 byte);
   * versi format DEX vs minSdk 21;
   * identitas paket, minSdk/targetSdk, dan nama aplikasi;
-  * **nol izin** — launcher ini tidak boleh meminta izin apa pun;
+  * **izin minimal** — hanya 6 izin yang boleh ada, semuanya khusus fitur
+    opsional "Spidometer mengambang" (nonaktif bawaan); semua izin lain
+    (internet, kontak, SMS, kamera, dll.) tetap nol;
   * syarat menjadi peluncur: komponen `launcher`, kategori HOME + DEFAULT + LAUNCHER;
   * SettingsActivity tidak diekspor;
   * seluruh kelas Java ikut ter-dex;
@@ -53,6 +55,9 @@ REQUIRED_CLASSES = [
     "Lmy/id/asproject/launcher/IconLoader;",
     "Lmy/id/asproject/launcher/Prefs;",
     "Lmy/id/asproject/launcher/HomeModel;",
+    "Lmy/id/asproject/launcher/Accent;",
+    "Lmy/id/asproject/launcher/SpeedometerService;",
+    "Lmy/id/asproject/launcher/SpeedGaugeView;",
 ]
 
 # Potongan kode yang membuktikan widget sistem ditempel TANPA deklarasi izin
@@ -79,15 +84,29 @@ FORBIDDEN_PERMISSIONS = [
     "android.permission.READ_SMS",
     "android.permission.RECORD_AUDIO",
     "android.permission.CAMERA",
-    "android.permission.ACCESS_FINE_LOCATION",
-    "android.permission.ACCESS_COARSE_LOCATION",
     "android.permission.READ_PHONE_STATE",
-    "android.permission.SYSTEM_ALERT_WINDOW",
     "android.permission.QUERY_ALL_PACKAGES",
     "android.permission.PACKAGE_USAGE_STATS",
     "android.permission.EXPAND_STATUS_BAR",
     "android.permission.BIND_ACCESSIBILITY_SERVICE",
+    "android.permission.ACCESS_BACKGROUND_LOCATION",
+    "android.permission.BLUETOOTH",
+    "android.permission.BLUETOOTH_ADMIN",
 ]
+
+# Satu-satunya izin yang BOLEH ada di manifest: semuanya dipakai khusus oleh
+# fitur opsional "Spidometer mengambang" (nonaktif bawaan, lihat
+# SpeedometerService/Prefs.speedometerEnabled). Permintaan izin RUNTIME-nya
+# baru terjadi saat pengguna menyalakan sakelarnya sendiri di Pengaturan —
+# deklarasi di manifest ini tidak memberi akses apa pun dengan sendirinya.
+ALLOWED_PERMISSIONS = {
+    "android.permission.ACCESS_FINE_LOCATION",
+    "android.permission.ACCESS_COARSE_LOCATION",
+    "android.permission.SYSTEM_ALERT_WINDOW",
+    "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_LOCATION",
+    "android.permission.POST_NOTIFICATIONS",
+}
 
 PASS = "\033[1;32mPASS\033[0m"
 FAIL = "\033[1;31mFAIL\033[0m"
@@ -249,9 +268,12 @@ def verify_manifest(apk: Path) -> None:
           launchable.group(1) if launchable else "tidak terbaca")
 
     permissions_dump = aapt2_out(aapt2, apk, "dump", "permissions")
-    requested = re.findall(r"uses-permission: name='([^']*)'", permissions_dump)
-    check("NOL izin Android diminta", not requested,
-          ", ".join(requested) if requested else "bersih — tidak ada satu pun")
+    requested = set(re.findall(r"uses-permission: name='([^']*)'", permissions_dump))
+    unexpected = sorted(requested - ALLOWED_PERMISSIONS)
+    missing = sorted(ALLOWED_PERMISSIONS - requested)
+    detail = f"tak terduga: {', '.join(unexpected) or '-'} | hilang: {', '.join(missing) or '-'}"
+    check("hanya 6 izin fitur Spidometer mengambang yang diminta (tidak lebih, tidak kurang)",
+          not unexpected and not missing, detail)
 
     tree = aapt2_out(aapt2, apk, "dump", "xmltree", "--file", "AndroidManifest.xml")
     for category in ("android.intent.category.HOME",
@@ -266,6 +288,13 @@ def verify_manifest(apk: Path) -> None:
     settings_exported = "exported(0x01010010)=false" in settings_block[-1][:2000] \
         if len(settings_block) > 1 else False
     check("SettingsActivity tidak diekspor", settings_exported)
+
+    service_block = tree.split("SpeedometerService")
+    service_tail = service_block[-1][:2000] if len(service_block) > 1 else ""
+    check("SpeedometerService terdaftar & tidak diekspor",
+          len(service_block) > 1 and "exported(0x01010010)=false" in service_tail)
+    check("SpeedometerService dideklarasikan foregroundServiceType=location",
+          "foregroundServiceType(0x01010599)=0x00000008" in service_tail)
 
 
 def apksigner_command(apk: Path) -> list[str] | None:

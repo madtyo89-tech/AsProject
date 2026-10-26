@@ -41,9 +41,10 @@ Verifikasi APK tanpa perangkat:
 python3 launcher/tools/verify_apk.py launcher/out/asproject-launcher-1.0.0-debug.apk
 ```
 
-Contoh hasil: **39 lulus, 0 peringatan, 0 gagal** — termasuk "NOL izin Android
-diminta", `provides-component:'launcher'`, kategori HOME/DEFAULT/LAUNCHER, dan
-tanda tangan v1+v2+v3.
+Contoh hasil: **72 lulus, 0 peringatan, 0 gagal** — termasuk "hanya 6 izin fitur
+Spidometer mengambang yang diminta (tidak lebih, tidak kurang)",
+`provides-component:'launcher'`, kategori HOME/DEFAULT/LAUNCHER, dan tanda
+tangan v1+v2+v3.
 
 ---
 

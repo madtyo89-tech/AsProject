@@ -270,6 +270,43 @@
                 style="@style/SectionLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/section_speedometer" />
+
+            <Switch
+                android:id="@+id/switchSpeedometer"
+                style="@style/SettingsSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_speedometer" />
+
+            <RadioGroup
+                android:id="@+id/speedUnitGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/unitKmh"
+                    style="@style/ColumnChoice"
+                    android:text="@string/speed_unit_kmh" />
+
+                <RadioButton
+                    android:id="@+id/unitMph"
+                    style="@style/ColumnChoice"
+                    android:text="@string/speed_unit_mph" />
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/speedometer_note"
+                android:textColor="@color/text_hint"
+                android:textSize="11.5sp" />
+
+            <TextView
+                style="@style/SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/section_appearance" />
 
             <Switch

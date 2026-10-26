@@ -55,8 +55,8 @@
     <string name="hidden_saved">%1$d aplikasi disembunyikan</string>
     <string name="section_about">Tentang</string>
     <string name="version_format">AsProject Launcher %1$s</string>
-    <string name="about_body">Launcher beranda tanpa iklan, tanpa izin, dan tanpa pelacakan. Semua pengaturan disimpan di perangkat ini saja.</string>
-    <string name="about_message">AsProject Launcher\n\nLauncher beranda ringan untuk Android 5.0 ke atas.\n\n• Tanpa izin apa pun — tidak ada akses internet, lokasi, atau kontak.\n• Jam besar, pencarian instan, dock 5 ikon, sembunyikan aplikasi.\n• Tekan lama ikon untuk opsi; tekan lama area kosong untuk mengganti wallpaper.
+    <string name="about_body">Launcher beranda tanpa iklan dan tanpa pelacakan. Semua pengaturan disimpan di perangkat ini saja. Satu-satunya izin yang pernah diminta adalah untuk fitur opsional Spidometer mengambang (nonaktif bawaan).</string>
+    <string name="about_message">AsProject Launcher\n\nLauncher beranda ringan untuk Android 5.0 ke atas.\n\n• Tanpa izin apa pun — tidak ada akses internet maupun kontak. Satu-satunya pengecualian: fitur opsional "Spidometer mengambang" (nonaktif bawaan) butuh izin Lokasi + overlay saat dinyalakan sendiri.\n• Jam besar, pencarian instan, dock 5 ikon, sembunyikan aplikasi.\n• Tekan lama ikon untuk opsi; tekan lama area kosong untuk mengganti wallpaper.
 • HUD menampilkan data asli: jam, daya baterai, dan suhu baterai. Angka
   "SECURE LINK / EST ms / INTEGRITAS" hanya dekorasi, bukan pengukuran.\n\nasproject.my.id</string>
     <string name="back">Kembali</string>
@@ -96,4 +96,19 @@
     <string name="slide_bar_pil">Pil neon berdenyut</string>
     <string name="slide_bar_titik">Titik sirkuit berjalan</string>
     <string name="slide_bar_sirkuit">Sirkuit zigzag</string>
+
+    <string name="section_speedometer">Spidometer mengambang</string>
+    <string name="enable_speedometer">Aktifkan spidometer mengambang</string>
+    <string name="speedometer_note">Bubble kaca cair neon yang tetap tampil di atas aplikasi lain, bisa digeser bebas, dan membuat layar tidak meredup/terkunci selama tampil. Ketuk bubble untuk ganti satuan, tekan lama untuk mematikan. Satu-satunya fitur yang memakai izin Lokasi, \"Gambar di atas aplikasi lain\", dan notifikasi tetap tampil.</string>
+    <string name="speed_unit_kmh">km/h</string>
+    <string name="speed_unit_mph">mph</string>
+    <string name="speedometer_need_location">Izinkan akses Lokasi dulu supaya kecepatan bisa dibaca dari GPS</string>
+    <string name="speedometer_need_overlay">Izinkan \"Gambar di atas aplikasi lain\" dulu di halaman Pengaturan Android yang terbuka</string>
+    <string name="speedometer_need_notif">Izinkan notifikasi dulu — wajib selama bubble kecepatan aktif</string>
+    <string name="speedometer_channel">Spidometer mengambang</string>
+    <string name="speedometer_channel_desc">Notifikasi wajib selama bubble kecepatan tampil di layar</string>
+    <string name="speedometer_notif_title">Spidometer aktif</string>
+    <string name="speedometer_notif_text">Bubble kecepatan tampil di atas layar — layar tidak akan meredup</string>
+    <string name="speedometer_notif_stop">Matikan</string>
+    <string name="speedometer_stopped">Spidometer mengambang dimatikan</string>
 </resources>

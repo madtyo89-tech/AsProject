@@ -30,5 +30,5 @@ APK yang ditandatangani kunci yang sama. Untuk APK rilis, lihat
 SHA-256 APK saat ini:
 
 ```
-5f7c784692f11b13ab8a4249fb8ee66eb5203fce4c3b9996d438d578d9261a92
+b03fbb753527cd73b7d4e2ce648bc21f8c81dbf69fa7e51b706cf61d348a457a
 ```

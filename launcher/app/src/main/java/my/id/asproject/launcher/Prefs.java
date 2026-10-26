@@ -34,6 +34,10 @@ public final class Prefs {
     private static final String KEY_FOLDERS = "folders";
     private static final String KEY_ICON_STYLE = "icon_style_";
     private static final String KEY_WIDGET_IDS = "widget_ids";
+    private static final String KEY_SPEEDOMETER_ENABLED = "speedometer_enabled";
+    private static final String KEY_SPEED_UNIT = "speed_unit";
+    private static final String KEY_SPEED_POS_X = "speed_pos_x";
+    private static final String KEY_SPEED_POS_Y = "speed_pos_y";
 
     public static final int MIN_COLUMNS = 3;
     public static final int MAX_COLUMNS = 6;
@@ -155,6 +159,39 @@ public final class Prefs {
         prefs.edit().putString(KEY_ACCENT_STYLE, style == null ? "biru" : style).apply();
     }
 
+
+    // ------------------------------------------------------------ spidometer
+
+    /**
+     * Spidometer digital mengambang (bubble di atas aplikasi lain). Nonaktif
+     * secara bawaan — satu-satunya fitur di launcher ini yang perlu izin
+     * Lokasi, "Gambar di atas aplikasi lain", dan notifikasi tetap tampil.
+     */
+    public boolean speedometerEnabled() {
+        return prefs.getBoolean(KEY_SPEEDOMETER_ENABLED, false);
+    }
+
+    public void setSpeedometerEnabled(boolean enabled) {
+        prefs.edit().putBoolean(KEY_SPEEDOMETER_ENABLED, enabled).apply();
+    }
+
+    /** Satuan kecepatan: {@code "kmh"} (bawaan) atau {@code "mph"}. */
+    public String speedUnit() {
+        return prefs.getString(KEY_SPEED_UNIT, "kmh");
+    }
+
+    public void setSpeedUnit(String unit) {
+        prefs.edit().putString(KEY_SPEED_UNIT, "mph".equals(unit) ? "mph" : "kmh").apply();
+    }
+
+    /** Posisi terakhir bubble spidometer di layar (px), supaya tidak loncat tiap dibuka. */
+    public int[] speedometerPosition() {
+        return new int[]{prefs.getInt(KEY_SPEED_POS_X, 24), prefs.getInt(KEY_SPEED_POS_Y, 220)};
+    }
+
+    public void setSpeedometerPosition(int x, int y) {
+        prefs.edit().putInt(KEY_SPEED_POS_X, x).putInt(KEY_SPEED_POS_Y, y).apply();
+    }
 
     // ---------------------------------------------------------------- folder
 

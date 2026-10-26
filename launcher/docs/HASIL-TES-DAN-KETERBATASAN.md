@@ -254,7 +254,7 @@ dll — apa pun yang disediakan aplikasi lain), ditempel sebagai kartu kaca cair
 (`bg_widget_frame`) yang digeser mendatar di atas kolom pencarian.
 
 Alurnya sengaja dipilih supaya **tidak perlu mendeklarasikan izin apa pun** di
-manifest (konsisten dengan klaim "nol izin" launcher ini):
+manifest (konsisten dengan prinsip izin minimal launcher ini — lihat §4):
 
 1. `AppWidgetHost` dengan ID tetap (`WIDGET_HOST_ID`) dibuat di `onCreate`,
    `startListening()`/`stopListening()` mengikuti `onResume`/`onPause`.
@@ -375,7 +375,7 @@ adalah hasil pembacaan kode, bukan hasil observasi:
 | Ikon neon memakai satu warna (biru) | Identitas warna merek hilang; lihat §1c. Bisa dimatikan. |
 | Blur neon memakai CPU di Android lama | Ikon pertama kali muncul bisa terasa 20–40 ms di perangkat 2015; setelah masuk cache tidak ada biaya lagi. |
 
-## 4. Kenapa tanpa izin sama sekali
+## 4. Kenapa hampir tanpa izin sama sekali
 
 Launcher biasanya meminta `QUERY_ALL_PACKAGES` (Android 11+) atau
 `PACKAGE_USAGE_STATS`. Keduanya tidak dipakai di sini:
@@ -386,3 +386,32 @@ Launcher biasanya meminta `QUERY_ALL_PACKAGES` (Android 11+) atau
 - tidak ada akses internet, sehingga tidak ada telemetri yang mungkin dikirim;
 - semua preferensi ada di `SharedPreferences` (`launcher_prefs.xml`) dan ikut
   cadangan Android (`allowBackup=true`).
+
+Satu-satunya pengecualian adalah fitur opsional **Spidometer mengambang**
+(§4a) — nonaktif secara bawaan, dan izinnya baru diminta saat pengguna
+menyalakan sakelarnya sendiri di Pengaturan.
+
+### 4a. Spidometer mengambang — satu-satunya fitur yang memakai izin
+
+`SpeedometerService.java` menampilkan bubble kecepatan (`SpeedGaugeView.java`)
+yang tetap tampil di atas aplikasi lain dan menyalakan `FLAG_KEEP_SCREEN_ON`
+supaya layar tidak meredup selama tampil. Tiga izin yang dipakai, semuanya
+wajib menurut aturan Android untuk kasus ini (tidak ada cara lain):
+
+- `ACCESS_FINE_LOCATION` / `ACCESS_COARSE_LOCATION` — kecepatan dihitung dari
+  `Location.getSpeed()` (GPS), diminta lewat dialog izin biasa saat sakelar
+  dinyalakan.
+- `SYSTEM_ALERT_WINDOW` — supaya bubble bisa digambar di atas aplikasi lain
+  (`WindowManager` + `TYPE_APPLICATION_OVERLAY`); harus disetujui lewat
+  halaman Pengaturan Android sendiri (`ACTION_MANAGE_OVERLAY_PERMISSION`),
+  Android tidak mengizinkan dialog biasa untuk izin ini.
+- `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_LOCATION` / `POST_NOTIFICATIONS`
+  — Android 10+ hanya menganggap akses lokasi sebagai "latar depan" (tidak
+  perlu `ACCESS_BACKGROUND_LOCATION`) selama berjalan sebagai layanan latar
+  depan bertipe `location` dengan notifikasi yang selalu terlihat; notifikasi
+  itulah yang memakai `POST_NOTIFICATIONS` (wajib sejak Android 13).
+
+`SettingsActivity.advanceSpeedometerFlow()` meminta ketiganya berurutan (satu
+per satu, bukan sekaligus) dan membatalkan sakelar bila salah satu ditolak.
+Mematikan sakelar atau menekan "Matikan" di notifikasi langsung menghentikan
+layanan (`stopSelf()`), melepas overlay, dan berhenti membaca lokasi.

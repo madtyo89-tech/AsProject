@@ -552,6 +552,10 @@ TEMPLATE = r"""<!DOCTYPE html>
     border:2px solid rgba(255,255,255,.25)}
   .swatch-item.sel{color:var(--text,#fff);border-color:rgba(212,175,55,.4)}
   .swatch-item.sel .swatch-dot{border-color:#fff}
+  .speed-bubble{position:absolute;width:118px;height:118px;right:14px;bottom:120px;
+    z-index:40;cursor:grab;touch-action:none;filter:drop-shadow(0 6px 18px rgba(0,0,0,.55))}
+  .speed-bubble:active{cursor:grabbing}
+  .speed-bubble canvas{width:100%;height:100%;display:block}
 
 __ICON_CSS__
 
@@ -777,10 +781,24 @@ __ICON_CSS__
             </div>
             <div class="small">Sentuh pratinjau untuk memicu riak. Pilihan ini mengubah gagang tarik laci aplikasi di beranda.</div>
 
+            <div class="label">Spidometer mengambang</div>
+            <div class="row"><span>Aktifkan spidometer mengambang</span><span id="swSpeedometer" class="sw"></span></div>
+            <div id="speedUnitChoices" class="swatch-row" style="display:none">
+              <div class="swatch-item sel" data-unit="kmh"><span>km/h</span></div>
+              <div class="swatch-item" data-unit="mph"><span>mph</span></div>
+            </div>
+            <div class="small">Bubble kaca cair neon yang tetap tampil di atas aplikasi lain, bisa digeser bebas,
+              dan membuat layar tidak meredup selama tampil. Nyalakan untuk melihat bubble-nya mengambang di kanan
+              pratinjau ini (di aplikasi sungguhan ia melayang di atas SEMUA aplikasi, bukan cuma di sini). Satu-satunya
+              fitur yang minta izin Lokasi + "Gambar di atas aplikasi lain" + notifikasi tetap tampil.</div>
+
             <div class="label">Tampilan</div>
             <div class="row"><span>Jam dan tanggal besar</span><span class="sw on"></span></div>
             <div class="row"><span>Kolom pencarian</span><span class="sw on"></span></div>
           </div>
+        </div>
+        <div id="speedBubble" class="speed-bubble" style="display:none">
+          <canvas id="speedGaugeCanvas" width="236" height="236"></canvas>
         </div>
       </div>
       <div class="caption">Pengaturan</div>
@@ -1500,6 +1518,73 @@ __ICON_CSS__
   var charging = false;
   var phase = 0;
   var last = 0;
+
+  /* ------------------------------------------------------------------
+     Spidometer mengambang — salinan SpeedGaugeView.java. Gauge 270 derajat
+     bersegmen (gaya sama dengan cincin baterai), angka digital besar di
+     tengah + satuan km/h atau mph di bawahnya.
+  ------------------------------------------------------------------ */
+  var speedCanvas = document.getElementById("speedGaugeCanvas");
+  var speedCtx = speedCanvas ? speedCanvas.getContext("2d") : null;
+  var speedEnabled = false;
+  var speedMph = false;
+  var speedPhase = 0;
+  var speedKmh = 0;
+
+  function drawSpeedGauge(now) {
+    if (!speedCtx || !speedEnabled) { return; }
+    var W = speedCanvas.width, H = speedCanvas.height;
+    speedCtx.clearRect(0, 0, W, H);
+    var size = Math.min(W, H), cx = W / 2, cy = H / 2;
+    var stroke = Math.max(2, size * 0.09);
+    var r = size / 2 - stroke / 2 - 2;
+    var glassR = r - stroke / 2 - 1;
+
+    var glass = speedCtx.createRadialGradient(cx, cy - glassR * 0.3, 0, cx, cy - glassR * 0.3, glassR * 1.3);
+    glass.addColorStop(0, "rgba(16,24,32,0.88)");
+    glass.addColorStop(1, "rgba(6,10,16,0.94)");
+    speedCtx.beginPath(); speedCtx.arc(cx, cy, glassR, 0, Math.PI * 2);
+    speedCtx.fillStyle = glass; speedCtx.fill();
+    speedCtx.lineWidth = Math.max(1, size * 0.012);
+    speedCtx.strokeStyle = ACC.rgba(255, 255, 255, 0.2);
+    speedCtx.stroke();
+
+    // simulasi kecepatan (gelombang 0-120) — di aplikasi asli ini dari GPS asli.
+    speedKmh = Math.max(0, 58 + 56 * Math.sin(now / 4200));
+    var display = speedMph ? speedKmh * 0.621371 : speedKmh;
+    var maxDisplay = speedMph ? 180 * 0.621371 : 180;
+    var levelPct = Math.min(1, display / maxDisplay);
+
+    var segments = 24, sweepStart = 135, sweepTotal = 270;
+    var sweepDeg = sweepTotal / segments, gap = sweepDeg * 0.22;
+    var filled = Math.round(segments * levelPct);
+
+    for (var i = 0; i < segments; i++) {
+      var start = (sweepStart + i * sweepDeg + gap / 2) * Math.PI / 180;
+      var end = start + (sweepDeg - gap) * Math.PI / 180;
+      speedCtx.beginPath();
+      speedCtx.arc(cx, cy, r, start, end);
+      speedCtx.lineWidth = stroke;
+      if (i < filled) {
+        var flow = 0.75 + 0.25 * Math.sin(speedPhase * 6.2832 * 3 - i * 0.5);
+        speedCtx.strokeStyle = ACC.rgbaPrefix(95, 216, 255) + Math.max(0.5, flow).toFixed(3) + ")";
+      } else {
+        speedCtx.strokeStyle = ACC.rgba(95, 216, 255, 0.16);
+      }
+      speedCtx.stroke();
+    }
+
+    speedCtx.fillStyle = ACC.hex("#E6FBFF");
+    speedCtx.shadowColor = ACC.hex("#5FD8FF"); speedCtx.shadowBlur = size * 0.16;
+    speedCtx.font = "700 " + Math.round(size * 0.30) + "px 'TechMono', ui-monospace, monospace";
+    speedCtx.textAlign = "center"; speedCtx.textBaseline = "middle";
+    speedCtx.fillText(String(Math.round(display)), cx, cy - size * 0.02);
+    speedCtx.shadowBlur = 0;
+
+    speedCtx.fillStyle = ACC.hex("#AEEBFF");
+    speedCtx.font = "600 " + Math.round(size * 0.115) + "px 'TechMono', ui-monospace, monospace";
+    speedCtx.fillText(speedMph ? "mph" : "km/h", cx, cy + size * 0.27);
+  }
   var settingsPulseAt = -10;
 
   /* ------------------------------------------------------------------
@@ -1777,6 +1862,8 @@ __ICON_CSS__
     last = now;
     phase += dt * 0.22;
     if (phase > 1) { phase -= 1; }
+    speedPhase += dt * 0.2;
+    if (speedPhase > 1) { speedPhase -= 1; }
 
     var d = new Date();
     var blink = d.getSeconds() % 2 === 0;
@@ -1786,6 +1873,7 @@ __ICON_CSS__
     drawClock(document.getElementById("clockHome"), d.getHours(), d.getMinutes(), blink);
     drawClock(document.getElementById("clockDrawer"), d.getHours(), d.getMinutes(), blink);
     drawBatteryRing();
+    drawSpeedGauge(now);
     var settingsRipple = Math.min(1, 0.35 + 0.65 * Math.max(0, 1 - (now / 1000 - settingsPulseAt) * 1.1));
     drawHandle("homeSlideBar", now / 1000, 0, 0.35, handleStyle);
     drawHandle("drawerHandle", now / 1000, 0, 0.6, handleStyle);
@@ -1820,6 +1908,62 @@ __ICON_CSS__
   var settingsHandleCanvas = document.getElementById("settingsHandle");
   if (settingsHandleCanvas) {
     settingsHandleCanvas.addEventListener("click", function () { settingsPulseAt = performance.now() / 1000; });
+  }
+
+  var swSpeedometer = document.getElementById("swSpeedometer");
+  var speedBubble = document.getElementById("speedBubble");
+  var speedUnitChoices = document.getElementById("speedUnitChoices");
+  if (swSpeedometer && speedBubble) {
+    swSpeedometer.addEventListener("click", function () {
+      speedEnabled = !speedEnabled;
+      swSpeedometer.classList.toggle("on", speedEnabled);
+      speedBubble.style.display = speedEnabled ? "block" : "none";
+      speedUnitChoices.style.display = speedEnabled ? "flex" : "none";
+    });
+  }
+  if (speedUnitChoices) {
+    var units = speedUnitChoices.querySelectorAll(".swatch-item");
+    for (var ui = 0; ui < units.length; ui++) {
+      units[ui].addEventListener("click", function () {
+        for (var uj = 0; uj < units.length; uj++) { units[uj].classList.remove("sel"); }
+        this.classList.add("sel");
+        speedMph = this.getAttribute("data-unit") === "mph";
+      });
+    }
+  }
+  // Geser bebas bubble spidometer di dalam batas mockup telepon (persis
+  // seperti bisa digeser di atas aplikasi lain pada aplikasi sungguhan).
+  if (speedBubble) {
+    var dragging = false, dragDX = 0, dragDY = 0;
+    var dragStart = function (ev) {
+      dragging = true;
+      var point = ev.touches ? ev.touches[0] : ev;
+      var box = speedBubble.getBoundingClientRect();
+      dragDX = point.clientX - box.left;
+      dragDY = point.clientY - box.top;
+      ev.preventDefault();
+    };
+    var dragMove = function (ev) {
+      if (!dragging) { return; }
+      var point = ev.touches ? ev.touches[0] : ev;
+      var parentBox = speedBubble.parentElement.getBoundingClientRect();
+      var x = point.clientX - parentBox.left - dragDX;
+      var y = point.clientY - parentBox.top - dragDY;
+      x = Math.max(0, Math.min(parentBox.width - speedBubble.offsetWidth, x));
+      y = Math.max(0, Math.min(parentBox.height - speedBubble.offsetHeight, y));
+      speedBubble.style.left = x + "px";
+      speedBubble.style.top = y + "px";
+      speedBubble.style.right = "auto";
+      speedBubble.style.bottom = "auto";
+      ev.preventDefault();
+    };
+    var dragEnd = function () { dragging = false; };
+    speedBubble.addEventListener("mousedown", dragStart);
+    speedBubble.addEventListener("touchstart", dragStart, { passive: false });
+    window.addEventListener("mousemove", dragMove);
+    window.addEventListener("touchmove", dragMove, { passive: false });
+    window.addEventListener("mouseup", dragEnd);
+    window.addEventListener("touchend", dragEnd);
   }
 
   var accentChoices = document.getElementById("accentChoices");

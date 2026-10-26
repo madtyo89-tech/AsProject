@@ -4,9 +4,9 @@ name: Android APK (AsProject Launcher)
 #
 # Jalur utama memakai skrip tanpa Gradle — sama dengan yang menghasilkan APK
 # di launcher/releases/. Setelah build, APK diperiksa oleh
-# launcher/tools/verify_apk.py: build GAGAL bila ada izin yang bocor masuk
-# (launcher ini harus nol izin), bila kategori HOME hilang, atau bila tanda
-# tangan tidak sah.
+# launcher/tools/verify_apk.py: build GAGAL bila ada izin di luar 6 izin resmi
+# fitur opsional Spidometer mengambang (lihat Accent.java/SpeedometerService),
+# bila kategori HOME hilang, atau bila tanda tangan tidak sah.
 #
 # Rahasia opsional untuk APK rilis bertanda tangan Anda:
 #   LAUNCHER_KEYSTORE_BASE64, LAUNCHER_KEYSTORE_PASSWORD,
@@ -91,7 +91,7 @@ jobs:
           fi
           tail -n 12 "$LOG"
 
-      - name: Periksa APK (nol izin, kategori HOME, tanda tangan)
+      - name: Periksa APK (izin spidometer, kategori HOME, tanda tangan)
         run: |
           set -euo pipefail
           APK="launcher/out/asproject-launcher-1.0.0-debug.apk"

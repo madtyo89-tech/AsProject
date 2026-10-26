@@ -63,6 +63,7 @@ Skrip build memakai ulang mesin build `android/buildkit/build-apk.sh`
 | **Warna aksen (4 pilihan)** | Pengaturan → *Warna aksen*: **Biru** (bawaan), **Hijau**, **Ungu**, atau **Pink** — memutar hue semua warna neon sekaligus (ikon otomatis, HUD, baterai, jam, wallpaper sirkuit, slide bar) lewat `Accent.shift()`, tanpa mengubah kecerahan/transparansi yang sudah dirancang. 8 ikon aplikasi populer (dari gambar asli yang diunggah) tetap warna aslinya |
 | **Efek buka kunci dramatis** | Saat digeser, papan sirkuit ikut menyergap (simpangan ombak naik 3,2×, bidang memperbesar). Saat lepas: sapuan terang naik dari bawah, dua cincin shockwave melebar dari titik sentuh, percikan neon beterbangan, HUD memipih, dan konten melesat ke atas (300 ms) |
 | **Efek scroll beranda** | Saat kisi aplikasi digulir, kepala (jam + tanggal) menyusut & memudar; saat laci dibuka, beranda menyusut + wallpaper memperbesar (parallax) |
+| **Spidometer mengambang** | Pengaturan → *Spidometer mengambang* — bubble kaca cair neon (gaya sama dengan cincin baterai) yang tetap tampil di atas aplikasi lain, bisa digeser bebas, dan menyalakan `FLAG_KEEP_SCREEN_ON` supaya layar tidak meredup/terkunci selama tampil. Kecepatan dibaca dari GPS (`LocationManager`), satuan km/h atau mph. **Satu-satunya fitur di launcher ini yang memakai izin Android** (Lokasi, "Gambar di atas aplikasi lain", notifikasi) — nonaktif bawaan, izin diminta hanya saat sakelarnya dinyalakan |
 | **Wallpaper sirkuit liquid 3D** | Layar kunci memakai **tiga bidang sirkuit** (jauh / tengah / dekat) yang digambar prosedural, diproyeksikan perspektif ke satu titik hilang, lalu diombak `drawBitmapMesh`; tiap bidang bergerak paralaks dengan sendirinya. Denyut cahaya, gelembung, dan kilau diproyeksikan ke koordinat yang sama, jadi ikut terombang-ambing bersama cairannya |
 | **Font tema** | Share Tech Mono (OFL) ikut terpasang, dipakai di seluruh antarmuka |
 | **Ikon baterai lingkaran bersegmen** | Cincin 20 ruas neon dengan aliran cair berjalan + angka persen di tengah; komet berputar saat mengisi daya | Ukuran kecil seperti ikon bilah status, di pojok kanan atas layar kunci: cairan neon beriak setinggi daya + kilat saat mengisi daya. Tidak ada ikon baterai kedua di HUD |
@@ -79,7 +80,7 @@ Detail teknis & keputusan desain: [docs/HASIL-TES-DAN-KETERBATASAN.md](docs/HASI
 ```
 launcher/
 ├── app/src/main/
-│   ├── AndroidManifest.xml              kategori HOME + LAUNCHER, <queries>, tanpa izin
+│   ├── AndroidManifest.xml              kategori HOME + LAUNCHER, <queries>, hampir tanpa izin (6 izin opsional untuk Spidometer mengambang)
 │   ├── java/my/id/asproject/launcher/
 │   │   ├── LauncherActivity.java        beranda: jam, cari, kisi, dock, dialog
 │   │   ├── SettingsActivity.java        pengaturan beranda
@@ -94,6 +95,8 @@ launcher/
 │   │   ├── AppDrawerView.java           laci aplikasi + gerakan geser
 │   │   ├── LiquidHandleView.java        liquid slide bar (4 gaya: ombak/pil/titik/sirkuit)
 │   │   ├── Accent.java                  warna aksen global (putar hue: biru/hijau/ungu/pink)
+│   │   ├── SpeedometerService.java      layanan latar depan bubble spidometer (GPS + overlay)
+│   │   ├── SpeedGaugeView.java          gauge kaca cair spidometer (gaya cincin baterai)
 │   │   └── Typefaces.java               font tema (Share Tech Mono)
 │   │   ├── NeonIconFactory.java         pembuat ikon liquid glass otomatis (semua aplikasi)
 │   │   ├── LiquidBatteryView.java       ikon baterai neon (satu-satunya)
@@ -135,4 +138,5 @@ launcher/
 | Kedalaman & parallax | `layerDepth()`, `layerPerspective()`, `layerAlpha()`, `meshCols()/meshRows()` di `CircuitWallpaperView`; `BASE_AMP`, `CAMERA_DISTANCE`, `PARALLAX_SCALE` di `LiquidWallpaperView` |
 | Laci & slide bar | `AppDrawerView` (ambang buka `0.45`, durasi 260 ms), `LiquidHandleView` (riak & lengkungan, 4 gaya via `setStyle()`) |
 | Warna aksen | `Accent.java` (`hueFor()` — tambah/ubah preset biru/hijau/ungu/pink), dipanggil lewat `Accent.shift(argb)` di tiap warna neon |
+| Spidometer mengambang | `SpeedometerService.java` (layanan latar depan + WindowManager overlay + LocationManager), `SpeedGaugeView.java` (gambar gauge), alur izin di `SettingsActivity.advanceSpeedometerFlow()` |
 | Pratinjau HTML | `python3 launcher/tools/make_preview.py` |

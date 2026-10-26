@@ -1436,8 +1436,11 @@ pengganti layar beranda Android (jam besar, pencarian instan, kisi aplikasi, doc
 5 ikon). Kode sumbernya ada di folder **[`launcher/`](launcher/)**, terpisah penuh
 dari situs dan dari `android/`.
 
-- Paket `my.id.asproject.launcher`, Android 5.0–14, APK ±1,6 MB, **nol izin**
-  (tanpa internet, lokasi, kontak, atau penyimpanan).
+- Paket `my.id.asproject.launcher`, Android 5.0–14, APK ±1,6 MB, **nyaris nol
+  izin** (tanpa internet, kontak, atau penyimpanan). Satu-satunya pengecualian:
+  fitur opsional *Spidometer mengambang* (nonaktif bawaan) yang minta izin
+  Lokasi + "Gambar di atas aplikasi lain" hanya saat pengguna menyalakannya
+  sendiri.
 - Tampilan bawaan: **layar kunci bergaya HUD** (bingkai liquid-chrome, jam neon,
   chip daya baterai asli, geser ke atas untuk membuka) + **wallpaper sirkuit neon**
   di beranda + **8 ikon neon** (Phone, Message, Camera, Settings, Music, Chrome,
@@ -1451,7 +1454,8 @@ dari situs dan dari `android/`.
 - Hasil tes otomatis & keterbatasan (termasuk checklist uji manual):
   [`launcher/docs/HASIL-TES-DAN-KETERBATASAN.md`](launcher/docs/HASIL-TES-DAN-KETERBATASAN.md).
 - Verifikasi APK tanpa perangkat: `python3 launcher/tools/verify_apk.py <apk>`
-  (memastikan nol izin, kategori HOME, dan tanda tangan v1/v2/v3).
+  (memastikan hanya 6 izin fitur Spidometer mengambang yang ada, kategori HOME,
+  dan tanda tangan v1/v2/v3).
 - Workflow APK otomatis: `.github/workflows/android-launcher-apk.yml`.
 
 ## Halaman publik, harga, dan kepercayaan (2026-10-21)

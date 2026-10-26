@@ -2,18 +2,30 @@
 <!--
   AsProject Launcher — pengganti layar beranda Android.
 
-  Aplikasi ini TIDAK meminta satu pun izin: tidak ada INTERNET, lokasi, kontak,
-  mikrofon, maupun akses penyimpanan. Semua data (susunan dock, aplikasi
-  tersembunyi, pilihan tampilan) hanya tersimpan di perangkat.
+  Launcher ini TIDAK meminta izin jaringan, kontak, mikrofon, kamera, SMS,
+  maupun penyimpanan. Satu-satunya pengecualian adalah fitur OPSIONAL
+  "Spidometer mengambang" (nonaktif secara bawaan, lihat SpeedometerService):
+  untuk bisa menampilkan bubble kecepatan di atas aplikasi lain tanpa meredup
+  layar, Android mewajibkan izin Lokasi, "Gambar di atas aplikasi lain", dan
+  notifikasi layanan latar depan. Izin-izin ini baru diminta saat pengguna
+  menyalakan sakelarnya sendiri di Pengaturan → Spidometer mengambang.
 
   Atribut `package` dan <uses-sdk> sengaja tidak ditulis:
     • Gradle memakai namespace/applicationId/minSdk/targetSdk dari app/build.gradle;
-    • build tanpa Gradle menyuntikkan `package` lewat tools/prepare_manifest.py.
+    • build tanpa Gradle menyuntikkannya lewat android/buildkit/build-apk.sh.
 
   <queries> diperlukan sejak Android 11 (API 30) agar peluncur tetap bisa melihat
   aplikasi lain meski aturan keterlihatan paket berlaku.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Dipakai HANYA oleh fitur opsional "Spidometer mengambang". -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <queries>
         <intent>
@@ -76,5 +88,16 @@
             android:exported="false"
             android:label="@string/settings_title"
             android:theme="@style/Theme.AsProjectLauncher.Settings" />
+
+        <!--
+          Layanan latar depan opsional untuk bubble "Spidometer mengambang".
+          Hanya berjalan saat pengguna menyalakannya sendiri di Pengaturan
+          dan semua izin terkait (Lokasi + overlay) sudah diberikan.
+        -->
+        <service
+            android:name=".SpeedometerService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location" />
     </application>
 </manifest>

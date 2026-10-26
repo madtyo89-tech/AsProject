@@ -1,11 +1,16 @@
 package my.id.asproject.launcher;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -21,7 +26,15 @@ import java.util.Set;
 /** Pengaturan beranda: tampilan, jumlah kolom, dock, dan aplikasi tersembunyi. */
 public final class SettingsActivity extends Activity implements View.OnClickListener {
 
+    private static final int REQUEST_NOTIF = 501;
+    private static final int REQUEST_LOCATION = 502;
+    private static final int REQUEST_OVERLAY = 503;
+    private static final int STEP_NOTIF = 1;
+    private static final int STEP_LOCATION = 2;
+    private static final int STEP_OVERLAY = 3;
+
     private Prefs prefs;
+    private Switch speedometerSwitch;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -129,6 +142,24 @@ public final class SettingsActivity extends Activity implements View.OnClickList
             }
         });
 
+        RadioGroup speedUnitGroup = (RadioGroup) findViewById(R.id.speedUnitGroup);
+        speedUnitGroup.check(unitId(prefs.speedUnit()));
+        speedUnitGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                prefs.setSpeedUnit(unitStyleFor(checkedId));
+            }
+        });
+
+        speedometerSwitch = (Switch) findViewById(R.id.switchSpeedometer);
+        boolean speedometerOn = prefs.speedometerEnabled() && hasSpeedometerPermissions();
+        if (speedometerOn != prefs.speedometerEnabled()) {
+            // Izin dicabut dari luar aplikasi sejak terakhir dibuka — selaraskan.
+            prefs.setSpeedometerEnabled(speedometerOn);
+        }
+        speedometerSwitch.setChecked(speedometerOn);
+        speedometerSwitch.setOnCheckedChangeListener(speedometerToggleListener);
+
         Button resetDock = (Button) findViewById(R.id.resetDock);
         resetDock.setOnClickListener(this);
         Button pickHidden = (Button) findViewById(R.id.pickHidden);
@@ -197,6 +228,119 @@ public final class SettingsActivity extends Activity implements View.OnClickList
                 action.onChanged(checked);
             }
         });
+    }
+
+    // ------------------------------------------------- spidometer mengambang
+
+    private final CompoundButton.OnCheckedChangeListener speedometerToggleListener =
+            new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton button, boolean checked) {
+                    if (checked) {
+                        advanceSpeedometerFlow(STEP_NOTIF);
+                    } else {
+                        stopSpeedometer();
+                    }
+                }
+            };
+
+    /** Lanjutkan alur izin dari langkah tertentu; baru nyalakan layanan bila semuanya lengkap. */
+    private void advanceSpeedometerFlow(int fromStepInclusive) {
+        if (fromStepInclusive <= STEP_NOTIF
+                && Build.VERSION.SDK_INT >= 33
+                && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_NOTIF);
+            return;
+        }
+        if (fromStepInclusive <= STEP_LOCATION
+                && Build.VERSION.SDK_INT >= 23
+                && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+            toast(getString(R.string.speedometer_need_location));
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+            return;
+        }
+        if (fromStepInclusive <= STEP_OVERLAY
+                && Build.VERSION.SDK_INT >= 23
+                && !Settings.canDrawOverlays(this)) {
+            toast(getString(R.string.speedometer_need_overlay));
+            startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName())), REQUEST_OVERLAY);
+            return;
+        }
+        startSpeedometer();
+    }
+
+    private void startSpeedometer() {
+        prefs.setSpeedometerEnabled(true);
+        Intent serviceIntent = new Intent(this, SpeedometerService.class);
+        if (Build.VERSION.SDK_INT >= 26) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
+    }
+
+    private void stopSpeedometer() {
+        prefs.setSpeedometerEnabled(false);
+        stopService(new Intent(this, SpeedometerService.class));
+    }
+
+    /** Matikan sakelar tanpa memicu ulang alur izin (dipakai saat izin ditolak). */
+    private void revertSpeedometerSwitch() {
+        prefs.setSpeedometerEnabled(false);
+        speedometerSwitch.setOnCheckedChangeListener(null);
+        speedometerSwitch.setChecked(false);
+        speedometerSwitch.setOnCheckedChangeListener(speedometerToggleListener);
+    }
+
+    private boolean hasSpeedometerPermissions() {
+        boolean location = Build.VERSION.SDK_INT < 23
+                || checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED;
+        boolean overlay = Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(this);
+        return location && overlay;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_NOTIF) {
+            // Notifikasi cuma memengaruhi ikon status bar, bukan fungsi utama —
+            // lanjutkan ke langkah berikutnya apa pun jawaban pengguna.
+            advanceSpeedometerFlow(STEP_LOCATION);
+        } else if (requestCode == REQUEST_LOCATION) {
+            boolean granted = grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            if (granted) {
+                advanceSpeedometerFlow(STEP_OVERLAY);
+            } else {
+                toast(getString(R.string.speedometer_need_location));
+                revertSpeedometerSwitch();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_OVERLAY) {
+            if (Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(this)) {
+                startSpeedometer();
+            } else {
+                toast(getString(R.string.speedometer_need_overlay));
+                revertSpeedometerSwitch();
+            }
+        }
+    }
+
+    private int unitId(String unit) {
+        return "mph".equals(unit) ? R.id.unitMph : R.id.unitKmh;
+    }
+
+    private String unitStyleFor(int checkedId) {
+        return checkedId == R.id.unitMph ? "mph" : "kmh";
     }
 
     private int columnId(int columns) {
