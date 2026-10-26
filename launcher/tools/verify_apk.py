@@ -264,13 +264,11 @@ def verify_manifest(apk: Path) -> None:
           "provides-component:'launcher'" in badging)
 
     launchable = re.search(r"launchable-activity: name='([^']*)'", badging)
-    # SEMENTARA (mode diagnosis ANR): kategori HOME dipindah ke
-    # MinimalLauncherActivity (beranda super polos tanpa wallpaper/animasi/
-    # widget) supaya bisa diuji terpisah dari LauncherActivity yang lengkap.
-    # Kembalikan ke "{EXPECTED_PACKAGE}.LauncherActivity" begitu penyebab
-    # macetnya ketemu dan kategori HOME dikembalikan di AndroidManifest.xml.
-    expected_activity = f"{EXPECTED_PACKAGE}.MinimalLauncherActivity"
-    check("kegiatan utama MinimalLauncherActivity (mode diagnosis ANR, sementara)",
+    # LauncherActivity terbukti aman dipakai sebagai beranda default (lihat
+    # MinimalLauncherActivity + Prefs.DIAGNOSTIC_STAGE untuk proses
+    # isolasi ANR bertahap yang membuktikan ini).
+    expected_activity = f"{EXPECTED_PACKAGE}.LauncherActivity"
+    check("kegiatan utama LauncherActivity",
           bool(launchable) and launchable.group(1) == expected_activity,
           launchable.group(1) if launchable else "tidak terbaca")
 

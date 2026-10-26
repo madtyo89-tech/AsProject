@@ -15,7 +15,7 @@ tanpa pustaka pihak ketiga, dan tanpa satu pun izin**.
 ## APK siap pasang
 
 ```
-launcher/releases/asproject-launcher-1.0.4-debug.apk
+launcher/releases/asproject-launcher-1.0.5-debug.apk
 ```
 
 Salin ke ponsel → buka → izinkan "Pasang aplikasi tidak dikenal". APK ini
@@ -34,7 +34,7 @@ atau cukup tekan tombol Home lalu pilih "AsProject Launcher → Selalu".
 ```bash
 launcher/buildkit/build-apk.sh                 # butuh JDK 17+ dan Android SDK
 FETCH_TOOLS=1 launcher/buildkit/build-apk.sh   # tanpa SDK: unduh alat (hash dipatok) lalu build
-python3 launcher/tools/verify_apk.py launcher/out/asproject-launcher-1.0.4-debug.apk
+python3 launcher/tools/verify_apk.py launcher/out/asproject-launcher-1.0.5-debug.apk
 ```
 
 Android Studio: buka folder `launcher/` sebagai proyek Gradle.

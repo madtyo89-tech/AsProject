@@ -40,6 +40,23 @@ public final class Prefs {
     private static final String KEY_SPEED_POS_X = "speed_pos_x";
     private static final String KEY_SPEED_POS_Y = "speed_pos_y";
     private static final String KEY_SAFE_MODE_MIGRATED_V1 = "safe_mode_migrated_v1";
+    private static final String KEY_DIAGNOSTIC_STAGE_APPLIED = "diagnostic_stage_applied";
+
+    /**
+     * Tahap isolasi ANR saat ini (lihat {@link #applyDiagnosticStageOnce()}).
+     * NAIKKAN SATU ANGKA tiap kali satu fitur baru mau dites kembali
+     * dinyalakan, setelah build sebelumnya terbukti LANCAR di HP uji.
+     * Kalau build di suatu tahap ternyata MACET, fitur yang baru ditambah
+     * di tahap itulah biang keroknya -- berhenti di situ, jangan dinaikkan
+     * lagi sebelum itu diperbaiki/dirombak.
+     *
+     * 0 = (tidak dipakai lagi setelah diagnosis selesai)
+     * 1 = kerangka LauncherActivity TANPA fitur berat apa pun: wallpaper,
+     *     layar kunci, ikon neon, animasi HUD/liquid semua mati paksa.
+     *     Tujuannya: tes apakah kerangka dasarnya sendiri (findViewById,
+     *     AppDrawerView, GestureDetector, AppWidgetHost init, dll) aman.
+     */
+    private static final int DIAGNOSTIC_STAGE = 1;
 
     public static final int MIN_COLUMNS = 3;
     public static final int MAX_COLUMNS = 6;
@@ -53,6 +70,36 @@ public final class Prefs {
         this.appContext = context.getApplicationContext();
         this.prefs = appContext.getSharedPreferences(FILE, Context.MODE_PRIVATE);
         forceSafeModeOnceIfLowEnd();
+        applyDiagnosticStageOnce();
+    }
+
+    /**
+     * Isolasi ANR bertahap: kembali ke {@link LauncherActivity} (kerangka
+     * lengkap) sebagai beranda, tapi fitur beratnya dinyalakan SATU PER SATU
+     * lewat {@link #DIAGNOSTIC_STAGE} supaya ketahuan persis fitur mana yang
+     * bikin macet -- bukan cuma "macet lagi" tanpa tau sebabnya. Dipaksa
+     * SEKALI per kenaikan angka tahap (ditandai lewat
+     * {@code diagnostic_stage_applied}), supaya kalau pengguna sempat
+     * mengubah sakelar manual di Pengaturan selama tahap berjalan, itu
+     * tidak langsung ketiban force lagi di peluncuran berikutnya.
+     */
+    private void applyDiagnosticStageOnce() {
+        int applied = prefs.getInt(KEY_DIAGNOSTIC_STAGE_APPLIED, 0);
+        if (applied >= DIAGNOSTIC_STAGE) {
+            return;
+        }
+        SharedPreferences.Editor editor = prefs.edit();
+        if (DIAGNOSTIC_STAGE >= 1) {
+            // Tahap 1: cuma kerangka dasar LauncherActivity -- semua fitur
+            // berat dipaksa MATI (liquid motion & HUD sudah dipaksa mati
+            // lewat forceSafeModeOnceIfLowEnd() di atas; di sini tambahan
+            // wallpaper kustom, layar kunci, dan ikon neon).
+            editor.putBoolean(KEY_FIGURE_WALLPAPER, false);
+            editor.putBoolean(KEY_LOCK_SCREEN, false);
+            editor.putBoolean(KEY_NEON_ICONS, false);
+        }
+        editor.putInt(KEY_DIAGNOSTIC_STAGE_APPLIED, DIAGNOSTIC_STAGE);
+        editor.commit();
     }
 
     /**

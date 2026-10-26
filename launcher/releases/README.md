@@ -2,7 +2,7 @@
 
 | Berkas | Ukuran | Keterangan |
 |--------|--------|------------|
-| `asproject-launcher-1.0.4-debug.apk` | ±1,2 MB | APK uji, ditandatangani kunci **debug** Android |
+| `asproject-launcher-1.0.5-debug.apk` | ±1,2 MB | APK uji, ditandatangani kunci **debug** Android |
 | `SHA256SUMS.txt` | — | Sidik jari SHA-256 berkas di atas |
 
 ## Memasang
@@ -30,57 +30,58 @@ APK yang ditandatangani kunci yang sama. Untuk APK rilis, lihat
 SHA-256 APK saat ini:
 
 ```
-05ceb83a08363ba11b2bebd231a534ac388411706c75e685877c580ef96abea5
+4fd8a09984627829252fc821c89e63e862c9c450b365efe50a9046401b1fef7f
 ```
 
 ## Versi
 
-`versionCode 5` / `versionName 1.0.4` — dinaikkan tiap build uji ANR supaya
+`versionCode 6` / `versionName 1.0.5` — dinaikkan tiap build uji ANR supaya
 pemasangan ulang dikenali Android sebagai **pembaruan** (tidak perlu
 uninstall manual dulu), dan supaya versi yang terpasang bisa dicek lewat
 **Pengaturan → Aplikasi → AsProject Launcher → lihat versi**.
 
-## PENTING — build ini (1.0.4) adalah beranda SUPER POLOS, sementara
+## Isolasi ANR bertahap (build ini: tahap 1 dari rencana)
 
-Build `1.0.3` (paksa matikan animasi berat + detak jantung runtime) sudah
-dicoba di Vivo Y50 dan **masih macet persis sama**, dan ketiga mekanisme
-diagnostik yang sudah dipasang (`CrashLog`, checkpoint `StartupTrace`, detak
-jantung runtime) **tetap tidak pernah mencatat apa pun**. Karena tiga
-pendekatan instrumentasi yang berbeda semuanya nihil, dugaan berubah: boleh
-jadi penyebabnya BUKAN bug di kode fitur `LauncherActivity` (wallpaper
-liquid 3D, HUD, widget, dll), melainkan sesuatu yang lebih mendasar.
+Build `1.0.4` (beranda SUPER POLOS, `MinimalLauncherActivity`) sudah dicoba
+beberapa jam di Vivo Y50 **TANPA macet sama sekali**. Ini bukti kuat
+masalahnya ada di salah satu fitur berat `LauncherActivity` (wallpaper
+liquid, HUD, layar kunci, ikon neon, widget) — bukan di status "aplikasi
+beranda default" itu sendiri.
 
-**Build ini sengaja mengganti beranda yang tampil dengan versi
-SE-POLOS-POLOSNYA (`MinimalLauncherActivity`)**: cuma kisi aplikasi standar
-(ikon & label APA ADANYA dari sistem, tanpa ikon neon) + jam digital teks
-biasa. **Tidak ada** wallpaper kustom, animasi Canvas, layar kunci, widget
-sistem, atau spidometer sama sekali. `LauncherActivity` yang lengkap (semua
-fitur fancy) tetap ada di dalam APK tapi untuk sementara TIDAK didaftarkan
-sebagai "Aplikasi beranda" — supaya bisa diuji terpisah dari kompleksitas
-fitur-fiturnya.
+**Rencana sekarang: nyalakan fitur satu per satu**, bukan sekaligus seperti
+sebelum-sebelumnya, supaya kalau macet lagi ketahuan PERSIS fitur mana yang
+jadi biang kerok.
 
-**Tujuan tes ini:** kalau beranda SEPOLOS INI ternyata **masih macet** di
-HP yang sama, itu bukti kuat masalahnya bukan di kode fitur kita, melainkan
-sesuatu yang lain (misalnya perilaku ROM Vivo terhadap status "aplikasi
-beranda default" itu sendiri). Kalau beranda polos ini **lancar/tidak
-macet**, baru fitur-fitur fancy-nya dikembalikan satu per satu sampai
-ketemu biang keroknya.
+**Build ini (tahap 1):** HOME dikembalikan ke `LauncherActivity` (kerangka
+lengkap), TAPI lewat `Prefs.DIAGNOSTIC_STAGE` semua fitur berat masih
+dipaksa MATI: wallpaper kustom, layar kunci, ikon neon, animasi
+HUD/liquid. Yang beda dari `1.0.4` di tahap ini cuma kerangka dasarnya
+(`findViewById` yang lebih banyak, `AppDrawerView`, `GestureDetector`,
+inisialisasi `AppWidgetHost`/`AppWidgetManager`, dll) — fitur visualnya
+masih nonaktif semua. `MinimalLauncherActivity` masih ada di APK, bisa
+dibuka manual dari laci aplikasi kapan pun untuk pembanding, tapi bukan
+beranda default lagi.
+
+**Kalau build tahap 1 ini lancar** → tahap berikutnya nyalain wallpaper,
+lalu layar kunci, lalu animasi, lalu ikon neon, satu-satu dengan cara yang
+sama (naikkan `DIAGNOSTIC_STAGE` + versi). **Kalau build ini malah macet**
+→ bukan di fitur visualnya, melainkan di kerangka dasar `LauncherActivity`
+sendiri (kemungkinan `AppWidgetHost`/`AppWidgetManager`, yang dibuat selalu
+tanpa syarat di `onCreate()`).
 
 Mekanisme diagnostik (`CrashLog` + `StartupTrace` + detak jantung) tetap
-aktif di build ini — kalau ternyata tetap macet, tolong buka ulang
-aplikasinya dan foto apa pun yang muncul (atau kabarkan kalau tidak ada
-apa-apa lagi).
+aktif. Kalau macet, buka ulang aplikasinya dan foto apa pun yang muncul.
 
-## Riwayat perbaikan sebelumnya
+## Riwayat tahap sebelumnya
 
-- **1.0.3** — paksa nonaktifkan animasi berat (liquid motion & HUD) di
-  perangkat kelas bawah + detak jantung runtime 4 detik. Hasil tes: tetap
-  macet, tanpa dialog apa pun.
-- **1.0.2** — `StartupTrace`: checkpoint di `onCreate()`/`onResume()`.
-  Hasil tes: tetap macet, tanpa dialog apa pun.
-- **1.0.1** — `showPendingCrashIfAny()` dipindah ke paling awal
-  `onCreate()`, sebelum `setContentView()`. Hasil tes: tetap macet, dialog
-  crash tetap tidak pernah muncul.
+- **1.0.4** — beranda super polos (`MinimalLauncherActivity`), tanpa fitur
+  berat apa pun. Hasil tes: **lancar**, dipakai berjam-jam tanpa macet.
+- **1.0.3** — `LauncherActivity` lengkap + paksa nonaktifkan animasi berat
+  di perangkat kelas bawah + detak jantung runtime. Hasil tes: tetap macet.
+- **1.0.2** — `StartupTrace` checkpoint `onCreate()`/`onResume()`. Hasil
+  tes: tetap macet, tanpa dialog apa pun.
+- **1.0.1** — dialog `CrashLog` dipindah ke paling awal `onCreate()`. Hasil
+  tes: tetap macet, dialog tetap tidak pernah muncul.
 - Perbaikan-perbaikan lebih awal (CrashLog di akhir `onCreate`, nilai
   bawaan animasi perangkat kelas bawah, `AppWidgetHost` try/catch) juga
   sudah dicoba dan tidak mengatasi macetnya — lihat riwayat commit di

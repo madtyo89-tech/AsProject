@@ -26,7 +26,7 @@ diunduh dua kali. Bila JDK 17+ dan Android SDK sudah terpasang, cukup:
 Keluaran:
 
 ```
-launcher/out/asproject-launcher-1.0.4-debug.apk
+launcher/out/asproject-launcher-1.0.5-debug.apk
 ```
 
 Rangkaian alat yang dijalankan (sama persis dengan aplikasi Studio):
@@ -38,7 +38,7 @@ aapt2 compile → aapt2 link → kompilasi Java (javac/ecj) → d8 → apk_pack 
 Verifikasi APK tanpa perangkat:
 
 ```bash
-python3 launcher/tools/verify_apk.py launcher/out/asproject-launcher-1.0.4-debug.apk
+python3 launcher/tools/verify_apk.py launcher/out/asproject-launcher-1.0.5-debug.apk
 ```
 
 Contoh hasil: **72 lulus, 0 peringatan, 0 gagal** — termasuk "hanya 6 izin fitur
@@ -104,7 +104,7 @@ KEY_PASSWORD='…' \
 ./buildkit/build-apk.sh
 ```
 
-Keluaran: `out/asproject-launcher-1.0.4-release.apk`.
+Keluaran: `out/asproject-launcher-1.0.5-release.apk`.
 
 Untuk Gradle, isi lewat variabel lingkungan yang dibaca `app/build.gradle`:
 
