@@ -48,3 +48,23 @@ drop policy if exists "public upload music" on storage.objects;
 drop policy if exists "public read music" on storage.objects;
 create policy "public upload music" on storage.objects for insert to anon, authenticated with check (bucket_id='music');
 create policy "public read music" on storage.objects for select to anon, authenticated using (bucket_id='music');
+
+-- ============================================================
+-- BAGIAN 3 — Draft Studio privat lintas perangkat (email OTP)
+-- Jalankan setelah mengaktifkan Email provider di Supabase Auth.
+-- Hanya pemilik yang sedang login boleh membaca/menulis barisnya.
+-- ============================================================
+create table if not exists public.studio_cloud_drafts (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  draft jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+alter table public.studio_cloud_drafts enable row level security;
+revoke all on table public.studio_cloud_drafts from anon, public;
+grant select, insert, update on table public.studio_cloud_drafts to authenticated;
+
+drop policy if exists "owner manages own studio cloud draft" on public.studio_cloud_drafts;
+create policy "owner manages own studio cloud draft"
+  on public.studio_cloud_drafts for all to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);

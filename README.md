@@ -275,14 +275,26 @@ atasnya. Sekarang, khusus `body.foto-full`:
   jika Supabase menolak simpan, Studio menampilkan pesan penyebab dan langkah perbaikannya.
 - Layar selesai menyediakan salin link tamu, WhatsApp, lihat undangan, edit,
   serta akses menu master terpisah. Link master bersifat privat.
+- Editor menampilkan status **Tersimpan di perangkat ini** setelah draft berhasil ditulis
+  ke localStorage. Tombol **↶ Urungkan** menyimpan sampai 10 checkpoint di memori sesi,
+  menggabungkan perubahan berdekatan, dan memulihkan draft sebelumnya tanpa memublikasikan.
+  Riwayat undo sengaja tidak bertahan setelah halaman ditutup; snapshot draft utama tetap awet.
+- Navigasi editor pada HP menumpuk stepbar dan tab tanpa saling menutupi. Tombol Lanjut/Mundur
+  menempel di bawah dengan mempertimbangkan safe area; preview mini dinaikkan agar tidak
+  menutupi tombol navigasi tersebut.
+- **Draft Cloud lintas perangkat saat ini ditunda** di balik feature flag (`CLOUD_DRAFT_ENABLED=false`)
+  atas permintaan pengguna. Studio tidak meminta login email dan tidak mengirim/membaca draft cloud;
+  penyimpanan lokal tetap berjalan. Bagian 3 `supabase-schema.sql` disiapkan untuk aktivasi di kemudian hari,
+  tetapi tidak perlu dijalankan saat cloud dinonaktifkan.
 - Membuat undangan baru meminta konfirmasi sebelum mengganti draft aktif.
   Arsip/katalog tetap dipertahankan dan kunci master baru dibuat.
 
 Uji publish tanpa menulis ke database produksi: `node tools/test-publish-fallback.cjs`
 (dengan `jsdom`). Uji UI opsional: pasang `jsdom`, `playwright-core`, dan
 `@sparticuz/chromium` melalui npm dengan `--no-save --package-lock=false`. Jalankan
-`node tools/test-floating-preview.cjs`, `node tools/test-scroll-effects.cjs`,
-dan (setelah server lokal aktif di :8080) `node tools/test-mobile-browser.cjs`.
+`node tools/test-floating-preview.cjs`, `node tools/test-studio-undo.cjs`,
+`node tools/test-studio-cloud.cjs`, `node tools/test-studio-theme-compare.cjs`, `node tools/test-scroll-effects.cjs`, dan
+(setelah server lokal aktif di :8080) `node tools/test-mobile-browser.cjs`.
 Browser memerlukan library sistem Chromium; atur `LD_LIBRARY_PATH` bila memakai
 library bundled. Tes publish memakai fixture lokal, **bukan database produksi**.
 
@@ -978,7 +990,26 @@ Menambah/mengubah template publik:
 4. Jalankan `node tools/bangun-halaman-publik.cjs` untuk membuat katalog, kategori, dan
    halaman detail masing-masing template. Jalankan `python3 tools/bangun-sitemap.py`
    sesudahnya agar semua URL bersih masuk sitemap.
-5. Jalankan `python3 tools/cek-kesehatan.py` dan `node tools/test-public-pages.cjs`.
+5. Jalankan `python3 tools/cek-kesehatan.py`, `node tools/test-public-pages.cjs`,
+   `node tools/test-katalog-v2.cjs`, `node tools/test-studio-demo.cjs`, dan
+   `node tools/test-studio-theme-compare.cjs` untuk memeriksa halaman publik, katalog,
+   reset sandbox demo, serta perbandingan tema tanpa mengubah draft aktif.
+
+### Katalog publik V2
+
+`katalog/index.html` tetap merender seluruh 34 kartu statis untuk SEO dan fallback tanpa JavaScript.
+Skin `ap-catalog-page` di `assets/marketing.css` mengadaptasi referensi UI kaca iridesen: panel frosted glass,
+tombol glossy, filter kapsul, kartu berkilau, switch favorit, serta toast saat favorit berubah.
+Enhancement `assets/katalog-v2.js` menambahkan pencarian nama/deskripsi, filter empat kategori,
+urutan nama/harga, favorit tersimpan lokal di perangkat, dan tampilan kosong dengan reset.
+Favorit tidak dikirim ke server. Tombol **Coba Studio demo** membuka `/katalog/studio-demo.html`:
+pengunjung dapat mengubah contoh acara, detail, dan tema dengan renderer undangan di iframe sandbox.
+Isian hanya di memori halaman, tidak bisa disimpan/dibagikan/diterbitkan, serta kembali ke contoh
+awal saat refresh atau buka ulang. Halaman demo memakai `noindex,nofollow`; uji perilakunya dengan
+`node tools/test-studio-demo.cjs`. Penawaran publik yang disetujui adalah harga khusus pelanggan baru Rp49.000 per tema, dari harga
+normal Rp99.000, tanpa tanggal akhir yang ditetapkan. Sumber
+halaman tetap `tools/bangun-halaman-publik.cjs`; jalankan generator itu setelah perubahan template
+agar listing dan halaman detail tetap sinkron.
 
 `ink` mengikuti aksen tema sendiri (uji kontras `node tools/test-kontras-tema.cjs`),
 `ev` dipetakan ke kategori acara, dan demo tiap tema dapat dibuka melalui renderer

@@ -42,10 +42,21 @@ function assertPage(rel, canonical) {
   check(fs.existsSync(path.join(ROOT, 'harga/index.html')), 'pricing page exists');
   const catalog = assertPage('katalog/index.html', `${ORIGIN}/katalog/`);
   const pricing = assertPage('harga/index.html', `${ORIGIN}/harga/`);
-  check(catalog.includes(`>${PUBLIC.length} tema yang bisa dicoba<`), 'catalog reports the template count');
+  const studioDemo = assertPage('katalog/studio-demo.html', `${ORIGIN}/katalog/studio-demo.html`);
+  check(/<meta\s+name="robots"\s+content="noindex,nofollow"/i.test(studioDemo), 'Studio demo is excluded from search indexing');
+  check(catalog.includes('href="../katalog/studio-demo.html"') && studioDemo.includes('assets/studio-demo.css') && studioDemo.includes('assets/studio-demo.js'), 'catalog links to a styled, interactive Studio demo');
+  check(catalog.includes('ap-catalog-studio-bottom') && catalog.includes('class="ap-studio-logo-button"') && catalog.includes('aria-label="Buka Studio demo untuk mulai menyusun undangan"'), 'catalog has a clear bottom CTA whose button contains only the AsProject logo and remains accessible');
+  check(catalog.includes('ap-studio-cta'), 'top Studio demo CTA is visually emphasized');
+  check(catalog.includes('Harga khusus pelanggan baru') && catalog.includes('<del>Rp99.000</del>') && catalog.includes('Rp49.000 per tema') && catalog.includes('tanpa tanggal akhir'), 'catalog shows the approved Rp99.000 normal price crossed out and the Rp49.000 new-customer offer');
+  check(studioDemo.includes('sandbox="allow-scripts allow-same-origin"') && studioDemo.includes('preview=1&amp;sandbox=1'), 'invitation preview runs in a restricted iframe sandbox');
+  check(studioDemo.includes('tidak bisa disimpan, diterbitkan, atau dibagikan') && studioDemo.includes('Refresh atau buka ulang'), 'Studio demo explains the ephemeral, non-publishing session');
+  check(studioDemo.includes('type="reset"') && studioDemo.includes('data-demo-field='), 'Studio demo has editable event details and a reset action');
+  check(catalog.includes(`${PUBLIC.length} tema yang bisa dicoba`), 'catalog reports the template count');
   check(catalog.includes('portofolio klien') && catalog.includes('data contoh'), 'catalog labels demo material, not customer proof');
+  check(catalog.includes('assets/katalog-v2.js') && catalog.includes('data-catalog-controls'), 'catalog V2 enhancement is linked while controls are server-rendered');
+  check(catalog.includes('data-category-filter="aqiqah"') && catalog.includes('data-favorites-toggle') && catalog.includes('data-catalog-search'), 'catalog V2 has category, favorite and search controls');
   check(pricing.includes('Batas tamu / RSVP') && pricing.includes('Masa aktif link') && pricing.includes('Watermark'), 'pricing table contains requested columns');
-  check(pricing.includes('Rp49.000') && pricing.includes('Belum dicantumkan'), 'pricing is tied to catalog data and marks unknown terms');
+  check(pricing.includes('<del>Rp99.000</del>') && pricing.includes('Rp49.000') && pricing.includes('Belum dicantumkan') && pricing.includes('pelanggan baru') && pricing.includes('tanggal akhir'), 'pricing shows the approved crossed-out price, customer offer, no deadline, and unknown service terms');
   check(pricing.includes('Satuan harga tercatat') && pricing.includes('Per tema katalog') &&
     !pricing.includes('1 tema katalog / 1 undangan'), 'pricing states the source unit without inventing a purchase package');
   check(pricing.includes('apa arti revisi unlimited') || pricing.includes('revisi unlimited'), 'pricing explains revision scope without claiming unlimited');
@@ -53,7 +64,7 @@ function assertPage(rel, canonical) {
   for (const slug of EVENTS) {
     const rel = `undangan/${slug}/index.html`;
     const html = assertPage(rel, `${ORIGIN}/undangan/${slug}/`);
-    check(html.includes('Coba demo') && html.includes('FAQPage'), `${rel}: demo CTA and FAQ schema`);
+    check(html.includes('Coba demo') && html.includes('FAQPage') && html.includes('Penawaran pelanggan baru') && html.includes('<del>Rp 99.000</del>') && html.includes('tanpa tanggal akhir'), `${rel}: demo CTA, FAQ and consistent crossed-out promotional pricing`);
   }
   for (const t of PUBLIC) {
     const rel = `template/${t.id}/index.html`;
@@ -63,7 +74,7 @@ function assertPage(rel, canonical) {
     check(html.includes(`Product`) && html.includes('priceCurrency') && html.includes(String(t.harga || 49000)), `${rel}: Product schema and template price`);
     check(html.includes(`tpl=${t.id}`), `${rel}: preview points at the matching renderer template`);
     check(html.includes('Demo memakai data contoh') && html.includes('bukan hasil pelanggan'), `${rel}: preview is clearly labelled`);
-    check(html.includes('harga katalog per tema') && !html.includes('harga katalog per undangan'), `${rel}: price unit is per theme, not a made-up per-invitation package`);
+    check(html.includes('<del>Rp99.000</del>') && html.includes('harga khusus pelanggan baru per tema') && !html.includes('harga katalog per undangan') && html.includes('tanggal akhir'), `${rel}: approved normal and customer prices are shown per theme without a fake expiry`);
     check(html.includes('wa.me/6285196755675'), `${rel}: order CTA`);
   }
   const trustPages = {};
@@ -84,7 +95,8 @@ function assertPage(rel, canonical) {
   const marketingCss = read('assets/marketing.css');
   check(home.includes('assets/marketing.css') && home.includes('assets/marketing.js'), 'home conversion layer linked');
   check(home.includes('"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1"') && home.includes('"Biru Ceria":"undangan.html?demo=1&tpl=biru-ceria&buka=1"'), 'root Demo Live links use the current production renderer for catalog templates');
-  check(home.includes('Harga katalog tercatat Rp49.000') || home.includes('Rp49.000 per tema'), 'home SEO fallback has current catalog price');
+  check(home.includes('Rp99.000') && home.includes('Rp49.000 per tema') && home.includes('pelanggan baru'), 'home fallback shows the regular and new-customer prices');
+  check(marketing.includes('<del>Rp99.000</del>') && marketing.includes('Rp49.000') && marketing.includes('pelanggan baru'), 'homepage pricing card shows the crossed-out regular price and promotional price');
   check(!home.includes('500+') && !/revisi unlimited/i.test(home), 'home has no unverified counter or unlimited-revision claim');
   check(home.includes('kebijakan-privasi/') && home.includes('syarat-ketentuan/') && home.includes('kebijakan-pengembalian/') && home.includes('kontak/'), 'home links to trust pages');
   const featured = marketing.match(/var FEATURED = \[([\s\S]*?)\n  \];/);
@@ -95,6 +107,7 @@ function assertPage(rel, canonical) {
     check(fs.existsSync(path.join(ROOT, image)), `homepage preview image exists: ${image}`);
   }
   const renderer = read('undangan.html');
+  check(renderer.includes("const SANDBOX=Q.get('sandbox')==='1'") && renderer.includes("m.type==='ASPROJECT_DEMO_PREVIEW'") && renderer.includes("window.open=()=>null"), 'invitation renderer accepts sandbox preview updates and blocks outgoing windows');
   const templateCovers = renderer.match(/const _coverByTemplate=\{([\s\S]*?)\};/);
   const coverSource = templateCovers ? templateCovers[1] : '';
   check(templateCovers, 'live demo renderer maps template-specific sample covers');
