@@ -409,6 +409,29 @@ try/catch — kalau gagal, keduanya diset `null` dan semua pemakai
 (`restoreWidgets()`, `showWidgetPicker()`) diberi penjaga null supaya
 beranda tetap bisa dibuka tanpa fitur widget alih-alih crash.
 
+**Dikonfirmasi lebih lanjut: macetnya persis sama bahkan saat dibuka dari
+app drawer biasa** (belum dijadikan launcher default), dan **tidak ada
+dialog `CrashLog` yang terlihat sama sekali**. Audit ulang menemukan BUG DI
+ALAT DIAGNOSISNYA SENDIRI: `showPendingCrashIfAny()` dicek **setelah**
+`setContentView(R.layout.activity_launcher)` — padahal `setContentView()`
+adalah baris yang mengonstruksi SEMUA View kustom (wallpaper, layar kunci,
+jam, dll) lewat inflasi layout. Kalau crash-nya ada DI DALAM
+`setContentView()` itu sendiri dan terjadi berulang di titik yang sama
+persis setiap kali (deterministik), maka `showPendingCrashIfAny()` tidak
+akan PERNAH tereksekusi pada percobaan manapun — bukan karena pencatatnya
+gagal menyimpan jejak (bagian itu tetap jalan lewat
+`Thread.setDefaultUncaughtExceptionHandler` yang global), tapi karena
+baris yang MENAMPILKANNYA selalu gagal dilewati duluan.
+
+**Perbaikan:** `showPendingCrashIfAny()` dipindah ke **paling awal
+`onCreate()`, sebelum `setContentView()`** (`AlertDialog` punya Window
+sendiri, tidak perlu menunggu `setContentView()` selesai). Build ini murni
+build diagnosis: kalau dialognya akhirnya muncul, itu akan jadi bukti nyata
+pertama. Kalau tetap tidak muncul apa pun dan macetnya sama persis, itu
+petunjuk kuat bahwa ini benar-benar **hang murni (ANR tanpa exception)**,
+bukan crash — dan artinya semua perbaikan try/catch sejauh ini (widget host,
+dll.) bukan penyebabnya, perlu diaudit arah lain sama sekali.
+
 ## 2. Status uji di perangkat
 
 Sebagian besar APK ini masih dibangun & diverifikasi lewat pemeriksaan

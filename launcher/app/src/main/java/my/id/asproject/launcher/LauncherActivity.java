@@ -131,11 +131,14 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        setContentView(R.layout.activity_launcher);
-        // Ditaruh sedini mungkin: kalau build sebelumnya crash berulang terus
-        // (loop, tak pernah sampai akhir onCreate), dialognya tetap sempat
-        // muncul duluan sebelum kemungkinan crash yang sama terulang lagi.
+        // PALING AWAL, SEBELUM setContentView(): kalau crash-nya ada di
+        // inflasi layout/konstruktor View kustom itu sendiri (jadi terjadi
+        // berulang di titik yang sama persis setiap kali), dialog dari
+        // percobaan sebelumnya tetap harus sempat tampil duluan sebelum
+        // baris yang sama kembali gagal. Dialog bikin Window-nya sendiri,
+        // jadi tidak perlu menunggu setContentView() selesai.
         showPendingCrashIfAny();
+        setContentView(R.layout.activity_launcher);
 
         prefs = new Prefs(this);
         Accent.configure(prefs.accentStyle());
