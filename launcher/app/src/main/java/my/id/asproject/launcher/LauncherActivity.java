@@ -29,7 +29,9 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,6 +39,8 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -108,6 +112,19 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     private AppGridAdapter drawerAdapter;
     private GestureDetector swipeDetector;
 
+    // ----------------------------------------------------------------- widget
+
+    /** ID host tetap untuk AsProject Launcher — tidak boleh bentrok dengan launcher lain. */
+    private static final int WIDGET_HOST_ID = 0x41535052; // "ASPR"
+    private static final int REQUEST_BIND_WIDGET = 702;
+    private static final int REQUEST_CONFIGURE_WIDGET = 703;
+
+    private android.appwidget.AppWidgetManager widgetManager;
+    private android.appwidget.AppWidgetHost widgetHost;
+    private HorizontalScrollView widgetScroll;
+    private LinearLayout widgetArea;
+    private int pendingConfigureWidgetId = -1;
+
     // --------------------------------------------------------------- siklus hidup
 
     @Override
@@ -118,6 +135,10 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         prefs = new Prefs(this);
         repository = new AppRepository(this);
         icons = new IconLoader(this, prefs, getResources().getDimensionPixelSize(R.dimen.app_icon_size));
+        widgetManager = android.appwidget.AppWidgetManager.getInstance(this);
+        widgetHost = new android.appwidget.AppWidgetHost(this, WIDGET_HOST_ID);
+        widgetScroll = (HorizontalScrollView) findViewById(R.id.widgetScroll);
+        widgetArea = (LinearLayout) findViewById(R.id.widgetArea);
         adapter = new AppGridAdapter(this, icons, prefs.showLabels());
 
         homeWallpaper = (HomeWallpaperView) findViewById(R.id.homeWallpaper);
@@ -262,6 +283,8 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                 return true;
             }
         });
+
+        restoreWidgets();
     }
 
     @Override
@@ -271,6 +294,9 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         adapter.setShowLabels(prefs.showLabels());
         grid.setNumColumns(prefs.columns());
         showDate();
+        if (widgetHost != null) {
+            widgetHost.startListening();
+        }
         clockHandler.removeCallbacks(clockTick);
         clockHandler.postDelayed(clockTick, CLOCK_REFRESH_MS);
         registerPackageReceiver();
@@ -298,6 +324,32 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         super.onPause();
         clockHandler.removeCallbacks(clockTick);
         unregisterPackageReceiver();
+        if (widgetHost != null) {
+            widgetHost.stopListening();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_BIND_WIDGET) {
+            int appWidgetId = data == null ? -1
+                    : data.getIntExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+            if (resultCode == RESULT_OK && appWidgetId != -1) {
+                afterWidgetBound(appWidgetId, null);
+            } else if (appWidgetId != -1) {
+                widgetHost.deleteAppWidgetId(appWidgetId);
+            }
+        } else if (requestCode == REQUEST_CONFIGURE_WIDGET) {
+            if (pendingConfigureWidgetId != -1) {
+                if (resultCode == RESULT_OK) {
+                    addWidgetView(pendingConfigureWidgetId);
+                } else {
+                    widgetHost.deleteAppWidgetId(pendingConfigureWidgetId);
+                }
+                pendingConfigureWidgetId = -1;
+            }
+        }
     }
 
     @Override
@@ -845,6 +897,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         String[] actions = {
                 getString(R.string.action_lock_now),
                 getString(R.string.action_wallpaper),
+                getString(R.string.action_add_widget),
                 getString(R.string.action_settings),
                 getString(R.string.action_about)
         };
@@ -858,6 +911,8 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                         } else if (which == 1) {
                             chooseWallpaper();
                         } else if (which == 2) {
+                            showWidgetPicker();
+                        } else if (which == 3) {
                             openSettings();
                         } else {
                             showAbout();
@@ -865,6 +920,198 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                     }
                 })
                 .show();
+    }
+
+    // ---------------------------------------------------------------- widget
+
+    /**
+     * Daftar widget sistem yang terpasang (dari seluruh aplikasi), diurutkan
+     * menurut label. Dipilih lewat {@link AlertDialog} buatan sendiri karena
+     * {@code ACTION_APPWIDGET_PICK} tidak tersedia konsisten di semua ROM.
+     */
+    private void showWidgetPicker() {
+        final List<android.appwidget.AppWidgetProviderInfo> providers =
+                widgetManager.getInstalledProviders();
+        if (providers.isEmpty()) {
+            toast(getString(R.string.no_widgets));
+            return;
+        }
+        Collections.sort(providers, new Comparator<android.appwidget.AppWidgetProviderInfo>() {
+            @Override
+            public int compare(android.appwidget.AppWidgetProviderInfo left,
+                               android.appwidget.AppWidgetProviderInfo right) {
+                return widgetLabel(left).compareToIgnoreCase(widgetLabel(right));
+            }
+        });
+        String[] labels = new String[providers.size()];
+        for (int i = 0; i < providers.size(); i++) {
+            labels[i] = widgetLabel(providers.get(i));
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.action_add_widget)
+                .setItems(labels, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        bindWidget(providers.get(which));
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private String widgetLabel(android.appwidget.AppWidgetProviderInfo info) {
+        CharSequence label = info.loadLabel(getPackageManager());
+        return label == null ? info.provider.getPackageName() : label.toString();
+    }
+
+    /**
+     * Alokasikan ID lewat {@link android.appwidget.AppWidgetHost}, lalu coba
+     * pasang langsung ({@code bindAppWidgetIdIfAllowed} — berhasil tanpa izin
+     * apa pun selama launcher ini aktif sebagai Aplikasi beranda bawaan).
+     * Bila ditolak (mis. belum jadi launcher bawaan), tampilkan dialog
+     * konfirmasi sistem ({@code ACTION_APPWIDGET_BIND}) — tetap tanpa
+     * deklarasi izin di manifest.
+     */
+    private void bindWidget(android.appwidget.AppWidgetProviderInfo info) {
+        int appWidgetId = widgetHost.allocateAppWidgetId();
+        boolean allowed;
+        try {
+            allowed = widgetManager.bindAppWidgetIdIfAllowed(appWidgetId, info.provider);
+        } catch (RuntimeException error) {
+            allowed = false;
+        }
+        if (allowed) {
+            afterWidgetBound(appWidgetId, info);
+        } else {
+            Intent intent = new Intent(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_BIND);
+            intent.putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            intent.putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, info.provider);
+            try {
+                startActivityForResult(intent, REQUEST_BIND_WIDGET);
+            } catch (ActivityNotFoundException error) {
+                widgetHost.deleteAppWidgetId(appWidgetId);
+                toast(getString(R.string.no_widgets));
+            }
+        }
+    }
+
+    /** Widget terpasang: minta konfigurasi (bila ada), lalu tempel ke beranda. */
+    private void afterWidgetBound(int appWidgetId, android.appwidget.AppWidgetProviderInfo info) {
+        if (info == null) {
+            info = widgetManager.getAppWidgetInfo(appWidgetId);
+        }
+        if (info != null && info.configure != null) {
+            pendingConfigureWidgetId = appWidgetId;
+            Intent configure = new Intent(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
+            configure.setComponent(info.configure);
+            configure.putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            try {
+                startActivityForResult(configure, REQUEST_CONFIGURE_WIDGET);
+                return;
+            } catch (ActivityNotFoundException error) {
+                // lanjut tempel tanpa konfigurasi
+            }
+        }
+        addWidgetView(appWidgetId);
+    }
+
+    /** Buat {@link android.appwidget.AppWidgetHostView}, tempel di kisi widget, dan simpan ID-nya. */
+    private void addWidgetView(int appWidgetId) {
+        android.appwidget.AppWidgetProviderInfo info = widgetManager.getAppWidgetInfo(appWidgetId);
+        if (info == null) {
+            widgetHost.deleteAppWidgetId(appWidgetId);
+            return;
+        }
+        prefs.addWidgetId(appWidgetId);
+        inflateWidget(appWidgetId, info);
+        widgetScroll.setVisibility(View.VISIBLE);
+        widgetScroll.post(new Runnable() {
+            @Override
+            public void run() {
+                widgetScroll.fullScroll(View.FOCUS_RIGHT);
+            }
+        });
+    }
+
+    private void inflateWidget(final int appWidgetId, android.appwidget.AppWidgetProviderInfo info) {
+        android.appwidget.AppWidgetHostView hostView =
+                widgetHost.createView(this, appWidgetId, info);
+        hostView.setAppWidget(appWidgetId, info);
+
+        int minWidth = dp(Math.max(140, info.minWidth / (int) getResources().getDisplayMetrics().density));
+        int minHeight = dp(Math.max(90, info.minHeight / (int) getResources().getDisplayMetrics().density));
+        FrameLayout frame = new FrameLayout(this);
+        frame.setBackgroundResource(R.drawable.bg_widget_frame);
+        frame.setPadding(dp(6), dp(6), dp(6), dp(6));
+        LinearLayout.LayoutParams frameParams =
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+        frameParams.setMarginEnd(dp(10));
+        frame.setLayoutParams(frameParams);
+
+        FrameLayout.LayoutParams hostParams =
+                new FrameLayout.LayoutParams(Math.max(minWidth, dp(160)), Math.max(minHeight, dp(90)));
+        hostView.setLayoutParams(hostParams);
+        hostView.setTag(appWidgetId);
+        frame.addView(hostView);
+        frame.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                confirmRemoveWidget(appWidgetId);
+                return true;
+            }
+        });
+        widgetArea.addView(frame);
+    }
+
+    private void confirmRemoveWidget(final int appWidgetId) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.remove_widget)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeWidget(appWidgetId);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void removeWidget(int appWidgetId) {
+        prefs.removeWidgetId(appWidgetId);
+        widgetHost.deleteAppWidgetId(appWidgetId);
+        for (int i = 0; i < widgetArea.getChildCount(); i++) {
+            View child = widgetArea.getChildAt(i);
+            if (child instanceof FrameLayout) {
+                FrameLayout frame = (FrameLayout) child;
+                if (frame.getChildCount() > 0
+                        && Integer.valueOf(appWidgetId).equals(frame.getChildAt(0).getTag())) {
+                    widgetArea.removeViewAt(i);
+                    break;
+                }
+            }
+        }
+        widgetScroll.setVisibility(widgetArea.getChildCount() == 0 ? View.GONE : View.VISIBLE);
+    }
+
+    /** Pulihkan widget yang sudah ditempel dari sesi sebelumnya. */
+    private void restoreWidgets() {
+        widgetArea.removeAllViews();
+        List<Integer> ids = prefs.widgetIds();
+        boolean any = false;
+        for (int i = 0; i < ids.size(); i++) {
+            int id = ids.get(i);
+            android.appwidget.AppWidgetProviderInfo info = widgetManager.getAppWidgetInfo(id);
+            if (info == null) {
+                // Widget sudah dicopot sistemnya / provider hilang: buang catatannya.
+                prefs.removeWidgetId(id);
+                widgetHost.deleteAppWidgetId(id);
+                continue;
+            }
+            inflateWidget(id, info);
+            any = true;
+        }
+        widgetScroll.setVisibility(any ? View.VISIBLE : View.GONE);
     }
 
     private void chooseWallpaper() {

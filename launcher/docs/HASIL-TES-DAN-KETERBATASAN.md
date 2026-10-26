@@ -6,7 +6,7 @@ di mana risikonya.
 ## 1. Sudah diverifikasi otomatis
 
 `python3 launcher/tools/verify_apk.py launcher/releases/asproject-launcher-1.0.0-debug.apk`
-→ **63 lulus, 0 peringatan, 0 gagal**.
+→ **67 lulus, 0 peringatan, 0 gagal**.
 
 | Kelompok | Yang diperiksa |
 |----------|----------------|
@@ -246,6 +246,43 @@ pilihan — squircle (bawaan), lingkaran, kotak bersudut tegas, dan segi delapan
 — disimpan per aplikasi lewat `Prefs.iconStyle(key)`. Semua lapisan ikon (kaca,
 sapuan, rim light, jejak sirkuit, glow neon) memakai `Path` yang sama, jadi
 bentuknya konsisten di setiap lapis, bukan cuma pada clip terluar.
+
+### Widget di beranda (`AppWidgetHost`, tanpa izin apa pun)
+
+Beranda bisa menampung widget sistem sungguhan (jam, cuaca, kalender, musik,
+dll — apa pun yang disediakan aplikasi lain), ditempel sebagai kartu kaca cair
+(`bg_widget_frame`) yang digeser mendatar di atas kolom pencarian.
+
+Alurnya sengaja dipilih supaya **tidak perlu mendeklarasikan izin apa pun** di
+manifest (konsisten dengan klaim "nol izin" launcher ini):
+
+1. `AppWidgetHost` dengan ID tetap (`WIDGET_HOST_ID`) dibuat di `onCreate`,
+   `startListening()`/`stopListening()` mengikuti `onResume`/`onPause`.
+2. Daftar widget terpasang diambil dari `AppWidgetManager.getInstalledProviders()`
+   lalu ditawarkan lewat dialog buatan sendiri (bukan `ACTION_APPWIDGET_PICK`,
+   yang tidak tersedia konsisten di semua ROM).
+3. ID widget dialokasikan via `host.allocateAppWidgetId()`, lalu dicoba pasang
+   langsung dengan `AppWidgetManager.bindAppWidgetIdIfAllowed()` — ini berhasil
+   **tanpa izin BIND_APPWIDGET** selama AsProject Launcher sedang aktif sebagai
+   Aplikasi beranda bawaan (sistem mempercayai launcher default untuk urusan
+   widget).
+4. Bila ditolak (mis. launcher belum dijadikan bawaan), sebagai jalan keluar
+   dipakai `Intent(AppWidgetManager.ACTION_APPWIDGET_BIND)` lewat
+   `startActivityForResult` — sistem sendiri yang menampilkan dialog
+   konfirmasi; **masih tanpa deklarasi izin apa pun**.
+5. Widget yang minta layar konfigurasi (`info.configure != null`, mis. widget
+   cuaca yang perlu memilih kota) diarahkan ke situ dulu lewat
+   `ACTION_APPWIDGET_CONFIGURE` sebelum ditempel.
+6. ID widget yang sedang ditempel disimpan di `Prefs.widgetIds()` (daftar
+   angka dipisah koma) dan dipulihkan lagi saat beranda dibuat ulang
+   (`restoreWidgets()`); widget yang providernya sudah hilang (aplikasinya
+   dicopot) otomatis dibuang dari daftar.
+
+Tekan lama kartu widget untuk melepasnya dari beranda (`confirmRemoveWidget`).
+
+**Keterbatasan:** ukuran widget tidak bisa diseret untuk diperbesar/perkecil
+(host hanya memakai ukuran minimum bawaan widget); beranda memuat widget
+berjajar mendatar, bukan kisi bebas seperti launcher penuh fitur.
 
 ### Font tema (`Typefaces`)
 

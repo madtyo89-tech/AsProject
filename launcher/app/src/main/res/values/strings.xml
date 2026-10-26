@@ -28,6 +28,9 @@
     <string name="icon_style_circle">Lingkaran</string>
     <string name="icon_style_square">Kotak tegas</string>
     <string name="icon_style_octagon">Segi delapan</string>
+    <string name="action_add_widget">Tambah widget…</string>
+    <string name="no_widgets">Tidak ada widget yang bisa dipasang</string>
+    <string name="remove_widget">Lepas widget ini dari beranda?</string>
 
     <string name="dock_added">%1$s ditambahkan ke dock</string>
     <string name="dock_removed">%1$s dikeluarkan dari dock</string>

@@ -31,6 +31,7 @@ public final class Prefs {
     private static final String KEY_LIQUID_MOTION = "liquid_motion";
     private static final String KEY_FOLDERS = "folders";
     private static final String KEY_ICON_STYLE = "icon_style_";
+    private static final String KEY_WIDGET_IDS = "widget_ids";
 
     public static final int MIN_COLUMNS = 3;
     public static final int MAX_COLUMNS = 6;
@@ -197,6 +198,53 @@ public final class Prefs {
         } else {
             prefs.edit().putString(KEY_ICON_STYLE + key, style).apply();
         }
+    }
+
+    // ----------------------------------------------------------------- widget
+
+    /** ID widget sistem yang sedang ditempel di beranda, berurutan sesuai tampilan. */
+    public List<Integer> widgetIds() {
+        List<Integer> ids = new ArrayList<Integer>();
+        String raw = prefs.getString(KEY_WIDGET_IDS, "");
+        if (raw == null || raw.length() == 0) {
+            return ids;
+        }
+        for (String part : raw.split(",")) {
+            try {
+                if (part.trim().length() > 0) {
+                    ids.add(Integer.parseInt(part.trim()));
+                }
+            } catch (NumberFormatException ignored) {
+                // abaikan entri rusak
+            }
+        }
+        return ids;
+    }
+
+    public void addWidgetId(int id) {
+        List<Integer> ids = widgetIds();
+        if (!ids.contains(id)) {
+            ids.add(id);
+            saveWidgetIds(ids);
+        }
+    }
+
+    public void removeWidgetId(int id) {
+        List<Integer> ids = widgetIds();
+        if (ids.remove(Integer.valueOf(id))) {
+            saveWidgetIds(ids);
+        }
+    }
+
+    private void saveWidgetIds(List<Integer> ids) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < ids.size(); i++) {
+            if (i > 0) {
+                builder.append(',');
+            }
+            builder.append(ids.get(i));
+        }
+        prefs.edit().putString(KEY_WIDGET_IDS, builder.toString()).apply();
     }
 
     // ------------------------------------------------------------------ dock

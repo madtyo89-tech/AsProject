@@ -54,6 +54,15 @@ REQUIRED_CLASSES = [
     "Lmy/id/asproject/launcher/Prefs;",
     "Lmy/id/asproject/launcher/HomeModel;",
 ]
+
+# Potongan kode yang membuktikan widget sistem ditempel TANPA deklarasi izin
+# (bindAppWidgetIdIfAllowed + alur konfirmasi ACTION_APPWIDGET_BIND).
+WIDGET_SIGNATURES = [
+    b"android/appwidget/AppWidgetHost",
+    b"android/appwidget/AppWidgetManager",
+    b"bindAppWidgetIdIfAllowed",
+    b"android.appwidget.action.APPWIDGET_BIND",
+]
 ICON_DENSITIES = ["mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"]
 
 # Izin yang launcher ini sengaja TIDAK minta. Daftar ini dipakai untuk memastikan
@@ -198,6 +207,8 @@ def verify_classes(apk: Path, dex_names: list[str]) -> None:
           all(name.encode() in blob for name in (
               "ic_phone", "ic_message", "ic_camera", "ic_settings",
               "ic_music", "ic_chrome", "ic_whatsapp", "ic_instagram")))
+    for value in WIDGET_SIGNATURES:
+        check(f"widget sistem: {value.decode()}", value in blob)
 
 
 def verify_manifest(apk: Path) -> None:
