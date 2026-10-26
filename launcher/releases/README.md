@@ -2,7 +2,7 @@
 
 | Berkas | Ukuran | Keterangan |
 |--------|--------|------------|
-| `asproject-launcher-1.0.3-debug.apk` | ±1,2 MB | APK uji, ditandatangani kunci **debug** Android |
+| `asproject-launcher-1.0.4-debug.apk` | ±1,2 MB | APK uji, ditandatangani kunci **debug** Android |
 | `SHA256SUMS.txt` | — | Sidik jari SHA-256 berkas di atas |
 
 ## Memasang
@@ -30,62 +30,57 @@ APK yang ditandatangani kunci yang sama. Untuk APK rilis, lihat
 SHA-256 APK saat ini:
 
 ```
-a21c08dd6baaca4130fa03b64e7eb9d93ced4490d8cf8a931230399aa3fe056c
+05ceb83a08363ba11b2bebd231a534ac388411706c75e685877c580ef96abea5
 ```
 
 ## Versi
 
-`versionCode 4` / `versionName 1.0.3` — dinaikkan tiap build uji ANR supaya
+`versionCode 5` / `versionName 1.0.4` — dinaikkan tiap build uji ANR supaya
 pemasangan ulang dikenali Android sebagai **pembaruan** (tidak perlu
 uninstall manual dulu), dan supaya versi yang terpasang bisa dicek lewat
 **Pengaturan → Aplikasi → AsProject Launcher → lihat versi**.
 
-## Build ini (1.0.3): paksa nonaktifkan animasi berat + detak jantung runtime
+## PENTING — build ini (1.0.4) adalah beranda SUPER POLOS, sementara
 
-Build `1.0.2` (pelacak checkpoint `StartupTrace` di `onCreate()`/`onResume()`)
-sudah dicoba di Vivo Y50 dan **tetap macet — kali ini TANPA dialog apa pun
-yang muncul sama sekali**, bahkan dialog diagnostik checkpoint yang baru.
-Itu artinya macetnya terjadi **SESUDAH** `onResume()` selesai dengan
-selamat (checkpoint-nya sudah keburu terhapus otomatis) — jadi bukan hang
-saat proses mulai, melainkan hang di tengah pemakaian normal, kemungkinan
-besar gara-gara **animasi berat yang jalan terus-menerus di thread utama**
-(wallpaper liquid 3D, HUD layar kunci).
+Build `1.0.3` (paksa matikan animasi berat + detak jantung runtime) sudah
+dicoba di Vivo Y50 dan **masih macet persis sama**, dan ketiga mekanisme
+diagnostik yang sudah dipasang (`CrashLog`, checkpoint `StartupTrace`, detak
+jantung runtime) **tetap tidak pernah mencatat apa pun**. Karena tiga
+pendekatan instrumentasi yang berbeda semuanya nihil, dugaan berubah: boleh
+jadi penyebabnya BUKAN bug di kode fitur `LauncherActivity` (wallpaper
+liquid 3D, HUD, widget, dll), melainkan sesuatu yang lebih mendasar.
 
-Ditemukan juga kemungkinan bug lain yang menjelaskan kenapa perbaikan
-"nonaktifkan animasi berat secara bawaan di perangkat kelas bawah"
-(build-build sebelumnya) tidak pernah benar-benar berlaku: APK ini selalu
-dipasang sebagai **pembaruan** (bukan uninstall bersih), jadi preferensi
-tersimpan dari pemasangan PERTAMA (sebelum pengaman itu ada) ikut terbawa
-terus — nilai "bawaan" yang baru tidak pernah sempat dipakai karena
-key-nya sudah keburu ada isinya.
+**Build ini sengaja mengganti beranda yang tampil dengan versi
+SE-POLOS-POLOSNYA (`MinimalLauncherActivity`)**: cuma kisi aplikasi standar
+(ikon & label APA ADANYA dari sistem, tanpa ikon neon) + jam digital teks
+biasa. **Tidak ada** wallpaper kustom, animasi Canvas, layar kunci, widget
+sistem, atau spidometer sama sekali. `LauncherActivity` yang lengkap (semua
+fitur fancy) tetap ada di dalam APK tapi untuk sementara TIDAK didaftarkan
+sebagai "Aplikasi beranda" — supaya bisa diuji terpisah dari kompleksitas
+fitur-fiturnya.
 
-**Dua perubahan di build ini:**
-1. `Prefs`: migrasi sekali-jalan yang MEMAKSA liquid motion & animasi HUD
-   mati di perangkat kelas bawah, apa pun nilai yang sudah tersimpan
-   sebelumnya (tidak lagi sekadar "nilai bawaan" yang bisa kalah oleh data
-   lama). Tetap bisa dinyalakan lagi manual lewat Pengaturan kapan saja.
-2. `StartupTrace` sekarang punya "detak jantung" yang menimpa checkpoint
-   yang sama setiap 4 detik SELAMA aplikasi di layar depan (bukan cuma
-   saat `onCreate()`/`onResume()`). Kalau macetnya memang terjadi di
-   tengah animasi/pemakaian normal, checkpoint terakhir yang tertinggal
-   seharusnya menunjukkan itu di peluncuran berikutnya.
+**Tujuan tes ini:** kalau beranda SEPOLOS INI ternyata **masih macet** di
+HP yang sama, itu bukti kuat masalahnya bukan di kode fitur kita, melainkan
+sesuatu yang lain (misalnya perilaku ROM Vivo terhadap status "aplikasi
+beranda default" itu sendiri). Kalau beranda polos ini **lancar/tidak
+macet**, baru fitur-fitur fancy-nya dikembalikan satu per satu sampai
+ketemu biang keroknya.
 
-Tolong pasang build ini, pakai seperti biasa, dan kalau macet lagi **buka
-ulang aplikasinya (atau restart HP, lalu buka lagi)** — foto layar apa pun
-yang muncul (dialog diagnostik atau tidak sama sekali) dan kabarkan juga
-kalau animasinya terasa sudah berhenti/diam (tanda migrasi animasi di atas
-berhasil jalan).
+Mekanisme diagnostik (`CrashLog` + `StartupTrace` + detak jantung) tetap
+aktif di build ini — kalau ternyata tetap macet, tolong buka ulang
+aplikasinya dan foto apa pun yang muncul (atau kabarkan kalau tidak ada
+apa-apa lagi).
 
 ## Riwayat perbaikan sebelumnya
 
-- **1.0.2** — `StartupTrace`: checkpoint di `onCreate()`/`onResume()`,
-  dihapus begitu proses mulai selesai. Hasil tes: tetap macet, **tanpa
-  dialog apa pun** → terbukti macetnya terjadi sesudah proses mulai
-  selesai, bukan selama proses mulai (lihat bagian di atas).
+- **1.0.3** — paksa nonaktifkan animasi berat (liquid motion & HUD) di
+  perangkat kelas bawah + detak jantung runtime 4 detik. Hasil tes: tetap
+  macet, tanpa dialog apa pun.
+- **1.0.2** — `StartupTrace`: checkpoint di `onCreate()`/`onResume()`.
+  Hasil tes: tetap macet, tanpa dialog apa pun.
 - **1.0.1** — `showPendingCrashIfAny()` dipindah ke paling awal
   `onCreate()`, sebelum `setContentView()`. Hasil tes: tetap macet, dialog
-  crash tetap tidak pernah muncul → mengonfirmasi ini bukan crash biasa
-  (exception), melainkan dugaan ANR murni (hang).
+  crash tetap tidak pernah muncul.
 - Perbaikan-perbaikan lebih awal (CrashLog di akhir `onCreate`, nilai
   bawaan animasi perangkat kelas bawah, `AppWidgetHost` try/catch) juga
   sudah dicoba dan tidak mengatasi macetnya — lihat riwayat commit di

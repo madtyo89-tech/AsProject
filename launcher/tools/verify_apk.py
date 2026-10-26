@@ -58,6 +58,8 @@ REQUIRED_CLASSES = [
     "Lmy/id/asproject/launcher/Accent;",
     "Lmy/id/asproject/launcher/SpeedometerService;",
     "Lmy/id/asproject/launcher/SpeedGaugeView;",
+    "Lmy/id/asproject/launcher/StartupTrace;",
+    "Lmy/id/asproject/launcher/MinimalLauncherActivity;",
 ]
 
 # Potongan kode yang membuktikan widget sistem ditempel TANPA deklarasi izin
@@ -262,8 +264,13 @@ def verify_manifest(apk: Path) -> None:
           "provides-component:'launcher'" in badging)
 
     launchable = re.search(r"launchable-activity: name='([^']*)'", badging)
-    expected_activity = f"{EXPECTED_PACKAGE}.LauncherActivity"
-    check("kegiatan utama LauncherActivity",
+    # SEMENTARA (mode diagnosis ANR): kategori HOME dipindah ke
+    # MinimalLauncherActivity (beranda super polos tanpa wallpaper/animasi/
+    # widget) supaya bisa diuji terpisah dari LauncherActivity yang lengkap.
+    # Kembalikan ke "{EXPECTED_PACKAGE}.LauncherActivity" begitu penyebab
+    # macetnya ketemu dan kategori HOME dikembalikan di AndroidManifest.xml.
+    expected_activity = f"{EXPECTED_PACKAGE}.MinimalLauncherActivity"
+    check("kegiatan utama MinimalLauncherActivity (mode diagnosis ANR, sementara)",
           bool(launchable) and launchable.group(1) == expected_activity,
           launchable.group(1) if launchable else "tidak terbaca")
 

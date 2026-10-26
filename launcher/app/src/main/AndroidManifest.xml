@@ -64,8 +64,37 @@
           "Aplikasi beranda" pada Pengaturan Android. Kategori LAUNCHER membuatnya
           juga bisa dibuka seperti aplikasi biasa dari peluncur mana pun.
         -->
+        <!--
+          SEMENTARA UNTUK DIAGNOSIS ANR: activity beranda lengkap
+          (LauncherActivity, dengan wallpaper liquid/HUD/widget/dll) TIDAK
+          didaftarkan sebagai HOME di build diagnosis ini: lihat
+          MinimalLauncherActivity di bawah untuk kenapa dan apa gantinya.
+          Kelasnya tetap ada (tidak dihapus) supaya gampang dikembalikan
+          begitu penyebab macetnya ketemu.
+        -->
         <activity
             android:name=".LauncherActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|smallestScreenSize|screenLayout|uiMode|density|fontScale"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="unspecified"
+            android:stateNotNeeded="true"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!--
+          Kategori HOME + DEFAULT membuat aplikasi ini muncul di daftar
+          "Aplikasi beranda" pada Pengaturan Android. Kategori LAUNCHER membuatnya
+          juga bisa dibuka seperti aplikasi biasa dari peluncur mana pun.
+
+          Build diagnosis: beranda SUPER POLOS (tanpa wallpaper/animasi/widget/
+          ikon neon/spidometer sama sekali): lihat MinimalLauncherActivity
+          untuk alasannya. Begitu macetnya ketemu penyebabnya, kategori-kategori
+          ini dikembalikan ke LauncherActivity di atas.
+        -->
+        <activity
+            android:name=".MinimalLauncherActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|smallestScreenSize|screenLayout|uiMode|density|fontScale"
             android:enabled="true"
             android:excludeFromRecents="true"
@@ -82,6 +111,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
 
         <activity
             android:name=".SettingsActivity"
