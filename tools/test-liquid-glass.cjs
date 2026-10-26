@@ -127,6 +127,19 @@ for (const s of [
   "'liquid-glass-ultah': 'neon'", "'liquid-glass-aqiqah': 'mentari'"
 ]) cek(js.includes(s), 'JS liquid kekurangan: ' + s);
 
+/* Galeri lingkaran 3D: cincin foto di sekeliling poros Y, dibangun dari
+   tombol galeri asli agar lightbox bawaan tetap berfungsi. */
+for (const s of [
+  '.lg-gal3d', '.lg-gal3d-scene', '.lg-gal3d-ring',
+  'rotateY(calc(var(--lg-gal-i)', 'translateZ(var(--lg-gal-radius))',
+  '.lg-gal3d-btn', '.lg-gal3d-dot'
+]) cek(css.includes(s), 'CSS galeri 3D kekurangan: ' + s);
+for (const s of [
+  'function pasangGaleri3d()', 'galeri3d: galeri3d',
+  'state.galeri3d.destroy()', 'IntersectionObserver',
+  'Geser untuk memutar'
+]) cek(js.includes(s), 'JS galeri 3D kekurangan: ' + s);
+
 for (const s of [
   '<link rel="stylesheet" href="assets/liquid-glass.css">',
   '<script src="assets/liquid-glass.js"></script>',
