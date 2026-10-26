@@ -2,7 +2,7 @@
 
 | Berkas | Ukuran | Keterangan |
 |--------|--------|------------|
-| `asproject-launcher-1.0.5-debug.apk` | ±1,2 MB | APK uji, ditandatangani kunci **debug** Android |
+| `asproject-launcher-1.0.6-debug.apk` | ±1,2 MB | APK uji, ditandatangani kunci **debug** Android |
 | `SHA256SUMS.txt` | — | Sidik jari SHA-256 berkas di atas |
 
 ## Memasang
@@ -30,54 +30,60 @@ APK yang ditandatangani kunci yang sama. Untuk APK rilis, lihat
 SHA-256 APK saat ini:
 
 ```
-4fd8a09984627829252fc821c89e63e862c9c450b365efe50a9046401b1fef7f
+b752324e552a29243276c7413b2b10dc6823c0a7fffc808306943054b567e4b5
 ```
 
 ## Versi
 
-`versionCode 6` / `versionName 1.0.5` — dinaikkan tiap build uji ANR supaya
+`versionCode 7` / `versionName 1.0.6` — dinaikkan tiap build uji ANR supaya
 pemasangan ulang dikenali Android sebagai **pembaruan** (tidak perlu
 uninstall manual dulu), dan supaya versi yang terpasang bisa dicek lewat
 **Pengaturan → Aplikasi → AsProject Launcher → lihat versi**.
 
-## Isolasi ANR bertahap (build ini: tahap 1 dari rencana)
+## Isolasi ANR bertahap — ketemu tersangka kuat: AppWidgetHost
 
-Build `1.0.4` (beranda SUPER POLOS, `MinimalLauncherActivity`) sudah dicoba
-beberapa jam di Vivo Y50 **TANPA macet sama sekali**. Ini bukti kuat
-masalahnya ada di salah satu fitur berat `LauncherActivity` (wallpaper
-liquid, HUD, layar kunci, ikon neon, widget) — bukan di status "aplikasi
-beranda default" itu sendiri.
+Build `1.0.5` (kerangka `LauncherActivity` + `AppWidgetManager`/
+`AppWidgetHost` dibuat seperti biasa, semua fitur visual lain masih mati)
+**TETAP MACET** di Vivo Y50, lagi-lagi **tepat sesudah dipasang** — pola
+yang sama persis dengan hampir semua percobaan sebelumnya. Satu-satunya hal
+baru & tidak bersyarat dibanding `1.0.4` (yang TERBUKTI lancar berjam-jam)
+adalah pembuatan `AppWidgetManager`/`AppWidgetHost` di `onCreate()`.
 
-**Rencana sekarang: nyalakan fitur satu per satu**, bukan sekaligus seperti
-sebelum-sebelumnya, supaya kalau macet lagi ketahuan PERSIS fitur mana yang
-jadi biang kerok.
+`AppWidgetHost`/`AppWidgetManager` adalah panggilan **Binder ke
+system_server**. Kalau layanan widget sistem di ROM ini lambat/bermasalah
+merespons — terutama tepat sesudah instal, saat sistem mungkin masih sibuk
+memproses paket yang baru dipasang — panggilan ini **bisa blocking/hang
+untuk waktu lama atau selamanya, TANPA pernah melempar exception apa pun**.
+Itulah kenapa `try/catch` yang sudah dipasang sejak lama tidak pernah
+menolong: `try/catch` cuma melindungi dari exception, bukan dari panggilan
+yang macet/menunggu selamanya.
 
-**Build ini (tahap 1):** HOME dikembalikan ke `LauncherActivity` (kerangka
-lengkap), TAPI lewat `Prefs.DIAGNOSTIC_STAGE` semua fitur berat masih
-dipaksa MATI: wallpaper kustom, layar kunci, ikon neon, animasi
-HUD/liquid. Yang beda dari `1.0.4` di tahap ini cuma kerangka dasarnya
-(`findViewById` yang lebih banyak, `AppDrawerView`, `GestureDetector`,
-inisialisasi `AppWidgetHost`/`AppWidgetManager`, dll) — fitur visualnya
-masih nonaktif semua. `MinimalLauncherActivity` masih ada di APK, bisa
-dibuka manual dari laci aplikasi kapan pun untuk pembanding, tapi bukan
-beranda default lagi.
+**Build ini (1.0.6):** pembuatan `AppWidgetManager`/`AppWidgetHost`
+**dinonaktifkan sepenuhnya** lewat flag `DIAGNOSTIC_WIDGETS_ENABLED = false`
+di `LauncherActivity` — bukan dibungkus try/catch lagi (karena itu tidak
+cukup), tapi benar-benar dilewati sama sekali. Semua kode yang bergantung
+padanya (tombol widget, `restoreWidgets()`, `safeStartListening()`/
+`safeStopListening()`) sudah lama dirancang aman menerima `null` di sini
+(awalnya untuk kasus exception), jadi tidak perlu perubahan lain — beranda
+akan tampil tanpa dukungan widget untuk sementara.
 
-**Kalau build tahap 1 ini lancar** → tahap berikutnya nyalain wallpaper,
-lalu layar kunci, lalu animasi, lalu ikon neon, satu-satu dengan cara yang
-sama (naikkan `DIAGNOSTIC_STAGE` + versi). **Kalau build ini malah macet**
-→ bukan di fitur visualnya, melainkan di kerangka dasar `LauncherActivity`
-sendiri (kemungkinan `AppWidgetHost`/`AppWidgetManager`, yang dibuat selalu
-tanpa syarat di `onCreate()`).
-
-Mekanisme diagnostik (`CrashLog` + `StartupTrace` + detak jantung) tetap
-aktif. Kalau macet, buka ulang aplikasinya dan foto apa pun yang muncul.
+**Kalau build ini lancar** → `AppWidgetHost` TERBUKTI jadi biang kerok
+ANR-nya, dan solusi permanennya: buat widget host-nya "malas" (`lazy-init`,
+baru dibuat saat pengguna benar-benar membuka menu tambah widget), bukan
+di setiap `onCreate()`. **Kalau build ini masih macet juga** → dugaan ini
+salah, lanjut ke kandidat berikutnya (`Typefaces.apply()`, `AppDrawerView`,
+atau `GestureDetector`).
 
 ## Riwayat tahap sebelumnya
 
+- **1.0.5** — kerangka `LauncherActivity` + `AppWidgetHost`/
+  `AppWidgetManager` dibuat seperti biasa, fitur visual lain mati. Hasil
+  tes: **macet lagi**, tepat sesudah instal.
 - **1.0.4** — beranda super polos (`MinimalLauncherActivity`), tanpa fitur
-  berat apa pun. Hasil tes: **lancar**, dipakai berjam-jam tanpa macet.
+  berat apa pun (termasuk tanpa widget). Hasil tes: **lancar**, dipakai
+  berjam-jam tanpa macet.
 - **1.0.3** — `LauncherActivity` lengkap + paksa nonaktifkan animasi berat
-  di perangkat kelas bawah + detak jantung runtime. Hasil tes: tetap macet.
+  + detak jantung runtime. Hasil tes: tetap macet.
 - **1.0.2** — `StartupTrace` checkpoint `onCreate()`/`onResume()`. Hasil
   tes: tetap macet, tanpa dialog apa pun.
 - **1.0.1** — dialog `CrashLog` dipindah ke paling awal `onCreate()`. Hasil

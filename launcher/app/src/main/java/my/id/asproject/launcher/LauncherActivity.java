@@ -140,11 +140,35 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     private static final int REQUEST_BIND_WIDGET = 702;
     private static final int REQUEST_CONFIGURE_WIDGET = 703;
 
+    /**
+     * TAHAP ISOLASI ANR (lihat Prefs.DIAGNOSTIC_STAGE dan releases/README.md):
+     * build 1.0.5 (kerangka LauncherActivity + AppWidgetHost/AppWidgetManager
+     * dibuat seperti biasa, semua fitur visual lain mati) TERBUKTI MACET LAGI
+     * di Vivo Y50, persis sesudah dipasang -- sama seperti pola macet yang
+     * berulang sebelumnya. Satu-satunya hal baru & unconditional dibanding
+     * 1.0.4 (yang lancar) adalah pembuatan AppWidgetManager/AppWidgetHost ini.
+     *
+     * AppWidgetHost/AppWidgetManager adalah panggilan Binder ke system_server
+     * -- kalau layanan widget sistem di ROM ini lambat/macet merespons,
+     * panggilannya BISA BLOCKING (menunggu lama/selamanya) tanpa pernah
+     * melempar exception apa pun, sehingga try/catch di bawah TIDAK MENOLONG
+     * sama sekali untuk kasus hang (hanya menolong untuk kasus exception).
+     * Ini cocok dengan pola yang diamati: macet tepat sesudah instal (saat
+     * sistem mungkin masih sibuk memproses paket yang baru dipasang).
+     *
+     * Matikan dulu lewat flag ini untuk MEMBUKTIKAN dugaan ini sebelum
+     * dirombak jadi solusi permanen (mis. lazy-init widget host hanya saat
+     * pengguna benar-benar membuka menu tambah widget, bukan di setiap
+     * onCreate()).
+     */
+    private static final boolean DIAGNOSTIC_WIDGETS_ENABLED = false;
+
     private android.appwidget.AppWidgetManager widgetManager;
     private android.appwidget.AppWidgetHost widgetHost;
     private HorizontalScrollView widgetScroll;
     private LinearLayout widgetArea;
     private int pendingConfigureWidgetId = -1;
+
 
     // --------------------------------------------------------------- siklus hidup
 
@@ -176,18 +200,25 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         // Binder ke layanan sistem, dan dilaporkan bisa gagal/melempar
         // RuntimeException di sebagian ROM vendor. Kalau gagal, fitur widget
         // sekadar tidak tersedia -- beranda tetap harus bisa dibuka.
+        //
+        // DIAGNOSTIC_WIDGETS_ENABLED=false (lihat komentar di deklarasinya):
+        // lewati pembuatan host/manager ini sama sekali untuk build
+        // diagnosis ini -- try/catch di bawah TIDAK melindungi dari Binder
+        // call yang blocking/hang (hanya dari yang melempar exception).
         android.appwidget.AppWidgetManager tempWidgetManager = null;
         android.appwidget.AppWidgetHost tempWidgetHost = null;
-        try {
-            tempWidgetManager = android.appwidget.AppWidgetManager.getInstance(this);
-            tempWidgetHost = new android.appwidget.AppWidgetHost(this, WIDGET_HOST_ID);
-        } catch (RuntimeException error) {
-            tempWidgetManager = null;
-            tempWidgetHost = null;
+        if (DIAGNOSTIC_WIDGETS_ENABLED) {
+            try {
+                tempWidgetManager = android.appwidget.AppWidgetManager.getInstance(this);
+                tempWidgetHost = new android.appwidget.AppWidgetHost(this, WIDGET_HOST_ID);
+            } catch (RuntimeException error) {
+                tempWidgetManager = null;
+                tempWidgetHost = null;
+            }
         }
         widgetManager = tempWidgetManager;
         widgetHost = tempWidgetHost;
-        StartupTrace.mark(this, "onCreate:sesudah AppWidgetManager/AppWidgetHost");
+        StartupTrace.mark(this, "onCreate:sesudah AppWidgetManager/AppWidgetHost (nonaktif sementara)");
         widgetScroll = (HorizontalScrollView) findViewById(R.id.widgetScroll);
         widgetArea = (LinearLayout) findViewById(R.id.widgetArea);
         adapter = new AppGridAdapter(this, icons, prefs.showLabels());
