@@ -344,6 +344,23 @@ adalah **perbaikan berbasis audit kode** — belum bisa diverifikasi ulang di
 sandbox ini (tidak ada ADB/emulator), jadi **mohon dites ulang di HP yang
 sama** setelah memasang APK baru ini.
 
+**Macet masih terjadi setelah perbaikan di atas** (dilaporkan pengguna pada
+percobaan ulang). Karena sandbox ini sama sekali tidak punya akses ADB/logcat
+ke perangkat fisik, tidak mungkin melihat jejak tumpukan (stack trace) yang
+sesungguhnya dengan cara biasa. Sebagai gantinya ditambahkan **`CrashLog`**
+(lihat `CrashLog.java` + `AsProjectApp.java`): pencatat crash darurat
+berbasis `Thread.setDefaultUncaughtExceptionHandler`, dipasang di
+`Application.onCreate()` (sebelum komponen lain dibuat), yang menyimpan jejak
+crash apa pun ke `SharedPreferences` (tanpa izin tambahan) lalu
+menampilkannya sebagai dialog ("AsProject sempat berhenti sebelumnya") pada
+peluncuran berikutnya yang berhasil, dengan tombol "Salin teks". Ini **tidak
+menangkap ANR murni** (hang tanpa exception) — tapi kalau yang sebenarnya
+terjadi adalah *crash* yang tersamar sebagai "macet" (karena aplikasi ini
+launcher default, sistem langsung meluncurkannya ulang begitu proses mati,
+jadi dialog "Aplikasi berhenti" bawaan Android mungkin tidak sempat
+terlihat), dialog ini akan menampilkan bukti nyatanya pada percobaan
+berikutnya.
+
 ## 2. Status uji di perangkat
 
 Sebagian besar APK ini masih dibangun & diverifikasi lewat pemeriksaan

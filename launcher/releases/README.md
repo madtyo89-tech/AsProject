@@ -30,7 +30,7 @@ APK yang ditandatangani kunci yang sama. Untuk APK rilis, lihat
 SHA-256 APK saat ini:
 
 ```
-024c6430ae0a14584f70a31624d9651ebe079f92ec24e7c844688580f5d41db4
+690ae01343c044aa99bd9ad35bb739ea767727b82c5e05ee214dadc6c89e9bc1
 ```
 
 ## Perbaikan terbaru (penting)
@@ -40,5 +40,14 @@ AsProject dipasang sebagai launcher default di HP dengan banyak aplikasi
 terpasang (umum di ROM vendor seperti Vivo/Oppo/Xiaomi): pemindaian daftar
 aplikasi (`PackageManager`) yang sebelumnya berjalan di thread utama setiap
 kali beranda muncul kembali, sekarang dipindah ke thread latar belakang.
+
+**Build ini juga menambahkan pencatat crash darurat** (lihat `CrashLog`):
+karena lingkungan pengembangan tidak punya akses ADB/logcat ke perangkat
+fisik mana pun, kalau proses AsProject ternyata benar-benar *crash* (bukan
+cuma macet), jejaknya akan disimpan dan **ditampilkan sebagai dialog pada
+peluncuran berikutnya yang berhasil** — ada tombol "Salin teks" untuk
+menyalinnya. Kalau dialog ini muncul, mohon foto/salin isinya dan kirim —
+itu akan sangat membantu diagnosis.
+
 Jika sebelumnya pernah mengalami notifikasi "AsProject Launcher mengalami
-macet", pasang ulang APK ini dan coba lagi.
+macet", pasang ulang APK ini (uninstall dulu yang lama) dan coba lagi.

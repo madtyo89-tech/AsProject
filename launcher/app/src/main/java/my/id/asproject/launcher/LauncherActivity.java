@@ -288,6 +288,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         });
 
         restoreWidgets();
+        showPendingCrashIfAny();
     }
 
     @Override
@@ -1257,6 +1258,40 @@ public final class LauncherActivity extends Activity implements TextWatcher,
 
     private void toast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Kalau proses sebelumnya pernah crash (lihat {@link CrashLog}), tampilkan
+     * jejaknya sekali di sini supaya bisa difoto/disalin dan dikirim untuk
+     * didiagnosis — sandbox pengembangan ini tidak punya akses ADB/logcat ke
+     * HP mana pun, jadi ini satu-satunya cara mendapat bukti nyata kalau
+     * penyebab "macet" sebenarnya adalah crash, bukan hang murni.
+     */
+    private void showPendingCrashIfAny() {
+        final String trace = CrashLog.lastTrace(this);
+        if (trace == null || trace.length() == 0) {
+            return;
+        }
+        CrashLog.clear(this);
+        final String shown = trace.length() > 3500 ? trace.substring(0, 3500) + "\n…(terpotong)" : trace;
+        new AlertDialog.Builder(this)
+                .setTitle("AsProject sempat berhenti sebelumnya")
+                .setMessage(shown)
+                .setPositiveButton("Salin teks", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)
+                                getSystemService(Context.CLIPBOARD_SERVICE);
+                        if (clipboard != null) {
+                            clipboard.setPrimaryClip(
+                                    android.content.ClipData.newPlainText("asproject_crash", trace));
+                            toast("Disalin ke papan klip");
+                        }
+                    }
+                })
+                .setNegativeButton("Tutup", null)
+                .setCancelable(true)
+                .show();
     }
 
     private int dp(float value) {
