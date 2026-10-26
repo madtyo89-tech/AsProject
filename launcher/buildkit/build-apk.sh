@@ -23,8 +23,8 @@ export WEB_DIR="$HERE/web"                 # tidak dipakai (SKIP_WEB_ASSETS=1)
 export SKIP_WEB_ASSETS=1
 export APP_ID="my.id.asproject.launcher"
 export OUTPUT_NAME="asproject-launcher"
-export VERSION_CODE="3"
-export VERSION_NAME="1.0.2"
+export VERSION_CODE="4"
+export VERSION_NAME="1.0.3"
 export BUILD_DIR="$HERE/out/build"
 export OUT_DIR="$HERE/out"
 

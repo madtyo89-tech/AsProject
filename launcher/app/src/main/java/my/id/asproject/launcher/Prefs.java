@@ -39,6 +39,7 @@ public final class Prefs {
     private static final String KEY_SPEED_UNIT = "speed_unit";
     private static final String KEY_SPEED_POS_X = "speed_pos_x";
     private static final String KEY_SPEED_POS_Y = "speed_pos_y";
+    private static final String KEY_SAFE_MODE_MIGRATED_V1 = "safe_mode_migrated_v1";
 
     public static final int MIN_COLUMNS = 3;
     public static final int MAX_COLUMNS = 6;
@@ -51,6 +52,41 @@ public final class Prefs {
     public Prefs(Context context) {
         this.appContext = context.getApplicationContext();
         this.prefs = appContext.getSharedPreferences(FILE, Context.MODE_PRIVATE);
+        forceSafeModeOnceIfLowEnd();
+    }
+
+    /**
+     * PENTING: {@link #hudAnimation()}/{@link #liquidMotion()} hanya memakai
+     * {@code isLikelyLowEndDevice()} sebagai nilai BAWAAN -- yaitu nilai yang
+     * dipakai HANYA kalau key-nya belum pernah tersimpan sama sekali. Masalahnya:
+     * APK ini terus dipasang sebagai "pembaruan" di atas versi sebelumnya
+     * (bukan uninstall bersih), jadi SharedPreferences (termasuk
+     * {@code hud_animation}/{@code liquid_motion}) ikut terbawa dari
+     * pemasangan PERTAMA KALI -- yaitu sebelum pengaman "perangkat kelas
+     * bawah" ini ada, waktu nilainya masih implisit "menyala". Akibatnya,
+     * perbaikan "nonaktifkan animasi berat di perangkat kelas bawah" bisa
+     * TIDAK PERNAH benar-benar berlaku walau kodenya sudah berubah, karena
+     * key lama yang sudah tersimpan selalu menang atas nilai bawaan baru.
+     *
+     * Migrasi SEKALI JALAN ini memaksa animasi berat MATI kalau perangkat
+     * terdeteksi kelas bawah, APA PUN nilai yang sudah tersimpan sebelumnya
+     * -- lalu menandai migrasi ini sudah dijalankan supaya tidak mengulang
+     * terus-menerus dan tidak mengunci pengguna: dari Pengaturan, sakelarnya
+     * tetap bisa dinyalakan lagi kapan saja seperti biasa.
+     */
+    private void forceSafeModeOnceIfLowEnd() {
+        if (prefs.getBoolean(KEY_SAFE_MODE_MIGRATED_V1, false)) {
+            return;
+        }
+        if (isLikelyLowEndDevice()) {
+            prefs.edit()
+                    .putBoolean(KEY_HUD_ANIMATION, false)
+                    .putBoolean(KEY_LIQUID_MOTION, false)
+                    .putBoolean(KEY_SAFE_MODE_MIGRATED_V1, true)
+                    .commit();
+        } else {
+            prefs.edit().putBoolean(KEY_SAFE_MODE_MIGRATED_V1, true).commit();
+        }
     }
 
     /**

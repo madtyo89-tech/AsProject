@@ -68,6 +68,26 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         }
     };
 
+    /**
+     * Lihat {@link StartupTrace}: checkpoint onCreate()/onResume() saja
+     * tidak cukup, karena kalau macetnya baru terjadi SESUDAH onResume()
+     * selesai (misalnya karena animasi berat yang jalan terus-menerus di
+     * thread utama -- liquid wallpaper, HUD, dll), jejaknya sudah keburu
+     * dihapus (markDone()) dan peluncuran berikutnya tidak akan menemukan
+     * apa pun. "Detak jantung" ini menimpa checkpoint yang sama setiap
+     * beberapa detik SELAMA aplikasi di layar depan, supaya kalau benar
+     * macet di tengah animasi, checkpoint terakhir tetap menunjukkan itu.
+     */
+    private static final long HEARTBEAT_MS = 4000L;
+    private final Runnable heartbeatTick = new Runnable() {
+        @Override
+        public void run() {
+            StartupTrace.mark(LauncherActivity.this,
+                    "runtime:masih berjalan normal (detak rutin, BUKAN saat proses mulai)");
+            clockHandler.postDelayed(this, HEARTBEAT_MS);
+        }
+    };
+
     /** Memuat ulang beranda saat aplikasi dipasang, diperbarui, atau dicabut. */
     private final BroadcastReceiver packageReceiver = new BroadcastReceiver() {
         @Override
@@ -359,8 +379,12 @@ public final class LauncherActivity extends Activity implements TextWatcher,
             lockScreen.hideNow();
         }
         // onResume() berhasil sampai akhir: tidak ada apa pun untuk
-        // dilaporkan pada peluncuran berikutnya.
+        // dilaporkan pada peluncuran berikutnya -- tapi tetap pasang detak
+        // jantung rutin (lihat heartbeatTick) selama aplikasi di depan,
+        // berjaga-jaga kalau macetnya baru terjadi NANTI di tengah animasi.
         StartupTrace.markDone(this);
+        clockHandler.removeCallbacks(heartbeatTick);
+        clockHandler.postDelayed(heartbeatTick, HEARTBEAT_MS);
     }
 
     @Override
@@ -373,6 +397,14 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     protected void onPause() {
         super.onPause();
         clockHandler.removeCallbacks(clockTick);
+        // Berhenti berpindah ke latar belakang itu NORMAL (bukan macet) --
+        // hentikan detak jantung dan bersihkan jejaknya supaya peluncuran
+        // berikutnya tidak salah lapor "macet" padahal cuma pindah aplikasi.
+        // Kalau yang terjadi sebenarnya hang murni, onPause() ini sendiri
+        // tidak akan sempat jalan (thread utama lagi macet), jadi jejak
+        // detak jantung terakhir tetap apa adanya -- itu yang kita mau.
+        clockHandler.removeCallbacks(heartbeatTick);
+        StartupTrace.markDone(this);
         unregisterPackageReceiver();
         if (widgetHost != null) {
             safeStopListening();
