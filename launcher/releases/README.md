@@ -30,24 +30,29 @@ APK yang ditandatangani kunci yang sama. Untuk APK rilis, lihat
 SHA-256 APK saat ini:
 
 ```
-690ae01343c044aa99bd9ad35bb739ea767727b82c5e05ee214dadc6c89e9bc1
+38c1fd6f92f9c2f966db7f18b3858dbe7079f3f61ed4c255161fb12adf615261
 ```
 
 ## Perbaikan terbaru (penting)
 
-Build ini memperbaiki **bug macet (ANR)** yang bisa muncul tak lama setelah
-AsProject dipasang sebagai launcher default di HP dengan banyak aplikasi
-terpasang (umum di ROM vendor seperti Vivo/Oppo/Xiaomi): pemindaian daftar
-aplikasi (`PackageManager`) yang sebelumnya berjalan di thread utama setiap
-kali beranda muncul kembali, sekarang dipindah ke thread latar belakang.
+Dilaporkan masih macet (ANR) di **Vivo Y50** (Snapdragon 665, Android
+10/11) bahkan setelah pemindaian aplikasi dipindah ke thread latar
+belakang. Dugaan kuat berikutnya: perangkat ini kelas menengah-bawah rilis
+2020, dan animasi Canvas berat (liquid wallpaper 3D + HUD berputar) yang
+berjalan terus-menerus di thread utama sejak layar pertama dibuka mungkin
+terlalu berat untuk GPU/CPU-nya.
 
-**Build ini juga menambahkan pencatat crash darurat** (lihat `CrashLog`):
-karena lingkungan pengembangan tidak punya akses ADB/logcat ke perangkat
-fisik mana pun, kalau proses AsProject ternyata benar-benar *crash* (bukan
-cuma macet), jejaknya akan disimpan dan **ditampilkan sebagai dialog pada
-peluncuran berikutnya yang berhasil** — ada tombol "Salin teks" untuk
-menyalinnya. Kalau dialog ini muncul, mohon foto/salin isinya dan kirim —
-itu akan sangat membantu diagnosis.
+**Perubahan di build ini:**
+- **Nilai bawaan animasi berat sekarang otomatis dimatikan di HP yang
+  terdeteksi kelas menengah-bawah/lama** (heuristik: `isLowRamDevice()` atau
+  Android ≤ 11 / API ≤ 30) — animasi liquid motion & HUD berputar tidak
+  menyala otomatis di pemasangan baru pada perangkat seperti itu. Ikon neon,
+  jam, dan layar kunci tetap tampil seperti biasa, hanya animasinya yang
+  diam di awal. Bisa dinyalakan manual lewat Pengaturan kalau ternyata
+  perangkatnya lancar-lancar saja.
+- Pencatat crash darurat (`CrashLog`) sekarang dicek **sedini mungkin** di
+  `onCreate()` (bukan di akhir), supaya tetap sempat tampil walau aplikasi
+  crash berulang sebelum sempat selesai memuat.
 
 Jika sebelumnya pernah mengalami notifikasi "AsProject Launcher mengalami
 macet", pasang ulang APK ini (uninstall dulu yang lama) dan coba lagi.

@@ -335,15 +335,6 @@ aplikasi bawaan (dua toko aplikasi, bloatware vendor, dst.) + beban sistem
 ekstra tepat setelah mengganti launcher default, pemindaian ini bisa cukup
 lambat untuk memicu detektor ANR sistem.
 
-**Perbaikan:** pemindaian `PackageManager` sekarang dijalankan di **thread
-latar belakang** (`reloadApps()` di `LauncherActivity`, dan `pickHiddenApps()`
-di `SettingsActivity`); hasilnya baru diterapkan ke tampilan lewat `Handler`
-di thread utama, dengan penjaga sederhana supaya pemindaian yang
-tumpang-tindih (mis. layar berkedip nyala/mati) tidak menumpuk thread. Ini
-adalah **perbaikan berbasis audit kode** — belum bisa diverifikasi ulang di
-sandbox ini (tidak ada ADB/emulator), jadi **mohon dites ulang di HP yang
-sama** setelah memasang APK baru ini.
-
 **Macet masih terjadi setelah perbaikan di atas** (dilaporkan pengguna pada
 percobaan ulang). Karena sandbox ini sama sekali tidak punya akses ADB/logcat
 ke perangkat fisik, tidak mungkin melihat jejak tumpukan (stack trace) yang
@@ -360,6 +351,38 @@ launcher default, sistem langsung meluncurkannya ulang begitu proses mati,
 jadi dialog "Aplikasi berhenti" bawaan Android mungkin tidak sempat
 terlihat), dialog ini akan menampilkan bukti nyatanya pada percobaan
 berikutnya.
+
+**Masih macet juga setelah itu, dan pengguna mengonfirmasi perangkatnya:
+Vivo Y50** — chipset Snapdragon 665 (Adreno 610), rilis 2020, Android
+10/11 (Funtouch OS 10/11). Ini kelas menengah-bawah dengan GPU/CPU jauh
+lebih lemah dari perangkat flagship yang biasa dipakai menguji tema
+semacam ini. Dua perbaikan tambahan dilakukan:
+
+1. **`showPendingCrashIfAny()` dipindah ke awal `onCreate()`** (sebelum
+   `prefs`/`repository`/`icons` dibuat), bukan di akhir — supaya kalau
+   aplikasinya crash berulang (loop, tak pernah sampai baris terakhir
+   `onCreate()`), dialog crash dari percobaan sebelumnya tetap sempat
+   ditampilkan di percobaan berikutnya sebelum kemungkinan crash yang sama
+   terulang lagi.
+2. **Nilai bawaan animasi berat (`liquidMotion`, `hudAnimation`) sekarang
+   otomatis `false` di perangkat yang diperkirakan kelas menengah-bawah/lama**
+   (heuristik di `Prefs.isLikelyLowEndDevice()`: `ActivityManager.isLowRamDevice()`
+   ATAU `Build.VERSION.SDK_INT <= Build.VERSION_CODES.R` / Android ≤ 11).
+   Ini HANYA memengaruhi nilai bawaan pemasangan baru yang belum pernah
+   mengubah sakelarnya sendiri; pengguna tetap bisa menyalakannya manual
+   lewat Pengaturan → Tampilan. Dugaannya: kedua animasi ini jalan terus
+   lewat `Choreographer` sejak layar pertama dibuka (lock screen sirkuit 3D
+   + HUD berputar), dan pada chipset selemah Snapdragon 665 bisa cukup berat
+   untuk ikut menyumbang beban thread utama tepat di jendela waktu yang
+   paling sensitif terhadap ANR (saat aplikasi baru dibuka / dijadikan
+   launcher default). Ikon neon, jam, layar kunci, dan wallpaper tetap
+   tampil seperti biasa — hanya kedua animasi kontinu ini yang diam di awal.
+
+   **Catatan jujur:** ini masih dugaan berbasis audit kode + perkiraan
+   performa kasar, bukan hasil pengukuran nyata (tidak ada cara mengukur FPS
+   atau waktu render sesungguhnya dari sandbox ini). Kalau setelah build ini
+   masih tetap macet, itu berarti dugaan ini salah dan penyebabnya ada di
+   tempat lain yang belum teraudit.
 
 ## 2. Status uji di perangkat
 

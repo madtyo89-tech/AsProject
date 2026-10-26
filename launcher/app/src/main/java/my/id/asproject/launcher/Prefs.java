@@ -2,6 +2,7 @@ package my.id.asproject.launcher;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,10 +46,38 @@ public final class Prefs {
     public static final int MAX_DOCK = 5;
 
     private final SharedPreferences prefs;
+    private final Context appContext;
 
     public Prefs(Context context) {
-        this.prefs = context.getApplicationContext()
-                .getSharedPreferences(FILE, Context.MODE_PRIVATE);
+        this.appContext = context.getApplicationContext();
+        this.prefs = appContext.getSharedPreferences(FILE, Context.MODE_PRIVATE);
+    }
+
+    /**
+     * Perkiraan kasar "HP kelas bawah/lama": dipakai sebagai nilai BAWAAN
+     * untuk animasi berat (liquid motion & HUD) yang jalan terus-menerus di
+     * thread utama. Hanya memengaruhi pemasangan baru yang belum pernah
+     * mengubah sakelarnya sendiri — pengguna tetap bebas menyalakannya lewat
+     * Pengaturan kalau perangkatnya ternyata lancar.
+     *
+     * Dasarnya: dilaporkan macet (ANR) nyata di Vivo Y50 (Snapdragon 665,
+     * Android 10/11) saat animasi ini menyala terus sejak awal — perangkat
+     * kelas menengah-bawah rilis lama lebih berisiko kesulitan merender
+     * Canvas prosedural terus-menerus di thread utama.
+     */
+    private boolean isLikelyLowEndDevice() {
+        try {
+            android.app.ActivityManager manager = (android.app.ActivityManager)
+                    appContext.getSystemService(Context.ACTIVITY_SERVICE);
+            if (manager != null && manager.isLowRamDevice()) {
+                return true;
+            }
+        } catch (RuntimeException ignored) {
+            // abaikan; lanjut ke perkiraan berikutnya
+        }
+        // HP yang masih di Android 11 (API 30) ke bawah kebanyakan rilis
+        // 2019–2021 kelas menengah-bawah (mis. Snapdragon 6xx).
+        return Build.VERSION.SDK_INT <= Build.VERSION_CODES.R;
     }
 
     // ------------------------------------------------------------------ grid
@@ -118,7 +147,7 @@ public final class Prefs {
 
     /** HUD layar kunci beranimasi (cincin berputar, garis pindai, gelombang). */
     public boolean hudAnimation() {
-        return prefs.getBoolean(KEY_HUD_ANIMATION, true);
+        return prefs.getBoolean(KEY_HUD_ANIMATION, !isLikelyLowEndDevice());
     }
 
     public void setHudAnimation(boolean enabled) {
@@ -127,7 +156,7 @@ public final class Prefs {
 
     /** Wallpaper liquid bergerak (efek 3D). */
     public boolean liquidMotion() {
-        return prefs.getBoolean(KEY_LIQUID_MOTION, true);
+        return prefs.getBoolean(KEY_LIQUID_MOTION, !isLikelyLowEndDevice());
     }
 
     public void setLiquidMotion(boolean enabled) {
