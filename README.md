@@ -286,6 +286,40 @@ dan (setelah server lokal aktif di :8080) `node tools/test-mobile-browser.cjs`.
 Browser memerlukan library sistem Chromium; atur `LD_LIBRARY_PATH` bila memakai
 library bundled. Tes publish memakai fixture lokal, **bukan database produksi**.
 
+## Penjaga Supabase anti-pause (2026-10-28)
+
+Project Supabase Free dapat dipause bila aktivitas databasenya rendah selama
+periode 7 hari. Penjaga eksternal di
+`.github/workflows/supabase-keepalive.yml` menjalankan
+`tools/supabase-keepalive.cjs` setiap 6 jam. Setiap run membuat **5 query baca
+sungguhan** melalui PostgREST: `invitation_drafts` 3 kali, lalu `rsvp` dan
+`checkin`. Query memakai slug sentinel `__asproject_keepalive__`, hanya memilih
+kolom `slug`, dan `limit=1`; tidak ada data yang ditulis dan baris tamu tidak
+perlu dikembalikan.
+
+- Konfigurasi bawaan mengambil URL + anon key publik yang sudah tertanam di
+  `studio.html`, jadi tidak ada secret baru yang wajib dibuat. Bila ingin
+  memisahkannya, workflow juga menerima variable `SUPABASE_URL` dan secret
+  `SUPABASE_ANON_KEY`. Script **menolak** secret/service-role key.
+- HTTP **540** dikenali sebagai project paused: workflow sengaja gagal sebagai
+  alarm. Query tidak dapat membangkitkan project yang sudah paused; tekan
+  **Resume project** di Supabase Dashboard.
+- Uji offline tanpa jaringan: `node tools/test-supabase-keepalive.cjs`.
+  Melihat rencana query saja: `node tools/supabase-keepalive.cjs --dry-run`.
+
+**Syarat aktivasi GitHub:** trigger `schedule` hanya berjalan dari branch
+default, jadi jadwal otomatis baru aktif setelah workflow ini berada di
+`main`. Selama hanya ada di branch fitur, script dan ujinya siap tetapi cron
+belum berjalan. Setelah masuk `main`, workflow juga bisa diuji dari
+**Actions → Penjaga Supabase (anti-pause) → Run workflow**. GitHub dapat
+menonaktifkan scheduled workflow pada repo publik yang tidak punya aktivitas
+repo selama 60 hari; periksa tab Actions sesekali pada masa repo sangat sepi.
+
+Keepalive ini membuat aktivitas rutin yang jauh di atas pola sepi penyebab
+pause, tetapi Supabase tidak memberikan jaminan resmi untuk cron pihak ketiga.
+Satu-satunya cara yang dijamin Supabase agar tidak kena auto-pause inactivity
+tetap memakai paid plan.
+
 ## Floating preview undangan di Studio (tombol kembali ke cover, 2026-10-14)
 
 Mini HP melayang (`#floatPrev`) menampilkan undangan yang sedang dibuat dan ikut

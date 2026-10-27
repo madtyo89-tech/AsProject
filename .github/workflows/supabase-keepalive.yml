@@ -1,0 +1,53 @@
+name: Penjaga Supabase (anti-pause)
+
+# Membuat aktivitas database sungguhan tiap 6 jam: script menjalankan query
+# baca ringan ke invitation_drafts (3x), rsvp, dan checkin. Tidak ada tulis
+# data dan tidak memakai service-role/secret key.
+#
+# Catatan GitHub: trigger schedule hanya berjalan dari branch default.
+# Jadi penjadwalan otomatis mulai aktif setelah workflow ini berada di main.
+# Run yang gagal (mis. HTTP 540 = project paused) sengaja dibiarkan merah
+# sebagai alarm; resume tetap dilakukan dari Supabase Dashboard.
+
+on:
+  schedule:
+    # 00:23, 06:23, 12:23, 18:23 UTC. Menit ganjil menghindari antrean awal jam.
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/supabase-keepalive.yml'
+      - 'tools/supabase-keepalive.cjs'
+      - 'studio.html'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-keepalive
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    name: Query baca ringan ke database
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Siapkan Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Jalankan penjaga Supabase
+        env:
+          # Opsional. Bila variable/secret ini belum dibuat, script memakai
+          # URL + anon key publik yang sudah tertanam di studio.html.
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: node tools/supabase-keepalive.cjs
