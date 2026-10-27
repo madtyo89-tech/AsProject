@@ -150,6 +150,7 @@ jobs:
   apk-gradle:
     name: Build APK (Gradle/Android Studio)
     runs-on: ubuntu-latest
+    needs: apk-offline
     continue-on-error: true
     steps:
       - name: Checkout
@@ -177,3 +178,16 @@ jobs:
           path: launcher/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Lampirkan APK Gradle ke GitHub Release (khusus tag v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSI="${GITHUB_REF_NAME#v}"
+          NAMA="asproject-launcher-${VERSI}-gradle-debug.apk"
+          cp launcher/app/build/outputs/apk/debug/app-debug.apk "$NAMA"
+          sha256sum "$NAMA" > "${NAMA}.sha256"
+          gh release upload "${GITHUB_REF_NAME}" "$NAMA" "${NAMA}.sha256" --clobber
+
