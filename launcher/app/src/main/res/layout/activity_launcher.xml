@@ -46,11 +46,24 @@
                 android:paddingTop="34dp"
                 android:paddingBottom="12dp">
 
-                <!-- Jam seven segment neon (sama dengan layar kunci). -->
-                <my.id.asproject.launcher.SevenSegmentClockView
+                <!--
+                  SEMENTARA (isolasi ANR, lihat releases/README.md): diganti
+                  dari SevenSegmentClockView ke TextView polos. Ini
+                  SATU SATUNYA View kustom berat yang masih AKTIF menggambar
+                  tiap detik di tahap sebelumnya (1.0.5 slash 1.0.6), karena
+                  wallpaper, layar kunci, dan laci aplikasi semuanya GONE
+                  secara default kalau fiturnya dimatikan, tapi jam ini
+                  selalu VISIBLE dan nge tick tiap detik apa pun pengaturannya.
+                -->
+                <TextView
                     android:id="@+id/clock"
                     android:layout_width="wrap_content"
-                    android:layout_height="64dp" />
+                    android:layout_height="64dp"
+                    android:gravity="center"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/gold_soft"
+                    android:textSize="40sp" />
+
 
                 <TextView
                     android:id="@+id/date"

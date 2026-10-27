@@ -120,7 +120,9 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     private View scrimLayer;
     private LockScreenView lockScreen;
     private LinearLayout content;
-    private SevenSegmentClockView clockView;
+    // SEMENTARA (isolasi ANR): tipe diturunkan dari SevenSegmentClockView ke
+    // TextView biasa -- lihat komentar di activity_launcher.xml.
+    private TextView clockView;
     private TextView dateView;
     private LinearLayout searchBar;
     private EditText searchInput;
@@ -241,7 +243,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
 
         content = (LinearLayout) findViewById(R.id.content);
         clockHeader = findViewById(R.id.clockHeader);
-        clockView = (SevenSegmentClockView) findViewById(R.id.clock);
+        clockView = (TextView) findViewById(R.id.clock);
         dateView = (TextView) findViewById(R.id.date);
         searchBar = (LinearLayout) findViewById(R.id.searchBar);
         searchInput = (EditText) findViewById(R.id.searchInput);
@@ -1390,6 +1392,12 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     private void showDate() {
         SimpleDateFormat format = new SimpleDateFormat("EEEE, d MMMM yyyy", new Locale("id", "ID"));
         dateView.setText(format.format(new Date()));
+        // SEMENTARA (isolasi ANR): clockView sekarang TextView biasa, jadi
+        // diisi manual di sini (jam SevenSegmentClockView sudah tidak dipakai).
+        if (clockView != null) {
+            SimpleDateFormat time = new SimpleDateFormat("HH:mm", new Locale("id", "ID"));
+            clockView.setText(time.format(new Date()));
+        }
     }
 
     private void hideKeyboard() {

@@ -11,5 +11,5 @@
 *.idsig
 
 # Pengecualian: satu APK debug ikut di-commit sebagai salinan uji (lihat releases/README.md).
-!/releases/asproject-launcher-1.0.6-debug.apk
+!/releases/asproject-launcher-1.0.7-debug.apk
 !/releases/SHA256SUMS.txt
