@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Isi layar kunci. Di-inflate ke dalam LockScreenView (FrameLayout) sehingga
+  memakai <merge>. Wallpaper memakai mode CONTAIN agar bingkai liquid-chrome
+  tidak terpotong di layar dengan rasio berbeda.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Wallpaper layar kunci: papan sirkuit liquid 3D (prosedural, beranimasi). -->
+    <my.id.asproject.launcher.CircuitWallpaperView
+        android:id="@+id/lockWallpaper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_lock_scrim" />
+
+    <LinearLayout
+        android:id="@+id/lockContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="26dp"
+        android:paddingTop="26dp"
+        android:paddingEnd="26dp"
+        android:paddingBottom="18dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/chipStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_glass_chip"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:paddingStart="10dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="5dp"
+                android:text="@string/lock_chip_status"
+                android:textColor="@color/neon_soft"
+                android:textSize="9sp" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Satu-satunya ikon baterai: lingkaran bersegmen, neon. -->
+            <my.id.asproject.launcher.LiquidBatteryView
+                android:id="@+id/batteryMeter"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:contentDescription="@string/lock_battery_desc" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lockLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.42"
+            android:text="@string/lock_label"
+            android:textColor="@color/neon_dim"
+            android:textSize="10sp" />
+
+        <!-- Jam seven segment neon: ruas menyala + titik dua berkedip. -->
+        <my.id.asproject.launcher.SevenSegmentClockView
+            android:id="@+id/lockClock"
+            android:layout_width="wrap_content"
+            android:layout_height="72dp"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/lockDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:letterSpacing="0.06"
+            android:shadowColor="#88000000"
+            android:shadowRadius="8"
+            android:textColor="@color/neon_soft"
+            android:textSize="13sp" />
+
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_lock"
+            android:tint="@color/neon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.14"
+            android:text="@string/lock_hint"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="6dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_arrow_up"
+            android:tint="@color/neon"
+            android:alpha="0.85" />
+
+        <View
+            android:id="@+id/lockHandle"
+            android:layout_width="96dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_lock_handle" />
+    </LinearLayout>
+
+    <!-- HUD animasi real-time: menutupi panel HUD statis pada gambar wallpaper. -->
+    <my.id.asproject.launcher.HudView
+        android:id="@+id/hud"
+        android:layout_width="match_parent"
+        android:layout_height="132dp"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="18dp" />
+</merge>

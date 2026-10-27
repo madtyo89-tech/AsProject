@@ -1,0 +1,67 @@
+// Modul aplikasi AsProject Launcher.
+//
+// Dua jalur build memakai sumber yang sama:
+//   • Gradle (berkas ini)                 — Android Studio / CI.
+//   • ../buildkit/build-apk.sh (tanpa Gradle) — aapt2 + ecj/javac + d8 + apksigner.
+
+plugins {
+    id 'com.android.application'
+}
+
+def keystoreFile = System.getenv('LAUNCHER_KEYSTORE_FILE') ?: (project.findProperty('launcherKeystoreFile') as String)
+def keystorePassword = System.getenv('LAUNCHER_KEYSTORE_PASSWORD') ?: (project.findProperty('launcherKeystorePassword') as String)
+def keyAlias = System.getenv('LAUNCHER_KEY_ALIAS') ?: (project.findProperty('launcherKeyAlias') as String)
+def keyPassword = System.getenv('LAUNCHER_KEY_PASSWORD') ?: (project.findProperty('launcherKeyPassword') as String)
+def hasReleaseSigning = keystoreFile && keystorePassword && keyAlias && keyPassword
+
+android {
+    namespace 'my.id.asproject.launcher'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'my.id.asproject.launcher'
+        minSdk 21
+        targetSdk 34
+        versionCode 8
+        versionName '1.0.7'
+    }
+
+    if (hasReleaseSigning) {
+        signingConfigs {
+            release {
+                storeFile file(keystoreFile)
+                storePassword keystorePassword
+                keyAlias keyAlias
+                keyPassword keyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            // APK uji, ditandatangani kunci debug Android.
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // Tanpa AndroidX; lint bukan penghalang build.
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    // Sengaja kosong: hanya API framework Android.
+}
