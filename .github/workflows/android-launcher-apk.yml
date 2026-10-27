@@ -37,6 +37,11 @@ jobs:
   apk-offline:
     name: Build + verifikasi APK launcher (tanpa Gradle)
     runs-on: ubuntu-latest
+    # Perlu tulis untuk membuat GitHub Release saat push tag v* (lihat
+    # langkah "Lampirkan ke GitHub Release" di bawah); default repo
+    # hanya baca (lihat `permissions:` di atas).
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -152,6 +157,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: apk-offline
     continue-on-error: true
+    # Perlu tulis untuk melampirkan APK ke GitHub Release yang sama saat
+    # push tag v* (lihat langkah "Lampirkan APK Gradle" di bawah).
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
