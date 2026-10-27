@@ -45,7 +45,13 @@ public final class SettingsActivity extends Activity implements View.OnClickList
         prefs = new Prefs(this);
         Accent.configure(prefs.accentStyle());
         // Font tema untuk seluruh halaman pengaturan.
-        Typefaces.apply(this, findViewById(android.R.id.content));
+        // (findViewById(android.R.id.content) mengembalikan FrameLayout --
+        // ditampung ke variabel View dulu supaya Typefaces.apply(Context, View)
+        // yang dipanggil, bukan overload Typefaces.apply(Context, TextView)
+        // yang salah dipilih compiler lewat inferensi generik lalu gagal
+        // di-cast saat runtime: ClassCastException FrameLayout -> TextView.)
+        View contentRoot = findViewById(android.R.id.content);
+        Typefaces.apply(this, contentRoot);
 
         findViewById(R.id.backButton).setOnClickListener(this);
 
