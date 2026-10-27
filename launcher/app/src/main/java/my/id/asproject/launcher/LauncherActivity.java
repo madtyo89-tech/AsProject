@@ -225,21 +225,31 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         widgetArea = (LinearLayout) findViewById(R.id.widgetArea);
         adapter = new AppGridAdapter(this, icons, prefs.showLabels());
 
-        homeWallpaper = (HomeWallpaperView) findViewById(R.id.homeWallpaper);
+        // SEMENTARA (isolasi ANR): homeWallpaper & lockScreen sengaja tidak
+        // ada lagi di activity_launcher.xml (lihat komentar di sana) --
+        // bahkan @+id-nya dihapus, jadi diisi null langsung di sini (bukan
+        // lewat findViewById, karena R.id.homeWallpaper/lockScreen sudah
+        // tidak ada). Semua pemakaiannya di bawah dijaga null-check.
+        homeWallpaper = null;
         glowLayer = findViewById(R.id.glowLayer);
         scrimLayer = findViewById(R.id.scrimLayer);
-        lockScreen = (LockScreenView) findViewById(R.id.lockScreen);
-        lockScreen.setListener(new LockScreenView.Listener() {
-            @Override
-            public void onUnlocked() {
-                hideKeyboard();
-                searchInput.clearFocus();
-                reloadApps();
-                // Wallpaper beranda tidak perlu bergerak selama layar kunci tampil.
-                homeWallpaper.setMotionEnabled(prefs.figureWallpaper() && prefs.liquidMotion());
-            }
-        });
+        lockScreen = null;
+        if (lockScreen != null) {
+            lockScreen.setListener(new LockScreenView.Listener() {
+                @Override
+                public void onUnlocked() {
+                    hideKeyboard();
+                    searchInput.clearFocus();
+                    reloadApps();
+                    // Wallpaper beranda tidak perlu bergerak selama layar kunci tampil.
+                    if (homeWallpaper != null) {
+                        homeWallpaper.setMotionEnabled(prefs.figureWallpaper() && prefs.liquidMotion());
+                    }
+                }
+            });
+        }
         StartupTrace.mark(this, "onCreate:sesudah setup LockScreenView");
+
 
         content = (LinearLayout) findViewById(R.id.content);
         clockHeader = findViewById(R.id.clockHeader);
@@ -298,7 +308,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
                 float dy = e2.getY() - e1.getY();
                 if (dy < -dp(48) && Math.abs(velocityY) > Math.abs(velocityX) && velocityY < -600f) {
                     if (drawer != null && !drawer.isOpen()
-                            && !lockScreen.isShowingLock()) {
+                            && (lockScreen == null || !lockScreen.isShowingLock())) {
                         drawer.open();
                         return true;
                     }
@@ -408,7 +418,7 @@ public final class LauncherActivity extends Activity implements TextWatcher,
             if (prefs.lockScreen()) {
                 showLockScreen(true);
             }
-        } else if (!prefs.lockScreen() && lockScreen.isShowingLock()) {
+        } else if (!prefs.lockScreen() && lockScreen != null && lockScreen.isShowingLock()) {
             lockScreen.hideNow();
         }
         // onResume() berhasil sampai akhir: tidak ada apa pun untuk
@@ -591,16 +601,22 @@ public final class LauncherActivity extends Activity implements TextWatcher,
     /** Wallpaper neon + opasitas lapisan gelap yang menyesuaikan. */
     private void applyWallpaper() {
         boolean figure = prefs.figureWallpaper();
-        homeWallpaper.setVisibility(figure ? View.VISIBLE : View.GONE);
+        // SEMENTARA (isolasi ANR): homeWallpaper/lockScreen bisa null (lihat
+        // komentar di onCreate() dan di activity_launcher.xml).
+        if (homeWallpaper != null) {
+            homeWallpaper.setVisibility(figure ? View.VISIBLE : View.GONE);
+            homeWallpaper.setMotionEnabled(figure && prefs.liquidMotion());
+        }
         // Wallpaper neon sudah ramai: lapisan emas tambahan tidak perlu.
         glowLayer.setAlpha(figure ? 0f : 1f);
         scrimLayer.setAlpha(figure ? 0.24f : 1f);
-        homeWallpaper.setMotionEnabled(figure && prefs.liquidMotion());
-        lockScreen.applyPrefs(prefs);
+        if (lockScreen != null) {
+            lockScreen.applyPrefs(prefs);
+        }
     }
 
     private void showLockScreen(boolean animate) {
-        if (!prefs.lockScreen()) {
+        if (!prefs.lockScreen() || lockScreen == null) {
             return;
         }
         if (drawer != null && drawer.isOpen()) {
@@ -610,7 +626,9 @@ public final class LauncherActivity extends Activity implements TextWatcher,
         searchInput.clearFocus();
         hideKeyboard();
         // Hemat baterai: hentikan animasi wallpaper yang tertutup layar kunci.
-        homeWallpaper.setMotionEnabled(false);
+        if (homeWallpaper != null) {
+            homeWallpaper.setMotionEnabled(false);
+        }
         lockScreen.show(animate);
     }
 

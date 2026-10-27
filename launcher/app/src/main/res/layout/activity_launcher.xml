@@ -8,12 +8,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Wallpaper bawaan (sirkuit neon). Bila dimatikan di Pengaturan, view ini
-         disembunyikan dan wallpaper sistem yang tampil (windowShowWallpaper). -->
-    <my.id.asproject.launcher.HomeWallpaperView
-        android:id="@+id/homeWallpaper"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!--
+      SEMENTARA (isolasi ANR, lihat releases/README.md): HomeWallpaperView
+      dihapus sepenuhnya dari sini (bukan cuma disembunyikan lewat Prefs),
+      supaya constructor/onAttachedToWindow-nya (LiquidWallpaperView, Paint
+      dan PorterDuffXfermode) sama sekali tidak dieksekusi. LauncherActivity
+      sudah dijaga null-check untuk homeWallpaper di semua pemakaiannya.
+    -->
 
     <View
         android:id="@+id/glowLayer"
@@ -204,10 +205,11 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
 
-    <!-- Layar kunci: menutupi seluruh beranda sampai digeser ke atas. -->
-    <my.id.asproject.launcher.LockScreenView
-        android:id="@+id/lockScreen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+    <!--
+      SEMENTARA (isolasi ANR, lihat releases/README.md): LockScreenView juga
+      dihapus sepenuhnya dari sini (sebelumnya cuma android:visibility="gone",
+      tapi constructor/onAttachedToWindow tetap jalan walau View-nya GONE).
+      LauncherActivity sudah dijaga null-check untuk lockScreen di semua
+      pemakaiannya, fitur layar kunci nonaktif sementara di build ini.
+    -->
 </FrameLayout>
