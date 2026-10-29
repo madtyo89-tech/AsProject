@@ -513,13 +513,17 @@ def cek_katalog_publik():
     rows = _tpl_rows("studio.html")
     studio_public_ids = [r["id"] for r in rows if not r["studioOnly"]]
     studio_only_ids = [r["id"] for r in rows if r["studioOnly"]]
-    # Katalog publik diurut rapi per kategori (Semua→Pernikahan→Khitanan→
-    # Ultah→Aqiqah), jadi bandingkan sebagai HIMPUNAN, bukan urutan.
+    # Isi katalog publik dibandingkan sebagai HIMPUNAN dengan TPL publik;
+    # urutan tampilnya sengaja menempatkan rilis NEW TEMPLATE paling depan.
     mismatch = sorted(pub_ids) != sorted(studio_public_ids)
     lapor("ok" if not mismatch else "masalah",
           "index.html: %d tema publik sinkron; %d tema Studio-only tidak dipublikasikan%s" % (
               len(pub_ids), len(studio_only_ids),
               "" if not mismatch else " — daftar publik harus sama dengan subset TPL non-Studio-only"))
+    new_template_ids = ([r["id"] for r in rows if r["arch"]]
+                        + [r["id"] for r in rows if r["id"].startswith("liquid-glass")])
+    lapor("ok" if pub_ids[:len(new_template_ids)] == new_template_ids else "masalah",
+          "index.html: %d NEW TEMPLATE tampil pertama di katalog beranda" % len(new_template_ids))
     # setiap kelas gradient katalog punya rule CSS Tailwind
     kurang = []
     for g in re.findall(r'gradient:"([^"]+)"', pn):

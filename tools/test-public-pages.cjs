@@ -45,6 +45,15 @@ function assertPage(rel, canonical) {
   const pricing = assertPage('harga/index.html', `${ORIGIN}/harga/`);
   check(catalog.includes(`>${PUBLIC.length} tema yang bisa dicoba<`), 'catalog reports the template count');
   check((catalog.match(/>NEW TEMPLATE<\/span>/g) || []).length === 10, 'catalog visibly marks the ten newly published templates as NEW TEMPLATE');
+  const newTemplateIds = [
+    ...PUBLIC.filter(t => t.arch),
+    ...PUBLIC.filter(t => t.id.startsWith('liquid-glass'))
+  ].map(t => t.id);
+  const catalogIds = [...new Set([...catalog.matchAll(/href="\.\.\/template\/([a-z0-9-]+)\/"/g)].map(m => m[1]))];
+  check(JSON.stringify(catalogIds.slice(0, newTemplateIds.length)) === JSON.stringify(newTemplateIds),
+    'catalog lists the ten NEW TEMPLATE releases first so they are immediately visible');
+  check(catalog.includes('Lihat 10 template terbaru') && catalog.includes('Sepuluh kartu pertama di bawah ini berlabel NEW TEMPLATE'),
+    'catalog signposts the newest templates before the full grid');
   check(catalog.includes('portofolio klien') && catalog.includes('data contoh'), 'catalog labels demo material, not customer proof');
   check(pricing.includes('Batas tamu / RSVP') && pricing.includes('Masa aktif link') && pricing.includes('Watermark'), 'pricing table contains requested columns');
   check(pricing.includes('Rp49.000') && pricing.includes('Belum dicantumkan'), 'pricing is tied to catalog data and marks unknown terms');
@@ -56,6 +65,14 @@ function assertPage(rel, canonical) {
     const rel = `undangan/${slug}/index.html`;
     const html = assertPage(rel, `${ORIGIN}/undangan/${slug}/`);
     check(html.includes('Coba demo') && html.includes('FAQPage'), `${rel}: demo CTA and FAQ schema`);
+    const eventKey = slug === 'ulang-tahun' ? 'ultah' : slug;
+    const expectedNew = newTemplateIds.filter(id => {
+      const t = PUBLIC.find(x => x.id === id);
+      return t && (t.ev === eventKey || t.ev === 'all');
+    });
+    const listedIds = [...new Set([...html.matchAll(/href="\.\.\/\.\.\/template\/([a-z0-9-]+)\/"/g)].map(m => m[1]))];
+    check(JSON.stringify(listedIds.slice(0, expectedNew.length)) === JSON.stringify(expectedNew),
+      `${rel}: newest templates for this category are listed first`);
   }
   for (const t of PUBLIC) {
     const rel = `template/${t.id}/index.html`;
@@ -120,6 +137,8 @@ function assertPage(rel, canonical) {
   }
   check(marketing.includes('Buka demo') && marketing.includes('Lihat Demo') && marketing.includes('Mulai '), 'homepage preview cards include image, demo CTA and price');
   check(marketing.includes('Undangan Digital <span') && marketing.includes('Lihat Template'), 'homepage hero has concise headline and primary template CTA');
+  check(marketing.includes('10 template terbaru—6 Gerbang Arch dan 4 Liquid Glass') && marketing.includes('href="#katalog">Lihat 10 template terbaru'),
+    'homepage showcase signposts the newest templates at the start of the full catalog');
   check(marketing.includes('Masa aktif link setelah acara belum dicantumkan') && marketing.includes('Apakah ada biaya tambahan?'), 'homepage FAQ discloses unknown service terms');
   check(marketing.includes('Portofolio dan counter pelanggan tidak ditampilkan tanpa bukti'), 'homepage does not fabricate testimonials, portfolio, or customer counters');
   check(marketingCss.includes('html body #aspWaFab{opacity:1!important') && marketingCss.includes('.ap-home-category-grid'), 'homepage keeps the WhatsApp control visible and uses image-led category cards');

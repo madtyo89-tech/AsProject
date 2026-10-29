@@ -13,6 +13,18 @@ const ROOT = path.resolve(__dirname, '..');
 const ORIGIN = 'https://asproject.my.id';
 const WA = '6285196755675';
 const PUBLIC = TEMPLATES.filter(t => !t.studioOnly).map(t => ({ ...t, ...motor.kompilasiLama(t) }));
+// Display order only: keep registry/TPL indexes untouched, but surface the
+// ten newest public releases first in catalog and category listings.
+const NEW_TEMPLATE_IDS = [
+  'gerbang-rosewood', 'gerbang-sage-pearl', 'gerbang-midnight-navy',
+  'gerbang-khitanan-emerald', 'gerbang-aqiqah-natural', 'gerbang-pesta-ceria',
+  'liquid-glass', 'liquid-glass-khitanan', 'liquid-glass-ultah', 'liquid-glass-aqiqah'
+];
+const PUBLIC_BY_ID = new Map(PUBLIC.map(t => [t.id, t]));
+const PUBLIC_DISPLAY = [
+  ...NEW_TEMPLATE_IDS.map(id => PUBLIC_BY_ID.get(id)).filter(Boolean),
+  ...PUBLIC.filter(t => !NEW_TEMPLATE_IDS.includes(t.id))
+];
 const TODAY = '2026-10-21';
 const EVENTS = {
   pernikahan: {
@@ -181,16 +193,16 @@ const faqBasic = [
 {
   const rel = 'katalog/index.html';
   const base = baseFor(rel);
-  const cards = PUBLIC.map(t => templateCard(t, base)).join('\n');
+  const cards = PUBLIC_DISPLAY.map(t => templateCard(t, base)).join('\n');
   const body = `<nav class="ap-breadcrumb" aria-label="Breadcrumb"><a href="${base}">Beranda</a><span>›</span><span>Katalog template</span></nav>
-  <section class="ap-hero ap-hero-compact"><div><p class="ap-eyebrow">Katalog AsProject</p><h1>Template undangan digital</h1><p class="ap-lead">Jelajahi ${PUBLIC.length} tema pernikahan, khitanan, ulang tahun, dan aqiqah. Setiap halaman tema memiliki demo live yang dapat dibuka tanpa chat admin.</p><div class="ap-actions"><a class="ap-btn ap-btn-dark" href="${base}harga/">Lihat harga & ketentuan</a><a class="ap-btn ap-btn-light" href="${base}#katalog">Kembali ke beranda</a></div></div><div class="ap-hero-note"><strong>Demo ≠ portofolio klien</strong><p>Pratinjau memakai data contoh dari renderer undangan. Kami tidak menganggapnya sebagai hasil acara pelanggan atau testimoni.</p></div></section>
+  <section class="ap-hero ap-hero-compact"><div><p class="ap-eyebrow">Katalog AsProject</p><h1>Template undangan digital</h1><p class="ap-lead">Sepuluh template terbaru—6 Gerbang Arch dan 4 Liquid Glass—tampil pertama, diikuti ${PUBLIC.length - NEW_TEMPLATE_IDS.length} tema lain untuk pernikahan, khitanan, ulang tahun, dan aqiqah. Setiap halaman tema memiliki demo live yang dapat dibuka tanpa chat admin.</p><div class="ap-actions"><a class="ap-btn ap-btn-dark" href="#semua-template">Lihat 10 template terbaru</a><a class="ap-btn ap-btn-light" href="${base}harga/">Lihat harga & ketentuan</a></div></div><div class="ap-hero-note"><strong>Demo ≠ portofolio klien</strong><p>Pratinjau memakai data contoh dari renderer undangan. Kami tidak menganggapnya sebagai hasil acara pelanggan atau testimoni.</p></div></section>
   <section class="ap-section"><div class="ap-section-heading"><p class="ap-eyebrow">Pilih kategori</p><h2>Temukan tema sesuai acara</h2></div><div class="ap-category-links">${Object.values(EVENTS).map(e => `<a class="ap-category-pill" href="${base}undangan/${e.slug}/">Undangan ${esc(e.label)} <span>→</span></a>`).join('')}</div></section>
-  <section class="ap-section"><div class="ap-section-heading"><p class="ap-eyebrow">Semua template</p><h2>${PUBLIC.length} tema yang bisa dicoba</h2><p>Harga katalog saat ini Rp49.000 per tema. Ketentuan layanan lain perlu dikonfirmasi sebelum transaksi.</p></div><div class="ap-template-grid">${cards}</div></section>
+  <section class="ap-section" id="semua-template"><div class="ap-section-heading"><p class="ap-eyebrow">Template terbaru tampil pertama</p><h2>${PUBLIC.length} tema yang bisa dicoba</h2><p>Sepuluh kartu pertama di bawah ini berlabel NEW TEMPLATE. Harga katalog saat ini Rp49.000 per tema. Ketentuan layanan lain perlu dikonfirmasi sebelum transaksi.</p></div><div class="ap-template-grid">${cards}</div></section>
   ${knownTermsNote(base)}
   ${faqSection(faqBasic)}`;
   const schema = [
     { '@type': 'CollectionPage', name: 'Katalog Template Undangan Digital AsProject', url: canonical(rel), description: `Katalog ${PUBLIC.length} template undangan digital AsProject.` },
-    { '@type': 'ItemList', name: 'Template undangan digital AsProject', numberOfItems: PUBLIC.length, itemListElement: PUBLIC.map((t, i) => ({ '@type': 'ListItem', position: i + 1, url: `${ORIGIN}/template/${t.id}/`, name: t.nama })) },
+    { '@type': 'ItemList', name: 'Template undangan digital AsProject', numberOfItems: PUBLIC_DISPLAY.length, itemListElement: PUBLIC_DISPLAY.map((t, i) => ({ '@type': 'ListItem', position: i + 1, url: `${ORIGIN}/template/${t.id}/`, name: t.nama })) },
     faqSchema(faqBasic)
   ];
   write(rel, pageTemplate({ rel, title: 'Katalog Template Undangan Digital', description: `Jelajahi ${PUBLIC.length} tema undangan digital pernikahan, khitanan, ulang tahun, dan aqiqah. Coba demo live gratis sebelum bertanya ke admin.`, body, schema, breadcrumbs: [{ name: 'Katalog', item: '/katalog/' }] }));
@@ -228,7 +240,7 @@ const faqBasic = [
 for (const event of Object.values(EVENTS)) {
   const rel = `undangan/${event.slug}/index.html`;
   const base = baseFor(rel);
-  const templates = PUBLIC.filter(t => t.ev === event.slug || t.ev === event.slug.replace('ulang-tahun', 'ultah') || t.ev === 'all');
+  const templates = PUBLIC_DISPLAY.filter(t => t.ev === event.slug || t.ev === event.slug.replace('ulang-tahun', 'ultah') || t.ev === 'all');
   const unique = [...new Map(templates.map(t => [t.id, t])).values()];
   const items = [
     { q: `Apakah demo undangan ${event.label.toLowerCase()} bisa dicoba gratis?`, a: 'Ya. Tombol “Coba demo” membuka renderer undangan dengan data contoh, tanpa perlu chat admin.' },

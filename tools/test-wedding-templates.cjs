@@ -79,6 +79,8 @@ const templateBaruPublik = [...archPublik, ...liquidPublik];
    Ultah→Aqiqah), jadi bandingkan sebagai HIMPUNAN, bukan urutan. */
 assert.equal(pubIds.length, expectedPublic.length, 'index.html: jumlah tema katalog publik = template non-Studio-only');
 assert.deepEqual([...pubIds].sort(), [...expectedPublic].sort(), 'index.html: katalog publik memakai tema yang sama dengan TPL publik (rapi per kategori)');
+assert.deepEqual(pubIds.slice(0, templateBaruPublik.length), templateBaruPublik.map(t => t.id),
+  'index.html: 10 NEW TEMPLATE tampil pertama di katalog beranda agar langsung terlihat');
 assert(studioTpl.every(t => !t.studioOnly), 'tidak ada tema bawaan yang masih Studio-only');
 assert.deepEqual(archPublik.map(t => t.id), ['gerbang-rosewood','gerbang-sage-pearl','gerbang-midnight-navy','gerbang-khitanan-emerald','gerbang-aqiqah-natural','gerbang-pesta-ceria'], 'enam tema Gerbang kini masuk katalog publik');
 assert.deepEqual(liquidPublik.map(t => t.id), ['liquid-glass', 'liquid-glass-khitanan', 'liquid-glass-ultah', 'liquid-glass-aqiqah'], 'empat Liquid Glass (1 per kategori) kini masuk katalog publik');

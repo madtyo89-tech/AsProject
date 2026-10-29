@@ -95,9 +95,9 @@
     section = el('div', { id: 'asp-home-showcase', class: 'ap-home-showcase' });
     section.innerHTML =
       '<section id="asp-template-showcase" class="ap-home-block" aria-labelledby="asp-template-title">' +
-        '<div class="ap-home-heading"><p class="ap-eyebrow">Pilihan tema · demo mandiri</p><h2 id="asp-template-title">Lihat desain sebelum memilih</h2><p>Delapan cuplikan tema dari katalog. Foto dan isi preview adalah materi demo dengan data contoh, bukan dokumentasi acara pelanggan.</p></div>' +
+        '<div class="ap-home-heading"><p class="ap-eyebrow">Baru rilis · pilihan tema</p><h2 id="asp-template-title">Lihat desain sebelum memilih</h2><p><strong>10 template terbaru—6 Gerbang Arch dan 4 Liquid Glass—tampil sebagai kartu pertama di katalog lengkap di bawah.</strong> Delapan cuplikan berikut adalah pilihan editor dari katalog. Foto dan isi preview adalah materi demo dengan data contoh, bukan dokumentasi acara pelanggan.</p></div>' +
         '<div class="ap-home-template-grid">' + FEATURED.map(templateCard).join('') + '</div>' +
-        '<div class="ap-home-showcase-foot"><span>Semua tema pada kartu dapat dicoba langsung tanpa menghubungi admin.</span><a href="' + base + 'katalog/">Jelajahi 44 tema <span aria-hidden="true">→</span></a></div>' +
+        '<div class="ap-home-showcase-foot"><span>Semua tema pada kartu dapat dicoba langsung tanpa menghubungi admin.</span><a href="#katalog">Lihat 10 template terbaru <span aria-hidden="true">↓</span></a><a href="' + base + 'katalog/">Jelajahi 44 tema <span aria-hidden="true">→</span></a></div>' +
       '</section>' +
       '<section id="asp-category-cards" class="ap-home-block ap-home-categories" aria-labelledby="asp-category-title">' +
         '<div class="ap-home-heading"><p class="ap-eyebrow">Pilih jenis acara</p><h2 id="asp-category-title">Temukan kategori undangan</h2><p>Setiap kategori memiliki katalog dan demo mandiri. Gambar di bawah berasal dari materi contoh, bukan foto pelanggan.</p></div>' +
