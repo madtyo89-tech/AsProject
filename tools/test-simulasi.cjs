@@ -159,9 +159,9 @@ function draftFor(tpl, idx) {
      Tanpa ini semua tema jatuh ke border 'double' dan tidak ada motif sama sekali. */
   const temaUji = w.eval('TPL.filter(t=>t.border).map(t=>t.id)');
   /* Test ini menyuntikkan tema sintetis 'uji-vip' ke TPL untuk menguji tier,
-     jadi TPL berisi 41 entri (40 asli + 1 sintetis). Tema sintetis itu
+     jadi TPL berisi 45 entri (44 asli + 1 sintetis). Tema sintetis itu
      tidak punya border/orn bawaan dan memang tidak boleh ikut dihitung. */
-  t('studio: 40 tema katalog punya border bawaan', temaUji.length === 40, temaUji.length + ' tema');
+  t('studio: 44 tema katalog punya border bawaan', temaUji.length === 44, temaUji.length + ' tema');
   let bBawaan = 0, oBawaan = 0, pBawaan = 0, gagalBorder = [], gagalOrn = [], gagalPat = [];
   for (const id of temaUji) {
     w.eval(`state.border='';state.orn='';state.pat='';pickTpl('${id}')`);
