@@ -397,8 +397,7 @@ Sekarang tiap entri `TPL` membawa `layout:` yang menunjuk satu preset di
 | `ekstra` | bagian eksklusif yang hanya lahir di preset itu |
 | `vip` | menyalakan mesin 4D (parallax 3 lapis + partikel + entrance sinematik) |
 
-**34 tema publik memakai 18 preset kerangka berbeda** pada katalog saat ini. Enam varian Gerbang Arch (Studio-only) memakai lima preset yang
-sudah ada ditambah `panggung-gerbang`.
+**44 tema publik memakai 19 preset kerangka berbeda** pada katalog saat ini. Enam varian Gerbang Arch yang kini publik berlabel **NEW TEMPLATE** memakai lima preset lain ditambah `panggung-gerbang`.
 
 Sepuluh shell: `klasik` (kerangka lama, tanpa aturan CSS), `editorial` (majalah
 tanpa kotak kartu), `bab` (pembatas gelap + angka romawi), `split` (rail lengket
@@ -512,7 +511,7 @@ Jaminan invariansi yang dijaga otomatis:
   (index ke array) untuk undangan lama tidak berubah.
 - `cek-kerangka.cjs` [10] memastikan literal TPL di HTML == hasil
   generator (anti-drift); `cek-kesehatan.py` [11][13] memastikan
-  urutan id studio == undangan dan katalog publik tetap sinkron dengan 34 tema publik.
+  urutan id studio == undangan dan katalog publik tetap sinkron dengan 44 tema publik.
 - `tools/test-kerangka-bebas.cjs` (jsdom, diikat di cek-kesehatan
   [35]) merender 6 template kb + 2 kompilasi legacy di renderer
   live: shell, urutan bebas, penomoran bab, strip galeri, jam
@@ -553,11 +552,20 @@ array `TPL` supaya index `theme` undangan lama tidak berubah.
   sebagai shell kaca biasa.
 - **Export mandiri**: Studio menyematkan CSS/JS liquid ke file HTML
   hasil “Simpan File HTML” hanya bila tema terpilih Liquid Glass.
-- **Uji**: `node tools/test-liquid-glass.cjs` (89 pemeriksaan, ikut
-  loop CI `tools/test-*.cjs`) mengunci tepat-satu-per-kategori,
-  posisi akhir array, dan pemasangan hook-nya; asersi
-  `studioOnlyBaru` di `tools/test-wedding-templates.cjs` kini
-  mengekspektasikan tepat keempat tema ini sebagai staged Studio-only.
+- **Uji**: `node tools/test-liquid-glass.cjs` (ikut loop CI
+  `tools/test-*.cjs`) mengunci tepat-satu-per-kategori, posisi akhir
+  array, status publik berlabel **NEW TEMPLATE**, dan pemasangan hook-nya.
+
+## Publikasi 10 template NEW TEMPLATE (2026-10-29)
+
+Enam tema *Gerbang Arch* dan empat tema *Liquid Glass* yang semula
+Studio-only kini masuk katalog pelanggan seperti tema lain. Kesepuluhnya
+membawa badge `NEW TEMPLATE`, harga katalog Rp49.000, kartu di beranda dan
+`/katalog/`, halaman kategori, halaman detail `/template/<id>/`, demo
+renderer, serta entri sitemap. Urutan `TPL` tidak digeser, jadi index
+kolom `theme` di Supabase tetap aman. Setelah mengubah status template,
+jalankan `node tools/bangun-tpl.cjs`, `node tools/bangun-halaman-publik.cjs`,
+lalu `python3 tools/bangun-sitemap.py`.
 
 ## Link undangan untuk semua tamu (tanpa nama) di Master & Studio (2026-10-15)
 
@@ -819,8 +827,8 @@ Ulangi: `node tools/audit-landmark.cjs`.
 - `robots.txt` mengizinkan semua halaman publik, menutup `/master.html`, `/scan.html`,
   `/checkin.html`, dan `/android/` (halaman internal & berkas unduhan), serta menunjuk
   `https://asproject.my.id/sitemap.xml`.
-- `sitemap.xml` berisi 50 URL: beranda + 5 demo kategori aktif, halaman katalog dan harga,
-  4 kategori acara, 34 detail tema, serta 4 halaman kepercayaan. Halaman
+- `sitemap.xml` berisi 60 URL: beranda + 5 demo kategori aktif, halaman katalog dan harga,
+  4 kategori acara, 44 detail tema, serta 4 halaman kepercayaan. Halaman
   arsip `katalog-demo/`, Ice Blue lama, 404, studio, `undangan.html`,
   dan laporan audit sengaja tidak didaftarkan. Jalankan `node tools/bangun-halaman-publik.cjs` lalu
   `python3 tools/bangun-sitemap.py` setelah mengubah daftar template.
@@ -1005,7 +1013,7 @@ Dua implikasi:
 
 1. Buka **Search Console** → properti `https://asproject.my.id/` → **Verifikasi**
    (token sudah terpasang sejak 2026-10-18; cukup klik).
-2. **Sitemaps** → submit `sitemap.xml` (50 URL). Kalau pernah submit versi lama,
+2. **Sitemaps** → submit `sitemap.xml` (60 URL). Kalau pernah submit versi lama,
    klik **Resubmit** supaya Google membaca komposisi baru.
 3. **URL Inspection** → `https://asproject.my.id/` → **Request Indexing**.
    Ulangi untuk 2–3 halaman demo terpenting, jangan semua sekaligus.
@@ -1022,9 +1030,10 @@ Dua implikasi:
 ## Katalog tema (direset + diisi ulang 2026-10-10)
 
 Katalog lama berisi 72 tema lengkap dengan artwork-nya. Pada 2026-10-10 katalog direset
-lalu mulai diisi ulang dari tema AsProject; sejak itu daftar tumbuh. **Per 2026-10-21 ada
-34 tema publik** (termasuk 2 tema umum yang tersedia di semua kategori) dan 6 pilihan
-Gerbang yang hanya tersedia di Studio. Seluruh harga publik pada sumber template saat ini
+lalu mulai diisi ulang dari tema AsProject; sejak itu daftar tumbuh. **Per 2026-10-29 ada
+44 tema publik** (termasuk 2 tema umum yang tersedia di semua kategori); enam Gerbang Arch
+dan empat Liquid Glass yang semula hanya tersedia di Studio kini ikut publik berlabel
+**NEW TEMPLATE**, sehingga tidak ada tema bawaan Studio-only yang tersisa. Seluruh harga publik pada sumber template saat ini
 adalah **Rp49.000 per tema**. Data rating/ulasan lama tidak dipakai sebagai social proof
 publik. Yang ikut terhapus saat reset: `assets/tema-3d/` dan `assets/wedding/` versi lama.
 

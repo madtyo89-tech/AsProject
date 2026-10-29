@@ -55,6 +55,9 @@ body.ap-page{margin:0;background:var(--ap-paper);color:var(--ap-ink);font-family
 .ap-swatch{position:relative;min-height:148px;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,var(--swatch-a),var(--swatch-b));color:var(--ap-ink)}
 .ap-swatch:before{content:"";position:absolute;inset:13px;border:1px solid rgba(255,255,255,.78);border-radius:15px}
 .ap-swatch span{position:absolute;top:13px;left:16px;padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.84);font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.ap-new-badge{display:inline-flex;align-items:center;padding:5px 10px;border-radius:99px;background:#19150f;color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.ap-swatch .ap-new-badge{left:auto;right:16px;background:#19150f;color:#fff}
+.ap-product-copy .ap-new-badge{margin-top:10px}
 .ap-swatch strong{position:relative;padding:15px;font:600 clamp(18px,2vw,25px) Georgia,"Times New Roman",serif;text-align:center;text-shadow:0 1px 12px rgba(255,255,255,.55)}
 .ap-template-card-body{display:flex;flex:1;flex-direction:column;align-items:flex-start;padding:18px}
 .ap-template-card h3{margin:2px 0 6px;font:600 20px/1.2 Georgia,"Times New Roman",serif}

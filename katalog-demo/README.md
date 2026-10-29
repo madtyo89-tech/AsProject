@@ -25,14 +25,14 @@ Live* katalog publik; enam demo tambahan di bawah dibuka lewat URL langsung.
 | `undangan-aqiqah-natural.html` | Aqiqah Natural · ivory & sand | demo tambahan; tidak mengubah routing katalog |
 | `undangan-ulang-tahun-ceria.html` | Pesta Ceria · plum & coral | demo tambahan; tidak mengubah routing katalog |
 | `undangan-luxury-seal.html` | *Luxury Invitation No. 001* — artifact React dari sesi Arena, dipulihkan | demo mandiri; tidak di-route katalog |
-| `perbandingan-tema.html` | dibangun `tools/bikin-perbandingan-tema.cjs` | 24 tema berdampingan + 15 model cover |
+| `perbandingan-tema.html` | dibangun `tools/bikin-perbandingan-tema.cjs` | 44 tema berdampingan + 15 model cover |
 | `index.html` | halaman pengantar Drive | **legacy / `noindex`** — templat landing lama dengan harga & jumlah tema berbeda dari produk; lihat catatan di bawah |
 | `foto-cover.jpg`, `foto-rahma-cover.jpg` | foto contoh | latar cover halaman-halaman di atas |
 
 Enam demo tambahan di tabel tetap menjadi halaman mandiri untuk pratinjau langsung lewat
-URL. Lapisan visual Gerbang Arch juga tersedia sebagai **enam pilihan Studio-only** yang
-bisa dipilih per kategori dan dipakai saat publish ke renderer live. Tema-tema ini belum
-ditambahkan sebagai listing atau harga baru di katalog publik. Floral Rustic tetap
+URL. Lapisan visual Gerbang Arch tersedia sebagai **enam pilihan publik berlabel NEW TEMPLATE**
+yang bisa dipilih per kategori, dipakai saat publish ke renderer live, dan tampil sebagai
+listing berharga katalog Rp49.000 di katalog publik. Floral Rustic tetap
 menggunakan `undangan-wedding-gold.html`.
 
 > **Status saat ini:** halaman `katalog-demo/index.html` adalah pengantar lama dan

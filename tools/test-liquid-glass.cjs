@@ -7,8 +7,8 @@
  * Yang dijaga:
  *   1. Ada 4 template Liquid Glass dan ev-nya persis {pernikahan,
  *      khitanan, ultah, aqiqah} (tidak ada tema liquid berev 'all');
- *      semuanya studioOnly dan berada di posisi AKHIR array supaya
- *      index Supabase kolom 'theme' tema lama tidak berubah.
+ *      semuanya publik berlabel NEW TEMPLATE dan berada di posisi AKHIR
+ *      array supaya index Supabase kolom 'theme' tema lama tidak berubah.
  *   2. Keempatnya punya token sendiri dan terkompilasi ke layout
  *      kaca lama (kaca-manis / kaca-dewasa) — bukan layout null.
  *   3. Literal TPL studio.html & undangan.html memuat keempat id
@@ -45,7 +45,7 @@ cek(
   'ev liquid harus tepat 1 per kategori, dapat: ' + lg.map((t) => t.id + '=' + t.ev).join(', ')
 );
 cek(!lg.some((t) => t.ev === 'all'), "tema liquid tidak boleh ada yang ev:'all'");
-cek(lg.every((t) => t.studioOnly === true), 'tema liquid harus studioOnly dulu');
+cek(lg.every((t) => !t.studioOnly && t.badge === 'NEW TEMPLATE' && t.harga === 49000), 'tema liquid harus publik berlabel NEW TEMPLATE dengan harga katalog');
 cek(
   TEMPLATES.slice(-4).every((t) => String(t.id).indexOf('liquid-glass') === 0),
   'tema liquid harus di akhir array TEMPLATES'

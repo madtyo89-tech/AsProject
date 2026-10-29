@@ -4,8 +4,7 @@
    bisa dipakai shell/susunan mana pun (berbeda dengan
    TPL lama yang mengunci warna + layout dalam satu objek).
 
-   27 token: 18 tema publik + 6 tema Gerbang migrasi (studioOnly
-   dan arch dipertahankan), lalu 2 token baru [BARU]. Id token
+   Token tema publik; enam token Gerbang mempertahankan penanda arch. Id token
    sama dengan id TPL lama supaya migrasi di template.js
    1:1 tanpa tabel terjemahan.
 
@@ -34,13 +33,13 @@ const TOKEN={
  'golden-jubilee':{nama:'Golden Jubilee',ev:'ultah',g:['#F5E7C8','#E8CF96','#D4AF37'],accent:'#8C6D1F',ink:'#5C4714',ft:'playfair',char:'JUBILE',orn:'bintang',pat:'deco',border:'artdeco',deco:'✦ ✸ ✦',desc:'Pesta emas champagne buat milestone istimewa — 30, 40, 50 tahun'},
  'pearl-ivory':{nama:'Pearl Ivory',ev:'aqiqah',g:['#FDF9F3','#F6E7E2','#E9D2CE'],accent:'#A87E74',ink:'#5E4E36',ft:'cormorant',char:'MUTIARA',orn:'mutiara',pat:'renda',border:'lace-ivory',deco:'✦ ❖ ✦',desc:'Mutiara rosé-champagne, lembut tapi tak lagi serupa ivory'},
 
- /* ---- 6 tema Gerbang Arch (studioOnly) ---- */
- 'gerbang-rosewood':{nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',ft:'lora',char:'ROSEWOOD',orn:'mawar',pat:'botanical',border:'gold-leaf',deco:'✦ ❖ ✦',studioOnly:true,arch:true,desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood'},
- 'gerbang-sage-pearl':{nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#EEEFE4','#D8DDCB'],accent:'#526A55',ink:'#435348',ft:'ebgaramond',char:'SAGE',orn:'mutiara',pat:'botanical',border:'pearl',deco:'✿ ❋ ✿',studioOnly:true,arch:true,desc:'Sage netral, kartu editorial ivory, dan foto berbingkai arch'},
- 'gerbang-midnight-navy':{nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',ft:'playfair',char:'NAVY',orn:'onyx',pat:'mendung',border:'vip-aurora',deco:'✦ ❖ ✦',studioOnly:true,arch:true,desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis'},
- 'gerbang-khitanan-emerald':{nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',ft:'cinzel',char:'EMERALD',orn:'arabesque',pat:'girih',border:'laurel',deco:'۞ ✦ ۞',studioOnly:true,arch:true,desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut'},
- 'gerbang-aqiqah-natural':{nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',ft:'marcellus',char:'NATURAL',orn:'botanical',pat:'kawung',border:'halo',deco:'۞ ❖ ۞',studioOnly:true,arch:true,desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung'},
- 'gerbang-pesta-ceria':{nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',ft:'dancing',char:'CERIA',orn:'confetti',pat:'confetti',border:'dotted',deco:'✸ ✦ ✸',studioOnly:true,arch:true,desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch'},
+ /* ---- 6 tema Gerbang Arch (publik) ---- */
+ 'gerbang-rosewood':{nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',ft:'lora',char:'ROSEWOOD',orn:'mawar',pat:'botanical',border:'gold-leaf',deco:'✦ ❖ ✦',arch:true,desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood'},
+ 'gerbang-sage-pearl':{nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#EEEFE4','#D8DDCB'],accent:'#526A55',ink:'#435348',ft:'ebgaramond',char:'SAGE',orn:'mutiara',pat:'botanical',border:'pearl',deco:'✿ ❋ ✿',arch:true,desc:'Sage netral, kartu editorial ivory, dan foto berbingkai arch'},
+ 'gerbang-midnight-navy':{nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',ft:'playfair',char:'NAVY',orn:'onyx',pat:'mendung',border:'vip-aurora',deco:'✦ ❖ ✦',arch:true,desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis'},
+ 'gerbang-khitanan-emerald':{nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',ft:'cinzel',char:'EMERALD',orn:'arabesque',pat:'girih',border:'laurel',deco:'۞ ✦ ۞',arch:true,desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut'},
+ 'gerbang-aqiqah-natural':{nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',ft:'marcellus',char:'NATURAL',orn:'botanical',pat:'kawung',border:'halo',deco:'۞ ❖ ۞',arch:true,desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung'},
+ 'gerbang-pesta-ceria':{nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',ft:'dancing',char:'CERIA',orn:'confetti',pat:'confetti',border:'dotted',deco:'✸ ✦ ✸',arch:true,desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch'},
 
  /* ---- [BARU] token baru murni untuk kerangka blok+token ---- */
  'kopi-sunda':{nama:'Kopi Sunda',ev:'all',g:['#F7F0E6','#EBDFC9','#D9C7A7'],accent:'#7C5A3A',ink:'#4E3F30',ft:'ebgaramond',orn:'botanical',pat:'kawung',border:'frame2',deco:'❀ ✦ ❀',desc:'Kopi Sunda hangat — tanah, kayu, dan kertas daur ulang [BARU]'},
@@ -65,10 +64,10 @@ const TOKEN={
     Liquid Glass (kelas badan 'tema-liquid' di undangan.html).
     Tanpa aset itu tema tetap tampil sebagai shell kaca biasa —
     degrade anggun. */
- 'liquid-glass':{nama:'Liquid Glass Aurora',ev:'pernikahan',g:['#EFF7FF','#DCEAFF','#C9DBFF'],accent:'#3E5EDD',ink:'#22314F',ft:'montserrat',char:'Aurora',orn:'geometrik',pat:'frost',border:'vip-aurora',deco:'✦ ◇ ✦',studioOnly:true,desc:'Liquid glass pernikahan — kaca cair Aurora 3D dinamis, aksen bisa diganti tamu [BARU]'},
- 'liquid-glass-khitanan':{nama:'Liquid Glass Khatam',ev:'khitanan',g:['#ECFDF8','#D2F5E7','#C7E8FF'],accent:'#0F766E',ink:'#173F3C',ft:'poppins',char:'KHATAM',orn:'arabesque',pat:'girih',border:'filigree',deco:'۞ ✦ ۞',studioOnly:true,desc:'Liquid glass khitanan — kaca es zamrud Islami 3D dinamis, aksen bisa diganti tamu [BARU]'},
- 'liquid-glass-ultah':{nama:'Liquid Glass Neon',ev:'ultah',g:['#FFF7ED','#FCE7F3','#DDD6FE'],accent:'#B4237A',ink:'#3B174A',ft:'poppins',char:'NEON',orn:'confetti',pat:'confetti',border:'vip-aurora',deco:'★ ✦ ★',studioOnly:true,desc:'Liquid glass ultah — kaca neon pop 3D dinamis, blob warna-warni dan aksen bisa diganti tamu [BARU]'},
- 'liquid-glass-aqiqah':{nama:'Liquid Glass Mentari',ev:'aqiqah',g:['#FFF9E9','#DFF6EE','#DCEBFF'],accent:'#2F7E73',ink:'#284856',ft:'poppins',char:'MENTARI',orn:'awan',pat:'frost',border:'halo',deco:'☁ ✦ ☁',studioOnly:true,desc:'Liquid glass aqiqah — kaca mentari lembut 3D dinamis, aksen bisa diganti tamu [BARU]'}
+ 'liquid-glass':{nama:'Liquid Glass Aurora',ev:'pernikahan',g:['#EFF7FF','#DCEAFF','#C9DBFF'],accent:'#3E5EDD',ink:'#22314F',ft:'montserrat',char:'Aurora',orn:'geometrik',pat:'frost',border:'vip-aurora',deco:'✦ ◇ ✦',desc:'Liquid glass pernikahan — kaca cair Aurora 3D dinamis, aksen bisa diganti tamu [BARU]'},
+ 'liquid-glass-khitanan':{nama:'Liquid Glass Khatam',ev:'khitanan',g:['#ECFDF8','#D2F5E7','#C7E8FF'],accent:'#0F766E',ink:'#173F3C',ft:'poppins',char:'KHATAM',orn:'arabesque',pat:'girih',border:'filigree',deco:'۞ ✦ ۞',desc:'Liquid glass khitanan — kaca es zamrud Islami 3D dinamis, aksen bisa diganti tamu [BARU]'},
+ 'liquid-glass-ultah':{nama:'Liquid Glass Neon',ev:'ultah',g:['#FFF7ED','#FCE7F3','#DDD6FE'],accent:'#B4237A',ink:'#3B174A',ft:'poppins',char:'NEON',orn:'confetti',pat:'confetti',border:'vip-aurora',deco:'★ ✦ ★',desc:'Liquid glass ultah — kaca neon pop 3D dinamis, blob warna-warni dan aksen bisa diganti tamu [BARU]'},
+ 'liquid-glass-aqiqah':{nama:'Liquid Glass Mentari',ev:'aqiqah',g:['#FFF9E9','#DFF6EE','#DCEBFF'],accent:'#2F7E73',ink:'#284856',ft:'poppins',char:'MENTARI',orn:'awan',pat:'frost',border:'halo',deco:'☁ ✦ ☁',desc:'Liquid glass aqiqah — kaca mentari lembut 3D dinamis, aksen bisa diganti tamu [BARU]'}
 };
 const TOKEN_IDS=Object.keys(TOKEN);
 if(typeof module!=='undefined')module.exports={TOKEN,TOKEN_IDS};

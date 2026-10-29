@@ -37,12 +37,14 @@ function assertPage(rel, canonical) {
 }
 
 (async () => {
-  check(PUBLIC.length === 34, `expected 34 public templates, got ${PUBLIC.length}`);
+  check(PUBLIC.length === 44, `expected 44 public templates, got ${PUBLIC.length}`);
+  check(TEMPLATES.every(t => !t.studioOnly), 'all built-in templates are public (no Studio-only built-ins remain)');
   check(fs.existsSync(path.join(ROOT, 'katalog/index.html')), 'catalog landing page exists');
   check(fs.existsSync(path.join(ROOT, 'harga/index.html')), 'pricing page exists');
   const catalog = assertPage('katalog/index.html', `${ORIGIN}/katalog/`);
   const pricing = assertPage('harga/index.html', `${ORIGIN}/harga/`);
   check(catalog.includes(`>${PUBLIC.length} tema yang bisa dicoba<`), 'catalog reports the template count');
+  check((catalog.match(/>NEW TEMPLATE<\/span>/g) || []).length === 10, 'catalog visibly marks the ten newly published templates as NEW TEMPLATE');
   check(catalog.includes('portofolio klien') && catalog.includes('data contoh'), 'catalog labels demo material, not customer proof');
   check(pricing.includes('Batas tamu / RSVP') && pricing.includes('Masa aktif link') && pricing.includes('Watermark'), 'pricing table contains requested columns');
   check(pricing.includes('Rp49.000') && pricing.includes('Belum dicantumkan'), 'pricing is tied to catalog data and marks unknown terms');
@@ -62,6 +64,7 @@ function assertPage(rel, canonical) {
     check(html.includes(`Undangan ${t.ev === 'ultah' ? 'Ulang Tahun' : t.ev === 'all' ? 'Pernikahan' : t.ev} ${t.nama}`) || html.includes(t.nama), `${rel}: template-specific title`);
     check(html.includes(`Product`) && html.includes('priceCurrency') && html.includes(String(t.harga || 49000)), `${rel}: Product schema and template price`);
     check(html.includes(`tpl=${t.id}`), `${rel}: preview points at the matching renderer template`);
+    check(t.badge !== 'NEW TEMPLATE' || html.includes('>NEW TEMPLATE</span>'), `${rel}: newly published template carries the visible NEW TEMPLATE badge`);
     check(html.includes('Demo memakai data contoh') && html.includes('bukan hasil pelanggan'), `${rel}: preview is clearly labelled`);
     check(html.includes('harga katalog per tema') && !html.includes('harga katalog per undangan'), `${rel}: price unit is per theme, not a made-up per-invitation package`);
     check(html.includes('wa.me/6285196755675'), `${rel}: order CTA`);
@@ -123,7 +126,7 @@ function assertPage(rel, canonical) {
 
   const sitemap = read('sitemap.xml');
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
-  check(urls.length === 50, `expected 50 sitemap routes (45 marketing + 5 active demos), got ${urls.length}`);
+  check(urls.length === 60, `expected 60 sitemap routes (55 marketing + 5 active demos), got ${urls.length}`);
   check(new Set(urls).size === urls.length, 'sitemap URLs are unique');
   for (const p of fs.readdirSync(path.join(ROOT, 'katalog-demo')).filter(f => f.endsWith('.html'))) {
     const legacy = read(`katalog-demo/${p}`);

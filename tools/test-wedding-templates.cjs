@@ -1,10 +1,10 @@
 // Skin undangan pernikahan + paritas katalog Studio/live/export.
 //
-// Uji ini tidak mengunci semua nama tema historis: katalog publik punya 13 entri,
-// dan enam varian Gerbang Arch tambahan bersifat Studio-only. Yang diuji sekarang
-// adalah INVARIAN-nya: tema publik cocok dengan katalog publik, enam tema Studio-only
-// tersambung ke renderer live, palet Studio/live selaras, skin wedding/arch terpasang,
-// dan mesin sematan artwork saat export.
+// Uji ini tidak mengunci semua nama tema historis. Yang diuji adalah
+// INVARIAN-nya: semua tema bawaan cocok dengan katalog publik (enam Gerbang
+// Arch + empat Liquid Glass berlabel NEW TEMPLATE), tersambung ke renderer
+// live, palet Studio/live selaras, skin wedding/arch terpasang, dan mesin
+// sematan artwork saat export.
 //
 // Run: node tools/test-wedding-templates.cjs
 //      NODE_PATH=… node tools/test-wedding-templates.cjs   (uji render perlu jsdom)
@@ -36,7 +36,7 @@ function entri(source) {
     if (!id) return null;
     const get = key => ((row.match(new RegExp(key + ":'([^']*)'")) || [])[1] || '');
     const g = (row.match(/g:\[([^\]]*)\]/) || [])[1] || '';
-    return { id, nama: get('nama'), ev: get('ev'), accent: get('accent'), ink: get('ink'),
+    return { id, nama: get('nama'), ev: get('ev'), badge: get('badge'), accent: get('accent'), ink: get('ink'),
       pat: get('pat'), bg3d: get('bg3d'), bgPaper: get('bgPaper'), tier: get('tier'),
       studioOnly: /studioOnly:true/.test(row), arch: /arch:true/.test(row),
       harga: Number((row.match(/harga:(\d+)/) || [])[1] || 0),
@@ -72,23 +72,25 @@ for (const s of studioTpl) {
 const pn = (indexHtml.match(/var Pn=\[([\s\S]*?)\],Xm=/) || [, ''])[1];
 const pubIds = [...pn.matchAll(/\{id:\"([a-z0-9-]+)\"/g)].map(m => m[1]);
 const expectedPublic = studioTpl.filter(t => !t.studioOnly).map(t => t.id);
-const archOnly = studioTpl.filter(t => t.studioOnly && t.arch);
-const studioOnlyBaru = studioTpl.filter(t => t.studioOnly && !t.arch);
+const archPublik = studioTpl.filter(t => t.arch);
+const liquidPublik = studioTpl.filter(t => t.id.startsWith('liquid-glass'));
+const templateBaruPublik = [...archPublik, ...liquidPublik];
 /* Katalog publik diurut rapi per kategori (Semua→Pernikahan→Khitanan→
    Ultah→Aqiqah), jadi bandingkan sebagai HIMPUNAN, bukan urutan. */
 assert.equal(pubIds.length, expectedPublic.length, 'index.html: jumlah tema katalog publik = template non-Studio-only');
 assert.deepEqual([...pubIds].sort(), [...expectedPublic].sort(), 'index.html: katalog publik memakai tema yang sama dengan TPL publik (rapi per kategori)');
-assert.deepEqual(archOnly.map(t => t.id), ['gerbang-rosewood','gerbang-sage-pearl','gerbang-midnight-navy','gerbang-khitanan-emerald','gerbang-aqiqah-natural','gerbang-pesta-ceria'], 'enam tema Gerbang tersedia khusus di Studio');
-assert.deepEqual(studioOnlyBaru.map(t => t.id), ['liquid-glass', 'liquid-glass-khitanan', 'liquid-glass-ultah', 'liquid-glass-aqiqah'], 'selain 4 Liquid Glass staged Studio-only (1 per kategori), tema baru sudah dipublikasikan ke katalog');
-assert(archOnly.every(t => t.arch), 'semua tema Studio-only Arch memakai penanda arch');
-assert(studioOnlyBaru.every(t => t.harga > 0), 'tema Studio-only baru membawa harga (bukan arch)');
-assert(archOnly.every(t => !t.harga) && liveTpl.filter(t => t.studioOnly && t.arch).every(t => !t.harga), 'varian Arch tidak membawa harga asumsi di Studio maupun live');
+assert(studioTpl.every(t => !t.studioOnly), 'tidak ada tema bawaan yang masih Studio-only');
+assert.deepEqual(archPublik.map(t => t.id), ['gerbang-rosewood','gerbang-sage-pearl','gerbang-midnight-navy','gerbang-khitanan-emerald','gerbang-aqiqah-natural','gerbang-pesta-ceria'], 'enam tema Gerbang kini masuk katalog publik');
+assert.deepEqual(liquidPublik.map(t => t.id), ['liquid-glass', 'liquid-glass-khitanan', 'liquid-glass-ultah', 'liquid-glass-aqiqah'], 'empat Liquid Glass (1 per kategori) kini masuk katalog publik');
+assert(archPublik.every(t => t.arch), 'semua tema Gerbang publik memakai penanda arch');
+assert(templateBaruPublik.every(t => t.harga === 49000 && t.badge === 'NEW TEMPLATE'), '10 template yang baru dipublikasikan membawa harga katalog Rp49.000 dan badge NEW TEMPLATE');
+assert(liveTpl.filter(t => templateBaruPublik.some(x => x.id === t.id)).every(t => !t.studioOnly && t.badge === 'NEW TEMPLATE'), 'renderer live menerima 10 template publik baru dengan badge yang sama');
 const demoByArch = {
   'gerbang-rosewood':'undangan-wedding-rosewood.html', 'gerbang-sage-pearl':'undangan-wedding-sage-pearl.html',
   'gerbang-midnight-navy':'undangan-wedding-midnight-navy.html', 'gerbang-khitanan-emerald':'undangan-khitanan-emerald.html',
   'gerbang-aqiqah-natural':'undangan-aqiqah-natural.html', 'gerbang-pesta-ceria':'undangan-ulang-tahun-ceria.html'
 };
-for (const t of archOnly) {
+for (const t of archPublik) {
   const demo = read('katalog-demo/' + demoByArch[t.id]);
   const css = demo.match(/--cream:(#[0-9a-f]{6})[;\s]/i), deep = demo.match(/--gold-deep:(#[0-9a-f]{6})[;\s]/i);
   assert(css && deep, `${t.id}: demo mandiri menyimpan token palet kategori`);
@@ -167,7 +169,7 @@ async function testLiveExamples() {
   }
 }
 async function testArchLive() {
-  for (const t of archOnly) {
+  for (const t of archPublik) {
     const dom = await renderLive(t.id, t.ev), w = dom.window;
     assert(w.document.body.classList.contains('gerbang-arch'), `${t.id}: skin Gerbang Arch aktif pada ${t.ev}`);
     assert(w.document.querySelector('#cover .cvf-arch'), `${t.id}: cover photo default memakai frame arch`);
@@ -175,7 +177,7 @@ async function testArchLive() {
     if (t.ev === 'pernikahan') assert(w.document.body.classList.contains('wedding-cover'), `${t.id}: skin wedding tetap aktif`);
     dom.window.close();
   }
-  const explicit = await renderLive(archOnly[0].id, archOnly[0].ev, 'polaroid');
+  const explicit = await renderLive(archPublik[0].id, archPublik[0].ev, 'polaroid');
   assert(explicit.window.document.querySelector('#cover .cvf-polaroid'), 'gaya cover tersimpan mengalahkan default arch di live');
   explicit.window.close();
 }
@@ -213,8 +215,7 @@ async function testStudioPreview() {
       w.localStorage.setItem('asproject_studio_auth', '31282510d0c10140f7413a0573fdade727453ec37c3c386e4363e7e598090d8e');
       /* Simulate an older saved Studio catalog containing an Arch row with a guessed price. */
       w.localStorage.setItem('asproject_studio_v3', JSON.stringify({
-        katalog: [{ id: 'gerbang-rosewood', nama: 'Gerbang Arch · Rosewood', tpl: 'gerbang-rosewood', ev: 'pernikahan', hargaNormal: 150000, hargaPromo: 75000, promoActive: true }],
-        katalogHide: ['gerbang-rosewood']
+        katalog: [{ id: 'gerbang-rosewood', nama: 'Gerbang Arch · Rosewood', tpl: 'gerbang-rosewood', ev: 'pernikahan', hargaNormal: 150000, hargaPromo: 75000, promoActive: true }]
       }));
       w.clearScrollReveal = () => {}; w.setupScrollReveal = () => {}; w.scrollTo = () => {};
       w.HTMLMediaElement.prototype.play = () => Promise.resolve(); w.HTMLMediaElement.prototype.pause = () => {};
@@ -222,12 +223,16 @@ async function testStudioPreview() {
     } });
   const w = dom.window;
   w.eval(`state.started=true;state.event='pernikahan';state.stage='editor';state.tab='desain';render()`);
-  assert.deepEqual([...w.eval('state.katalog.map(k=>k.tpl)')], expectedPublic, 'Studio price catalog migrates back to the public themes only');
-  assert.deepEqual([...w.eval('state.katalogHide')], [], 'Studio-only themes are not left hidden by old catalog settings');
-  assert(archOnly.every(t => w.eval(`tplsFor('${t.ev}').some(x=>x.id==='${t.id}')`)), 'all six unpriced Studio-only themes remain selectable by event');
-  assert(archOnly.every(t => w.eval(`!Object.prototype.hasOwnProperty.call(TPL.find(x=>x.id==='${t.id}'),'harga')`)), 'Studio-only themes carry no assumed price');
+  const katalogIds = [...w.eval('state.katalog.map(k=>k.tpl)')];
+  assert.deepEqual([...katalogIds].sort(), [...expectedPublic].sort(), 'Studio price catalog contains every public theme exactly once after migration');
+  assert.equal(new Set(katalogIds).size, expectedPublic.length, 'Studio price catalog has no duplicate public theme rows');
+  assert.equal(w.eval("state.katalog.find(k=>k.tpl==='gerbang-rosewood').hargaNormal"), 49000, 'legacy guessed Arch price migrates to the catalog price');
+  assert.equal(w.eval("state.katalog.find(k=>k.tpl==='gerbang-rosewood').hargaPromo"), 49000, 'legacy guessed Arch promo price migrates to the catalog price');
+  assert.deepEqual([...w.eval('state.katalogHide')], [], 'newly public themes are not hidden by the legacy fixture');
+  assert(archPublik.every(t => w.eval(`tplsFor('${t.ev}').some(x=>x.id==='${t.id}')`)), 'all six public Arch themes remain selectable by event');
+  assert(archPublik.every(t => w.eval(`TPL.find(x=>x.id==='${t.id}').harga`) === 49000), 'public Arch themes carry the catalog price in Studio');
   const catalogMarkup = w.eval('katalog()');
-  assert(archOnly.every(t => !catalogMarkup.includes(t.nama)), 'Studio-only themes do not appear in the price/promo management catalog');
+  assert(templateBaruPublik.every(t => catalogMarkup.includes(t.nama)), 'newly public themes appear in the price/promo management catalog');
   /* Pratinjau Studio kini menampilkan berkas undangan.html asli di dalam iframe,
      jadi skin tema diuji lewat renderer live (testLiveExamples/testArchLive) dan
      lewat payload yang dikirim Studio ke iframe (barisUndangan). */
@@ -239,7 +244,7 @@ async function testStudioPreview() {
     assert.equal(row.data.accent, tplOfCheck(w, t), `${t.id}: payload membawa aksen tema`);
   }
 
-  for (const t of archOnly) {
+  for (const t of archPublik) {
     w.eval(`state.event='${t.ev}';state.cover='assets/demo/wedding/01-jawa-elegan.jpg';state.coverStyle='kotak';state.coverStyleExplicit=false;pickTpl('${t.id}')`);
     assert.equal(w.eval('state.coverStyle'), 'arch', `${t.id}: Studio memberi frame arch sebagai default`);
     assert.equal(w.eval('barisUndangan().data.coverStyle'), 'arch', `${t.id}: payload pratinjau mengirim gaya arch`);
@@ -292,6 +297,6 @@ async function testStudioPreview() {
   try {
     if (JSDOM) { await testLiveExamples(); await testArchLive(); await testCustomTemplateLive(); await testCoverLayoutsLive(); await testStudioPreview(); }
     else console.log('INFO: jsdom unavailable; runtime rendering checks skipped.');
-    console.log(`PASS: ${studioTpl.length} tema selaras Studio/live (${expectedPublic.length} publik, ${archOnly.length} Studio-only Arch + ${studioOnlyBaru.length} Studio-only baru); ${wedding.length} tema memakai skin wedding; semua enam Arch diuji di renderer & preview.`);
+    console.log(`PASS: ${studioTpl.length} tema selaras Studio/live (${expectedPublic.length} publik, termasuk ${archPublik.length} Arch + ${liquidPublik.length} Liquid Glass berlabel NEW TEMPLATE); ${wedding.length} tema memakai skin wedding; semua enam Arch diuji di renderer & preview.`);
   } catch (error) { console.error(error); process.exitCode = 1; }
 })();

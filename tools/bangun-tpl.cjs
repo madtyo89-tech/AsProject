@@ -50,9 +50,9 @@ function bangun(denganHarga){
     renderer. */
  const masuk=TEMPLATES.map(t=>({t,k:motor.kompilasiLama(t)}));
  const pub=masuk.filter(x=>!x.t.studioOnly).length;
- /* 18 tema publik dulu disatukan dalam satu baris (meniru gaya
-    lama), sisanya (Gerbang & tema baru) satu entry per baris. */
- const batas=masuk.findIndex(x=>x.t.studioOnly||x.t.baru);
+ /* 18 tema awal disatukan dalam satu baris (meniru gaya lama),
+    sisanya (Gerbang & tema baru) satu entry per baris. */
+ const batas=masuk.findIndex(x=>x.t.arch||x.t.baru||x.t.studioOnly);
  const satuBaris=masuk.slice(0,batas>0?batas:masuk.length);
  let out='/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.\n'
   +'   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.\n'
@@ -71,17 +71,20 @@ function bangun(denganHarga){
 
 function tulis(rel,denganHarga){
  const src=fs.readFileSync(R(rel),'utf8');
- const m=src.match(/const TPL=\[[\s\S]*?\];/);
+ /* Sertakan semua header generator lama yang menempel tepat sebelum
+    TPL dan baris kosong sesudahnya supaya hitungan usang/baris kosong
+    tidak menumpuk setiap generator dijalankan (idempoten). */
+ const m=src.match(/(?:\/\* DIBANGKITKAN tools\/bangun-tpl\.cjs — JANGAN EDIT MANUAL\.[\s\S]*?\*\/\n)*const TPL=\[[\s\S]*?\];\n*/);
  if(!m){console.error('!! const TPL=[ tidak ditemukan di '+rel);process.exit(1)}
  const {out,jumlah,pub}=bangun(denganHarga);
- fs.writeFileSync(R(rel),src.replace(m[0],out));
+ fs.writeFileSync(R(rel),src.replace(m[0],()=>out+'\n'));
  return {jumlah,pub};
 }
 
 if(require.main===module){
  const s=tulis('studio.html',true);
  const u=tulis('undangan.html',false);
- console.log('studio.html   → '+s.jumlah+' template ('+s.pub+' publik + Studio-only)');
+ console.log('studio.html   → '+s.jumlah+' template ('+s.pub+' publik + '+(s.jumlah-s.pub)+' Studio-only)');
  console.log('undangan.html → '+u.jumlah+' template (tanpa harga, seperti semula)');
  console.log('Urutan id 0–23 tidak berubah; entry baru di akhir (index Supabase aman).');
 }

@@ -296,7 +296,7 @@ def _tpl_ids(rel):
 
 
 def _tpl_rows(rel):
-    """Baris TPL termasuk kategori, harga, dan penanda Studio-only/Arch."""
+    """Baris TPL termasuk kategori, harga, badge, dan penanda Studio-only/Arch."""
     s = baca(rel)
     m = re.search(r"const TPL=\[(.*?)\];", s, re.S)
     if not m:
@@ -304,7 +304,7 @@ def _tpl_rows(rel):
     rows = []
     for chunk in m.group(1).split("{id:'")[1:]:
         row = {"id": chunk.split("'")[0]}
-        for key in ("ev", "tier", "char", "bg3d", "bgPaper", "nama", "accent"):
+        for key in ("ev", "tier", "char", "bg3d", "bgPaper", "nama", "accent", "badge"):
             g = re.search(r"%s:'([^']*)'" % key, chunk)
             row[key] = g.group(1) if g else ''
         row["studioOnly"] = bool(re.search(r"studioOnly:true", chunk))
@@ -558,18 +558,21 @@ def cek_fitur_terbaru():
     lapor("ok" if ev_ok else "masalah", "setiap tema punya kategori acara (ev) yang sah")
     arch_rows = [r for r in rows if r["arch"]]
     arch_categories = {r["ev"] for r in arch_rows}
-    arch_ok = (len(arch_rows) == 6 and all(r["studioOnly"] for r in arch_rows)
+    arch_ok = (len(arch_rows) == 6 and all(not r["studioOnly"] and r["harga"] == 49000 and r["badge"] == "NEW TEMPLATE" for r in arch_rows)
                and arch_categories == {"pernikahan", "khitanan", "aqiqah", "ultah"}
                and "body.gerbang-arch" in undangan
                and "state.coverStyle=t&&t.arch?'arch':'kotak'" in studio)
     lapor("ok" if arch_ok else "masalah",
-          f"Gerbang Arch: {len(arch_rows)} varian Studio tersambung ke skin live lintas 4 kategori")
-    katalog_arch_ok = (all(r["harga"] == 0 for r in arch_rows)
+          f"Gerbang Arch: {len(arch_rows)} varian publik NEW TEMPLATE tersambung ke skin live lintas 4 kategori")
+    new_rows = [r for r in rows if r["badge"] == "NEW TEMPLATE"]
+    katalog_baru_ok = (len(new_rows) == 10
+                       and all(not r["studioOnly"] and r["harga"] == 49000 for r in new_rows)
+                       and all(not r["studioOnly"] for r in rows)
                        and "katalog:TPL.filter(t=>!t.studioOnly).map" in studio
                        and "if(!t.studioOnly&&!state.katalogDel.includes(t.id)&&!state.katalog.some" in studio
                        and "state.katalogHide=state.katalogHide.filter(id=>{const t=tplById(id);return !!t&&!t.studioOnly});" in studio)
-    lapor("ok" if katalog_arch_ok else "masalah",
-          "Studio-only Arch: tetap bisa dipilih tanpa harga, promo, atau baris katalog pemasaran")
+    lapor("ok" if katalog_baru_ok else "masalah",
+          "Template publik baru: 10 tema NEW TEMPLATE berharga katalog dan masuk baris katalog pemasaran")
     kategori = ("pernikahan", "khitanan", "ultah", "aqiqah")
     kurang = [ev for ev in kategori if not any(r["ev"] in (ev, "all") for r in rows)]
     lapor("ok" if not kurang else "masalah",

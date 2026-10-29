@@ -22,7 +22,7 @@ serta ditautkan melalui `/template/{id}/` dan `/katalog/`. Semua demo mandiri di
 | `ultah-anak.html` | **Bikinan ulang** — 3 kulit: Kids Party, Sweet 17, Adult Elegant (menggantikan rencana PDF) | kecil | ✅ aktif |
 | `aqiqah.html` | **Bikinan ulang** — 3 kulit: Baby Boy, Baby Girl, Islamic Neutral | kecil | ✅ aktif |
 
-Katalog produksi berisi 34 tema publik. Tombol demo produk aktif memakai renderer
+Katalog produksi berisi 44 tema publik. Tombol demo produk aktif memakai renderer
 langsung (`undangan.html?demo=1&tpl=<id>`) supaya palet dan layout sama dengan yang
 akan dilihat tamu; data pada `demo/*.html` hanya contoh standalone/legacy.
 
