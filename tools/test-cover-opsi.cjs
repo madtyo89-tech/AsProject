@@ -166,6 +166,19 @@ async function renderUndangan(data) {
     ws.setAnim('buka', 'zoom');
     cek(ws.eval('barisUndangan().data.anim.buka') === 'zoom', 'payload pratinjau membawa efek perpindahan Zoom');
 
+    ws.eval("applyDraftData({event:'pernikahan',tpl:'ivory-klasik',coverLayout:'amplop',coverLayoutExplicit:false,buka:'pita',bukaExplicit:false})");
+    ws.pickTpl('jawa-elegan');
+    ws.pickTpl('minimalist-sage');
+    cek(ws.eval('barisUndangan().data.coverLayout') === 'minimal' && ws.eval('barisUndangan().data.buka') === 'buku',
+      'bawaan layout & cara buka mengikuti template saat pemilik menelusuri template berurutan');
+    ws.setCvLayout('amplop');
+    ws.setBuka('pita');
+    ws.pickTpl('luxury-gold');
+    cek(ws.eval('barisUndangan().data.coverLayout') === 'amplop' && ws.eval('barisUndangan().data.buka') === 'pita',
+      'pilihan manual Amplop/Pita tidak ditimpa bawaan template berikutnya');
+    cek(ws.eval('barisUndangan().data.coverLayoutExplicit') === true && ws.eval('barisUndangan().data.bukaExplicit') === true,
+      'payload membawa penanda pilihan cover manual');
+
     ws.uploadCover({ files: [new ws.File(['x'], 'fotoku.png', { type: 'image/png' })] });
     await new Promise(r => setTimeout(r, 400));
     ws.set('tab', 'musik');
@@ -194,6 +207,10 @@ async function renderUndangan(data) {
     ws.setCvLayout('sakura');
     cek(terkirim.some(m => m.type === 'asproject:cover'), 'ganti layout memerintahkan pratinjau kembali ke cover');
     cek(ws.eval('barisUndangan().data.coverLayout') === 'sakura', 'payload membawa layout Sakura');
+    terkirim.length = 0;
+    ws.setAnim('buka', 'blinds');
+    cek(terkirim.some(m => m.type === 'asproject:cover'), 'ganti efek membuka cover memerintahkan pratinjau kembali ke cover');
+    cek(ws.eval('barisUndangan().data.anim.buka') === 'blinds', 'payload membawa efek Blind Empat Lajur');
     domS.window.close();
   }
 

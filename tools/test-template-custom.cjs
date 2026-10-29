@@ -32,7 +32,8 @@ function val(expr){return run(expr)}
   await new Promise(r=>setTimeout(r,180));
   run(`state.started=true;state.page='editor';state.tab='desain';state.event='pernikahan';state.tpl='jawa-elegan';
    state.accent='#abcdef';state.fontTitle='lora';state.fontBody='inter';state.border='thin';state.ornSudut='ranting';
-   state.coverLayout='neon';state.coverStyle='arch';state.coverStyleExplicit=true;
+   state.coverLayout='neon';state.coverLayoutExplicit=true;state.coverStyle='arch';state.coverStyleExplicit=true;
+   state.buka='kotak';state.bukaExplicit=true;
    state.tplDraftName='Sage Buatan';state.tplDraftPublic=false;render()`);
   const publicTplCount=val('TPL.length');
   const publicTplIds=val('TPL.map(t=>t.id).join(",")');
@@ -40,11 +41,11 @@ function val(expr){return run(expr)}
   const privateId=val('state.tpl');
   check('DEF/migrasi: custom tersimpan sebagai daftar terpisah tanpa mengubah TPL publik',()=>val('state.tplCustom.length')===1&&val('TPL.length')===publicTplCount&&val('TPL.map(t=>t.id).join(",")')===publicTplIds);
   check('tema kustom: id stabil, badge CUSTOM, default Studio-only',()=>/^custom-[a-z0-9-]+$/.test(privateId)&&val(`tplById(${JSON.stringify(privateId)}).badge`)==='CUSTOM'&&val(`tplById(${JSON.stringify(privateId)}).studioOnly`)===true);
-  check('tema kustom: salin aksen, font, palet, border, ornamen, dan cover aktif',()=>val(`(()=>{const t=tplById(${JSON.stringify(privateId)});return t.nama==='Sage Buatan'&&t.accent==='#ABCDEF'&&t.ft==='lora'&&t.design.fontBody==='inter'&&t.design.border==='thin'&&t.design.ornSudut==='ranting'&&t.design.coverLayout==='neon'&&t.design.coverStyle==='arch'&&t.g.length===3})()`));
+  check('tema kustom: salin aksen, font, palet, border, ornamen, dan cover aktif',()=>val(`(()=>{const t=tplById(${JSON.stringify(privateId)});return t.nama==='Sage Buatan'&&t.accent==='#ABCDEF'&&t.ft==='lora'&&t.design.fontBody==='inter'&&t.design.border==='thin'&&t.design.ornSudut==='ranting'&&t.design.coverLayout==='neon'&&t.design.coverLayoutExplicit===true&&t.design.coverStyle==='arch'&&t.design.buka==='kotak'&&t.design.bukaExplicit===true&&t.g.length===3})()`));
   check('picker: tema kustom tampil untuk acara dan memiliki badge serta kelola',()=>val(`tplsFor('pernikahan').some(t=>t.id===${JSON.stringify(privateId)})`)&&w.document.querySelector('.tpl-custom-entry')?.textContent.includes('CUSTOM')&&!!w.document.querySelector(`[aria-label="Ganti nama template Sage Buatan"]`)&&!!w.document.querySelector(`[aria-label="Duplikat template Sage Buatan"]`)&&!!w.document.querySelector(`[aria-label="Hapus template Sage Buatan"]`));
   check('tema Studio-only tidak menambah baris katalog',()=>!val(`state.katalog.some(k=>(k.tpl||k.id)===${JSON.stringify(privateId)})`));
   check('payload preview: indeks TPL publik tetap 0 untuk custom dan data membawa tema serta status cover eksplisit',()=>{
-   const row=val('barisUndangan()');return row.theme===0&&row.data.tpl===privateId&&row.data.tplCustom.length===1&&row.data.tplCustom[0].id===privateId&&row.data.coverLayout==='neon'&&row.data.coverStyle==='arch'&&row.data.coverStyleExplicit===true
+   const row=val('barisUndangan()');return row.theme===0&&row.data.tpl===privateId&&row.data.tplCustom.length===1&&row.data.tplCustom[0].id===privateId&&row.data.coverLayout==='neon'&&row.data.coverLayoutExplicit===true&&row.data.coverStyle==='arch'&&row.data.coverStyleExplicit===true&&row.data.buka==='kotak'&&row.data.bukaExplicit===true
   });
   check('draftSig: perubahan definisi template kustom menandai publish sebagai kotor',()=>{
    run('state.published=true;state.pubSig=draftSig()');const sig=val('state.pubSig');run(`state.tplCustom[0].nama+=' edit';`);const dirty=val('draftDirty()');run(`state.tplCustom[0].nama='Sage Buatan'`);run(`state.published=false;state.pubSig=${JSON.stringify(sig)}`);return dirty
@@ -52,7 +53,7 @@ function val(expr){return run(expr)}
   // Arus pulih dari snapshot terbit dan arsip; draft lama tanpa daftar custom memakai daftar lokal.
   const dataJSON=JSON.stringify(val('barisUndangan().data'));
   run(`applyDraftData(${dataJSON})`);
-  check('applyDraftData: snapshot memulihkan tema custom dan pilihan cover eksplisit',()=>val('state.tpl')===privateId&&val('tplOf().id')===privateId&&val('state.tplCustom.length')===1&&val('state.coverLayout')==='neon'&&val('state.coverStyle')==='arch'&&val('state.coverStyleExplicit')===true);
+  check('applyDraftData: snapshot memulihkan tema custom dan pilihan cover eksplisit',()=>val('state.tpl')===privateId&&val('tplOf().id')===privateId&&val('state.tplCustom.length')===1&&val('state.coverLayout')==='neon'&&val('state.coverLayoutExplicit')===true&&val('state.coverStyle')==='arch'&&val('state.coverStyleExplicit')===true&&val('state.buka')==='kotak'&&val('state.bukaExplicit')===true);
   run(`applyDraftData({event:'pernikahan',tpl:${JSON.stringify(privateId)}})`);
   check('migrasi draft lama: tanpa tplCustom, library lokal dipertahankan dan tema custom aman dipilih',()=>val('state.tpl')===privateId&&val('state.tplCustom.length')===1);
   run('startInvitation()');

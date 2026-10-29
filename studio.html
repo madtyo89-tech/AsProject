@@ -1014,6 +1014,10 @@ function patAktif(d, tplF) {
  if (POLA[pilih]) return pilih;
  return (tplF && tplF.pat) || '';
 }
+/* Bawaan cover/cara buka milik satu template. Template kustom menyimpannya di
+   design; template bawaan memakai field cover/buka (atau kb.cover lama). */
+function tplCoverHint(t){const d=(t&&t.design)||{};const hint=d.coverLayout||(t&&(t.cover||(t.kb&&t.kb.cover)));return CUSTOM_TPL_COVER_LAYOUTS.includes(hint)?hint:'amplop'}
+function tplBukaHint(t){const d=(t&&t.design)||{};const hint=d.buka||(t&&t.buka);return CARA_BUKA_ID.includes(hint)?hint:'pita'}
 function normalizeTplCustom(items){
  if(!Array.isArray(items))return[];
  const used=new Set(TPL.map(t=>t.id)),out=[];
@@ -1039,6 +1043,10 @@ function normalizeTplCustom(items){
   if(CV_UKURAN_ID.includes(source.coverSize))design.coverSize=source.coverSize;
   if(CARA_BUKA_ID.includes(source.buka))design.buka=source.buka;
   if(typeof source.coverStyleExplicit==='boolean')design.coverStyleExplicit=source.coverStyleExplicit;
+  if(typeof source.coverLayoutExplicit==='boolean')design.coverLayoutExplicit=source.coverLayoutExplicit;
+  else if(design.coverLayout)design.coverLayoutExplicit=design.coverLayout!==tplCoverHint(base);
+  if(typeof source.bukaExplicit==='boolean')design.bukaExplicit=source.bukaExplicit;
+  else if(design.buka)design.bukaExplicit=design.buka!==tplBukaHint(base);
   if(typeof source.darkMode==='boolean')design.darkMode=source.darkMode;
   if(typeof source.goldOrn==='boolean')design.goldOrn=source.goldOrn;
   const row={id,nama,ev,baseTpl:base.id,
@@ -1357,7 +1365,7 @@ const DEF={
   liveAkad:'',liveResepsi:'',
   harapanPria:'',harapanWanita:'',
   ucapanCustom:''},
- musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverLayout:'amplop',coverStyleExplicit:false,coverPos:{x:50,y:50,z:1},coverSize:'sedang',buka:'pita',fotoPria:'',fotoWanita:'',gallery:[],videoLink:'',
+ musicDb:DEMO_MUSIC.map(d=>Object.assign({},d)),music:null,playing:false,cover:'',coverStyle:'kotak',coverLayout:'amplop',coverStyleExplicit:false,coverLayoutExplicit:false,bukaExplicit:false,coverPos:{x:50,y:50,z:1},coverSize:'sedang',buka:'pita',fotoPria:'',fotoWanita:'',gallery:[],videoLink:'',
  doa:'pernikahan',
  linkMode:'personal',guestsRaw:'',
  guestCodes:{},masterKey:'',selGuest:null,showNameQr:true,
@@ -1399,6 +1407,15 @@ if(stored.tab==='master'||stored.tab==='domain')stored.tab='terbit'; /* susunan 
  if(typeof stored.coverStyleExplicit==='boolean')state.coverStyleExplicit=stored.coverStyleExplicit;
  else state.coverStyleExplicit=!!stored.coverStyle&&!['kotak','arch'].includes(stored.coverStyle);
  if(!state.coverStyleExplicit){const aktif=tplById(state.tpl);state.coverStyle=aktif&&aktif.arch?'arch':'kotak'}
+ /* Migrasi asal pilihan layout/cara buka: nilai yang sama dengan bawaan tema
+    aktif dianggap bawaan tema; nilai berbeda dipertahankan sebagai manual. */
+ const aktifCover=tplById(state.tpl),desainAktif=(aktifCover&&aktifCover.design)||{};
+ if(typeof stored.coverLayoutExplicit==='boolean')state.coverLayoutExplicit=stored.coverLayoutExplicit;
+ else if(state.coverLayout===tplCoverHint(aktifCover)&&typeof desainAktif.coverLayoutExplicit==='boolean')state.coverLayoutExplicit=desainAktif.coverLayoutExplicit;
+ else state.coverLayoutExplicit=!!stored.coverLayout&&state.coverLayout!==tplCoverHint(aktifCover);
+ if(typeof stored.bukaExplicit==='boolean')state.bukaExplicit=stored.bukaExplicit;
+ else if(state.buka===tplBukaHint(aktifCover)&&typeof desainAktif.bukaExplicit==='boolean')state.bukaExplicit=desainAktif.bukaExplicit;
+ else state.bukaExplicit=!!stored.buka&&state.buka!==tplBukaHint(aktifCover);
  state.playing=false
 }catch(e){state=JSON.parse(JSON.stringify(DEF))}
 if(state.started===false&&(state.form.namaPria||state.form.namaWanita||state.form.namaAnak||state.published))state.started=true;
@@ -1450,7 +1467,7 @@ function sigHash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h+str.ch
 function draftSig(){const m=state.music||{};return sigHash(JSON.stringify([state.form,state.event,state.tpl,state.tplCustom||[],state.doa,state.accent,state.fontTitle,state.fontBody,state.border,state.orn||'',state.pat||'',state.ornSudut,state.amplop,state.slides,state.anim,state.videoLink||'',m.name||'',m.url||'',state.coverStyle,state.coverLayout||'amplop',!!state.coverStyleExplicit,state.coverPos,state.coverSize||'sedang',state.buka||'pita',(state.cover||'').length,(state.fotoPria||'').length,(state.fotoWanita||'').length,(state.gallery||[]).map(g=>String(g||'').length),state.guestsRaw||'',state.guestCodes||{},state.linkMode,state.slug].concat(
  /* Teks WA ikut snapshot publish (dibaca Master & undangan live). Hanya teks yang diubah
     pemilik yang dihitung, supaya undangan lama bertemplate bawaan tidak mendadak "berubah". */
- state.waTemplate===WA_TEMPLATE_DEFAULT?[]:[String(state.waTemplate||'')])))}
+ state.waTemplate===WA_TEMPLATE_DEFAULT?[]:[String(state.waTemplate||'')],(state.coverLayoutExplicit||state.bukaExplicit)?[!!state.coverLayoutExplicit,!!state.bukaExplicit]:[])))}
 function draftDirty(){return !!(state.published&&state.pubSig&&state.pubSig!==draftSig())}
 /* Ketik isian tidak me-render ulang seluruh editor (agar fokus tidak hilang),
    jadi status "perubahan belum dipublikasikan" & tombol Publish Ulang
@@ -1785,7 +1802,7 @@ function storyAdd(){const s=state.slides.story;if(!s)return;if(!Array.isArray(s.
 function storyDel(i){const s=state.slides.story;if(s&&Array.isArray(s.items)){s.items.splice(i,1);save();render()}}
 function upStoryFoto(input,i){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const asal=r.result;const s=state.slides.story;if(!s||!Array.isArray(s.items)||!s.items[i])return;s.items[i].foto=asal;save();render();
  kecilkanFoto(asal,f.type).then(k=>{const it=state.slides.story.items[i];if(k!==asal&&it&&it.foto===asal){it.foto=k;save();render()}})};r.readAsDataURL(f)}
-function setAnim(k,v){if((k==='effect'||k==='scroll')&&isVipFx(k,v)&&!bolehVip()){notify('👑 Efek VIP hanya untuk tema tier VIP (Rp149.000).');render();return}if((k==='effect'||k==='scroll')&&isEksFx(k,v)&&!bolehEks()){kunciEks();return}state.anim[k]=v;animSig=null;save();render()}
+function setAnim(k,v){if((k==='effect'||k==='scroll')&&isVipFx(k,v)&&!bolehVip()){notify('👑 Efek VIP hanya untuk tema tier VIP (Rp149.000).');render();return}if((k==='effect'||k==='scroll')&&isEksFx(k,v)&&!bolehEks()){kunciEks();return}state.anim[k]=v;animSig=null;save();render();if(k==='buka')pvKeCover()}
 function rsvpWa(){const n=document.getElementById('rvpN')?document.getElementById('rvpN').value:'Tamu',h=document.getElementById('rvpH')?document.getElementById('rvpH').value:'Hadir',m=document.getElementById('rvpM')?document.getElementById('rvpM').value:'';const t='RSVP — '+titleOf()+' '+displayName()+'\nNama: '+n+'\nKonfirmasi: '+h+(m?'\nPesan: '+m:'')+'\nTautan: '+previewUrl();window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
 /* Tulisan undangan yang dikirim lewat WA — SATU template (diatur di tab Tamu & QR) untuk semua
    tombol kirim/bagikan. g = tamu dari guests() → sapaan nama + link personal; tanpa g → sapaan
@@ -1889,15 +1906,17 @@ function applyTplToState(t){if(!t)return false;
  if(CV_UKURAN_ID.includes(d.coverSize))state.coverSize=d.coverSize;
  if(CARA_BUKA_ID.includes(d.buka))state.buka=d.buka;
  if(typeof d.coverStyleExplicit==='boolean')state.coverStyleExplicit=d.coverStyleExplicit;
+ if(typeof d.coverLayoutExplicit==='boolean')state.coverLayoutExplicit=d.coverLayoutExplicit;
+ if(typeof d.bukaExplicit==='boolean')state.bukaExplicit=d.bukaExplicit;
  if(typeof d.darkMode==='boolean')state.darkMode=d.darkMode;
  if(typeof d.goldOrn==='boolean')state.goldOrn=d.goldOrn;
  /* Hint model cover & tombol buka dari tema (field cover/btn,
-    atau kb.cover untuk template kerangka bebas lama). Hanya
-    dipakai bila pemilik belum memilih model lain — field
-    cover/btn tersimpan di draft saat disimpan. */
+    atau kb.cover untuk template kerangka bebas lama). Bawaan tema
+    mengikuti tema yang baru dipilih; hanya pilihan manual pemilik
+    (ditandai *Explicit) yang dipertahankan lintas tema. */
  const hintCv=t.cover||(t.kb&&t.kb.cover);
- if(CV_LAYOUTS.some(c=>c[0]===hintCv)&&state.coverLayout==='amplop')state.coverLayout=hintCv;
- if(t.buka&&CARA_BUKA_ID.includes(t.buka)&&state.buka==='pita')state.buka=t.buka;
+ if(CV_LAYOUTS.some(c=>c[0]===hintCv)&&!state.coverLayoutExplicit)state.coverLayout=hintCv;
+ if(t.buka&&CARA_BUKA_ID.includes(t.buka)&&!state.bukaExplicit)state.buka=t.buka;
  syncDefaultCoverStyle(t);paksaTier();return true
 }
 function newCustomTplId(){let id;do{id='custom-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7)}while(tplById(id));return id}
@@ -1910,8 +1929,8 @@ function makeCustomTemplate(name,isPublic){
   deco:source.deco,pat:source.pat,ft:state.fontTitle,char:source.char,arch:source.arch,baseTpl:source.custom?(source.baseTpl||TPL[0].id):source.id,
   bg3d:source.bg3d,bgPaper:source.bgPaper,studioOnly:!isPublic,
   desc:'Tema kustom berdasarkan '+source.nama,
-  design:{fontBody:state.fontBody,border:state.border,orn:state.orn||'',pat:state.pat||'',ornSudut:state.ornSudut,coverLayout:state.coverLayout||'amplop',
-   coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,coverSize:state.coverSize||'sedang',buka:state.buka||'pita',darkMode:!!state.darkMode,goldOrn:!!state.goldOrn}}]).slice(-80).find(t=>t.id===id)
+  design:{fontBody:state.fontBody,border:state.border,orn:state.orn||'',pat:state.pat||'',ornSudut:state.ornSudut,coverLayout:state.coverLayout||'amplop',coverLayoutExplicit:!!state.coverLayoutExplicit,
+   coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,coverSize:state.coverSize||'sedang',buka:state.buka||'pita',bukaExplicit:!!state.bukaExplicit,darkMode:!!state.darkMode,goldOrn:!!state.goldOrn}}]).slice(-80).find(t=>t.id===id)
 }
 function saveCustomTemplate(){
  const nama=String(state.tplDraftName||'').trim().slice(0,60);
@@ -2102,7 +2121,7 @@ const CV_LAYOUTS=[
    membuat pratinjau kembali ke cover — kalau tidak, pilihan barunya tidak
    kelihatan karena pratinjau masih menampilkan isi undangan yang terbuka. */
 function pvKeCover(){document.querySelectorAll('iframe.pv-frame').forEach(f=>{try{const t=f.contentWindow;if(t)t.postMessage({type:'asproject:cover'},'*')}catch(e){}})}
-function setCvLayout(id){if(!CV_LAYOUTS.some(c=>c[0]===id))return;state.coverLayout=id;save();render();renderPreview();pvKeCover()}
+function setCvLayout(id){if(!CV_LAYOUTS.some(c=>c[0]===id))return;state.coverLayout=id;state.coverLayoutExplicit=true;save();render();renderPreview();pvKeCover()}
 /* Ukuran foto di cover — dulu fotonya dikunci kecil (maks. 170px) tanpa pilihan.
    Sekarang pemilik memilih sendiri; "sedang" (bawaan) sudah lebih besar. */
 const CV_UKURAN=[
@@ -2126,7 +2145,7 @@ const CARA_BUKA_STYLES=[
  ['selendang','Selendang Songket','🧵','Kain songket — geser ke atas untuk membuka.']
 ];
 function bukaId(){return CARA_BUKA_ID.includes(state.buka)?state.buka:'pita'}
-function setBuka(id){if(!CARA_BUKA_ID.includes(id))return;state.buka=id;save();render();renderPreview();pvKeCover();notify('Cara Buka Cover: '+(CARA_BUKA_STYLES.find(b=>b[0]===id)||[])[1])}
+function setBuka(id){if(!CARA_BUKA_ID.includes(id))return;state.buka=id;state.bukaExplicit=true;save();render();renderPreview();pvKeCover();notify('Cara Buka Cover: '+(CARA_BUKA_STYLES.find(b=>b[0]===id)||[])[1])}
 function setCvStyle(id){if(!CV_BENTUK[id])return;state.coverStyle=id;state.coverStyleExplicit=true;save();render();renderPreview();pvKeCover();notify('Gaya foto cover: '+cvNama())}
 function cvTerapkanCrop(im,frame,p){
  const b=frame.getBoundingClientRect(),w=frame.clientWidth||b.width,h=frame.clientHeight||b.height;
@@ -2240,7 +2259,7 @@ async function publish(){
    slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    amplop:JSON.parse(JSON.stringify(state.amplop)),videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href,local:false}:{name:'',url:'',local:false},
-   cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),buka:bukaId(),
+   cover:state.cover||'',coverStyle:state.coverStyle||'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverLayoutExplicit:!!state.coverLayoutExplicit,bukaExplicit:!!state.bukaExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),buka:bukaId(),
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),linkMode:state.linkMode||'personal',
    waTemplate:String(state.waTemplate||''),masterKey:state.masterKey||'',savedAt:new Date().toISOString()}};
@@ -2266,7 +2285,7 @@ async function dlUndangan(){
    amplop:JSON.parse(JSON.stringify(state.amplop)),slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),
    videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),buka:bukaId(),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
+   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverLayoutExplicit:!!state.coverLayoutExplicit,bukaExplicit:!!state.bukaExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),buka:bukaId(),fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],waTemplate:String(state.waTemplate||''),publishedAt:new Date().toISOString()};
   if(JSON.stringify(data).length>1500000){data.gallery=[];
    if(JSON.stringify(data).length>1200000){data.cover='';
@@ -2342,9 +2361,16 @@ function applyDraftData(d,extra){
  if(typeof d.coverStyleExplicit==='boolean')state.coverStyleExplicit=d.coverStyleExplicit;
  else state.coverStyleExplicit=!!d.cover&&!!d.coverStyle&&!['kotak','arch'].includes(d.coverStyle);
  if(!state.coverStyleExplicit)syncDefaultCoverStyle(tplOf());
+ const tplDraft=tplOf(),desainDraft=(tplDraft&&tplDraft.design)||{};
+ if(typeof d.coverLayoutExplicit==='boolean')state.coverLayoutExplicit=d.coverLayoutExplicit;
+ else if(state.coverLayout===tplCoverHint(tplDraft)&&typeof desainDraft.coverLayoutExplicit==='boolean')state.coverLayoutExplicit=desainDraft.coverLayoutExplicit;
+ else state.coverLayoutExplicit=!!d.coverLayout&&state.coverLayout!==tplCoverHint(tplDraft);
  if(d.coverPos)state.coverPos=Object.assign({x:50,y:50,z:1},d.coverPos);
  state.coverSize=CV_UKURAN_ID.includes(d.coverSize)?d.coverSize:'sedang';
  state.buka=CARA_BUKA_ID.includes(d.buka)?d.buka:'pita';
+ if(typeof d.bukaExplicit==='boolean')state.bukaExplicit=d.bukaExplicit;
+ else if(state.buka===tplBukaHint(tplDraft)&&typeof desainDraft.bukaExplicit==='boolean')state.bukaExplicit=desainDraft.bukaExplicit;
+ else state.bukaExplicit=!!d.buka&&state.buka!==tplBukaHint(tplDraft);
  if(d.fotoPria!==undefined)state.fotoPria=d.fotoPria||'';
  if(d.fotoWanita!==undefined)state.fotoWanita=d.fotoWanita||'';
  if(Array.isArray(d.gallery))state.gallery=d.gallery.filter(Boolean).slice(0,12);
@@ -3268,7 +3294,7 @@ function barisUndangan(){
    amplop:JSON.parse(JSON.stringify(state.amplop)),
    slides:JSON.parse(JSON.stringify(state.slides)),anim:JSON.parse(JSON.stringify(state.anim)),videoLink:state.videoLink||'',
    music:(state.music&&!state.music.local)?{name:state.music.name,url:new URL(state.music.url,location.href).href}:{name:'',url:''},
-   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),buka:bukaId(),
+   cover:state.cover||'',coverStyle:CV_URUT.includes(state.coverStyle)?state.coverStyle:'kotak',coverLayout:state.coverLayout||'amplop',coverStyleExplicit:!!state.coverStyleExplicit,coverLayoutExplicit:!!state.coverLayoutExplicit,bukaExplicit:!!state.bukaExplicit,coverPos:Object.assign({},cvPos()),coverSize:cvSizeId(),buka:bukaId(),
    fotoPria:state.fotoPria||'',fotoWanita:state.fotoWanita||'',
    gallery:Array.isArray(state.gallery)?state.gallery.slice(0,12):[],
    guestsRaw:state.guestsRaw||'',guestCodes:Object.assign({},state.guestCodes||{}),
