@@ -51,7 +51,8 @@ body.ap-page{margin:0;background:var(--ap-paper);color:var(--ap-ink);font-family
 .ap-category-pill{display:inline-flex;align-items:center;gap:10px;padding:11px 16px;border:1px solid #d7c8ae;border-radius:999px;background:#fffdf8;text-decoration:none;font-weight:700}
 .ap-category-pill span{color:var(--ap-gold-dark)}
 .ap-template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.ap-template-card{display:flex;flex-direction:column;min-width:0;overflow:hidden;border:1px solid var(--ap-line);border-radius:22px;background:var(--ap-card);box-shadow:0 10px 30px rgba(49,36,18,.055)}
+.ap-template-card{display:flex;flex-direction:column;min-width:0;overflow:hidden;border:1px solid var(--ap-line);border-radius:22px;background:var(--ap-card);box-shadow:0 10px 30px rgba(49,36,18,.055);content-visibility:auto;contain-intrinsic-size:auto 390px}
+@media(max-width:860px){.ap-header{backdrop-filter:blur(8px)}}
 .ap-swatch{position:relative;min-height:148px;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,var(--swatch-a),var(--swatch-b));color:var(--ap-ink)}
 .ap-swatch:before{content:"";position:absolute;inset:13px;border:1px solid rgba(255,255,255,.78);border-radius:15px}
 .ap-swatch span{position:absolute;top:13px;left:16px;padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.84);font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}

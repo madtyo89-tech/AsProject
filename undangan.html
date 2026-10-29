@@ -1887,6 +1887,11 @@ body.kartu-demo #cover .brand{display:none}
 body.kartu-demo #cover .cvcue,body.kartu-demo #cover .geser-hint{display:none}
 body.kartu-demo #cover .vip-btn{display:none}
 body.kartu-demo #coverBack{display:none}
+body.kartu-demo #aspAmbient{display:none}
+/* Thumbnail harus terbaca sebagai hasil akhir seketika; jangan warisi
+   jeda masuk cover dari mode demo penuh. */
+body.kartu-demo #cover *,body.kartu-demo #cover *::before,body.kartu-demo #cover *::after{
+  animation-delay:0s!important;transition-delay:0s!important}
 
 /* Setelah terbuka, elemen tidak bisa diketuk lagi */
 body.opened #cover .pemicu{pointer-events:none}
@@ -4351,12 +4356,12 @@ function boot(draft){
  if(ogI){const src=String((d&&d.cover)||'').trim();if(/^https?:\/\//.test(src))ogI.content=src;else ogI.remove()}
  const mapsLink=form.mapsLink&&!/example/i.test(form.mapsLink)?form.mapsLink:'';
 
- const play=setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
+ const play=KARTU?null:setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
 
  /* ---------- animasi (diatur dari Studio: cover / teks / scroll reveal + pilihan efek) ---------- */
  const AN=(d&&d.anim)||{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'};
  const RM=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
- const covOn=!!AN.cover&&!RM,txOn=!!AN.text&&!RM,rvOn=!!AN.reveal&&!RM;
+ const covOn=!!AN.cover&&!RM&&!KARTU,txOn=!!AN.text&&!RM&&!KARTU,rvOn=!!AN.reveal&&!RM&&!KARTU;
  const CE=fxCoverId(AN),SC=fxScrollId(AN);document.body.className=String(document.body.className||'').replace(/\bbuka-\S+/g,'').replace(/\born-\S+/g,'').trim();
  /* Tirai/gerbang/pintu/amplop/gembok/kotak/selendang sudah punya animasi fisik
     sendiri; fade mencegah gerakan kulit cover bertabrakan. Pita & buku tetap
@@ -4751,7 +4756,7 @@ function boot(draft){
 
  /* — parallax cover: pola, foto, teks bergerak beda kecepatan (property translate,
       aman bersanding dengan animasi masuk yang memakai transform) — */
- if(!RM){
+ if(!RM&&!KARTU){
   const pat=document.querySelector('#cover .pat'),cvf=document.querySelector('#cover .cvf')||document.querySelector('#cover .cvlatar'),
    inner=document.querySelector('#cover .inner');
   let tick=false;
@@ -4766,7 +4771,7 @@ function boot(draft){
  }
 
  if(tt)startCountdown(tt);
- ambientPasang(tplF);
+ if(!KARTU)ambientPasang(tplF);
  /* scroll reveal — bagian muncul halus saat tamu menggulir */
  setupNavPager(AN.navMode);
  /* Peta baru digambar setelah pager selesai menata slide: kanvas ubin yang
@@ -4857,7 +4862,7 @@ function startCountdown(tt){
   setCd('cdS',pad(Math.floor(s%3600/60)));
   setCd('cdD',pad(s%60));
  };
- tick();window.__aspCdTimer=setInterval(tick,1000);
+ tick();if(KARTU)return;window.__aspCdTimer=setInterval(tick,1000);
 }
 
 /* ---------- partikel ambien per tema (rombak dinamis 2026-10-11) ----------
@@ -4990,7 +4995,7 @@ if(DEMO){const _t=(Q.get('tpl')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
 /* ---------- mulai ---------- */
 if(PREVIEW){loading()}
 else if(typeof EMBEDDED_DATA!=='undefined'&&EMBEDDED_DATA){loading();setTimeout(()=>boot(EMBEDDED_DATA),350)}
-else if(DEMO){loading();setTimeout(()=>boot(DEMO_DRAFT),350)}
+else if(DEMO){if(KARTU)boot(DEMO_DRAFT);else{loading();setTimeout(()=>boot(DEMO_DRAFT),350)}}
 else if(!SLUG){notFound()}
 else{
  loading();

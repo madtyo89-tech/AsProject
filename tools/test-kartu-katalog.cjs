@@ -70,6 +70,19 @@ t('lightbox & tab baru memakai demo penuh (tanpa kartu=1)',
   idxSrc.includes("box.querySelector('.asp-lb-full').href = srcDemo(nama);"));
 t('hero kiri memakai cuplikan kartu, hero kanan (sudah dibuka) tetap penuh',
   idxSrc.includes("(cfg.buka ? '&buka=1' : '&kartu=1')"));
+t('preview kartu terjadwal: wrapper kosong dulu, aktif & paralel dibatasi',
+  idxSrc.includes("wrap.setAttribute('data-src', srcUntuk(nama));") &&
+  idxSrc.includes('var MAKS_PREVIEW_AKTIF = hematPreview ? 2 : (layarKecilPreview ? 3 : 6);') &&
+  idxSrc.includes('var MAKS_PREVIEW_PARALEL = (hematPreview || layarKecilPreview) ? 1 : 2;') &&
+  idxSrc.includes('if (previewIO) previewIO.observe(card);') &&
+  !idxSrc.includes("{ rootMargin: '520px 0px' }"));
+t('art statis tetap tampil sampai preview hidup siap memudar masuk',
+  idxSrc.includes('.asp-live.siap iframe{opacity:1}') &&
+  !idxSrc.includes('#katalog .catalog-art .catalog-paper{display:none}'));
+t('mode hemat tidak auto-load; hover/fokus yang memprioritaskan preview',
+  idxSrc.includes('koneksiPreview.saveData') &&
+  idxSrc.includes('else if (!hematPreview) mintaPreview(wrap, false);') &&
+  idxSrc.includes("grid.addEventListener('focusin'"));
 
 /* ------------------------------------------------------------------ *
  * 3. undangan.html — mode kartu
@@ -83,6 +96,12 @@ t('mode kartu menyembunyikan pemicu buka + ornamen kontrol',
   undSrc.includes('body.kartu-demo #cover .vip-btn{display:none}'));
 t('kelas kartu-demo bertahan saat bootBersihkan() (kelas sesi)',
   undSrc.includes("BOOT_KELAS_SESI=['preview-mode','opened','pv-soft','embed-buka','kartu-demo']"));
+t('mode kartu boot seketika dan melewatkan animasi/timer thumbnail berat',
+  undSrc.includes('if(KARTU)boot(DEMO_DRAFT)') &&
+  undSrc.includes('covOn=!!AN.cover&&!RM&&!KARTU') &&
+  undSrc.includes('txOn=!!AN.text&&!RM&&!KARTU') &&
+  undSrc.includes('if(!KARTU)ambientPasang(tplF);') &&
+  undSrc.includes('tick();if(KARTU)return;'));
 
 /* ------------------------------------------------------------------ *
  * 4. pemicu buka = anak langsung #cover (bukan di dalam .inner)

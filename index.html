@@ -1370,26 +1370,37 @@ var DEMO_BY_NAME = {"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1
 
 <style id="asp-live-demo">
   /* ============ Preview demo langsung di kartu katalog ============ */
-  #katalog .catalog-art .catalog-paper{display:none}
+  /* Kartu di luar layar boleh melewatkan paint isinya sampai mendekat;
+     tinggi intrinsik menjaga posisi gulir dan mencegah lompatan tata letak. */
+  #katalog .catalog-card{content-visibility:auto;contain-intrinsic-size:auto 462px}
+  @media (max-width:639px){#katalog .catalog-card{contain-intrinsic-size:auto 432px}}
+  /* Art statis tetap menjadi placeholder yang langsung terbaca. Preview
+     hidup nanti menutupinya sebagai overlay dan memudar masuk setelah
+     dokumennya siap, jadi kartu tidak pernah tampil sebagai kotak kosong. */
+  #katalog .catalog-art{isolation:isolate}
+  #katalog .catalog-art .catalog-paper{position:relative;z-index:0}
   /* Bingkai demo: tingginya selalu pas di area kartu (tidak pernah terpotong).
      Isi undangan TIDAK dirender selebar bingkai — lihat ukurLive() di bawah:
      iframe tetap 390px (lebar HP asli) lalu diperkecil dengan transform.
      Dulu iframe-nya ikut menyempit ±200px sehingga font clamp() mentok di
      ukuran minimum dan judul/amplop tema meluber keluar bingkai. */
   .asp-live{height:100%;width:auto;max-width:100%;aspect-ratio:3/4;
-    border-radius:14px;overflow:hidden;position:relative;z-index:0;
-    flex:none;background:#fff;box-shadow:0 16px 38px rgba(0,0,0,.35);
-    transition:transform .65s cubic-bezier(.22,.9,.34,1),box-shadow .35s ease}
-  .catalog-card:hover .asp-live{box-shadow:0 22px 50px rgba(0,0,0,.45)}
+    border-radius:14px;overflow:hidden;position:absolute;top:50%;left:50%;z-index:1;
+    translate:-50% -50%;flex:none;background:transparent;box-shadow:none;
+    transition:transform .65s cubic-bezier(.22,.9,.34,1),box-shadow .35s ease,background .3s ease}
+  .asp-live.siap{background:#fff;box-shadow:0 16px 38px rgba(0,0,0,.35)}
+  .catalog-card:hover .asp-live.siap{box-shadow:0 22px 50px rgba(0,0,0,.45)}
   .asp-live iframe{position:absolute;top:0;left:0;width:390px;height:520px;border:0;
-    pointer-events:none;transform-origin:top left;transform:scale(var(--asp-k,.48))}
+    pointer-events:none;transform-origin:top left;transform:scale(var(--asp-k,.48));
+    opacity:0;transition:opacity .35s ease .05s}
+  .asp-live.siap iframe{opacity:1}
   /* Label kategori / bestseller tetap terbaca di atas bingkai demo. */
   #katalog .catalog-art > div:first-child{z-index:2}
   #katalog .catalog-art > div:first-child > span{box-shadow:0 4px 14px rgba(77,56,28,.16)}
-  .asp-live::after{content:"";position:absolute;inset:0;pointer-events:none;
+  .asp-live.siap::after{content:"";position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(115deg,transparent 42%,rgba(255,235,190,.22) 50%,transparent 58%);
     transform:translateX(-75%);transition:transform .95s ease}
-  .catalog-card:hover .asp-live::after{transform:translateX(75%)}
+  .catalog-card:hover .asp-live.siap::after{transform:translateX(75%)}
 
   /* Tata letak tidak monoton — baris kartu berjenjang halus */
   @media (min-width:640px){
@@ -1526,21 +1537,191 @@ var DEMO_BY_NAME = {"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1
     bukaDemo(textOf(card.querySelector('h3')));
   }, true);
 
-  /* ---------- Preview live di dalam kartu (lazy) ---------- */
+  /* ---------- Preview live di dalam kartu (lazy + terjadwal) ----------
+     Dulu setiap kartu langsung mempunyai iframe dan margin pandang 520px
+     dapat menyalakan banyak dokumen undangan.html sekaligus. Satu dokumen
+     itu jauh lebih berat daripada kartu katalognya, jadi thumbnail kini
+     dibuat sebagai wrapper kosong dulu. Scheduler di bawah hanya membuat
+     iframe untuk kartu yang benar-benar mendekat, membatasi muatan paralel,
+     lalu membongkar dokumen yang sudah jauh dari viewport. Art statis tetap
+     terlihat selama antrean berjalan. */
+  var koneksiPreview = navigator.connection || {};
+  var hematPreview = !!(
+    koneksiPreview.saveData ||
+    /^(slow-)?2g$/.test(koneksiPreview.effectiveType || '') ||
+    (navigator.deviceMemory && navigator.deviceMemory <= 2) ||
+    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2)
+  );
+  var layarKecilPreview = !!(window.matchMedia && matchMedia('(max-width: 767px)').matches);
+  var MAKS_PREVIEW_AKTIF = hematPreview ? 2 : (layarKecilPreview ? 3 : 6);
+  var MAKS_PREVIEW_PARALEL = (hematPreview || layarKecilPreview) ? 1 : 2;
+  var MARGIN_PREVIEW_PX = hematPreview ? 80 : (layarKecilPreview ? 160 : 240);
+  var MARGIN_PREVIEW = MARGIN_PREVIEW_PX + 'px 0px';
+  var antreanPreview = [];
+  var previewAktif = [];
+  var pompaPreviewTimer = 0;
+
+  function bersihkanDaftarPreview() {
+    antreanPreview = antreanPreview.filter(function (wrap) {
+      return wrap.isConnected && !wrap.querySelector('iframe');
+    });
+    previewAktif = previewAktif.filter(function (wrap) {
+      return wrap.isConnected && !!wrap.querySelector('iframe');
+    });
+  }
+  function segarkanJarakPreview() {
+    var vh = window.innerHeight || 700;
+    previewAktif.concat(antreanPreview).forEach(function (wrap) {
+      var card = wrap.closest && wrap.closest('.catalog-card');
+      var r = (card || wrap).getBoundingClientRect();
+      wrap._aspDekat = r.bottom >= -MARGIN_PREVIEW_PX && r.top <= vh + MARGIN_PREVIEW_PX;
+      wrap._aspJarak = r.bottom < 0 ? -r.bottom : (r.top > vh ? r.top - vh : 0);
+    });
+    antreanPreview = antreanPreview.filter(function (wrap) { return wrap._aspDekat || wrap._aspPrioritas; });
+  }
+  function sentuhPreview(wrap) {
+    if (!wrap || !wrap.querySelector('iframe')) return;
+    var i = previewAktif.indexOf(wrap);
+    if (i >= 0) previewAktif.splice(i, 1);
+    previewAktif.push(wrap);
+  }
+  function lepasPreview(wrap) {
+    var f = wrap.querySelector('iframe');
+    if (f) f.remove();
+    wrap.classList.remove('siap');
+    wrap.removeAttribute('data-asp-state');
+    previewAktif = previewAktif.filter(function (item) { return item !== wrap; });
+    antreanPreview = antreanPreview.filter(function (item) { return item !== wrap; });
+  }
+  function pangkasPreview(buatRuang) {
+    bersihkanDaftarPreview();
+    var batas = buatRuang ? Math.max(0, MAKS_PREVIEW_AKTIF - 1) : MAKS_PREVIEW_AKTIF;
+    while (previewAktif.length > batas) {
+      var korban = null;
+      var terjauh = 0;
+      previewAktif.forEach(function (wrap) {
+        var jarak = typeof wrap._aspJarak === 'number' ? wrap._aspJarak : (wrap._aspDekat ? 0 : 9999);
+        if (jarak > terjauh) { terjauh = jarak; korban = wrap; }
+      });
+      if (!korban) break;
+      lepasPreview(korban);
+    }
+  }
+  function jumlahPreviewMemuat() {
+    var n = 0;
+    previewAktif.forEach(function (wrap) {
+      if (wrap.getAttribute('data-asp-state') === 'memuat') n++;
+    });
+    return n;
+  }
+  function pompaPreview() {
+    bersihkanDaftarPreview();
+    segarkanJarakPreview();
+    pangkasPreview();
+    while (antreanPreview.length && jumlahPreviewMemuat() < MAKS_PREVIEW_PARALEL) {
+      if (previewAktif.length >= MAKS_PREVIEW_AKTIF) {
+        pangkasPreview(true);
+        if (previewAktif.length >= MAKS_PREVIEW_AKTIF) break;
+      }
+      mulaiPreview(antreanPreview.shift());
+    }
+  }
+  function jadwalkanPompaPreview() {
+    if (pompaPreviewTimer) return;
+    pompaPreviewTimer = setTimeout(function () {
+      pompaPreviewTimer = 0;
+      pompaPreview();
+    }, layarKecilPreview ? 320 : 160);
+  }
+  function mintaPreview(wrap, prioritas) {
+    if (!wrap || !wrap.isConnected) return;
+    if (wrap.querySelector('iframe')) { sentuhPreview(wrap); return; }
+    var i = antreanPreview.indexOf(wrap);
+    if (i >= 0) antreanPreview.splice(i, 1);
+    if (prioritas) {
+      wrap._aspPrioritas = true;
+      antreanPreview.unshift(wrap);
+      bersihkanDaftarPreview();
+      if (previewAktif.length >= MAKS_PREVIEW_AKTIF) {
+        pangkasPreview(true);
+        if (previewAktif.length >= MAKS_PREVIEW_AKTIF) {
+          var korban = previewAktif.filter(function (item) {
+            return item.getAttribute('data-asp-state') !== 'memuat';
+          })[0] || previewAktif[0];
+          if (korban) lepasPreview(korban);
+        }
+      }
+      pompaPreview();
+    } else {
+      antreanPreview.push(wrap);
+      jadwalkanPompaPreview();
+    }
+  }
+  function mulaiPreview(wrap) {
+    var src = wrap.getAttribute('data-src');
+    if (!src || wrap.querySelector('iframe')) return;
+    var f = document.createElement('iframe');
+    f.loading = 'lazy';
+    f.tabIndex = -1;
+    f.title = 'Preview tema ' + (wrap.getAttribute('data-nama') || '');
+    wrap.setAttribute('data-asp-state', 'memuat');
+    wrap._aspPrioritas = false;
+    f.addEventListener('load', function () {
+      if (!f.isConnected || !wrap.isConnected) return;
+      try {
+        if (!f.contentWindow || f.contentWindow.location.href.indexOf('undangan.html') < 0) return;
+      } catch (err) { /* dokumen seasal; abaikan bila browser membatasi */ }
+      wrap.setAttribute('data-asp-state', 'siap');
+      wrap.classList.add('siap');
+      sentuhPreview(wrap);
+      pompaPreview();
+      var card = wrap.closest && wrap.closest('.catalog-card');
+      if (card && card.matches && card.matches(':hover')) mulaiGeser(f);
+    });
+    f.src = src;
+    wrap.appendChild(f);
+    sentuhPreview(wrap);
+    ukurLive(wrap);
+  }
+
   var previewIO = ('IntersectionObserver' in window)
     ? new IntersectionObserver(function (entri) {
         entri.forEach(function (e) {
-          var f = e.target.querySelector('iframe');
-          if (!f) return;
+          var wrap = e.target.querySelector && e.target.querySelector('.asp-live');
+          if (!wrap) return;
+          wrap._aspDekat = e.isIntersecting;
+          var vhPreview = window.innerHeight || 700;
+          wrap._aspJarak = e.boundingClientRect.bottom < 0
+            ? -e.boundingClientRect.bottom
+            : (e.boundingClientRect.top > vhPreview ? e.boundingClientRect.top - vhPreview : 0);
           if (e.isIntersecting) {
-            if (!f.src || f.src === 'about:blank') f.src = f.getAttribute('data-src');
-          } else if (e.boundingClientRect.top > 2400 || e.boundingClientRect.bottom < -2400) {
-            /* jauh dari pandangan — bebaskan memori, muat lagi saat mendekat */
-            f.src = 'about:blank';
+            if (wrap.querySelector('iframe')) sentuhPreview(wrap);
+            else if (!hematPreview) mintaPreview(wrap, false);
+            return;
+          }
+          antreanPreview = antreanPreview.filter(function (item) { return item !== wrap; });
+          var jauh = Math.max(900, (window.innerHeight || 700) * 1.25);
+          if (e.boundingClientRect.top > jauh || e.boundingClientRect.bottom < -jauh) {
+            lepasPreview(wrap);
+            pompaPreview();
+          } else {
+            /* IntersectionObserver tidak memberi callback baru hanya karena
+               elemen yang sudah keluar makin menjauh. Pompa lagi di sini
+               agar status _aspDekat terbaru dapat memberi ruang LRU bagi
+               kartu yang sedang mengantre. */
+            pompaPreview();
           }
         });
-      }, { rootMargin: '520px 0px' })
+      }, { rootMargin: MARGIN_PREVIEW })
     : null;
+  var segarkanPreviewTimer = 0;
+  window.addEventListener('scroll', function () {
+    if (segarkanPreviewTimer || !antreanPreview.length) return;
+    segarkanPreviewTimer = setTimeout(function () {
+      segarkanPreviewTimer = 0;
+      pompaPreview();
+    }, 220);
+  }, { passive: true });
 
   /* ---------- Skala bingkai demo ----------
      Undangan selalu digambar pada lebar HP asli (390px), lalu seluruh iframe
@@ -1550,12 +1731,12 @@ var DEMO_BY_NAME = {"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1
      kartu (±200px). */
   var LIVE_W = 390;
   function ukurLive(wrap) {
-    var f = wrap.querySelector('iframe');
-    if (!f) return;
     var w = wrap.clientWidth, h = wrap.clientHeight;
     if (!w || !h) return;
     var k = w / LIVE_W;
     wrap.style.setProperty('--asp-k', k.toFixed(4));
+    var f = wrap.querySelector('iframe');
+    if (!f) return;
     f.style.width = LIVE_W + 'px';
     f.style.height = Math.round(h / k) + 'px';
   }
@@ -1564,8 +1745,15 @@ var DEMO_BY_NAME = {"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1
         es.forEach(function (e) { ukurLive(e.target); });
       })
     : null;
+  var resizeLiveRaf = 0;
   window.addEventListener('resize', function () {
-    document.querySelectorAll('.asp-live').forEach(ukurLive);
+    if (resizeLiveRaf) return;
+    var jalankan = function () {
+      resizeLiveRaf = 0;
+      document.querySelectorAll('.asp-live').forEach(ukurLive);
+    };
+    if (window.requestAnimationFrame) resizeLiveRaf = requestAnimationFrame(jalankan);
+    else jalankan();
   });
 
   function pasangPreview() {
@@ -1577,59 +1765,119 @@ var DEMO_BY_NAME = {"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1
       if (!nama) return;
       var wrap = node('div', 'asp-live');
       wrap.setAttribute('aria-hidden', 'true');
-      var f = document.createElement('iframe');
-      f.loading = 'lazy';
-      f.tabIndex = -1;
-      f.title = 'Preview tema ' + nama;
-      f.setAttribute('data-src', srcUntuk(nama));
-      wrap.appendChild(f);
+      wrap.setAttribute('data-src', srcUntuk(nama));
+      wrap.setAttribute('data-nama', nama);
+      wrap._aspJarak = 9999;
       art.appendChild(wrap);
       ukurLive(wrap);
       if (liveRO) liveRO.observe(wrap);
-      if (previewIO) previewIO.observe(wrap);
-      else f.src = f.getAttribute('data-src');
+      if (previewIO) previewIO.observe(card);
+      else if (!hematPreview) mintaPreview(wrap, false);
     });
   }
 
-  /* ---------- Geser pelan isi demo saat hover (daya tarik) ---------- */
-  var geser = 0;
-  function berhentiGeser() { if (geser) { clearInterval(geser); geser = 0; } }
+  /* ---------- Geser pelan isi demo saat hover (daya tarik) ----------
+     Interval 42ms lama membaca scrollHeight iframe pada setiap tick dan
+     dapat terpasang ulang saat pointer berpindah antar-anak kartu. Versi
+     ini memakai satu requestAnimationFrame, meng-cache batas gulir, dan
+     selalu berhenti ketika pointer meninggalkan kartu/grid. Hover/fokus
+     juga menaikkan prioritas thumbnail—penting pada mode hemat yang tidak
+     memuat preview hanya karena kartu terlihat. */
+  var geserRaf = 0;
+  var geserFrame = null;
+  var geserMaks = 0;
+  var geserSampel = 0;
+  var geserTerakhir = 0;
+  function berhentiGeser() {
+    if (geserRaf && window.cancelAnimationFrame) cancelAnimationFrame(geserRaf);
+    geserRaf = 0;
+    geserFrame = null;
+    geserTerakhir = 0;
+  }
+  function langkahGeser(ts) {
+    if (!geserFrame || !geserFrame.isConnected) { berhentiGeser(); return; }
+    try {
+      var w = geserFrame.contentWindow;
+      if (!w || !w.document) throw new Error('preview belum siap');
+      if (!geserTerakhir) geserTerakhir = ts;
+      var dt = Math.min(80, Math.max(0, ts - geserTerakhir));
+      geserTerakhir = ts;
+      if ((geserSampel++ % 45) === 0 || !(geserMaks > 4)) {
+        geserMaks = w.document.documentElement.scrollHeight - w.innerHeight;
+      }
+      if (geserMaks > 4) {
+        var jarak = Math.max(1, Math.round(dt / 24));
+        if (w.scrollY < geserMaks - 4) w.scrollBy(0, jarak);
+        else w.scrollTo(0, 0);
+      }
+      geserRaf = requestAnimationFrame(langkahGeser);
+    } catch (err) { berhentiGeser(); }
+  }
+  function mulaiGeser(f) {
+    if (!f || !window.requestAnimationFrame || reduced()) return;
+    if (!(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches)) return;
+    if (f === geserFrame && geserRaf) return;
+    berhentiGeser();
+    geserFrame = f;
+    geserMaks = 0;
+    geserSampel = 0;
+    geserRaf = requestAnimationFrame(langkahGeser);
+  }
+  function prioritaskanPreview(card) {
+    var wrap = card && card.querySelector('.asp-live');
+    if (!wrap) return null;
+    wrap._aspDekat = true;
+    wrap._aspJarak = 0;
+    mintaPreview(wrap, true);
+    return wrap;
+  }
   function pasangGeser() {
     var grid = document.querySelector('.catalog-grid');
-    if (!grid || grid.getAttribute('data-asp-geser') || reduced()) return;
+    if (!grid || grid.getAttribute('data-asp-geser')) return;
     grid.setAttribute('data-asp-geser', '1');
     grid.addEventListener('pointerover', function (e) {
       if (!(e.target.closest && e.target.closest('.catalog-card'))) return;
-      berhentiGeser();
-      if (!(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches)) return;
       var card = e.target.closest('.catalog-card');
-      var f = card && card.querySelector('.asp-live iframe');
-      if (!f || !f.contentWindow) return;
-      geser = setInterval(function () {
-        try {
-          var w = f.contentWindow;
-          var tinggi = w.document.documentElement.scrollHeight - w.innerHeight;
-          if (w.scrollY < tinggi - 4) w.scrollBy(0, 1);
-          else w.scrollTo(0, 0);
-        } catch (err) { /* lintas asal / belum siap — abaikan */ }
-      }, 42);
+      if (e.relatedTarget && card.contains(e.relatedTarget)) return;
+      berhentiGeser();
+      prioritaskanPreview(card);
+      var f = card.querySelector('.asp-live.siap iframe');
+      if (f) mulaiGeser(f);
+    });
+    grid.addEventListener('pointerout', function (e) {
+      if (!(e.target.closest && e.target.closest('.catalog-card'))) return;
+      var card = e.target.closest('.catalog-card');
+      if (e.relatedTarget && card.contains(e.relatedTarget)) return;
+      berhentiGeser();
+    });
+    grid.addEventListener('focusin', function (e) {
+      if (e.target.closest) prioritaskanPreview(e.target.closest('.catalog-card'));
     });
     grid.addEventListener('pointerleave', berhentiGeser);
     grid.addEventListener('click', berhentiGeser, true);
   }
 
   /* ---------- Susulan ---------- */
-  function enhance() { pasangPreview(); pasangGeser(); }
+  function enhance() { pasangPreview(); pasangGeser(); pantauKatalog(); pompaPreview(); }
   var timer = null;
+  var katalogObserver = null;
+  var katalogTarget = null;
   function schedule() {
     if (timer) return;
     timer = setTimeout(function () { timer = null; enhance(); }, 150);
   }
+  function pantauKatalog() {
+    var target = document.querySelector('#katalog') || document.body;
+    if (!target || target === katalogTarget) return;
+    katalogTarget = target;
+    if (katalogObserver) katalogObserver.disconnect();
+    if ('MutationObserver' in window) {
+      katalogObserver = new MutationObserver(schedule);
+      katalogObserver.observe(target, { childList: true, subtree: true });
+    }
+  }
   function boot() {
     enhance();
-    if ('MutationObserver' in window) {
-      new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
-    }
     var tries = 0;
     (function find() {
       if (document.querySelector('.catalog-grid') || ++tries > 60) { enhance(); return; }
@@ -1666,6 +1914,14 @@ var DEMO_BY_NAME = {"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1
 (function () {
   'use strict';
   var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var koneksiHero = navigator.connection || {};
+  var hematHero = !!(
+    koneksiHero.saveData ||
+    /^(slow-)?2g$/.test(koneksiHero.effectiveType || '') ||
+    (navigator.deviceMemory && navigator.deviceMemory <= 2) ||
+    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2)
+  );
+  var heroTerlihat = [false, false];
   var SE = [
     { tema: 'Minimalist Sage', buka: false, langkah: 1, ms: 70,
       maks: function (w) { return (w.innerHeight || 600) * 1.15; } },
@@ -1686,8 +1942,15 @@ var DEMO_BY_NAME = {"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1
     fr.style.height = Math.round(h / k) + 'px';
     fr.style.transform = 'scale(' + k.toFixed(4) + ')';
   }
+  var resizeHeroRaf = 0;
   window.addEventListener('resize', function () {
-    document.querySelectorAll('.asp-hero-live').forEach(ukurHero);
+    if (resizeHeroRaf) return;
+    var jalankan = function () {
+      resizeHeroRaf = 0;
+      document.querySelectorAll('.asp-hero-live').forEach(ukurHero);
+    };
+    if (window.requestAnimationFrame) resizeHeroRaf = requestAnimationFrame(jalankan);
+    else jalankan();
   });
 
   function pasangHero() {
@@ -1701,6 +1964,11 @@ var DEMO_BY_NAME = {"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1
       if (f.getAttribute('data-asp-hero')) return;
       f.setAttribute('data-asp-hero', '1');
       if (!RM) f.className += ' asp-hero-float' + (i ? ' asp-hf-dua' : '');
+      /* Refresh visual saat ini memang menyembunyikan frame pertama dan
+         hanya menampilkan frame kedua sebagai ponsel. Jangan buat iframe
+         untuk frame yang tidak pernah terlihat. Pada koneksi/perangkat
+         hemat, mockup statis frame kedua juga dipertahankan. */
+      if (i === 0 || hematHero) return;
       var cfg = SE[i];
       var wrap = document.createElement('div');
       wrap.className = 'asp-hero-live';
@@ -1708,21 +1976,22 @@ var DEMO_BY_NAME = {"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1
       var fr = document.createElement('iframe');
       fr.title = 'Demo langsung tema ' + cfg.tema;
       fr.tabIndex = -1;
-      fr.loading = 'eager';
+      fr.loading = 'lazy';
       fr.setAttribute('data-src', 'undangan.html?demo=1&tema=' + encodeURIComponent(cfg.tema) + (cfg.buka ? '&buka=1' : '&kartu=1'));
       wrap.appendChild(fr);
       f.replaceChildren(wrap);
       ukurHero(wrap);
       frs[i] = fr;
       if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (e) {
-          if (e[0] && e[0].isIntersecting) {
-            if (!fr.src) fr.src = fr.getAttribute('data-src');
-            io.disconnect();
-          }
-        }, { rootMargin: '400px 0px' });
+        var io = new IntersectionObserver(function (entri) {
+          entri.forEach(function (e) {
+            heroTerlihat[i] = e.isIntersecting;
+            if (e.isIntersecting && !fr.src) fr.src = fr.getAttribute('data-src');
+          });
+        }, { rootMargin: '120px 0px' });
         io.observe(wrap);
       } else {
+        heroTerlihat[i] = true;
         fr.src = fr.getAttribute('data-src');
       }
     });
@@ -1766,13 +2035,18 @@ var DEMO_BY_NAME = {"Ivory Klasik":"undangan.html?demo=1&tpl=ivory-klasik&buka=1
      aliran isi undangan di kartu kanan) */
   if (!RM) {
     var arah = [1, 1];
+    var maksHeroCache = [0, 0];
+    var maksHeroSampel = [0, 0];
     setInterval(function () {
       if (document.hidden) return;
       frs.forEach(function (fr, i) {
-        if (!fr || !fr.contentWindow) return;
+        if (!fr || !fr.contentWindow || !heroTerlihat[i]) return;
         try {
           var w = fr.contentWindow;
-          var maks = SE[i].maks(w);
+          if ((maksHeroSampel[i]++ % 40) === 0 || !(maksHeroCache[i] > 4)) {
+            maksHeroCache[i] = SE[i].maks(w);
+          }
+          var maks = maksHeroCache[i];
           if (!(maks > 4)) return;
           var y = w.scrollY + arah[i] * SE[i].langkah;
           if (y >= maks) { y = maks; arah[i] = -1; }
