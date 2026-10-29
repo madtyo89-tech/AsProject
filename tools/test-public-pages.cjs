@@ -101,10 +101,11 @@ function assertPage(rel, canonical) {
   for (const [, id] of (featured ? [...featured[1].matchAll(/id: '([^']+)'/g)] : [])) {
     check(coverSource.includes(`'${id}':`), `live demo uses a matching sample cover: ${id}`);
   }
-  check(renderer.includes('body.opened.cover-opening #content{opacity:0;transition:none}') &&
-    renderer.includes("body.classList.add('opened','cover-opening')") && renderer.includes('},1200);') &&
+  check(renderer.includes('body.opened.cover-opening #content{opacity:0;visibility:hidden;transition:none;pointer-events:none}') &&
+    renderer.includes("body.classList.add('opened','cover-opening')") && renderer.includes('function coverSelesaiDalam()') &&
+    renderer.includes('},coverSelesaiDalam());') &&
     renderer.includes("prefers-reduced-motion: reduce") && renderer.includes("body.classList.remove('opened','cover-opening')"),
-    'interactive cover waits 1.2 seconds before fading in the invitation; reduced-motion remains immediate');
+    'interactive cover reveal follows each opening animation duration; reduced-motion remains immediate');
   check(renderer.includes("document.body.classList.add('opened','embed-buka')") && !renderer.includes("document.body.classList.add('opened','cover-opening')"),
     'auto-open demo stays immediate without the interactive cover delay');
   const homeCategories = marketing.match(/var CATEGORIES = \[([\s\S]*?)\n  \];/);

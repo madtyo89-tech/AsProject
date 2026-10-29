@@ -251,9 +251,16 @@ body.opened #cover{opacity:0;visibility:hidden}
 #content{opacity:0;transition:opacity .8s ease .15s}
 body.opened #content{opacity:1}
 /* Sesudah cover ditekan, tahan tampilan isi sejenak agar animasi cover selesai
-   lebih dulu; kelas ini hanya dipakai oleh buka interaktif, bukan demo auto-open. */
-body.opened.cover-opening #content{opacity:0;transition:none}
+   lebih dulu; kelas ini hanya dipakai oleh buka interaktif, bukan demo auto-open.
+   Isi juga dikunci dari sentuhan/fokus/scroll supaya tamu tidak bisa menggeser
+   atau menekan halaman yang masih transparan di balik cover. */
+body.opened.cover-opening{overflow:hidden}
+html:has(body.opened.cover-opening){overflow:hidden}
+body.opened.cover-opening #content{opacity:0;visibility:hidden;transition:none;pointer-events:none}
 body.opened.cover-opening #coverBack{display:none}
+body.opened.cover-opening .nv-bar{display:none}
+body.opened.cover-opening .scr-frame{opacity:0;visibility:hidden}
+body.opened.cover-opening .scr-frame .orn-c{clip-path:inset(0 100% 100% 0)}
 .wrap{max-width:470px;margin:0 auto;padding:34px 20px 90px;background:
   radial-gradient(rgba(212,175,55,.06) 1.5px,transparent 1.8px);background-size:26px 26px;}
 .card{background:var(--card);border:1px solid #f0e6d6;border-radius:22px;padding:28px 22px;text-align:center;box-shadow:0 16px 40px rgba(90,70,30,.07);margin-bottom:18px}
@@ -374,8 +381,8 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 #musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
 #musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Nama lagu/template tidak ditulis di cover — hanya ikon piringan. Nama muncul lagi setelah undangan dibuka. */
-body:not(.opened) #musikBtn .t{display:none}
-body:not(.opened) #musikBtn{padding:0 13px}
+body:not(.opened) #musikBtn .t,body.cover-opening #musikBtn .t{display:none}
+body:not(.opened) #musikBtn,body.cover-opening #musikBtn{padding:0 13px}
 
 /* ==== Mode pratinjau (iframe Studio): tanpa tombol kontrol Studio ==== */
 body.preview-mode #coverBack{display:none}
@@ -717,9 +724,13 @@ body.buka-tirai.opened #cover{transform-origin:50% 50%;transform:scaleX(.68)}
 body.buka-pintu #cover .bkl{display:block}
 body.buka-kotak #cover .bkt,body.buka-kotak .kt-burst{display:block}
 body.buka-pintu #cover{perspective:1200px;transform-style:preserve-3d}
-body.buka-buku.opened #cover{opacity:1;visibility:visible;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-158deg);backface-visibility:hidden;transition:transform 1.05s cubic-bezier(.62,.05,.3,1),visibility 0s 1.12s}
+/* Keadaan akhir cover harus hidden: delay pada transisi visibility-lah yang
+   menahannya tetap tampak selama panel bergerak. Jika keadaan akhirnya dibuat
+   visible, latar #cover yang pekat tertinggal selamanya dan menutupi isi. */
+body.buka-buku.opened #cover{opacity:1;visibility:hidden;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-158deg);backface-visibility:hidden;transition:transform 1.05s cubic-bezier(.62,.05,.3,1),visibility 0s linear 1.12s}
 body.buka-pintu.opened #cover .bdfr,body.buka-kotak.opened #cover .bdfr,body.buka-pintu.opened #cover .pat,body.buka-kotak.opened #cover .pat,body.buka-pintu.opened #cover .veil,body.buka-kotak.opened #cover .veil{opacity:0;transition:opacity .25s ease}
-body.buka-pintu.opened #cover,body.buka-kotak.opened #cover{opacity:1;visibility:visible;pointer-events:none;transition:visibility 0s 1.25s}
+body.buka-pintu.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease .94s,visibility 0s linear 1.12s}
+body.buka-kotak.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease 1.22s,visibility 0s linear 1.42s}
 body.buka-pintu.opened #cover .bkl.l{animation:pintuL .95s cubic-bezier(.55,.06,.28,.99) .1s both}
 body.buka-pintu.opened #cover .bkl.r{animation:pintuR .95s cubic-bezier(.55,.06,.28,.99) .1s both}
 body.buka-kotak.opened #cover .bkt.t{animation:kotakT 1.05s cubic-bezier(.5,.08,.3,1) .05s both}
@@ -769,7 +780,8 @@ body.buka-iris #cover{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
 body.buka-lubang #cover{clip-path:circle(150% at 50% 50%)}
 body.buka-blinds.opened #cover .bdfr,body.buka-blinds.opened #cover .pat,body.buka-blinds.opened #cover .veil{opacity:0;transition:opacity .25s ease}
 body.buka-pintu.opened #cover .cvlatar,body.buka-kotak.opened #cover .cvlatar,body.buka-blinds.opened #cover .cvlatar{opacity:0;transition:opacity .25s ease}
-body.buka-blinds.opened #cover,body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover{opacity:1;visibility:visible;pointer-events:none;transition:visibility 0s 1.15s}
+body.buka-blinds.opened #cover,body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover{opacity:1;visibility:hidden;pointer-events:none;transition:visibility 0s linear 1.15s}
+body.buka-blinds.opened #cover{opacity:0;transition:opacity .18s ease .97s,visibility 0s linear 1.15s}
 body.buka-blinds.opened #cover .bld.b1{animation:blindsL .8s cubic-bezier(.65,.05,.3,.95) .05s both}
 body.buka-blinds.opened #cover .bld.b2{animation:blindsR .8s cubic-bezier(.65,.05,.3,.95) .15s both}
 body.buka-blinds.opened #cover .bld.b3{animation:blindsL .8s cubic-bezier(.65,.05,.3,.95) .25s both}
@@ -3337,6 +3349,25 @@ if(KARTU)document.body.classList.add('kartu-demo');
    "Buka Undangan" sekali lagi. Musik latar sengaja tidak dihentikan. */
 function monogramOf(a,b){const ini=x=>{const w=String(x||'').trim().split(/\s+/).filter(Boolean);return ((w[0]||'')[0]||'')+((w[w.length-1]||'')[0]||'')};return (ini(a)+(b?'·'+ini(b):'')).toUpperCase()}
 let _coverRevealTimer=0;
+/* Durasi reveal mengikuti transisi #cover yang benar-benar aktif, bukan satu
+   angka tetap. Gembok/kotak fisik selesai ±2 detik, sedangkan iris/lubang
+   selesai ±1 detik; timer tetap akan memunculkan isi dan tombol Cover terlalu
+   awal pada model panjang (teks hantu) dan terlalu lambat pada efek pendek
+   (layar latar kosong). CSS isi punya jeda transisi 150ms, jadi kelas penahan
+   dilepas ±180ms sebelum cover tuntas agar fade isi mulai tepat di ujungnya. */
+function coverSelesaiDalam(){
+ let selesai=1200;
+ try{
+  const cv=document.getElementById('cover');
+  const cs=cv?getComputedStyle(cv):null;
+  const keMs=s=>{s=String(s||'').trim();const n=parseFloat(s);return isFinite(n)?(s.endsWith('ms')?n:n*1000):0};
+  const dur=String((cs&&cs.transitionDuration)||'').split(',').map(keMs);
+  const tunda=String((cs&&cs.transitionDelay)||'').split(',').map(keMs);
+  const total=dur.reduce((maks,d,i)=>Math.max(maks,d+(tunda[i%tunda.length]||0)),0);
+  if(total>0)selesai=total;
+ }catch(e){/* gaya transisi tak terbaca — pakai bawaan 1,2 detik */}
+ return Math.min(2200,Math.max(650,Math.round(selesai-180)));
+}
 function kembaliKeCover(){
  if(!document.body.classList.contains('opened'))return;
  if(_coverRevealTimer){clearTimeout(_coverRevealTimer);_coverRevealTimer=0}
@@ -4709,7 +4740,7 @@ function boot(draft){
   kabariInduk();
   const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduceMotion){body.classList.remove('cover-opening');return}
-  _coverRevealTimer=setTimeout(()=>{_coverRevealTimer=0;body.classList.remove('cover-opening')},1200);
+  _coverRevealTimer=setTimeout(()=>{_coverRevealTimer=0;body.classList.remove('cover-opening')},coverSelesaiDalam());
  }
  $('btnOpen').addEventListener('click',bukaCover);
  $('btnOpen').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();bukaCover()}});

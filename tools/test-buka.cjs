@@ -126,10 +126,22 @@ async function render(buka, coverStyle, physicalBuka = 'pita') {
     undSrc.includes('body.buka-pintu.opened #cover .bkl.l{animation:pintuL') &&
     undSrc.includes('body.buka-pintu.opened #cover .bkl.r{animation:pintuR'));
   t('buku: membalik dari tepi kiri sampai punggung hilang',
-    undSrc.includes('body.buka-buku.opened #cover{opacity:1;visibility:visible;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-158deg);backface-visibility:hidden'));
+    undSrc.includes('body.buka-buku.opened #cover{opacity:1;visibility:hidden;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-158deg);backface-visibility:hidden'));
   t('kotak: tutup terangkat + letupan kelip',
     undSrc.includes('body.buka-kotak.opened #cover .bkt.t{animation:kotakT') &&
     undSrc.includes('body.buka-kotak.opened .kt-burst i{animation:ktTerbang'));
+  t('semua efek panel berakhir dengan cover hidden, bukan latar pekat tertinggal',
+    undSrc.includes('body.buka-pintu.opened #cover{opacity:0;visibility:hidden;') &&
+    undSrc.includes('body.buka-kotak.opened #cover{opacity:0;visibility:hidden;') &&
+    undSrc.includes('body.buka-blinds.opened #cover{opacity:0;transition:opacity .18s ease .97s,visibility 0s linear 1.15s}') &&
+    !/body\.buka-[a-z]+\.opened #cover\{[^}]*visibility:visible/.test(undSrc));
+  t('reveal isi mengikuti durasi cover aktif dan mengunci isi selama animasi',
+    undSrc.includes('function coverSelesaiDalam()') &&
+    undSrc.includes('cs.transitionDuration') && undSrc.includes('cs.transitionDelay') &&
+    undSrc.includes('},coverSelesaiDalam());') && !undSrc.includes("body.classList.remove('cover-opening')},1200);") &&
+    undSrc.includes('body.opened.cover-opening #content{opacity:0;visibility:hidden;transition:none;pointer-events:none}') &&
+    undSrc.includes('body.opened.cover-opening{overflow:hidden}') &&
+    undSrc.includes('body.opened.cover-opening .scr-frame{opacity:0;visibility:hidden}'));
   t('reveal sudut lewat clip-path berjenjang (mirror tetap utuh)',
     undSrc.includes('.scr-frame .orn-c{clip-path:inset(0 100% 100% 0);transition:clip-path') &&
     undSrc.includes('body.opened .scr-frame .orn-c{clip-path:inset(0 0 0 0)}') &&

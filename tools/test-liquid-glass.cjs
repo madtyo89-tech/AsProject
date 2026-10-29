@@ -89,6 +89,7 @@ const studio = baca('studio.html');
 
 for (const s of [
   'body.tema-liquid', '.lg-Aurora', '.lg-dock', '.lg-swatch',
+  'body.tema-liquid.cover-opening:not(.preview-mode) .lg-dock',
   'prefers-reduced-motion:reduce', '@supports not ((backdrop-filter',
   'body.tema-liquid-glass-khitanan', 'body.tema-liquid-glass-ultah',
   'body.tema-liquid-glass-aqiqah', '--lg-rx', '--lg-mx'

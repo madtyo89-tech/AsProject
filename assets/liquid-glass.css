@@ -399,7 +399,8 @@ body.tema-liquid .lg-dock{
   transition:opacity .35s ease,transform .35s ease;
 }
 body.tema-liquid.navpager .lg-dock{bottom:calc(124px + env(safe-area-inset-bottom,0px))}
-body.tema-liquid:not(.opened):not(.preview-mode) .lg-dock{
+body.tema-liquid:not(.opened):not(.preview-mode) .lg-dock,
+body.tema-liquid.cover-opening:not(.preview-mode) .lg-dock{
   opacity:0;pointer-events:none;transform:translateX(12px) scale(.94);
 }
 body.tema-liquid.kartu-demo .lg-dock{display:none}
