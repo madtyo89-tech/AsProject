@@ -31,6 +31,12 @@
   --ink-body:#2b2b2b; --ink-body-fg:#fff; --ink-fg:#fff;
   --accent-body:#0c4a6e; --accent-cover:#0EA5E9;
   --ft:"Cormorant Garamond",serif; --fb:"Inter",sans-serif;
+  /* Kurva bersama animasi cover: mulai responsif, lalu melambat panjang di
+     ujung. Dipakai semua model fisik & FX supaya katalog, Studio, dan
+     undangan live terasa sama halusnya. */
+  --ease-cover:cubic-bezier(.22,.78,.24,1);
+  --ease-cover-soft:cubic-bezier(.33,.72,.24,1);
+  --ease-cover-io:cubic-bezier(.45,0,.22,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -54,7 +60,19 @@ button{font-family:inherit;cursor:pointer}
 /* ---------- COVER ---------- */
 #cover{position:fixed;inset:0;height:100vh;height:100dvh;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 26px;
   background:linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));
-  transition:opacity .7s ease,visibility .7s;}
+  transition:transform .72s var(--ease-cover-soft),opacity .72s var(--ease-cover-soft),clip-path .72s var(--ease-cover-soft),visibility .72s;}
+/* Promosikan hanya lapisan yang sedang membuka ke GPU. Ini mencegah panel
+   besar/foto penuh dicat ulang tiap frame di HP, tanpa menahan will-change
+   secara permanen setelah cover selesai. */
+body.opened #cover{will-change:transform,opacity,clip-path;backface-visibility:hidden}
+body.opened #cover .pemicu,
+body.opened #cover .pemicu .el,
+body.opened #cover .pemicu .el2,
+body.opened #cover .pemicu .simpul,
+body.opened #cover .bkl,
+body.opened #cover .bkt,
+body.opened #cover .bld,
+body.opened #cover .kt-burst i{will-change:transform,opacity}
 #cover .pat{position:absolute;inset:0;pointer-events:none;opacity:.5}
 #cover .veil{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(255,255,255,.25)}
 #cover .inner{position:relative;max-width:400px;width:100%;margin-left:auto;margin-right:auto}
@@ -248,7 +266,7 @@ body.gerbang-arch .acara{border-radius:12px}
 body.opened #cover{opacity:0;visibility:hidden}
 
 /* ---------- CONTENT ---------- */
-#content{opacity:0;transition:opacity .8s ease .15s}
+#content{opacity:0;transition:opacity .85s var(--ease-cover-soft) .1s}
 body.opened #content{opacity:1}
 /* Sesudah cover ditekan, tahan tampilan isi sejenak agar animasi cover selesai
    lebih dulu; kelas ini hanya dipakai oleh buka interaktif, bukan demo auto-open.
@@ -392,6 +410,8 @@ body.pv-soft *,body.pv-soft *::before,body.pv-soft *::after{animation:none!impor
 /* ==== Tombol kembali ke cover: muncul hanya setelah undangan dibuka ==== */
 #coverBack{position:fixed;right:14px;bottom:16px;z-index:120;display:none;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-radius:99px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(90,70,30,.18);color:var(--ink-body);font-size:11px;font-weight:600;cursor:pointer}
 body.opened #coverBack{display:inline-flex}
+@keyframes coverBackIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+body.opened:not(.cover-opening) #coverBack{animation:coverBackIn .5s var(--ease-cover-soft) backwards}
 #coverBack .arw{font-size:15px;line-height:1}
 /* Bar navigasi slide (mode navpager) duduk di tengah bawah — naikkan tombol agar tidak bertumpuk. */
 body.navpager #coverBack{bottom:66px}
@@ -564,7 +584,7 @@ body:not(.opened) #aspAmbient{opacity:.42}
 @media (prefers-reduced-motion:reduce){
   #aspAmbient{display:none}
   .kn-l,.kn-l::after{animation:none;opacity:1}
-  .cvcue,.cdw .n.tick{animation:none}
+  .cvcue,.cvcue i,.cdw .n.tick{animation:none}
   .livebtn i{animation:none}
 }
 
@@ -635,7 +655,7 @@ body:not(.opened) #aspAmbient{opacity:.42}
    sentuhan sama sekali, dan hanya muncul setelah undangan dibuka supaya
    sampul tidak berhias dobel. Bayangan dibuat bertingkat (emboss + bayangan
    ambien dalam) supaya ornamen terasa melayang nyata di atas halaman. */
-.scr-frame{position:fixed;inset:0;pointer-events:none;z-index:150;opacity:0;visibility:hidden;transition:opacity .7s ease,visibility .7s}
+.scr-frame{position:fixed;inset:0;pointer-events:none;z-index:150;opacity:0;visibility:hidden;transition:opacity .85s var(--ease-cover-soft),visibility .85s}
 body.opened .scr-frame{opacity:1;visibility:visible}
 .scr-frame .orn-c{top:8px;left:8px;right:auto;bottom:auto;width:clamp(58px,15vw,92px);height:clamp(58px,15vw,92px);opacity:.95;color:var(--accent-body)}
 .scr-frame .orn-c.tr{top:8px;right:8px;left:auto}
@@ -689,10 +709,10 @@ body.wedding-cover #cover .open:active,body.foto-full #cover .open:active,#cover
 #musikBtn .disc::after{width:4px;height:4px}
 
 /* ==== Animasi buka amplop: flap terangkat, segel jatuh, cover fade perlahan ==== */
-#cover .open::before{transform-origin:50% 0;transition:transform .55s cubic-bezier(.34,0,.2,1)}
-#cover .open::after,#cover .open .env{transition:transform .45s ease .16s,opacity .38s ease .22s}
+#cover .open::before{transform-origin:50% 0;transition:transform .68s var(--ease-cover-io)}
+#cover .open::after,#cover .open .env{transition:transform .58s var(--ease-cover-soft) .18s,opacity .5s ease .24s}
 body.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transform-origin:0% 50%;
-  transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .6s ease .78s,visibility 0s linear 1.35s}
+  transition:transform 1.02s var(--ease-cover) .48s,opacity .7s ease .8s,visibility 0s linear 1.5s}
 body.buka-gilir.opened #cover{transform:perspective(1300px) rotateY(-15deg) translateX(-38%)}
 body.buka-geser.opened #cover{transform:translateX(-105%)}
 body.buka-lipat.opened #cover{transform-origin:50% 0;transform:perspective(1200px) rotateX(-24deg) translateY(-42%)}
@@ -727,20 +747,20 @@ body.buka-pintu #cover{perspective:1200px;transform-style:preserve-3d}
 /* Keadaan akhir cover harus hidden: delay pada transisi visibility-lah yang
    menahannya tetap tampak selama panel bergerak. Jika keadaan akhirnya dibuat
    visible, latar #cover yang pekat tertinggal selamanya dan menutupi isi. */
-body.buka-buku.opened #cover{opacity:1;visibility:hidden;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-158deg);backface-visibility:hidden;transition:transform 1.05s cubic-bezier(.62,.05,.3,1),visibility 0s linear 1.12s}
-body.buka-pintu.opened #cover .bdfr,body.buka-kotak.opened #cover .bdfr,body.buka-pintu.opened #cover .pat,body.buka-kotak.opened #cover .pat,body.buka-pintu.opened #cover .veil,body.buka-kotak.opened #cover .veil{opacity:0;transition:opacity .25s ease}
-body.buka-pintu.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease .94s,visibility 0s linear 1.12s}
-body.buka-kotak.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease 1.22s,visibility 0s linear 1.42s}
-body.buka-pintu.opened #cover .bkl.l{animation:pintuL .95s cubic-bezier(.55,.06,.28,.99) .1s both}
-body.buka-pintu.opened #cover .bkl.r{animation:pintuR .95s cubic-bezier(.55,.06,.28,.99) .1s both}
-body.buka-kotak.opened #cover .bkt.t{animation:kotakT 1.05s cubic-bezier(.5,.08,.3,1) .05s both}
-body.buka-kotak.opened #cover .bkt.b{animation:kotakB 1.05s ease-in .32s both}
-body.buka-kotak.opened .kt-burst i{animation:ktTerbang 1.15s ease-out .5s both}
-@keyframes pintuL{0%{opacity:1;transform:rotateY(0)}100%{opacity:1;transform:rotateY(-102deg)}}
-@keyframes pintuR{0%{opacity:1;transform:rotateY(0)}100%{opacity:1;transform:rotateY(102deg)}}
-@keyframes kotakT{0%{opacity:1;transform:rotateX(0)}55%{opacity:1;transform:rotateX(-116deg)}100%{opacity:0;transform:rotateX(-116deg) translateY(-8%)}}
-@keyframes kotakB{0%{opacity:1;transform:translateY(0)}70%{opacity:1}100%{opacity:0;transform:translateY(16%)}}
-@keyframes ktTerbang{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}18%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(160deg)}}
+body.buka-buku.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-112deg) translateX(-7%);backface-visibility:hidden;transition:transform 1.18s var(--ease-cover-io),opacity .36s ease .82s,visibility 0s linear 1.22s}
+body.buka-pintu.opened #cover .bdfr,body.buka-kotak.opened #cover .bdfr,body.buka-pintu.opened #cover .pat,body.buka-kotak.opened #cover .pat,body.buka-pintu.opened #cover .veil,body.buka-kotak.opened #cover .veil{opacity:0;transition:opacity .38s var(--ease-cover-soft)}
+body.buka-pintu.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease .94s,visibility 0s linear 1.26s}
+body.buka-kotak.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .34s ease 1.18s,visibility 0s linear 1.52s}
+body.buka-pintu.opened #cover .bkl.l{animation:pintuL 1.08s var(--ease-cover-io) .08s both}
+body.buka-pintu.opened #cover .bkl.r{animation:pintuR 1.08s var(--ease-cover-io) .08s both}
+body.buka-kotak.opened #cover .bkt.t{animation:kotakT 1.14s var(--ease-cover-io) .05s both}
+body.buka-kotak.opened #cover .bkt.b{animation:kotakB 1.14s var(--ease-cover-soft) .28s both}
+body.buka-kotak.opened .kt-burst i{animation:ktTerbang 1.02s ease-out .42s both}
+@keyframes pintuL{0%{opacity:1;transform:rotateY(0)}82%{opacity:1}100%{opacity:0;transform:rotateY(-102deg)}}
+@keyframes pintuR{0%{opacity:1;transform:rotateY(0)}82%{opacity:1}100%{opacity:0;transform:rotateY(102deg)}}
+@keyframes kotakT{0%{opacity:1;transform:rotateX(0)}58%{opacity:1;transform:rotateX(-116deg)}78%{opacity:.55;transform:rotateX(-116deg) translateY(-4%)}100%{opacity:0;transform:rotateX(-116deg) translateY(-8%)}}
+@keyframes kotakB{0%{opacity:1;transform:translateY(0)}62%{opacity:1}100%{opacity:0;transform:translateY(18%)}}
+@keyframes ktTerbang{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}18%{opacity:1}55%{opacity:.86;transform:translate(calc(var(--dx)*.58),calc(var(--dy)*.58)) scale(.94) rotate(96deg)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(160deg)}}
 
 /* Reveal elegan bingkai layar: tiap sudut tersibak dari pojok layarnya lewat
    clip-path (bukan transform, supaya mirror .orn-c tetap utuh), berjenjang
@@ -778,19 +798,19 @@ body.opened .scr-frame .orn-c.br svg{animation-delay:2.6s}
 body.buka-blinds #cover .bld{display:block}
 body.buka-iris #cover{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
 body.buka-lubang #cover{clip-path:circle(150% at 50% 50%)}
-body.buka-blinds.opened #cover .bdfr,body.buka-blinds.opened #cover .pat,body.buka-blinds.opened #cover .veil{opacity:0;transition:opacity .25s ease}
-body.buka-pintu.opened #cover .cvlatar,body.buka-kotak.opened #cover .cvlatar,body.buka-blinds.opened #cover .cvlatar{opacity:0;transition:opacity .25s ease}
-body.buka-blinds.opened #cover,body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover{opacity:1;visibility:hidden;pointer-events:none;transition:visibility 0s linear 1.15s}
-body.buka-blinds.opened #cover{opacity:0;transition:opacity .18s ease .97s,visibility 0s linear 1.15s}
-body.buka-blinds.opened #cover .bld.b1{animation:blindsL .8s cubic-bezier(.65,.05,.3,.95) .05s both}
-body.buka-blinds.opened #cover .bld.b2{animation:blindsR .8s cubic-bezier(.65,.05,.3,.95) .15s both}
-body.buka-blinds.opened #cover .bld.b3{animation:blindsL .8s cubic-bezier(.65,.05,.3,.95) .25s both}
-body.buka-blinds.opened #cover .bld.b4{animation:blindsR .8s cubic-bezier(.65,.05,.3,.95) .35s both}
-body.buka-iris.opened #cover{clip-path:polygon(0 0,0 0,0 0,0 0);transition:clip-path 1s cubic-bezier(.7,.05,.3,1),visibility 0s 1.05s}
-body.buka-lubang.opened #cover{clip-path:circle(0% at 50% 50%);transition:clip-path .95s cubic-bezier(.6,.05,.3,1),visibility 0s 1s}
-body.buka-jungkit.opened #cover{transform-origin:50% 100%;transform:perspective(1200px) rotateX(94deg);transition:transform .95s cubic-bezier(.55,.08,.3,1),visibility 0s 1s}
-@keyframes blindsL{0%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(-102%)}}
-@keyframes blindsR{0%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(102%)}}
+body.buka-blinds.opened #cover .bdfr,body.buka-blinds.opened #cover .pat,body.buka-blinds.opened #cover .veil{opacity:0;transition:opacity .38s var(--ease-cover-soft)}
+body.buka-pintu.opened #cover .cvlatar,body.buka-kotak.opened #cover .cvlatar,body.buka-blinds.opened #cover .cvlatar{opacity:0;transition:opacity .38s var(--ease-cover-soft)}
+body.buka-blinds.opened #cover,body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover{visibility:hidden;pointer-events:none}
+body.buka-blinds.opened #cover{opacity:0;transition:opacity .3s ease .98s,visibility 0s linear 1.28s}
+body.buka-blinds.opened #cover .bld.b1{animation:blindsL .92s var(--ease-cover-io) .04s both}
+body.buka-blinds.opened #cover .bld.b2{animation:blindsR .92s var(--ease-cover-io) .12s both}
+body.buka-blinds.opened #cover .bld.b3{animation:blindsL .92s var(--ease-cover-io) .2s both}
+body.buka-blinds.opened #cover .bld.b4{animation:blindsR .92s var(--ease-cover-io) .28s both}
+body.buka-iris.opened #cover{opacity:0;clip-path:polygon(0 0,0 0,0 0,0 0);transition:clip-path 1.12s var(--ease-cover),opacity .3s ease .84s,visibility 0s linear 1.16s}
+body.buka-lubang.opened #cover{opacity:0;clip-path:circle(0% at 50% 50%);transition:clip-path 1.06s var(--ease-cover),opacity .3s ease .78s,visibility 0s linear 1.1s}
+body.buka-jungkit.opened #cover{opacity:0;transform-origin:50% 100%;transform:perspective(1200px) rotateX(94deg);transition:transform 1.08s var(--ease-cover-io),opacity .3s ease .78s,visibility 0s linear 1.12s}
+@keyframes blindsL{0%{opacity:1;transform:translateX(0)}82%{opacity:1}100%{opacity:0;transform:translateX(-102%)}}
+@keyframes blindsR{0%{opacity:1;transform:translateX(0)}82%{opacity:1}100%{opacity:0;transform:translateX(102%)}}
 @media (prefers-reduced-motion:reduce){
  #cover .bld{animation:none!important;opacity:0!important}
  body.buka-iris #cover,body.buka-lubang #cover{clip-path:none}
@@ -876,6 +896,7 @@ body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open
 body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,4%) scale(.5);opacity:0}
 @media (prefers-reduced-motion:reduce){
   #content{transition:none!important}
+  #coverBack{animation:none!important}
   #cover .open::after{animation:none}
   #cover .open::before,#cover .open::after,#cover .open .env,body.opened #cover{transition:none!important}
   body.opened #cover{transform:none}
@@ -1136,10 +1157,20 @@ body.cvsz-jumbo #content .couple-foto.tunggal .cf{width:min(228px,60vw)}
    terbuka. Setiap tema membawa elemennya sendiri dari kerangka.
    Semua elemen berukuran penuh & bertekstur 3D — gradasi berlapis,
    bayangan dalam, tepi timbul, kilau, pegangan pintu. ==== */
-#cover .pemicu{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .25s ease,filter .25s ease}
+#cover .pemicu{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .32s var(--ease-cover-soft),filter .3s ease}
 #cover .pemicu .el,#cover .pemicu .el2,#cover .pemicu .simpul{display:block;position:absolute;pointer-events:none}
 #cover .pemicu .p-hint{position:absolute;left:50%;top:calc(100% + 14px);transform:translateX(-50%);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-fg,#fff);opacity:.92;white-space:nowrap;text-shadow:0 1px 6px rgba(0,0,0,.45)}
 #cover .pemicu:focus-visible{outline:2px solid var(--accent-cover,var(--accent));outline-offset:8px}
+/* Selama elemen kaca/kain sedang bergerak, backdrop-filter dimatikan agar
+   browser tidak mengambil ulang latar di baliknya pada setiap frame. Tint
+   warnanya tetap sama; efek kacanya kembali utuh saat cover ditutup lagi. */
+body.opened[class*="elbuka-"].elbuka-pita #cover .pemicu .el,
+body.opened[class*="elbuka-"].elbuka-pita #cover .pemicu .el2,
+body.opened[class*="elbuka-"].elbuka-pita #cover .pemicu .simpul,
+body.opened[class*="elbuka-"].elbuka-gembok #cover .pemicu .el,
+body.opened[class*="elbuka-"].elbuka-gembok #cover .pemicu .simpul,
+body.opened[class*="elbuka-"].elbuka-selendang #cover .pemicu .el{-webkit-backdrop-filter:none;backdrop-filter:none}
+body.opened[class*="elbuka-"].elbuka-gembok #cover .pemicu .simpul::after{-webkit-backdrop-filter:none;backdrop-filter:none}
 /* respons sentuh: elemen kecil bereaksi di hover & tekan */
 body:not(.opened) #cover .pemicu:hover{filter:brightness(1.07)}
 body:not(.opened) #cover .pemicu:active{transform:translate(-50%,-50%) scale(.95)}
@@ -1197,18 +1228,19 @@ body.elbuka-pita.foto-full #cover .pemicu .el2{top:78px;height:17px;border-radiu
 body.elbuka-pita.foto-full #cover .pemicu .simpul{top:41px;width:40px;height:40px;margin-left:-20px;
   --pa:40%;--pb:24%;--pc:18%}
 body.elbuka-pita #cover .kt-burst{display:block}
-body.elbuka-pita.opened #cover .pemicu .el,body.elbuka-pita.opened #cover .pemicu .simpul{animation:pitaTerbang 1.05s cubic-bezier(.5,.05,.3,1) forwards}
-body.elbuka-pita.opened #cover .pemicu .el2{animation:pitaTerbang 1.05s .07s cubic-bezier(.5,.05,.3,1) forwards}
-body.elbuka-pita.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .45s both}
-@keyframes pitaTerbang{to{transform:translateY(-300px) rotate(16deg) scale(1.35);opacity:0;filter:blur(8px)}}
+body.elbuka-pita.opened #cover .pemicu .el,body.elbuka-pita.opened #cover .pemicu .simpul{animation:pitaTerbang 1.22s var(--ease-cover-io) forwards}
+body.elbuka-pita.opened #cover .pemicu .el2{animation:pitaTerbang 1.22s .08s var(--ease-cover-io) forwards}
+body.elbuka-pita.opened #cover .kt-burst i{animation:ktTerbang 1s ease-out .4s both}
+@keyframes pitaTerbang{0%{transform:translateY(0) rotate(0) scale(1);opacity:1}22%{transform:translateY(-42px) rotate(3deg) scale(1.04);opacity:1}68%{transform:translateY(-190px) rotate(11deg) scale(1.2);opacity:.72}100%{transform:translateY(-300px) rotate(16deg) scale(1.32);opacity:0}}
 
 /* --- Tirai: dua panel berlipat penuh --- */
 body.elbuka-tirai #cover .pemicu{position:absolute;left:0;top:0;transform:none;width:100%;height:100%}
 body.elbuka-tirai #cover .pemicu .el,body.elbuka-tirai #cover .pemicu .el2{top:0;bottom:0;width:50.6%;background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.17) 0 3px,transparent 3px 10px),repeating-linear-gradient(0deg,transparent 0 46px,rgba(0,0,0,.12) 46px 49px),linear-gradient(165deg,color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 68%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 36%,#140a06));box-shadow:inset 0 0 80px rgba(0,0,0,.58),inset 0 -30px 50px rgba(0,0,0,.35)}
 body.elbuka-tirai #cover .pemicu .el{left:0;transform-origin:left center}
 body.elbuka-tirai #cover .pemicu .el2{right:0;transform-origin:right center}
-body.elbuka-tirai.opened #cover .pemicu .el{transform:translateX(-106%) skewX(-10deg);transition:transform 1.2s cubic-bezier(.4,0,.2,1)}
-body.elbuka-tirai.opened #cover .pemicu .el2{transform:translateX(106%) skewX(10deg);transition:transform 1.2s cubic-bezier(.4,0,.2,1)}
+body.elbuka-tirai #cover .pemicu .el,body.elbuka-tirai #cover .pemicu .el2{transition:transform 1.34s var(--ease-cover-io)}
+body.elbuka-tirai.opened #cover .pemicu .el{transform:translateX(-106%) skewX(-8deg)}
+body.elbuka-tirai.opened #cover .pemicu .el2{transform:translateX(106%) skewX(8deg)}
 
 /* --- Gerbang foto: dua panel SIMETRIS dari FOTO MEMPELAI (--fotoSampul).
    Tiap panel menampilkan separuh foto (background 200% lebar: kiri & kanan),
@@ -1239,10 +1271,12 @@ body.elbuka-gerbang #cover .pemicu .simpul{left:50%;top:0;bottom:0;width:2px;mar
   background:linear-gradient(180deg,transparent,rgba(255,241,206,.8) 16%,#fff 50%,rgba(255,241,206,.8) 84%,transparent);
   box-shadow:0 0 24px 6px rgba(255,226,150,.4)}
 body.elbuka-gerbang #cover .kt-burst{display:block}
-body.elbuka-gerbang.opened #cover .pemicu .el{transform:perspective(1100px) rotateY(-74deg);transition:transform 1.1s cubic-bezier(.5,0,.2,1)}
-body.elbuka-gerbang.opened #cover .pemicu .el2{transform:perspective(1100px) rotateY(74deg);transition:transform 1.1s cubic-bezier(.5,0,.2,1)}
-body.elbuka-gerbang.opened #cover .pemicu .simpul{opacity:0;transition:opacity .45s}
-body.elbuka-gerbang.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .45s both}
+body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{transition:transform 1.3s var(--ease-cover-io)}
+body.elbuka-gerbang #cover .pemicu .simpul,body.elbuka-gerbang #cover .pemicu .p-kulit,body.elbuka-gerbang #cover .pemicu .p-hint{transition:opacity .45s var(--ease-cover-soft)}
+body.elbuka-gerbang.opened #cover .pemicu .el{transform:perspective(1100px) rotateY(-76deg)}
+body.elbuka-gerbang.opened #cover .pemicu .el2{transform:perspective(1100px) rotateY(76deg)}
+body.elbuka-gerbang.opened #cover .pemicu .simpul{opacity:0}
+body.elbuka-gerbang.opened #cover .kt-burst i{animation:ktTerbang 1s ease-out .42s both}
 
 /* --- Pintu: dua daun berpapan + pegangan, berayun 3D.
    Realistis: serat kayu, kusen emas, celah cahaya di
@@ -1257,10 +1291,12 @@ body.elbuka-pintu #cover .pemicu .el2::after{left:16px;margin-top:-8px}
 /* celah cahaya di antara dua daun */
 body.elbuka-pintu #cover .pemicu .simpul{left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:linear-gradient(180deg,transparent,#fff3c4 26%,#fff 50%,#fff3c4 74%,transparent);opacity:.9;box-shadow:0 0 26px 7px rgba(255,220,130,.7);z-index:1}
 body.elbuka-pintu #cover .kt-burst{display:block}
-body.elbuka-pintu.opened #cover .pemicu .el{transform:perspective(1200px) rotateY(-102deg);transition:transform 1.05s cubic-bezier(.3,1.35,.4,1)}
-body.elbuka-pintu.opened #cover .pemicu .el2{transform:perspective(1200px) rotateY(102deg);transition:transform 1.05s cubic-bezier(.3,1.35,.4,1)}
-body.elbuka-pintu.opened #cover .pemicu .simpul{opacity:0;transition:opacity .5s .75s}
-body.elbuka-pintu.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .5s both}
+body.elbuka-pintu #cover .pemicu .el,body.elbuka-pintu #cover .pemicu .el2{transition:transform 1.24s var(--ease-cover-io)}
+body.elbuka-pintu #cover .pemicu .simpul{transition:opacity .45s var(--ease-cover-soft)}
+body.elbuka-pintu.opened #cover .pemicu .el{transform:perspective(1200px) rotateY(-103deg)}
+body.elbuka-pintu.opened #cover .pemicu .el2{transform:perspective(1200px) rotateY(103deg)}
+body.elbuka-pintu.opened #cover .pemicu .simpul{opacity:0;transition:opacity .5s var(--ease-cover-soft) .72s}
+body.elbuka-pintu.opened #cover .kt-burst i{animation:ktTerbang .98s ease-out .44s both}
 
 /* --- Buku foto: sampul memakai FOTO MEMPELAI (--fotoSampul), lengkap dengan
    punggung buku, blok halaman, pita pembatas, dan judul tercetak di kulit.
@@ -1319,8 +1355,8 @@ body.elbuka-buku #cover .kt-burst{display:block}
 /* Buku terbuka dari PUNGGUNGNYA (tepi kiri), bukan berputar di tengah. */
 body.elbuka-buku.opened #cover .pemicu{transform-origin:left center;
   transform:translate(-50%,-50%) perspective(1400px) rotateY(-150deg);opacity:0;
-  transition:transform 1.15s cubic-bezier(.55,.05,.28,1),opacity .85s .3s}
-body.elbuka-buku.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .45s both}
+  transition:transform 1.28s var(--ease-cover-io),opacity .92s var(--ease-cover-soft) .3s}
+body.elbuka-buku.opened #cover .kt-burst i{animation:ktTerbang 1s ease-out .42s both}
 
 /* --- Amplop besar dengan segel lilin: flap segitiga terangkat
    ke belakang, segel melebar lalu pecah --- */
@@ -1337,10 +1373,13 @@ body.elbuka-amplop #cover .pemicu .el2{left:0;top:52%;bottom:0;width:100%;backgr
 body.elbuka-amplop #cover .pemicu .simpul{left:50%;top:47%;width:78px;height:78px;margin-left:-39px;margin-top:-39px;border-radius:50%;background:radial-gradient(circle at 38% 30%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 85%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 55%,#fff) 40%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 40%,#3a0f1c) 78%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 28%,#2a0a12));box-shadow:0 8px 22px rgba(30,10,20,.5),inset 0 -5px 10px rgba(0,0,0,.35),inset 0 3px 6px rgba(255,255,255,.45);z-index:4}
 body.elbuka-amplop #cover .pemicu .simpul::after{content:'';position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 70%,#fff);opacity:.7}
 body.elbuka-amplop #cover .kt-burst{display:block}
-body.elbuka-amplop.opened #cover .pemicu .el{transform:rotateX(-178deg);transition:transform 1s cubic-bezier(.4,0,.2,1)}
-body.elbuka-amplop.opened #cover .pemicu .simpul{transform:translate(-50%,-50%) scale(1.4) rotate(20deg);opacity:0;transition:transform .6s ease,opacity .6s ease .1s}
-body.elbuka-amplop.opened #cover .pemicu .el2{opacity:0;transition:opacity .8s .3s}
-body.elbuka-amplop.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .4s both}
+body.elbuka-amplop #cover .pemicu .el{transition:transform 1.18s var(--ease-cover-io)}
+body.elbuka-amplop #cover .pemicu .simpul{transition:transform .74s var(--ease-cover-soft),opacity .74s ease .08s}
+body.elbuka-amplop #cover .pemicu .el2{transition:opacity .92s var(--ease-cover-soft) .28s}
+body.elbuka-amplop.opened #cover .pemicu .el{transform:rotateX(-178deg)}
+body.elbuka-amplop.opened #cover .pemicu .simpul{transform:scale(1.38) rotate(18deg);opacity:0}
+body.elbuka-amplop.opened #cover .pemicu .el2{opacity:0}
+body.elbuka-amplop.opened #cover .kt-burst i{animation:ktTerbang 1s ease-out .4s both}
 
 /* --- Amplop + FOTO PENUH (mis. Midnight Gold) ---
    Dulu amplopnya melebar 100% layar dengan dua bidang gradasi pekat: foto
@@ -1444,10 +1483,10 @@ body.elbuka-gembok #cover .pemicu .el{--ga:54%;--gb:34%;--gc:46%;
   -webkit-backdrop-filter:blur(2px) saturate(1.05);backdrop-filter:blur(2px) saturate(1.05);
   border:2px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 52%,rgba(255,255,255,.45));
   box-shadow:0 14px 34px rgba(10,6,3,.26),inset 0 1px 1px rgba(255,255,255,.6),inset 0 0 0 1px rgba(255,255,255,.18);
-  z-index:2;transition:transform .95s cubic-bezier(.33,.02,.26,1) 1.25s,opacity .7s ease 1.45s,box-shadow .45s ease .55s;will-change:transform,opacity}
-body.elbuka-gembok #cover .pemicu .el::before{content:'';position:absolute;top:-56px;left:50%;width:88px;height:64px;margin-left:-44px;border:13px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 70%,#8c6d3a);border-bottom:0;border-radius:56px 56px 0 0;transform-origin:bottom left;box-shadow:0 5px 15px rgba(0,0,0,.4);transition:transform .8s cubic-bezier(.34,1.2,.46,1) 1s}
+  z-index:2;transition:transform .82s var(--ease-cover) 1.22s,opacity .64s ease 1.4s,box-shadow .55s var(--ease-cover-soft) .72s;will-change:transform,opacity}
+body.elbuka-gembok #cover .pemicu .el::before{content:'';position:absolute;top:-56px;left:50%;width:88px;height:64px;margin-left:-44px;border:13px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 70%,#8c6d3a);border-bottom:0;border-radius:56px 56px 0 0;transform-origin:bottom left;box-shadow:0 5px 15px rgba(0,0,0,.4);transition:transform .88s cubic-bezier(.3,1.08,.42,1) 1.02s}
 body.elbuka-gembok #cover .pemicu .el::after{content:'';position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#1a1205;box-shadow:inset 0 3px 10px #000}
-body.elbuka-gembok #cover .pemicu .el2{left:50%;top:calc(50% + 11px);width:9px;height:18px;margin-left:-4.5px;border-radius:0 0 5px 5px;background:#1a1205;z-index:2;transition:opacity .5s ease .9s}
+body.elbuka-gembok #cover .pemicu .el2{left:50%;top:calc(50% + 11px);width:9px;height:18px;margin-left:-4.5px;border-radius:0 0 5px 5px;background:#1a1205;z-index:2;transition:opacity .55s var(--ease-cover-soft) .95s}
 /* kunci miring di bawah gembok: batang + gigi + kepala */
 body.elbuka-gembok #cover .pemicu .simpul{--ka:78%;left:50%;top:188px;width:120px;height:14px;margin-left:-60px;border-radius:7px;
   background:linear-gradient(90deg,
@@ -1467,20 +1506,20 @@ body.elbuka-gembok #cover .kt-burst{display:block}
 /* langkah 1-2: kunci terangkat mulus, masuk lubang, lalu DIPUTAR pelan.
    Tiap segmen punya easing sendiri supaya tidak ada "patahan" gerak, dan
    kunci baru memudar setelah putarannya benar-benar selesai. */
-body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.75s linear forwards}
+body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.88s linear forwards}
 @keyframes kunciMasuk{
   0%  {transform:translateY(0)     rotate(-30deg) scale(1);
-       animation-timing-function:cubic-bezier(.45,0,.55,1)}
+       animation-timing-function:cubic-bezier(.42,0,.5,1)}
   16% {transform:translateY(-16px) rotate(-30deg) scale(1.03);
-       animation-timing-function:cubic-bezier(.4,0,.6,1)}
+       animation-timing-function:cubic-bezier(.38,0,.52,1)}
   42% {transform:translateY(-82px) rotate(-30deg) scale(1);
-       animation-timing-function:cubic-bezier(.32,0,.3,1)}
+       animation-timing-function:cubic-bezier(.34,0,.28,1)}
   58% {transform:translateY(-84px) rotate(-6deg)  scale(.98);
-       animation-timing-function:cubic-bezier(.35,0,.3,1)}
+       animation-timing-function:cubic-bezier(.34,0,.28,1)}
   76% {transform:translateY(-84px) rotate(58deg)  scale(.96);
-       animation-timing-function:cubic-bezier(.3,0,.35,1)}
+       animation-timing-function:cubic-bezier(.32,0,.32,1)}
   86% {transform:translateY(-84px) rotate(64deg)  scale(.95);opacity:1;
-       animation-timing-function:cubic-bezier(.3,0,.4,1)}
+       animation-timing-function:cubic-bezier(.32,0,.34,1)}
   100%{transform:translateY(-108px) rotate(64deg) scale(.7);opacity:0}}
 /* langkah 3: shackle terbuka -45°, berporos di kaki kanan shackle
    (dulu transform-origin:bottom left + translateX(-50%) membuatnya
@@ -1489,7 +1528,7 @@ body.elbuka-gembok.opened #cover .pemicu .el::before{transform:translateX(-50%) 
 /* langkah 4-5: cahaya dari lubang kunci, gembok naik menghilang */
 body.elbuka-gembok.opened #cover .pemicu .el{box-shadow:0 0 60px 20px rgba(255,215,0,.5),0 16px 40px rgba(0,0,0,.6);transform:translateY(-130px) scale(.55) rotateX(18deg);opacity:0}
 body.elbuka-gembok.opened #cover .pemicu .el2{opacity:0}
-body.elbuka-gembok.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .55s both}
+body.elbuka-gembok.opened #cover .kt-burst i{animation:ktTerbang 1.05s ease-out .58s both}
 
 /* --- Gembok + FOTO PENUH (mis. Sultan Arsip, Gelap Rimbun) ---
    Dulu gembok "melayang" 190x260 px di tengah cover: di layar pendek
@@ -1593,7 +1632,7 @@ body.elbuka-gembok.foto-full #cover .pemicu .p-hint{top:auto;left:50%;bottom:18p
 body.elbuka-gembok.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}
 body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 2.15s both}
 /* Gembok: tahan cover sedikit lebih lama (sampai 1.55s) supaya seluruh
-   animasi kunci (1.75s: naik → masuk → putar) selesai dulu sebelum cover
+   animasi kunci (1.88s: naik → masuk → putar) selesai dulu sebelum cover
    memudar. Tanpa ini cover sudah hilang di 1.35s dan kuncinya "terpotong". */
 body.elbuka-gembok.opened #cover{transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .5s ease 1.55s,visibility 0s linear 2.05s}
 body.elbuka-gembok.foto-full:not(.opened) #cover .geser-hint{display:none}
@@ -1632,12 +1671,12 @@ body.elbuka-kotak #cover .pemicu::before{content:'';position:absolute;
   background:
     radial-gradient(ellipse at 50% 74%,rgba(255,244,205,.95),rgba(255,214,128,.72) 26%,rgba(255,186,80,.34) 52%,transparent 74%);
   opacity:0;transform:scale(.5);transform-origin:50% 82%;
-  transition:opacity .4s ease .22s,transform .8s cubic-bezier(.2,.9,.3,1) .22s}
-body.elbuka-kotak.opened #cover .pemicu::before{opacity:1;transform:scale(1);animation:kotakCahaya 1.4s ease-out .24s}
+  transition:opacity .5s var(--ease-cover-soft) .24s,transform .95s var(--ease-cover-soft) .24s}
+body.elbuka-kotak.opened #cover .pemicu::before{opacity:1;transform:scale(1);animation:kotakCahaya 1.55s var(--ease-cover-soft) .26s}
 @keyframes kotakCahaya{
   0%{opacity:0;transform:scale(.45)}
-  30%{opacity:1;transform:scale(1.1)}
-  100%{opacity:.9;transform:scale(1)}}
+  38%{opacity:1;transform:scale(1.08)}
+  100%{opacity:.92;transform:scale(1)}}
 /* bayangan alas di bawah kotak */
 body.elbuka-kotak #cover .pemicu::after{content:'';position:absolute;
   left:12%;right:12%;bottom:-14px;height:22px;border-radius:50%;pointer-events:none;z-index:0;
@@ -1713,7 +1752,7 @@ body.elbuka-kotak #cover .pemicu .el{
     inset 0 3px 0 rgba(255,255,255,.3),inset 0 10px 18px rgba(255,255,255,.12),
     inset 0 -16px 24px rgba(0,0,0,.4),0 5px 0 -1px rgba(0,0,0,.5);
   z-index:4;
-  transition:transform .82s cubic-bezier(.28,1.02,.32,1) .04s,border-radius .4s ease .3s}
+  transition:transform .98s cubic-bezier(.22,.86,.28,1) .05s,border-radius .5s var(--ease-cover-soft) .34s}
 body.elbuka-kotak.opened #cover .pemicu .el{box-shadow:0 -3px 0 rgba(255,255,255,.14),
   0 12px 26px rgba(0,0,0,.36),inset 0 2px 0 rgba(255,255,255,.2),inset 0 -12px 22px rgba(0,0,0,.32)}
 /* rusuk emas tipis di tepi bawah tutup (garis sambungan dengan badan) */
@@ -1736,7 +1775,7 @@ body.elbuka-kotak #cover .pemicu .simpul{
   box-shadow:inset 0 1px 2px rgba(255,255,255,.55),0 3px 8px rgba(0,0,0,.4);
   transform:rotate(-7deg);transform-origin:50% 100%;
   z-index:3;opacity:0;
-  transition:opacity .3s ease .16s,box-shadow .6s ease .35s}
+  transition:opacity .38s var(--ease-cover-soft) .18s,box-shadow .75s var(--ease-cover-soft) .38s}
 /* permata (brilliant cut) di puncak cincin */
 body.elbuka-kotak #cover .pemicu .simpul::before{content:'';position:absolute;left:50%;top:-13px;
   width:15px;height:15px;margin-left:-7.5px;
@@ -1770,12 +1809,12 @@ body.elbuka-kotak.opened #cover .pemicu .el2::before{
   box-shadow:inset 0 8px 16px rgba(0,0,0,.55),inset 0 -2px 0 rgba(255,255,255,.06),0 0 30px 6px rgba(255,204,118,.55)}
 /* burst kelip mengikuti posisi kotak (dulu meledak di tengah layar) */
 body.elbuka-kotak #cover .kt-burst{top:auto;bottom:22%}
-body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .62s cubic-bezier(.4,0,.2,1) .95s both}
+body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .74s var(--ease-cover-soft) 1.02s both}
 @keyframes kotakBoxOut{
   0%{opacity:1;transform:translateX(-50%) scale(var(--k,1))}
-  30%{opacity:1}
+  34%{opacity:1}
   100%{opacity:0;transform:translate(-50%,-10%) scale(calc(var(--k,1) * 1.04))}}
-body.elbuka-kotak.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .5s both}
+body.elbuka-kotak.opened #cover .kt-burst i{animation:ktTerbang 1.02s ease-out .5s both}
 /* Teks cover (nama, tanggal, countdown) SELALU tampil — kotak cincin
    diletakkan di bawahnya, bukan menimpanya. */
 body.elbuka-kotak.foto-full:not(.opened) #cover .geser-hint{display:none}
@@ -1814,7 +1853,7 @@ body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0 0 auto 0;
   clip-path:polygon(0 0,100% 0,100% 86%,78% 100%,52% 88%,26% 99%,0 87%);
   box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--accent-cover,var(--accent,#7a3040)) 60%,#d4af37),inset 0 -26px 40px rgba(0,0,0,.34);
   filter:drop-shadow(0 16px 26px rgba(0,0,0,.38));
-  transition:transform 1.4s cubic-bezier(.7,0,.3,1),opacity 1s;z-index:5}
+  transition:transform 1.55s var(--ease-cover),opacity 1.08s ease .38s;z-index:5}
 /* Foto penuh: kain dibuat lebih bening lagi supaya wajah mempelai tembus. */
 /* Foto penuh: kain jadi selendang SHEER — motif tetap terlihat, tapi wajah
    mempelai di bawahnya masih jelas (tint aksen 14-30%, tanpa lapisan gelap
@@ -1824,16 +1863,19 @@ body.elbuka-selendang.foto-full #cover .pemicu .el{--sa:30%;--sb:26%;--sc:12%;--
 body.elbuka-selendang.foto-full #cover .pemicu .el::after{opacity:.62}
 body.elbuka-selendang #cover .pemicu .el::before{content:'';position:absolute;inset:8px 9% 20px;border:2px solid color-mix(in srgb,var(--accent-cover,var(--accent,#7a3040)) 70%,#d4af37);opacity:.55;border-radius:8px}
 body.elbuka-selendang #cover .pemicu .el::after{content:'SONGKET';position:absolute;top:38%;left:50%;transform:translateX(-50%);font-size:13px;letter-spacing:.4em;color:color-mix(in srgb,var(--accent-cover,var(--accent,#7a3040)) 62%,#fff);opacity:.8;font-family:var(--ft);text-shadow:0 1px 10px rgba(0,0,0,.45)}
-body.elbuka-selendang #cover .pemicu .el2,body.elbuka-selendang #cover .pemicu .simpul{position:absolute;top:0;bottom:auto;height:clamp(110px,18dvh,220px);width:25%;background:linear-gradient(90deg,rgba(0,0,0,.3),transparent 50%,rgba(0,0,0,.2));mix-blend-mode:multiply;z-index:6;transition:opacity .8s}
+body.elbuka-selendang #cover .pemicu .el2,body.elbuka-selendang #cover .pemicu .simpul{position:absolute;top:0;bottom:auto;height:clamp(110px,18dvh,220px);width:25%;background:linear-gradient(90deg,rgba(0,0,0,.3),transparent 50%,rgba(0,0,0,.2));mix-blend-mode:multiply;z-index:6;transition:opacity .95s var(--ease-cover-soft) .12s}
 body.elbuka-selendang #cover .pemicu .el2{left:0}
 body.elbuka-selendang #cover .pemicu .simpul{right:0}
 /* Kain ditarik KE ATAS (sesuai petunjuk "geser atas"), bukan tergulung turun. */
-body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-118%) rotateX(16deg) scaleY(1.04);opacity:0}
+body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-122%) rotateX(14deg) scaleY(1.03);opacity:0}
 body.elbuka-selendang.opened #cover .pemicu .el2,body.elbuka-selendang.opened #cover .pemicu .simpul{opacity:0}
+/* Kain butuh 1,55 detik untuk terangkat penuh; tahan cover sampai geraknya
+   selesai agar ekor kain tidak terpotong oleh batas generik 1,5 detik. */
+body.elbuka-selendang.opened #cover{transition:transform 1.02s var(--ease-cover) .48s,opacity .62s ease 1.08s,visibility 0s linear 1.7s}
 /* Saat kain ditarik, teks cover ikut memudar cepat supaya nama besar tidak
    sempat bertumpuk dengan isi undangan yang sudah muncul di belakang. */
-body.elbuka-selendang #cover .bdfr{transition:opacity .45s ease}
-body.elbuka-selendang.opened #cover .bdfr{opacity:0;transition:opacity .3s ease}
+body.elbuka-selendang #cover .bdfr{transition:opacity .55s var(--ease-cover-soft)}
+body.elbuka-selendang.opened #cover .bdfr{opacity:0;transition:opacity .38s var(--ease-cover-soft)}
 /* Hint khusus selendang kini berada di dalam area aman bawah pemicu; hint
    generik di kartu akan menduplikasi instruksi dan dapat menimpa RSVP. */
 body.elbuka-selendang #cover .geser-hint{display:none}
@@ -1914,6 +1956,9 @@ body.elbuka-selendang #cover .pemicu .p-hint::after{content:'Geser atas selendan
  body.elbuka-kotak.opened #cover .pemicu .el,body.elbuka-kotak.opened #cover .pemicu .el2,body.elbuka-kotak.opened #cover .pemicu .simpul{opacity:0;transform:none;transition:opacity .3s}
  body.elbuka-selendang.opened #cover .pemicu .el,body.elbuka-selendang.opened #cover .pemicu .el2,body.elbuka-selendang.opened #cover .pemicu .simpul{opacity:0;transform:none;transition:opacity .3s}
  #cover .pemicu{transition:none}
+ /* Cover induk langsung disembunyikan pada mode hemat gerak; hentikan juga
+    urutan internalnya agar tidak terus berlari (dan memakai CPU) di balik isi. */
+ body.opened #cover *,body.opened #cover *::before,body.opened #cover *::after{animation:none!important;transition:none!important}
 }
 
 /* ==========================================================================
@@ -3353,8 +3398,9 @@ let _coverRevealTimer=0;
    angka tetap. Gembok/kotak fisik selesai ±2 detik, sedangkan iris/lubang
    selesai ±1 detik; timer tetap akan memunculkan isi dan tombol Cover terlalu
    awal pada model panjang (teks hantu) dan terlalu lambat pada efek pendek
-   (layar latar kosong). CSS isi punya jeda transisi 150ms, jadi kelas penahan
-   dilepas ±180ms sebelum cover tuntas agar fade isi mulai tepat di ujungnya. */
+   (layar latar kosong). Kelas penahan dilepas 300ms sebelum cover tuntas;
+   setelah jeda fade isi 100ms, ada overlap ±200ms sehingga cover dan isi
+   melakukan crossfade halus, bukan berganti mendadak. */
 function coverSelesaiDalam(){
  let selesai=1200;
  try{
@@ -3366,7 +3412,7 @@ function coverSelesaiDalam(){
   const total=dur.reduce((maks,d,i)=>Math.max(maks,d+(tunda[i%tunda.length]||0)),0);
   if(total>0)selesai=total;
  }catch(e){/* gaya transisi tak terbaca — pakai bawaan 1,2 detik */}
- return Math.min(2200,Math.max(650,Math.round(selesai-180)));
+ return Math.min(2200,Math.max(650,Math.round(selesai-300)));
 }
 function kembaliKeCover(){
  if(!document.body.classList.contains('opened'))return;

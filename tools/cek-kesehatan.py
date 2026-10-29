@@ -1696,7 +1696,8 @@ def cek_kartu_katalog():
     selendang = ("body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0 0 auto 0;" in live
                  and "height:clamp(110px,18dvh,220px);" in live
                  and "body.elbuka-selendang.foto-full #cover .pemicu .el{--sa:30%;--sb:26%;--sc:12%;--sd:20%;" in live
-                 and "body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-118%)" in live)
+                 and "body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-122%)" in live
+                 and "body.elbuka-selendang.opened #cover{transition:transform 1.02s var(--ease-cover) .48s,opacity .62s ease 1.08s,visibility 0s linear 1.7s}" in live)
     lapor("ok" if selendang else "masalah",
           "undangan.html: selendang hanya menutup bagian atas & tembus pandang, jadi foto + teks cover tetap terlihat")
     gembok = ("body.elbuka-gembok.foto-full #cover .pemicu{" in live
@@ -1707,7 +1708,7 @@ def cek_kartu_katalog():
           "undangan.html: gembok foto penuh = kartu foto besar berisi nama & tanggal + petunjuk di dalam kartu")
     gembok_kaca = ("body.elbuka-gembok #cover .pemicu .el{--ga:54%;--gb:34%;--gc:46%;" in live
                    and "body.elbuka-gembok #cover .pemicu .simpul{--ka:78%;" in live
-                   and "animation:kunciMasuk 1.75s linear forwards" in live
+                   and "animation:kunciMasuk 1.88s linear forwards" in live
                    and "opacity .5s ease 1.55s,visibility 0s linear 2.05s}" in live)
     lapor("ok" if gembok_kaca else "masalah",
           "undangan.html: gembok kaca (badan & kunci tembus) + animasi kunci per-segmen, cover ditahan sampai kunci selesai")

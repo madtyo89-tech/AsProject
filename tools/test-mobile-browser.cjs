@@ -91,7 +91,9 @@ const assert = require('node:assert/strict');
    const mBox=await page.locator('#musikBtn').boundingBox();
    if(mBox)assert(mBox.x+mBox.width<=backBox.x||backBox.x+backBox.width<=mBox.x||mBox.y+mBox.height<=backBox.y||backBox.y+backBox.height<=mBox.y,`Music and cover buttons do not overlap at ${width}px`);
    await back.click();
-   await page.waitForTimeout(1000);
+   // Headless Chromium can defer the first transition frame under load; wait
+   // for the same visible endpoint instead of assuming a fixed 1s schedule.
+   await page.waitForFunction(()=>{const c=getComputedStyle(document.getElementById('cover'));return c.visibility!=='hidden'&&parseFloat(c.opacity)>.5},null,{timeout:6000});
    assert(!await back.isVisible(),`Cover button hides again after returning to cover at ${width}px`);
    assert(await page.evaluate(()=>{const c=getComputedStyle(document.getElementById('cover'));return c.visibility!=='hidden'&&parseFloat(c.opacity)>.5}),`Cover is visible again at ${width}px`);
    assert(!await page.evaluate(()=>document.body.classList.contains('opened')),`Invitation state returns to cover at ${width}px`);

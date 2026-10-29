@@ -215,7 +215,7 @@ async function render(d) {
     !undSrc.includes('body.elbuka-kotak.foto-full:not(.opened) #cover .bdfr{opacity:0') &&
     undSrc.includes('body.elbuka-kotak.foto-full #cover .std-label{color:#fff;'));
   t('kotak cincin: tutup terangkat + cahaya emas, cover ditahan sampai adegan selesai',
-    undSrc.includes('body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .62s cubic-bezier(.4,0,.2,1) .95s both}') &&
+    undSrc.includes('body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .74s var(--ease-cover-soft) 1.02s both}') &&
     undSrc.includes('transform:perspective(760px) rotateX(-122deg);') &&
     undSrc.includes('@keyframes kotakCahaya{') &&
     undSrc.includes('opacity .55s ease 1.32s,visibility 0s linear 1.88s'));
@@ -225,8 +225,8 @@ async function render(d) {
     undSrc.includes('body.elbuka-gembok #cover .pemicu .simpul{--ka:78%;') &&
     undSrc.includes('body.elbuka-gembok.foto-full #cover .pemicu .simpul{\n  --ka:58%;top:44%;width:34%;margin-left:-17%;height:13px;'));
   t('animasi kunci dipecah per-segmen easing + cover ditahan sampai selesai',
-    undSrc.includes('body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.75s linear forwards}') &&
-    undSrc.includes('animation-timing-function:cubic-bezier(.45,0,.55,1)}') &&
+    undSrc.includes('body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.88s linear forwards}') &&
+    undSrc.includes('animation-timing-function:cubic-bezier(.42,0,.5,1)}') &&
     undSrc.includes('0%  {transform:translateY(0)     rotate(-30deg) scale(1);') &&
     undSrc.includes('opacity .5s ease 1.55s,visibility 0s linear 2.05s}') &&
     undSrc.includes('body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 2.15s both}'));
@@ -292,8 +292,9 @@ async function render(d) {
     undSrc.includes('body.elbuka-selendang.foto-full #cover .pemicu .el{--sa:30%;--sb:26%;--sc:12%;--sd:20%;') &&
     !undSrc.includes('body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0;background-image:radial-gradient(circle at 30% 18%,color-mix(in srgb,var(--accent-cover,var(--accent,#7a3040)) 70%,#fff)'));
   t('selendang dibuka dengan menarik kain KE ATAS + teks cover memudar',
-    undSrc.includes('body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-118%) rotateX(16deg) scaleY(1.04);opacity:0}') &&
-    undSrc.includes('body.elbuka-selendang.opened #cover .bdfr{opacity:0;transition:opacity .3s ease}'));
+    undSrc.includes('body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-122%) rotateX(14deg) scaleY(1.03);opacity:0}') &&
+    undSrc.includes('body.elbuka-selendang.opened #cover .bdfr{opacity:0;transition:opacity .38s var(--ease-cover-soft)}') &&
+    undSrc.includes('body.elbuka-selendang.opened #cover{transition:transform 1.02s var(--ease-cover) .48s,opacity .62s ease 1.08s,visibility 0s linear 1.7s}'));
 
   /* ------------------------------------------------------------------ *
    * 8. Amplop: kartu kaca di tengah foto (bukan menutup seluruh layar)
