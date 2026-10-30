@@ -404,6 +404,9 @@ body:not(.opened) #musikBtn,body.cover-opening #musikBtn{padding:0 13px}
 
 /* ==== Mode pratinjau (iframe Studio): tanpa tombol kontrol Studio ==== */
 body.preview-mode #coverBack{display:none}
+/* Public Studio sandbox: remove share/contact affordances from the invitation renderer. */
+body.sandbox-demo #btnShare,body.sandbox-demo .as-contact-wa,body.sandbox-demo [data-share],body.sandbox-demo [data-publish]{display:none!important}
+body.sandbox-demo a{cursor:default!important}
 /* Saat data diperbarui dari Studio, jangan ulang animasi masuk supaya tidak berkedip. */
 body.pv-soft *,body.pv-soft *::before,body.pv-soft *::after{animation:none!important;transition:none!important}
 
@@ -3295,7 +3298,9 @@ const DEMO=Q.get('demo')==='1';
    Semua interaksi tetap seperti tamu, tetapi tanpa jaringan (tanpa tulis RSVP,
    tanpa ambil buku tamu dari server) dan tanpa tombol kontrol milik Studio. */
 const PREVIEW=Q.get('preview')==='1';
+const SANDBOX=Q.get('sandbox')==='1';
 if(PREVIEW)document.body.classList.add('preview-mode');
+if(SANDBOX)document.body.classList.add('sandbox-demo');
 /* demo auto-buka (dipakai hero dinamis index): tampilkan isi undangan langsung,
    tanpa memutar musik — tombol Buka Undangan tidak dipicu */
 if(DEMO&&Q.get('buka')==='1'){document.body.classList.add('opened','embed-buka');}
@@ -3355,8 +3360,15 @@ function pvTerapkan(row){
 }
 window.addEventListener('asproject:preview',()=>{pvTerapkan(window.__asPreview)});
 window.addEventListener('message',e=>{const m=e.data;if(!m||typeof m!=='object')return;
- if(m.type==='asproject:preview')pvTerapkan(m.row);
+ if(SANDBOX&&e.source===window.parent&&e.origin===location.origin&&m.type==='ASPROJECT_DEMO_PREVIEW')pvTerapkan(m.row);
+ else if(m.type==='asproject:preview')pvTerapkan(m.row);
  else if(m.type==='asproject:cover'){if(document.body.classList.contains('opened'))kembaliKeCover();else{try{window.scrollTo(0,0)}catch(e2){}}}});
+if(SANDBOX&&window.parent!==window)window.parent.postMessage({type:'ASPROJECT_DEMO_READY'},location.origin);
+if(SANDBOX){
+ document.addEventListener('click',e=>{const link=e.target&&e.target.closest?e.target.closest('a'):null;if(link){e.preventDefault();e.stopImmediatePropagation()}},true);
+ try{window.open=()=>null}catch(e){}
+ document.addEventListener('submit',e=>{e.preventDefault();e.stopImmediatePropagation()},true);
+}
 let SLUG=(Q.get('slug')||'').toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/^-+|-+$/g,'');
 if(!SLUG){const h=location.hostname.toLowerCase();
  if(h.slice(-16)==='.asproject.my.id'&&h.length>16)SLUG=h.split('.')[0]}

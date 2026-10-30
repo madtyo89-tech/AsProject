@@ -17,11 +17,34 @@ const assert = require('node:assert/strict');
    await page.setViewportSize({ width, height: 844 });
    await page.goto('http://localhost:8080/studio.html');
    await page.evaluate(()=>{if(!state.started)startInvitation()});
+   if (width === 320) {
+    const readiness = await page.locator('.readiness').innerText();
+    assert.match(readiness, /0\/5 wajib siap/, 'preflight starts by showing the required-field count');
+    assert.equal(await page.locator('.chk').count(), 9, 'five required and four optional checks are visible');
+    await page.evaluate(()=>{updF('namaPria','Dimas');updF('namaWanita','Nadia');updF('tanggalAcara','2027-01-20');updF('jamAcara','10:00');updF('venue','Gedung Acara')});
+    assert.match(await page.locator('.readiness-head').innerText(), /5\/5 wajib siap/, 'required checklist updates as details are entered');
+    await page.locator('.chk[data-check-tab="musik"]').click();
+    assert.equal(await page.evaluate(()=>state.tab), 'musik', 'optional gallery check opens its editor section');
+   }
    for (const tab of ['info','desain','slide','musik','amplop','tamu','terbit']) {
     await page.evaluate(tab => set('tab',tab), tab);
     const overflow = await page.evaluate(() => ({ width: innerWidth, doc: document.documentElement.scrollWidth }));
 
     assert(overflow.doc <= width + 1, `${width}px ${tab}: document overflow ${overflow.doc}`);
+   }
+   if (width <= 800) {
+    const mobileNav = await page.evaluate(() => ({
+     stepPosition: getComputedStyle(document.querySelector('.stepbar')).position,
+     tabPosition: getComputedStyle(document.querySelector('.tabbar')).position,
+     tabTop: getComputedStyle(document.querySelector('.tabbar')).top,
+     footerPosition: getComputedStyle(document.querySelector('.tabnav')).position,
+     footerBottom: getComputedStyle(document.querySelector('.tabnav')).bottom
+    }));
+    assert.equal(mobileNav.stepPosition, 'sticky', `${width}px: step navigation stays reachable`);
+    assert.equal(mobileNav.tabPosition, 'sticky', `${width}px: editor tabs stay reachable`);
+    assert.equal(mobileNav.tabTop, '52px', `${width}px: tabs sit below the step navigation`);
+    assert.equal(mobileNav.footerPosition, 'sticky', `${width}px: next/back navigation stays reachable`);
+    assert.equal(mobileNav.footerBottom, '0px', `${width}px: next/back navigation respects the bottom safe area`);
    }
    await page.evaluate(() => { openMasterMenu(); setFloat(true); floatGo(); });
    const box = await page.locator('#floatPrev').boundingBox();

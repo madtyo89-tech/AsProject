@@ -214,12 +214,16 @@ a.sm-btn{display:inline-flex;align-items:center;justify-content:center;text-deco
  .aside{display:none;height:auto;position:static;border-right:0}
  body.studio-nav-open .aside{display:block}
  .mainc{height:auto;min-height:60dvh;overflow:visible;border-right:0;padding-bottom:80px}
- .tabbar{top:0;max-width:100%;scrollbar-width:thin}
+ .tabbar{top:52px;max-width:100%;scrollbar-width:thin}
  .tabbtn{min-height:44px}
+ .tabnav{position:sticky;bottom:0;z-index:25;margin:20px 0 0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(251,250,248,.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(0,0,0,.06)}
+ .tabnav button{flex:1;min-width:0;min-height:48px;justify-content:center;white-space:normal}
+ .mainc{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
  .grid2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
  .f input,.f select,.f textarea{font-size:16px}
  .notice{width:max-content;max-width:calc(100vw - 24px);border-radius:16px}
- #floatPrev{right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom))}
+ #floatPrev{right:max(8px,env(safe-area-inset-right));bottom:calc(76px + env(safe-area-inset-bottom))}
+ #floatPrev.fp-expanded{bottom:max(8px,env(safe-area-inset-bottom))}
  #floatPrev:not(.fp-expanded) .fp-box{width:156px}
  #floatPrev:not(.fp-expanded) .fp-screen{height:min(220px,calc(100dvh - 120px))}
  #floatPrev .fp-head{padding:6px;gap:2px}
@@ -236,6 +240,19 @@ a.sm-btn{display:inline-flex;align-items:center;justify-content:center;text-deco
 .flow-actions>*{min-height:44px;flex:1 1 150px;justify-content:center}
 .flow-link{display:block;width:100%;margin-top:12px;padding:12px;border:1px solid var(--line2);border-radius:12px;background:var(--soft);font-size:12px}
 .editor-actions{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.editor-savebar{display:flex;align-items:center;gap:8px;flex:1 1 100%;min-width:0}
+.editor-savebar .save-state{font-size:11px;color:var(--mut);line-height:1.4;flex:1;min-width:0}
+.editor-savebar .save-state[data-state="error"]{color:#b42318}
+.editor-savebar .undo-btn{min-height:36px;padding:6px 12px;flex:none}
+.cloud-card>p{font-size:11px;color:var(--mut);line-height:1.65;margin-bottom:10px}
+.cloud-card small{display:block;font-size:10px;color:var(--mut);line-height:1.55;margin-top:8px}
+.cloud-card .cloud-status{margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--soft)}
+.cloud-card .cloud-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cloud-card .cloud-actions .sm-btn{min-height:40px}
+.cloud-card .cloud-remote{margin-top:8px}
+.cloud-card .cloud-choice{padding:12px;border:1px solid #ead58e;border-radius:12px;background:#fff9e8}
+.cloud-card .cloud-choice p{font-size:10.5px;line-height:1.6;margin-top:4px;color:#65562c}
+@media(max-width:520px){.editor-savebar{align-items:stretch}.editor-savebar .undo-btn{min-height:40px}}
 .editor-actions button{min-height:44px}
 .editor-actions .mobile-menu{width:auto;flex:1 1 180px}
 .editor-actions .back-links{display:flex;gap:8px;flex-wrap:wrap;width:100%}
@@ -301,10 +318,22 @@ a.sm-btn{display:inline-flex;align-items:center;justify-content:center;text-deco
 .step.done .stxt{color:#8a6d2f}
 .step:not(.on):hover{background:#fff}
 .step-sep{width:18px;height:1px;background:var(--line2);flex:none;align-self:center}
+.readiness{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.76)}
+.readiness-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.readiness-head b{display:block;font-size:11px;font-weight:700}
+.readiness-head p{margin-top:2px;font-size:10px;color:var(--mut)}
+.readiness-badge{flex:none;font-size:9px;font-weight:700;padding:4px 8px;border-radius:99px;background:#fff5f5;color:#a33;border:1px solid #f2d4d4}
+.readiness-badge.ready{background:#fff9e8;color:#80631b;border-color:#ead58e}
+.readiness-group{display:grid;gap:5px}
+.readiness-group+.readiness-group{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line2)}
+.readiness-label{font-size:9px;font-weight:700;color:var(--mut);letter-spacing:.08em;text-transform:uppercase}
 .checkbar{display:flex;flex-wrap:wrap;gap:6px;width:100%}
-.chk{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:4px 9px;border-radius:99px;border:1px solid var(--line2);background:#fff;color:var(--mut);letter-spacing:.02em}
+.chk{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:4px 9px;border-radius:99px;border:1px solid var(--line2);background:#fff;color:var(--mut);letter-spacing:.02em;text-align:left}
+button.chk{cursor:pointer}
+button.chk:hover{border-color:#c9b56a;color:#55451a}
+.chk.optional{border-style:dashed;font-weight:500}
 .chk.ok{border-color:rgba(212,175,55,.55);background:rgba(255,251,235,.9);color:#8a6d2f}
-.chk .cd{width:6px;height:6px;border-radius:99px;background:var(--line2)}
+.chk .cd{width:6px;height:6px;border-radius:99px;background:var(--line2);flex:none}
 .chk.ok .cd{background:var(--gold)}
 /* ===== Welcome: 3 langkah alur ===== */
 .flow-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 4px}
@@ -350,6 +379,71 @@ a.sm-btn{display:inline-flex;align-items:center;justify-content:center;text-deco
  border:1px solid rgba(0,0,0,.10);box-shadow:0 18px 48px rgba(0,0,0,.20);margin:auto}
 .pv-phone iframe.pv-frame{width:390px;height:780px;border:0;display:block;background:#fff;transform-origin:top left}
 .fp-screen .pv-phone{border:0;border-radius:0;box-shadow:none}
+.theme-compare-tool{display:grid;gap:10px}
+.theme-compare-intro{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.theme-compare-intro strong{font-size:12px}
+.theme-compare-intro p{margin:4px 0 0;color:var(--mut);font-size:10px;line-height:1.55}
+.theme-compare-overlay{position:fixed;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;padding:clamp(8px,2vw,24px);background:rgba(18,19,17,.68);backdrop-filter:blur(7px)}
+.theme-compare-dialog{width:min(1160px,100%);max-height:min(94dvh,1000px);overflow:auto;padding:clamp(14px,2vw,22px);border:1px solid rgba(255,255,255,.45);border-radius:22px;background:#f8f7f2;box-shadow:0 30px 90px rgba(0,0,0,.36)}
+.theme-compare-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:15px}
+.theme-compare-dialog-head h3{margin:0;font-size:17px}
+.theme-compare-dialog-head p{margin:4px 0 0;color:var(--mut);font-size:11px;line-height:1.5}
+.theme-compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.theme-compare-card{min-width:0;padding:12px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(30,26,18,.06)}
+.theme-compare-card-head,.theme-compare-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.theme-compare-card-head{margin-bottom:9px;font-size:12px}
+.theme-compare-active{padding:4px 7px;border-radius:999px;background:#eaf3eb;color:#31593b;font-size:9px;font-weight:750}
+.theme-compare-select{display:grid;gap:5px;margin-bottom:9px;color:var(--mut);font-size:10px;font-weight:650}
+.theme-compare-select select{width:100%;min-width:0;height:40px;padding:0 10px;border:1px solid var(--line2);border-radius:10px;background:#fff;color:var(--ink);font:600 12px Inter,system-ui,sans-serif}
+.theme-compare-screen{height:min(55vh,600px);min-height:310px;overflow:hidden;border:1px solid var(--line);border-radius:13px;background:#eeeae1}
+.theme-compare-screen .pv-phone{max-width:none}
+.theme-compare-card-foot{margin-top:10px}
+.theme-compare-card-foot>span{min-width:0;overflow:hidden;color:var(--ink);font-size:10px;font-weight:650;text-overflow:ellipsis;white-space:nowrap}
+.theme-compare-card-foot .sm-btn{min-height:36px;flex:none;font-size:10px}
+.theme-compare-empty{padding:18px;border:1px dashed var(--line2);border-radius:12px;color:var(--mut);font-size:12px;text-align:center}
+@media(max-width:680px){.theme-compare-overlay{align-items:flex-start;padding:8px}.theme-compare-dialog{max-height:calc(100dvh - 16px);padding:12px;border-radius:16px}.theme-compare-grid{grid-template-columns:1fr}.theme-compare-screen{height:min(42vh,380px);min-height:260px}.theme-compare-card{padding:10px}.theme-compare-intro{align-items:flex-start;flex-direction:column}.theme-compare-dialog-head h3{font-size:15px}}
+@media(prefers-reduced-motion:reduce){.theme-compare-overlay{scroll-behavior:auto}}
+/* ===== Studio V2 visual polish: warm editorial workspace ===== */
+:root{--bg:#f6f4ef;--card:#fffdf9;--line:#e9e4d9;--line2:#e4ded1;--ink:#25251f;--mut:#77756c;--mut2:#a6a195;--gold:#c3a15a;--cream:#fff8e8;--cream2:#eadbb8;--soft:#f4f1e9}
+body{background:radial-gradient(1100px 420px at 50% -220px,rgba(222,205,164,.26),transparent 72%),var(--bg);color:var(--ink)}
+.hdr{background:rgba(255,253,248,.9);border-bottom-color:#e9e2d5;box-shadow:0 5px 22px rgba(72,58,31,.035)}
+.logo{border:1px solid rgba(170,139,76,.18);background:linear-gradient(145deg,#fff8df,#e8d39a);color:#5a4821}
+.layout{background:transparent}
+.aside{background:rgba(255,253,249,.92);border-right-color:var(--line)}
+.mainc{background:rgba(249,247,242,.78);border-right-color:var(--line)}
+.prevc{background:linear-gradient(160deg,#f3f0e8,#eeece5)}
+.tabbar{background:rgba(249,247,242,.94);border-bottom-color:var(--line);box-shadow:0 5px 14px rgba(57,47,29,.035)}
+.tabbtn{transition:background .18s,border-color .18s,color .18s,transform .18s}
+.tabbtn:hover{background:#f4efdf;border-color:#dfd0aa;transform:translateY(-1px)}
+.tabbtn.on{background:linear-gradient(135deg,#292923,#11110f);border-color:#292923;box-shadow:0 4px 12px rgba(23,22,17,.17)}
+.stepbar{background:rgba(249,247,242,.96);border-bottom-color:var(--line);box-shadow:0 5px 14px rgba(57,47,29,.035)}
+.step.on{background:#fffdf8;box-shadow:0 5px 16px rgba(57,47,29,.09)}
+.step.on .num{background:linear-gradient(145deg,#292923,#11110f)}
+.step.done .num{background:linear-gradient(145deg,#c9ad6c,#a88642);color:#fff;border-color:#b39450}
+.card{background:var(--card);border-color:#e9e4d9;box-shadow:0 10px 28px rgba(62,51,31,.045);transition:box-shadow .2s,border-color .2s,transform .2s}
+.card h4{color:#292820;letter-spacing:.01em}
+.f input,.f select,.f textarea{border-color:#e4ded1;background:#fffefb;transition:border-color .18s,box-shadow .18s}
+.f input:focus,.f textarea:focus,.f select:focus{border-color:#c3a15a;box-shadow:0 0 0 3px rgba(195,161,90,.16)}
+.sm-btn{background:#fffdf8;border-color:#e4ded1;transition:transform .16s,box-shadow .16s,background .16s,border-color .16s}
+.sm-btn:hover:not(:disabled){background:#f7f1e1;border-color:#d9c99f;box-shadow:0 4px 12px rgba(68,53,24,.08);transform:translateY(-1px)}
+.sm-btn.dark,.btn-pub{background:linear-gradient(135deg,#2b2a24,#11110f);border-color:#292820;box-shadow:0 6px 16px rgba(29,27,20,.16)}
+.sm-btn.dark:hover:not(:disabled),.btn-pub:hover{background:linear-gradient(135deg,#3b382d,#171713)}
+.readiness{background:linear-gradient(135deg,#fffdf8,#f8f4e9);border-color:#e9dfc8;box-shadow:inset 3px 0 0 #c3a15a}
+.readiness-badge.ready{background:#f7f0db;border-color:#e3d2a5;color:#715a27}
+.editor-savebar{padding:9px 11px;border:1px solid #e9e4d9;border-radius:13px;background:rgba(255,253,248,.8)}
+.editor-savebar .undo-btn{background:#fffdf8}
+.cloud-card{border-color:#e5dece}
+.cloud-card h4{color:#514325}
+:where(button,a,input,textarea,select):focus-visible{outline:3px solid rgba(195,161,90,.48);outline-offset:2px}
+@media(max-width:800px){
+ .hdr{box-shadow:none}
+ .mainc{background:transparent}
+ .tabbar{box-shadow:0 5px 14px rgba(57,47,29,.06)}
+ .tabnav{background:rgba(255,253,248,.96);border-top-color:#e6dfd2;box-shadow:0 -8px 24px rgba(57,47,29,.08)}
+ .editor-savebar{background:rgba(255,253,248,.9)}
+}
+@media(hover:hover){.card:hover{border-color:#e3dccd;box-shadow:0 12px 32px rgba(62,51,31,.065)}}
+@media(prefers-reduced-motion:reduce){.tabbtn,.card,.sm-btn{transition:none!important}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="assets/scroll-effects.css">
@@ -940,6 +1034,22 @@ function tplOf(){return tplById(state.tpl)||TPL[0]}
 function syncDefaultCoverStyle(t){if(!state.coverStyleExplicit)state.coverStyle=t&&t.arch?'arch':'kotak'}
 function tplsFor(ev){if((state.kategoriHide||[]).includes(ev))return[];const hidden=Array.isArray(state.katalogHide)?state.katalogHide:[];
  return [...TPL,...(Array.isArray(state.tplCustom)?state.tplCustom:[])].filter(t=>(t.ev===ev||t.ev==='all')&&!hidden.includes(t.id))}
+let compareThemesOpen=false,compareThemeA='',compareThemeB='';
+function ensureCompareThemes(){const choices=tplsFor(state.event);if(!choices.length){compareThemeA='';compareThemeB='';return}
+ if(!choices.some(t=>t.id===compareThemeA))compareThemeA=choices.some(t=>t.id===state.tpl)?state.tpl:choices[0].id;
+ if(!choices.some(t=>t.id===compareThemeB)||compareThemeB===compareThemeA)compareThemeB=(choices.find(t=>t.id!==compareThemeA)||choices[0]).id;
+}
+function toggleThemeComparison(){compareThemesOpen=!compareThemesOpen;if(compareThemesOpen)ensureCompareThemes();render();const target=compareThemesOpen?document.querySelector('.theme-compare-select select'):document.querySelector('.theme-compare-intro button');if(target)target.focus()}
+function setThemeComparison(side,id){if(side==='a')compareThemeA=id;else compareThemeB=id;ensureCompareThemes();render();const target=document.querySelector(`.theme-compare-select select[data-compare-side="${side}"]`);if(target)target.focus()}
+function useThemeComparison(side){const id=side==='a'?compareThemeA:compareThemeB;if(!id)return;compareThemesOpen=false;pickTpl(id)}
+function themeCompareRow(id){const t=tplById(id);if(!t)return barisUndangan();
+ const keys=['tpl','accent','fontTitle','fontBody','border','orn','pat','ornSudut','coverLayout','coverStyle','coverSize','buka','coverStyleExplicit','coverLayoutExplicit','bukaExplicit','darkMode','goldOrn'];
+ const saved=Object.fromEntries(keys.map(k=>[k,state[k]]));
+ try{applyTplToState(t,{skipTier:true});return barisUndangan()}finally{Object.assign(state,saved)}
+}
+function compareThemeSelect(side,current){const options=tplsFor(state.event);return `<label class="theme-compare-select">Tema ${side==='a'?'A':'B'}<select data-compare-side="${side}" aria-label="Pilih tema ${side==='a'?'A':'B'} untuk dibandingkan" onchange="setThemeComparison('${side}',this.value)">${options.map(t=>`<option value="${esc(t.id)}" ${t.id===current?'selected':''}>${esc(t.nama)}${t.id===state.tpl?' · aktif':''}</option>`).join('')}</select></label>`}
+function themeCompareCard(side,id){const t=tplById(id);return `<article class="theme-compare-card"><div class="theme-compare-card-head"><strong>${side==='a'?'Tema A':'Tema B'}</strong>${t&&t.id===state.tpl?'<span class="theme-compare-active">Sedang dipakai</span>':''}</div>${compareThemeSelect(side,id)}<div class="theme-compare-screen"><div class="pv-phone"><iframe class="pv-frame" data-compare-side="${side}" src="undangan.html?preview=1" title="Pratinjau perbandingan tema ${side==='a'?'A':'B'}" loading="eager" referrerpolicy="no-referrer"></iframe></div></div><div class="theme-compare-card-foot"><span>${esc(t?t.nama:'Pilih tema')}</span><button type="button" class="sm-btn dark" onclick="useThemeComparison('${side}')">Gunakan tema ini</button></div></article>`}
+function themeComparePanel(){ensureCompareThemes();const choices=tplsFor(state.event);return `<div class="theme-compare-tool"><div class="theme-compare-intro"><div><strong>Bandingkan dua tema</strong><p>Pratinjau data acara yang sama pada dua tema. Membandingkan tidak mengubah draft aktif.</p></div><button type="button" class="sm-btn dark" aria-expanded="${compareThemesOpen}" aria-controls="themeCompareDialog" onclick="toggleThemeComparison()">⚖️ Bandingkan tema</button></div>${compareThemesOpen?`<div class="theme-compare-overlay" onclick="if(event.target===this)toggleThemeComparison()"><section class="theme-compare-dialog" role="dialog" aria-modal="true" aria-labelledby="themeCompareTitle"><header class="theme-compare-dialog-head"><div><h3 id="themeCompareTitle">Bandingkan dua tema</h3><p>Nama, acara, tanggal, dan isian tetap sama di kedua pratinjau.</p></div><button type="button" class="sm-btn" aria-label="Tutup perbandingan tema" onclick="toggleThemeComparison()">✕ Tutup</button></header>${choices.length>1?`<div class="theme-compare-grid">${themeCompareCard('a',compareThemeA)}${themeCompareCard('b',compareThemeB)}</div>`:'<p class="theme-compare-empty">Belum ada dua tema yang tersedia untuk acara ini.</p>'}</section></div>`:''}</div>`}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
 function patCss(t,skala){return polaCss(t&&t.pat,t,skala)}
 
@@ -1319,6 +1429,11 @@ state.katalog.forEach(k=>{const t=tplById(k.tpl||k.id);if(t&&!t.custom){k.hargaN
 state.tplCustom.forEach((t,i)=>{if(!t.studioOnly&&!state.katalog.some(k=>(k.tpl||k.id)===t.id))state.katalog.push(barisKat(t,i))});
 /* migrasi border (dulu: toggle dblBorder) & daftar katalog tersembunyi */
 if(state.dblBorder===false)state.border='none';else if(state.dblBorder===true)state.border='double';delete state.dblBorder
+/* Riwayat undo sesi ini saja; simpan snapshot kecil sebelum perubahan penting. */
+let _undoStack=[],_undoBusy=false,_lastUndoCheckpoint=0,_saveState='saved',_savedAt=0;
+const CLOUD_DRAFT_ENABLED=false; /* Ditahan sementara atas permintaan pengguna; aktifkan setelah setup cloud disetujui. */
+const CLOUD_SYNC_PREF='asproject_cloud_sync_v1',CLOUD_SYNC_TIME='asproject_cloud_sync_at_v1',CLOUD_SYNC_USER='asproject_cloud_sync_user_v1';
+let _cloudSyncEnabled=CLOUD_DRAFT_ENABLED&&localStorage.getItem(CLOUD_SYNC_PREF)==='1',_cloudSession=null,_cloudRemoteDraft=null,_cloudNeedsChoice=false,_cloudBusy=false,_cloudAuthBusy=false,_cloudSyncTimer=null,_cloudStatus='Draft Cloud dinonaktifkan sementara',_cloudAuthMessage='',_cloudFetchedUid='';
 /* kunci master (akses dashboard privat) — dibuat sekali, dipakai di link master */
 function mkRand(){const c='abcdefghjkmnpqrstuvwxyz23456789';let s='';for(let i=0;i<10;i++)s+=c[Math.floor(Math.random()*c.length)];return s}
 if(!state.masterKey){state.masterKey=mkRand();save()}
@@ -1347,6 +1462,11 @@ function draftDirty(){return !!(state.published&&state.pubSig&&state.pubSig!==dr
    diperbarui langsung di tempat. */
 function refreshEditorStatus(){
  const bar=document.querySelector('.editor-actions');if(!bar)return;
+ cloudRefreshCard();
+ const checklist=bar.querySelector('.readiness');if(checklist)checklist.outerHTML=checklistSiap();
+ const saveLabel=bar.querySelector('.save-state');
+ if(saveLabel){saveLabel.dataset.state=_saveState;saveLabel.textContent=_saveState==='error'?'Belum tersimpan — penyimpanan browser penuh':_savedAt?'Tersimpan di perangkat ini • '+new Date(_savedAt).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'Draft tersimpan di perangkat ini'}
+ const undoBtn=bar.querySelector('.undo-btn');if(undoBtn)undoBtn.disabled=!_undoStack.length;
  const dirty=draftDirty(),pub=!!state.published;
  const st=bar.querySelector('.flow-status');
  if(st)st.innerHTML=!pub?'Draft • tersimpan di perangkat ini':dirty?'<b style="color:#8a6d0f">● Ada perubahan belum dipublikasikan</b>':'Sudah dipublikasikan • undangan live sudah sinkron';
@@ -1363,13 +1483,22 @@ function ringankanArsip(){state.arsip.forEach(a=>{if(!a.snap)return;
 let _quotaWarnAt=0;
 /* Simpan draft. Kuota localStorage bisa penuh (foto) → ringankan arsip, lalu
    beri tahu pemilik dengan langkah perbaikan; draft aktif tidak pernah gagal diam-diam. */
-function save(){const write=c=>localStorage.setItem('asproject_studio_v3',JSON.stringify(c));
- try{write(state);refreshEditorStatus();return}catch(e){}
- try{ringankanArsip();write(state);if(Date.now()-_quotaWarnAt>8000){_quotaWarnAt=Date.now();notifyWarn('Penyimpanan browser hampir penuh — foto besar di arsip dipindah ke server (bisa dimuat lagi saat dibuka).')}refreshEditorStatus();return}catch(e){}
- try{state.arsip=state.arsip.map((a,i)=>i<3?a:Object.assign({},a,{snap:null}));write(state);if(Date.now()-_quotaWarnAt>8000){_quotaWarnAt=Date.now();notifyWarn('Penyimpanan browser penuh — arsip lama diringkas (nama & tanggal tetap ada).')}refreshEditorStatus();return}catch(e){}
- if(Date.now()-_quotaWarnAt>8000){_quotaWarnAt=Date.now();
+function save(){const key='asproject_studio_v3',write=c=>localStorage.setItem(key,JSON.stringify(c));
+ /* Sebelum menimpa draft, simpan snapshot sebelumnya sebagai satu langkah undo.
+    Ketikan beruntun digabung (maks 10 langkah); foto besar tidak diduplikasi. */
+ if(!_undoBusy&&state.started){try{const old=localStorage.getItem(key),now=JSON.stringify(state),before=old&&JSON.parse(old),beforeText=before&&JSON.stringify(before);
+  if(old&&before&&now.length<1200000&&beforeText.length<1200000&&beforeText!==now&&Date.now()-_lastUndoCheckpoint>850){_undoStack.push(before);if(_undoStack.length>10)_undoStack.shift();_lastUndoCheckpoint=Date.now()}
+ }catch(e){}}
+ try{write(state);_saveState='saved';_savedAt=Date.now();refreshEditorStatus();scheduleCloudSave();return}catch(e){}
+ try{ringankanArsip();write(state);_saveState='saved';_savedAt=Date.now();if(Date.now()-_quotaWarnAt>8000){_quotaWarnAt=Date.now();notifyWarn('Penyimpanan browser hampir penuh — foto besar di arsip dipindah ke server (bisa dimuat lagi saat dibuka).')}refreshEditorStatus();scheduleCloudSave();return}catch(e){}
+ try{state.arsip=state.arsip.map((a,i)=>i<3?a:Object.assign({},a,{snap:null}));write(state);_saveState='saved';_savedAt=Date.now();if(Date.now()-_quotaWarnAt>8000){_quotaWarnAt=Date.now();notifyWarn('Penyimpanan browser penuh — arsip lama diringkas (nama & tanggal tetap ada).')}refreshEditorStatus();scheduleCloudSave();return}catch(e){}
+ _saveState='error';if(Date.now()-_quotaWarnAt>8000){_quotaWarnAt=Date.now();
   notifyErr('<b>Penyimpanan browser penuh.</b> Draft terakhir belum tersimpan di perangkat ini — kecilkan atau kurangi foto (cover/galeri), lalu ubah isian apa pun agar tersimpan lagi.')}
  refreshEditorStatus()}
+function undoStudio(){if(!_undoStack.length){notify('Belum ada perubahan yang bisa diurungkan.');return}
+ const before=_undoStack.pop();_undoBusy=true;state=Object.assign({},JSON.parse(JSON.stringify(DEF)),before);state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,amplopNormal(state.amplop));state.slides=mergeSlides(state.slides);
+ try{save()}finally{_undoBusy=false}render();renderPreview();notify('Perubahan terakhir diurungkan. Draft tetap tersimpan di perangkat ini.')}
+
 /* ===== Animasi pratinjau: diputar ulang HANYA saat struktur berubah
    (template / event / slide on-off), agar tidak berkedip tiap ketik ===== */
 /* 34 efek scroll reveal + 10 efek animasi cover — HARUS identik dengan undangan.html */
@@ -1761,7 +1890,7 @@ function qrDataUndangan(g){return qrTeks(g.link,state.showNameQr?`${g.nama.slice
 
 /* state setters */
 function set(k,v){state[k]=v;save();render()}
-function applyTplToState(t){if(!t)return false;
+function applyTplToState(t,options){if(!t)return false;
  state.tpl=t.id;state.accent=t.accent||state.accent;state.fontTitle=t.ft||state.fontTitle;
  /* Bawaan tema untuk border dan motif ornamen. Ditaruh SEBELUM blok design
     supaya template kustom -- yang menyimpan pilihan pemilik di design -- menang. */
@@ -1790,7 +1919,7 @@ function applyTplToState(t){if(!t)return false;
  const hintCv=t.cover||(t.kb&&t.kb.cover);
  if(CV_LAYOUTS.some(c=>c[0]===hintCv)&&!state.coverLayoutExplicit)state.coverLayout=hintCv;
  if(t.buka&&CARA_BUKA_ID.includes(t.buka)&&!state.bukaExplicit)state.buka=t.buka;
- syncDefaultCoverStyle(t);paksaTier();return true
+ syncDefaultCoverStyle(t);if(!(options&&options.skipTier))paksaTier();return true
 }
 function newCustomTplId(){let id;do{id='custom-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7)}while(tplById(id));return id}
 function pickTpl(id){const t=tplById(id);if(!t)return;applyTplToState(t);save();render();notify('Template: '+t.nama)}
@@ -1879,6 +2008,117 @@ async function upsertInvitationDraft(payload){
  if(raw){try{const body=JSON.parse(raw);detail=body.message||body.error_description||body.error||raw;code=body.code||''}catch(e){detail=raw}}
  const err=new Error(detail||('Supabase HTTP '+response.status));
  err.code=code;err.status=response.status;throw err;
+}
+function cloudDraftCard(){
+ if(!CLOUD_DRAFT_ENABLED)return `<div class="card cloud-card cloud-disabled"><h4>☁ Draft Cloud <span class="chip" style="margin-left:auto">DITUNDA</span></h4><p>Sinkronisasi cloud sedang dimatikan. Draft tetap tersimpan lokal di perangkat ini seperti biasa.</p></div>`;
+ if(!db||!db.auth)return `<div class="card cloud-card"><h4>☁ Draft Cloud</h4><p>Login cloud memerlukan koneksi Supabase Auth. Muat ulang saat koneksi tersedia.</p></div>`;
+ if(!_cloudSession)return `<div class="card cloud-card"><h4>☁ Draft Cloud lintas perangkat</h4><p>Masuk dengan email untuk menyimpan draft secara privat dan melanjutkan di perangkat lain. Email hanya dipakai oleh Supabase Auth.</p><form onsubmit="event.preventDefault();cloudSignIn(this.email.value)"><label class="f">Email<input name="email" type="email" autocomplete="email" required placeholder="nama@email.com" style="margin-top:4px"></label><button class="sm-btn dark" type="submit" style="min-height:44px;margin-top:10px" ${_cloudAuthBusy?'disabled':''}>${_cloudAuthBusy?'Mengirim tautan…':'Kirim tautan masuk via email'}</button></form><p class="cloud-status" role="status" aria-live="polite">${esc(_cloudAuthMessage||_cloudStatus)}</p><small>Setelah masuk, cek email dan buka tautan di perangkat yang ingin dipakai.</small></div>`;
+ const updated=_cloudRemoteDraft&&_cloudRemoteDraft.updated_at?new Date(_cloudRemoteDraft.updated_at).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'}):'';
+ const remoteInfo=_cloudRemoteDraft?`Draft cloud terakhir diperbarui ${esc(updated)}.`:'Belum ada draft cloud untuk akun ini.';
+ const choice=_cloudNeedsChoice?`<div class="cloud-choice"><b>Draft cloud tersedia</b><p>${remoteInfo} Pilih sumber agar perubahan tidak saling menimpa.</p><div class="cloud-actions"><button class="sm-btn dark" onclick="cloudRestoreDraft()">Pulihkan draft cloud</button>${state.started?'<button class="sm-btn" onclick="cloudUseLocal()">Pakai draft perangkat ini</button>':''}</div></div>`
+  :_cloudSyncEnabled?`<p class="cloud-status" role="status" aria-live="polite">${esc(_cloudStatus)}</p><div class="cloud-actions"><button class="sm-btn" onclick="cloudCheckRemote()">↻ Periksa cloud</button><button class="sm-btn" onclick="cloudDisableSync()">Matikan sinkronisasi</button></div>`
+  :_cloudRemoteDraft?`<p class="cloud-status">${remoteInfo}</p><div class="cloud-actions"><button class="sm-btn dark" onclick="cloudRestoreDraft()">Pulihkan draft cloud</button>${state.started?'<button class="sm-btn" onclick="cloudUseLocal()">Sinkronkan draft ini</button>':''}</div>`
+  :state.started?`<p class="cloud-status" role="status">${esc(_cloudStatus)}</p><button class="sm-btn dark" onclick="cloudUseLocal()">Aktifkan sinkronisasi draft ini</button>`:`<p class="cloud-status">${esc(_cloudStatus)}. Mulai atau pulihkan draft, lalu aktifkan sinkronisasi.</p>`;
+ return `<div class="card cloud-card"><h4>☁ Draft Cloud lintas perangkat <span class="chip" style="margin-left:auto">${_cloudSyncEnabled&&!_cloudNeedsChoice?'AKTIF':'PRIVAT'}</span></h4><p>Masuk sebagai <b>${esc(_cloudSession.user.email||'akun email')}</b>. Draft hanya dapat dibaca akun ini. Foto ikut selama ukuran snapshot tidak melebihi 1,3 MB; musik yang hanya tersimpan di perangkat tidak ikut.</p><div class="cloud-remote">${choice}</div><div class="cloud-actions"><button class="sm-btn" onclick="cloudSignOut()">Keluar akun</button></div><small>Autosinkron aktif setelah dipilih. Saat ada draft cloud dan lokal, Studio meminta pilihan sebelum menimpa.</small></div>`
+}
+function cloudRefreshCard(){const card=document.querySelector('.cloud-card');if(card)card.outerHTML=cloudDraftCard()}
+function cloudNotifyState(status){_cloudStatus=status;cloudRefreshCard()}
+async function cloudSignIn(email){
+ if(!CLOUD_DRAFT_ENABLED){notify('Sinkronisasi cloud sedang dimatikan sementara.');return}
+ const address=String(email||'').trim();if(!address||!db||!db.auth){notifyErr('Login email belum tersedia. Pastikan Supabase Auth aktif dan koneksi berhasil.');return}
+ _cloudAuthBusy=true;_cloudAuthMessage='';cloudRefreshCard();
+ try{const {error}=await db.auth.signInWithOtp({email:address,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}});if(error)throw error;
+  _cloudAuthMessage='Tautan masuk dikirim ke '+address+'. Buka email pada perangkat ini untuk menyelesaikan login.';_cloudStatus='Menunggu konfirmasi email';notify('Tautan masuk sudah dikirim. Cek inbox/spam email.');
+ }catch(e){_cloudAuthMessage='Gagal mengirim tautan: '+String(e&&e.message||e);notifyErr('Login email gagal: '+esc(e&&e.message||e))}
+ finally{_cloudAuthBusy=false;cloudRefreshCard()}
+}
+function cloudSetSession(session){
+ const oldUid=_cloudSession&&_cloudSession.user&&_cloudSession.user.id;
+ _cloudSession=session||null;
+ if(!_cloudSession){_cloudRemoteDraft=null;_cloudNeedsChoice=false;_cloudFetchedUid='';_cloudStatus='Belum terhubung ke cloud';cloudRefreshCard();return}
+ const uid=_cloudSession.user&&_cloudSession.user.id;
+ if(_cloudSyncEnabled&&localStorage.getItem(CLOUD_SYNC_USER)!==uid){_cloudSyncEnabled=false;localStorage.removeItem(CLOUD_SYNC_PREF);localStorage.removeItem(CLOUD_SYNC_TIME)}
+ _cloudStatus='Memeriksa draft cloud…';cloudRefreshCard();
+ if(uid&&uid!==_cloudFetchedUid){_cloudFetchedUid=uid;setTimeout(()=>cloudCheckRemote(),0)}
+ else if(uid!==oldUid)cloudRefreshCard()
+}
+async function cloudCheckRemote(){
+ if(!CLOUD_DRAFT_ENABLED||!db||!db.auth||!_cloudSession)return;
+ if(_cloudBusy)return;
+ _cloudBusy=true;_cloudStatus='Memeriksa draft cloud…';cloudRefreshCard();let syncAfterCheck=false;
+ try{
+  const {data,error}=await db.from('studio_cloud_drafts').select('draft,updated_at').eq('user_id',_cloudSession.user.id).maybeSingle();
+  if(error)throw error;
+  _cloudRemoteDraft=data&&data.draft&&typeof data.draft==='object'?data:null;
+  _cloudNeedsChoice=false;
+  if(_cloudRemoteDraft){
+   const last=Date.parse(localStorage.getItem(CLOUD_SYNC_TIME)||'')||0,remote=Date.parse(_cloudRemoteDraft.updated_at||'')||0;
+   _cloudNeedsChoice=!_cloudSyncEnabled||remote>last;
+   _cloudStatus=_cloudNeedsChoice?'Pilih draft cloud atau draft perangkat ini':'Sinkronisasi cloud aktif';
+   if(_cloudSyncEnabled&&!_cloudNeedsChoice&&state.started)syncAfterCheck=true;
+  }else{
+   _cloudStatus='Belum ada draft cloud untuk akun ini';
+   if(_cloudSyncEnabled&&state.started)syncAfterCheck=true;
+  }
+ }catch(e){_cloudStatus='Gagal memeriksa cloud: '+String(e&&e.message||e);_cloudRemoteDraft=null}
+ finally{_cloudBusy=false;cloudRefreshCard();if(syncAfterCheck)scheduleCloudSave()}
+}
+function cloudPayload(){
+ const copy=JSON.parse(JSON.stringify(state));copy.playing=false;
+ copy.musicDb=(copy.musicDb||[]).filter(m=>!m.local);
+ if(copy.music&&copy.music.local)copy.music=null;
+ const json=JSON.stringify(copy),bytes=new Blob([json]).size;
+ if(bytes>1300000)throw new Error('Ukuran draft lebih dari 1,3 MB. Kecilkan foto sebelum sinkronisasi.');
+ return copy
+}
+function scheduleCloudSave(){
+ if(!CLOUD_DRAFT_ENABLED||!_cloudSyncEnabled||!_cloudSession||_cloudBusy||_cloudNeedsChoice||!state.started)return;
+ if(_cloudSyncTimer)clearTimeout(_cloudSyncTimer);
+ _cloudStatus='Perubahan menunggu sinkronisasi…';cloudRefreshCard();
+ _cloudSyncTimer=setTimeout(()=>cloudSaveDraft(false),1200)
+}
+async function cloudSaveDraft(manual){
+ if(!CLOUD_DRAFT_ENABLED||!_cloudSyncEnabled||!_cloudSession||!db||_cloudBusy||_cloudNeedsChoice||!state.started)return;
+ if(_cloudSyncTimer){clearTimeout(_cloudSyncTimer);_cloudSyncTimer=null}
+ _cloudBusy=true;_cloudStatus='Menyinkronkan draft…';cloudRefreshCard();
+ try{
+  const draft=cloudPayload(),updated_at=new Date().toISOString();
+  const {error}=await db.from('studio_cloud_drafts').upsert({user_id:_cloudSession.user.id,draft,updated_at},{onConflict:'user_id'});
+  if(error)throw error;
+  _cloudRemoteDraft={draft,updated_at};_cloudNeedsChoice=false;_cloudStatus='Tersimpan di cloud • '+new Date(updated_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  localStorage.setItem(CLOUD_SYNC_TIME,updated_at);
+ }catch(e){_cloudStatus='Gagal sinkron: '+String(e&&e.message||e);if(manual)notifyErr(esc(_cloudStatus),10000)}
+ finally{_cloudBusy=false;cloudRefreshCard()}
+}
+async function cloudUseLocal(){
+ if(!CLOUD_DRAFT_ENABLED){notify('Sinkronisasi cloud sedang dimatikan sementara.');return}
+ if(!_cloudSession||!state.started){notify('Mulai atau pulihkan draft terlebih dahulu.');return}
+ _cloudSyncEnabled=true;localStorage.setItem(CLOUD_SYNC_PREF,'1');localStorage.setItem(CLOUD_SYNC_USER,_cloudSession.user.id);_cloudNeedsChoice=false;await cloudSaveDraft(true)
+}
+function cloudRestoreDraft(){
+ if(!CLOUD_DRAFT_ENABLED){notify('Sinkronisasi cloud sedang dimatikan sementara.');return}
+ if(!_cloudRemoteDraft||!_cloudRemoteDraft.draft){notifyErr('Draft cloud belum tersedia untuk dipulihkan.');return}
+ try{
+  const d=_cloudRemoteDraft.draft;
+  if(typeof d!=='object'||Array.isArray(d))throw new Error('Format draft cloud tidak valid.');
+  _cloudBusy=true;_cloudSyncEnabled=true;localStorage.setItem(CLOUD_SYNC_PREF,'1');localStorage.setItem(CLOUD_SYNC_USER,_cloudSession.user.id);_cloudNeedsChoice=false;
+  state=Object.assign({},JSON.parse(JSON.stringify(DEF)),d);state.tplCustom=normalizeTplCustom(state.tplCustom);state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,amplopNormal(state.amplop));state.slides=mergeSlides(state.slides);state.playing=false;
+  localStorage.setItem(CLOUD_SYNC_TIME,_cloudRemoteDraft.updated_at||new Date().toISOString());save();
+  _cloudBusy=false;_cloudStatus='Draft cloud dipulihkan';render();notify('Draft cloud dipulihkan ke perangkat ini ✓')
+ }catch(e){_cloudBusy=false;notifyErr('Tidak dapat memulihkan draft cloud: '+esc(e&&e.message||e))}
+}
+function cloudDisableSync(){_cloudSyncEnabled=false;localStorage.removeItem(CLOUD_SYNC_PREF);localStorage.removeItem(CLOUD_SYNC_USER);if(_cloudSyncTimer)clearTimeout(_cloudSyncTimer);_cloudStatus='Sinkronisasi otomatis dimatikan';cloudRefreshCard()}
+async function cloudSignOut(){if(!db||!db.auth)return;cloudDisableSync();try{const {error}=await db.auth.signOut();if(error)throw error;cloudSetSession(null);notify('Keluar dari akun cloud.')}
+ catch(e){notifyErr('Gagal keluar dari akun: '+esc(e&&e.message||e))}}
+function cloudInitAuth(){
+ if(!CLOUD_DRAFT_ENABLED){
+  _cloudSyncEnabled=false;localStorage.removeItem(CLOUD_SYNC_PREF);localStorage.removeItem(CLOUD_SYNC_TIME);localStorage.removeItem(CLOUD_SYNC_USER);
+  if(db&&db.auth&&typeof db.auth.signOut==='function')db.auth.signOut({scope:'local'}).catch(()=>{});
+  _cloudStatus='Draft Cloud dinonaktifkan sementara';return
+ }
+ if(!db||!db.auth){_cloudStatus='SDK Supabase Auth belum dimuat';return}
+ db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT')cloudSetSession(null);else if(session)cloudSetSession(session)});
+ db.auth.getSession().then(({data,error})=>{if(error)throw error;cloudSetSession(data&&data.session)}).catch(e=>{_cloudStatus='Gagal memeriksa sesi: '+String(e&&e.message||e)})
 }
 function publishErrorHtml(e){
  const message=String(e&&e.message||e||'Kesalahan tidak diketahui');
@@ -2101,7 +2341,7 @@ async function publish(){
  if(state.event==='pernikahan'?(!f.namaPria.trim()||!f.namaWanita.trim()):!f.namaAnak.trim())missing.push('nama');
  if(!f.tanggalAcara)missing.push('tanggal acara');if(!f.jamAcara)missing.push('jam acara');if(!f.venue.trim())missing.push('lokasi acara');
  if(!state.slug)missing.push('slug/link undangan');
- if(missing.length){notify('Lengkapi '+missing.join(', ')+' terlebih dahulu.');return}
+ if(missing.length){notify('Lengkapi '+missing.join(', ')+' terlebih dahulu.');keChecklistTab(missing.some(x=>x!=='slug/link undangan')?'info':'terbit');return}
  _publishing=true;$('root').inert=true;$('root').setAttribute('aria-busy','true');
  const publishButtons=Array.from(document.querySelectorAll('[onclick="publish()"]')).map(button=>({button,label:button.textContent}));
  publishButtons.forEach(({button})=>{button.textContent='Menyiapkan link…'});notify('Sedang menyiapkan link undangan…');
@@ -2448,6 +2688,7 @@ function tabInfo(){const f=state.form,e=state.event;
  </div></div>`}
 
 function tabDesain(){return `<div style="display:grid;gap:16px">
+ <div class="card"><h4>🆚 Bandingkan tema</h4>${themeComparePanel()}</div>
  <div class="card"><h4>💌 Model Cover Pembuka <span class="chip" style="margin-left:auto">15 model</span></h4>
   <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-top:-4px">Pilih satu dari 15 tampilan pembuka; pratinjau di kanan langsung mengikuti pilihan.</div>
   <div class="cv-layout-grid" role="group" aria-label="Pilih model cover pembuka">
@@ -2862,7 +3103,7 @@ function masterCard(){return ` <div class="card"><h4>🔑 Undangan Master (khusu
  </div>
 `}
 
-function tabDomain(){return `<div style="display:grid;gap:16px">
+function tabDomain(){return `<div style="display:grid;gap:16px">${cloudDraftCard()}
  <div class="card"><h4>🌐 Domain & Publikasi — FITUR BARU</h4>
   <label class="f">Custom Subdomain (auto dari nama mempelai)
    <div style="display:flex;margin-top:4px">
@@ -2928,10 +3169,19 @@ function shareReadyLink(action){if(!linkReady())return;
  if(action==='open')window.open(baseUrl(),'_blank','noopener,noreferrer');
 }
 function readyView(){return `<main class="flow-page"><section class="card" aria-labelledby="ready-title"><div role="status" aria-live="polite"><div style="font-size:36px;margin-bottom:12px">✓</div><h1 id="ready-title">Undangan sudah jadi!</h1><p>Link siap dibagikan. Undangan berhasil dipublish dan tersimpan di arsip.</p></div><label class="f" style="margin-top:20px">Link undangan tamu<input class="flow-link" readonly value="${esc(baseUrl())}" onclick="this.select()"></label><div class="flow-actions"><button class="sm-btn dark" onclick="shareReadyLink('copy')">Salin Link Undangan</button><button class="sm-btn wa" onclick="shareReadyLink('wa')">Bagikan via WhatsApp</button><button class="sm-btn" onclick="shareReadyLink('open')">Lihat Undangan ↗</button></div><div class="flow-actions"><button class="sm-btn" onclick="openMasterMenu()">Kirim Master ke Pemilik</button><button class="sm-btn" onclick="editInvitation()">Edit Undangan</button></div><p style="font-size:11px;margin-top:12px">Link master terpisah dan privat. Untuk tamu, gunakan link undangan di atas.</p></section><button class="sm-btn" style="min-height:44px" onclick="startInvitation()">Membuat Undangan Baru</button></main>`}
-function checklistSiap(){const f=state.form;const items=[
- ['Nama',state.event==='pernikahan'?!!(f.namaPria.trim()&&f.namaWanita.trim()):!!f.namaAnak.trim()],
- ['Tanggal',!!f.tanggalAcara],['Jam',!!f.jamAcara],['Lokasi',!!f.venue.trim()],['Link',!!state.slug]];
- return `<div class="checkbar" role="status" aria-label="Kesiapan undangan">${items.map(([n,ok])=>`<span class="chk ${ok?'ok':''}"><span class="cd"></span>${n}${ok?' ✓':''}</span>`).join('')}</div>`}
+function keChecklistTab(tab){if(!['info','desain','musik','tamu','terbit'].includes(tab))return;state.page='editor';state.tab=tab;save();render();const main=document.querySelector('.mainc');if(main)main.scrollTo({top:0,behavior:'smooth'})}
+function checklistSiap(){const f=state.form||{};
+ const wajib=[
+  ['Nama',state.event==='pernikahan'?!!(String(f.namaPria||'').trim()&&String(f.namaWanita||'').trim()):!!String(f.namaAnak||'').trim(),'info'],
+  ['Tanggal',!!f.tanggalAcara,'info'],['Jam',!!f.jamAcara,'info'],['Lokasi',!!String(f.venue||'').trim(),'info'],['Link',!!String(state.slug||'').trim(),'terbit']];
+ const opsional=[
+  ['Peta',!!String(f.mapsLink||'').trim(),'info'],
+  ['Foto cover',!!(state.cover||state.fotoPria||state.fotoWanita),'desain'],
+  ['Galeri',Array.isArray(state.gallery)&&state.gallery.some(Boolean),'musik'],
+  ['Daftar tamu',!!String(state.guestsRaw||'').trim(),'tamu']];
+ const siap=wajib.filter(x=>x[1]).length,bonus=opsional.filter(x=>x[1]).length;
+ const chip=(item,optional)=>`<button type="button" class="chk ${item[1]?'ok':''} ${optional?'optional':''}" data-check-tab="${item[2]}" onclick="keChecklistTab('${item[2]}')" aria-label="${item[1]?'Sudah siap':'Belum diisi'}: ${item[0]}${optional?' (opsional)':''}"><span class="cd"></span>${item[0]}${item[1]?' ✓':''}</button>`;
+ return `<section class="readiness" aria-label="Checklist kesiapan undangan"><div class="readiness-head" role="status" aria-live="polite"><div><b>Checklist sebelum terbit</b><p>${siap}/${wajib.length} wajib siap · ${bonus}/${opsional.length} tambahan terisi</p></div><span class="readiness-badge ${siap===wajib.length?'ready':''}">${siap===wajib.length?'Siap diterbitkan':(wajib.length-siap)+' wajib tersisa'}</span></div><div class="readiness-group"><span class="readiness-label">Wajib untuk publish</span><div class="checkbar">${wajib.map(item=>chip(item,false)).join('')}</div></div><div class="readiness-group"><span class="readiness-label">Opsional · bisa dilengkapi kapan saja</span><div class="checkbar">${opsional.map(item=>chip(item,true)).join('')}</div></div></section>`}
 function stepbar(){const L=[['1','Isi Acara',['info','amplop']],['2','Tampilan',['desain','slide','musik']],['3','Tamu',['tamu']],['4','Terbit',['terbit','master','domain']]]; const aktif=L.findIndex(([,,tabs])=>tabs.includes(state.tab));
  return `<div class="stepbar sb" role="navigation" aria-label="Langkah pembuatan undangan">${L.map(([n,nama,tabs],i)=>`${i?'<span class="step-sep"></span>':''}<button class="step ${i===aktif?'on':''} ${i<aktif?'done':''}" onclick="set('tab','${tabs[0]}')" aria-current="${i===aktif?'step':'false'}"><span class="num">${i<aktif?'✓':n}</span><span class="stxt">${nama}</span></button>`).join('')}</div>`}
 function editorActions(){
@@ -2941,6 +3191,7 @@ function editorActions(){
   :'Sudah dipublikasikan • undangan live sudah sinkron';
  return `<div class="editor-actions">
  <span style="width:100%;font-size:11px;color:var(--mut)">ⓘ Tahan tombol 1 detik untuk keterangan. Di desktop: fokuskan tombol, lalu tekan F1.</span>
+ <div class="editor-savebar"><span class="save-state" role="status" aria-live="polite" data-state="${_saveState}">${_saveState==='error'?'Belum tersimpan — penyimpanan browser penuh':_savedAt?'Tersimpan di perangkat ini • '+new Date(_savedAt).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'Draft tersimpan di perangkat ini'}</span><button class="sm-btn undo-btn" onclick="undoStudio()" ${_undoStack.length?'':'disabled'} aria-label="Urungkan perubahan terakhir" title="Urungkan perubahan terakhir di sesi ini">↶ Urungkan</button></div>
  <div class="back-links"><button class="sm-btn" onclick="showWelcome()" data-help="Kembali ke layar awal Studio. Draft aktif tetap tersimpan dan bisa dilanjutkan.">← Layar Awal</button><a class="sm-btn" href="./" data-help="Keluar dari Studio dan buka halaman utama situs.">← Halaman Utama</a></div>
  ${checklistSiap()}<span class="flow-status">${status}</span>
  <button class="mobile-menu" aria-expanded="${document.body.classList.contains('studio-nav-open')}" onclick="toggleStudioMenu(this)">☰ Template & Menu</button>
@@ -3180,7 +3431,7 @@ function pvHtml(){return '<div class="pv-phone"><iframe class="pv-frame" src="un
    diperkecil dengan transform supaya pas di panel atau di kotak melayang. */
 function pvUkur(ifr){
  const box=ifr.parentElement;if(!box)return;
- const layar=box.closest('.fp-screen');
+ const layar=box.closest('.fp-screen, .theme-compare-screen');
  const lebar=Math.max(160,(layar?layar.clientWidth:box.clientWidth)||360);
  const tinggi=Math.max(260,(layar?layar.clientHeight:window.innerHeight-32)||680);
  const k=Math.min(lebar/PV_LEBAR,tinggi/PV_TINGGI);
@@ -3207,6 +3458,15 @@ function pvPasang(ifr){
  pvUkur(ifr);pvKirim(ifr);
 }
 /* Semua pratinjau (panel kanan & kotak melayang) memakai berkas undangan yang sama. */
+const _themeCompareBound=new WeakSet();
+function syncThemeCompare(){document.querySelectorAll('.theme-compare-screen iframe[data-compare-side]').forEach(ifr=>{
+ const side=ifr.dataset.compareSide,id=side==='a'?compareThemeA:compareThemeB,row=themeCompareRow(id);
+ ifr.__aspRow=row;
+ if(!_themeCompareBound.has(ifr)){_themeCompareBound.add(ifr);ifr.addEventListener('load',()=>{
+  pvUkur(ifr);try{const t=ifr.contentWindow;if(t)t.postMessage({type:'asproject:preview',row:ifr.__aspRow||themeCompareRow(ifr.dataset.compareSide==='a'?compareThemeA:compareThemeB)},'*')}catch(e){}
+ })}
+ pvUkur(ifr);try{const t=ifr.contentWindow;if(t)t.postMessage({type:'asproject:preview',row},'*')}catch(e){}
+})}
 function syncPreview(){
  const panel=$('phoneWrap');
  if(panel&&!panel.querySelector('iframe.pv-frame'))panel.innerHTML=pvHtml();
@@ -3214,6 +3474,7 @@ function syncPreview(){
  if(fl&&state.floatPrevOn){const layar=fl.querySelector('.fp-screen');
   if(layar&&!layar.querySelector('iframe.pv-frame'))layar.innerHTML=pvHtml()}
  document.querySelectorAll('.pv-stage iframe.pv-frame, #floatPrev .fp-screen iframe.pv-frame').forEach(pvPasang);
+ syncThemeCompare();
 }
 let _pvTimer=null;
 /* Ketikan pemilik tidak me-render ulang seluruh editor, jadi pratinjau
@@ -3284,10 +3545,12 @@ function fpDragStart(e){if(e.button!==0||e.target.closest('button'))return;
  head.addEventListener('pointermove',mv);head.addEventListener('pointerup',up);head.addEventListener('pointercancel',up);head.addEventListener('lostpointercapture',up);e.preventDefault();
 }
 window.addEventListener('resize',function(){fitFloat();syncPreview()});
+document.addEventListener('keydown',function(e){if(compareThemesOpen&&e.key==='Escape'){e.preventDefault();toggleThemeComparison()}});
 /* Musik gagal dimuat (link privat/rusak) → beri tahu, jangan diam saja. */
 document.addEventListener('error',e=>{const t=e.target;if(t&&t.id==='player'&&state.music&&!state.music.local)
  notifyErr('Musik <b>'+esc(state.music.name||'')+'</b> gagal dimuat dari penyimpanan — file mungkin privat/terhapus. Upload ulang atau pilih musik lain.',10000)},true);
 
+cloudInitAuth();
 if(paksaTier())save();
 /* pratinjau ringan 4D: geser latar pratinjau mengikuti mouse saat tier VIP */
 document.addEventListener('mousemove',function(e){if(typeof bolehVip!=='function'||!bolehVip())return;var ap=document.querySelector('.ap');if(!ap)return;var r=ap.getBoundingClientRect();if(!r.width)return;var dx=(e.clientX-r.left)/r.width*2-1,dy=(e.clientY-r.top)/r.height*2-1;if(dx<-1.2||dx>1.2||dy<-1.2||dy>1.2)return;ap.style.backgroundPosition=(50+dx*3).toFixed(1)+'% '+(50+dy*3).toFixed(1)+'%';},{passive:true});

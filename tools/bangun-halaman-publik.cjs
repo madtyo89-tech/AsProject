@@ -29,22 +29,22 @@ const TODAY = '2026-10-21';
 const EVENTS = {
   pernikahan: {
     label: 'Pernikahan', slug: 'pernikahan', title: 'Undangan Pernikahan Digital',
-    description: 'Pilih tema undangan pernikahan digital AsProject, lihat demo interaktif gratis, dan periksa rincian harga serta ketentuan sebelum memesan.',
+    description: 'Pilih tema undangan pernikahan digital AsProject dan coba demonya. Harga khusus pelanggan baru Rp49.000 dari Rp99.000 per tema; konfirmasi ketentuan sebelum memesan.',
     intro: 'Jelajahi tema untuk akad dan resepsi. Setiap tombol demo membuka renderer undangan langsung dengan data contoh—bukan tangkapan layar atau testimoni pelanggan.'
   },
   khitanan: {
     label: 'Khitanan', slug: 'khitanan', title: 'Undangan Khitanan Digital',
-    description: 'Tema undangan khitanan digital AsProject dengan demo interaktif, RSVP, lokasi, dan informasi harga yang transparan.',
+    description: 'Tema undangan khitanan digital AsProject dengan demo interaktif. Harga khusus pelanggan baru Rp49.000 dari Rp99.000 per tema; ketentuan layanan dikonfirmasi sebelum memesan.',
     intro: 'Lihat pilihan tema khitanan bernuansa ceria maupun islami. Coba demonya sendiri sebelum menghubungi admin.'
   },
   ultah: {
     label: 'Ulang Tahun', slug: 'ulang-tahun', title: 'Undangan Ulang Tahun Digital',
-    description: 'Tema undangan ulang tahun digital untuk anak dan dewasa. Coba demo AsProject gratis tanpa menghubungi admin.',
+    description: 'Tema undangan ulang tahun digital untuk anak dan dewasa. Harga khusus pelanggan baru Rp49.000 dari Rp99.000 per tema; coba demo sebelum memesan.',
     intro: 'Pilih desain untuk pesta anak, sweet seventeen, atau perayaan usia dewasa. Demo memakai nama dan foto contoh.'
   },
   aqiqah: {
     label: 'Aqiqah', slug: 'aqiqah', title: 'Undangan Aqiqah Digital',
-    description: 'Tema undangan aqiqah digital AsProject. Lihat demo live, fitur yang tersedia, harga katalog, dan ketentuan sebelum memesan.',
+    description: 'Tema undangan aqiqah digital AsProject dengan demo live. Harga khusus pelanggan baru Rp49.000 dari Rp99.000 per tema; ketentuan dikonfirmasi sebelum memesan.',
     intro: 'Temukan tema aqiqah bernuansa lembut dan islami. Pratinjau ini merupakan demo produk, bukan hasil acara pelanggan.'
   }
 };
@@ -78,7 +78,7 @@ function orgSchema() {
     sameAs: ['https://instagram.com/asproject.my.id']
   };
 }
-function pageTemplate({ rel, title, description, body, schema = [], breadcrumbs = [], robots = 'index,follow' }) {
+function pageTemplate({ rel, title, description, body, schema = [], breadcrumbs = [], robots = 'index,follow', styles = [], scripts = [], bodyClass = '', themeColor = '#19150f' }) {
   const base = baseFor(rel);
   const url = canonical(rel);
   const crumbItems = [
@@ -107,7 +107,7 @@ function pageTemplate({ rel, title, description, body, schema = [], breadcrumbs 
   <meta name="description" content="${esc(description)}">
   <meta name="robots" content="${robots}">
   <link rel="canonical" href="${url}">
-  <meta name="theme-color" content="#19150f">
+  <meta name="theme-color" content="${esc(themeColor)}">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="AsProject">
   <meta property="og:title" content="${esc(title)} | AsProject">
@@ -120,9 +120,10 @@ function pageTemplate({ rel, title, description, body, schema = [], breadcrumbs 
   <link rel="apple-touch-icon" href="${base}assets/apple-touch-icon.png">
   <link rel="manifest" href="${base}manifest.webmanifest">
   <link rel="stylesheet" href="${base}assets/marketing.css">
+${styles.length ? `  ${styles.map(href => `<link rel="stylesheet" href="${base}${esc(href)}">`).join('\n  ')}` : ''}
   <script type="application/ld+json">${js({ '@context': 'https://schema.org', '@graph': [orgSchema(), ...graph] })}</script>
 </head>
-<body class="ap-page">
+<body class="ap-page${bodyClass ? ` ${esc(bodyClass)}` : ''}">
   <header class="ap-header">
     <div class="ap-wrap ap-nav">
       <a class="ap-brand" href="${base}" aria-label="AsProject — beranda"><img src="${base}assets/logo-asproject.svg" alt="" width="34" height="34"><span>AsProject</span></a>
@@ -141,6 +142,7 @@ function pageTemplate({ rel, title, description, body, schema = [], breadcrumbs 
     </div>
     <div class="ap-wrap ap-copyright">© ${TODAY.slice(0, 4)} AsProject · Bandung, Indonesia</div>
   </footer>
+${scripts.length ? `  ${scripts.map(src => `<script src="${base}${esc(src)}" defer></script>`).join('\n  ')}` : ''}
 </body>
 </html>
 `;
@@ -154,7 +156,7 @@ function faqSchema(items) {
   return { '@type': 'FAQPage', mainEntity: items.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) };
 }
 function knownTermsNote(base = '') {
-  return `<aside class="ap-notice" role="note"><strong>Catatan ketentuan:</strong> harga Rp49.000 berasal dari harga yang tercatat pada katalog template. Batas tamu/RSVP, masa aktif link, status watermark, ruang lingkup revisi, metode pembayaran, dan lama aktif setelah acara belum dijelaskan pada informasi produk yang tersedia. Minta jawaban tertulis dari admin sebelum membayar.</aside>`;
+  return `<aside class="ap-notice" role="note"><strong>Penawaran pelanggan baru:</strong> dari <del>Rp99.000</del> menjadi Rp49.000 per tema. Tidak ada tanggal akhir promo yang ditetapkan saat ini. Batas tamu/RSVP, masa aktif link, status watermark, ruang lingkup revisi, metode pembayaran, dan lama aktif setelah acara belum dijelaskan pada informasi produk yang tersedia. Minta konfirmasi tertulis dari admin sebelum membayar.</aside>`;
 }
 function faqSection(items) {
   return `<section class="ap-section"><div class="ap-section-heading"><p class="ap-eyebrow">FAQ</p><h2>Pertanyaan sebelum memesan</h2></div><div class="ap-faq">${items.map(({ q, a }) => `<details><summary>${esc(q)}</summary><div class="ap-answer">${a}</div></details>`).join('')}</div></section>`;
@@ -164,9 +166,11 @@ function templateCard(t, base) {
   const detail = `${base}template/${t.id}/`;
   const demo = `${base}undangan.html?demo=1&amp;tpl=${encodeURIComponent(t.id)}&amp;buka=1`;
   const newBadge = t.badge === 'NEW TEMPLATE' ? '<span class="ap-new-badge">NEW TEMPLATE</span>' : '';
-  return `<article class="ap-template-card">
-    <div class="ap-swatch" style="--swatch-a:${esc(t.g?.[0] || '#f8f3e9')};--swatch-b:${esc(t.g?.[2] || '#c7a873')}"><span>${esc(ev.label)}</span>${newBadge}<strong>${esc(t.char || t.nama)}</strong></div>
-    <div class="ap-template-card-body"><p class="ap-eyebrow">${esc(ev.label)}</p><h3><a href="${detail}">${esc(t.nama)}</a></h3><p>${esc(t.desc || `Tema undangan digital ${ev.label.toLowerCase()} ${t.nama}.`)}</p><p class="ap-card-price">Rp ${Number(t.harga || 49000).toLocaleString('id-ID')}</p><div class="ap-card-actions"><a class="ap-btn ap-btn-dark" href="${demo}">Coba demo</a><a class="ap-btn ap-btn-light" href="${detail}">Detail tema</a></div></div>
+  const description = t.desc || `Tema undangan digital ${ev.label.toLowerCase()} ${t.nama}.`;
+  const search = `${t.nama} ${ev.label} ${description}`.toLocaleLowerCase('id-ID');
+  return `<article class="ap-template-card" data-template-card data-category="${esc(ev.slug)}" data-search="${esc(search)}" data-price="${Number(t.harga || 49000)}">
+    <div class="ap-swatch" style="--swatch-a:${esc(t.g?.[0] || '#f8f3e9')};--swatch-b:${esc(t.g?.[2] || '#c7a873')}"><span>${esc(ev.label)}</span>${newBadge}<strong>${esc(t.char || t.nama)}</strong><button class="ap-favorite" type="button" data-favorite="${esc(t.id)}" aria-label="Simpan ${esc(t.nama)} ke favorit" aria-pressed="false" title="Simpan ke favorit">♡</button></div>
+    <div class="ap-template-card-body"><p class="ap-eyebrow">${esc(ev.label)}</p><h3><a href="${detail}">${esc(t.nama)}</a></h3><p>${esc(description)}</p><p class="ap-card-price"><del>Rp 99.000</del> <strong>Rp ${Number(t.harga || 49000).toLocaleString('id-ID')}</strong> <span class="ap-new-customer-price">Pelanggan baru</span></p><div class="ap-card-actions"><a class="ap-btn ap-btn-dark" href="${demo}">Coba demo</a><a class="ap-btn ap-btn-light" href="${detail}">Detail tema</a></div></div>
   </article>`;
 }
 function templateSchema(t, rel) {
@@ -194,10 +198,22 @@ const faqBasic = [
   const rel = 'katalog/index.html';
   const base = baseFor(rel);
   const cards = PUBLIC_DISPLAY.map(t => templateCard(t, base)).join('\n');
+  const categoryFilters = Object.values(EVENTS).map(e => {
+    const count = PUBLIC.filter(t => eventOf(t).slug === e.slug).length;
+    return `<button class="ap-filter-chip" type="button" data-category-filter="${esc(e.slug)}" aria-pressed="false">${esc(e.label)} <span data-filter-count>${count}</span></button>`;
+  }).join('');
+  const controls = `<div class="ap-catalog-controls" data-catalog-controls hidden>
+    <label class="ap-catalog-search"><span class="ap-catalog-control-label">Cari tema</span><span class="ap-search-input"><span aria-hidden="true">⌕</span><input type="search" data-catalog-search placeholder="Contoh: sage, islami, ulang tahun" autocomplete="off" aria-label="Cari tema undangan"></span></label>
+    <div class="ap-catalog-filter-row"><div class="ap-catalog-filters" role="group" aria-label="Filter kategori"><button class="ap-filter-chip is-active" type="button" data-category-filter="all" aria-pressed="true">Semua <span data-filter-count>${PUBLIC.length}</span></button>${categoryFilters}</div>
+      <div class="ap-catalog-tools"><label class="ap-sort-control"><span class="ap-catalog-control-label">Urutkan</span><select data-catalog-sort aria-label="Urutkan tema"><option value="featured">Terbaru & unggulan</option><option value="name-asc">Nama A–Z</option><option value="name-desc">Nama Z–A</option><option value="price-asc">Harga terendah</option><option value="price-desc">Harga tertinggi</option></select></label><button class="ap-filter-chip ap-favorites-toggle" type="button" data-favorites-toggle aria-pressed="false">♡ Favorit saya <span data-favorite-count>0</span></button></div>
+    </div><div class="ap-catalog-summary"><p data-catalog-count role="status" aria-live="polite">${PUBLIC.length} tema ditampilkan</p><button type="button" class="ap-clear-filters" data-clear-filters hidden>Hapus filter</button></div>
+  </div><div class="ap-catalog-empty" data-catalog-empty hidden><strong>Tema belum ditemukan</strong><p>Coba kata kunci lain atau hapus filter untuk melihat semua tema.</p><button type="button" class="ap-btn ap-btn-light" data-clear-filters>Reset pencarian & filter</button></div>`;
   const body = `<nav class="ap-breadcrumb" aria-label="Breadcrumb"><a href="${base}">Beranda</a><span>›</span><span>Katalog template</span></nav>
-  <section class="ap-hero ap-hero-compact"><div><p class="ap-eyebrow">Katalog AsProject</p><h1>Template undangan digital</h1><p class="ap-lead">Sepuluh template terbaru—6 Gerbang Arch dan 4 Liquid Glass—tampil pertama, diikuti ${PUBLIC.length - NEW_TEMPLATE_IDS.length} tema lain untuk pernikahan, khitanan, ulang tahun, dan aqiqah. Setiap halaman tema memiliki demo live yang dapat dibuka tanpa chat admin.</p><div class="ap-actions"><a class="ap-btn ap-btn-dark" href="#semua-template">Lihat 10 template terbaru</a><a class="ap-btn ap-btn-light" href="${base}harga/">Lihat harga & ketentuan</a></div></div><div class="ap-hero-note"><strong>Demo ≠ portofolio klien</strong><p>Pratinjau memakai data contoh dari renderer undangan. Kami tidak menganggapnya sebagai hasil acara pelanggan atau testimoni.</p></div></section>
+  <section class="ap-hero ap-hero-compact"><div><p class="ap-eyebrow">Katalog AsProject · ${PUBLIC.length} inspirasi</p><h1>Temukan tema yang terasa seperti kamu</h1><p class="ap-lead">Sepuluh template terbaru—6 Gerbang Arch dan 4 Liquid Glass—tampil pertama, diikuti ${PUBLIC.length - NEW_TEMPLATE_IDS.length} tema lain untuk pernikahan, khitanan, ulang tahun, dan aqiqah. Cari dengan kata kunci, saring sesuai acara, lalu buka demo live sebelum memilih.</p><p class="ap-promo-ribbon"><strong>Harga khusus pelanggan baru</strong><span><del>Rp99.000</del> Rp49.000 per tema · tanpa tanggal akhir yang ditetapkan</span></p><div class="ap-actions"><a class="ap-btn ap-btn-dark" href="#semua-template">Lihat 10 template terbaru</a><a class="ap-btn ap-btn-dark ap-studio-cta" href="${base}katalog/studio-demo.html">Coba Studio demo</a><a class="ap-btn ap-btn-light" href="${base}harga/">Lihat harga & ketentuan</a></div></div><div class="ap-hero-note"><strong>Mulai dari inspirasimu</strong><p>Gunakan pencarian dan filter untuk mempersempit pilihan. Semua demo memakai data contoh—bukan portofolio klien atau testimoni pelanggan.</p></div></section>
   <section class="ap-section"><div class="ap-section-heading"><p class="ap-eyebrow">Pilih kategori</p><h2>Temukan tema sesuai acara</h2></div><div class="ap-category-links">${Object.values(EVENTS).map(e => `<a class="ap-category-pill" href="${base}undangan/${e.slug}/">Undangan ${esc(e.label)} <span>→</span></a>`).join('')}</div></section>
-  <section class="ap-section" id="semua-template"><div class="ap-section-heading"><p class="ap-eyebrow">Template terbaru tampil pertama</p><h2>${PUBLIC.length} tema yang bisa dicoba</h2><p>Sepuluh kartu pertama di bawah ini berlabel NEW TEMPLATE. Harga katalog saat ini Rp49.000 per tema. Ketentuan layanan lain perlu dikonfirmasi sebelum transaksi.</p></div><div class="ap-template-grid">${cards}</div></section>
+  <section class="ap-section" id="semua-template"><div class="ap-section-heading"><p class="ap-eyebrow">Template terbaru tampil pertama</p><h2>${PUBLIC.length} tema yang bisa dicoba</h2><p>Sepuluh kartu pertama di bawah ini berlabel NEW TEMPLATE. Harga khusus pelanggan baru dari <del>Rp99.000</del> menjadi Rp49.000 per tema, tanpa tanggal akhir yang ditetapkan; ketentuan layanan lain perlu dikonfirmasi sebelum transaksi.</p></div>${controls}<div class="ap-template-grid" data-catalog-grid>${cards}</div></section>
+  <div class="ap-catalog-toast" data-catalog-toast role="status" aria-live="polite" aria-atomic="true" hidden></div>
+  <section class="ap-catalog-studio-bottom" aria-labelledby="ap-studio-bottom-title"><div><p class="ap-eyebrow">Studio demo · gratis dicoba</p><h2 id="ap-studio-bottom-title">Mulai susun contoh undanganmu</h2><p>Pilih jenis acara, ubah detail, lalu lihat pratinjau. Isian akan reset saat halaman dibuka ulang.</p></div><a class="ap-studio-logo-button" href="${base}katalog/studio-demo.html" aria-label="Buka Studio demo untuk mulai menyusun undangan" title="Buka Studio demo"><img src="${base}assets/logo-asproject.svg" alt="" width="40" height="40"></a></section>
   ${knownTermsNote(base)}
   ${faqSection(faqBasic)}`;
   const schema = [
@@ -205,7 +221,37 @@ const faqBasic = [
     { '@type': 'ItemList', name: 'Template undangan digital AsProject', numberOfItems: PUBLIC_DISPLAY.length, itemListElement: PUBLIC_DISPLAY.map((t, i) => ({ '@type': 'ListItem', position: i + 1, url: `${ORIGIN}/template/${t.id}/`, name: t.nama })) },
     faqSchema(faqBasic)
   ];
-  write(rel, pageTemplate({ rel, title: 'Katalog Template Undangan Digital', description: `Jelajahi ${PUBLIC.length} tema undangan digital pernikahan, khitanan, ulang tahun, dan aqiqah. Coba demo live gratis sebelum bertanya ke admin.`, body, schema, breadcrumbs: [{ name: 'Katalog', item: '/katalog/' }] }));
+  write(rel, pageTemplate({ rel, title: 'Katalog Template Undangan Digital', description: `Jelajahi ${PUBLIC.length} tema undangan digital. Harga pelanggan baru Rp49.000 dari Rp99.000 per tema tanpa tanggal akhir yang ditetapkan; demo dapat dicoba gratis.`, body, schema, breadcrumbs: [{ name: 'Katalog', item: '/katalog/' }], scripts: ['assets/katalog-v2.js'], bodyClass: 'ap-catalog-page', themeColor: '#edf0f5' }));
+  generated.push(rel);
+}
+
+// Sandbox Studio publik: interaktif, tetapi tidak dapat menerbitkan atau membagikan hasilnya.
+{
+  const rel = 'katalog/studio-demo.html';
+  const base = baseFor(rel);
+  const options = PUBLIC.map(t => {
+    const ev = eventOf(t);
+    const themeIndex = TEMPLATES.findIndex(source => source.id === t.id);
+    return `<option value="${esc(t.id)}" data-event="${esc(t.ev)}" data-theme-index="${themeIndex}" data-cover="${esc(t.cover || 'amplop')}">${esc(t.nama)} · ${esc(ev.label)}</option>`;
+  }).join('');
+  const events = Object.entries(EVENTS).map(([key, e]) => `<option value="${esc(key)}">${esc(e.label)}</option>`).join('');
+  const body = `<div class="ap-studio-demo"><nav class="ap-breadcrumb" aria-label="Breadcrumb"><a href="${base}">Beranda</a><span>›</span><a href="${base}katalog/">Katalog</a><span>›</span><span>Studio demo</span></nav>
+  <header class="ap-studio-demo-heading"><p class="ap-eyebrow">Studio AsProject · mode demo</p><h1>Coba susun undanganmu</h1><p>Ubah contoh acara, pilih tema, lalu lihat pratinjau langsung. Ini hanya untuk mencoba—tidak bisa disimpan, diterbitkan, atau dibagikan.</p></header>
+  <aside class="ap-studio-demo-notice" role="note"><span aria-hidden="true">⏳</span><div><strong>Sesi sementara</strong><p>Isian hanya hidup di halaman ini. Refresh atau buka ulang untuk kembali ke contoh awal; data tidak dikirim ke server atau disimpan.</p></div></aside>
+  <div class="ap-studio-demo-layout"><section class="ap-studio-demo-form"><div class="ap-demo-card-heading"><span class="ap-demo-number">01</span><div><h2>Atur contoh undangan</h2><p>Pilih acara dan isi beberapa detail untuk mencoba preview.</p></div></div>
+   <form id="studio-demo-form" autocomplete="off">
+    <label class="ap-demo-field">Jenis acara<select id="demo-event">${events}</select></label>
+    <label class="ap-demo-field">Tema<select id="demo-theme">${options}</select></label>
+    <div class="ap-demo-name-grid" data-demo-visibility="pernikahan"><label class="ap-demo-field">Nama mempelai pria<input data-demo-field="namaPria" maxlength="60" value="Rafi Pratama" placeholder="Nama"></label><label class="ap-demo-field">Nama mempelai wanita<input data-demo-field="namaWanita" maxlength="60" value="Alya Putri" placeholder="Nama"></label></div>
+    <label class="ap-demo-field" data-demo-visibility="nonwedding">Nama yang dirayakan<input data-demo-field="namaAnak" maxlength="60" value="Alya Putri" placeholder="Nama"></label>
+    <div class="ap-demo-grid"><label class="ap-demo-field">Tanggal acara<input data-demo-field="tanggalAcara" type="date" value="2027-08-21"></label><label class="ap-demo-field">Jam<input data-demo-field="jamAcara" type="time" value="10:00"></label></div>
+    <label class="ap-demo-field">Lokasi acara<input data-demo-field="venue" maxlength="90" value="Gedung Serbaguna" placeholder="Nama gedung atau lokasi"></label>
+    <label class="ap-demo-field">Alamat singkat<textarea data-demo-field="alamat" maxlength="160" rows="2" placeholder="Alamat contoh (opsional)"></textarea></label>
+    <div class="ap-demo-actions"><button class="ap-btn ap-btn-light" type="reset">↺ Reset contoh</button><a class="ap-btn ap-btn-dark" href="${base}katalog/">Selesai mencoba</a></div>
+   </form><p class="ap-demo-status" id="demo-preview-status" role="status" aria-live="polite">Contoh ini tidak disimpan.</p>
+  </section><aside class="ap-studio-demo-preview"><div class="ap-demo-preview-heading"><span class="ap-demo-number">02</span><div><h2>Pratinjau langsung</h2><p>Renderer undangan yang sama, tanpa tombol berbagi.</p></div><span class="ap-demo-live"><i></i> LIVE</span></div><div class="ap-demo-frame"><iframe id="demo-preview" sandbox="allow-scripts allow-same-origin" src="${base}undangan.html?preview=1&amp;sandbox=1" title="Pratinjau Studio demo AsProject" loading="eager" referrerpolicy="no-referrer"></iframe></div><p class="ap-demo-preview-note">Nama dan detail di sini hanyalah contoh sementara.</p></aside></div>
+  <section class="ap-studio-demo-foot"><h2>Suka hasilnya?</h2><p>Pilih tema dari katalog untuk melihat demo produk, atau tanya AsProject tentang fitur dan ketentuannya.</p><div class="ap-actions"><a class="ap-btn ap-btn-dark" href="${base}katalog/">Kembali ke katalog</a><a class="ap-btn ap-btn-light" href="${base}kontak/">Hubungi AsProject</a></div></section></div>`;
+  write(rel, pageTemplate({ rel, title: 'Studio Demo Undangan Digital', description: 'Coba Studio demo undangan digital AsProject. Atur contoh acara dan tema dengan pratinjau langsung; tidak dapat disimpan, diterbitkan, atau dibagikan.', body, robots: 'noindex,nofollow', styles: ['assets/studio-demo.css'], breadcrumbs: [{ name: 'Katalog', item: '/katalog/' }, { name: 'Studio demo', item: '/katalog/studio-demo.html' }], scripts: ['assets/studio-demo.js'] }));
   generated.push(rel);
 }
 
@@ -224,15 +270,15 @@ const faqBasic = [
     { q: 'Apakah undangan memiliki watermark?', a: 'Status watermark belum disebutkan di katalog. Tanyakan dan minta konfirmasi tertulis sebelum pembayaran.' }
   ];
   const body = `<nav class="ap-breadcrumb" aria-label="Breadcrumb"><a href="${base}">Beranda</a><span>›</span><span>Harga</span></nav>
-  <section class="ap-hero ap-hero-compact"><div><p class="ap-eyebrow">Harga & ketentuan</p><h1>Harga jelas, ketentuan juga harus jelas</h1><p class="ap-lead">Katalog sumber mencatat harga Rp49.000 untuk setiap template publik. Rincian batas pemakaian yang belum tersedia kami tandai terbuka di bawah—jangan menebak atau membayar sebelum mendapat konfirmasi.</p><div class="ap-actions"><a class="ap-btn ap-btn-wa" href="${waLink('Halo AsProject, saya ingin konfirmasi harga Rp49.000 dan ketentuan masa aktif, kuota tamu/RSVP, watermark, revisi, serta pembayaran sebelum memesan.') }" target="_blank" rel="noopener noreferrer">Konfirmasi via WhatsApp</a><a class="ap-btn ap-btn-light" href="${base}katalog/">Lihat demo tema</a></div></div></section>
-  <section class="ap-section"><div class="ap-section-heading"><p class="ap-eyebrow">Daftar harga</p><h2>Harga katalog yang tercatat per tema</h2><p>Data template publik mencatat Rp49.000 untuk setiap tema (${PUBLIC.length} template publik). Minta admin memastikan harga akhir serta rincian pesanan sebelum pembayaran.</p></div><div class="ap-table-wrap"><table class="ap-table"><thead><tr><th scope="col">Satuan harga tercatat</th><th scope="col">Harga katalog</th><th scope="col">Fitur</th><th scope="col">Batas tamu / RSVP</th><th scope="col">Masa aktif link</th><th scope="col">Watermark</th></tr></thead><tbody><tr><th scope="row">Per tema katalog</th><td><strong>Rp49.000</strong></td><td>Ini adalah harga yang tersimpan pada data tema, bukan rincian kontrak pesanan. Renderer menyediakan pengaturan acara, lokasi, galeri, RSVP/ucapan, amplop digital, musik, dan link tamu; fitur yang termasuk dalam pesanan harus dikonfirmasi tertulis.</td><td><span class="ap-status-unknown">Belum dicantumkan</span></td><td><span class="ap-status-unknown">Belum dicantumkan</span></td><td><span class="ap-status-unknown">Belum dicantumkan</span></td></tr></tbody></table></div>${knownTermsNote(base)}</section>
+  <section class="ap-hero ap-hero-compact"><div><p class="ap-eyebrow">Harga & ketentuan</p><h1>Harga jelas, ketentuan juga harus jelas</h1><p class="ap-lead">Pelanggan baru mendapat harga khusus <del>Rp99.000</del> Rp49.000 per tema. Promo tidak memiliki tanggal akhir yang ditetapkan saat ini. Batas pemakaian dan rincian layanan tetap perlu dikonfirmasi sebelum memesan.</p><div class="ap-actions"><a class="ap-btn ap-btn-wa" href="${waLink('Halo AsProject, saya pelanggan baru dan ingin konfirmasi harga khusus Rp49.000 per tema serta ketentuan masa aktif, kuota tamu/RSVP, watermark, revisi, dan pembayaran.') }" target="_blank" rel="noopener noreferrer">Konfirmasi promo via WhatsApp</a><a class="ap-btn ap-btn-light" href="${base}katalog/">Lihat demo tema</a></div></div></section>
+  <section class="ap-section"><div class="ap-section-heading"><p class="ap-eyebrow">Daftar harga</p><h2>Penawaran pelanggan baru per tema</h2><p>Harga khusus pelanggan baru turun dari Rp99.000 menjadi Rp49.000 per tema untuk ${PUBLIC.length} template publik dan tidak memiliki tanggal akhir yang ditetapkan.</p></div><div class="ap-table-wrap"><table class="ap-table"><thead><tr><th scope="col">Satuan harga tercatat</th><th scope="col">Harga katalog</th><th scope="col">Fitur</th><th scope="col">Batas tamu / RSVP</th><th scope="col">Masa aktif link</th><th scope="col">Watermark</th></tr></thead><tbody><tr><th scope="row">Per tema katalog</th><td><del>Rp99.000</del> <strong>Rp49.000</strong></td><td>Harga khusus bagi pelanggan baru; harga promosi yang berlaku adalah Rp49.000 per tema. Renderer menyediakan pengaturan acara, lokasi, galeri, RSVP/ucapan, amplop digital, musik, dan link tamu; fitur yang termasuk dalam pesanan harus dikonfirmasi tertulis.</td><td><span class="ap-status-unknown">Belum dicantumkan</span></td><td><span class="ap-status-unknown">Belum dicantumkan</span></td><td><span class="ap-status-unknown">Belum dicantumkan</span></td></tr></tbody></table></div>${knownTermsNote(base)}</section>
   <section class="ap-section ap-section-tint"><div class="ap-section-heading"><p class="ap-eyebrow">Revisi & masa layanan</p><h2>Jangan mengandalkan asumsi</h2></div><div class="ap-grid ap-grid-2"><article class="ap-card"><h3>Revisi</h3><p>Website belum menetapkan batas atau arti “revisi unlimited”. Minta jawaban tertulis untuk jumlah revisi, perubahan teks/foto, ganti tema/layout, perubahan fitur, serta batas waktu revisi.</p></article><article class="ap-card"><h3>Domain & masa aktif</h3><p>Link undangan menggunakan domain AsProject (format <code>asproject.my.id/u/slug</code>). Masa aktif setelah hari acara belum dipublikasikan. Minta tanggal berakhir/masa aktif di konfirmasi pesanan.</p></article><article class="ap-card"><h3>Watermark & kuota</h3><p>Status watermark dan batas nama tamu/RSVP belum tersedia secara publik. Tanyakan sebelum membayar; jangan menganggap kuota tidak terbatas atau undangan bebas watermark.</p></article><article class="ap-card"><h3>Pembayaran</h3><p>Situs tidak memproses pembayaran dan metode pembayaran belum dicantumkan. Minta rincian metode dan rekening tujuan melalui kontak AsProject, lalu pastikan detailnya jelas sebelum membayar.</p></article></div></section>
   ${faqSection(items)}`;
   const schema = [
     { '@type': 'Service', name: 'Undangan digital AsProject', serviceType: 'Pembuatan undangan digital', provider: { '@id': `${ORIGIN}/#org` }, areaServed: { '@type': 'Country', name: 'Indonesia' }, offers: { '@type': 'AggregateOffer', priceCurrency: 'IDR', lowPrice: 49000, highPrice: 49000, offerCount: PUBLIC.length, url: canonical(rel) } },
     faqSchema(items)
   ];
-  write(rel, pageTemplate({ rel, title: 'Harga Undangan Digital AsProject', description: 'Harga katalog Rp49.000 per tema. Cek tabel batas tamu, RSVP, masa aktif domain, watermark, revisi, pembayaran, dan FAQ sebelum memesan.', body, schema, breadcrumbs: [{ name: 'Harga', item: '/harga/' }] }));
+  write(rel, pageTemplate({ rel, title: 'Harga Undangan Digital AsProject', description: 'Harga pelanggan baru Rp49.000 dari Rp99.000 per tema tanpa tanggal akhir yang ditetapkan. Cek kuota tamu, masa aktif, revisi, watermark, dan ketentuan pesanan.', body, schema, breadcrumbs: [{ name: 'Harga', item: '/harga/' }] }));
   generated.push(rel);
 }
 
@@ -244,11 +290,11 @@ for (const event of Object.values(EVENTS)) {
   const unique = [...new Map(templates.map(t => [t.id, t])).values()];
   const items = [
     { q: `Apakah demo undangan ${event.label.toLowerCase()} bisa dicoba gratis?`, a: 'Ya. Tombol “Coba demo” membuka renderer undangan dengan data contoh, tanpa perlu chat admin.' },
-    { q: 'Berapa harga template?', a: 'Harga yang tercatat di katalog adalah Rp49.000 per tema. Batas tamu, masa aktif, watermark, dan lingkup revisi harus dikonfirmasi sebelum pembayaran.' },
+    { q: 'Berapa harga template untuk pelanggan baru?', a: 'Harga normal Rp99.000, sementara harga khusus pelanggan baru Rp49.000 per tema. Promo tidak memiliki tanggal akhir yang ditetapkan saat ini. Batas tamu, masa aktif, watermark, dan lingkup revisi tetap harus dikonfirmasi sebelum pembayaran.' },
     { q: 'Bagaimana memesan?', a: 'Pilih tema, coba demonya, lalu hubungi admin di WhatsApp untuk meminta rincian dan konfirmasi tertulis.' }
   ];
   const body = `<nav class="ap-breadcrumb" aria-label="Breadcrumb"><a href="${base}">Beranda</a><span>›</span><a href="${base}katalog/">Katalog</a><span>›</span><span>${esc(event.label)}</span></nav>
-  <section class="ap-hero ap-hero-compact"><div><p class="ap-eyebrow">Kategori undangan</p><h1>${esc(event.title)}</h1><p class="ap-lead">${esc(event.intro)}</p><div class="ap-actions"><a class="ap-btn ap-btn-dark" href="#tema">Pilih tema ${esc(event.label.toLowerCase())}</a><a class="ap-btn ap-btn-light" href="${base}harga/">Cek harga & ketentuan</a></div></div><div class="ap-hero-note"><strong>Demo langsung</strong><p>Nama, tanggal, dan gambar dalam demo adalah data contoh, bukan dokumentasi acara pelanggan.</p></div></section>
+  <section class="ap-hero ap-hero-compact"><div><p class="ap-eyebrow">Kategori undangan</p><h1>${esc(event.title)}</h1><p class="ap-lead">${esc(event.intro)}</p><p class="ap-promo-ribbon"><strong>Penawaran pelanggan baru</strong><span><del>Rp99.000</del> Rp49.000 per tema · tanpa tanggal akhir yang ditetapkan</span></p><div class="ap-actions"><a class="ap-btn ap-btn-dark" href="#tema">Pilih tema ${esc(event.label.toLowerCase())}</a><a class="ap-btn ap-btn-light" href="${base}harga/">Cek harga & ketentuan</a></div></div><div class="ap-hero-note"><strong>Demo langsung</strong><p>Nama, tanggal, dan gambar dalam demo adalah data contoh, bukan dokumentasi acara pelanggan.</p></div></section>
   <section class="ap-section" id="tema"><div class="ap-section-heading"><p class="ap-eyebrow">Tema ${esc(event.label)}</p><h2>${unique.length} pilihan untuk dijelajahi</h2><p>Setiap tema memiliki halaman detail, harga katalog, fitur, dan tombol demo tersendiri.</p></div><div class="ap-template-grid">${unique.map(t => templateCard(t, base)).join('')}</div></section>
   <section class="ap-section ap-section-tint"><div class="ap-section-heading"><p class="ap-eyebrow">Sebelum memesan</p><h2>Pastikan kebutuhan acara cocok</h2><p>Periksa masa aktif link, batas tamu/RSVP, watermark, revisi, dan metode pembayaran langsung dengan admin sebelum transfer.</p><a class="ap-btn ap-btn-wa" href="${waLink(`Halo AsProject, saya mencari undangan digital untuk acara ${event.label.toLowerCase()}. Mohon konfirmasi tema, harga, fitur, masa aktif, batas tamu/RSVP, watermark, revisi, dan metode pembayaran.`)}" target="_blank" rel="noopener noreferrer">Tanya admin via WhatsApp</a></div></section>
   ${faqSection(items)}`;
@@ -267,11 +313,11 @@ for (const t of PUBLIC) {
   const base = baseFor(rel);
   const event = eventOf(t);
   const title = `Undangan ${event.label} ${t.nama}`;
-  const description = `${t.desc || `Tema undangan digital ${event.label.toLowerCase()} ${t.nama}.`} Lihat preview interaktif, harga katalog, fitur, dan ketentuan AsProject.`;
+  const description = `${t.desc || `Tema undangan digital ${event.label.toLowerCase()} ${t.nama}.`} Coba preview interaktif; harga khusus pelanggan baru Rp49.000 dari harga normal Rp99.000 per tema tanpa tanggal akhir yang ditetapkan.`;
   const demo = `${base}undangan.html?demo=1&amp;tpl=${encodeURIComponent(t.id)}&amp;buka=1`;
   const items = [
     { q: `Bisakah saya melihat demo ${t.nama}?`, a: `Ya. <a href="${demo}">Buka demo interaktif</a> tanpa menghubungi admin. Demo memakai data contoh, bukan hasil pelanggan.` },
-    { q: 'Berapa harganya?', a: 'Harga katalog yang tercatat untuk tema ini adalah Rp49.000. Minta admin memastikan harga akhir dan ketentuan sebelum pembayaran.' },
+    { q: 'Berapa harga khusus pelanggan baru?', a: 'Harga normal tema ini Rp99.000; harga khusus pelanggan baru Rp49.000 per tema tanpa tanggal akhir yang ditetapkan saat ini. Konfirmasi ketentuan pesanan kepada admin sebelum pembayaran.' },
     { q: 'Apakah revisi dan masa aktif sudah termasuk?', a: 'Batas revisi, jenis perubahan yang diizinkan, masa aktif link, batas tamu/RSVP, serta watermark belum dirinci secara publik. Minta konfirmasi tertulis sebelum membayar.' }
   ];
   const featureList = [
@@ -283,7 +329,7 @@ for (const t of PUBLIC) {
   ];
   const product = templateSchema(t, rel);
   const body = `<nav class="ap-breadcrumb" aria-label="Breadcrumb"><a href="${base}">Beranda</a><span>›</span><a href="${base}katalog/">Katalog</a><span>›</span><a href="${base}undangan/${event.slug}/">${esc(event.label)}</a><span>›</span><span>${esc(t.nama)}</span></nav>
-  <section class="ap-hero ap-product-hero"><div class="ap-product-grid"><div class="ap-preview-column"><div class="ap-preview-frame"><iframe src="${base}undangan.html?demo=1&amp;kartu=1&amp;tpl=${encodeURIComponent(t.id)}" title="Preview demo tema ${esc(t.nama)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div><p class="ap-caption">Demo produk dengan nama, tanggal, dan gambar contoh. Ini bukan undangan pelanggan atau testimoni.</p><a class="ap-btn ap-btn-light" href="${demo}">Buka demo interaktif ukuran penuh ↗</a></div><div class="ap-product-copy"><p class="ap-eyebrow">${esc(event.label)} · Detail tema</p>${t.badge === 'NEW TEMPLATE' ? '<span class="ap-new-badge">NEW TEMPLATE</span>' : ''}<h1>${esc(title)}</h1><p class="ap-lead">${esc(t.desc || `Tema undangan digital ${event.label.toLowerCase()} ${t.nama}.`)}</p><p class="ap-price">Rp ${Number(t.harga || 49000).toLocaleString('id-ID')} <span>harga katalog per tema</span></p><p>Harga ini adalah data katalog template; admin perlu mengonfirmasi harga akhir dan lingkup layanan sebelum pembayaran.</p><ul class="ap-feature-list">${featureList.map(x => `<li>${esc(x)}</li>`).join('')}</ul><div class="ap-actions ap-actions-stack"><a class="ap-btn ap-btn-wa" href="${waLink(`Halo AsProject, saya tertarik dengan tema ${t.nama} untuk ${event.label.toLowerCase()}. Mohon konfirmasi fitur yang termasuk, kuota tamu/RSVP, masa aktif, watermark, revisi, estimasi, dan metode pembayaran.`)}" target="_blank" rel="noopener noreferrer">Tanya fitur & harga via WhatsApp</a><a class="ap-btn ap-btn-dark" href="${demo}">Coba demo tanpa chat</a></div><p class="ap-caption">Tidak ada formulir pembayaran di situs. Jangan transfer sebelum menerima rincian pesanan tertulis.</p></div></div></section>
+  <section class="ap-hero ap-product-hero"><div class="ap-product-grid"><div class="ap-preview-column"><div class="ap-preview-frame"><iframe src="${base}undangan.html?demo=1&amp;kartu=1&amp;tpl=${encodeURIComponent(t.id)}" title="Preview demo tema ${esc(t.nama)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div><p class="ap-caption">Demo produk dengan nama, tanggal, dan gambar contoh. Ini bukan undangan pelanggan atau testimoni.</p><a class="ap-btn ap-btn-light" href="${demo}">Buka demo interaktif ukuran penuh ↗</a></div><div class="ap-product-copy"><p class="ap-eyebrow">${esc(event.label)} · Detail tema</p>${t.badge === 'NEW TEMPLATE' ? '<span class="ap-new-badge">NEW TEMPLATE</span>' : ''}<h1>${esc(title)}</h1><p class="ap-lead">${esc(t.desc || `Tema undangan digital ${event.label.toLowerCase()} ${t.nama}.`)}</p><p class="ap-price"><del>Rp99.000</del> Rp ${Number(t.harga || 49000).toLocaleString('id-ID')} <span>harga khusus pelanggan baru per tema</span></p><p>Harga khusus ini tidak memiliki tanggal akhir yang ditetapkan. Rincian layanan dan ketentuan pesanan tetap perlu dikonfirmasi kepada admin sebelum pembayaran.</p><ul class="ap-feature-list">${featureList.map(x => `<li>${esc(x)}</li>`).join('')}</ul><div class="ap-actions ap-actions-stack"><a class="ap-btn ap-btn-wa" href="${waLink(`Halo AsProject, saya tertarik dengan tema ${t.nama} untuk ${event.label.toLowerCase()}. Mohon konfirmasi fitur yang termasuk, kuota tamu/RSVP, masa aktif, watermark, revisi, estimasi, dan metode pembayaran.`)}" target="_blank" rel="noopener noreferrer">Tanya fitur & harga via WhatsApp</a><a class="ap-btn ap-btn-dark" href="${demo}">Coba demo tanpa chat</a></div><p class="ap-caption">Tidak ada formulir pembayaran di situs. Jangan transfer sebelum menerima rincian pesanan tertulis.</p></div></div></section>
   ${knownTermsNote(base)}
   <section class="ap-section"><div class="ap-section-heading"><p class="ap-eyebrow">Fitur & ketentuan</p><h2>Yang perlu dipastikan</h2></div><div class="ap-grid ap-grid-2"><article class="ap-card"><h3>Pengaturan undangan</h3><p>Studio AsProject menyediakan pengaturan data acara dan opsi konten seperti lokasi, galeri, RSVP/ucapan, amplop digital, musik, serta link tamu. Minta admin menegaskan fitur yang termasuk pada pesanan ${esc(t.nama)}.</p></article><article class="ap-card"><h3>Kuota dan masa aktif</h3><p>Batas tamu/RSVP dan berapa lama link tetap aktif setelah acara belum dipublikasikan. Minta jawaban tertulis sebelum pembayaran.</p></article><article class="ap-card"><h3>Revisi</h3><p>Jangan menganggap revisi unlimited. Minta admin menjelaskan revisi teks/foto, perubahan tema atau layout, jumlah, dan batas waktu.</p></article><article class="ap-card"><h3>Watermark & harga akhir</h3><p>Watermark dan kemungkinan biaya tambahan belum dijelaskan di katalog. Konfirmasi keduanya di pesan WhatsApp sebelum transfer.</p></article></div></section>
   ${faqSection(items)}`;
@@ -312,7 +358,7 @@ const termsRel = 'syarat-ketentuan/index.html';
 {
   const rel = termsRel, base = baseFor(rel);
   const body = `<nav class="ap-breadcrumb" aria-label="Breadcrumb"><a href="${base}">Beranda</a><span>›</span><span>Syarat & Ketentuan</span></nav><header class="ap-page-heading"><p class="ap-eyebrow">Ketentuan layanan</p><h1>Syarat & Ketentuan</h1><p class="ap-caption">Terakhir ditinjau ${TODAY}. Rincian pesanan final harus dikonfirmasi tertulis oleh admin sebelum pembayaran.</p></header>
-  <div class="ap-prose"><div class="ap-notice"><strong>Informasi yang tersedia:</strong> harga katalog yang tercatat adalah Rp49.000 per tema. Situs ini tidak memiliki checkout. Batas tamu, masa aktif link, status watermark, jumlah/jenis revisi, waktu pengerjaan, dan metode pembayaran belum dinyatakan sebagai ketentuan final oleh pemilik; minta rincian tertulis sebelum membayar. Halaman ini merangkum informasi situs dan tidak menetapkan nilai atau prosedur yang belum diberikan.</div>
+  <div class="ap-prose"><div class="ap-notice"><strong>Informasi penawaran:</strong> pelanggan baru mendapat harga khusus dari Rp99.000 menjadi Rp49.000 per tema tanpa tanggal akhir yang ditetapkan saat ini. Situs ini tidak memiliki checkout. Batas tamu, masa aktif link, status watermark, jumlah/jenis revisi, waktu pengerjaan, dan metode pembayaran belum dinyatakan sebagai ketentuan final oleh pemilik; minta rincian tertulis sebelum membayar. Halaman ini merangkum informasi situs dan tidak menetapkan nilai atau prosedur yang belum diberikan.</div>
   <h2>Demo dan pemesanan</h2><p>Demo tema dapat dibuka tanpa menghubungi admin. Demo memakai data dan gambar contoh untuk memperlihatkan renderer; demo bukan hasil acara pelanggan dan bukan jaminan bahwa semua fitur akan diaktifkan pada pesanan.</p><p>Alur pemesanan dan syarat final belum dirinci di situs. Sebelum membayar, minta rincian tertulis mengenai tema, harga akhir, fitur, kuota tamu/RSVP, masa aktif, watermark, ruang lingkup revisi, estimasi selesai, dan metode pembayaran.</p>
   <h2>Materi undangan</h2><p>Sebelum membagikan link, periksa ketepatan nama, tanggal, lokasi, tautan, rekening, foto, dan musik yang ditampilkan. Gunakan hanya materi yang memang boleh dipakai dan informasi yang Anda ingin bagikan kepada penerima.</p>
   <h2>Revisi dan perubahan</h2><p>Website belum menetapkan arti atau jumlah “revisi unlimited”. Jenis revisi (teks/foto, tema, layout, atau fitur) dan tenggat harus dijelaskan di konfirmasi pesanan. Jangan berasumsi perubahan tema atau desain besar termasuk tanpa biaya tambahan.</p>
@@ -370,5 +416,5 @@ const publicPaths = [
   ...TRUST.map(t => `/${t.slug}/`)
 ];
 fs.writeFileSync(path.join(ROOT, 'tools/public-page-urls.json'), JSON.stringify(publicPaths, null, 2) + '\n');
-console.log(`Generated ${generated.length} HTML pages (${PUBLIC.length} template details, ${Object.keys(EVENTS).length} categories, ${TRUST.length} trust pages, catalog and pricing).`);
+console.log(`Generated ${generated.length} HTML pages (${PUBLIC.length} template details, ${Object.keys(EVENTS).length} categories, ${TRUST.length} trust pages, catalog, Studio demo and pricing).`);
 console.log(`Public sitemap routes: ${publicPaths.length} (plus existing demos listed separately).`);
