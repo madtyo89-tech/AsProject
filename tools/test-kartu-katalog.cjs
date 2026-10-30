@@ -283,6 +283,16 @@ async function render(d) {
   t('gerbang: teks cetak memudar saat membuka (tidak jadi teks hantu)',
     undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .p-kulit,') &&
     undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .p-hint{opacity:0;transition:opacity .28s ease}'));
+  t('gerbang: pemicu layar penuh tidak ikut bergeser saat ditekan',
+    undSrc.includes('body:not(.opened).elbuka-gerbang #cover .pemicu:active,') &&
+    undSrc.includes('body:not(.opened).elbuka-amplop:not(.foto-full) #cover .pemicu:active,') &&
+    undSrc.includes('body:not(.opened).elbuka-selendang #cover .pemicu:active{transform:none}'));
+  t('gerbang: ayunan memakai satu perspektif panel dan cover ditahan sampai hampir tuntas',
+    undSrc.includes('body.elbuka-gerbang #cover .pemicu{position:absolute;left:0;top:0;transform:none;width:100%;height:100%}') &&
+    undSrc.includes('overflow:hidden;backface-visibility:hidden;') &&
+    undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .el{transform:perspective(1200px) rotateY(-80deg)}') &&
+    undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .el2{transform:perspective(1200px) rotateY(80deg)}') &&
+    undSrc.includes('body.elbuka-gerbang.opened #cover{transition:transform 1.02s var(--ease-cover) .48s,opacity .34s ease 1.14s,visibility 0s linear 1.48s}'));
 
   /* ------------------------------------------------------------------ *
    * 7. Pita: satin transparan (nama mempelai tidak tertutup)

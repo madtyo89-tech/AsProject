@@ -1687,11 +1687,16 @@ def cek_kartu_katalog():
                and "background-position:center,right center,center;transform-origin:right center;" in live
                and "border-radius:clamp(56px,15vh,140px) 0 0 0}" in live
                and "border-radius:0 clamp(56px,15vh,140px) 0 0}" in live
-               and "background-size:100% 100%,200% 100%,100% 100%;" in live)
+               and "background-size:100% 100%,200% 100%,100% 100%;" in live
+               and "body:not(.opened).elbuka-gerbang #cover .pemicu:active," in live
+               and "body:not(.opened).elbuka-selendang #cover .pemicu:active{transform:none}" in live
+               and "body.elbuka-gerbang.opened #cover .pemicu .el{transform:perspective(1200px) rotateY(-80deg)}" in live
+               and "body.elbuka-gerbang.opened #cover .pemicu .el2{transform:perspective(1200px) rotateY(80deg)}" in live
+               and "opacity .34s ease 1.14s,visibility 0s linear 1.48s" in live)
     lapor("ok" if buku else "masalah",
           "undangan.html: sampul buku & gerbang memakai foto mempelai (--fotoSampul) + judul tercetak + teks cover disembunyikan saat tertutup")
     lapor("ok" if gerbang else "masalah",
-          "undangan.html: gerbang dua panel simetris (lebar 50%, radius & poros mirror) memakai separuh foto yang menyatu")
+          "undangan.html: gerbang dua panel simetris memakai separuh foto; pemicu layar penuh tidak bergeser saat ditekan dan ayunannya tidak memakai perspektif ganda")
     amplop = ("body.elbuka-amplop.foto-full #cover .pemicu{" in live
               and "width:min(330px,82%);height:min(430px,62%);" in live
               and "body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:26%;--fb:10%;--fc:18%;" in live
