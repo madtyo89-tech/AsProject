@@ -6,6 +6,8 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const { JSDOM } = require('jsdom');
 const ROOT = path.resolve(__dirname, '..');
+const { TEMPLATES } = require('../kerangka/template.js');
+const expectedCount = TEMPLATES.filter(t => !t.studioOnly).length;
 const html = fs.readFileSync(path.join(ROOT, 'katalog/index.html'), 'utf8');
 const script = fs.readFileSync(path.join(ROOT, 'assets/katalog-v2.js'), 'utf8');
 const dom = new JSDOM(html, { url: 'https://asproject.my.id/katalog/', runScripts: 'outside-only', pretendToBeVisual: true });
@@ -19,10 +21,12 @@ try {
   assert(w.document.body.classList.contains('ap-catalog-page'), 'catalog page opts into its isolated glass UI skin');
   assert(toast && toast.hidden && toast.getAttribute('aria-live') === 'polite', 'favorite toast is present and accessible before enhancement');
   assert(controls && controls.hidden, 'interactive controls are hidden before JS enhancement');
-  assert.equal(all().length, 34, 'all templates are server-rendered');
+  assert.equal(all().length, expectedCount, 'all templates are server-rendered');
   w.eval(script);
   assert.equal(controls.hidden, false, 'controls appear after enhancement');
-  assert.equal(visible().length, 34);
+  assert.equal(visible().length, expectedCount);
+  assert.equal(controls.querySelector('[data-catalog-sort]').value, 'featured', 'catalog enhancement keeps the server-rendered featured order by default');
+  assert(visible().slice(0, 10).every(card => card.textContent.includes('NEW TEMPLATE')), 'the ten NEW TEMPLATE releases remain first after enhancement');
 
   const search = controls.querySelector('[data-catalog-search]');
   search.value = 'sorot utama';
@@ -58,7 +62,8 @@ try {
   assert.equal(visible().length, 0);
   assert.equal(w.document.querySelector('[data-catalog-empty]').hidden, false, 'empty state appears');
   w.document.querySelector('[data-clear-filters]').click();
-  assert.equal(visible().length, 34, 'reset restores the full catalog');
+  assert.equal(visible().length, expectedCount, 'reset restores the full catalog');
+  assert(visible().slice(0, 10).every(card => card.textContent.includes('NEW TEMPLATE')), 'reset restores the newest templates first');
   assert.equal(w.document.querySelector('[data-catalog-empty]').hidden, true);
   console.log('Katalog V2 search, category filters, sorting, favorites and empty state passed.');
 } finally {

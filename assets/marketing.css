@@ -51,10 +51,14 @@ body.ap-page{margin:0;background:var(--ap-paper);color:var(--ap-ink);font-family
 .ap-category-pill{display:inline-flex;align-items:center;gap:10px;padding:11px 16px;border:1px solid #d7c8ae;border-radius:999px;background:#fffdf8;text-decoration:none;font-weight:700}
 .ap-category-pill span{color:var(--ap-gold-dark)}
 .ap-template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.ap-template-card{display:flex;flex-direction:column;min-width:0;overflow:hidden;border:1px solid var(--ap-line);border-radius:22px;background:var(--ap-card);box-shadow:0 10px 30px rgba(49,36,18,.055)}
+.ap-template-card{display:flex;flex-direction:column;min-width:0;overflow:hidden;border:1px solid var(--ap-line);border-radius:22px;background:var(--ap-card);box-shadow:0 10px 30px rgba(49,36,18,.055);content-visibility:auto;contain-intrinsic-size:auto 390px}
+@media(max-width:860px){.ap-header{backdrop-filter:blur(8px)}}
 .ap-swatch{position:relative;min-height:148px;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,var(--swatch-a),var(--swatch-b));color:var(--ap-ink)}
 .ap-swatch:before{content:"";position:absolute;inset:13px;border:1px solid rgba(255,255,255,.78);border-radius:15px}
 .ap-swatch span{position:absolute;top:13px;left:16px;padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.84);font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.ap-new-badge{display:inline-flex;align-items:center;padding:5px 10px;border-radius:99px;background:#19150f;color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.ap-swatch .ap-new-badge{top:auto;bottom:16px;left:auto;right:16px;background:#19150f;color:#fff}
+.ap-product-copy .ap-new-badge{margin-top:10px}
 .ap-swatch strong{position:relative;padding:15px;font:600 clamp(18px,2vw,25px) Georgia,"Times New Roman",serif;text-align:center;text-shadow:0 1px 12px rgba(255,255,255,.55)}
 .ap-template-card-body{display:flex;flex:1;flex-direction:column;align-items:flex-start;padding:18px}
 .ap-template-card h3{margin:2px 0 6px;font:600 20px/1.2 Georgia,"Times New Roman",serif}
@@ -367,6 +371,7 @@ body.ap-page.ap-catalog-page{
 .ap-catalog-page .ap-swatch:before{inset:11px;border:1px solid rgba(255,255,255,.74);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 2px 14px rgba(255,255,255,.12)}
 .ap-catalog-page .ap-swatch:after{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(255,255,255,.35),transparent 42%,rgba(255,255,255,.08) 72%,rgba(255,255,255,.26));pointer-events:none}
 .ap-catalog-page .ap-swatch span{z-index:1;border:1px solid rgba(255,255,255,.84);background:rgba(255,255,255,.66);color:#39475e;box-shadow:inset 0 1px 0 #fff,0 3px 10px rgba(48,61,83,.12);backdrop-filter:blur(12px)}
+.ap-catalog-page .ap-swatch .ap-new-badge{border-color:#19150f;background:#19150f;color:#fff;box-shadow:0 7px 16px rgba(25,21,15,.24)}
 .ap-catalog-page .ap-swatch strong{z-index:1;color:#27364d;text-shadow:0 1px 0 rgba(255,255,255,.82),0 4px 16px rgba(255,255,255,.54)}
 .ap-catalog-page .ap-favorite{top:12px;right:13px;border:1px solid rgba(255,255,255,.95);background:rgba(255,255,255,.67);color:#42536e;box-shadow:inset 0 1px 0 #fff,0 5px 15px rgba(44,62,91,.18);backdrop-filter:blur(14px)}
 .ap-catalog-page .ap-favorite.is-saved{background:linear-gradient(145deg,#fff,#ffe3e2);color:#ba5360}

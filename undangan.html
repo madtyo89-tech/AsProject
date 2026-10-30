@@ -31,6 +31,12 @@
   --ink-body:#2b2b2b; --ink-body-fg:#fff; --ink-fg:#fff;
   --accent-body:#0c4a6e; --accent-cover:#0EA5E9;
   --ft:"Cormorant Garamond",serif; --fb:"Inter",sans-serif;
+  /* Kurva bersama animasi cover: mulai responsif, lalu melambat panjang di
+     ujung. Dipakai semua model fisik & FX supaya katalog, Studio, dan
+     undangan live terasa sama halusnya. */
+  --ease-cover:cubic-bezier(.22,.78,.24,1);
+  --ease-cover-soft:cubic-bezier(.33,.72,.24,1);
+  --ease-cover-io:cubic-bezier(.45,0,.22,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -54,7 +60,19 @@ button{font-family:inherit;cursor:pointer}
 /* ---------- COVER ---------- */
 #cover{position:fixed;inset:0;height:100vh;height:100dvh;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 26px;
   background:linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));
-  transition:opacity .7s ease,visibility .7s;}
+  transition:transform .72s var(--ease-cover-soft),opacity .72s var(--ease-cover-soft),clip-path .72s var(--ease-cover-soft),visibility .72s;}
+/* Promosikan hanya lapisan yang sedang membuka ke GPU. Ini mencegah panel
+   besar/foto penuh dicat ulang tiap frame di HP, tanpa menahan will-change
+   secara permanen setelah cover selesai. */
+body.opened #cover{will-change:transform,opacity,clip-path;backface-visibility:hidden}
+body.opened #cover .pemicu,
+body.opened #cover .pemicu .el,
+body.opened #cover .pemicu .el2,
+body.opened #cover .pemicu .simpul,
+body.opened #cover .bkl,
+body.opened #cover .bkt,
+body.opened #cover .bld,
+body.opened #cover .kt-burst i{will-change:transform,opacity}
 #cover .pat{position:absolute;inset:0;pointer-events:none;opacity:.5}
 #cover .veil{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(255,255,255,.25)}
 #cover .inner{position:relative;max-width:400px;width:100%;margin-left:auto;margin-right:auto}
@@ -228,7 +246,7 @@ body.wedding-cover .amp-row .nm,body.wedding-cover .footer .orn{color:var(--acce
 body.wedding-cover .copy{border-color:color-mix(in srgb,var(--accent-body) 35%,#fff);background:color-mix(in srgb,var(--g1) 24%,#fff);color:var(--accent-body)}
 body.wedding-cover .gal img{border-color:color-mix(in srgb,var(--accent) 25%,#fff)}
 
-/* Gerbang Arch Studio-only variants: keep category copy and live controls, add layered arch stationery. */
+/* Gerbang Arch public variants: keep category copy and live controls, add layered arch stationery. */
 body.gerbang-arch #cover .bdfr{isolation:isolate}
 body.gerbang-arch #cover .bdfr::before{
  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
@@ -248,12 +266,19 @@ body.gerbang-arch .acara{border-radius:12px}
 body.opened #cover{opacity:0;visibility:hidden}
 
 /* ---------- CONTENT ---------- */
-#content{opacity:0;transition:opacity .8s ease .15s}
+#content{opacity:0;transition:opacity .85s var(--ease-cover-soft) .1s}
 body.opened #content{opacity:1}
 /* Sesudah cover ditekan, tahan tampilan isi sejenak agar animasi cover selesai
-   lebih dulu; kelas ini hanya dipakai oleh buka interaktif, bukan demo auto-open. */
-body.opened.cover-opening #content{opacity:0;transition:none}
+   lebih dulu; kelas ini hanya dipakai oleh buka interaktif, bukan demo auto-open.
+   Isi juga dikunci dari sentuhan/fokus/scroll supaya tamu tidak bisa menggeser
+   atau menekan halaman yang masih transparan di balik cover. */
+body.opened.cover-opening{overflow:hidden}
+html:has(body.opened.cover-opening){overflow:hidden}
+body.opened.cover-opening #content{opacity:0;visibility:hidden;transition:none;pointer-events:none}
 body.opened.cover-opening #coverBack{display:none}
+body.opened.cover-opening .nv-bar{display:none}
+body.opened.cover-opening .scr-frame{opacity:0;visibility:hidden}
+body.opened.cover-opening .scr-frame .orn-c{clip-path:inset(0 100% 100% 0)}
 .wrap{max-width:470px;margin:0 auto;padding:34px 20px 90px;background:
   radial-gradient(rgba(212,175,55,.06) 1.5px,transparent 1.8px);background-size:26px 26px;}
 .card{background:var(--card);border:1px solid #f0e6d6;border-radius:22px;padding:28px 22px;text-align:center;box-shadow:0 16px 40px rgba(90,70,30,.07);margin-bottom:18px}
@@ -374,8 +399,8 @@ h2.sec{font-family:var(--ft);font-size:27px;font-weight:700;color:var(--ink-body
 #musikBtn .disc::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
 #musikBtn .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Nama lagu/template tidak ditulis di cover — hanya ikon piringan. Nama muncul lagi setelah undangan dibuka. */
-body:not(.opened) #musikBtn .t{display:none}
-body:not(.opened) #musikBtn{padding:0 13px}
+body:not(.opened) #musikBtn .t,body.cover-opening #musikBtn .t{display:none}
+body:not(.opened) #musikBtn,body.cover-opening #musikBtn{padding:0 13px}
 
 /* ==== Mode pratinjau (iframe Studio): tanpa tombol kontrol Studio ==== */
 body.preview-mode #coverBack{display:none}
@@ -388,6 +413,8 @@ body.pv-soft *,body.pv-soft *::before,body.pv-soft *::after{animation:none!impor
 /* ==== Tombol kembali ke cover: muncul hanya setelah undangan dibuka ==== */
 #coverBack{position:fixed;right:14px;bottom:16px;z-index:120;display:none;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-radius:99px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(90,70,30,.18);color:var(--ink-body);font-size:11px;font-weight:600;cursor:pointer}
 body.opened #coverBack{display:inline-flex}
+@keyframes coverBackIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+body.opened:not(.cover-opening) #coverBack{animation:coverBackIn .5s var(--ease-cover-soft) backwards}
 #coverBack .arw{font-size:15px;line-height:1}
 /* Bar navigasi slide (mode navpager) duduk di tengah bawah — naikkan tombol agar tidak bertumpuk. */
 body.navpager #coverBack{bottom:66px}
@@ -560,7 +587,7 @@ body:not(.opened) #aspAmbient{opacity:.42}
 @media (prefers-reduced-motion:reduce){
   #aspAmbient{display:none}
   .kn-l,.kn-l::after{animation:none;opacity:1}
-  .cvcue,.cdw .n.tick{animation:none}
+  .cvcue,.cvcue i,.cdw .n.tick{animation:none}
   .livebtn i{animation:none}
 }
 
@@ -631,7 +658,7 @@ body:not(.opened) #aspAmbient{opacity:.42}
    sentuhan sama sekali, dan hanya muncul setelah undangan dibuka supaya
    sampul tidak berhias dobel. Bayangan dibuat bertingkat (emboss + bayangan
    ambien dalam) supaya ornamen terasa melayang nyata di atas halaman. */
-.scr-frame{position:fixed;inset:0;pointer-events:none;z-index:150;opacity:0;visibility:hidden;transition:opacity .7s ease,visibility .7s}
+.scr-frame{position:fixed;inset:0;pointer-events:none;z-index:150;opacity:0;visibility:hidden;transition:opacity .85s var(--ease-cover-soft),visibility .85s}
 body.opened .scr-frame{opacity:1;visibility:visible}
 .scr-frame .orn-c{top:8px;left:8px;right:auto;bottom:auto;width:clamp(58px,15vw,92px);height:clamp(58px,15vw,92px);opacity:.95;color:var(--accent-body)}
 .scr-frame .orn-c.tr{top:8px;right:8px;left:auto}
@@ -685,10 +712,10 @@ body.wedding-cover #cover .open:active,body.foto-full #cover .open:active,#cover
 #musikBtn .disc::after{width:4px;height:4px}
 
 /* ==== Animasi buka amplop: flap terangkat, segel jatuh, cover fade perlahan ==== */
-#cover .open::before{transform-origin:50% 0;transition:transform .55s cubic-bezier(.34,0,.2,1)}
-#cover .open::after,#cover .open .env{transition:transform .45s ease .16s,opacity .38s ease .22s}
+#cover .open::before{transform-origin:50% 0;transition:transform .68s var(--ease-cover-io)}
+#cover .open::after,#cover .open .env{transition:transform .58s var(--ease-cover-soft) .18s,opacity .5s ease .24s}
 body.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transform-origin:0% 50%;
-  transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .6s ease .78s,visibility 0s linear 1.35s}
+  transition:transform 1.02s var(--ease-cover) .48s,opacity .7s ease .8s,visibility 0s linear 1.5s}
 body.buka-gilir.opened #cover{transform:perspective(1300px) rotateY(-15deg) translateX(-38%)}
 body.buka-geser.opened #cover{transform:translateX(-105%)}
 body.buka-lipat.opened #cover{transform-origin:50% 0;transform:perspective(1200px) rotateX(-24deg) translateY(-42%)}
@@ -720,19 +747,23 @@ body.buka-tirai.opened #cover{transform-origin:50% 50%;transform:scaleX(.68)}
 body.buka-pintu #cover .bkl{display:block}
 body.buka-kotak #cover .bkt,body.buka-kotak .kt-burst{display:block}
 body.buka-pintu #cover{perspective:1200px;transform-style:preserve-3d}
-body.buka-buku.opened #cover{opacity:1;visibility:visible;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-158deg);backface-visibility:hidden;transition:transform 1.05s cubic-bezier(.62,.05,.3,1),visibility 0s 1.12s}
-body.buka-pintu.opened #cover .bdfr,body.buka-kotak.opened #cover .bdfr,body.buka-pintu.opened #cover .pat,body.buka-kotak.opened #cover .pat,body.buka-pintu.opened #cover .veil,body.buka-kotak.opened #cover .veil{opacity:0;transition:opacity .25s ease}
-body.buka-pintu.opened #cover,body.buka-kotak.opened #cover{opacity:1;visibility:visible;pointer-events:none;transition:visibility 0s 1.25s}
-body.buka-pintu.opened #cover .bkl.l{animation:pintuL .95s cubic-bezier(.55,.06,.28,.99) .1s both}
-body.buka-pintu.opened #cover .bkl.r{animation:pintuR .95s cubic-bezier(.55,.06,.28,.99) .1s both}
-body.buka-kotak.opened #cover .bkt.t{animation:kotakT 1.05s cubic-bezier(.5,.08,.3,1) .05s both}
-body.buka-kotak.opened #cover .bkt.b{animation:kotakB 1.05s ease-in .32s both}
-body.buka-kotak.opened .kt-burst i{animation:ktTerbang 1.15s ease-out .5s both}
-@keyframes pintuL{0%{opacity:1;transform:rotateY(0)}100%{opacity:1;transform:rotateY(-102deg)}}
-@keyframes pintuR{0%{opacity:1;transform:rotateY(0)}100%{opacity:1;transform:rotateY(102deg)}}
-@keyframes kotakT{0%{opacity:1;transform:rotateX(0)}55%{opacity:1;transform:rotateX(-116deg)}100%{opacity:0;transform:rotateX(-116deg) translateY(-8%)}}
-@keyframes kotakB{0%{opacity:1;transform:translateY(0)}70%{opacity:1}100%{opacity:0;transform:translateY(16%)}}
-@keyframes ktTerbang{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}18%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(160deg)}}
+/* Keadaan akhir cover harus hidden: delay pada transisi visibility-lah yang
+   menahannya tetap tampak selama panel bergerak. Jika keadaan akhirnya dibuat
+   visible, latar #cover yang pekat tertinggal selamanya dan menutupi isi. */
+body.buka-buku.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-112deg) translateX(-7%);backface-visibility:hidden;transition:transform 1.18s var(--ease-cover-io),opacity .36s ease .82s,visibility 0s linear 1.22s}
+body.buka-pintu.opened #cover .bdfr,body.buka-kotak.opened #cover .bdfr,body.buka-pintu.opened #cover .pat,body.buka-kotak.opened #cover .pat,body.buka-pintu.opened #cover .veil,body.buka-kotak.opened #cover .veil{opacity:0;transition:opacity .38s var(--ease-cover-soft)}
+body.buka-pintu.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease .94s,visibility 0s linear 1.26s}
+body.buka-kotak.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .34s ease 1.18s,visibility 0s linear 1.52s}
+body.buka-pintu.opened #cover .bkl.l{animation:pintuL 1.08s var(--ease-cover-io) .08s both}
+body.buka-pintu.opened #cover .bkl.r{animation:pintuR 1.08s var(--ease-cover-io) .08s both}
+body.buka-kotak.opened #cover .bkt.t{animation:kotakT 1.14s var(--ease-cover-io) .05s both}
+body.buka-kotak.opened #cover .bkt.b{animation:kotakB 1.14s var(--ease-cover-soft) .28s both}
+body.buka-kotak.opened .kt-burst i{animation:ktTerbang 1.02s ease-out .42s both}
+@keyframes pintuL{0%{opacity:1;transform:rotateY(0)}82%{opacity:1}100%{opacity:0;transform:rotateY(-102deg)}}
+@keyframes pintuR{0%{opacity:1;transform:rotateY(0)}82%{opacity:1}100%{opacity:0;transform:rotateY(102deg)}}
+@keyframes kotakT{0%{opacity:1;transform:rotateX(0)}58%{opacity:1;transform:rotateX(-116deg)}78%{opacity:.55;transform:rotateX(-116deg) translateY(-4%)}100%{opacity:0;transform:rotateX(-116deg) translateY(-8%)}}
+@keyframes kotakB{0%{opacity:1;transform:translateY(0)}62%{opacity:1}100%{opacity:0;transform:translateY(18%)}}
+@keyframes ktTerbang{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}18%{opacity:1}55%{opacity:.86;transform:translate(calc(var(--dx)*.58),calc(var(--dy)*.58)) scale(.94) rotate(96deg)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(160deg)}}
 
 /* Reveal elegan bingkai layar: tiap sudut tersibak dari pojok layarnya lewat
    clip-path (bukan transform, supaya mirror .orn-c tetap utuh), berjenjang
@@ -770,18 +801,19 @@ body.opened .scr-frame .orn-c.br svg{animation-delay:2.6s}
 body.buka-blinds #cover .bld{display:block}
 body.buka-iris #cover{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
 body.buka-lubang #cover{clip-path:circle(150% at 50% 50%)}
-body.buka-blinds.opened #cover .bdfr,body.buka-blinds.opened #cover .pat,body.buka-blinds.opened #cover .veil{opacity:0;transition:opacity .25s ease}
-body.buka-pintu.opened #cover .cvlatar,body.buka-kotak.opened #cover .cvlatar,body.buka-blinds.opened #cover .cvlatar{opacity:0;transition:opacity .25s ease}
-body.buka-blinds.opened #cover,body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover{opacity:1;visibility:visible;pointer-events:none;transition:visibility 0s 1.15s}
-body.buka-blinds.opened #cover .bld.b1{animation:blindsL .8s cubic-bezier(.65,.05,.3,.95) .05s both}
-body.buka-blinds.opened #cover .bld.b2{animation:blindsR .8s cubic-bezier(.65,.05,.3,.95) .15s both}
-body.buka-blinds.opened #cover .bld.b3{animation:blindsL .8s cubic-bezier(.65,.05,.3,.95) .25s both}
-body.buka-blinds.opened #cover .bld.b4{animation:blindsR .8s cubic-bezier(.65,.05,.3,.95) .35s both}
-body.buka-iris.opened #cover{clip-path:polygon(0 0,0 0,0 0,0 0);transition:clip-path 1s cubic-bezier(.7,.05,.3,1),visibility 0s 1.05s}
-body.buka-lubang.opened #cover{clip-path:circle(0% at 50% 50%);transition:clip-path .95s cubic-bezier(.6,.05,.3,1),visibility 0s 1s}
-body.buka-jungkit.opened #cover{transform-origin:50% 100%;transform:perspective(1200px) rotateX(94deg);transition:transform .95s cubic-bezier(.55,.08,.3,1),visibility 0s 1s}
-@keyframes blindsL{0%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(-102%)}}
-@keyframes blindsR{0%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(102%)}}
+body.buka-blinds.opened #cover .bdfr,body.buka-blinds.opened #cover .pat,body.buka-blinds.opened #cover .veil{opacity:0;transition:opacity .38s var(--ease-cover-soft)}
+body.buka-pintu.opened #cover .cvlatar,body.buka-kotak.opened #cover .cvlatar,body.buka-blinds.opened #cover .cvlatar{opacity:0;transition:opacity .38s var(--ease-cover-soft)}
+body.buka-blinds.opened #cover,body.buka-iris.opened #cover,body.buka-lubang.opened #cover,body.buka-jungkit.opened #cover{visibility:hidden;pointer-events:none}
+body.buka-blinds.opened #cover{opacity:0;transition:opacity .3s ease .98s,visibility 0s linear 1.28s}
+body.buka-blinds.opened #cover .bld.b1{animation:blindsL .92s var(--ease-cover-io) .04s both}
+body.buka-blinds.opened #cover .bld.b2{animation:blindsR .92s var(--ease-cover-io) .12s both}
+body.buka-blinds.opened #cover .bld.b3{animation:blindsL .92s var(--ease-cover-io) .2s both}
+body.buka-blinds.opened #cover .bld.b4{animation:blindsR .92s var(--ease-cover-io) .28s both}
+body.buka-iris.opened #cover{opacity:0;clip-path:polygon(0 0,0 0,0 0,0 0);transition:clip-path 1.12s var(--ease-cover),opacity .3s ease .84s,visibility 0s linear 1.16s}
+body.buka-lubang.opened #cover{opacity:0;clip-path:circle(0% at 50% 50%);transition:clip-path 1.06s var(--ease-cover),opacity .3s ease .78s,visibility 0s linear 1.1s}
+body.buka-jungkit.opened #cover{opacity:0;transform-origin:50% 100%;transform:perspective(1200px) rotateX(94deg);transition:transform 1.08s var(--ease-cover-io),opacity .3s ease .78s,visibility 0s linear 1.12s}
+@keyframes blindsL{0%{opacity:1;transform:translateX(0)}82%{opacity:1}100%{opacity:0;transform:translateX(-102%)}}
+@keyframes blindsR{0%{opacity:1;transform:translateX(0)}82%{opacity:1}100%{opacity:0;transform:translateX(102%)}}
 @media (prefers-reduced-motion:reduce){
  #cover .bld{animation:none!important;opacity:0!important}
  body.buka-iris #cover,body.buka-lubang #cover{clip-path:none}
@@ -867,6 +899,7 @@ body.wedding-cover.opened #cover .open::after,body.foto-full.opened #cover .open
 body.wedding-cover.opened #cover .open .env,body.foto-full.opened #cover .open .env,body.opened #cover .open .env{transform:translate(-50%,4%) scale(.5);opacity:0}
 @media (prefers-reduced-motion:reduce){
   #content{transition:none!important}
+  #coverBack{animation:none!important}
   #cover .open::after{animation:none}
   #cover .open::before,#cover .open::after,#cover .open .env,body.opened #cover{transition:none!important}
   body.opened #cover{transform:none}
@@ -1127,14 +1160,43 @@ body.cvsz-jumbo #content .couple-foto.tunggal .cf{width:min(228px,60vw)}
    terbuka. Setiap tema membawa elemennya sendiri dari kerangka.
    Semua elemen berukuran penuh & bertekstur 3D — gradasi berlapis,
    bayangan dalam, tepi timbul, kilau, pegangan pintu. ==== */
-#cover .pemicu{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .25s ease,filter .25s ease}
+#cover .pemicu{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .32s var(--ease-cover-soft),filter .3s ease}
 #cover .pemicu .el,#cover .pemicu .el2,#cover .pemicu .simpul{display:block;position:absolute;pointer-events:none}
 #cover .pemicu .p-hint{position:absolute;left:50%;top:calc(100% + 14px);transform:translateX(-50%);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-fg,#fff);opacity:.92;white-space:nowrap;text-shadow:0 1px 6px rgba(0,0,0,.45)}
 #cover .pemicu:focus-visible{outline:2px solid var(--accent-cover,var(--accent));outline-offset:8px}
+/* Selama elemen kaca/kain sedang bergerak, backdrop-filter dimatikan agar
+   browser tidak mengambil ulang latar di baliknya pada setiap frame. Tint
+   warnanya tetap sama; efek kacanya kembali utuh saat cover ditutup lagi. */
+body.opened[class*="elbuka-"].elbuka-pita #cover .pemicu .el,
+body.opened[class*="elbuka-"].elbuka-pita #cover .pemicu .el2,
+body.opened[class*="elbuka-"].elbuka-pita #cover .pemicu .simpul,
+body.opened[class*="elbuka-"].elbuka-gembok #cover .pemicu .el,
+body.opened[class*="elbuka-"].elbuka-gembok #cover .pemicu .simpul,
+body.opened[class*="elbuka-"].elbuka-selendang #cover .pemicu .el{-webkit-backdrop-filter:none;backdrop-filter:none}
+body.opened[class*="elbuka-"].elbuka-gembok #cover .pemicu .simpul::after{-webkit-backdrop-filter:none;backdrop-filter:none}
 /* respons sentuh: elemen kecil bereaksi di hover & tekan */
 body:not(.opened) #cover .pemicu:hover{filter:brightness(1.07)}
 body:not(.opened) #cover .pemicu:active{transform:translate(-50%,-50%) scale(.95)}
+/* Pemicu layar penuh tidak memakai transform tengah milik pemicu kecil.
+   Tanpa pengecualian ini, translate(-50%,-50%) dari aturan :active di atas
+   menang atas transform:none modelnya dan menggeser seluruh tirai/gerbang/
+   pintu/amplop/selendang ke kiri-atas sesaat sebelum animasi membuka. */
+body:not(.opened).elbuka-tirai #cover .pemicu:active,
+body:not(.opened).elbuka-gerbang #cover .pemicu:active,
+body:not(.opened).elbuka-pintu #cover .pemicu:active,
+body:not(.opened).elbuka-amplop:not(.foto-full) #cover .pemicu:active,
+body:not(.opened).elbuka-selendang #cover .pemicu:active{transform:none}
 body:not(.opened).elbuka-pita #cover .pemicu:hover,body:not(.opened).elbuka-buku #cover .pemicu:hover{transform:translate(-50%,-50%) scale(1.05)}
+/* Pemicu kecil punya transform dasar yang berbeda-beda. Aturan tekan generik
+   tidak boleh menebak translate/skala modelnya: pita/buku dulu malah membesar
+   karena aturan :hover menang atas :active, sedangkan kotak meloncat ke atas
+   karena translateY(-50%) ikut dipaksakan. Samakan respons tekannya tanpa
+   mengubah titik jangkar masing-masing model. */
+body:not(.opened).elbuka-pita #cover .pemicu:active,
+body:not(.opened).elbuka-buku #cover .pemicu:active,
+body:not(.opened).elbuka-amplop.foto-full #cover .pemicu:active{transform:translate(-50%,-50%) scale(.95)}
+body:not(.opened).elbuka-gembok:not(.foto-full) #cover .pemicu:active{transform:translate(-50%,-50%) scale(.475)}
+body:not(.opened).elbuka-kotak #cover .pemicu:active{transform:translateX(-50%) scale(calc(var(--k,1)*.95))}
 
 /* --- Pita satin melintang penuh (KACA/transparan) ---
    Pita dulu menutupi total nama mempelai di kartu belakangnya. Sekarang
@@ -1188,26 +1250,33 @@ body.elbuka-pita.foto-full #cover .pemicu .el2{top:78px;height:17px;border-radiu
 body.elbuka-pita.foto-full #cover .pemicu .simpul{top:41px;width:40px;height:40px;margin-left:-20px;
   --pa:40%;--pb:24%;--pc:18%}
 body.elbuka-pita #cover .kt-burst{display:block}
-body.elbuka-pita.opened #cover .pemicu .el,body.elbuka-pita.opened #cover .pemicu .simpul{animation:pitaTerbang 1.05s cubic-bezier(.5,.05,.3,1) forwards}
-body.elbuka-pita.opened #cover .pemicu .el2{animation:pitaTerbang 1.05s .07s cubic-bezier(.5,.05,.3,1) forwards}
-body.elbuka-pita.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .45s both}
-@keyframes pitaTerbang{to{transform:translateY(-300px) rotate(16deg) scale(1.35);opacity:0;filter:blur(8px)}}
+body.elbuka-pita.opened #cover .pemicu .el,body.elbuka-pita.opened #cover .pemicu .simpul{animation:pitaTerbang 1.22s var(--ease-cover-io) forwards}
+body.elbuka-pita.opened #cover .pemicu .el2{animation:pitaTerbang 1.22s .08s var(--ease-cover-io) forwards}
+body.elbuka-pita.opened #cover .kt-burst i{animation:ktTerbang 1s ease-out .4s both}
+@keyframes pitaTerbang{0%{transform:translateY(0) rotate(0) scale(1);opacity:1}22%{transform:translateY(-42px) rotate(3deg) scale(1.04);opacity:1}68%{transform:translateY(-190px) rotate(11deg) scale(1.2);opacity:.72}100%{transform:translateY(-300px) rotate(16deg) scale(1.32);opacity:0}}
 
 /* --- Tirai: dua panel berlipat penuh --- */
 body.elbuka-tirai #cover .pemicu{position:absolute;left:0;top:0;transform:none;width:100%;height:100%}
 body.elbuka-tirai #cover .pemicu .el,body.elbuka-tirai #cover .pemicu .el2{top:0;bottom:0;width:50.6%;background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.17) 0 3px,transparent 3px 10px),repeating-linear-gradient(0deg,transparent 0 46px,rgba(0,0,0,.12) 46px 49px),linear-gradient(165deg,color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 68%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A8823F)) 36%,#140a06));box-shadow:inset 0 0 80px rgba(0,0,0,.58),inset 0 -30px 50px rgba(0,0,0,.35)}
 body.elbuka-tirai #cover .pemicu .el{left:0;transform-origin:left center}
 body.elbuka-tirai #cover .pemicu .el2{right:0;transform-origin:right center}
-body.elbuka-tirai.opened #cover .pemicu .el{transform:translateX(-106%) skewX(-10deg);transition:transform 1.2s cubic-bezier(.4,0,.2,1)}
-body.elbuka-tirai.opened #cover .pemicu .el2{transform:translateX(106%) skewX(10deg);transition:transform 1.2s cubic-bezier(.4,0,.2,1)}
+body.elbuka-tirai #cover .pemicu .el,body.elbuka-tirai #cover .pemicu .el2{transition:transform 1.34s var(--ease-cover-io)}
+body.elbuka-tirai.opened #cover .pemicu .el{transform:translateX(-106%) skewX(-8deg)}
+body.elbuka-tirai.opened #cover .pemicu .el2{transform:translateX(106%) skewX(8deg)}
+/* Panel tirai bergerak 1,34 detik; tahan fade cover sampai panel hampir
+   keluar layar agar sepertiga akhir geraknya tidak berubah menjadi hantu. */
+body.elbuka-tirai.opened #cover{transition:transform .98s var(--ease-cover) .48s,opacity .34s ease 1.12s,visibility 0s linear 1.46s}
 
 /* --- Gerbang foto: dua panel SIMETRIS dari FOTO MEMPELAI (--fotoSampul).
    Tiap panel menampilkan separuh foto (background 200% lebar: kiri & kanan),
    jadi saat tertutup keduanya menyatu jadi satu foto utuh. Dulu panelnya
    hanya gradasi emas dan radius-nya tidak mirror (kiri-bawah 260px vs
    kiri-atas 260px) sehingga gerbang tampak asimetris/condong. --- */
-body.elbuka-gerbang #cover .pemicu{position:absolute;left:0;top:0;transform:none;width:100%;height:100%;perspective:1200px}
-body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{top:0;bottom:0;width:50%;overflow:hidden;
+/* Perspektif hanya dipasang sekali pada transform tiap panel (seperti pintu).
+   Perspektif parent + perspective() panel bersamaan membuat tepi tengah
+   membesar vertikal berlebihan dan ayunan gerbang terasa melengkung. */
+body.elbuka-gerbang #cover .pemicu{position:absolute;left:0;top:0;transform:none;width:100%;height:100%}
+body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{top:0;bottom:0;width:50%;overflow:hidden;backface-visibility:hidden;
   background-image:
     linear-gradient(180deg,rgba(12,9,6,.08) 0%,rgba(12,9,6,.16) 42%,rgba(12,9,6,.56) 100%),
     var(--fotoSampul,none),
@@ -1230,10 +1299,15 @@ body.elbuka-gerbang #cover .pemicu .simpul{left:50%;top:0;bottom:0;width:2px;mar
   background:linear-gradient(180deg,transparent,rgba(255,241,206,.8) 16%,#fff 50%,rgba(255,241,206,.8) 84%,transparent);
   box-shadow:0 0 24px 6px rgba(255,226,150,.4)}
 body.elbuka-gerbang #cover .kt-burst{display:block}
-body.elbuka-gerbang.opened #cover .pemicu .el{transform:perspective(1100px) rotateY(-74deg);transition:transform 1.1s cubic-bezier(.5,0,.2,1)}
-body.elbuka-gerbang.opened #cover .pemicu .el2{transform:perspective(1100px) rotateY(74deg);transition:transform 1.1s cubic-bezier(.5,0,.2,1)}
-body.elbuka-gerbang.opened #cover .pemicu .simpul{opacity:0;transition:opacity .45s}
-body.elbuka-gerbang.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .45s both}
+body.elbuka-gerbang #cover .pemicu .el,body.elbuka-gerbang #cover .pemicu .el2{transition:transform 1.3s var(--ease-cover-io)}
+body.elbuka-gerbang #cover .pemicu .simpul,body.elbuka-gerbang #cover .pemicu .p-kulit,body.elbuka-gerbang #cover .pemicu .p-hint{transition:opacity .45s var(--ease-cover-soft)}
+/* Tahan fade cover sampai daun gerbang hampir tuntas; fade generik yang
+   mulai di 0,8 dtk membuat panel berubah hantu pada sepertiga akhir ayunan. */
+body.elbuka-gerbang.opened #cover{transition:transform 1.02s var(--ease-cover) .48s,opacity .34s ease 1.14s,visibility 0s linear 1.48s}
+body.elbuka-gerbang.opened #cover .pemicu .el{transform:perspective(1200px) rotateY(-80deg)}
+body.elbuka-gerbang.opened #cover .pemicu .el2{transform:perspective(1200px) rotateY(80deg)}
+body.elbuka-gerbang.opened #cover .pemicu .simpul{opacity:0}
+body.elbuka-gerbang.opened #cover .kt-burst i{animation:ktTerbang 1s ease-out .42s both}
 
 /* --- Pintu: dua daun berpapan + pegangan, berayun 3D.
    Realistis: serat kayu, kusen emas, celah cahaya di
@@ -1248,10 +1322,15 @@ body.elbuka-pintu #cover .pemicu .el2::after{left:16px;margin-top:-8px}
 /* celah cahaya di antara dua daun */
 body.elbuka-pintu #cover .pemicu .simpul{left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:linear-gradient(180deg,transparent,#fff3c4 26%,#fff 50%,#fff3c4 74%,transparent);opacity:.9;box-shadow:0 0 26px 7px rgba(255,220,130,.7);z-index:1}
 body.elbuka-pintu #cover .kt-burst{display:block}
-body.elbuka-pintu.opened #cover .pemicu .el{transform:perspective(1200px) rotateY(-102deg);transition:transform 1.05s cubic-bezier(.3,1.35,.4,1)}
-body.elbuka-pintu.opened #cover .pemicu .el2{transform:perspective(1200px) rotateY(102deg);transition:transform 1.05s cubic-bezier(.3,1.35,.4,1)}
-body.elbuka-pintu.opened #cover .pemicu .simpul{opacity:0;transition:opacity .5s .75s}
-body.elbuka-pintu.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .5s both}
+body.elbuka-pintu #cover .pemicu .el,body.elbuka-pintu #cover .pemicu .el2{transition:transform 1.24s var(--ease-cover-io)}
+body.elbuka-pintu #cover .pemicu .simpul{transition:opacity .45s var(--ease-cover-soft)}
+body.elbuka-pintu.opened #cover .pemicu .el{transform:perspective(1200px) rotateY(-103deg)}
+body.elbuka-pintu.opened #cover .pemicu .el2{transform:perspective(1200px) rotateY(103deg)}
+body.elbuka-pintu.opened #cover .pemicu .simpul{opacity:0;transition:opacity .5s var(--ease-cover-soft) .72s}
+body.elbuka-pintu.opened #cover .kt-burst i{animation:ktTerbang .98s ease-out .44s both}
+/* Daun pintu berayun 1,24 detik; fade cover generik yang mulai di 0,8 detik
+   membuat foto dan celah cahaya ikut menjadi hantu sebelum ayunan tuntas. */
+body.elbuka-pintu.opened #cover{transition:transform .86s var(--ease-cover) .48s,opacity .32s ease 1.02s,visibility 0s linear 1.34s}
 
 /* --- Buku foto: sampul memakai FOTO MEMPELAI (--fotoSampul), lengkap dengan
    punggung buku, blok halaman, pita pembatas, dan judul tercetak di kulit.
@@ -1272,7 +1351,10 @@ body.elbuka-buku #cover .pemicu{width:min(310px,78%);height:min(420px,64%);
     inset 0 0 0 1px rgba(255,255,255,.42),
     inset 0 0 0 7px rgba(255,255,255,.10);
   overflow:hidden;
-  isolation:isolate}
+  isolation:isolate;
+  /* Setelah sampul melewati 90°, sembunyikan punggungnya. Tanpa ini, foto &
+     judul tercetak sempat tampak termirror sebagai sliver tipis di tepi kiri. */
+  backface-visibility:hidden}
 /* Bayangan punggung: sisi kiri buku terasa melengkung masuk. */
 body.elbuka-buku #cover .pemicu::before{content:'';position:absolute;left:0;top:0;bottom:0;width:64px;z-index:1;
   pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.14) 55%,transparent)}
@@ -1310,8 +1392,8 @@ body.elbuka-buku #cover .kt-burst{display:block}
 /* Buku terbuka dari PUNGGUNGNYA (tepi kiri), bukan berputar di tengah. */
 body.elbuka-buku.opened #cover .pemicu{transform-origin:left center;
   transform:translate(-50%,-50%) perspective(1400px) rotateY(-150deg);opacity:0;
-  transition:transform 1.15s cubic-bezier(.55,.05,.28,1),opacity .85s .3s}
-body.elbuka-buku.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .45s both}
+  transition:transform 1.28s var(--ease-cover-io),opacity .92s var(--ease-cover-soft) .3s}
+body.elbuka-buku.opened #cover .kt-burst i{animation:ktTerbang 1s ease-out .42s both}
 
 /* --- Amplop besar dengan segel lilin: flap segitiga terangkat
    ke belakang, segel melebar lalu pecah --- */
@@ -1328,10 +1410,16 @@ body.elbuka-amplop #cover .pemicu .el2{left:0;top:52%;bottom:0;width:100%;backgr
 body.elbuka-amplop #cover .pemicu .simpul{left:50%;top:47%;width:78px;height:78px;margin-left:-39px;margin-top:-39px;border-radius:50%;background:radial-gradient(circle at 38% 30%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 85%,#fff),color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 55%,#fff) 40%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 40%,#3a0f1c) 78%,color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 28%,#2a0a12));box-shadow:0 8px 22px rgba(30,10,20,.5),inset 0 -5px 10px rgba(0,0,0,.35),inset 0 3px 6px rgba(255,255,255,.45);z-index:4}
 body.elbuka-amplop #cover .pemicu .simpul::after{content:'';position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid color-mix(in srgb,var(--accent-cover,var(--accent,#A65066)) 70%,#fff);opacity:.7}
 body.elbuka-amplop #cover .kt-burst{display:block}
-body.elbuka-amplop.opened #cover .pemicu .el{transform:rotateX(-178deg);transition:transform 1s cubic-bezier(.4,0,.2,1)}
-body.elbuka-amplop.opened #cover .pemicu .simpul{transform:translate(-50%,-50%) scale(1.4) rotate(20deg);opacity:0;transition:transform .6s ease,opacity .6s ease .1s}
-body.elbuka-amplop.opened #cover .pemicu .el2{opacity:0;transition:opacity .8s .3s}
-body.elbuka-amplop.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .4s both}
+body.elbuka-amplop #cover .pemicu .el{transition:transform 1.18s var(--ease-cover-io)}
+body.elbuka-amplop #cover .pemicu .simpul{transition:transform .74s var(--ease-cover-soft),opacity .74s ease .08s}
+body.elbuka-amplop #cover .pemicu .el2{transition:opacity .92s var(--ease-cover-soft) .28s}
+body.elbuka-amplop.opened #cover .pemicu .el{transform:rotateX(-178deg)}
+body.elbuka-amplop.opened #cover .pemicu .simpul{transform:scale(1.38) rotate(18deg);opacity:0}
+body.elbuka-amplop.opened #cover .pemicu .el2{opacity:0}
+body.elbuka-amplop.opened #cover .kt-burst i{animation:ktTerbang 1s ease-out .4s both}
+/* Flap amplop berputar 1,18 detik; tahan fade cover sampai flap hampir
+   terbalik penuh agar segitiga flap tidak larut menjadi hantu di akhir. */
+body.elbuka-amplop.opened #cover{transition:transform .8s var(--ease-cover) .48s,opacity .32s ease .96s,visibility 0s linear 1.28s}
 
 /* --- Amplop + FOTO PENUH (mis. Midnight Gold) ---
    Dulu amplopnya melebar 100% layar dengan dua bidang gradasi pekat: foto
@@ -1435,10 +1523,10 @@ body.elbuka-gembok #cover .pemicu .el{--ga:54%;--gb:34%;--gc:46%;
   -webkit-backdrop-filter:blur(2px) saturate(1.05);backdrop-filter:blur(2px) saturate(1.05);
   border:2px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 52%,rgba(255,255,255,.45));
   box-shadow:0 14px 34px rgba(10,6,3,.26),inset 0 1px 1px rgba(255,255,255,.6),inset 0 0 0 1px rgba(255,255,255,.18);
-  z-index:2;transition:transform .95s cubic-bezier(.33,.02,.26,1) 1.25s,opacity .7s ease 1.45s,box-shadow .45s ease .55s;will-change:transform,opacity}
-body.elbuka-gembok #cover .pemicu .el::before{content:'';position:absolute;top:-56px;left:50%;width:88px;height:64px;margin-left:-44px;border:13px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 70%,#8c6d3a);border-bottom:0;border-radius:56px 56px 0 0;transform-origin:bottom left;box-shadow:0 5px 15px rgba(0,0,0,.4);transition:transform .8s cubic-bezier(.34,1.2,.46,1) 1s}
+  z-index:2;transition:transform .82s var(--ease-cover) 1.22s,opacity .64s ease 1.4s,box-shadow .55s var(--ease-cover-soft) .72s;will-change:transform,opacity}
+body.elbuka-gembok #cover .pemicu .el::before{content:'';position:absolute;top:-56px;left:50%;width:88px;height:64px;margin-left:-44px;border:13px solid color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 70%,#8c6d3a);border-bottom:0;border-radius:56px 56px 0 0;transform-origin:bottom right;box-shadow:0 5px 15px rgba(0,0,0,.4);transition:transform .88s cubic-bezier(.3,1.08,.42,1) 1.02s}
 body.elbuka-gembok #cover .pemicu .el::after{content:'';position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#1a1205;box-shadow:inset 0 3px 10px #000}
-body.elbuka-gembok #cover .pemicu .el2{left:50%;top:calc(50% + 11px);width:9px;height:18px;margin-left:-4.5px;border-radius:0 0 5px 5px;background:#1a1205;z-index:2;transition:opacity .5s ease .9s}
+body.elbuka-gembok #cover .pemicu .el2{left:50%;top:calc(50% + 11px);width:9px;height:18px;margin-left:-4.5px;border-radius:0 0 5px 5px;background:#1a1205;z-index:2;transition:opacity .55s var(--ease-cover-soft) .95s}
 /* kunci miring di bawah gembok: batang + gigi + kepala */
 body.elbuka-gembok #cover .pemicu .simpul{--ka:78%;left:50%;top:188px;width:120px;height:14px;margin-left:-60px;border-radius:7px;
   background:linear-gradient(90deg,
@@ -1458,29 +1546,30 @@ body.elbuka-gembok #cover .kt-burst{display:block}
 /* langkah 1-2: kunci terangkat mulus, masuk lubang, lalu DIPUTAR pelan.
    Tiap segmen punya easing sendiri supaya tidak ada "patahan" gerak, dan
    kunci baru memudar setelah putarannya benar-benar selesai. */
-body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.75s linear forwards}
+body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.88s linear forwards}
 @keyframes kunciMasuk{
   0%  {transform:translateY(0)     rotate(-30deg) scale(1);
-       animation-timing-function:cubic-bezier(.45,0,.55,1)}
+       animation-timing-function:cubic-bezier(.42,0,.5,1)}
   16% {transform:translateY(-16px) rotate(-30deg) scale(1.03);
-       animation-timing-function:cubic-bezier(.4,0,.6,1)}
+       animation-timing-function:cubic-bezier(.38,0,.52,1)}
   42% {transform:translateY(-82px) rotate(-30deg) scale(1);
-       animation-timing-function:cubic-bezier(.32,0,.3,1)}
+       animation-timing-function:cubic-bezier(.34,0,.28,1)}
   58% {transform:translateY(-84px) rotate(-6deg)  scale(.98);
-       animation-timing-function:cubic-bezier(.35,0,.3,1)}
+       animation-timing-function:cubic-bezier(.34,0,.28,1)}
   76% {transform:translateY(-84px) rotate(58deg)  scale(.96);
-       animation-timing-function:cubic-bezier(.3,0,.35,1)}
+       animation-timing-function:cubic-bezier(.32,0,.32,1)}
   86% {transform:translateY(-84px) rotate(64deg)  scale(.95);opacity:1;
-       animation-timing-function:cubic-bezier(.3,0,.4,1)}
+       animation-timing-function:cubic-bezier(.32,0,.34,1)}
   100%{transform:translateY(-108px) rotate(64deg) scale(.7);opacity:0}}
-/* langkah 3: shackle terbuka -45°, berporos di kaki kanan shackle
-   (dulu transform-origin:bottom left + translateX(-50%) membuatnya
-   terlempar keluar kartu — terlihat "patah" saat cover memudar) */
-body.elbuka-gembok.opened #cover .pemicu .el::before{transform:translateX(-50%) rotate(-46deg)}
+/* langkah 3: shackle terbuka 46°, berporos di kaki kanan shackle.
+   Shackle sudah ditengahkan oleh margin-left negatifnya; translateX(-50%)
+   tambahan justru memindahkan poros keluar dari badan gembok dan membuat
+   lengkungnya tampak terlepas saat mulai berputar. */
+body.elbuka-gembok.opened #cover .pemicu .el::before{transform:rotate(46deg)}
 /* langkah 4-5: cahaya dari lubang kunci, gembok naik menghilang */
 body.elbuka-gembok.opened #cover .pemicu .el{box-shadow:0 0 60px 20px rgba(255,215,0,.5),0 16px 40px rgba(0,0,0,.6);transform:translateY(-130px) scale(.55) rotateX(18deg);opacity:0}
 body.elbuka-gembok.opened #cover .pemicu .el2{opacity:0}
-body.elbuka-gembok.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .55s both}
+body.elbuka-gembok.opened #cover .kt-burst i{animation:ktTerbang 1.05s ease-out .58s both}
 
 /* --- Gembok + FOTO PENUH (mis. Sultan Arsip, Gelap Rimbun) ---
    Dulu gembok "melayang" 190x260 px di tengah cover: di layar pendek
@@ -1550,7 +1639,7 @@ body.elbuka-gembok.foto-full #cover .pemicu .el{
 /* shackle juga kaca: tabung emas transparan dengan tepi mengkilat */
 body.elbuka-gembok.foto-full #cover .pemicu .el::before{
   top:-46%;width:56%;height:30%;margin-left:-28%;border-width:16px;
-  border-radius:110px 110px 0 0;transform-origin:bottom left;
+  border-radius:110px 110px 0 0;transform-origin:bottom right;
   border-color:color-mix(in srgb,var(--accent-cover,var(--accent,#C9A86A)) 52%,rgba(255,255,255,.42))}
 body.elbuka-gembok.foto-full #cover .pemicu .el::after{width:30px;height:30px;margin:-15px 0 0 -15px;
   background:radial-gradient(circle at 50% 34%,rgba(26,18,5,.92),rgba(26,18,5,.68) 70%,rgba(26,18,5,.5));
@@ -1584,7 +1673,7 @@ body.elbuka-gembok.foto-full #cover .pemicu .p-hint{top:auto;left:50%;bottom:18p
 body.elbuka-gembok.foto-full:not(.opened) #cover .bdfr{opacity:0!important;pointer-events:none}
 body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 2.15s both}
 /* Gembok: tahan cover sedikit lebih lama (sampai 1.55s) supaya seluruh
-   animasi kunci (1.75s: naik → masuk → putar) selesai dulu sebelum cover
+   animasi kunci (1.88s: naik → masuk → putar) selesai dulu sebelum cover
    memudar. Tanpa ini cover sudah hilang di 1.35s dan kuncinya "terpotong". */
 body.elbuka-gembok.opened #cover{transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .5s ease 1.55s,visibility 0s linear 2.05s}
 body.elbuka-gembok.foto-full:not(.opened) #cover .geser-hint{display:none}
@@ -1623,12 +1712,12 @@ body.elbuka-kotak #cover .pemicu::before{content:'';position:absolute;
   background:
     radial-gradient(ellipse at 50% 74%,rgba(255,244,205,.95),rgba(255,214,128,.72) 26%,rgba(255,186,80,.34) 52%,transparent 74%);
   opacity:0;transform:scale(.5);transform-origin:50% 82%;
-  transition:opacity .4s ease .22s,transform .8s cubic-bezier(.2,.9,.3,1) .22s}
-body.elbuka-kotak.opened #cover .pemicu::before{opacity:1;transform:scale(1);animation:kotakCahaya 1.4s ease-out .24s}
+  transition:opacity .5s var(--ease-cover-soft) .24s,transform .95s var(--ease-cover-soft) .24s}
+body.elbuka-kotak.opened #cover .pemicu::before{opacity:1;transform:scale(1);animation:kotakCahaya 1.55s var(--ease-cover-soft) .26s}
 @keyframes kotakCahaya{
   0%{opacity:0;transform:scale(.45)}
-  30%{opacity:1;transform:scale(1.1)}
-  100%{opacity:.9;transform:scale(1)}}
+  38%{opacity:1;transform:scale(1.08)}
+  100%{opacity:.92;transform:scale(1)}}
 /* bayangan alas di bawah kotak */
 body.elbuka-kotak #cover .pemicu::after{content:'';position:absolute;
   left:12%;right:12%;bottom:-14px;height:22px;border-radius:50%;pointer-events:none;z-index:0;
@@ -1704,7 +1793,7 @@ body.elbuka-kotak #cover .pemicu .el{
     inset 0 3px 0 rgba(255,255,255,.3),inset 0 10px 18px rgba(255,255,255,.12),
     inset 0 -16px 24px rgba(0,0,0,.4),0 5px 0 -1px rgba(0,0,0,.5);
   z-index:4;
-  transition:transform .82s cubic-bezier(.28,1.02,.32,1) .04s,border-radius .4s ease .3s}
+  transition:transform .98s cubic-bezier(.22,.86,.28,1) .05s,border-radius .5s var(--ease-cover-soft) .34s}
 body.elbuka-kotak.opened #cover .pemicu .el{box-shadow:0 -3px 0 rgba(255,255,255,.14),
   0 12px 26px rgba(0,0,0,.36),inset 0 2px 0 rgba(255,255,255,.2),inset 0 -12px 22px rgba(0,0,0,.32)}
 /* rusuk emas tipis di tepi bawah tutup (garis sambungan dengan badan) */
@@ -1727,7 +1816,7 @@ body.elbuka-kotak #cover .pemicu .simpul{
   box-shadow:inset 0 1px 2px rgba(255,255,255,.55),0 3px 8px rgba(0,0,0,.4);
   transform:rotate(-7deg);transform-origin:50% 100%;
   z-index:3;opacity:0;
-  transition:opacity .3s ease .16s,box-shadow .6s ease .35s}
+  transition:opacity .38s var(--ease-cover-soft) .18s,box-shadow .75s var(--ease-cover-soft) .38s}
 /* permata (brilliant cut) di puncak cincin */
 body.elbuka-kotak #cover .pemicu .simpul::before{content:'';position:absolute;left:50%;top:-13px;
   width:15px;height:15px;margin-left:-7.5px;
@@ -1761,12 +1850,12 @@ body.elbuka-kotak.opened #cover .pemicu .el2::before{
   box-shadow:inset 0 8px 16px rgba(0,0,0,.55),inset 0 -2px 0 rgba(255,255,255,.06),0 0 30px 6px rgba(255,204,118,.55)}
 /* burst kelip mengikuti posisi kotak (dulu meledak di tengah layar) */
 body.elbuka-kotak #cover .kt-burst{top:auto;bottom:22%}
-body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .62s cubic-bezier(.4,0,.2,1) .95s both}
+body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .74s var(--ease-cover-soft) 1.02s both}
 @keyframes kotakBoxOut{
   0%{opacity:1;transform:translateX(-50%) scale(var(--k,1))}
-  30%{opacity:1}
+  34%{opacity:1}
   100%{opacity:0;transform:translate(-50%,-10%) scale(calc(var(--k,1) * 1.04))}}
-body.elbuka-kotak.opened #cover .kt-burst i{animation:ktTerbang 1.15s ease-out .5s both}
+body.elbuka-kotak.opened #cover .kt-burst i{animation:ktTerbang 1.02s ease-out .5s both}
 /* Teks cover (nama, tanggal, countdown) SELALU tampil — kotak cincin
    diletakkan di bawahnya, bukan menimpanya. */
 body.elbuka-kotak.foto-full:not(.opened) #cover .geser-hint{display:none}
@@ -1805,7 +1894,7 @@ body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0 0 auto 0;
   clip-path:polygon(0 0,100% 0,100% 86%,78% 100%,52% 88%,26% 99%,0 87%);
   box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--accent-cover,var(--accent,#7a3040)) 60%,#d4af37),inset 0 -26px 40px rgba(0,0,0,.34);
   filter:drop-shadow(0 16px 26px rgba(0,0,0,.38));
-  transition:transform 1.4s cubic-bezier(.7,0,.3,1),opacity 1s;z-index:5}
+  transition:transform 1.55s var(--ease-cover),opacity 1.08s ease .38s;z-index:5}
 /* Foto penuh: kain dibuat lebih bening lagi supaya wajah mempelai tembus. */
 /* Foto penuh: kain jadi selendang SHEER — motif tetap terlihat, tapi wajah
    mempelai di bawahnya masih jelas (tint aksen 14-30%, tanpa lapisan gelap
@@ -1815,16 +1904,21 @@ body.elbuka-selendang.foto-full #cover .pemicu .el{--sa:30%;--sb:26%;--sc:12%;--
 body.elbuka-selendang.foto-full #cover .pemicu .el::after{opacity:.62}
 body.elbuka-selendang #cover .pemicu .el::before{content:'';position:absolute;inset:8px 9% 20px;border:2px solid color-mix(in srgb,var(--accent-cover,var(--accent,#7a3040)) 70%,#d4af37);opacity:.55;border-radius:8px}
 body.elbuka-selendang #cover .pemicu .el::after{content:'SONGKET';position:absolute;top:38%;left:50%;transform:translateX(-50%);font-size:13px;letter-spacing:.4em;color:color-mix(in srgb,var(--accent-cover,var(--accent,#7a3040)) 62%,#fff);opacity:.8;font-family:var(--ft);text-shadow:0 1px 10px rgba(0,0,0,.45)}
-body.elbuka-selendang #cover .pemicu .el2,body.elbuka-selendang #cover .pemicu .simpul{position:absolute;top:0;bottom:auto;height:clamp(110px,18dvh,220px);width:25%;background:linear-gradient(90deg,rgba(0,0,0,.3),transparent 50%,rgba(0,0,0,.2));mix-blend-mode:multiply;z-index:6;transition:opacity .8s}
+body.elbuka-selendang #cover .pemicu .el2,body.elbuka-selendang #cover .pemicu .simpul{position:absolute;top:0;bottom:auto;height:clamp(110px,18dvh,220px);width:25%;background:linear-gradient(90deg,rgba(0,0,0,.3),transparent 50%,rgba(0,0,0,.2));mix-blend-mode:multiply;z-index:6;transition:transform 1.55s var(--ease-cover),opacity .95s var(--ease-cover-soft) .12s}
 body.elbuka-selendang #cover .pemicu .el2{left:0}
 body.elbuka-selendang #cover .pemicu .simpul{right:0}
 /* Kain ditarik KE ATAS (sesuai petunjuk "geser atas"), bukan tergulung turun. */
-body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-118%) rotateX(16deg) scaleY(1.04);opacity:0}
-body.elbuka-selendang.opened #cover .pemicu .el2,body.elbuka-selendang.opened #cover .pemicu .simpul{opacity:0}
+body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-122%) rotateX(14deg) scaleY(1.03);opacity:0}
+/* Bayangan tepi adalah bagian kainnya, jadi ikut terangkat; kalau hanya
+   memudar di tempat, dua blok bayangan tertinggal di pojok atas foto. */
+body.elbuka-selendang.opened #cover .pemicu .el2,body.elbuka-selendang.opened #cover .pemicu .simpul{transform:translateY(-122%);opacity:0}
+/* Kain butuh 1,55 detik untuk terangkat penuh; tahan cover sampai geraknya
+   selesai agar ekor kain tidak terpotong oleh batas generik 1,5 detik. */
+body.elbuka-selendang.opened #cover{transition:transform 1.02s var(--ease-cover) .48s,opacity .62s ease 1.08s,visibility 0s linear 1.7s}
 /* Saat kain ditarik, teks cover ikut memudar cepat supaya nama besar tidak
    sempat bertumpuk dengan isi undangan yang sudah muncul di belakang. */
-body.elbuka-selendang #cover .bdfr{transition:opacity .45s ease}
-body.elbuka-selendang.opened #cover .bdfr{opacity:0;transition:opacity .3s ease}
+body.elbuka-selendang #cover .bdfr{transition:opacity .55s var(--ease-cover-soft)}
+body.elbuka-selendang.opened #cover .bdfr{opacity:0;transition:opacity .38s var(--ease-cover-soft)}
 /* Hint khusus selendang kini berada di dalam area aman bawah pemicu; hint
    generik di kartu akan menduplikasi instruksi dan dapat menimpa RSVP. */
 body.elbuka-selendang #cover .geser-hint{display:none}
@@ -1836,6 +1930,11 @@ body.kartu-demo #cover .brand{display:none}
 body.kartu-demo #cover .cvcue,body.kartu-demo #cover .geser-hint{display:none}
 body.kartu-demo #cover .vip-btn{display:none}
 body.kartu-demo #coverBack{display:none}
+body.kartu-demo #aspAmbient{display:none}
+/* Thumbnail harus terbaca sebagai hasil akhir seketika; jangan warisi
+   jeda masuk cover dari mode demo penuh. */
+body.kartu-demo #cover *,body.kartu-demo #cover *::before,body.kartu-demo #cover *::after{
+  animation-delay:0s!important;transition-delay:0s!important}
 
 /* Setelah terbuka, elemen tidak bisa diketuk lagi */
 body.opened #cover .pemicu{pointer-events:none}
@@ -1905,6 +2004,9 @@ body.elbuka-selendang #cover .pemicu .p-hint::after{content:'Geser atas selendan
  body.elbuka-kotak.opened #cover .pemicu .el,body.elbuka-kotak.opened #cover .pemicu .el2,body.elbuka-kotak.opened #cover .pemicu .simpul{opacity:0;transform:none;transition:opacity .3s}
  body.elbuka-selendang.opened #cover .pemicu .el,body.elbuka-selendang.opened #cover .pemicu .el2,body.elbuka-selendang.opened #cover .pemicu .simpul{opacity:0;transform:none;transition:opacity .3s}
  #cover .pemicu{transition:none}
+ /* Cover induk langsung disembunyikan pada mode hemat gerak; hentikan juga
+    urutan internalnya agar tidak terus berlari (dan memakai CPU) di balik isi. */
+ body.opened #cover *,body.opened #cover *::before,body.opened #cover *::after{animation:none!important;transition:none!important}
 }
 
 /* ==========================================================================
@@ -2120,6 +2222,8 @@ body.lay-rimbun .lay-navdot{background:rgba(20,14,30,.75);border-color:color-mix
 <link rel="stylesheet" href="assets/scroll-effects.css">
 <script src="assets/scroll-effects.js"></script>
 <script src="assets/vip-4d.js"></script>
+<link rel="stylesheet" href="assets/liquid-glass.css">
+<script src="assets/liquid-glass.js"></script>
 <script src="assets/theme-contrast.js"></script>
 <link rel="stylesheet" href="assets/button-help.css">
 <script src="assets/button-help.js" defer></script>
@@ -2140,113 +2244,16 @@ body.lay-rimbun .lay-navdot{background:rgba(20,14,30,.75);border-color:color-mix
    Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
    Urutan & id WAJIB identik di studio.html & undangan.html (kolom
    'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template khusus motor baru belum masuk produksi.
-   18 tema publik + 8 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
    di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
    ekstra,cover} — dirender jalur kerangka di undangan.html.
-   18 tema publik + 14 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   18 tema publik + 14 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   18 tema publik + 15 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   18 tema publik + 18 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   30 tema publik + 6 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   30 tema publik + 6 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   34 tema publik + 6 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   34 tema publik + 6 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   34 tema publik + 6 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   34 tema publik + 6 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   34 tema publik + 6 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   34 tema publik + 6 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   34 tema publik + 6 Studio-only. */
-/* DIBANGKITKAN tools/bangun-tpl.cjs — JANGAN EDIT MANUAL.
-   Sumber kebenaran: kerangka/{token-tema,registry-blok,template,motor}.js.
-   Urutan & id WAJIB identik di studio.html & undangan.html (kolom
-   'theme' di Supabase adalah index ke array ini). Entry baru selalu
-   di AKHIR array. Template kombinasi bebas membawa kb:{shell,urutan,
-   ekstra,cover} — dirender jalur kerangka di undangan.html.
-   34 tema publik + 6 Studio-only. */
+   44 tema publik + 0 Studio-only. */
 const TPL=[ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',g:['#FBFAF7','#F0ECE3','#DCD3C3'],accent:'#8A6E4B',ink:'#4B4237',badge:'DASAR',deco:'✦ ❖ ✦',pat:'damask',ft:'cormorant',desc:'Kanvas bersih untuk semua acara — kertas ivory hangat, Cormorant, aksen perunggu',layout:'klasik',orn:'klasik',border:'double',cover:'amplop',buka:'amplop'}, {id:'jawa-elegan',nama:'Adat Jawa Elegan',ev:'pernikahan',g:['#E8DCCA','#D8C7B0','#C2A88B'],accent:'#7A5C3E',ink:'#6C5237',badge:'LARIS',deco:'❖ ✦ ❖',pat:'parang',ft:'marcellus',char:'JAWA',desc:'Nuansa pranakan jawa yang anggun, motif batik halus & gold foil',layout:'arsip',orn:'batik',border:'frame2',cover:'royal',buka:'tirai'}, {id:'minimalist-sage',nama:'Minimalist Sage',ev:'pernikahan',g:['#D9E4D7','#C2D4BE','#A8BEA3'],accent:'#5F7A5C',ink:'#4A6647',deco:'✿ ❋ ✿',pat:'botanical',ft:'cormorant',char:'SAGE',desc:'Bersih, modern, sage green aesthetic buat couple anti ribet',layout:'editorial-sage',orn:'geometrik',border:'thin',cover:'minimal',buka:'buku'}, {id:'luxury-gold',nama:'Luxury Gold',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'PREMIUM',deco:'✦ ❖ ✦',pat:'deco',ft:'playfair',char:'GOLD',desc:'Glam soft luxury, emboss gold & black tie vibe',layout:'panggung-emas',orn:'deco',border:'vip-diamond',cover:'royal',buka:'gerbang'}, {id:'floral-rustic',nama:'Floral Rustic',ev:'pernikahan',g:['#FBE9E7','#F8CFC8','#E8AFA4'],accent:'#A66A5E',ink:'#70463E',deco:'❀ ❁ ❀',pat:'botanical',ft:'lora',char:'RUSTIC',desc:'Bunga-bunga rustic yang manis, cocok outdoor garden party',layout:'zigzag-rustic',orn:'mawar',border:'gapdash',cover:'sakura',buka:'pita'}, {id:'biru-ceria',nama:'Biru Ceria',ev:'khitanan',g:['#E0F2FF','#B8DAFF','#7FB8F0'],accent:'#3A6EA5',ink:'#2D5680',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'CERIA',desc:'Ceria & playful buat jagoan yang lagi disunat, tetap sopan',layout:'poster-ceria',orn:'confetti',border:'dotted',cover:'kartu',buka:'pita'}, {id:'islamic-elegant',nama:'Islamic Elegant',ev:'khitanan',g:['#E6F0E6','#C9DCC9','#A3C4A3'],accent:'#4A6741',ink:'#4C6A43',deco:'۞ ✦ ۞',pat:'girih',ft:'cinzel',char:'ISLAMI',desc:'Islami elegan dengan ornamen arabesque gold yang halus',layout:'bab-islami',orn:'bulan',border:'filigree',cover:'batik',buka:'selendang'}, {id:'kids-party',nama:'Kids Party',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'LARIS',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Warna-warni happy, balon & confetti buat si kecil',layout:'poster-anak',orn:'kembang-api',border:'dashed',cover:'ticket',buka:'pita'}, {id:'sweet-17',nama:'Sweet 17',ev:'ultah',g:['#F9D5E5','#F4A9C4','#E57AA0'],accent:'#9E4A66',ink:'#76374C',badge:'FAVORIT',deco:'✦ ❀ ✦',pat:'tabur',ft:'dancing',char:'SWEET',desc:'Pink soft dan aesthetic, pas buat sweet seventeen yang lagi seneng-senengnya',layout:'kaca-manis',orn:'pita',border:'ribbon-satin',cover:'polaroid',buka:'pita'}, {id:'adult-elegant',nama:'Adult Elegant',ev:'ultah',g:['#E8E6E1','#D5D0C9','#B8B2A8'],accent:'#5A5753',ink:'#665947',deco:'❖ ─ ❖',pat:'marmer',ft:'ebgaramond',char:'ELEGAN',desc:'Mature, minimal, buat ultah ke-30, 40, 50 yang classy',layout:'kaca-dewasa',orn:'zaitun',border:'topbot',cover:'archive',buka:'pintu'}, {id:'baby-boy',nama:'Baby Boy',ev:'aqiqah',g:['#E3F2FD','#BBDEFB','#90CAF9'],accent:'#4A7FB5',ink:'#32567B',deco:'✦ ☁ ✦',pat:'frost',ft:'caveat',char:'BABY',desc:'Lembut biru langit, ilustrasi baby boy yang gemes',layout:'lembut-biru',orn:'awan',border:'halo',cover:'glass',buka:'pita'}, {id:'baby-girl',nama:'Baby Girl',ev:'aqiqah',g:['#FCE4EC','#F8BBD0','#F48FB1'],accent:'#B55A7A',ink:'#78364D',deco:'✿ ✦ ✿',pat:'renda',ft:'caveat',char:'PUTRI',desc:'Pink blush super lembut buat si putri kecil kesayangan',layout:'lembut-merah',orn:'bunga',border:'pearl-crown',cover:'sakura',buka:'pita'}, {id:'islamic-neutral',nama:'Islamic Neutral',ev:'aqiqah',g:['#F5F2E4','#E7E3CB','#D2CBA8'],accent:'#6E7A52',ink:'#5A5540',deco:'۞ ❖ ۞',pat:'damask',ft:'marcellus',char:'ADAB',desc:'Gender neutral, kaligrafi doa & nuansa cream hangat',layout:'bab-netral',orn:'arabesque',border:'corners',cover:'batik',buka:'selendang'}, {id:'midnight-gold',nama:'Midnight Gold',ev:'pernikahan',g:['#1E1A15','#2E2419','#4A3A22'],accent:'#D4AF37',ink:'#F2E8D5',badge:'BARU',deco:'✦ ❖ ✦',pat:'sulur',ft:'cinzel',char:'ONYX',desc:'Kemewahan onyx & gold foil — drama elegan untuk malam sakral',layout:'split-midnight',orn:'onyx',border:'onyx-inlay',cover:'night',buka:'amplop'}, {id:'emerald-royal',nama:'Emerald Royal',ev:'pernikahan',g:['#14342B','#1F4D3E','#356B55'],accent:'#D9B86C',ink:'#F0EAD6',badge:'BARU',deco:'❖ ✦ ❖',pat:'botanical',ft:'marcellus',char:'ZAMRUD',desc:'Zamrud pekat beraksen emas kerajaan, anggun & berwibawa',layout:'bab-royal',orn:'botanical',border:'laurel',cover:'royal',buka:'gerbang'}, {id:'navy-crest',nama:'Navy Crest',ev:'khitanan',g:['#16233F','#223457','#334B76'],accent:'#E7C27D',ink:'#F2ECDC',badge:'BARU',deco:'★ ✦ ★',pat:'ombak',ft:'ebgaramond',char:'BINTANG',desc:'Navy klasik bercrest emas — gagah, sopan, tetap mewah',layout:'split-navy',orn:'mahkota',border:'vip-crown',cover:'night',buka:'pintu'}, {id:'golden-jubilee',nama:'Golden Jubilee',ev:'ultah',g:['#F5E7C8','#E8CF96','#D4AF37'],accent:'#8C6D1F',ink:'#5C4714',badge:'BARU',deco:'✦ ✸ ✦',pat:'deco',ft:'playfair',char:'JUBILE',desc:'Pesta emas champagne buat milestone istimewa — 30, 40, 50 tahun',layout:'zigzag-jubile',orn:'bintang',border:'artdeco',cover:'ticket',buka:'gerbang'}, {id:'pearl-ivory',nama:'Pearl Ivory',ev:'aqiqah',g:['#FDF9F3','#F6E7E2','#E9D2CE'],accent:'#A87E74',ink:'#5E4E36',badge:'BARU',deco:'✦ ❖ ✦',pat:'renda',ft:'cormorant',char:'MUTIARA',desc:'Lembut mutiara & ivory hangat, elegan menyambut si kecil',layout:'editorial-mutiara',orn:'mutiara',border:'lace-ivory',cover:'kartu',buka:'kotak'},
- {id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'botanical',ft:'lora',char:'ROSEWOOD',desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood',layout:'panggung-gerbang',orn:'mawar',border:'gold-leaf',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
- {id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#EEEFE4','#D8DDCB'],accent:'#526A55',ink:'#435348',badge:'GERBANG',deco:'✿ ❋ ✿',pat:'botanical',ft:'ebgaramond',char:'SAGE',desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch',layout:'editorial-mutiara',orn:'mutiara',border:'pearl',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
- {id:'gerbang-midnight-navy',nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',badge:'GERBANG',deco:'✦ ❖ ✦',pat:'mendung',ft:'playfair',char:'NAVY',desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis',layout:'split-midnight',orn:'onyx',border:'vip-aurora',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
- {id:'gerbang-khitanan-emerald',nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',badge:'GERBANG',deco:'۞ ✦ ۞',pat:'girih',ft:'cinzel',char:'EMERALD',desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut',layout:'bab-islami',orn:'arabesque',border:'laurel',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
- {id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'GERBANG',deco:'۞ ❖ ۞',pat:'kawung',ft:'marcellus',char:'NATURAL',desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung',layout:'lembut-biru',orn:'botanical',border:'halo',cover:'gerbang',buka:'gerbang',arch:true,studioOnly:true},
- {id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'GERBANG',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch',layout:'poster-anak',orn:'confetti',border:'dotted',cover:'gerbang',buka:'pita',arch:true,studioOnly:true},
+ {id:'gerbang-rosewood',nama:'Gerbang Arch · Rosewood',ev:'pernikahan',g:['#FFF8F3','#F3E5DC','#E8CFC4'],accent:'#8A4B56',ink:'#5B3540',badge:'NEW TEMPLATE',deco:'✦ ❖ ✦',pat:'botanical',ft:'lora',char:'ROSEWOOD',desc:'Bingkai arch berlapis dengan ivory hangat dan aksen rosewood',layout:'panggung-gerbang',orn:'mawar',border:'gold-leaf',cover:'gerbang',buka:'gerbang',arch:true},
+ {id:'gerbang-sage-pearl',nama:'Gerbang Arch · Sage Pearl',ev:'pernikahan',g:['#FBFAF5','#EEEFE4','#D8DDCB'],accent:'#526A55',ink:'#435348',badge:'NEW TEMPLATE',deco:'✿ ❋ ✿',pat:'botanical',ft:'ebgaramond',char:'SAGE',desc:'Sage lembut, kartu editorial ivory, dan foto berbingkai arch',layout:'editorial-mutiara',orn:'mutiara',border:'pearl',cover:'gerbang',buka:'gerbang',arch:true},
+ {id:'gerbang-midnight-navy',nama:'Gerbang Arch · Midnight Navy',ev:'pernikahan',g:['#FBF8F0','#F1E3C2','#D8C7A3'],accent:'#80653D',ink:'#26364D',badge:'NEW TEMPLATE',deco:'✦ ❖ ✦',pat:'mendung',ft:'playfair',char:'NAVY',desc:'Kontras midnight navy dengan champagne dan bingkai arch berlapis',layout:'split-midnight',orn:'onyx',border:'vip-aurora',cover:'gerbang',buka:'gerbang',arch:true},
+ {id:'gerbang-khitanan-emerald',nama:'Gerbang Arch · Khitanan Emerald',ev:'khitanan',g:['#FFFCF3','#E5F1E8','#C6D8CB'],accent:'#3A765F',ink:'#3D5F4F',badge:'NEW TEMPLATE',deco:'۞ ✦ ۞',pat:'girih',ft:'cinzel',char:'EMERALD',desc:'Khitanan bernuansa emerald, doa islami, dan aksen emas lembut',layout:'bab-islami',orn:'arabesque',border:'laurel',cover:'gerbang',buka:'gerbang',arch:true},
+ {id:'gerbang-aqiqah-natural',nama:'Gerbang Arch · Aqiqah Natural',ev:'aqiqah',g:['#FCF8F0','#F3E9D4','#E1D1B5'],accent:'#8C7052',ink:'#5E5142',badge:'NEW TEMPLATE',deco:'۞ ❖ ۞',pat:'kawung',ft:'marcellus',char:'NATURAL',desc:'Aqiqah bernuansa sand dan ivory dengan bingkai foto lengkung',layout:'lembut-biru',orn:'botanical',border:'halo',cover:'gerbang',buka:'gerbang',arch:true},
+ {id:'gerbang-pesta-ceria',nama:'Gerbang Arch · Ulang Tahun Ceria',ev:'ultah',g:['#FFF8F4','#FFE6DC','#F2C9CB'],accent:'#A65066',ink:'#644355',badge:'NEW TEMPLATE',deco:'✸ ✦ ✸',pat:'confetti',ft:'dancing',char:'CERIA',desc:'Ulang tahun ceria dengan sentuhan editorial, coral, dan arch',layout:'poster-anak',orn:'confetti',border:'dotted',cover:'gerbang',buka:'pita',arch:true},
  {id:'noir-kutip',nama:'Noir Kutip',ev:'pernikahan',g:['#1E1A15','#2E2419','#4A3A22'],accent:'#D4AF37',ink:'#F2E8D5',badge:'BARU',deco:'✦ ❖ ✦',pat:'sulur',ft:'cinzel',char:'ONYX',desc:'Kegelapan glamor dengan kutipan besar pembuka dan foto hero',layout:null,orn:'onyx',border:'onyx-inlay',cover:'night',buka:'amplop',kb:{"shell":"editorial","urutan":["quote","guest","doa","profil","harapan","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["kutipBesar","heroFoto"],"cover":"amplop"}},
  {id:'sultan-arsip',nama:'Sultan Arsip',ev:'pernikahan',g:['#FFF8E1','#F7E8B0','#D4AF37'],accent:'#8C6D1F',ink:'#6B5724',badge:'BARU',deco:'✦ ❖ ✦',pat:'deco',ft:'playfair',char:'GOLD',desc:'Kerajaan bernomor romawi, sampul segel emas, galeri mengalir',layout:null,orn:'deco',border:'vip-diamond',cover:'archive',buka:'gembok',kb:{"shell":"bab","urutan":["guest","story","timeline","profil","harapan","acara","quote","doa","galeri","menu","party","dresscode","map","gift","bukutamu","amplop","rsvp","closing","ucapan"],"ekstra":["babAngka","galeriStrip"],"cover":"minimal"}},
  {id:'pop-zigzag',nama:'Pop Zigzag',ev:'ultah',g:['#FFF1C1','#FFE082','#FFB74D'],accent:'#B87A1A',ink:'#82602B',badge:'BARU',deco:'✸ ★ ✸',pat:'confetti',ft:'pacifico',char:'PARTY',desc:'Zigzag ceria dengan jam hitung-mundur digital',layout:null,orn:'kembang-api',border:'dashed',cover:'ticket',buka:'pita',kb:{"shell":"zigzag","urutan":["guest","acara","timeline","profil","harapan","galeri","story","quote","doa","menu","party","dresscode","map","gift","bukutamu","rsvp","closing","amplop","ucapan"],"ekstra":["jamFlip"],"cover":"batik"}},
@@ -2262,21 +2269,11 @@ const TPL=[ {id:'ivory-klasik',nama:'Ivory Klasik',ev:'all',g:['#FBFAF7','#F0ECE
  {id:'rimba-tropis',nama:'Rimba Tropis',ev:'pernikahan',g:['#F0F7EE','#D6EAD9','#A9CDB0'],accent:'#1F6B44',ink:'#274A33',badge:'BARU',deco:'❀ ✦ ❀',pat:'monstera',ft:'merriweather',char:'RIMBA',desc:'Rimba tropis — monstera & palem rimbun, hijau segar, cover foto penuh',layout:null,orn:'botanical',border:'laurel',cover:'foto',buka:'gerbang',kb:{"shell":"panggung","urutan":["profil","quote","guest","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["heroFoto"],"cover":"night"}},
  {id:'kertas-kraft',nama:'Kertas Kraft',ev:'pernikahan',g:['#EFE4D0','#E0CDA6','#C9AE83'],accent:'#7C5230',ink:'#4E3B26',badge:'BARU',deco:'✁ ✦ ✁',pat:'kraft',ft:'caveat',char:'KRAFT',desc:'Kertas kraft bertekstur, tulisan tangan, kesan kraftangan',layout:null,orn:'coretan',border:'gapdash',cover:'archive',buka:'buku',kb:{"shell":"arsip","urutan":["guest","doa","profil","harapan","quote","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["navDot"],"cover":"amplop"}},
  {id:'wabi-sabi',nama:'Wabi Sabi',ev:'pernikahan',g:['#F1ECE3','#E4DBCB','#CFC0AA'],accent:'#8C7A64',ink:'#57503F',badge:'BARU',deco:'・ ✦ ・',pat:'washi',ft:'cormorant',char:'WABI',desc:'Wabi sabi — ketidaksempurnaan yang tenang, washi & tanah',layout:null,orn:'mutiara',border:'halo',cover:'minimal',buka:'buku',kb:{"shell":"gedung","urutan":["quote","profil","guest","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":[],"cover":"amplop"}},
- {id:'bunga-kering',nama:'Bunga Kering',ev:'pernikahan',g:['#F4E7D7','#E4C9AE','#CBA37C'],accent:'#9C6B4F',ink:'#5E4634',badge:'BARU',deco:'❀ ✦ ❀',pat:'botanical',ft:'lora',char:'KEMBANG',desc:'Bunga kering — dusty rose & gandum, nostalgi lembut',layout:null,orn:'mawar',border:'pearl',cover:'polaroid',buka:'pita',kb:{"shell":"lembut","urutan":["guest","profil","quote","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["galeriStrip"],"cover":"gerbang"}}];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ {id:'bunga-kering',nama:'Bunga Kering',ev:'pernikahan',g:['#F4E7D7','#E4C9AE','#CBA37C'],accent:'#9C6B4F',ink:'#5E4634',badge:'BARU',deco:'❀ ✦ ❀',pat:'botanical',ft:'lora',char:'KEMBANG',desc:'Bunga kering — dusty rose & gandum, nostalgi lembut',layout:null,orn:'mawar',border:'pearl',cover:'polaroid',buka:'pita',kb:{"shell":"lembut","urutan":["guest","profil","quote","harapan","doa","acara","timeline","story","menu","party","dresscode","map","gift","galeri","amplop","rsvp","ucapan"],"ekstra":["galeriStrip"],"cover":"gerbang"}},
+ {id:'liquid-glass',nama:'Liquid Glass Aurora',ev:'pernikahan',g:['#EFF7FF','#DCEAFF','#C9DBFF'],accent:'#3E5EDD',ink:'#22314F',badge:'NEW TEMPLATE',deco:'✦ ◇ ✦',pat:'frost',ft:'montserrat',char:'Aurora',desc:'Liquid glass pernikahan — kaca cair Aurora 3D dinamis, aksen bisa diganti tamu',layout:'kaca-manis',orn:'geometrik',border:'vip-aurora',cover:'glass',buka:'gerbang'},
+ {id:'liquid-glass-khitanan',nama:'Liquid Glass Khatam',ev:'khitanan',g:['#ECFDF8','#D2F5E7','#C7E8FF'],accent:'#0F766E',ink:'#173F3C',badge:'NEW TEMPLATE',deco:'۞ ✦ ۞',pat:'girih',ft:'poppins',char:'KHATAM',desc:'Liquid glass khitanan — kaca es zamrud Islami 3D dinamis, aksen bisa diganti tamu',layout:'kaca-dewasa',orn:'arabesque',border:'filigree',cover:'glass',buka:'pintu'},
+ {id:'liquid-glass-ultah',nama:'Liquid Glass Neon',ev:'ultah',g:['#FFF7ED','#FCE7F3','#DDD6FE'],accent:'#B4237A',ink:'#3B174A',badge:'NEW TEMPLATE',deco:'★ ✦ ★',pat:'confetti',ft:'poppins',char:'NEON',desc:'Liquid glass ultah — kaca neon pop 3D dinamis, aksen bisa diganti tamu',layout:'kaca-manis',orn:'confetti',border:'vip-aurora',cover:'glass',buka:'gerbang'},
+ {id:'liquid-glass-aqiqah',nama:'Liquid Glass Mentari',ev:'aqiqah',g:['#FFF9E9','#DFF6EE','#DCEBFF'],accent:'#2F7E73',ink:'#284856',badge:'NEW TEMPLATE',deco:'☁ ✦ ☁',pat:'frost',ft:'poppins',char:'MENTARI',desc:'Liquid glass aqiqah — kaca mentari lembut 3D dinamis, aksen bisa diganti tamu',layout:'kaca-manis',orn:'awan',border:'halo',cover:'glass',buka:'buku'}];
 
 /* Peta migrasi katalog LAMA (72 tema, urutan ev per index) — dipakai hanya untuk menebak
    jenis acara draft lama yang tidak punya snapshot 'data', supaya struktur cover-nya tidak
@@ -3320,6 +3317,26 @@ if(KARTU)document.body.classList.add('kartu-demo');
    "Buka Undangan" sekali lagi. Musik latar sengaja tidak dihentikan. */
 function monogramOf(a,b){const ini=x=>{const w=String(x||'').trim().split(/\s+/).filter(Boolean);return ((w[0]||'')[0]||'')+((w[w.length-1]||'')[0]||'')};return (ini(a)+(b?'·'+ini(b):'')).toUpperCase()}
 let _coverRevealTimer=0;
+/* Durasi reveal mengikuti transisi #cover yang benar-benar aktif, bukan satu
+   angka tetap. Gembok/kotak fisik selesai ±2 detik, sedangkan iris/lubang
+   selesai ±1 detik; timer tetap akan memunculkan isi dan tombol Cover terlalu
+   awal pada model panjang (teks hantu) dan terlalu lambat pada efek pendek
+   (layar latar kosong). Kelas penahan dilepas 300ms sebelum cover tuntas;
+   setelah jeda fade isi 100ms, ada overlap ±200ms sehingga cover dan isi
+   melakukan crossfade halus, bukan berganti mendadak. */
+function coverSelesaiDalam(){
+ let selesai=1200;
+ try{
+  const cv=document.getElementById('cover');
+  const cs=cv?getComputedStyle(cv):null;
+  const keMs=s=>{s=String(s||'').trim();const n=parseFloat(s);return isFinite(n)?(s.endsWith('ms')?n:n*1000):0};
+  const dur=String((cs&&cs.transitionDuration)||'').split(',').map(keMs);
+  const tunda=String((cs&&cs.transitionDelay)||'').split(',').map(keMs);
+  const total=dur.reduce((maks,d,i)=>Math.max(maks,d+(tunda[i%tunda.length]||0)),0);
+  if(total>0)selesai=total;
+ }catch(e){/* gaya transisi tak terbaca — pakai bawaan 1,2 detik */}
+ return Math.min(2200,Math.max(650,Math.round(selesai-300)));
+}
 function kembaliKeCover(){
  if(!document.body.classList.contains('opened'))return;
  if(_coverRevealTimer){clearTimeout(_coverRevealTimer);_coverRevealTimer=0}
@@ -4219,7 +4236,8 @@ function bootBersihkan(){
  document.body.className=simpan.join(' ');
  /* Elemen yang ditempel boot() sebelumnya ke <body> (di luar #app) ikut
     dibersihkan supaya tidak menumpuk tiap pratinjau diperbarui. */
- document.querySelectorAll('.nv-bar,.gal-lb,#aspAmbient').forEach(el=>el.remove());
+ document.querySelectorAll('.nv-bar,.gal-lb,#aspAmbient,.lg-Aurora-page,.lg-dock').forEach(el=>el.remove());
+ if(window.AsLiquidGlass){try{window.AsLiquidGlass.unmount()}catch(e){}}
  if(window.__aspCdTimer){clearInterval(window.__aspCdTimer);window.__aspCdTimer=null}
  if(window.__aspMapIO){try{window.__aspMapIO.disconnect()}catch(e){}window.__aspMapIO=null}
 }
@@ -4284,6 +4302,8 @@ function boot(draft){
     punya aturan CSS — jadi output-nya tetap persis seperti sebelum rombakan. */
  const LX=layoutOf(tplF);
  if(isWedding){document.body.classList.add('wedding-cover','theme-'+tplF.id)}
+ /* Liquid Glass (4 tema per kategori): kelas pengait material kaca cair. */
+ if(tplF.id==='liquid-glass'||String(tplF.id||'').indexOf('liquid-glass-')===0)document.body.classList.add('tema-liquid','tema-'+tplF.id);
  if(tplF.arch)document.body.classList.add('gerbang-arch');
  document.body.classList.add('lay-'+LX.shell);
  /* Model cover pembuka: lima model dasar + sepuluh gaya unik dari Studio. */
@@ -4388,12 +4408,12 @@ function boot(draft){
  if(ogI){const src=String((d&&d.cover)||'').trim();if(/^https?:\/\//.test(src))ogI.content=src;else ogI.remove()}
  const mapsLink=form.mapsLink&&!/example/i.test(form.mapsLink)?form.mapsLink:'';
 
- const play=setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
+ const play=KARTU?null:setupMusic((d&&d.music&&d.music.url)||(draft.music_url||''),(d&&d.music&&d.music.name)||draft.music_name||'');
 
  /* ---------- animasi (diatur dari Studio: cover / teks / scroll reveal + pilihan efek) ---------- */
  const AN=(d&&d.anim)||{cover:true,text:true,reveal:true,effect:'zoom',scroll:'fade-up'};
  const RM=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
- const covOn=!!AN.cover&&!RM,txOn=!!AN.text&&!RM,rvOn=!!AN.reveal&&!RM;
+ const covOn=!!AN.cover&&!RM&&!KARTU,txOn=!!AN.text&&!RM&&!KARTU,rvOn=!!AN.reveal&&!RM&&!KARTU;
  const CE=fxCoverId(AN),SC=fxScrollId(AN);document.body.className=String(document.body.className||'').replace(/\bbuka-\S+/g,'').replace(/\born-\S+/g,'').trim();
  /* Tirai/gerbang/pintu/amplop/gembok/kotak/selendang sudah punya animasi fisik
     sendiri; fade mencegah gerakan kulit cover bertabrakan. Pita & buku tetap
@@ -4681,6 +4701,9 @@ function boot(draft){
  const vip4dOn=(tplF.tier==='vip'&&window.AsVip4d)||((LX&&LX.vip)&&window.AsVip4d);
  if(vip4dOn){document.body.classList.add('vip4d');
   try{AsVip4d.mount({art:ART||'',deco:tplF.deco||'',part:tplF.part||'gold',scene:tplF.scene||'zoom'})}catch(e){/* efek VIP gagal mount — undangan tetap tampil normal */}}
+ /* Mesin Liquid Glass dimount di sini juga (sesudah #cover lahir): Aurora
+    cair, tilt 3D, dan pemilih aksen dinamis untuk 4 tema Liquid Glass. */
+ if(document.body.classList.contains('tema-liquid')&&window.AsLiquidGlass){try{AsLiquidGlass.mount(tplF.id)}catch(e){/* efek gagal mount — undangan tetap tampil normal */}}
  muatBukuTamu();
 
  /* interaksi */
@@ -4693,7 +4716,7 @@ function boot(draft){
   kabariInduk();
   const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduceMotion){body.classList.remove('cover-opening');return}
-  _coverRevealTimer=setTimeout(()=>{_coverRevealTimer=0;body.classList.remove('cover-opening')},1200);
+  _coverRevealTimer=setTimeout(()=>{_coverRevealTimer=0;body.classList.remove('cover-opening')},coverSelesaiDalam());
  }
  $('btnOpen').addEventListener('click',bukaCover);
  $('btnOpen').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();bukaCover()}});
@@ -4785,7 +4808,7 @@ function boot(draft){
 
  /* — parallax cover: pola, foto, teks bergerak beda kecepatan (property translate,
       aman bersanding dengan animasi masuk yang memakai transform) — */
- if(!RM){
+ if(!RM&&!KARTU){
   const pat=document.querySelector('#cover .pat'),cvf=document.querySelector('#cover .cvf')||document.querySelector('#cover .cvlatar'),
    inner=document.querySelector('#cover .inner');
   let tick=false;
@@ -4800,7 +4823,7 @@ function boot(draft){
  }
 
  if(tt)startCountdown(tt);
- ambientPasang(tplF);
+ if(!KARTU)ambientPasang(tplF);
  /* scroll reveal — bagian muncul halus saat tamu menggulir */
  setupNavPager(AN.navMode);
  /* Peta baru digambar setelah pager selesai menata slide: kanvas ubin yang
@@ -4891,7 +4914,7 @@ function startCountdown(tt){
   setCd('cdS',pad(Math.floor(s%3600/60)));
   setCd('cdD',pad(s%60));
  };
- tick();window.__aspCdTimer=setInterval(tick,1000);
+ tick();if(KARTU)return;window.__aspCdTimer=setInterval(tick,1000);
 }
 
 /* ---------- partikel ambien per tema (rombak dinamis 2026-10-11) ----------
@@ -5024,7 +5047,7 @@ if(DEMO){const _t=(Q.get('tpl')||'').toLowerCase().replace(/[^a-z0-9-]/g,'');
 /* ---------- mulai ---------- */
 if(PREVIEW){loading()}
 else if(typeof EMBEDDED_DATA!=='undefined'&&EMBEDDED_DATA){loading();setTimeout(()=>boot(EMBEDDED_DATA),350)}
-else if(DEMO){loading();setTimeout(()=>boot(DEMO_DRAFT),350)}
+else if(DEMO){if(KARTU)boot(DEMO_DRAFT);else{loading();setTimeout(()=>boot(DEMO_DRAFT),350)}}
 else if(!SLUG){notFound()}
 else{
  loading();

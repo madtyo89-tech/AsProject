@@ -42,7 +42,8 @@
   }
 
   function sortedCards() {
-    const mode = sort?.value || 'name-asc';
+    const mode = sort?.value || 'featured';
+    if (mode === 'featured') return cards.slice();
     return cards.slice().sort((a, b) => {
       const nameA = norm(a.querySelector('h3')?.textContent);
       const nameB = norm(b.querySelector('h3')?.textContent);
@@ -93,7 +94,7 @@
 
   function clearFilters() {
     if (search) search.value = '';
-    if (sort) sort.value = 'name-asc';
+    if (sort) sort.value = 'featured';
     category = 'all';
     favoritesOnly = false;
     categoryButtons.forEach(button => {

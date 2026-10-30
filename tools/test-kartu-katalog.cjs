@@ -70,6 +70,19 @@ t('lightbox & tab baru memakai demo penuh (tanpa kartu=1)',
   idxSrc.includes("box.querySelector('.asp-lb-full').href = srcDemo(nama);"));
 t('hero kiri memakai cuplikan kartu, hero kanan (sudah dibuka) tetap penuh',
   idxSrc.includes("(cfg.buka ? '&buka=1' : '&kartu=1')"));
+t('preview kartu terjadwal: wrapper kosong dulu, aktif & paralel dibatasi',
+  idxSrc.includes("wrap.setAttribute('data-src', srcUntuk(nama));") &&
+  idxSrc.includes('var MAKS_PREVIEW_AKTIF = hematPreview ? 2 : (layarKecilPreview ? 3 : 6);') &&
+  idxSrc.includes('var MAKS_PREVIEW_PARALEL = (hematPreview || layarKecilPreview) ? 1 : 2;') &&
+  idxSrc.includes('if (previewIO) previewIO.observe(card);') &&
+  !idxSrc.includes("{ rootMargin: '520px 0px' }"));
+t('art statis tetap tampil sampai preview hidup siap memudar masuk',
+  idxSrc.includes('.asp-live.siap iframe{opacity:1}') &&
+  !idxSrc.includes('#katalog .catalog-art .catalog-paper{display:none}'));
+t('mode hemat tidak auto-load; hover/fokus yang memprioritaskan preview',
+  idxSrc.includes('koneksiPreview.saveData') &&
+  idxSrc.includes('else if (!hematPreview) mintaPreview(wrap, false);') &&
+  idxSrc.includes("grid.addEventListener('focusin'"));
 
 /* ------------------------------------------------------------------ *
  * 3. undangan.html — mode kartu
@@ -83,6 +96,12 @@ t('mode kartu menyembunyikan pemicu buka + ornamen kontrol',
   undSrc.includes('body.kartu-demo #cover .vip-btn{display:none}'));
 t('kelas kartu-demo bertahan saat bootBersihkan() (kelas sesi)',
   undSrc.includes("BOOT_KELAS_SESI=['preview-mode','opened','pv-soft','embed-buka','kartu-demo']"));
+t('mode kartu boot seketika dan melewatkan animasi/timer thumbnail berat',
+  undSrc.includes('if(KARTU)boot(DEMO_DRAFT)') &&
+  undSrc.includes('covOn=!!AN.cover&&!RM&&!KARTU') &&
+  undSrc.includes('txOn=!!AN.text&&!RM&&!KARTU') &&
+  undSrc.includes('if(!KARTU)ambientPasang(tplF);') &&
+  undSrc.includes('tick();if(KARTU)return;'));
 
 /* ------------------------------------------------------------------ *
  * 4. pemicu buka = anak langsung #cover (bukan di dalam .inner)
@@ -215,7 +234,7 @@ async function render(d) {
     !undSrc.includes('body.elbuka-kotak.foto-full:not(.opened) #cover .bdfr{opacity:0') &&
     undSrc.includes('body.elbuka-kotak.foto-full #cover .std-label{color:#fff;'));
   t('kotak cincin: tutup terangkat + cahaya emas, cover ditahan sampai adegan selesai',
-    undSrc.includes('body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .62s cubic-bezier(.4,0,.2,1) .95s both}') &&
+    undSrc.includes('body.elbuka-kotak.opened #cover .pemicu{animation:kotakBoxOut .74s var(--ease-cover-soft) 1.02s both}') &&
     undSrc.includes('transform:perspective(760px) rotateX(-122deg);') &&
     undSrc.includes('@keyframes kotakCahaya{') &&
     undSrc.includes('opacity .55s ease 1.32s,visibility 0s linear 1.88s'));
@@ -225,8 +244,8 @@ async function render(d) {
     undSrc.includes('body.elbuka-gembok #cover .pemicu .simpul{--ka:78%;') &&
     undSrc.includes('body.elbuka-gembok.foto-full #cover .pemicu .simpul{\n  --ka:58%;top:44%;width:34%;margin-left:-17%;height:13px;'));
   t('animasi kunci dipecah per-segmen easing + cover ditahan sampai selesai',
-    undSrc.includes('body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.75s linear forwards}') &&
-    undSrc.includes('animation-timing-function:cubic-bezier(.45,0,.55,1)}') &&
+    undSrc.includes('body.elbuka-gembok.opened #cover .pemicu .simpul{animation:kunciMasuk 1.88s linear forwards}') &&
+    undSrc.includes('animation-timing-function:cubic-bezier(.42,0,.5,1)}') &&
     undSrc.includes('0%  {transform:translateY(0)     rotate(-30deg) scale(1);') &&
     undSrc.includes('opacity .5s ease 1.55s,visibility 0s linear 2.05s}') &&
     undSrc.includes('body.elbuka-gembok.foto-full.opened #cover .bdfr{animation:bdfrAmplop .4s ease 2.15s both}'));
@@ -264,6 +283,16 @@ async function render(d) {
   t('gerbang: teks cetak memudar saat membuka (tidak jadi teks hantu)',
     undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .p-kulit,') &&
     undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .p-hint{opacity:0;transition:opacity .28s ease}'));
+  t('gerbang: pemicu layar penuh tidak ikut bergeser saat ditekan',
+    undSrc.includes('body:not(.opened).elbuka-gerbang #cover .pemicu:active,') &&
+    undSrc.includes('body:not(.opened).elbuka-amplop:not(.foto-full) #cover .pemicu:active,') &&
+    undSrc.includes('body:not(.opened).elbuka-selendang #cover .pemicu:active{transform:none}'));
+  t('gerbang: ayunan memakai satu perspektif panel dan cover ditahan sampai hampir tuntas',
+    undSrc.includes('body.elbuka-gerbang #cover .pemicu{position:absolute;left:0;top:0;transform:none;width:100%;height:100%}') &&
+    undSrc.includes('overflow:hidden;backface-visibility:hidden;') &&
+    undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .el{transform:perspective(1200px) rotateY(-80deg)}') &&
+    undSrc.includes('body.elbuka-gerbang.opened #cover .pemicu .el2{transform:perspective(1200px) rotateY(80deg)}') &&
+    undSrc.includes('body.elbuka-gerbang.opened #cover{transition:transform 1.02s var(--ease-cover) .48s,opacity .34s ease 1.14s,visibility 0s linear 1.48s}'));
 
   /* ------------------------------------------------------------------ *
    * 7. Pita: satin transparan (nama mempelai tidak tertutup)
@@ -292,8 +321,9 @@ async function render(d) {
     undSrc.includes('body.elbuka-selendang.foto-full #cover .pemicu .el{--sa:30%;--sb:26%;--sc:12%;--sd:20%;') &&
     !undSrc.includes('body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0;background-image:radial-gradient(circle at 30% 18%,color-mix(in srgb,var(--accent-cover,var(--accent,#7a3040)) 70%,#fff)'));
   t('selendang dibuka dengan menarik kain KE ATAS + teks cover memudar',
-    undSrc.includes('body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-118%) rotateX(16deg) scaleY(1.04);opacity:0}') &&
-    undSrc.includes('body.elbuka-selendang.opened #cover .bdfr{opacity:0;transition:opacity .3s ease}'));
+    undSrc.includes('body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-122%) rotateX(14deg) scaleY(1.03);opacity:0}') &&
+    undSrc.includes('body.elbuka-selendang.opened #cover .bdfr{opacity:0;transition:opacity .38s var(--ease-cover-soft)}') &&
+    undSrc.includes('body.elbuka-selendang.opened #cover{transition:transform 1.02s var(--ease-cover) .48s,opacity .62s ease 1.08s,visibility 0s linear 1.7s}'));
 
   /* ------------------------------------------------------------------ *
    * 8. Amplop: kartu kaca di tengah foto (bukan menutup seluruh layar)

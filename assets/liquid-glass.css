@@ -1,0 +1,458 @@
+/* AsProject Liquid Glass — material kaca cair futuristik untuk tema
+   Liquid Glass Aurora (pernikahan), Khatam (khitanan), Neon (ultah),
+   dan Mentari (aqiqah).
+
+   Semua aturan dikunci ke body.tema-liquid; tema lain tidak berubah.
+   Layer .lg-Aurora dan pemilih aksen dibuat oleh assets/liquid-glass.js.
+   Bila JS/CSS tidak termuat, tema tetap tampil sebagai shell kaca biasa.
+*/
+
+body.tema-liquid{
+  --lg-c1:#38bdf8;
+  --lg-c2:#818cf8;
+  --lg-c3:#f472b6;
+  --lg-c4:#facc15;
+  --lg-rx:0deg;
+  --lg-ry:0deg;
+  --lg-mx:50%;
+  --lg-my:0%;
+  --lg-ink-shadow:rgba(34,49,79,.22);
+  /* Isi panel sengaja SANGAT tipis: warna Aurora/foto di baliknya harus
+     tetap terlihat. Kesan kaca datang dari blur latar, tepi terang,
+     kilau, dan bayangan — bukan dari lapisan putih tebal. */
+  --lg-fill:rgba(255,255,255,.035);
+  --lg-fill-hi:rgba(255,255,255,.18);
+  --lg-fill-mid:rgba(255,255,255,.025);
+  --lg-fill-lo:rgba(255,255,255,.09);
+  --lg-edge:rgba(255,255,255,.62);
+  --lg-edge-soft:rgba(255,255,255,.42);
+}
+
+/* Aksen bawaan tiap kategori; pemilih warna tamu bisa menimpanya. */
+body.tema-liquid-glass-khitanan{--lg-c1:#34d399;--lg-c2:#22d3ee;--lg-c3:#84cc16;--lg-c4:#60a5fa}
+body.tema-liquid-glass-ultah{--lg-c1:#ff6b9d;--lg-c2:#ffb86b;--lg-c3:#8b5cf6;--lg-c4:#67e8f9}
+body.tema-liquid-glass-aqiqah{--lg-c1:#fbbf24;--lg-c2:#34d399;--lg-c3:#60a5fa;--lg-c4:#f472b6}
+
+/* ---------- Aurora: blob cairan di balik kaca ---------- */
+body.tema-liquid .lg-Aurora{
+  position:absolute;inset:-12%;overflow:hidden;pointer-events:none;
+  z-index:0;isolation:isolate;
+}
+body.tema-liquid .lg-Aurora-page{
+  position:fixed;inset:-10%;z-index:0;
+  /* Hamparan warna diam di seluruh viewport: panel bening selalu punya
+     warna cairan yang terlihat menembusnya, di posisi scroll mana pun. */
+  background:
+    radial-gradient(60% 46% at 12% 8%,color-mix(in srgb,var(--lg-c1) 30%,transparent),transparent 70%),
+    radial-gradient(55% 44% at 92% 22%,color-mix(in srgb,var(--lg-c2) 26%,transparent),transparent 70%),
+    radial-gradient(58% 48% at 18% 88%,color-mix(in srgb,var(--lg-c3) 24%,transparent),transparent 72%),
+    radial-gradient(48% 40% at 86% 92%,color-mix(in srgb,var(--lg-c4) 22%,transparent),transparent 70%);
+}
+body.tema-liquid #app{position:relative;z-index:1}
+body.tema-liquid .lg-Aurora i{
+  position:absolute;display:block;width:64vmax;height:64vmax;opacity:.88;
+  border-radius:42% 58% 63% 37%/45% 40% 60% 55%;
+  will-change:transform,border-radius;
+}
+body.tema-liquid .lg-Aurora i:nth-child(1){
+  left:-18%;top:-16%;background:radial-gradient(circle at 35% 35%,var(--lg-c1),transparent 58%);
+  animation:lg-cair-a 18s ease-in-out infinite alternate;
+}
+body.tema-liquid .lg-Aurora i:nth-child(2){
+  right:-22%;top:8%;background:radial-gradient(circle at 60% 38%,var(--lg-c2),transparent 60%);
+  animation:lg-cair-b 22s ease-in-out infinite alternate;
+}
+body.tema-liquid .lg-Aurora i:nth-child(3){
+  left:4%;bottom:-24%;background:radial-gradient(circle at 45% 45%,var(--lg-c3),transparent 60%);
+  animation:lg-cair-c 20s ease-in-out infinite alternate;
+}
+body.tema-liquid .lg-Aurora i:nth-child(4){
+  right:2%;bottom:-12%;width:48vmax;height:48vmax;opacity:.72;
+  background:radial-gradient(circle at 45% 45%,var(--lg-c4),transparent 60%);
+  animation:lg-cair-a 16s ease-in-out infinite alternate-reverse;
+}
+@keyframes lg-cair-a{
+  from{transform:translate3d(-3%,-2%,0) scale(1) rotate(0deg);border-radius:42% 58% 63% 37%/45% 40% 60% 55%}
+  to{transform:translate3d(10%,7%,0) scale(1.14) rotate(18deg);border-radius:61% 39% 38% 62%/52% 62% 38% 48%}
+}
+@keyframes lg-cair-b{
+  from{transform:translate3d(4%,5%,0) scale(1.08) rotate(8deg);border-radius:58% 42% 40% 60%/45% 58% 42% 55%}
+  to{transform:translate3d(-11%,-4%,0) scale(.94) rotate(-14deg);border-radius:39% 61% 59% 41%/61% 39% 61% 39%}
+}
+@keyframes lg-cair-c{
+  from{transform:translate3d(2%,4%,0) scale(.96) rotate(-6deg);border-radius:47% 53% 61% 39%/57% 43% 57% 43%}
+  to{transform:translate3d(12%,-8%,0) scale(1.16) rotate(12deg);border-radius:62% 38% 43% 57%/41% 59% 41% 59%}
+}
+
+/* Biarkan blob terlihat melalui latar konten, bukan ditutup warna padat.
+   Selubung putih di .wrap hanya seujung kuku; kalau terlalu tebal, panel
+   kaca di atasnya ikut terlihat susu walau isinya sendiri sudah tipis. */
+body.tema-liquid .wrap{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.015) 34%,rgba(255,255,255,.05)),
+    radial-gradient(90% 52% at 12% 0%,rgba(255,255,255,.07),transparent 62%),
+    radial-gradient(80% 55% at 94% 42%,rgba(255,255,255,.05),transparent 64%);
+}
+
+/* ---------- Material kaca ---------- */
+/* Panel utama: isi putih hanya ±3–18% (dulu bertumpuk sampai ±80% dan
+   terlihat seperti kartu putih susu). Blur cukup 11px, diganti saturasi
+   latar yang kuat supaya warna & motif di balik kaca tetap terlihat. */
+body.tema-liquid .card,
+body.tema-liquid #cover .bdfr,
+body.tema-liquid #cover .wedding-invite-card{
+  position:relative;
+  background-color:var(--lg-fill);
+  background-image:
+    radial-gradient(560px circle at var(--lg-mx) var(--lg-my),rgba(255,255,255,.22),rgba(255,255,255,0) 46%),
+    linear-gradient(145deg,var(--lg-fill-hi),var(--lg-fill-mid) 38%,rgba(255,255,255,.03) 62%,var(--lg-fill-lo)),
+    linear-gradient(115deg,color-mix(in srgb,var(--lg-c1) 18%,transparent),transparent 44%,color-mix(in srgb,var(--lg-c3) 15%,transparent));
+  border:1px solid var(--lg-edge);
+  border-radius:30px;
+  -webkit-backdrop-filter:blur(11px) saturate(2.05) brightness(1.03) contrast(1.06);
+  backdrop-filter:blur(11px) saturate(2.05) brightness(1.03) contrast(1.06);
+  box-shadow:
+    0 24px 58px var(--lg-ink-shadow),
+    0 3px 14px rgba(34,49,79,.10),
+    inset 0 1px 0 rgba(255,255,255,.92),
+    inset 1px 0 0 rgba(255,255,255,.34),
+    inset -1px 0 0 rgba(255,255,255,.16),
+    inset 0 -18px 32px rgba(255,255,255,.09);
+}
+
+/* Panel-panel DI DALAM kartu. CSS bawaan mewarnainya putih/krem padat
+   (#fffdf9 dsb.), jadi walau kartu luarnya sudah kaca, isinya tetap terlihat
+   opak. Di sini cukup diberi isi tipis tanpa backdrop-filter kedua —
+   kaca kartu luarnya sudah menyaring latar halaman. */
+body.tema-liquid .acara,
+body.tema-liquid .couple .c,
+body.tema-liquid .amp-row,
+body.tema-liquid .qrcard,
+body.tema-liquid .bt-item,
+body.tema-liquid .harapan-kartu,
+body.tema-liquid .cv-jendela .cvband{
+  background:linear-gradient(150deg,rgba(255,255,255,.14),rgba(255,255,255,.025) 46%,rgba(255,255,255,.07));
+  border-color:var(--lg-edge-soft);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -12px 22px rgba(255,255,255,.06),0 10px 24px rgba(34,49,79,.08);
+}
+/* Kontrol kecil di dalam kartu ikut bening (state aktif/berhasil dikecualikan). */
+body.tema-liquid .mapreload,
+body.tema-liquid .qrbtn,
+body.tema-liquid .copy:not(.ok),
+body.tema-liquid .stk:not(.on),
+body.tema-liquid .mini-acts a,
+body.tema-liquid .mini-acts button{
+  background:rgba(255,255,255,.13);
+  border-color:rgba(255,255,255,.52);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 6px 16px rgba(34,49,79,.08);
+}
+/* Beberapa permukaan ditulis inline oleh renderer (kolom RSVP, chip panitia,
+   kartu kontak footer) sehingga hanya bisa ditipiskan dengan !important. */
+body.tema-liquid #rvpN,
+body.tema-liquid #rvpH,
+body.tema-liquid #rvpM{
+  background:rgba(255,255,255,.14)!important;
+  border-color:rgba(255,255,255,.55)!important;
+  color:var(--ink-body,var(--ink));
+}
+body.tema-liquid [data-rsvpb][data-r="ragu"],
+body.tema-liquid [data-rsvpb][data-r="tidak"]{
+  background:rgba(255,255,255,.12)!important;
+  border-color:rgba(255,255,255,.55)!important;
+}
+body.tema-liquid .card [style*="#fffdf9"]{
+  background:linear-gradient(155deg,rgba(255,255,255,.15),rgba(255,255,255,.035))!important;
+  border-color:rgba(255,255,255,.50)!important;
+}
+body.tema-liquid .as-contact{
+  background:linear-gradient(150deg,rgba(255,255,255,.18),rgba(255,255,255,.06))!important;
+  border-color:rgba(255,255,255,.58)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.85) brightness(1.03);
+  backdrop-filter:blur(12px) saturate(1.85) brightness(1.03);
+  box-shadow:0 18px 42px rgba(34,49,79,.14),inset 0 1px 0 rgba(255,255,255,.75);
+}
+/* Chip tanggal di cover (kecuali foto penuh/karya 3D yang memang gelap). */
+body.tema-liquid:not(.foto-full):not(.art3d) #cover .date{
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.52);
+  -webkit-backdrop-filter:blur(9px) saturate(1.9);
+  backdrop-filter:blur(9px) saturate(1.9);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 8px 20px rgba(34,49,79,.10);
+}
+/* Kotak dialog & tombol melayang global ikut jadi kaca, bukan putih 92%. */
+body.tema-liquid .scrim .box{
+  background:linear-gradient(155deg,rgba(255,255,255,.26),rgba(255,255,255,.10));
+  border-color:var(--lg-edge);
+  -webkit-backdrop-filter:blur(16px) saturate(1.9) brightness(1.03);
+  backdrop-filter:blur(16px) saturate(1.9) brightness(1.03);
+  box-shadow:0 28px 64px rgba(34,49,79,.24),inset 0 1px 0 rgba(255,255,255,.85);
+}
+body.tema-liquid #musikBtn,
+body.tema-liquid #coverBack{
+  background:rgba(255,255,255,.20);
+  border:1px solid rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(12px) saturate(1.85) brightness(1.03);
+  backdrop-filter:blur(12px) saturate(1.85) brightness(1.03);
+}
+
+/* Lapisan konten terluar sedikit mengikuti ruang 3D; cover lebih terasa. */
+body.tema-liquid #cover{perspective:1100px}
+body.tema-liquid #cover .bdfr{
+  transform:perspective(1100px) rotateX(var(--lg-rx)) rotateY(var(--lg-ry)) translateZ(0);
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+body.tema-liquid .card{
+  transform:perspective(1200px) rotateX(calc(var(--lg-rx) * .18)) rotateY(calc(var(--lg-ry) * .18));
+  transform-style:preserve-3d;
+}
+
+/* Garis prisma di tepi atas panel. */
+body.tema-liquid .card::before,
+body.tema-liquid #cover .bdfr::before{
+  content:"";position:absolute;left:18px;right:18px;top:0;height:2px;
+  border-radius:99px;pointer-events:none;opacity:.85;
+  background:linear-gradient(90deg,transparent,var(--lg-c1),rgba(255,255,255,.96),var(--lg-c3),transparent);
+}
+/* Kilau diagonal lembut; --lg-mx digerakkan JS mengikuti sentuh/gyro. */
+body.tema-liquid .card::after,
+body.tema-liquid #cover .bdfr::after{
+  content:"";position:absolute;inset:1px;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.12) 0%,transparent 30%,transparent 72%,rgba(255,255,255,.06) 100%);
+  background-position:var(--lg-mx) var(--lg-my);
+  mix-blend-mode:soft-light;
+}
+
+/* Countdown jadi kubus kaca kecil. */
+body.tema-liquid .cdw .u,
+body.tema-liquid .cdw-mini .u{
+  background:linear-gradient(155deg,rgba(255,255,255,.20),rgba(255,255,255,.035));
+  border:1px solid rgba(255,255,255,.62);
+  border-radius:20px;
+  -webkit-backdrop-filter:blur(7px) saturate(1.95) brightness(1.03);
+  backdrop-filter:blur(7px) saturate(1.95) brightness(1.03);
+  box-shadow:0 12px 28px rgba(34,49,79,.14),inset 0 1px 0 rgba(255,255,255,.85),inset 0 -10px 20px rgba(255,255,255,.08);
+}
+
+/* Tombol utama terasa seperti kapsul gel berwarna. */
+body.tema-liquid .btn-gold{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 74%,#fff),var(--accent) 52%,color-mix(in srgb,var(--accent) 78%,#111827));
+  color:#fff;
+  border:1px solid rgba(255,255,255,.72);
+  box-shadow:0 14px 32px color-mix(in srgb,var(--accent) 38%,transparent),inset 0 1px 0 rgba(255,255,255,.88),inset 0 -10px 18px rgba(255,255,255,.16);
+  text-shadow:0 1px 8px rgba(0,0,0,.22);
+}
+
+/* Navigasi titik ikut menjadi rel kaca. */
+body.tema-liquid .lay-navdot{
+  background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.46);
+  -webkit-backdrop-filter:blur(11px) saturate(1.8) brightness(1.03);
+  backdrop-filter:blur(11px) saturate(1.8) brightness(1.03);
+  box-shadow:0 12px 32px rgba(34,49,79,.16),inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+/* ---------- Galeri lingkaran 3D ---------- */
+/* Grid galeri bawaan diubah JS menjadi cincin foto di sekeliling poros Y.
+   Tanpa JS (atau foto kurang dari 3), galeri tetap grid biasa. */
+body.tema-liquid .lg-gal3d{
+  --lg-gal-rot:0deg;
+  --lg-gal-step:60deg;
+  --lg-gal-radius:150px;
+  --lg-gal-w:clamp(116px,42vw,164px);
+  position:relative;
+  margin-top:10px;
+}
+body.tema-liquid .lg-gal3d-scene{
+  position:relative;
+  height:clamp(270px,calc(var(--lg-gal-w) * 1.9),355px);
+  perspective:1050px;
+  perspective-origin:50% 42%;
+  border-radius:26px;
+  cursor:grab;
+  touch-action:pan-y;
+}
+body.tema-liquid .lg-gal3d-scene.is-dragging{cursor:grabbing}
+body.tema-liquid .lg-gal3d-scene:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:4px;
+}
+body.tema-liquid .lg-gal3d-scene::before{
+  content:"";position:absolute;left:50%;top:45%;width:64%;aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  border-radius:50%;pointer-events:none;opacity:.5;filter:blur(24px);
+  background:conic-gradient(from 120deg,
+    color-mix(in srgb,var(--lg-c1) 28%,transparent),
+    color-mix(in srgb,var(--lg-c2) 18%,transparent),
+    color-mix(in srgb,var(--lg-c3) 24%,transparent),
+    color-mix(in srgb,var(--lg-c4) 18%,transparent),
+    color-mix(in srgb,var(--lg-c1) 28%,transparent));
+}
+body.tema-liquid .lg-gal3d-floor{
+  position:absolute;left:50%;top:65%;width:min(88%,335px);height:88px;
+  transform:translate(-50%,-50%) rotateX(66deg);
+  border:1px solid rgba(255,255,255,.42);border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse at center,
+    color-mix(in srgb,var(--accent) 24%,transparent),
+    rgba(255,255,255,.10) 44%,transparent 72%);
+  box-shadow:0 22px 34px color-mix(in srgb,var(--accent) 18%,transparent),
+    inset 0 0 26px rgba(255,255,255,.18);
+}
+body.tema-liquid .lg-gal3d .gal-grid.lg-gal3d-ring{
+  display:block;position:absolute;inset:0;margin:0;overflow:visible;
+  transform-style:preserve-3d;
+  transform:rotateX(-7deg) rotateY(var(--lg-gal-rot));
+  will-change:transform;
+}
+body.tema-liquid .lg-gal3d-cell{
+  position:absolute;left:50%;top:45%;width:var(--lg-gal-w);aspect-ratio:3/4;
+  border:1px solid rgba(255,255,255,.58);border-radius:22px;overflow:hidden;
+  transform:translate(-50%,-50%)
+    rotateY(calc(var(--lg-gal-i) * var(--lg-gal-step)))
+    translateZ(var(--lg-gal-radius));
+  transform-style:preserve-3d;
+  background:rgba(255,255,255,.10);
+  box-shadow:0 18px 38px rgba(34,49,79,.22),inset 0 1px 0 rgba(255,255,255,.75);
+  filter:brightness(calc(.74 + ((var(--lg-gal-facing,1) + 1) * .17)))
+    saturate(calc(.88 + ((var(--lg-gal-facing,1) + 1) * .12)));
+  opacity:calc(.55 + ((var(--lg-gal-facing,1) + 1) * .225));
+  transition:border-color .25s ease,box-shadow .25s ease;
+  isolation:isolate;
+}
+body.tema-liquid .lg-gal3d-cell::before{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(155deg,rgba(255,255,255,.34),transparent 44%,rgba(255,255,255,.08));
+  opacity:calc(.38 + ((var(--lg-gal-facing,1) + 1) * .20));
+}
+body.tema-liquid .lg-gal3d-cell::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:38%;z-index:2;
+  pointer-events:none;background:linear-gradient(0deg,rgba(10,16,35,.20),transparent);
+}
+body.tema-liquid .lg-gal3d-cell.is-active{
+  border-color:rgba(255,255,255,.92);
+  box-shadow:0 26px 52px rgba(34,49,79,.28),
+    0 0 0 1px rgba(255,255,255,.72),
+    0 0 34px color-mix(in srgb,var(--accent) 38%,transparent),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+body.tema-liquid .lg-gal3d-cell:focus-visible{
+  outline:3px solid var(--accent);outline-offset:3px;
+}
+body.tema-liquid .lg-gal3d-cell img{
+  width:100%;height:100%;aspect-ratio:auto;object-fit:cover;
+  border:0;border-radius:inherit;transform:none;pointer-events:none;
+}
+body.tema-liquid .lg-gal3d .gal-more{display:none}
+body.tema-liquid .lg-gal3d-controls{
+  position:relative;z-index:5;display:flex;align-items:center;justify-content:center;
+  gap:10px;margin-top:-6px;
+}
+body.tema-liquid .lg-gal3d-btn{
+  appearance:none;width:42px;height:42px;padding:0;cursor:pointer;
+  border:1px solid rgba(255,255,255,.62);border-radius:50%;
+  background:linear-gradient(155deg,rgba(255,255,255,.26),rgba(255,255,255,.08));
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(1.04);
+  backdrop-filter:blur(10px) saturate(1.8) brightness(1.04);
+  box-shadow:0 10px 24px rgba(34,49,79,.16),inset 0 1px 0 rgba(255,255,255,.8);
+  color:var(--ink-body,var(--ink));font-size:26px;line-height:1;font-weight:700;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+body.tema-liquid .lg-gal3d-btn:hover{transform:translateY(-1px) scale(1.05)}
+body.tema-liquid .lg-gal3d-btn:active{transform:scale(.96)}
+body.tema-liquid .lg-gal3d-btn:focus-visible,
+body.tema-liquid .lg-gal3d-dot:focus-visible{
+  outline:3px solid var(--accent);outline-offset:3px;
+}
+body.tema-liquid .lg-gal3d-count{
+  min-width:52px;text-align:center;font-size:11px;font-weight:800;
+  letter-spacing:.18em;color:var(--ink-body,var(--ink));opacity:.72;
+  font-variant-numeric:tabular-nums;
+}
+body.tema-liquid .lg-gal3d-dots{
+  position:relative;z-index:5;display:flex;justify-content:center;gap:6px;margin-top:9px;
+}
+body.tema-liquid .lg-gal3d-dot{
+  appearance:none;width:7px;height:7px;padding:0;cursor:pointer;
+  border:1px solid rgba(255,255,255,.65);border-radius:99px;
+  background:color-mix(in srgb,var(--accent) 30%,rgba(255,255,255,.55));
+  box-shadow:0 3px 9px rgba(34,49,79,.14);
+  transition:width .22s ease,background .22s ease,transform .22s ease;
+}
+body.tema-liquid .lg-gal3d-dot:hover{transform:scale(1.2)}
+body.tema-liquid .lg-gal3d-dot[aria-current="true"]{
+  width:23px;background:var(--accent);
+}
+@media (max-width:380px){
+  body.tema-liquid .lg-gal3d-scene{height:clamp(255px,calc(var(--lg-gal-w) * 1.95),320px)}
+  body.tema-liquid .lg-gal3d-btn{width:38px;height:38px}
+}
+
+/* ---------- Pemilih aksen dinamis ---------- */
+body.tema-liquid .lg-dock{
+  position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:130;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  padding:9px 7px;border:1px solid rgba(255,255,255,.58);border-radius:99px;
+  background:linear-gradient(160deg,rgba(255,255,255,.20),rgba(255,255,255,.07));
+  -webkit-backdrop-filter:blur(13px) saturate(1.9) brightness(1.03);
+  backdrop-filter:blur(13px) saturate(1.9) brightness(1.03);
+  box-shadow:0 16px 38px rgba(34,49,79,.20),inset 0 1px 0 rgba(255,255,255,.92);
+  transition:opacity .35s ease,transform .35s ease;
+}
+body.tema-liquid.navpager .lg-dock{bottom:calc(124px + env(safe-area-inset-bottom,0px))}
+body.tema-liquid:not(.opened):not(.preview-mode) .lg-dock,
+body.tema-liquid.cover-opening:not(.preview-mode) .lg-dock{
+  opacity:0;pointer-events:none;transform:translateX(12px) scale(.94);
+}
+body.tema-liquid.kartu-demo .lg-dock{display:none}
+body.tema-liquid .lg-dock-label{
+  font-size:8px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-body,var(--ink));opacity:.68;writing-mode:vertical-rl;
+  line-height:1;padding:2px 0 3px;
+}
+body.tema-liquid .lg-swatch{
+  appearance:none;width:30px;height:30px;padding:0;cursor:pointer;
+  border:2px solid rgba(255,255,255,.88);border-radius:50%;
+  box-shadow:0 5px 14px rgba(34,49,79,.20),inset 0 1px 2px rgba(255,255,255,.95),inset 0 -6px 9px rgba(255,255,255,.24);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+body.tema-liquid .lg-swatch:hover{transform:scale(1.1)}
+body.tema-liquid .lg-swatch:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+body.tema-liquid .lg-swatch[aria-pressed="true"]{
+  transform:scale(1.14);
+  box-shadow:0 0 0 3px rgba(255,255,255,.88),0 0 0 5px var(--accent),0 8px 18px rgba(34,49,79,.22);
+}
+@media (max-height:620px){
+  body.tema-liquid .lg-dock{flex-direction:row;bottom:calc(122px + env(safe-area-inset-bottom,0px));padding:7px 9px}
+  body.tema-liquid .lg-dock-label{writing-mode:horizontal-tb;padding:0 2px}
+  body.tema-liquid .lg-swatch{width:26px;height:26px}
+}
+
+/* Konten cover tetap di atas Aurora. */
+body.tema-liquid #cover>.bdfr,
+body.tema-liquid #cover>.pat,
+body.tema-liquid #cover>.veil,
+body.tema-liquid #cover>.brand{position:relative;z-index:2}
+
+/* Pengguna yang meminta gerak dikurangi mendapat kaca statis. */
+@media (prefers-reduced-motion:reduce){
+  body.tema-liquid .lg-Aurora i{animation:none!important}
+  body.tema-liquid #cover .bdfr,
+  body.tema-liquid .card{transform:none!important;will-change:auto}
+  body.tema-liquid .lg-dock,
+  body.tema-liquid .lg-swatch{transition:none}
+  body.tema-liquid .lg-gal3d-ring{will-change:auto}
+  body.tema-liquid .lg-gal3d-cell,
+  body.tema-liquid .lg-gal3d-btn,
+  body.tema-liquid .lg-gal3d-dot{transition:none}
+}
+
+/* Tanpa backdrop-filter tidak ada blur latar, jadi isi panel dinaikkan
+   secukupnya agar teks tetap terbaca — tetapi tetap tembus pandang (±38%),
+   bukan kembali jadi kartu putih padat. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  body.tema-liquid .card,
+  body.tema-liquid #cover .bdfr,
+  body.tema-liquid #cover .wedding-invite-card{background-color:rgba(255,255,255,.38)}
+  body.tema-liquid .lg-dock,
+  body.tema-liquid .scrim .box{background-color:rgba(255,255,255,.48)}
+}

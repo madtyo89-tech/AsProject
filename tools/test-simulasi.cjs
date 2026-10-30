@@ -1,9 +1,9 @@
 const blobText=(win,b)=>typeof b.text==='function'?b.text():new Promise((ok,no)=>{const r=new win.FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsText(b)});
 /* Simulasi pemakaian nyata AsProject (jsdom, offline):
-   1) studio.html  : boot, evPick 4 event, render 19 tema (termasuk enam Studio-only), 32 border ber-tier,
+   1) studio.html  : boot, evPick 4 event, render semua tema, 32 border ber-tier,
                      17 font, semua fx cover/scroll, render 8 tab, publish offline,
                      dlUndangan (export HTML mandiri)
-   2) undangan.html: boot() live untuk semua 19 tema, demo draft, RSVP offline
+   2) undangan.html: boot() live untuk semua tema, demo draft, RSVP offline
    3) hasil export : dibuka sebagai HTML mandiri (EMBEDDED_DATA) dan harus render
    Jalankan: node tools/test-simulasi.cjs   (butuh: npm i jsdom) */
 'use strict';
@@ -159,9 +159,9 @@ function draftFor(tpl, idx) {
      Tanpa ini semua tema jatuh ke border 'double' dan tidak ada motif sama sekali. */
   const temaUji = w.eval('TPL.filter(t=>t.border).map(t=>t.id)');
   /* Test ini menyuntikkan tema sintetis 'uji-vip' ke TPL untuk menguji tier,
-     jadi TPL berisi 41 entri (40 asli + 1 sintetis). Tema sintetis itu
+     jadi TPL berisi 45 entri (44 asli + 1 sintetis). Tema sintetis itu
      tidak punya border/orn bawaan dan memang tidak boleh ikut dihitung. */
-  t('studio: 40 tema katalog punya border bawaan', temaUji.length === 40, temaUji.length + ' tema');
+  t('studio: 44 tema katalog punya border bawaan', temaUji.length === 44, temaUji.length + ' tema');
   let bBawaan = 0, oBawaan = 0, pBawaan = 0, gagalBorder = [], gagalOrn = [], gagalPat = [];
   for (const id of temaUji) {
     w.eval(`state.border='';state.orn='';state.pat='';pickTpl('${id}')`);

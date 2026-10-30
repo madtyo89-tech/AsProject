@@ -18,7 +18,7 @@ Setelah publikasi selesai (tunggu Actions/Pages ±2 menit), cek sitemap di brows
 https://asproject.my.id/sitemap.xml
 ```
 
-Harus berisi **50 URL** (beranda, 5 demo kategori aktif, halaman harga/katalog, 4 kategori, 34 detail template, dan 4 halaman kepercayaan). URL arsip `katalog-demo/` dan `undangan.html` tidak didaftarkan. Kalau jumlah belum 50, tunggu build Pages lagi (cek tab **Actions** di GitHub).
+Harus berisi **60 URL** (beranda, 5 demo kategori aktif, halaman harga/katalog, 4 kategori, 44 detail template, dan 4 halaman kepercayaan). URL arsip `katalog-demo/` dan `undangan.html` tidak didaftarkan. Kalau jumlah belum 60, tunggu build Pages lagi (cek tab **Actions** di GitHub).
 
 > Verifikasi Google Search Console tetap bisa dilakukan **sekarang**, tidak perlu
 > menunggu merge — berkas verifikasi sudah hidup (dicek 2026-10-20).
@@ -124,7 +124,7 @@ lebih bernilai daripada 20 kali Request Indexing.
 - **Bio** (≤150 karakter, ini versi 140 karakter — sisa 10):
 
   ```
-  Undangan digital pernikahan, khitanan, ultah & aqiqah ✨ 34 tema untuk dicoba. Demo interaktif gratis. Katalog Rp49rb/tema; ketentuan dikonfirmasi sebelum bayar. Konsultasi via WhatsApp 👇
+  Undangan digital pernikahan, khitanan, ultah & aqiqah ✨ 44 tema untuk dicoba. Demo interaktif gratis. Katalog Rp49rb/tema; ketentuan dikonfirmasi sebelum bayar. Konsultasi via WhatsApp 👇
   ```
 - **Link**: `https://asproject.my.id` (pakai satu link saja, jangan Linktree).
 - Setiap caption: sisipkan `asproject.my.id` sebagai teks **dan** tautan di bio.
@@ -150,7 +150,7 @@ lebih bernilai daripada 20 kali Request Indexing.
    ```
    AsProject adalah studio undangan digital online yang berbasis di Bandung dan melayani seluruh Indonesia. Kami membuat undangan pernikahan, khitanan, ulang tahun, dan aqiqah dalam bentuk satu tautan yang mudah dibagikan lewat WhatsApp, lengkap dengan RSVP dan buku tamu digital, hitung mundur hari-H, peta lokasi, galeri foto, musik latar, amplop digital, serta QR check-in tamu.
 
-   Tersedia 34 tema publik dengan demo interaktif. Data katalog mencatat Rp49.000 per tema; kuota tamu/RSVP, masa aktif, watermark, revisi, estimasi pengerjaan, dan pembayaran harus dikonfirmasi tertulis sebelum transaksi.
+   Tersedia 44 tema publik dengan demo interaktif. Data katalog mencatat Rp49.000 per tema; kuota tamu/RSVP, masa aktif, watermark, revisi, estimasi pengerjaan, dan pembayaran harus dikonfirmasi tertulis sebelum transaksi.
    ```
 7. **Jam buka**: isi sesuai jam operasional yang benar-benar disepakati pemilik. Jam layanan belum dipublikasikan di situs; jangan mengisi 09.00–22.00 tanpa konfirmasi.
 8. **Verifikasi**: Google biasanya meminta **video singkat** (rekam layar/meja
@@ -172,7 +172,7 @@ lebih bernilai daripada 20 kali Request Indexing.
 - **Description** (≤512 karakter, ini 365):
 
   ```
-  AsProject — studio undangan digital di Bandung. Jelajahi 34 tema pernikahan, khitanan, ulang tahun, dan aqiqah serta coba demo interaktif memakai data contoh. Data katalog mencatat harga Rp49.000 per tema. Kuota tamu/RSVP, masa aktif link, watermark, revisi, estimasi pengerjaan, dan metode pembayaran dikonfirmasi tertulis sebelum transaksi. Hubungi kami melalui WhatsApp.
+  AsProject — studio undangan digital di Bandung. Jelajahi 44 tema pernikahan, khitanan, ulang tahun, dan aqiqah serta coba demo interaktif memakai data contoh. Data katalog mencatat harga Rp49.000 per tema. Kuota tamu/RSVP, masa aktif link, watermark, revisi, estimasi pengerjaan, dan metode pembayaran dikonfirmasi tertulis sebelum transaksi. Hubungi kami melalui WhatsApp.
   ```
 - **Business website / catalog link**: `https://asproject.my.id`
 

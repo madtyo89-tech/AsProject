@@ -37,7 +37,8 @@ function assertPage(rel, canonical) {
 }
 
 (async () => {
-  check(PUBLIC.length === 34, `expected 34 public templates, got ${PUBLIC.length}`);
+  check(PUBLIC.length === 44, `expected 44 public templates, got ${PUBLIC.length}`);
+  check(TEMPLATES.every(t => !t.studioOnly), 'all built-in templates are public (no Studio-only built-ins remain)');
   check(fs.existsSync(path.join(ROOT, 'katalog/index.html')), 'catalog landing page exists');
   check(fs.existsSync(path.join(ROOT, 'harga/index.html')), 'pricing page exists');
   const catalog = assertPage('katalog/index.html', `${ORIGIN}/katalog/`);
@@ -51,7 +52,17 @@ function assertPage(rel, canonical) {
   check(studioDemo.includes('sandbox="allow-scripts allow-same-origin"') && studioDemo.includes('preview=1&amp;sandbox=1'), 'invitation preview runs in a restricted iframe sandbox');
   check(studioDemo.includes('tidak bisa disimpan, diterbitkan, atau dibagikan') && studioDemo.includes('Refresh atau buka ulang'), 'Studio demo explains the ephemeral, non-publishing session');
   check(studioDemo.includes('type="reset"') && studioDemo.includes('data-demo-field='), 'Studio demo has editable event details and a reset action');
-  check(catalog.includes(`${PUBLIC.length} tema yang bisa dicoba`), 'catalog reports the template count');
+  check(catalog.includes(`>${PUBLIC.length} tema yang bisa dicoba<`), 'catalog reports the template count');
+  check((catalog.match(/>NEW TEMPLATE<\/span>/g) || []).length === 10, 'catalog visibly marks the ten newly published templates as NEW TEMPLATE');
+  const newTemplateIds = [
+    ...PUBLIC.filter(t => t.arch),
+    ...PUBLIC.filter(t => t.id.startsWith('liquid-glass'))
+  ].map(t => t.id);
+  const catalogIds = [...new Set([...catalog.matchAll(/href="\.\.\/template\/([a-z0-9-]+)\/"/g)].map(m => m[1]))];
+  check(JSON.stringify(catalogIds.slice(0, newTemplateIds.length)) === JSON.stringify(newTemplateIds),
+    'catalog lists the ten NEW TEMPLATE releases first so they are immediately visible');
+  check(catalog.includes('Lihat 10 template terbaru') && catalog.includes('Sepuluh kartu pertama di bawah ini berlabel NEW TEMPLATE'),
+    'catalog signposts the newest templates before the full grid');
   check(catalog.includes('portofolio klien') && catalog.includes('data contoh'), 'catalog labels demo material, not customer proof');
   check(catalog.includes('assets/katalog-v2.js') && catalog.includes('data-catalog-controls'), 'catalog V2 enhancement is linked while controls are server-rendered');
   check(catalog.includes('data-category-filter="aqiqah"') && catalog.includes('data-favorites-toggle') && catalog.includes('data-catalog-search'), 'catalog V2 has category, favorite and search controls');
@@ -65,6 +76,14 @@ function assertPage(rel, canonical) {
     const rel = `undangan/${slug}/index.html`;
     const html = assertPage(rel, `${ORIGIN}/undangan/${slug}/`);
     check(html.includes('Coba demo') && html.includes('FAQPage') && html.includes('Penawaran pelanggan baru') && html.includes('<del>Rp 99.000</del>') && html.includes('tanpa tanggal akhir'), `${rel}: demo CTA, FAQ and consistent crossed-out promotional pricing`);
+    const eventKey = slug === 'ulang-tahun' ? 'ultah' : slug;
+    const expectedNew = newTemplateIds.filter(id => {
+      const t = PUBLIC.find(x => x.id === id);
+      return t && (t.ev === eventKey || t.ev === 'all');
+    });
+    const listedIds = [...new Set([...html.matchAll(/href="\.\.\/\.\.\/template\/([a-z0-9-]+)\/"/g)].map(m => m[1]))];
+    check(JSON.stringify(listedIds.slice(0, expectedNew.length)) === JSON.stringify(expectedNew),
+      `${rel}: newest templates for this category are listed first`);
   }
   for (const t of PUBLIC) {
     const rel = `template/${t.id}/index.html`;
@@ -73,6 +92,7 @@ function assertPage(rel, canonical) {
     check(html.includes(`Undangan ${t.ev === 'ultah' ? 'Ulang Tahun' : t.ev === 'all' ? 'Pernikahan' : t.ev} ${t.nama}`) || html.includes(t.nama), `${rel}: template-specific title`);
     check(html.includes(`Product`) && html.includes('priceCurrency') && html.includes(String(t.harga || 49000)), `${rel}: Product schema and template price`);
     check(html.includes(`tpl=${t.id}`), `${rel}: preview points at the matching renderer template`);
+    check(t.badge !== 'NEW TEMPLATE' || html.includes('>NEW TEMPLATE</span>'), `${rel}: newly published template carries the visible NEW TEMPLATE badge`);
     check(html.includes('Demo memakai data contoh') && html.includes('bukan hasil pelanggan'), `${rel}: preview is clearly labelled`);
     check(html.includes('<del>Rp99.000</del>') && html.includes('harga khusus pelanggan baru per tema') && !html.includes('harga katalog per undangan') && html.includes('tanggal akhir'), `${rel}: approved normal and customer prices are shown per theme without a fake expiry`);
     check(html.includes('wa.me/6285196755675'), `${rel}: order CTA`);
@@ -114,10 +134,11 @@ function assertPage(rel, canonical) {
   for (const [, id] of (featured ? [...featured[1].matchAll(/id: '([^']+)'/g)] : [])) {
     check(coverSource.includes(`'${id}':`), `live demo uses a matching sample cover: ${id}`);
   }
-  check(renderer.includes('body.opened.cover-opening #content{opacity:0;transition:none}') &&
-    renderer.includes("body.classList.add('opened','cover-opening')") && renderer.includes('},1200);') &&
+  check(renderer.includes('body.opened.cover-opening #content{opacity:0;visibility:hidden;transition:none;pointer-events:none}') &&
+    renderer.includes("body.classList.add('opened','cover-opening')") && renderer.includes('function coverSelesaiDalam()') &&
+    renderer.includes('},coverSelesaiDalam());') &&
     renderer.includes("prefers-reduced-motion: reduce") && renderer.includes("body.classList.remove('opened','cover-opening')"),
-    'interactive cover waits 1.2 seconds before fading in the invitation; reduced-motion remains immediate');
+    'interactive cover reveal follows each opening animation duration; reduced-motion remains immediate');
   check(renderer.includes("document.body.classList.add('opened','embed-buka')") && !renderer.includes("document.body.classList.add('opened','cover-opening')"),
     'auto-open demo stays immediate without the interactive cover delay');
   const homeCategories = marketing.match(/var CATEGORIES = \[([\s\S]*?)\n  \];/);
@@ -129,13 +150,15 @@ function assertPage(rel, canonical) {
   }
   check(marketing.includes('Buka demo') && marketing.includes('Lihat Demo') && marketing.includes('Mulai '), 'homepage preview cards include image, demo CTA and price');
   check(marketing.includes('Undangan Digital <span') && marketing.includes('Lihat Template'), 'homepage hero has concise headline and primary template CTA');
+  check(marketing.includes('10 template terbaru—6 Gerbang Arch dan 4 Liquid Glass') && marketing.includes('href="#katalog">Lihat 10 template terbaru'),
+    'homepage showcase signposts the newest templates at the start of the full catalog');
   check(marketing.includes('Masa aktif link setelah acara belum dicantumkan') && marketing.includes('Apakah ada biaya tambahan?'), 'homepage FAQ discloses unknown service terms');
   check(marketing.includes('Portofolio dan counter pelanggan tidak ditampilkan tanpa bukti'), 'homepage does not fabricate testimonials, portfolio, or customer counters');
   check(marketingCss.includes('html body #aspWaFab{opacity:1!important') && marketingCss.includes('.ap-home-category-grid'), 'homepage keeps the WhatsApp control visible and uses image-led category cards');
 
   const sitemap = read('sitemap.xml');
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
-  check(urls.length === 50, `expected 50 sitemap routes (45 marketing + 5 active demos), got ${urls.length}`);
+  check(urls.length === 60, `expected 60 sitemap routes (55 marketing + 5 active demos), got ${urls.length}`);
   check(new Set(urls).size === urls.length, 'sitemap URLs are unique');
   for (const p of fs.readdirSync(path.join(ROOT, 'katalog-demo')).filter(f => f.endsWith('.html'))) {
     const legacy = read(`katalog-demo/${p}`);

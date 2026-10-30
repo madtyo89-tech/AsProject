@@ -28,6 +28,7 @@ on:
       - 'robots.txt'
       - 'manifest.webmanifest'
       - '.github/workflows/cek-kesehatan.yml'
+      - '.github/workflows/supabase-keepalive.yml'
   pull_request:
     paths:
       - '**.html'
@@ -39,6 +40,7 @@ on:
       - 'robots.txt'
       - 'manifest.webmanifest'
       - '.github/workflows/cek-kesehatan.yml'
+      - '.github/workflows/supabase-keepalive.yml'
   workflow_dispatch:
 
 permissions:

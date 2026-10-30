@@ -108,6 +108,24 @@ async function render(buka, coverStyle, physicalBuka = 'pita') {
   t('gembok biasa diperkecil dan dipindah ke area foto atas, bukan teks tengah',
     undSrc.includes('body.elbuka-gembok:not(.foto-full) #cover .pemicu{width:150px;height:206px;top:22%;') &&
     undSrc.includes('transform:translate(-50%,-50%) scale(.5)}'));
+  t('respons tekan pemicu kecil mempertahankan jangkar & skala dasar modelnya',
+    undSrc.includes('body:not(.opened).elbuka-pita #cover .pemicu:active,') &&
+    undSrc.includes('body:not(.opened).elbuka-amplop.foto-full #cover .pemicu:active{transform:translate(-50%,-50%) scale(.95)}') &&
+    undSrc.includes('body:not(.opened).elbuka-gembok:not(.foto-full) #cover .pemicu:active{transform:translate(-50%,-50%) scale(.475)}') &&
+    undSrc.includes('body:not(.opened).elbuka-kotak #cover .pemicu:active{transform:translateX(-50%) scale(calc(var(--k,1)*.95))}'));
+  t('fade cover ditahan sampai animasi fisik tirai/pintu/amplop hampir tuntas',
+    undSrc.includes('body.elbuka-tirai.opened #cover{transition:transform .98s var(--ease-cover) .48s,opacity .34s ease 1.12s,visibility 0s linear 1.46s}') &&
+    undSrc.includes('body.elbuka-pintu.opened #cover{transition:transform .86s var(--ease-cover) .48s,opacity .32s ease 1.02s,visibility 0s linear 1.34s}') &&
+    undSrc.includes('body.elbuka-amplop.opened #cover{transition:transform .8s var(--ease-cover) .48s,opacity .32s ease .96s,visibility 0s linear 1.28s}'));
+  t('shackle gembok berporos di kaki kanan tanpa translasi yang melepaskannya dari badan',
+    undSrc.includes('transform-origin:bottom right;box-shadow:0 5px 15px rgba(0,0,0,.4)') &&
+    undSrc.includes('body.elbuka-gembok.opened #cover .pemicu .el::before{transform:rotate(46deg)}') &&
+    !undSrc.includes('body.elbuka-gembok.opened #cover .pemicu .el::before{transform:translateX(-50%)'));
+  t('bayangan tepi selendang ikut terangkat bersama kainnya',
+    undSrc.includes('transition:transform 1.55s var(--ease-cover),opacity .95s var(--ease-cover-soft) .12s}') &&
+    undSrc.includes('body.elbuka-selendang.opened #cover .pemicu .simpul{transform:translateY(-122%);opacity:0}'));
+  t('punggung buku disembunyikan setelah sampul melewati 90°',
+    /body\.elbuka-buku #cover \.pemicu\{[\s\S]{0,1800}?backface-visibility:hidden\}/.test(undSrc));
   t('studio: FX_BUKA menambah 4 skin berstruktur beda',
     studioSrc.includes("['iris','Iris Diagonal','cover tersibak menyamping lewat potongan diagonal'],") &&
     studioSrc.includes("['lubang','Iris Lingkaran','cover tersedot mengecil ke tengah membentuk bulat'],") &&
@@ -126,10 +144,33 @@ async function render(buka, coverStyle, physicalBuka = 'pita') {
     undSrc.includes('body.buka-pintu.opened #cover .bkl.l{animation:pintuL') &&
     undSrc.includes('body.buka-pintu.opened #cover .bkl.r{animation:pintuR'));
   t('buku: membalik dari tepi kiri sampai punggung hilang',
-    undSrc.includes('body.buka-buku.opened #cover{opacity:1;visibility:visible;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-158deg);backface-visibility:hidden'));
+    undSrc.includes('body.buka-buku.opened #cover{opacity:0;visibility:hidden;pointer-events:none;transform-origin:0% 50%;transform:perspective(1500px) rotateY(-112deg) translateX(-7%);backface-visibility:hidden'));
   t('kotak: tutup terangkat + letupan kelip',
     undSrc.includes('body.buka-kotak.opened #cover .bkt.t{animation:kotakT') &&
     undSrc.includes('body.buka-kotak.opened .kt-burst i{animation:ktTerbang'));
+  t('semua efek panel berakhir dengan cover hidden, bukan latar pekat tertinggal',
+    undSrc.includes('body.buka-pintu.opened #cover{opacity:0;visibility:hidden;') &&
+    undSrc.includes('body.buka-kotak.opened #cover{opacity:0;visibility:hidden;') &&
+    undSrc.includes('body.buka-blinds.opened #cover{opacity:0;transition:opacity .3s ease .98s,visibility 0s linear 1.28s}') &&
+    !/body\.buka-[a-z]+\.opened #cover\{[^}]*visibility:visible/.test(undSrc));
+  t('reveal isi mengikuti durasi cover aktif dan mengunci isi selama animasi',
+    undSrc.includes('function coverSelesaiDalam()') &&
+    undSrc.includes('cs.transitionDuration') && undSrc.includes('cs.transitionDelay') &&
+    undSrc.includes('},coverSelesaiDalam());') && !undSrc.includes("body.classList.remove('cover-opening')},1200);") &&
+    undSrc.includes('body.opened.cover-opening #content{opacity:0;visibility:hidden;transition:none;pointer-events:none}') &&
+    undSrc.includes('body.opened.cover-opening{overflow:hidden}') &&
+    undSrc.includes('body.opened.cover-opening .scr-frame{opacity:0;visibility:hidden}'));
+  t('semua animasi buka memakai kurva halus bersama & lapisan GPU saat bergerak',
+    undSrc.includes('--ease-cover:cubic-bezier(.22,.78,.24,1)') &&
+    undSrc.includes('--ease-cover-soft:cubic-bezier(.33,.72,.24,1)') &&
+    undSrc.includes('--ease-cover-io:cubic-bezier(.45,0,.22,1)') &&
+    undSrc.includes('body.opened #cover{will-change:transform,opacity,clip-path') &&
+    undSrc.includes('body.opened #cover .pemicu .el') &&
+    undSrc.includes('transition:transform 1.02s var(--ease-cover) .48s,opacity .7s ease .8s,visibility 0s linear 1.5s'));
+  t('crossfade isi overlap halus di ujung animasi cover',
+    undSrc.includes('#content{opacity:0;transition:opacity .85s var(--ease-cover-soft) .1s}') &&
+    undSrc.includes('Math.round(selesai-300)') &&
+    undSrc.includes('body.opened:not(.cover-opening) #coverBack{animation:coverBackIn'));
   t('reveal sudut lewat clip-path berjenjang (mirror tetap utuh)',
     undSrc.includes('.scr-frame .orn-c{clip-path:inset(0 100% 100% 0);transition:clip-path') &&
     undSrc.includes('body.opened .scr-frame .orn-c{clip-path:inset(0 0 0 0)}') &&
@@ -142,15 +183,17 @@ async function render(buka, coverStyle, physicalBuka = 'pita') {
     undSrc.includes('.scr-frame .orn-c{transition:none!important}') &&
     undSrc.includes('body.opened .scr-frame .orn-c svg{animation:none!important}') &&
     undSrc.includes('#cover .bkl,#cover .bkt,.kt-burst i{animation:none!important;opacity:0!important}') &&
-    undSrc.includes('body.buka-buku.opened #cover,body.buka-pintu.opened #cover,body.buka-kotak.opened #cover{opacity:0;visibility:hidden;transform:none'));
+    undSrc.includes('body.buka-buku.opened #cover,body.buka-pintu.opened #cover,body.buka-kotak.opened #cover{opacity:0;visibility:hidden;transform:none') &&
+    undSrc.includes('.cvcue,.cvcue i,.cdw .n.tick{animation:none}') &&
+    undSrc.includes('body.opened #cover *,body.opened #cover *::before,body.opened #cover *::after{animation:none!important;transition:none!important}'));
 
   t('skin clip-path: iris diagonal & iris lingkaran',
     undSrc.includes('body.buka-iris #cover{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}') &&
-    undSrc.includes('body.buka-iris.opened #cover{clip-path:polygon(0 0,0 0,0 0,0 0);transition:clip-path 1s') &&
+    undSrc.includes('body.buka-iris.opened #cover{opacity:0;clip-path:polygon(0 0,0 0,0 0,0 0);transition:clip-path 1.12s') &&
     undSrc.includes('body.buka-lubang #cover{clip-path:circle(150% at 50% 50%)}') &&
-    undSrc.includes('body.buka-lubang.opened #cover{clip-path:circle(0% at 50% 50%);transition:clip-path .95s'));
+    undSrc.includes('body.buka-lubang.opened #cover{opacity:0;clip-path:circle(0% at 50% 50%);transition:clip-path 1.06s'));
   t('skin jungkit drawbridge dari tepi bawah',
-    undSrc.includes('body.buka-jungkit.opened #cover{transform-origin:50% 100%;transform:perspective(1200px) rotateX(94deg)'));
+    undSrc.includes('body.buka-jungkit.opened #cover{opacity:0;transform-origin:50% 100%;transform:perspective(1200px) rotateX(94deg)'));
   t('panel & lajur membawa foto lewat --bukaImg (full foto tetap menyatu)',
     undSrc.includes('#cover .bkl{position:absolute;top:0;bottom:0;width:50.6%;display:none;opacity:0;pointer-events:none;background-image:var(--bukaImg,none),linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:200% 100%,200% 100%') &&
     undSrc.includes('#cover .bkt{position:absolute;left:0;right:0;height:50.6%;display:none;opacity:0;pointer-events:none;background-image:var(--bukaImg,none),linear-gradient(165deg,var(--g0),var(--g1) 55%,var(--g2));background-size:100% 200%,100% 200%') &&

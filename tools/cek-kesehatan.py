@@ -296,7 +296,7 @@ def _tpl_ids(rel):
 
 
 def _tpl_rows(rel):
-    """Baris TPL termasuk kategori, harga, dan penanda Studio-only/Arch."""
+    """Baris TPL termasuk kategori, harga, badge, dan penanda Studio-only/Arch."""
     s = baca(rel)
     m = re.search(r"const TPL=\[(.*?)\];", s, re.S)
     if not m:
@@ -304,7 +304,7 @@ def _tpl_rows(rel):
     rows = []
     for chunk in m.group(1).split("{id:'")[1:]:
         row = {"id": chunk.split("'")[0]}
-        for key in ("ev", "tier", "char", "bg3d", "bgPaper", "nama", "accent"):
+        for key in ("ev", "tier", "char", "bg3d", "bgPaper", "nama", "accent", "badge"):
             g = re.search(r"%s:'([^']*)'" % key, chunk)
             row[key] = g.group(1) if g else ''
         row["studioOnly"] = bool(re.search(r"studioOnly:true", chunk))
@@ -513,13 +513,17 @@ def cek_katalog_publik():
     rows = _tpl_rows("studio.html")
     studio_public_ids = [r["id"] for r in rows if not r["studioOnly"]]
     studio_only_ids = [r["id"] for r in rows if r["studioOnly"]]
-    # Katalog publik diurut rapi per kategori (Semua→Pernikahan→Khitanan→
-    # Ultah→Aqiqah), jadi bandingkan sebagai HIMPUNAN, bukan urutan.
+    # Isi katalog publik dibandingkan sebagai HIMPUNAN dengan TPL publik;
+    # urutan tampilnya sengaja menempatkan rilis NEW TEMPLATE paling depan.
     mismatch = sorted(pub_ids) != sorted(studio_public_ids)
     lapor("ok" if not mismatch else "masalah",
           "index.html: %d tema publik sinkron; %d tema Studio-only tidak dipublikasikan%s" % (
               len(pub_ids), len(studio_only_ids),
               "" if not mismatch else " — daftar publik harus sama dengan subset TPL non-Studio-only"))
+    new_template_ids = ([r["id"] for r in rows if r["arch"]]
+                        + [r["id"] for r in rows if r["id"].startswith("liquid-glass")])
+    lapor("ok" if pub_ids[:len(new_template_ids)] == new_template_ids else "masalah",
+          "index.html: %d NEW TEMPLATE tampil pertama di katalog beranda" % len(new_template_ids))
     # setiap kelas gradient katalog punya rule CSS Tailwind
     kurang = []
     for g in re.findall(r'gradient:"([^"]+)"', pn):
@@ -558,18 +562,21 @@ def cek_fitur_terbaru():
     lapor("ok" if ev_ok else "masalah", "setiap tema punya kategori acara (ev) yang sah")
     arch_rows = [r for r in rows if r["arch"]]
     arch_categories = {r["ev"] for r in arch_rows}
-    arch_ok = (len(arch_rows) == 6 and all(r["studioOnly"] for r in arch_rows)
+    arch_ok = (len(arch_rows) == 6 and all(not r["studioOnly"] and r["harga"] == 49000 and r["badge"] == "NEW TEMPLATE" for r in arch_rows)
                and arch_categories == {"pernikahan", "khitanan", "aqiqah", "ultah"}
                and "body.gerbang-arch" in undangan
                and "state.coverStyle=t&&t.arch?'arch':'kotak'" in studio)
     lapor("ok" if arch_ok else "masalah",
-          f"Gerbang Arch: {len(arch_rows)} varian Studio tersambung ke skin live lintas 4 kategori")
-    katalog_arch_ok = (all(r["harga"] == 0 for r in arch_rows)
+          f"Gerbang Arch: {len(arch_rows)} varian publik NEW TEMPLATE tersambung ke skin live lintas 4 kategori")
+    new_rows = [r for r in rows if r["badge"] == "NEW TEMPLATE"]
+    katalog_baru_ok = (len(new_rows) == 10
+                       and all(not r["studioOnly"] and r["harga"] == 49000 for r in new_rows)
+                       and all(not r["studioOnly"] for r in rows)
                        and "katalog:TPL.filter(t=>!t.studioOnly).map" in studio
                        and "if(!t.studioOnly&&!state.katalogDel.includes(t.id)&&!state.katalog.some" in studio
                        and "state.katalogHide=state.katalogHide.filter(id=>{const t=tplById(id);return !!t&&!t.studioOnly});" in studio)
-    lapor("ok" if katalog_arch_ok else "masalah",
-          "Studio-only Arch: tetap bisa dipilih tanpa harga, promo, atau baris katalog pemasaran")
+    lapor("ok" if katalog_baru_ok else "masalah",
+          "Template publik baru: 10 tema NEW TEMPLATE berharga katalog dan masuk baris katalog pemasaran")
     kategori = ("pernikahan", "khitanan", "ultah", "aqiqah")
     kurang = [ev for ev in kategori if not any(r["ev"] in (ev, "all") for r in rows)]
     lapor("ok" if not kurang else "masalah",
@@ -1680,11 +1687,16 @@ def cek_kartu_katalog():
                and "background-position:center,right center,center;transform-origin:right center;" in live
                and "border-radius:clamp(56px,15vh,140px) 0 0 0}" in live
                and "border-radius:0 clamp(56px,15vh,140px) 0 0}" in live
-               and "background-size:100% 100%,200% 100%,100% 100%;" in live)
+               and "background-size:100% 100%,200% 100%,100% 100%;" in live
+               and "body:not(.opened).elbuka-gerbang #cover .pemicu:active," in live
+               and "body:not(.opened).elbuka-selendang #cover .pemicu:active{transform:none}" in live
+               and "body.elbuka-gerbang.opened #cover .pemicu .el{transform:perspective(1200px) rotateY(-80deg)}" in live
+               and "body.elbuka-gerbang.opened #cover .pemicu .el2{transform:perspective(1200px) rotateY(80deg)}" in live
+               and "opacity .34s ease 1.14s,visibility 0s linear 1.48s" in live)
     lapor("ok" if buku else "masalah",
           "undangan.html: sampul buku & gerbang memakai foto mempelai (--fotoSampul) + judul tercetak + teks cover disembunyikan saat tertutup")
     lapor("ok" if gerbang else "masalah",
-          "undangan.html: gerbang dua panel simetris (lebar 50%, radius & poros mirror) memakai separuh foto yang menyatu")
+          "undangan.html: gerbang dua panel simetris memakai separuh foto; pemicu layar penuh tidak bergeser saat ditekan dan ayunannya tidak memakai perspektif ganda")
     amplop = ("body.elbuka-amplop.foto-full #cover .pemicu{" in live
               and "width:min(330px,82%);height:min(430px,62%);" in live
               and "body.elbuka-amplop.foto-full #cover .pemicu .el{--fa:26%;--fb:10%;--fc:18%;" in live
@@ -1696,7 +1708,8 @@ def cek_kartu_katalog():
     selendang = ("body.elbuka-selendang #cover .pemicu .el{position:absolute;inset:0 0 auto 0;" in live
                  and "height:clamp(110px,18dvh,220px);" in live
                  and "body.elbuka-selendang.foto-full #cover .pemicu .el{--sa:30%;--sb:26%;--sc:12%;--sd:20%;" in live
-                 and "body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-118%)" in live)
+                 and "body.elbuka-selendang.opened #cover .pemicu .el{transform:translateY(-122%)" in live
+                 and "body.elbuka-selendang.opened #cover{transition:transform 1.02s var(--ease-cover) .48s,opacity .62s ease 1.08s,visibility 0s linear 1.7s}" in live)
     lapor("ok" if selendang else "masalah",
           "undangan.html: selendang hanya menutup bagian atas & tembus pandang, jadi foto + teks cover tetap terlihat")
     gembok = ("body.elbuka-gembok.foto-full #cover .pemicu{" in live
@@ -1707,7 +1720,7 @@ def cek_kartu_katalog():
           "undangan.html: gembok foto penuh = kartu foto besar berisi nama & tanggal + petunjuk di dalam kartu")
     gembok_kaca = ("body.elbuka-gembok #cover .pemicu .el{--ga:54%;--gb:34%;--gc:46%;" in live
                    and "body.elbuka-gembok #cover .pemicu .simpul{--ka:78%;" in live
-                   and "animation:kunciMasuk 1.75s linear forwards" in live
+                   and "animation:kunciMasuk 1.88s linear forwards" in live
                    and "opacity .5s ease 1.55s,visibility 0s linear 2.05s}" in live)
     lapor("ok" if gembok_kaca else "masalah",
           "undangan.html: gembok kaca (badan & kunci tembus) + animasi kunci per-segmen, cover ditahan sampai kunci selesai")
@@ -1721,6 +1734,18 @@ def cek_kartu_katalog():
              and "body.elbuka-kotak.opened #cover{transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .55s ease 1.32s,visibility 0s linear 1.88s}" in live)
     lapor("ok" if kotak else "masalah",
           "undangan.html: kotak cincin tertutup di bawah cover + teks selalu tampil + bukaan cahaya emas")
+    animasi_buka = ("body:not(.opened).elbuka-amplop.foto-full #cover .pemicu:active{transform:translate(-50%,-50%) scale(.95)}" in live
+                    and "body:not(.opened).elbuka-gembok:not(.foto-full) #cover .pemicu:active{transform:translate(-50%,-50%) scale(.475)}" in live
+                    and "body:not(.opened).elbuka-kotak #cover .pemicu:active{transform:translateX(-50%) scale(calc(var(--k,1)*.95))}" in live
+                    and "opacity .34s ease 1.12s,visibility 0s linear 1.46s" in live
+                    and "opacity .32s ease 1.02s,visibility 0s linear 1.34s" in live
+                    and "opacity .32s ease .96s,visibility 0s linear 1.28s" in live
+                    and "body.elbuka-gembok.opened #cover .pemicu .el::before{transform:rotate(46deg)}" in live
+                    and "body.elbuka-gembok.opened #cover .pemicu .el::before{transform:translateX(-50%)" not in live
+                    and "body.elbuka-selendang.opened #cover .pemicu .simpul{transform:translateY(-122%);opacity:0}" in live
+                    and "backface-visibility:hidden}" in live)
+    lapor("ok" if animasi_buka else "masalah",
+          "undangan.html: animasi buka lain stabil — respons tekan tidak meloncat, fade tidak mendahului gerak fisik, shackle tetap berporos, bayangan selendang ikut kain, punggung buku tidak termirror")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
         return

@@ -298,6 +298,40 @@ Uji publish tanpa menulis ke database produksi: `node tools/test-publish-fallbac
 Browser memerlukan library sistem Chromium; atur `LD_LIBRARY_PATH` bila memakai
 library bundled. Tes publish memakai fixture lokal, **bukan database produksi**.
 
+## Penjaga Supabase anti-pause (2026-10-28)
+
+Project Supabase Free dapat dipause bila aktivitas databasenya rendah selama
+periode 7 hari. Penjaga eksternal di
+`.github/workflows/supabase-keepalive.yml` menjalankan
+`tools/supabase-keepalive.cjs` setiap 6 jam. Setiap run membuat **5 query baca
+sungguhan** melalui PostgREST: `invitation_drafts` 3 kali, lalu `rsvp` dan
+`checkin`. Query memakai slug sentinel `__asproject_keepalive__`, hanya memilih
+kolom `slug`, dan `limit=1`; tidak ada data yang ditulis dan baris tamu tidak
+perlu dikembalikan.
+
+- Konfigurasi bawaan mengambil URL + anon key publik yang sudah tertanam di
+  `studio.html`, jadi tidak ada secret baru yang wajib dibuat. Bila ingin
+  memisahkannya, workflow juga menerima variable `SUPABASE_URL` dan secret
+  `SUPABASE_ANON_KEY`. Script **menolak** secret/service-role key.
+- HTTP **540** dikenali sebagai project paused: workflow sengaja gagal sebagai
+  alarm. Query tidak dapat membangkitkan project yang sudah paused; tekan
+  **Resume project** di Supabase Dashboard.
+- Uji offline tanpa jaringan: `node tools/test-supabase-keepalive.cjs`.
+  Melihat rencana query saja: `node tools/supabase-keepalive.cjs --dry-run`.
+
+**Syarat aktivasi GitHub:** trigger `schedule` hanya berjalan dari branch
+default, jadi jadwal otomatis baru aktif setelah workflow ini berada di
+`main`. Selama hanya ada di branch fitur, script dan ujinya siap tetapi cron
+belum berjalan. Setelah masuk `main`, workflow juga bisa diuji dari
+**Actions → Penjaga Supabase (anti-pause) → Run workflow**. GitHub dapat
+menonaktifkan scheduled workflow pada repo publik yang tidak punya aktivitas
+repo selama 60 hari; periksa tab Actions sesekali pada masa repo sangat sepi.
+
+Keepalive ini membuat aktivitas rutin yang jauh di atas pola sepi penyebab
+pause, tetapi Supabase tidak memberikan jaminan resmi untuk cron pihak ketiga.
+Satu-satunya cara yang dijamin Supabase agar tidak kena auto-pause inactivity
+tetap memakai paid plan.
+
 ## Floating preview undangan di Studio (tombol kembali ke cover, 2026-10-14)
 
 Mini HP melayang (`#floatPrev`) menampilkan undangan yang sedang dibuat dan ikut
@@ -375,8 +409,7 @@ Sekarang tiap entri `TPL` membawa `layout:` yang menunjuk satu preset di
 | `ekstra` | bagian eksklusif yang hanya lahir di preset itu |
 | `vip` | menyalakan mesin 4D (parallax 3 lapis + partikel + entrance sinematik) |
 
-**34 tema publik memakai 18 preset kerangka berbeda** pada katalog saat ini. Enam varian Gerbang Arch (Studio-only) memakai lima preset yang
-sudah ada ditambah `panggung-gerbang`.
+**44 tema publik memakai 19 preset kerangka berbeda** pada katalog saat ini. Enam varian Gerbang Arch yang kini publik berlabel **NEW TEMPLATE** memakai lima preset lain ditambah `panggung-gerbang`.
 
 Sepuluh shell: `klasik` (kerangka lama, tanpa aturan CSS), `editorial` (majalah
 tanpa kotak kartu), `bab` (pembatas gelap + angka romawi), `split` (rail lengket
@@ -490,7 +523,7 @@ Jaminan invariansi yang dijaga otomatis:
   (index ke array) untuk undangan lama tidak berubah.
 - `cek-kerangka.cjs` [10] memastikan literal TPL di HTML == hasil
   generator (anti-drift); `cek-kesehatan.py` [11][13] memastikan
-  urutan id studio == undangan dan katalog publik tetap sinkron dengan 34 tema publik.
+  urutan id studio == undangan dan katalog publik tetap sinkron dengan 44 tema publik.
 - `tools/test-kerangka-bebas.cjs` (jsdom, diikat di cek-kesehatan
   [35]) merender 6 template kb + 2 kompilasi legacy di renderer
   live: shell, urutan bebas, penomoran bab, strip galeri, jam
@@ -498,6 +531,53 @@ Jaminan invariansi yang dijaga otomatis:
 - Alur edit tema: ubah `kerangka/template.js` / `token-tema.js`,
   jalankan `node tools/bangun-tpl.cjs`, lalu `node tools/cek-kerangka.cjs`
   dan `python3 tools/cek-kesehatan.py`.
+
+## Tema Liquid Glass per kategori (2026-10-25)
+
+Empat tema kaca cair futuristik, **tepat satu per kategori** (bukan satu
+tema `all`): *Liquid Glass Aurora* (`liquid-glass`, pernikahan),
+*Liquid Glass Khatam* (`liquid-glass-khitanan`), *Liquid Glass Neon*
+(`liquid-glass-ultah`), dan *Liquid Glass Mentari*
+(`liquid-glass-aqiqah`). Keempatnya **Studio-only** dulu mengikuti pola
+rilis tema baru — katalog publik tetap 34 tema, dan posisinya di akhir
+array `TPL` supaya index `theme` undangan lama tidak berubah.
+
+- **Token** terpisah per kategori (palet, font, ornamen, pola sendiri),
+  terkompilasi ke layout kaca lama (`kaca-manis`/`kaca-dewasa`) dan
+  model cover `glass`, jadi renderer lama memakainya tanpa layout baru.
+- **Lapisan efek** tinggal di `assets/liquid-glass.css` +
+  `assets/liquid-glass.js`, hanya menyala untuk id `liquid-glass*`
+  (kelas `tema-liquid` di `undangan.html`, dimount sesudah `#cover`
+  lahir, disebelah mount VIP 4D): blob Aurora cair yang bergerak di
+  balik panel kaca, tilt 3D mengikuti kursor/sentuh/gyro HP, kilau
+  specular mengikuti posisi cahaya, **galeri lingkaran 3D** (cincin foto
+  yang berputar otomatis, bisa diseret/dipindah dengan tombol, titik,
+  atau panah keyboard; foto depan tetap membuka lightbox bawaan), dan
+  **pemilih aksen dinamis** (6 preset; bawaan per kategori; pilihan tamu
+  disimpan di `sessionStorage`). Material panelnya benar-benar bening — isi putih
+  hanya ±3–18% di atas blur/saturasi latar, dan panel di dalam kartu
+  (acara, amplop, countdown, RSVP, buku tamu, kontak footer) ikut
+  ditipiskan di CSS yang sama supaya tidak kembali putih padat.
+  `prefers-reduced-motion` mematikan tilt/animasi; tanpa
+  `backdrop-filter` panel memakai fallback ±38% agar teks tetap
+  terbaca namun tetap tembus pandang; tanpa aset ini tema tetap tampil
+  sebagai shell kaca biasa.
+- **Export mandiri**: Studio menyematkan CSS/JS liquid ke file HTML
+  hasil “Simpan File HTML” hanya bila tema terpilih Liquid Glass.
+- **Uji**: `node tools/test-liquid-glass.cjs` (ikut loop CI
+  `tools/test-*.cjs`) mengunci tepat-satu-per-kategori, posisi akhir
+  array, status publik berlabel **NEW TEMPLATE**, dan pemasangan hook-nya.
+
+## Publikasi 10 template NEW TEMPLATE (2026-10-29)
+
+Enam tema *Gerbang Arch* dan empat tema *Liquid Glass* yang semula
+Studio-only kini masuk katalog pelanggan seperti tema lain. Kesepuluhnya
+membawa badge `NEW TEMPLATE`, harga katalog Rp49.000, kartu di beranda dan
+`/katalog/`, halaman kategori, halaman detail `/template/<id>/`, demo
+renderer, serta entri sitemap. Urutan `TPL` tidak digeser, jadi index
+kolom `theme` di Supabase tetap aman. Setelah mengubah status template,
+jalankan `node tools/bangun-tpl.cjs`, `node tools/bangun-halaman-publik.cjs`,
+lalu `python3 tools/bangun-sitemap.py`.
 
 ## Link undangan untuk semua tamu (tanpa nama) di Master & Studio (2026-10-15)
 
@@ -759,8 +839,8 @@ Ulangi: `node tools/audit-landmark.cjs`.
 - `robots.txt` mengizinkan semua halaman publik, menutup `/master.html`, `/scan.html`,
   `/checkin.html`, dan `/android/` (halaman internal & berkas unduhan), serta menunjuk
   `https://asproject.my.id/sitemap.xml`.
-- `sitemap.xml` berisi 50 URL: beranda + 5 demo kategori aktif, halaman katalog dan harga,
-  4 kategori acara, 34 detail tema, serta 4 halaman kepercayaan. Halaman
+- `sitemap.xml` berisi 60 URL: beranda + 5 demo kategori aktif, halaman katalog dan harga,
+  4 kategori acara, 44 detail tema, serta 4 halaman kepercayaan. Halaman
   arsip `katalog-demo/`, Ice Blue lama, 404, studio, `undangan.html`,
   dan laporan audit sengaja tidak didaftarkan. Jalankan `node tools/bangun-halaman-publik.cjs` lalu
   `python3 tools/bangun-sitemap.py` setelah mengubah daftar template.
@@ -945,7 +1025,7 @@ Dua implikasi:
 
 1. Buka **Search Console** → properti `https://asproject.my.id/` → **Verifikasi**
    (token sudah terpasang sejak 2026-10-18; cukup klik).
-2. **Sitemaps** → submit `sitemap.xml` (50 URL). Kalau pernah submit versi lama,
+2. **Sitemaps** → submit `sitemap.xml` (60 URL). Kalau pernah submit versi lama,
    klik **Resubmit** supaya Google membaca komposisi baru.
 3. **URL Inspection** → `https://asproject.my.id/` → **Request Indexing**.
    Ulangi untuk 2–3 halaman demo terpenting, jangan semua sekaligus.
@@ -962,9 +1042,10 @@ Dua implikasi:
 ## Katalog tema (direset + diisi ulang 2026-10-10)
 
 Katalog lama berisi 72 tema lengkap dengan artwork-nya. Pada 2026-10-10 katalog direset
-lalu mulai diisi ulang dari tema AsProject; sejak itu daftar tumbuh. **Per 2026-10-21 ada
-34 tema publik** (termasuk 2 tema umum yang tersedia di semua kategori) dan 6 pilihan
-Gerbang yang hanya tersedia di Studio. Seluruh harga publik pada sumber template saat ini
+lalu mulai diisi ulang dari tema AsProject; sejak itu daftar tumbuh. **Per 2026-10-29 ada
+44 tema publik** (termasuk 2 tema umum yang tersedia di semua kategori); enam Gerbang Arch
+dan empat Liquid Glass yang semula hanya tersedia di Studio kini ikut publik berlabel
+**NEW TEMPLATE**, sehingga tidak ada tema bawaan Studio-only yang tersisa. Seluruh harga publik pada sumber template saat ini
 adalah **Rp49.000 per tema**. Data rating/ulasan lama tidak dipakai sebagai social proof
 publik. Yang ikut terhapus saat reset: `assets/tema-3d/` dan `assets/wedding/` versi lama.
 
@@ -997,7 +1078,7 @@ Menambah/mengubah template publik:
 
 ### Katalog publik V2
 
-`katalog/index.html` tetap merender seluruh 34 kartu statis untuk SEO dan fallback tanpa JavaScript.
+`katalog/index.html` tetap merender seluruh 44 kartu statis untuk SEO dan fallback tanpa JavaScript.
 Skin `ap-catalog-page` di `assets/marketing.css` mengadaptasi referensi UI kaca iridesen: panel frosted glass,
 tombol glossy, filter kapsul, kartu berkilau, switch favorit, serta toast saat favorit berubah.
 Enhancement `assets/katalog-v2.js` menambahkan pencarian nama/deskripsi, filter empat kategori,
