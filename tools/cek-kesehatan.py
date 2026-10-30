@@ -1734,6 +1734,18 @@ def cek_kartu_katalog():
              and "body.elbuka-kotak.opened #cover{transition:transform .85s cubic-bezier(.5,0,.24,1) .55s,opacity .55s ease 1.32s,visibility 0s linear 1.88s}" in live)
     lapor("ok" if kotak else "masalah",
           "undangan.html: kotak cincin tertutup di bawah cover + teks selalu tampil + bukaan cahaya emas")
+    animasi_buka = ("body:not(.opened).elbuka-amplop.foto-full #cover .pemicu:active{transform:translate(-50%,-50%) scale(.95)}" in live
+                    and "body:not(.opened).elbuka-gembok:not(.foto-full) #cover .pemicu:active{transform:translate(-50%,-50%) scale(.475)}" in live
+                    and "body:not(.opened).elbuka-kotak #cover .pemicu:active{transform:translateX(-50%) scale(calc(var(--k,1)*.95))}" in live
+                    and "opacity .34s ease 1.12s,visibility 0s linear 1.46s" in live
+                    and "opacity .32s ease 1.02s,visibility 0s linear 1.34s" in live
+                    and "opacity .32s ease .96s,visibility 0s linear 1.28s" in live
+                    and "body.elbuka-gembok.opened #cover .pemicu .el::before{transform:rotate(46deg)}" in live
+                    and "body.elbuka-gembok.opened #cover .pemicu .el::before{transform:translateX(-50%)" not in live
+                    and "body.elbuka-selendang.opened #cover .pemicu .simpul{transform:translateY(-122%);opacity:0}" in live
+                    and "backface-visibility:hidden}" in live)
+    lapor("ok" if animasi_buka else "masalah",
+          "undangan.html: animasi buka lain stabil — respons tekan tidak meloncat, fade tidak mendahului gerak fisik, shackle tetap berporos, bayangan selendang ikut kain, punggung buku tidak termirror")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji kartu katalog dilewati")
         return

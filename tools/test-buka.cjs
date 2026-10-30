@@ -108,6 +108,24 @@ async function render(buka, coverStyle, physicalBuka = 'pita') {
   t('gembok biasa diperkecil dan dipindah ke area foto atas, bukan teks tengah',
     undSrc.includes('body.elbuka-gembok:not(.foto-full) #cover .pemicu{width:150px;height:206px;top:22%;') &&
     undSrc.includes('transform:translate(-50%,-50%) scale(.5)}'));
+  t('respons tekan pemicu kecil mempertahankan jangkar & skala dasar modelnya',
+    undSrc.includes('body:not(.opened).elbuka-pita #cover .pemicu:active,') &&
+    undSrc.includes('body:not(.opened).elbuka-amplop.foto-full #cover .pemicu:active{transform:translate(-50%,-50%) scale(.95)}') &&
+    undSrc.includes('body:not(.opened).elbuka-gembok:not(.foto-full) #cover .pemicu:active{transform:translate(-50%,-50%) scale(.475)}') &&
+    undSrc.includes('body:not(.opened).elbuka-kotak #cover .pemicu:active{transform:translateX(-50%) scale(calc(var(--k,1)*.95))}'));
+  t('fade cover ditahan sampai animasi fisik tirai/pintu/amplop hampir tuntas',
+    undSrc.includes('body.elbuka-tirai.opened #cover{transition:transform .98s var(--ease-cover) .48s,opacity .34s ease 1.12s,visibility 0s linear 1.46s}') &&
+    undSrc.includes('body.elbuka-pintu.opened #cover{transition:transform .86s var(--ease-cover) .48s,opacity .32s ease 1.02s,visibility 0s linear 1.34s}') &&
+    undSrc.includes('body.elbuka-amplop.opened #cover{transition:transform .8s var(--ease-cover) .48s,opacity .32s ease .96s,visibility 0s linear 1.28s}'));
+  t('shackle gembok berporos di kaki kanan tanpa translasi yang melepaskannya dari badan',
+    undSrc.includes('transform-origin:bottom right;box-shadow:0 5px 15px rgba(0,0,0,.4)') &&
+    undSrc.includes('body.elbuka-gembok.opened #cover .pemicu .el::before{transform:rotate(46deg)}') &&
+    !undSrc.includes('body.elbuka-gembok.opened #cover .pemicu .el::before{transform:translateX(-50%)'));
+  t('bayangan tepi selendang ikut terangkat bersama kainnya',
+    undSrc.includes('transition:transform 1.55s var(--ease-cover),opacity .95s var(--ease-cover-soft) .12s}') &&
+    undSrc.includes('body.elbuka-selendang.opened #cover .pemicu .simpul{transform:translateY(-122%);opacity:0}'));
+  t('punggung buku disembunyikan setelah sampul melewati 90°',
+    /body\.elbuka-buku #cover \.pemicu\{[\s\S]{0,1800}?backface-visibility:hidden\}/.test(undSrc));
   t('studio: FX_BUKA menambah 4 skin berstruktur beda',
     studioSrc.includes("['iris','Iris Diagonal','cover tersibak menyamping lewat potongan diagonal'],") &&
     studioSrc.includes("['lubang','Iris Lingkaran','cover tersedot mengecil ke tengah membentuk bulat'],") &&
