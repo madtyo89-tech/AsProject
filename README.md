@@ -855,6 +855,15 @@ dipasang di seluruh 75 halaman HTML publik/internal yang diuji. Uji:
 
 ### Batas laju RSVP & check-in
 
+**Status produksi (2026-10-30):** `tools/rsvp.sql` dan `tools/checkin.sql` sudah
+dijalankan di project Supabase `aalrhvirqwjtbbxmteeg` sebagai migrasi
+`pasang_tabel_rsvp_dan_pembatas_laju` + `pasang_tabel_checkin_dan_pembatas_laju`.
+Tabel `public.rsvp`, `public.checkin`, dan `public.rate_limit` ada dengan RLS aktif,
+policy anon (insert/select/update) terpasang, dan kedua trigger pembatas laju aktif.
+Sebelum tanggal itu RSVP tamu dan check-in QR gagal tersimpan karena tabelnya belum
+ada — `undangan.html` menampilkan "konfirmasi belum bisa disimpan", `scan.html`
+menampilkan "Tabel check-in belum aktif".
+
 `tools/rsvp.sql` menambah tabel `public.rate_limit` (RLS aktif tanpa policy),
 fungsi `batas_laju(kunci, maks, detik)` (security definer + `search_path` kosong),
 lalu trigger `rsvp_batas_laju_trg`:
@@ -1467,7 +1476,8 @@ di pintu masuk; kehadiran langsung tercatat.
 
 1. **Pasang tabel check-in sekali**: buka Supabase → SQL Editor → jalankan
    `tools/checkin.sql` (tabel `checkin` terpisah dari `rsvp`: RSVP = "akan hadir",
-   check-in = "sudah tiba").
+   check-in = "sudah tiba"). *Sudah dijalankan di project produksi pada 2026-10-30 —
+   langkah ini hanya perlu diulang bila memakai project Supabase lain.*
 2. **Bagikan link scan**: dashboard **Undangan Master** → kartu **🔗 Link Scan QR
    Panitia (Check-in)** → tombol **Salin** / **💬 Share via WhatsApp**.
    Link berbentuk `scan.html?s=<slug>&k=<kunci>` — privat (kunci sama dengan link
