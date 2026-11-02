@@ -133,10 +133,11 @@ async function render(theme, patPemilik) {
   /* ---------- 4. wiring studio ---------- */
   t('studio punya setPat', studioSrc.includes('function setPat(id){'));
   t('studio memvalidasi state.pat', studioSrc.includes("if(typeof state.pat!=='string'||(state.pat&&!POLA[state.pat]))state.pat='';"));
-  t('payload membawa pat (4 tempat)', (studioSrc.match(/pat:state\.pat\|\|''/g) || []).length === 4);
+  t('payload membawa pat (3 tempat)', (studioSrc.match(/pat:state\.pat\|\|''/g) || []).length === 3);
   t('whitelist template kustom mengenal pat', studioSrc.includes('if(POLA[source.pat])design.pat=source.pat;'));
   t('draftSig memperhitungkan pat', studioSrc.includes("state.orn||'',state.pat||'',state.ornSudut"));
-  t('picker pola ada di tab Desain', studioSrc.includes('POLA_IDS.map(pid=>`<button') && studioSrc.includes("setPat('')"));
+  t('picker pola pindah ke Studio Template', require('fs').readFileSync(require('path').join(__dirname,'..','studio-template.html'),'utf8').includes('Studio Template'));
+  t('studio-template.html memuat daftar pola & chip pemilih', require('fs').readFileSync(require('path').join(__dirname,'..','assets','studio-template.js'),'utf8').includes("chips(POLA, 'pat', t.pat)"));
   t('bawaan tema & design mengalir ke state.pat', studioSrc.includes('if(POLA[t.pat])state.pat=t.pat;') && studioSrc.includes('if(POLA[d.pat])state.pat=d.pat;'));
 
   /* ---------- 5. render nyata ---------- */

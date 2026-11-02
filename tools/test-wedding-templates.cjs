@@ -224,7 +224,7 @@ async function testStudioPreview() {
       w.HTMLCanvasElement.prototype.getContext = () => ({});
     } });
   const w = dom.window;
-  w.eval(`state.started=true;state.event='pernikahan';state.stage='editor';state.tab='desain';render()`);
+  w.eval(`state.started=true;state.event='pernikahan';state.stage='editor';state.tab='cover';render()`);
   const katalogIds = [...w.eval('state.katalog.map(k=>k.tpl)')];
   assert.deepEqual([...katalogIds].sort(), [...expectedPublic].sort(), 'Studio price catalog contains every public theme exactly once after migration');
   assert.equal(new Set(katalogIds).size, expectedPublic.length, 'Studio price catalog has no duplicate public theme rows');
@@ -233,8 +233,12 @@ async function testStudioPreview() {
   assert.deepEqual([...w.eval('state.katalogHide')], [], 'newly public themes are not hidden by the legacy fixture');
   assert(archPublik.every(t => w.eval(`tplsFor('${t.ev}').some(x=>x.id==='${t.id}')`)), 'all six public Arch themes remain selectable by event');
   assert(archPublik.every(t => w.eval(`TPL.find(x=>x.id==='${t.id}').harga`) === 49000), 'public Arch themes carry the catalog price in Studio');
-  const catalogMarkup = w.eval('katalog()');
-  assert(templateBaruPublik.every(t => catalogMarkup.includes(t.nama)), 'newly public themes appear in the price/promo management catalog');
+  /* Halaman Katalog Template pindah ke studio-katalog.html; data harga tetap
+     diperiksa di atas. Di sini cukup pastikan studio isi data tidak lagi punya
+     halaman katalog, dan daftar tema untuk halaman admin dibangkitkan lengkap. */
+  assert.equal(w.eval("typeof katalog"), 'undefined', 'Studio isi data tidak lagi punya halaman Katalog Template sendiri');
+  const dataAdmin = fs.readFileSync(path.join(ROOT, 'assets/tpl-data.js'), 'utf8');
+  assert(templateBaruPublik.every(t => dataAdmin.includes(t.id)), 'halaman admin (tpl-data.js) memuat semua tema publik baru');
   /* Pratinjau Studio kini menampilkan berkas undangan.html asli di dalam iframe,
      jadi skin tema diuji lewat renderer live (testLiveExamples/testArchLive) dan
      lewat payload yang dikirim Studio ke iframe (barisUndangan). */

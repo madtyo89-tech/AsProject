@@ -241,8 +241,10 @@ async function render(theme, ev, orn, ornSudut, coverLayout, coverStyle) {
   /* ---------- 6. studio menyimpan orn ke snapshot ---------- */
   {
     const nPayload = (studioSrc.match(/orn:state\.orn\|\|''/g) || []).length;
-    t('studio: 3 payload publish/export + design template kustom membawa orn',
-      nPayload === 4, nPayload + ' titik, harap 4');
+    t('studio: 3 payload publish/export membawa orn (desain template pindah ke Studio Template)',
+      nPayload === 3, nPayload + ' titik, harap 3');
+    t('studio-template.html: token ornamen tersedia untuk tema baru',
+      (read('studio-template.html').includes('Ornamen pembatas')));
     t('studio: draftSig memperhitungkan orn agar pratinjau ikut berubah',
       studioSrc.includes("state.border,state.orn||'',state.pat||'',state.ornSudut"));
     t('studio: normalizeTplCustom memutihkan design.orn',

@@ -1,103 +1,118 @@
-// Template kustom Studio, migrasi, arsip/payload, katalog privat/publik, dan persistensi model cover.
-// Jalankan: node tools/test-template-custom.cjs (butuh jsdom)
+/* Uji Studio Template (menggantikan uji "template kustom di studio.html").
+   Sejak 2026-11-01 pembuatan/penyuntingan tema pindah ke studio-template.html
+   supaya studio isi data tidak bisa mengubah template produksi.
+
+   Yang diuji (jsdom, offline):
+   - 44 tema dari assets/tpl-data.js tampil di daftar
+   - memilih template = membuat SALINAN draf; daftar tema asli tetap 44
+   - draf tersimpan di perangkat, bisa diganti nama, diduplikasi, dihapus
+   - ekspor token / entri template.js memakai slug draf
+   - "Kirim ke Setting Katalog" menulis daftar tunggu, bukan mengubah produksi
+
+   Jalankan: node tools/test-template-custom.cjs   (butuh: npm i jsdom) */
 'use strict';
-const fs=require('node:fs');
-const path=require('node:path');
-const assert=require('node:assert/strict');
-const {JSDOM,VirtualConsole}=require('jsdom');
-const html=fs.readFileSync(path.join(__dirname,'..','studio.html'),'utf8');
-const AUTH='31282510d0c10140f7413a0573fdade727453ec37c3c386e4363e7e598090d8e';
-const storage=new Map();
-const vc=new VirtualConsole();
-vc.on('error',()=>{});vc.on('warn',()=>{});vc.on('log',()=>{});
-vc.on('jsdomError',e=>{if(!/Not implemented/.test(String(e&&e.message)))console.error(e)});
-const dom=new JSDOM(html,{runScripts:'dangerously',url:'https://asproject.my.id/studio.html',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){
- w.localStorage.setItem('asproject_studio_auth',AUTH);
- const ls={getItem:k=>storage.has(k)?storage.get(k):null,setItem:(k,v)=>storage.set(k,String(v)),removeItem:k=>storage.delete(k),clear:()=>storage.clear(),key:i=>[...storage.keys()][i]??null,get length(){return storage.size}};
- Object.defineProperty(w,'localStorage',{value:ls,configurable:true});
- w.fetch=async()=>({ok:false,status:0,text:async()=>'',json:async()=>({})});
- w.confirm=()=>true;w.prompt=(_m,def)=>def;w.scrollTo=()=>{};
- w.Element.prototype.scrollIntoView=function(){};w.HTMLElement.prototype.scrollIntoView=function(){};
- w.HTMLMediaElement.prototype.play=()=>Promise.resolve();w.HTMLMediaElement.prototype.pause=()=>{};
- w.HTMLCanvasElement.prototype.getContext=()=>({});
- w.clearScrollReveal=()=>{};w.setupScrollReveal=()=>{};
-}});
-const w=dom.window;
-const run=code=>w.eval(code);
-const tests=[];
-function check(name,fn){try{assert.ok(fn(),name);tests.push(name);console.log('ok  '+name)}catch(e){console.error('FAIL '+name+' — '+e.message);throw e}}
-function val(expr){return run(expr)}
-(async()=>{
- try{
-  await new Promise(r=>setTimeout(r,180));
-  run(`state.started=true;state.page='editor';state.tab='desain';state.event='pernikahan';state.tpl='jawa-elegan';
-   state.accent='#abcdef';state.fontTitle='lora';state.fontBody='inter';state.border='thin';state.ornSudut='ranting';
-   state.coverLayout='neon';state.coverLayoutExplicit=true;state.coverStyle='arch';state.coverStyleExplicit=true;
-   state.buka='kotak';state.bukaExplicit=true;
-   state.tplDraftName='Sage Buatan';state.tplDraftPublic=false;render()`);
-  const publicTplCount=val('TPL.length');
-  const publicTplIds=val('TPL.map(t=>t.id).join(",")');
-  run('saveCustomTemplate()');
-  const privateId=val('state.tpl');
-  check('DEF/migrasi: custom tersimpan sebagai daftar terpisah tanpa mengubah TPL publik',()=>val('state.tplCustom.length')===1&&val('TPL.length')===publicTplCount&&val('TPL.map(t=>t.id).join(",")')===publicTplIds);
-  check('tema kustom: id stabil, badge CUSTOM, default Studio-only',()=>/^custom-[a-z0-9-]+$/.test(privateId)&&val(`tplById(${JSON.stringify(privateId)}).badge`)==='CUSTOM'&&val(`tplById(${JSON.stringify(privateId)}).studioOnly`)===true);
-  check('tema kustom: salin aksen, font, palet, border, ornamen, dan cover aktif',()=>val(`(()=>{const t=tplById(${JSON.stringify(privateId)});return t.nama==='Sage Buatan'&&t.accent==='#ABCDEF'&&t.ft==='lora'&&t.design.fontBody==='inter'&&t.design.border==='thin'&&t.design.ornSudut==='ranting'&&t.design.coverLayout==='neon'&&t.design.coverLayoutExplicit===true&&t.design.coverStyle==='arch'&&t.design.buka==='kotak'&&t.design.bukaExplicit===true&&t.g.length===3})()`));
-  check('picker: tema kustom tampil untuk acara dan memiliki badge serta kelola',()=>val(`tplsFor('pernikahan').some(t=>t.id===${JSON.stringify(privateId)})`)&&w.document.querySelector('.tpl-custom-entry')?.textContent.includes('CUSTOM')&&!!w.document.querySelector(`[aria-label="Ganti nama template Sage Buatan"]`)&&!!w.document.querySelector(`[aria-label="Duplikat template Sage Buatan"]`)&&!!w.document.querySelector(`[aria-label="Hapus template Sage Buatan"]`));
-  check('tema Studio-only tidak menambah baris katalog',()=>!val(`state.katalog.some(k=>(k.tpl||k.id)===${JSON.stringify(privateId)})`));
-  check('payload preview: indeks TPL publik tetap 0 untuk custom dan data membawa tema serta status cover eksplisit',()=>{
-   const row=val('barisUndangan()');return row.theme===0&&row.data.tpl===privateId&&row.data.tplCustom.length===1&&row.data.tplCustom[0].id===privateId&&row.data.coverLayout==='neon'&&row.data.coverLayoutExplicit===true&&row.data.coverStyle==='arch'&&row.data.coverStyleExplicit===true&&row.data.buka==='kotak'&&row.data.bukaExplicit===true
-  });
-  check('draftSig: perubahan definisi template kustom menandai publish sebagai kotor',()=>{
-   run('state.published=true;state.pubSig=draftSig()');const sig=val('state.pubSig');run(`state.tplCustom[0].nama+=' edit';`);const dirty=val('draftDirty()');run(`state.tplCustom[0].nama='Sage Buatan'`);run(`state.published=false;state.pubSig=${JSON.stringify(sig)}`);return dirty
-  });
-  // Arus pulih dari snapshot terbit dan arsip; draft lama tanpa daftar custom memakai daftar lokal.
-  const dataJSON=JSON.stringify(val('barisUndangan().data'));
-  run(`applyDraftData(${dataJSON})`);
-  check('applyDraftData: snapshot memulihkan tema custom dan pilihan cover eksplisit',()=>val('state.tpl')===privateId&&val('tplOf().id')===privateId&&val('state.tplCustom.length')===1&&val('state.coverLayout')==='neon'&&val('state.coverLayoutExplicit')===true&&val('state.coverStyle')==='arch'&&val('state.coverStyleExplicit')===true&&val('state.buka')==='kotak'&&val('state.bukaExplicit')===true);
-  run(`applyDraftData({event:'pernikahan',tpl:${JSON.stringify(privateId)}})`);
-  check('migrasi draft lama: tanpa tplCustom, library lokal dipertahankan dan tema custom aman dipilih',()=>val('state.tpl')===privateId&&val('state.tplCustom.length')===1);
-  run('startInvitation()');
-  check('Undangan Baru mempertahankan perpustakaan template kustom',()=>val('state.tplCustom.some(t=>t.id===`'+privateId+'`)'));
+const fs = require('fs');
+const path = require('path');
+const { JSDOM, VirtualConsole } = require('jsdom');
+const ROOT = path.join(__dirname, '..');
+const read = r => fs.readFileSync(path.join(ROOT, r), 'utf8');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const HASH = '31282510d0c10140f7413a0573fdade727453ec37c3c386e4363e7e598090d8e';
 
-  // Nama/gandakan/hapus: operasi terpisah, pilihan aktif selalu punya fallback sah.
-  w.prompt=()=> 'Sage Dirapikan';run(`renameCustomTpl(${JSON.stringify(privateId)})`);
-  check('kelola: ganti nama memperbarui tema kustom',()=>val(`state.tplCustom.some(t=>t.id===${JSON.stringify(privateId)}&&t.nama==='Sage Dirapikan')`));
-  run(`duplicateCustomTpl(${JSON.stringify(privateId)})`);
-  const copyId=val(`state.tplCustom.find(t=>t.id!==${JSON.stringify(privateId)}).id`);
-  check('kelola: duplikat mendapat id baru, tetap Studio-only dan tidak menduplikasi baris katalog',()=>copyId!==privateId&&val(`tplById(${JSON.stringify(copyId)}).studioOnly`)===true&&!val(`state.katalog.some(k=>(k.tpl||k.id)===${JSON.stringify(copyId)})`));
-  run(`state.event='pernikahan';state.tpl=${JSON.stringify(copyId)};deleteCustomTpl(${JSON.stringify(copyId)})`);
-  check('kelola: hapus tema aktif beralih ke fallback valid tanpa menggeser TPL',()=>val('state.tpl')!==copyId&&!!val('tplById(state.tpl)')&&val('TPL.length')===publicTplCount);
+let ok = 0, fail = 0;
+const t = (name, cond, extra) => {
+  if (cond) ok++; else fail++;
+  console.log((cond ? 'ok  ' : 'FAIL') + ' ' + name + (!cond && extra ? ' — ' + extra : ''));
+};
 
-  // Checkbox publik membuat baris melalui addKat; default tetap privat.
-  run(`state.tab='desain';state.tplDraftName='Rosewood Publik';state.tplDraftPublic=true;render();saveCustomTemplate()`);
-  const publicId=val('state.tpl');
-  const publicSnapshot=JSON.stringify(val('barisUndangan().data'));
-  run(`state.katalog=state.katalog.filter(k=>(k.tpl||k.id)!==${JSON.stringify(publicId)});applyDraftData(${publicSnapshot})`);
-  check('snapshot publik: baris katalog dipulihkan saat tema custom publik dimuat',()=>val(`state.katalog.filter(k=>(k.tpl||k.id)===${JSON.stringify(publicId)}).length`)===1);
-  check('checkbox publik: custom menjadi non-Studio-only dan baris katalog dibuat otomatis via addKat',()=>val(`tplById(${JSON.stringify(publicId)}).studioOnly`)===false&&val(`state.katalog.some(k=>(k.tpl||k.id)===${JSON.stringify(publicId)}&&k.nama==='Rosewood Publik'&&k.hargaNormal>0&&k.hargaPromo>0)`));
-  check('Katalog: template custom publik tampil, preview dan pengelolaan memakai tplById',()=>val(`katalog().includes('Rosewood Publik')`)&&val(`tplById(${JSON.stringify(publicId)}).badge`)==='CUSTOM');
-  run(`state.tpl=${JSON.stringify(publicId)};state.katalogHide=[];const before=TPL.map(t=>t.id).join(',');tglKatHide(${JSON.stringify(publicId)})`);
-  check('Katalog: custom publik dapat disembunyikan dari picker tanpa menghapus definisi',()=>val(`state.katalogHide.includes(${JSON.stringify(publicId)})`)&&val(`state.tplCustom.some(t=>t.id===${JSON.stringify(publicId)})`));
-  run(`state.tpl=${JSON.stringify(publicId)};deleteCustomTpl(${JSON.stringify(publicId)})`);
-  check('hapus custom publik menghapus baris katalog dan memilih fallback aman',()=>!val(`state.katalog.some(k=>(k.tpl||k.id)===${JSON.stringify(publicId)})`)&&val('state.tpl')!==publicId&&!!val('tplById(state.tpl)'));
+const store = new Map();
+const vc = new VirtualConsole();
+vc.on('jsdomError', e => { if (!/Not implemented/.test(String(e && e.message))) console.error(String(e.message)); });
 
-  // Custom payload tidak dapat menyuntikkan CSS/id lewat draft lama yang rusak.
-  const normalized=val(`normalizeTplCustom([{id:'custom-aman123',nama:'<img onerror=x>',accent:'red',g:['url(x)','bad',''],pat:'url',ft:'unknown',baseTpl:'ivory-klasik',studioOnly:false}])`);
-  check('migrasi: validasi data custom menormalkan warna/font/pola dan menyingkirkan markup nama',()=>normalized.length===1&&normalized[0].nama==='img onerror=x'&&normalized[0].accent==='#8A6E4B'&&normalized[0].pat==='damask'&&normalized[0].ft==='cormorant'&&normalized[0].studioOnly===false);
+const dom = new JSDOM(read('studio-template.html'), {
+  runScripts: 'dangerously', url: 'https://x.test/studio-template.html', pretendToBeVisual: true, virtualConsole: vc,
+  beforeParse(w) {
+    w.Element.prototype.scrollIntoView = function () {};
+    w.HTMLElement.prototype.scrollIntoView = function () {};
+    w.confirm = () => true;
+    w.fetch = async () => ({ ok: false, status: 0, text: async () => '', json: async () => ({}) });
+    const ls = {
+      getItem: k => (store.has(k) ? store.get(k) : null),
+      setItem: (k, v) => store.set(k, String(v)),
+      removeItem: k => store.delete(k),
+      clear: () => store.clear(),
+      key: i => Array.from(store.keys())[i] ?? null,
+      get length() { return store.size; }
+    };
+    Object.defineProperty(w, 'localStorage', { value: ls, configurable: true });
+    Object.defineProperty(w, 'sessionStorage', { value: ls, configurable: true });
+  }
+});
+const w = dom.window;
+const d = w.document;
+store.set('asproject_studio_auth', HASH);
 
-  run("state.tab='desain';render()");
-  const layoutIds=val('CV_LAYOUTS.map(x=>x[0])');
-  check('Studio menyediakan 15 model cover, termasuk 10 gaya unik tambahan',()=>layoutIds.length===15&&['batik','sakura','night','ticket','editorial','polaroid','glass','royal','archive','neon'].every(id=>layoutIds.includes(id))&&w.document.querySelectorAll('.cv-layout-btn').length===15);
-  run("setCvLayout('neon')");
-  check('pilihan cover baru tersimpan sebagai layout aktif',()=>val('state.coverLayout')==='neon'&&w.document.querySelector('[data-layout="neon"]').getAttribute('aria-pressed')==='true');
-  run("setCvLayout('amplop')");
-  check('halaman Desain & Cover menyediakan kartu Simpan sebagai Template Baru dalam bahasa Indonesia',()=>!!w.document.querySelector('#tplCustomName')&&html.includes('💾 Simpan sebagai Template Baru')&&html.includes('Tambahkan ke Katalog Publik'));
-  check('baris katalog dan template custom ikut snapshot/arsip/export',()=>html.includes('tplCustom:JSON.parse(JSON.stringify(state.tplCustom||[]))')&&html.includes('tplCustom:normalizeTplCustom(state.tplCustom)'));
-  check('aksi custom baru memiliki bantuan konteks bahasa Indonesia',()=>{
-   const help=fs.readFileSync(path.join(__dirname,'..','assets/button-help.js'),'utf8');
-   return ['setCvLayout','saveCustomTemplate','renameCustomTpl','duplicateCustomTpl','deleteCustomTpl'].every(k=>help.includes(k+':'))&&html.includes('Latar malam bertabur bintang')
-  });
-  check('tidak ada error JavaScript runtime selama alur custom',()=>true);
-  console.log(`\nRingkasan: ${tests.length} lulus, 0 gagal`);
- }finally{w.close()}
-})().catch(e=>{console.error(e);process.exitCode=1});
+for (const src of ['assets/tpl-data.js', 'assets/studio-core.js', 'assets/studio-template.js']) w.eval(read(src));
+
+(async () => {
+  const tplAsli = w.eval('window.ASP_TPL.length');
+  t('studio-template: daftar tema dibaca dari tpl-data.js', tplAsli === 44, tplAsli + ' tema');
+  t('studio-template: gerbang sandi terbuka dengan sesi tersimpan', !d.querySelector('.asp-gate') && !d.documentElement.classList.contains('asp-locked'));
+
+  const items = d.querySelectorAll('#daftarTema [data-open]');
+  t('studio-template: 44 tema tampil di sidebar', items.length === 44, items.length + ' baris');
+
+  /* pilih template → salinan draf */
+  const baris = d.querySelector('[data-open="tpl:luxury-gold"]');
+  baris.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  t('memilih template membuka editor draf', !!d.querySelector('#editor [data-k="nama"]'), 'editor tidak tampil');
+  t('judul editor memakai nama template asal', (d.querySelector('#editor h2') || {}).textContent === 'Luxury Gold');
+  await sleep(400);
+  const db1 = JSON.parse(store.get('asproject_studio_template_v1') || '{}');
+  t('draf pertama tersimpan di perangkat', (db1.drafts || []).length === 1, JSON.stringify((db1.drafts || []).length));
+  t('template asli tidak bertambah/berubah', w.eval('window.ASP_TPL.length') === 44);
+  t('draf memakai id custom- (dikenal renderer live)', /^custom-/.test((db1.drafts || [{}])[0].id || ''), (db1.drafts || [{}])[0].id);
+
+  /* ganti nama + simpan */
+  const nama = d.querySelector('#editor [data-k="nama"]');
+  nama.value = 'Gold Uji';
+  nama.dispatchEvent(new w.Event('input', { bubbles: true }));
+  await sleep(400);
+  const db2 = JSON.parse(store.get('asproject_studio_template_v1') || '{}');
+  t('perubahan nama ikut tersimpan', (db2.drafts || [])[0].nama === 'Gold Uji', JSON.stringify((db2.drafts || [])[0].nama));
+  t('label pratinjau mengikuti nama draf', (d.querySelector('#pvLabel') || {}).textContent.includes('Gold Uji'));
+
+  /* ekspor */
+  d.querySelector('[data-export="token"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  const kodeToken = (d.querySelector('#kodeEkspor') || {}).textContent || '';
+  t('ekspor token memakai slug draf', kodeToken.includes("'luxury-gold'") && kodeToken.includes('kerangka/token-tema.js'), kodeToken.slice(0, 60));
+  d.querySelector('[data-export="template"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  const kodeTpl = (d.querySelector('#kodeEkspor') || {}).textContent || '';
+  t('ekspor entri template.js menyertakan shell & susunan', kodeTpl.includes('"shell"') && kodeTpl.includes('"susunan"'), kodeTpl.slice(0, 70));
+  t('ekspor tidak menyuruh menyunting berkas hasil generator',
+    ((d.querySelector('#kartuEkspor') || {}).textContent || '').includes('kerangka/'));
+
+  /* duplikat */
+  d.querySelector('[data-act="duplikat"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  await sleep(400);
+  const db3 = JSON.parse(store.get('asproject_studio_template_v1') || '{}');
+  t('duplikat menambah draf (bukan mengubah template asli)', (db3.drafts || []).length === 2, (db3.drafts || []).length + ' draf');
+  t('nama salinan ditandai', (db3.drafts || []).some(x => /Salinan/.test(x.nama)));
+
+  /* kirim ke setting katalog */
+  store.set('asproject_katalog_setting_v1', JSON.stringify({}));
+  d.querySelector('[data-act="katalog"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  const kat = JSON.parse(store.get('asproject_katalog_setting_v1') || '{}');
+  t('kirim ke Setting Katalog menulis daftar tunggu', Array.isArray(kat.pending) && kat.pending.length === 1, JSON.stringify(kat.pending || null));
+  t('tema kiriman belum dianggap template produksi', w.eval("window.ASP_TPL.some(t=>t.id==='" + ((kat.pending || [{}])[0].id || '') + "')") === false);
+
+  /* hapus draf */
+  d.querySelector('[data-act="hapus"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  await sleep(400);
+  const db4 = JSON.parse(store.get('asproject_studio_template_v1') || '{}');
+  t('hapus draf tidak menyentuh daftar 44 tema', (db4.drafts || []).length === 1 && w.eval('window.ASP_TPL.length') === 44);
+
+  console.log('\nRingkasan: ' + ok + ' lulus, ' + fail + ' gagal');
+  process.exitCode = fail ? 1 : 0;
+  dom.window.close();
+})().catch(e => { console.error(e); process.exitCode = 1; });

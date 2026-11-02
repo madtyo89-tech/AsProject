@@ -44,6 +44,90 @@ Catatan:
 - Uji pipeline: `python3 tools/cek-kesehatan.py` dan
   server lokal `python3 tools/serve.py` (emulasi 404-routing Pages, default :8080).
 
+## Tiga pintu studio: isi data, racik tema, atur katalog (2026-11-02)
+
+Sebelumnya semuanya menumpuk di `studio.html`: mengisi data undangan, membuat
+tema kustom, membandingkan tema, **dan** mengatur harga/promo katalog. Halaman
+Katalog di studio itu bahkan hanya menulis `localStorage` sehingga tidak pernah
+sampai ke katalog publik. Sejak 2026-11-02 tanggung jawabnya dipisah:
+
+| Halaman | Untuk | Boleh mengubah | Tidak boleh |
+|---|---|---|---|
+| `studio.html` **Studio Undangan** | mengisi data 1 pesanan | draft undangan, publish ke Supabase | identitas template (warna/font/border/ornamen/pola), daftar tema, harga katalog |
+| `studio-template.html` **Studio Template** | meracik tema baru dari template yang ada | draf tema lokal + kode ekspor | template produksi, publish undangan |
+| `studio-katalog.html` **Setting Katalog** | visibilitas, urutan, harga, promo, badge | `catalog_settings` (Supabase) + `katalog-setting.json` | isi undangan |
+
+Ketiganya tetap di balik sandi studio (hash yang sama, `asproject_studio_auth`),
+`noindex,nofollow`, dan dilarang di `robots.txt`.
+
+**Yang pindah dari `studio.html`:**
+
+- tab **Desain & Cover** → menjadi tab **Cover & Animasi**. Yang tetap:
+  model cover (15), cara buka (9), ornamen sudut, dan animasi. Warna aksen,
+  font judul/isi, border, ornamen, pola, serta **Bandingkan tema** pindah ke
+  Studio Template. Draft lama yang menyimpan nilai-nilai itu tetap dirender
+  `undangan.html` apa adanya — tidak ada undangan yang berubah.
+- pembuatan **template kustom** (simpan/ganti nama/salin/hapus) → Studio Template.
+- halaman **Katalog Template** (harga/promo/badge/hide/hapus) → Setting Katalog.
+- `state.tplCustom` **tetap dibaca** saat publish & preview supaya undangan
+  lama bertema kustom tidak rusak.
+
+### Sumber daftar tema untuk halaman admin
+
+`assets/tpl-data.js` dibangkitkan `node tools/bangun-tpl-data.cjs` (dipanggil
+otomatis di akhir `node tools/bangun-tpl.cjs`) dari
+`kerangka/{token-tema,registry-blok,template,motor}.js`. Jadi halaman admin
+tidak pernah menyalin literal `TPL`, dan urutan tema tetap identik dengan
+`studio.html`/`undangan.html`.
+
+### Setting Katalog: dua jalur sampai ke pengunjung
+
+1. **Cloud (langsung).** Tombol *Simpan ke cloud* menulis satu baris JSON ke
+   tabel Supabase `catalog_settings` (Bagian 4 di `supabase-schema.sql`).
+   `assets/katalog-live.js` — dimuat di katalog, halaman kategori, detail tema,
+   dan harga — membaca baris itu lalu menyembunyikan tema nonaktif, mengganti
+   harga/badge/deskripsi, menyusun ulang kartu, dan memperbarui pita promo.
+   Catatan jujur: HTML statis & JSON-LD tetap versi lama sampai build ulang.
+2. **Build (permanen).** Tombol *Ekspor katalog-setting.json* menghasilkan
+   berkas yang dibaca `tools/bangun-halaman-publik.cjs`:
+
+   ```bash
+   # letakkan katalog-setting.json di akar repo, lalu:
+   node tools/bangun-halaman-publik.cjs
+   python3 tools/bangun-sitemap.py
+   python3 tools/cek-kesehatan.py
+   ```
+
+   Tanpa berkas itu, keluaran generator identik dengan sebelumnya (perilaku
+   katalog lama dipertahankan).
+
+### Alur merilis tema baru dari Studio Template
+
+1. Buka `studio-template.html`, pilih template asal (dibuat **salinan draf**),
+   atur palet/font/pola/border/cover, lalu periksa pratinjau (renderer asli).
+2. Ekspor **Token kerangka** → tempel di `kerangka/token-tema.js`.
+3. Ekspor **Entri template.js** → tempel di akhir array `TEMPLATES`.
+4. `node tools/bangun-tpl.cjs` (menyegarkan `TPL` di studio.html/undangan.html
+   **dan** `assets/tpl-data.js`).
+5. `node tools/bangun-halaman-publik.cjs` → `python3 tools/bangun-sitemap.py`.
+6. `python3 tools/cek-kesehatan.py`.
+
+Tema baru selalu masuk **di akhir** array supaya kolom `theme` (index) undangan
+lama tidak bergeser. Halaman katalog tidak lagi punya tombol “tambah tema”:
+tema dibuat dari kerangka, bukan diketik di browser.
+
+### Tes yang menjaga pemisahan ini
+
+- `tools/test-template-custom.cjs` — Studio Template: 44 tema, salinan draf,
+  ekspor, dan “kirim ke Setting Katalog” tanpa menyentuh produksi.
+- `tools/test-katalog-admin.cjs` — Setting Katalog: visibilitas, harga,
+  simpan ke `catalog_settings`, ekspor `katalog-setting.json`, status jujur
+  saat tabel belum ada.
+- `tools/test-studio-theme-compare.cjs` — Bandingkan tema (asal vs draf) di
+  Studio Template.
+- `tools/test-simulasi.cjs` — studio isi data tetap merender 7 tab tanpa error
+  dan **tidak lagi** memuat picker identitas tema.
+
 ## Pratinjau tema di kartu katalog (2026-10-20)
 
 Kartu katalog di `index.html` menampilkan undangan **asli** (`undangan.html`)

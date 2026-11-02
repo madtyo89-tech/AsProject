@@ -126,7 +126,7 @@ function draftFor(tpl, idx) {
   let renderErr = null, nRender = 0;
   for (const [id] of tpls) {
     try {
-      w.eval(`state.tpl='${id}';paksaTier();state.page='editor';state.tab='desain';render()`);
+      w.eval(`state.tpl='${id}';paksaTier();state.page='editor';state.tab='cover';render()`);
       nRender++;
     } catch (e) { if (!renderErr) renderErr = id + ': ' + e.message; }
   }
@@ -211,28 +211,25 @@ function draftFor(tpl, idx) {
   /* render() keluar lebih awal ke welcomeView()/readyView() bila state.started
      belum nyala, _welcome masih true, atau stage-nya 'ready'. Ketiga-tiganya
      harus dibereskan dulu supaya panel tabDesain() benar-benar terender. */
-  w.eval(`state.started=true;_welcome=false;state.stage='editor';state.page='editor';state.tab='desain';render()`);
+  w.eval(`state.started=true;_welcome=false;state.stage='editor';state.page='editor';state.tab='cover';render()`);
   /* Dihitung dari #root, BUKAN document.body: studio.html punya <script> inline
      di dalam body, sehingga teks sumbernya (definisi setOrn dan template picker)
      ikut terhitung dan menggandakan jumlah tombol. */
   const htmlDesain = w.eval("document.getElementById('root').innerHTML");
+  /* Picker ornamen, pola, dan border pindah ke Studio Template (halaman admin
+     terpisah). Yang diuji di sini: studio isi data TIDAK lagi menampilkannya,
+     sedangkan halaman barunya menyediakan daftar lengkap dari registry. */
   const nMotif = w.eval('Object.keys(ORN_NAMA).length');
-  const nTombol = (htmlDesain.match(/setOrn\(/g) || []).length;
-  t(`studio: picker ornamen merender ${nMotif} motif + 1 pilihan "ikut tema"`,
-    nTombol === nMotif + 1, nTombol + ' tombol');
-  t('studio: picker menampilkan pratinjau SVG tiap motif',
-    (htmlDesain.match(/class="ornpick"/g) || []).length === nMotif,
-    (htmlDesain.match(/class="ornpick"/g) || []).length + ' pratinjau');
   const nPola = w.eval('POLA_IDS.length');
-  const nTombolPat = (htmlDesain.match(/setPat\(/g) || []).length;
-  t(`studio: picker pola latar merender ${nPola} motif + 1 pilihan "ikut tema"`,
-    nTombolPat === nPola + 1, nTombolPat + ' tombol');
-  t('studio: picker pola menampilkan pratinjau background tiap motif',
-    (htmlDesain.match(/Pola Latar/g) || []).length >= 1 &&
-    (htmlDesain.match(/background:#fff;background-image:/g) || []).length === nPola,
-    (htmlDesain.match(/background:#fff;background-image:/g) || []).length + ' pratinjau');
-  t('studio: label pola menyebut jumlah yang benar',
-    htmlDesain.includes('Pola Latar (' + nPola + ' motif)'), 'seharusnya ' + nPola + ' motif');
+  t('studio: picker ornamen/pola tidak lagi di tab isi data',
+    (htmlDesain.match(/setOrn\(/g) || []).length === 0 &&
+    (htmlDesain.match(/setPat\(/g) || []).length === 0, 'masih ada picker di tab');
+  const srcTemplate = fs.readFileSync(path.join(__dirname, '..', 'assets', 'studio-template.js'), 'utf8');
+  t(`studio-template: daftar ornamen lengkap (${nMotif}) tersedia`,
+    (srcTemplate.match(/\['[a-z-]+', '[^']+'\]/g) || []).length > 0 &&
+    srcTemplate.includes("chips(ORN, 'orn', t.orn)"));
+  t('studio-template: daftar pola & border tersedia sebagai chip',
+    srcTemplate.includes("chips(POLA, 'pat', t.pat)") && srcTemplate.includes("chips(BORDERS, 'border', t.border)"));
   const nBuka = (htmlDesain.match(/setAnim\('buka','/g) || []).length;
   t('studio: picker gaya membuka merender 20 pilihan', nBuka === 20, nBuka + ' tombol');
   w.eval(`setAnim('buka','pintu')`);
@@ -240,9 +237,9 @@ function draftFor(tpl, idx) {
   w.eval(`setAnim('buka','palsu')`);
   t('studio: id gaya buka asing tetap jatuh ke gaya sah', w.eval(`FX_BUKA.some(f=>f[0]===fxBukaId())`), w.eval('state.anim.buka'));
   w.eval(`setAnim('buka','gilir')`);
-  t('studio: label border menyebut jumlah yang benar (bukan 20 yang lama)',
-    htmlDesain.includes('Border Undangan (' + idBorder.length + ' jenis)'),
-    'seharusnya ' + idBorder.length + ' jenis');
+  t('studio-template: daftar border memuat semua id registry',
+    (srcTemplate.match(/\['[a-z0-9-]+', '[^']+'\]/g) || []).length >= idBorder.length,
+    'daftar border di studio-template kurang lengkap');
 
   /* font: semua 17 di VIP; font eks terkunci di basic */
   const fonts = w.eval('FONTS.map(f=>f.id)');
@@ -264,7 +261,7 @@ function draftFor(tpl, idx) {
   t('studio: tier basic — fx VIP terkunci', w.eval(`state.anim.effect==='zoom'`));
 
   /* semua tab dirender, bebas 'undefined'/'NaN' bocor */
-  const tabs = ['tabInfo', 'tabMaster', 'tabDesain', 'tabSlide', 'tabMusik', 'tabTamu', 'tabAmplop', 'tabDomain'];
+  const tabs = ['tabInfo', 'tabMaster', 'tabCover', 'tabSlide', 'tabMusik', 'tabTamu', 'tabAmplop', 'tabDomain'];
   let tabBad = [];
   w.eval(`state.page='editor'`);
   for (const tb of tabs) {

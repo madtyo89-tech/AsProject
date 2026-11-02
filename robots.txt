@@ -4,6 +4,9 @@ Allow: /
 
 # Halaman privat / butuh kunci akses — jangan dirayapi
 Disallow: /master.html
+Disallow: /studio.html
+Disallow: /studio-template.html
+Disallow: /studio-katalog.html
 Disallow: /scan.html
 Disallow: /checkin.html
 Disallow: /android/

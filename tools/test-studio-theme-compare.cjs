@@ -1,66 +1,104 @@
-// Run: npm install --no-save --package-lock=false jsdom
-//      node tools/test-studio-theme-compare.cjs
-// Checks side-by-side theme comparison previews use the same event data without mutating the draft.
+/* Uji "Bandingkan tema" — sekarang bagian dari Studio Template
+   (studio-template.html), bukan lagi tab Desain di studio.html.
+
+   Yang diuji (jsdom, offline):
+   - tombol bandingkan membuka dialog dengan dua pratinjau: tema ASAL vs DRAF
+   - kedua iframe memakai berkas renderer yang sama (undangan.html?preview=1)
+   - menutup dialog membersihkan iframe & status tombol
+   - studio isi data tidak lagi menyimpan kode bandingkan tema
+
+   Jalankan: npm install --no-save jsdom && node tools/test-studio-theme-compare.cjs */
+'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const { JSDOM } = require('jsdom');
-const html = fs.readFileSync(path.join(__dirname, '../studio.html'), 'utf8');
-const dom = new JSDOM(html, { url: 'https://studio.test/', runScripts: 'outside-only', pretendToBeVisual: true });
+const { JSDOM, VirtualConsole } = require('jsdom');
+const ROOT = path.join(__dirname, '..');
+const read = r => fs.readFileSync(path.join(ROOT, r), 'utf8');
+const HASH = '31282510d0c10140f7413a0573fdade727453ec37c3c386e4363e7e598090d8e';
+
+const store = new Map();
+const posted = [];
+const vc = new VirtualConsole();
+vc.on('jsdomError', e => { if (!/Not implemented/.test(String(e && e.message))) console.error(String(e.message)); });
+
+const dom = new JSDOM(read('studio-template.html'), {
+  url: 'https://studio.test/studio-template.html',
+  runScripts: 'dangerously',
+  pretendToBeVisual: true,
+  virtualConsole: vc,
+  beforeParse(w) {
+    w.Element.prototype.scrollIntoView = function () {};
+    w.HTMLElement.prototype.scrollIntoView = function () {};
+    w.fetch = async () => ({ ok: false, status: 0, text: async () => '', json: async () => ({}) });
+    /* iframe di jsdom tidak memuat dokumen; tangkap pesan yang akan dikirim. */
+    const asli = w.HTMLIFrameElement.prototype;
+    Object.defineProperty(w.HTMLIFrameElement.prototype, 'contentWindow', {
+      configurable: true,
+      get() { return { postMessage: msg => posted.push({ el: this.__id || '', msg }) }; }
+    });
+    void asli;
+    const ls = {
+      getItem: k => (store.has(k) ? store.get(k) : null),
+      setItem: (k, v) => store.set(k, String(v)),
+      removeItem: k => store.delete(k),
+      clear: () => store.clear(),
+      key: i => Array.from(store.keys())[i] ?? null,
+      get length() { return store.size; }
+    };
+    Object.defineProperty(w, 'localStorage', { value: ls, configurable: true });
+    Object.defineProperty(w, 'sessionStorage', { value: ls, configurable: true });
+  }
+});
 const w = dom.window;
-w.scrollTo = () => {};
-w.HTMLMediaElement.prototype.pause = () => {};
-w.eval(fs.readFileSync(path.join(__dirname, '../assets/scroll-effects.js'), 'utf8'));
-for (const script of w.document.querySelectorAll('script:not([src])')) {
-  const source = script.textContent;
-  if (source.includes('let state;')) {
-    w.eval(source + `\nwindow.__themeCompareTest={
-      setup(){state.event='pernikahan';state.doa='pernikahan';state.page='editor';state.tab='desain';state.started=true;render()},
-      snapshot(){return JSON.stringify(state)},
-      alternate(){return tplsFor(state.event).find(t=>t.id!==state.tpl).id},
-      row(id){return themeCompareRow(id)},
-      active(){return state.tpl},
-      open(){toggleThemeComparison()},
-      change(side,id){setThemeComparison(side,id)},
-      apply(side){useThemeComparison(side)},
-      close(){if(compareThemesOpen)toggleThemeComparison()}
-    };`);
-  } else w.eval(source);
-}
 
 try {
-  w.startInvitation();
-  w.__themeCompareTest.setup();
-  const starting = w.__themeCompareTest.snapshot();
-  const alternateId = w.__themeCompareTest.alternate();
-  const row = w.__themeCompareTest.row(alternateId);
-  assert.equal(row.data.tpl, alternateId, 'comparison payload uses the candidate theme');
-  assert.equal(row.data.event, 'pernikahan', 'comparison preserves the selected event');
-  assert.equal(row.data.form.namaPria, JSON.parse(starting).form.namaPria, 'comparison carries the current invitation details');
-  assert.equal(w.__themeCompareTest.snapshot(), starting,
-    'building a comparison preview leaves the active draft untouched');
+  store.set('asproject_studio_auth', HASH);
+  for (const src of ['assets/tpl-data.js', 'assets/studio-core.js', 'assets/studio-template.js']) w.eval(read(src));
 
-  w.__themeCompareTest.open();
-  assert.equal(w.__themeCompareTest.snapshot(), starting, 'opening the comparison leaves the entire active draft unchanged');
-  assert.equal(w.document.querySelectorAll('.theme-compare-select select').length, 2, 'dialog offers two independent theme selectors');
-  assert.equal(w.document.querySelectorAll('.theme-compare-screen iframe').length, 2, 'dialog renders two live invitation previews');
-  const selects = [...w.document.querySelectorAll('.theme-compare-select select')];
-  const candidate = [...selects[1].options].find(option => option.value !== selects[0].value).value;
-  selects[1].value = candidate;
-  selects[1].dispatchEvent(new w.Event('change', { bubbles: true }));
-  assert.equal(w.__themeCompareTest.snapshot(), starting, 'switching a comparison candidate does not mutate any draft field');
-  assert.equal(w.__themeCompareTest.active(), JSON.parse(starting).tpl, 'switching a comparison candidate does not apply it to the draft');
-  assert.equal(w.document.querySelectorAll('.theme-compare-screen iframe').length, 2, 'both previews remain available after changing a candidate');
-  assert.equal(w.document.querySelectorAll('.theme-compare-select select')[1].value, candidate, 'selected candidate remains in the comparison');
+  /* buka satu template → draf aktif */
+  w.document.querySelector('[data-open="tpl:luxury-gold"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  assert(w.document.querySelector('#editor [data-k="nama"]'), 'editor draf terbuka');
 
-  w.__themeCompareTest.close();
-  assert.equal(w.document.querySelector('.theme-compare-overlay'), null, 'comparison can be closed without changing the draft');
-  assert.equal(w.__themeCompareTest.active(), JSON.parse(starting).tpl);
-  w.__themeCompareTest.open();
-  w.__themeCompareTest.apply('b');
-  assert.equal(w.__themeCompareTest.active(), candidate, 'only the explicit “Gunakan tema ini” action applies a candidate');
-  assert.equal(w.document.querySelector('.theme-compare-overlay'), null, 'applying a chosen theme exits comparison mode');
-  console.log('Studio side-by-side theme previews preserve draft data and apply only on explicit selection.');
-} finally {
-  dom.window.close();
+  /* bandingkan */
+  w.document.querySelector('#btnBandingkan').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  const dialog = w.document.querySelector('#compareWrap [role="dialog"]');
+  assert(dialog, 'dialog bandingkan terbuka');
+  assert.equal(w.document.querySelector('#compareWrap').hidden, false, 'overlay bandingkan tampil');
+
+  const a = w.document.getElementById('cmpA');
+  const b = w.document.getElementById('cmpB');
+  assert(a && b, 'dua pratinjau tersedia');
+  assert.equal(a.getAttribute('src'), 'undangan.html?preview=1', 'pratinjau A memakai renderer asli');
+  assert.equal(b.getAttribute('src'), 'undangan.html?preview=1', 'pratinjau B memakai renderer asli');
+  assert(/A · Luxury Gold/.test(dialog.textContent), 'sisi A diberi label tema asal');
+  assert(/B · Luxury Gold/.test(dialog.textContent), 'sisi B diberi label draf');
+  assert.equal(w.document.querySelector('#btnBandingkan').getAttribute('aria-pressed'), 'true', 'status tombol bandingkan aktif');
+
+  /* pesan terkirim ke dua iframe: A = tema asal, B = tema draf */
+  const baris = posted.filter(x => x.msg && x.msg.type === 'asproject:preview');
+  assert(baris.length >= 2, 'payload pratinjau dikirim ke kedua sisi (' + baris.length + ')');
+  const payload = baris.map(x => x.msg.row);
+  assert(payload.some(r => r.data.tpl === 'luxury-gold'), 'sisi A memakai tema asal');
+  assert(payload.some(r => /^custom-/.test(r.data.tpl)), 'sisi B memakai tema draf (custom-)');
+  assert(payload.every(r => r.data.form && r.data.event), 'kedua sisi memakai data acara yang sama');
+
+  /* tutup */
+  w.document.querySelector('[data-act="tutupcmp"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  assert.equal(w.document.querySelector('#compareWrap').hidden, true, 'overlay tertutup');
+  assert.equal(w.document.querySelector('#compareWrap').innerHTML, '', 'iframe dibersihkan saat ditutup');
+  assert.equal(w.document.querySelector('#btnBandingkan').getAttribute('aria-pressed'), 'false', 'status tombol kembali');
+
+  /* kode lama benar-benar pindah */
+  const studio = read('studio.html');
+  assert(!studio.includes('function toggleThemeComparison'), 'studio isi data tidak lagi punya bandingkan tema');
+  assert(!studio.includes('function themeComparePanel'), 'panel bandingkan tema sudah dipindah');
+
+  console.log('ok   bandingkan tema: 2 pratinjau (asal vs draf), payload benar, tutup bersih');
+  console.log('ok   studio.html: fitur bandingkan tema sudah dipindahkan');
+  console.log('\nRingkasan: 2 lulus, 0 gagal');
+} catch (e) {
+  console.error(e);
+  process.exitCode = 1;
 }
+dom.window.close();

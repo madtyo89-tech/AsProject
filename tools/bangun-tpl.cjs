@@ -84,6 +84,11 @@ function tulis(rel,denganHarga){
 if(require.main===module){
  const s=tulis('studio.html',true);
  const u=tulis('undangan.html',false);
+ /* Halaman admin (Studio Template & Setting Katalog) membaca daftar tema dari
+    berkas terpisah supaya tidak menyalin literal TPL. Selalu dibangkitkan
+    bersama TPL agar urutan & isinya tidak pernah basi. */
+ const d=require('./bangun-tpl-data.cjs').bangun();
+ console.log('assets/tpl-data.js → '+d.jumlah+' tema');
  console.log('studio.html   → '+s.jumlah+' template ('+s.pub+' publik + '+(s.jumlah-s.pub)+' Studio-only)');
  console.log('undangan.html → '+u.jumlah+' template (tanpa harga, seperti semula)');
  console.log('Urutan id 0–23 tidak berubah; entry baru di akhir (index Supabase aman).');

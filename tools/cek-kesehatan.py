@@ -487,6 +487,13 @@ def cek_pipeline_undangan():
           and "state.tab='terbit'" in studio and "if(stored.tab==='master'||stored.tab==='domain')stored.tab='terbit'" in studio)
     lapor("ok" if ok else "masalah",
           "studio.html: urutan pengisian dirapikan (7 tab + tombol Lanjut/Mundur, master+domain dilebur)")
+    # 22b) id tab setelah tab Desain dipecah: checklist & stepbar harus ikut 'cover'
+    ok = ("if(stored.tab==='desain')stored.tab='cover'" in studio
+          and "['info','cover','slide','musik','tamu','terbit'].includes(tab)" in studio
+          and "['2','Tampilan',['cover','slide','musik']]" in studio
+          and "state.fotoWanita),'cover']" in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: checklist & stepbar memakai id tab 'cover' (bukan 'desain' yang sudah dihapus)")
     # 23) tombol kembali ke cover di undangan live
     ok = ('id="coverBack"' in undangan and "function kembaliKeCover" in undangan
           and "body.opened #coverBack{display:inline-flex}" in undangan
@@ -624,10 +631,11 @@ def cek_fitur_terbaru():
     # 3) hide template di katalog + urut per kategori
     ok = "function tglKatHide(id)" in studio and "katalogHide" in studio
     lapor("ok" if ok else "masalah", "studio.html: tombol hide/tampilkan template (katalogHide + tglKatHide)")
-    ok = "state.katalogHide.includes(t.id)" in studio
+    ok = "!hidden.includes(t.id)" in studio and "state.katalogHide" in studio
     lapor("ok" if ok else "masalah", "studio.html: pilihan tema (tplsFor) menghormati template tersembunyi")
-    ok = "${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>" in studio
-    lapor("ok" if ok else "masalah", "studio.html: daftar katalog diurutkan per kategori")
+    katalog_js = baca("assets/studio-katalog.js") if os.path.exists(os.path.join(ROOT, "assets", "studio-katalog.js")) else ""
+    ok = "['pernikahan', 'khitanan', 'ultah', 'aqiqah', 'all']" in katalog_js
+    lapor("ok" if ok else "masalah", "Setting Katalog: daftar tema dikelompokkan per kategori acara")
     # 4) teks WA personal: nama tamu terpilih + link bersih (pesanWa memakai link dari guests())
     ok = ("nama_tamu:g?g.nama:WA_SAPA_UMUM" in studio and "link_undangan:g?g.link:baseUrl()" in studio
           and "link:state.linkMode==='single'?baseUrl():baseUrl()+'?to='+encodeURIComponent(nama)" in studio)
@@ -927,82 +935,99 @@ def cek_simulasi():
 
 
 def cek_katalog_admin():
-    """Halaman Katalog Template & Arsip di Studio: tombol kembali, hapus baris, pulihkan bawaan,
-    dan baris yang tidak remuk di layar HP (regresi laporan 2026-10-12)."""
-    print("\n[23] Katalog Template & Arsip di Studio (kembali / hapus / pulihkan / baris HP)")
+    """Sejak 2026-11-01 "Katalog Template" keluar dari studio isi data dan
+    menjadi halaman sendiri: studio-katalog.html (Setting Katalog).
+    Di studio.html tersisa Folder/Arsip yang tetap butuh toolbar kembali."""
+    print("\n[23] Setting Katalog (halaman sendiri) & Folder/Arsip Studio")
     studio = baca("studio.html")
-    ok = "function pageActions(" in studio and "function goPage(" in studio \
-        and studio.count("${pageActions(") >= 2 and "Kembali ke Editor" in studio
+    katalog = baca("studio-katalog.html") if os.path.exists(os.path.join(ROOT, "studio-katalog.html")) else ""
+    js = baca("assets/studio-katalog.js") if os.path.exists(os.path.join(ROOT, "assets", "studio-katalog.js")) else ""
+    ok = "function pageActions(" in studio and "function goPage(" in studio and "Kembali ke Editor" in studio
     lapor("ok" if ok else "masalah",
-          "studio.html: Katalog & Arsip punya toolbar ← Kembali ke Editor + ☰ Template & Menu (goPage/pageActions)")
-    ok = "goPage('${id}')" in studio and "set('page','${id}')" not in studio
-    lapor("ok" if ok else "masalah", "studio.html: menu sidebar memakai goPage() (menu HP tertutup saat pindah halaman)")
-    ok = "function delKat(id)" in studio and "delKat('${k.id}')" in studio and "sm-btn del" in studio
-    lapor("ok" if ok else "masalah", "studio.html: tiap baris katalog punya tombol 🗑 Hapus (delKat + konfirmasi)")
-    ok = ("katalogDel:[]" in studio and "function pulihkanKat()" in studio
-          and "!state.katalogDel.includes(t.id)&&!state.katalog.some(k=>(k.tpl||k.id)===t.id)" in studio
-          and "katalogDel:state.katalogDel" in studio)
+          "studio.html: Folder/Arsip punya toolbar ← Kembali ke Editor + ☰ Template & Menu (goPage/pageActions)")
+    ok = "function katalog()" not in studio and "state.page==='katalog'" not in studio
     lapor("ok" if ok else "masalah",
-          "studio.html: tema bawaan yang dihapus tidak kembali saat dibuka ulang (tombstone katalogDel) + Pulihkan Bawaan")
-    ok = ('class="kat-row' in studio and ".kat-list{container-type:inline-size" in studio
-          and "@container kat (min-width:" in studio and ".kat-row{padding:12px 16px;display:flex;flex-wrap:wrap" in studio)
+          "studio.html: halaman Katalog Template lama sudah tidak ada (tidak lagi menumpuk di studio isi data)")
+    ok = ('studio-template.html' in studio and 'studio-katalog.html' in studio)
     lapor("ok" if ok else "masalah",
-          "studio.html: baris katalog bertumpuk di layar sempit (container query .kat-list), tidak remuk per huruf")
+          "studio.html: menu menautkan Studio Template & Setting Katalog")
+    ok = bool(katalog) and 'noindex,nofollow' in katalog and 'id="daftarTema"' in katalog and 'id="btnSimpan"' in katalog
+    lapor("ok" if ok else "masalah",
+          "studio-katalog.html: halaman admin noindex dengan daftar tema + tombol simpan")
+    ok = all(x in js for x in ('catalog_settings', 'data-f="visible"', 'data-f="hargaPromo"',
+                               'katalog-setting.json', 'function saveCloud(', 'function loadCloud('))
+    lapor("ok" if ok else "masalah",
+          "Setting Katalog: visibilitas/harga tersimpan ke Supabase + bisa diekspor untuk build")
+    ok = 'catalog_settings' in baca("assets/katalog-live.js") and \
+         'assets/katalog-live.js' in baca("katalog/index.html")
+    lapor("ok" if ok else "masalah",
+          "katalog publik memuat katalog-live.js (setting cloud langsung terbaca pengunjung)")
+    skema = baca("supabase-schema.sql")
+    ok = 'create table if not exists public.catalog_settings' in skema
+    lapor("ok" if ok else "masalah", "supabase-schema.sql: Bagian 4 tabel catalog_settings tersedia")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji jsdom katalog dilewati")
         return
-    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT,
+                           env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})
     if probe.returncode != 0:
         lapor("info", "jsdom belum terpasang (npm i jsdom) — uji jsdom katalog dilewati")
         return
     skrip = os.path.join(ROOT, "tools", "test-katalog-admin.cjs")
-    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
+    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT,
+                       env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})
     baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
     lapor("ok" if r.returncode == 0 else "masalah",
-          "uji katalog admin: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
+          "uji setting katalog: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
 
 
 def cek_template_custom():
-    """RONDE 5: tema kustom tersimpan terpisah dari TPL publik, ikut payload, dan bisa dikelola."""
-    print("\n[24] Template kustom Studio (simpan / kelola / publish / migrasi)")
+    """Tema baru tidak lagi dibuat di dalam studio isi data. Studio Template
+    menghasilkan draf + kode ekspor ke kerangka/; renderer live tetap membaca
+    tema kustom lama agar undangan yang sudah terbit tidak rusak."""
+    print("\n[24] Studio Template terpisah (racik tema, ekspor, kompatibilitas)")
     studio = baca("studio.html")
     live = baca("undangan.html")
+    modul = baca("studio-template.html") if os.path.exists(os.path.join(ROOT, "studio-template.html")) else ""
+    js = baca("assets/studio-template.js") if os.path.exists(os.path.join(ROOT, "assets", "studio-template.js")) else ""
+    data = baca("assets/tpl-data.js") if os.path.exists(os.path.join(ROOT, "assets", "tpl-data.js")) else ""
     ids_st, ids_live = _tpl_ids("studio.html"), _tpl_ids("undangan.html")
-    ok = ("tplCustom:[]" in studio and "function normalizeTplCustom(items)" in studio
-          and "state.tplCustom=normalizeTplCustom(state.tplCustom)" in studio
-          and "function tplById(id)" in studio and "[...TPL,...(Array.isArray(state.tplCustom)?state.tplCustom:[])]" in studio)
-    lapor("ok" if ok else "masalah", "Studio: tplCustom punya migrasi aman dan tplOf/tplsFor memakai daftar terpisah")
-    ok = ids_st == ids_live and "Math.max(0,TPL.findIndex(t=>t.id===state.tpl))" in studio
-    lapor("ok" if ok else "masalah", "TPL publik tetap identik/berurutan; tema custom memakai indeks fallback tanpa menggeser TPL")
-    ok = all(x in studio for x in ("function saveCustomTemplate()", "function renameCustomTpl(id)",
-                                    "function duplicateCustomTpl(id)", "function deleteCustomTpl(id)",
-                                    'class="tpl-custom-entry"', "Tambahkan ke Katalog Publik",
-                                    "addKat(saved.id,{silent:true,nama:saved.nama})"))
-    lapor("ok" if ok else "masalah", "Studio: kartu simpan, badge CUSTOM, kelola tema, fallback hapus, dan opsi katalog publik tersedia")
-    baris_at = studio.find("function barisUndangan()")
-    pv_at = studio.find("function pvHtml()", baris_at)
-    baris = studio[baris_at:pv_at] if baris_at >= 0 and pv_at > baris_at else ""
-    ok = ("state.tplCustom||[]" in studio and studio.count("tplCustom:JSON.parse(JSON.stringify(state.tplCustom||[]))") >= 2
-          and "tplCustom:normalizeTplCustom(state.tplCustom)" in studio and "state.tplCustom||[]" in studio[studio.find("function draftSig") : studio.find("function draftDirty")]
-          and "coverStyleExplicit:!!state.coverStyleExplicit" in baris
-          and studio.count("state.tplCustom.forEach((t,i)=>{if(!t.studioOnly&&!state.katalog.some") >= 2)
-    lapor("ok" if ok else "masalah", "draftSig, preview/publish/export, arsip, cover eksplisit, dan katalog pulih bersama tplCustom")
-    custom_at = live.find("const customTpl=d&&tplId?customThemeFromDraft(tplId,d.tplCustom):null;")
-    index_at = live.find("const tplF=tpl||TPL[Math.max(0,Math.min(TPL.length-1")
-    ok = custom_at >= 0 and index_at > custom_at and "TPL publik tidak pernah ditambah/diurut ulang" in live
-    lapor("ok" if ok else "masalah", "undangan.html: d.tplCustom diselesaikan sebelum fallback indeks tema publik")
+    ok = ids_st == ids_live and len(ids_st) == 44
+    lapor("ok" if ok else "masalah", "TPL publik tetap identik/berurutan di studio.html & undangan.html (44 tema)")
+    ok = ('tplCustom:[]' in studio and 'function normalizeTplCustom(items)' in studio
+          and 'function tplById(id)' in studio and 'tplCustom:JSON.parse(JSON.stringify(state.tplCustom||[]))' in studio)
+    lapor("ok" if ok else "masalah",
+          "studio.html: draft lama bertema kustom tetap dibaca & ikut payload publish (tidak ada undangan rusak)")
+    ok = ('tplCustom' in live and 'function customThemeFromDraft(' in live
+          and 'const customTpl=d&&tplId?customThemeFromDraft(tplId,d.tplCustom):null;' in live)
+    lapor("ok" if ok else "masalah",
+          "undangan.html: renderer tetap menyelesaikan tema kustom dari snapshot sebelum fallback indeks")
+    ok = bool(modul) and 'noindex,nofollow' in modul and 'assets/studio-template.js' in modul and 'undangan.html?preview=1' in modul
+    lapor("ok" if ok else "masalah", "studio-template.html: halaman admin noindex dengan pratinjau renderer asli")
+    ok = all(x in js for x in ('window.ASP_TPL', 'function previewRow(', 'function exportText(',
+                               'kerangka/token-tema.js', 'kerangka/template.js', 'sendToKatalog'))
+    lapor("ok" if ok else "masalah",
+          "Studio Template: pratinjau, ekspor token/template, dan kirim ke Setting Katalog tersedia")
+    ok = data.startswith('/* DIBANGKITKAN tools/bangun-tpl-data.cjs') and data.count('"id":"') >= 44
+    lapor("ok" if ok else "masalah", "assets/tpl-data.js dibangkitkan dari kerangka/ (bukan salinan manual TPL)")
+    ok = 'bangun-tpl-data' in baca("tools/bangun-tpl.cjs")
+    lapor("ok" if ok else "masalah", "bangun-tpl.cjs ikut menyegarkan tpl-data.js setiap kali TPL dibangun")
     if not shutil.which("node"):
-        lapor("info", "node tidak tersedia — uji interaksi template kustom dilewati")
+        lapor("info", "node tidak tersedia — uji interaksi Studio Template dilewati")
         return
-    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT)
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT,
+                           env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})
     if probe.returncode != 0:
-        lapor("info", "jsdom belum terpasang — uji interaksi template kustom dilewati")
+        lapor("info", "jsdom belum terpasang — uji interaksi Studio Template dilewati")
         return
-    skrip = os.path.join(ROOT, "tools", "test-template-custom.cjs")
-    r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT)
-    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
-    lapor("ok" if r.returncode == 0 else "masalah",
-          "uji template kustom: " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300]))
+    for nama, judul in (("test-template-custom.cjs", "uji studio template"),
+                        ("test-studio-theme-compare.cjs", "uji bandingkan tema")):
+        skrip = os.path.join(ROOT, "tools", nama)
+        r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT,
+                           env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})
+        baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+        lapor("ok" if r.returncode == 0 else "masalah",
+              judul + ": " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
 
 
 def cek_peta_undangan():

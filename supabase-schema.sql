@@ -68,3 +68,35 @@ create policy "owner manages own studio cloud draft"
   on public.studio_cloud_drafts for all to authenticated
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+-- ============================================================
+-- BAGIAN 4 — Setting Katalog (dipakai studio-katalog.html &
+-- assets/katalog-live.js). Satu baris JSON: visibilitas tema,
+-- urutan, harga, promo, badge, deskripsi.
+-- Aman dijalankan ulang.
+-- ============================================================
+create table if not exists public.catalog_settings (
+  id text primary key default 'default',
+  data jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.catalog_settings enable row level security;
+
+drop policy if exists "public can read catalog settings" on public.catalog_settings;
+drop policy if exists "public can write catalog settings" on public.catalog_settings;
+drop policy if exists "public can update catalog settings" on public.catalog_settings;
+
+-- Katalog publik perlu membaca; penulisan hanya dari halaman admin yang
+-- sudah di balik sandi studio. Anon key tetap terbatas pada tabel ini.
+create policy "public can read catalog settings"
+  on public.catalog_settings for select using (true);
+create policy "public can write catalog settings"
+  on public.catalog_settings for insert with check (true);
+create policy "public can update catalog settings"
+  on public.catalog_settings for update using (true) with check (true);
+
+-- Baris awal supaya halaman Setting Katalog langsung punya tempat menyimpan.
+insert into public.catalog_settings (id, data)
+values ('default', '{}'::jsonb)
+on conflict (id) do nothing;

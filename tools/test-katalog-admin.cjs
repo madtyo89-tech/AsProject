@@ -1,18 +1,23 @@
-/* Uji halaman Katalog Template & Arsip di studio.html (jsdom, offline):
-   - tombol "← Kembali ke Editor" + "☰ Template & Menu" ada di Katalog & Arsip (dulu tidak ada → terjebak di HP)
-   - goPage() menutup menu HP, kembali ke editor
-   - tombol 🗑 Hapus per baris: baris buatan sendiri hilang; tema bawaan hilang DAN tidak kembali setelah
-     halaman dibuka ulang (tombstone katalogDel); "Pulihkan Bawaan" mengembalikannya
-   - baris katalog memakai kelas responsif (.kat-row dkk) — bukan flex satu baris yang remuk di layar HP
+/* Uji Setting Katalog (menggantikan uji halaman katalog di dalam studio.html).
+   Halaman katalog admin sekarang berdiri sendiri: studio-katalog.html.
+
+   Yang diuji (jsdom, offline):
+   - 44 tema tampil sebagai baris pengaturan
+   - tombol "Tampil" menyembunyikan baris (dan menyembunyikannya dari daftar)
+   - ubah harga promo → "Simpan ke cloud" mengirim POST ke catalog_settings
+   - kalau tabel cloud belum ada, status jujur "lokal" (bukan diam-diam gagal)
+   - Ekspor JSON menghasilkan katalog-setting.json berisi pengaturan
+   - daftar "Menunggu rilis" membaca kiriman dari Studio Template
+
    Jalankan: node tools/test-katalog-admin.cjs   (butuh: npm i jsdom) */
 'use strict';
-const { JSDOM, VirtualConsole } = require('jsdom');
 const fs = require('fs');
 const path = require('path');
+const { JSDOM, VirtualConsole } = require('jsdom');
 const ROOT = path.join(__dirname, '..');
 const read = r => fs.readFileSync(path.join(ROOT, r), 'utf8');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const AUTH = ['asproject_studio_auth', '31282510d0c10140f7413a0573fdade727453ec37c3c386e4363e7e598090d8e'];
+const HASH = '31282510d0c10140f7413a0573fdade727453ec37c3c386e4363e7e598090d8e';
 
 let ok = 0, fail = 0;
 const t = (name, cond, extra) => {
@@ -20,162 +25,138 @@ const t = (name, cond, extra) => {
   console.log((cond ? 'ok  ' : 'FAIL') + ' ' + name + (!cond && extra ? ' — ' + extra : ''));
 };
 
-/* satu "sesi browser": localStorage dibawa antar boot supaya bisa meniru buka-ulang halaman */
-const store = new Map();
-function boot() {
-  const vc = new VirtualConsole();                      // buang "Not implemented: pause()/scrollTo()" milik jsdom
-  vc.on('error', m => console.error(m)); vc.on('warn', () => {}); vc.on('log', m => console.log(m));
-  vc.on('jsdomError', e => { if (!/Not implemented/.test(String(e && e.message))) console.error(e); });
-  const dom = new JSDOM(read('studio.html'), {
-    runScripts: 'dangerously', url: 'https://x.test/studio.html', pretendToBeVisual: true, virtualConsole: vc,
+async function boot({ cloudRows = null, cloudError = null } = {}) {
+  const store = new Map();
+  const calls = [];
+  const downloads = [];
+  const blobs = [];
+  const vc = new VirtualConsole();
+  vc.on('jsdomError', e => { if (!/Not implemented/.test(String(e && e.message))) console.error(String(e.message)); });
+  const dom = new JSDOM(read('studio-katalog.html'), {
+    runScripts: 'dangerously', url: 'https://x.test/studio-katalog.html', pretendToBeVisual: true, virtualConsole: vc,
     beforeParse(w) {
-      w.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} takeRecords() { return [] } };
-      if (!w.matchMedia) w.matchMedia = q => ({ matches: false, media: q, addListener() {}, removeListener() {}, addEventListener() {}, removeEventListener() {} });
-      w.fetch = async () => ({ ok: false, status: 0, text: async () => '', json: async () => ({}) });
-      w.Element.prototype.scrollIntoView = function () {};
-      w.HTMLElement.prototype.scrollIntoView = function () {};
       w.confirm = () => true;
-      // localStorage bersama antar boot
+      w.URL.createObjectURL = blob => { blobs.push(blob); return 'blob:uji'; };
+      w.URL.revokeObjectURL = () => {};
+      w.HTMLAnchorElement.prototype.click = function () { downloads.push({ href: this.href, download: this.download }); };
+      w.fetch = async (url, opts = {}) => {
+        calls.push({ url: String(url), opts });
+        if (cloudError) throw new Error(cloudError);
+        if (opts.method === 'POST') return { ok: true, status: 201, text: async () => '', json: async () => null };
+        return { ok: true, status: 200, text: async () => JSON.stringify(cloudRows || []), json: async () => (cloudRows || []) };
+      };
       const ls = {
         getItem: k => (store.has(k) ? store.get(k) : null),
         setItem: (k, v) => store.set(k, String(v)),
         removeItem: k => store.delete(k),
         clear: () => store.clear(),
         key: i => Array.from(store.keys())[i] ?? null,
-        get length() { return store.size },
+        get length() { return store.size; }
       };
       Object.defineProperty(w, 'localStorage', { value: ls, configurable: true });
-      try { w.eval(read('assets/scroll-effects.js')); } catch (e) {}
-      if (typeof w.clearScrollReveal !== 'function') w.clearScrollReveal = () => {};
-      try { w.eval(read('assets/theme-contrast.js')); } catch (e) {}
-      try { w.eval(read('assets/vip-4d.js')); } catch (e) {}
-    },
+      Object.defineProperty(w, 'sessionStorage', { value: ls, configurable: true });
+    }
   });
-  return dom.window;
+  const w = dom.window;
+  store.set('asproject_studio_auth', HASH);
+  for (const src of ['assets/tpl-data.js', 'assets/studio-core.js', 'assets/studio-katalog.js']) w.eval(read(src));
+  await sleep(40);
+  return { dom, w, d: w.document, store, calls, downloads, blobs };
 }
 
 (async () => {
-  store.set(AUTH[0], AUTH[1]);
-  const errs = [];
-  let w = boot();
-  w.addEventListener('error', e => errs.push(String(e.message)));
-  await sleep(250);
-  w.eval('if(!state.started)startInvitation()');
-  const $ = sel => w.document.querySelector(sel);
-  const $$ = sel => Array.from(w.document.querySelectorAll(sel));
+  /* ---- 1. cloud kosong: status lokal + 44 baris ---- */
+  {
+    const { dom, w, d, calls, downloads, blobs } = await boot({ cloudRows: [] });
+    t('katalog: gerbang sandi terbuka', !d.querySelector('.asp-gate'));
+    t('katalog: 44 tema tampil sebagai baris', d.querySelectorAll('[data-row]').length === 44, d.querySelectorAll('[data-row]').length + ' baris');
+    t('katalog: cloud dibaca saat halaman dibuka', calls.some(c => c.url.includes('catalog_settings')));
+    t('katalog: status jujur saat cloud kosong', /Lokal/i.test(d.querySelector('#pillSync').textContent), d.querySelector('#pillSync').textContent.trim());
+    t('katalog: ringkasan menghitung tema tampil', d.querySelector('#statTampil').textContent === '44', d.querySelector('#statTampil').textContent);
 
-  /* ---------- 1) Kembali dari Katalog & Arsip ---------- */
-  console.log('— Navigasi Katalog / Arsip —');
-  w.document.body.classList.add('studio-nav-open');              // menu HP terbuka
-  w.eval("goPage('katalog')");
-  t('katalog: state.page = katalog', w.eval("state.page") === 'katalog');
-  t('katalog: menu HP tertutup setelah pindah halaman', !w.document.body.classList.contains('studio-nav-open'));
-  t('katalog: ada tombol ← Kembali ke Editor', $$('.page-actions button').some(b => /Kembali ke Editor/.test(b.textContent)));
-  t('katalog: ada tombol ☰ Template & Menu', !!$('.page-actions .mobile-menu'));
-  t('katalog: menu sidebar memakai goPage (bukan set)', $$('.menubtn').every(b => /goPage\(/.test(b.getAttribute('onclick') || '')));
-  const back = $$('.page-actions button').find(b => /Kembali ke Editor/.test(b.textContent));
-  back.click();
-  t('katalog → Kembali: state.page = editor & editor tampil', w.eval("state.page") === 'editor' && !!$('.tabbar'));
+    /* sembunyikan satu tema */
+    const cek = d.querySelector('[data-t="luxury-gold"][data-f="visible"]');
+    cek.checked = false;
+    cek.dispatchEvent(new w.Event('input', { bubbles: true }));
+    const barisSembunyi = d.querySelector('[data-row="luxury-gold"]');
+    t('katalog: centang "Tampil" mematikan tema',
+      !barisSembunyi || barisSembunyi.classList.contains('is-hidden'));
+    t('katalog: tema tersembunyi hilang dari daftar default', !barisSembunyi);
+    t('katalog: statistik langsung ikut', d.querySelector('#statSembunyi').textContent === '1', d.querySelector('#statSembunyi').textContent);
 
-  w.eval("goPage('arsip')");
-  t('arsip: ada tombol ← Kembali ke Editor', $$('.page-actions button').some(b => /Kembali ke Editor/.test(b.textContent)));
-  t('arsip: ada tombol ☰ Template & Menu', !!$('.page-actions .mobile-menu'));
-  w.eval("goPage('editor')");
-  t('editor: tidak ada toolbar halaman ganda', $$('.page-actions').length === 0 && $$('.editor-actions').length === 1);
+    /* ubah harga + simpan */
+    const harga = d.querySelector('[data-t="ivory-klasik"][data-f="hargaPromo"]');
+    harga.value = '39000';
+    harga.dispatchEvent(new w.Event('input', { bubbles: true }));
+    d.querySelector('#btnSimpan').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+    await sleep(60);
+    const post = calls.find(c => c.opts && c.opts.method === 'POST');
+    t('katalog: simpan mengirim POST ke catalog_settings', !!post && post.url.includes('catalog_settings'), post ? post.url : 'tidak ada POST');
+    if (post) {
+      const body = JSON.parse(post.opts.body);
+      t('katalog: harga promo baru ikut terkirim', body[0].data.themes['ivory-klasik'].hargaPromo === 39000, JSON.stringify(body[0].data.themes['ivory-klasik'].hargaPromo));
+      t('katalog: visibilitas ikut terkirim', body[0].data.themes['luxury-gold'].visible === false);
+      t('katalog: kolom id = default', body[0].id === 'default');
+    }
 
-  /* ---------- 2) Baris katalog responsif ---------- */
-  console.log('— Baris katalog —');
-  w.eval("goPage('katalog')");
-  const n0 = w.eval('state.katalog.length');
-  const nTPL = w.eval('TPL.filter(t=>!t.studioOnly).length');
-  t('katalog: semua 44 tema publik punya baris bawaan', n0 === nTPL && nTPL === 44, n0 + ' vs ' + nTPL);
-  t('katalog: enam Arch publik berharga katalog dan masuk daftar pemasaran', w.eval('TPL.filter(t=>t.arch).length') === 6 && w.eval('TPL.filter(t=>t.arch).every(t=>!t.studioOnly&&t.harga===49000&&t.badge==="NEW TEMPLATE"&&state.katalog.some(k=>k.tpl===t.id))'));
-  t('katalog: tidak ada tema bawaan Studio-only; 4 Liquid Glass publik berlabel NEW TEMPLATE', w.eval('TPL.filter(t=>t.studioOnly).length') === 0 && w.eval('TPL.filter(t=>t.id.startsWith("liquid-glass")).length') === 4 && w.eval('TPL.filter(t=>t.id.startsWith("liquid-glass")).every(t=>t.harga===49000&&t.badge==="NEW TEMPLATE"&&state.katalog.some(k=>k.tpl===t.id))') && w.eval('TPL.filter(t=>t.badge==="NEW TEMPLATE").length') === 10);
-  const activeTpl = w.eval('state.tpl');
-  w.eval("state.tpl='gerbang-rosewood';save()");
-  const countBeforeStudioOnlyAdd = w.eval('state.katalog.length');
-  w.eval("TPL.find(t=>t.id==='gerbang-rosewood').studioOnly=true;addKat()");
-  t('addKat: tetap menolak varian Studio-only dari Katalog Harga & Promo (fixture runtime)', w.eval('state.katalog.length') === countBeforeStudioOnlyAdd);
-  w.eval("delete TPL.find(t=>t.id==='gerbang-rosewood').studioOnly");
-  w.eval('state.tpl=' + JSON.stringify(activeTpl) + ';save()');
-  const rows = $$('.kat-row');
-  t('katalog: baris memakai kelas .kat-row', rows.length > 0);
-  t('katalog: tiap baris punya thumb, nama, harga, promo, badge, aksi',
-    rows.every(r => r.querySelector('.kat-thumb') && r.querySelector('.kat-main input') && r.querySelectorAll('.kat-price input').length === 2
-      && r.querySelector('.kat-promo input[type=checkbox]') && r.querySelector('.kat-badge') && r.querySelector('.kat-acts')));
-  t('katalog: tiap baris punya tombol 🗑 Hapus', rows.every(r => r.querySelector('.kat-acts .sm-btn.del')));
-  t('katalog: tombol 👁️ dan Preview masih ada', rows.every(r => r.querySelectorAll('.kat-acts .sm-btn').length === 3));
-  const css = read('studio.html');
-  t('css: baris katalog bertumpuk sebagai bawaan (flex-wrap) — aman di HP & kolom desktop 480px', /\.kat-row\{[^}]*flex-wrap:wrap/.test(css));
-  t('css: satu baris penuh hanya lewat container query lebar daftar (bukan lebar layar)', /@container kat \(min-width:\d+px\)\{\s*\.kat-row\{flex-wrap:nowrap/.test(css) && /\.kat-list\{container-type:inline-size/.test(css));
-  t('katalog: kartu daftar memakai .kat-list (container query)', !!$('.card.kat-list .kat-row'));
-  t('css: toolbar halaman .page-actions sticky', /\.page-actions\{position:sticky/.test(css));
-  t('katalog: tidak ada baris dengan style flex inline lama', !css.includes('<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;${hid'));
+    /* ekspor */
+    d.querySelector('#btnEkspor').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+    await sleep(30);
+    t('katalog: tombol ekspor membuat berkas katalog-setting.json',
+      downloads.some(x => x.download === 'katalog-setting.json'), JSON.stringify(downloads));
+    t('katalog: isi ekspor berupa JSON pengaturan',
+      blobs.length === 1 && blobs[0].type.includes('application/json'), blobs.length ? blobs[0].type : 'tidak ada blob');
+    dom.window.close();
+  }
 
-  /* ---------- 3) Tambah & hapus baris buatan sendiri ---------- */
-  console.log('— Tambah / hapus baris —');
-  w.eval('addKat()');
-  const n1 = w.eval('state.katalog.length');
-  t('addKat: baris bertambah 1', n1 === n0 + 1, n1 + ' vs ' + (n0 + 1));
-  const baruId = w.eval('state.katalog[0].id');
-  t('addKat: baris baru di paling atas, id custom (k…)', /^k\d+$/.test(baruId), baruId);
-  t('addKat: baris baru tampil & punya tombol hapus', !!$(`.kat-row[data-kid="${baruId}"] .sm-btn.del`));
-  $(`.kat-row[data-kid="${baruId}"] .sm-btn.del`).click();
-  t('delKat (custom): baris hilang', w.eval('state.katalog.length') === n0 && !w.eval(`state.katalog.some(k=>k.id==='${baruId}')`));
-  t('delKat (custom): tidak dicatat sebagai tombstone', w.eval('state.katalogDel.length') === 0);
+  /* ---- 2. cloud sudah berisi pengaturan ---- */
+  {
+    const cloudRows = [{
+      data: {
+        version: 1, updatedAt: '2026-11-01T00:00:00Z',
+        global: { promoAktif: false, hargaCoret: 129000, ribbon: 'Promo Uji', ribbonSub: 'Uji', catatan: '' },
+        themes: { 'luxury-gold': { visible: false, featured: true, order: 1, hargaNormal: 99000, hargaPromo: 59000, promoAktif: true, badge: 'UJI', desc: 'Deskripsi uji' } }
+      },
+      updated_at: '2026-11-01T00:00:00Z'
+    }];
+    const { dom, w, d } = await boot({ cloudRows });
+    t('katalog: pengaturan cloud dipakai (pill cloud)', /Tersimpan di cloud|Dimuat dari cloud/i.test(d.querySelector('#pillSync').textContent), d.querySelector('#pillSync').textContent.trim());
+    t('katalog: tema nonaktif dari cloud disembunyikan default', !d.querySelector('[data-row="luxury-gold"]'));
+    const filt = d.querySelector('#filterSembunyi');
+    filt.checked = true;
+    filt.dispatchEvent(new w.Event('change', { bubbles: true }));
+    t('katalog: centang "tampilkan tersembunyi" memunculkan kembali', !!d.querySelector('[data-row="luxury-gold"]'));
+    t('katalog: badge cloud tampil di kolom badge',
+      (d.querySelector('[data-t="luxury-gold"][data-f="badge"]') || {}).value === 'UJI',
+      (d.querySelector('[data-t="luxury-gold"][data-f="badge"]') || {}).value);
+    t('katalog: promo global nonaktif terbaca', d.querySelector('[data-g="promoAktif"]').checked === false);
+    dom.window.close();
+  }
 
-  /* confirm ditolak → tidak dihapus */
-  w.confirm = () => false;
-  w.eval('addKat()');
-  const batalId = w.eval('state.katalog[0].id');
-  w.eval(`delKat('${batalId}')`);
-  t('delKat: batal di konfirmasi → baris tetap ada', w.eval(`state.katalog.some(k=>k.id==='${batalId}')`));
-  w.confirm = () => true;
-  w.eval(`delKat('${batalId}')`);
+  /* ---- 3. tabel belum ada: pesan jelas ---- */
+  {
+    const { dom, d } = await boot({ cloudError: 'HTTP 404: relation "catalog_settings" does not exist' });
+    const teks = (d.querySelector('#statusTeks') || {}).textContent || '';
+    t('katalog: tabel belum ada dijelaskan, bukan gagal senyap', /catalog_settings|Bagian 4/i.test(teks), teks.slice(0, 90));
+    t('katalog: halaman tetap bisa dipakai (44 baris)', d.querySelectorAll('[data-row]').length === 44);
+    dom.window.close();
+  }
 
-  /* ---------- 4) Hapus tema bawaan + buka ulang halaman ---------- */
-  console.log('— Hapus tema bawaan & buka ulang —');
-  const bawaan = w.eval('TPL.filter(t=>!t.studioOnly).slice(-1)[0].id'); // tema publik bawaan terakhir
-  w.eval(`delKat('${bawaan}')`);
-  t('delKat (bawaan): baris hilang', !w.eval(`state.katalog.some(k=>k.id==='${bawaan}')`));
-  t('delKat (bawaan): dicatat di katalogDel', w.eval(`state.katalogDel.includes('${bawaan}')`));
-  t('delKat (bawaan): tema masih bisa dipilih di Studio (katalogHide tidak disentuh)', w.eval(`tplsFor(TPL.find(t=>t.id==='${bawaan}').ev==='all'?'pernikahan':TPL.find(t=>t.id==='${bawaan}').ev).some(x=>x.id==='${bawaan}')`));
-  t('katalog: tombol Pulihkan Bawaan muncul dengan hitungan', $$('.kat-head-acts button').some(b => /Pulihkan Bawaan \(1\)/.test(b.textContent)));
-  const sidebarCount = $$('.menubtn').find(b => /Katalog Template/.test(b.textContent)).querySelector('.chip').textContent.trim();
-  t('sidebar: hitungan katalog ikut berkurang', Number(sidebarCount) === n0 - 1, sidebarCount);
+  /* ---- 4. daftar tunggu dari Studio Template ---- */
+  {
+    const { dom, w, d, store } = await boot({ cloudRows: [] });
+    store.set('asproject_katalog_setting_v1', JSON.stringify({ pending: [{ id: 'tema-uji', nama: 'Tema Uji', baseTpl: 'luxury-gold' }] }));
+    /* Reset memicu renderAll() yang ikut merender daftar tunggu (confirm = true). */
+    d.querySelector('#btnReset').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+    await sleep(30);
+    t('katalog: kiriman Studio Template tampil sebagai "menunggu rilis"',
+      (d.querySelector('#daftarPending') || {}).textContent.includes('Tema Uji'),
+      (d.querySelector('#daftarPending') || {}).textContent.slice(0, 80));
+    t('katalog: tema kiriman tidak otomatis masuk daftar 44',
+      d.querySelectorAll('[data-row]').length === 44 && !d.querySelector('[data-row="tema-uji"]'));
+    dom.window.close();
+  }
 
-  // buka ulang halaman: localStorage sama, DOM baru
-  w.close();
-  w = boot();
-  w.addEventListener('error', e => errs.push(String(e.message)));
-  await sleep(250);
-  t('buka ulang: tema bawaan yang dihapus TIDAK kembali', !w.eval(`state.katalog.some(k=>k.id==='${bawaan}')`));
-  t('buka ulang: baris lain tetap lengkap', w.eval('state.katalog.length') === n0 - 1, w.eval('state.katalog.length') + ' vs ' + (n0 - 1));
-  t('buka ulang: halaman tetap Katalog (page tersimpan) & tombol kembali tersedia',
-    w.eval('state.page') === 'katalog' && Array.from(w.document.querySelectorAll('.page-actions button')).some(b => /Kembali ke Editor/.test(b.textContent)));
-
-  // pulihkan
-  w.eval('pulihkanKat()');
-  t('pulihkanKat: tema bawaan kembali', w.eval(`state.katalog.some(k=>k.id==='${bawaan}')`));
-  t('pulihkanKat: katalogDel kosong & tombol Pulihkan hilang', w.eval('state.katalogDel.length') === 0
-    && !Array.from(w.document.querySelectorAll('.kat-head-acts button')).some(b => /Pulihkan/.test(b.textContent)));
-  t('pulihkanKat: jumlah baris kembali penuh', w.eval('state.katalog.length') === n0);
-
-  /* ---------- 5) Hapus semua → katalog kosong + tombol pulihkan; Undangan Baru mempertahankan katalogDel ---------- */
-  console.log('— Katalog kosong & Undangan Baru —');
-  w.eval('state.katalog.slice().forEach(k=>delKat(k.id))');
-  t('hapus semua: katalog kosong', w.eval('state.katalog.length') === 0);
-  t('hapus semua: tampil pesan kosong + tombol pulihkan', !!w.document.querySelector('.kat-empty button'));
-  w.eval('startInvitation()');
-  t('Undangan Baru: katalogDel ikut dipertahankan', w.eval('state.katalogDel.length') === nTPL);
-  w.close();
-  w = boot();
-  await sleep(250);
-  t('buka ulang setelah hapus semua: katalog tetap kosong (tidak diisi ulang paksa)', w.eval('state.katalog.length') === 0);
-  w.eval('pulihkanKat()');
-  t('pulihkanKat setelah kosong: semua tema bawaan kembali', w.eval('state.katalog.length') === nTPL);
-
-  t('tidak ada error JS selama uji', errs.length === 0, errs.join(' | '));
-  console.log(`\nRingkasan: ${ok} lulus, ${fail} gagal`);
-  process.exit(fail ? 1 : 0);
-})().catch(e => { console.error('ERROR', e); process.exit(1); });
+  console.log('\nRingkasan: ' + ok + ' lulus, ' + fail + ' gagal');
+  process.exitCode = fail ? 1 : 0;
+})().catch(e => { console.error(e); process.exitCode = 1; });

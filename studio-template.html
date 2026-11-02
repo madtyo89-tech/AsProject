@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="id" class="asp-locked">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#111">
+<title>Studio Template — AsProject</title>
+<meta name="description" content="Studio Template AsProject: meracik tema undangan dari template yang sudah ada, pratinjau langsung, dan ekspor ke kerangka template.">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/studio-admin.css">
+</head>
+<body>
+<header class="asp-top">
+  <a class="asp-brand" href="./" aria-label="AsProject — beranda">
+    <img src="assets/logo-asproject.svg" alt="" width="30" height="30">
+    <span>AsProject<small>Admin</small></span>
+  </a>
+  <div class="asp-top-title">Studio Template</div>
+  <span class="asp-pill" id="pillMode">Racik tema</span>
+  <nav class="asp-top-nav" aria-label="Navigasi admin">
+    <a href="studio.html">✦ Studio Undangan</a>
+    <a href="studio-katalog.html">🏷️ Setting Katalog</a>
+    <a href="katalog/" target="_blank" rel="noopener">Katalog publik ↗</a>
+  </nav>
+</header>
+
+<main class="asp-wrap">
+  <div class="asp-layout">
+    <!-- daftar tema -->
+    <aside class="asp-panel asp-side" aria-label="Daftar template">
+      <div class="asp-search">
+        <label class="sr-only" for="cariTema">Cari template</label>
+        <input id="cariTema" type="search" placeholder="Cari nama template…" autocomplete="off">
+        <button class="asp-btn asp-btn-dark asp-btn-sm" id="btnBaru" title="Salin template terpilih menjadi tema draf baru">+ Baru</button>
+      </div>
+      <div class="asp-filter" id="filterTema" role="group" aria-label="Saring kategori"></div>
+      <div class="asp-side-scroll" id="daftarTema"></div>
+      <div class="asp-panel-head" style="border-top:1px solid var(--line);border-bottom:0;padding:10px 14px">
+        <span class="asp-small asp-muted" id="infoJumlah"></span>
+      </div>
+    </aside>
+
+    <!-- editor -->
+    <section class="asp-panel" id="editor" aria-label="Editor tema" aria-live="polite"></section>
+
+    <!-- pratinjau -->
+    <aside class="asp-preview-col">
+      <div class="asp-preview-card">
+        <div class="asp-preview-head">
+          <strong>Pratinjau langsung</strong>
+          <span class="asp-live"><i></i> LIVE</span>
+          <span style="margin-left:auto" class="asp-small asp-muted" id="pvLabel">—</span>
+        </div>
+        <div class="asp-field" style="margin:0">
+          <label for="pvEvent">Pratinjau sebagai acara</label>
+          <select id="pvEvent">
+            <option value="pernikahan">Pernikahan</option>
+            <option value="khitanan">Khitanan</option>
+            <option value="ultah">Ulang Tahun</option>
+            <option value="aqiqah">Aqiqah</option>
+          </select>
+        </div>
+        <div class="asp-preview-stage" id="pvStage">
+          <div class="asp-phone"><iframe id="pvFrame" src="undangan.html?preview=1" title="Pratinjau undangan dengan tema draf" loading="eager" referrerpolicy="no-referrer"></iframe></div>
+        </div>
+        <div class="asp-actions">
+          <button class="asp-btn asp-btn-sm" id="btnBandingkan" aria-pressed="false">⚖️ Bandingkan dengan asal</button>
+          <button class="asp-btn asp-btn-sm" id="btnCover">↺ Kembali ke cover</button>
+        </div>
+        <p class="asp-preview-note">Pratinjau memakai berkas <code>undangan.html</code> yang sama dengan undangan tamu, jadi yang terlihat di sini adalah hasil akhirnya.</p>
+      </div>
+
+      <div class="asp-card" style="margin-top:14px">
+        <h3>🎯 Status draf</h3>
+        <p class="hint" id="statusDraf">Belum ada tema aktif.</p>
+        <div class="asp-stats">
+          <div class="asp-stat"><b id="statTema">0</b><small>Tema</small></div>
+          <div class="asp-stat"><b id="statDraf">0</b><small>Draf tersimpan</small></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<div id="compareWrap" hidden></div>
+
+<script src="assets/tpl-data.js"></script>
+<script src="assets/studio-core.js"></script>
+<script src="assets/studio-template.js"></script>
+</body>
+</html>

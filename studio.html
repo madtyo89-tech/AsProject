@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111">
+<meta name="robots" content="noindex,nofollow">
 <title>asproject.my.id — Studio Undangan Premium 4in1</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=EB+Garamond:wght@500;600&family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600&family=Pacifico&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&family=Sacramento&family=Cinzel:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
@@ -1034,22 +1035,6 @@ function tplOf(){return tplById(state.tpl)||TPL[0]}
 function syncDefaultCoverStyle(t){if(!state.coverStyleExplicit)state.coverStyle=t&&t.arch?'arch':'kotak'}
 function tplsFor(ev){if((state.kategoriHide||[]).includes(ev))return[];const hidden=Array.isArray(state.katalogHide)?state.katalogHide:[];
  return [...TPL,...(Array.isArray(state.tplCustom)?state.tplCustom:[])].filter(t=>(t.ev===ev||t.ev==='all')&&!hidden.includes(t.id))}
-let compareThemesOpen=false,compareThemeA='',compareThemeB='';
-function ensureCompareThemes(){const choices=tplsFor(state.event);if(!choices.length){compareThemeA='';compareThemeB='';return}
- if(!choices.some(t=>t.id===compareThemeA))compareThemeA=choices.some(t=>t.id===state.tpl)?state.tpl:choices[0].id;
- if(!choices.some(t=>t.id===compareThemeB)||compareThemeB===compareThemeA)compareThemeB=(choices.find(t=>t.id!==compareThemeA)||choices[0]).id;
-}
-function toggleThemeComparison(){compareThemesOpen=!compareThemesOpen;if(compareThemesOpen)ensureCompareThemes();render();const target=compareThemesOpen?document.querySelector('.theme-compare-select select'):document.querySelector('.theme-compare-intro button');if(target)target.focus()}
-function setThemeComparison(side,id){if(side==='a')compareThemeA=id;else compareThemeB=id;ensureCompareThemes();render();const target=document.querySelector(`.theme-compare-select select[data-compare-side="${side}"]`);if(target)target.focus()}
-function useThemeComparison(side){const id=side==='a'?compareThemeA:compareThemeB;if(!id)return;compareThemesOpen=false;pickTpl(id)}
-function themeCompareRow(id){const t=tplById(id);if(!t)return barisUndangan();
- const keys=['tpl','accent','fontTitle','fontBody','border','orn','pat','ornSudut','coverLayout','coverStyle','coverSize','buka','coverStyleExplicit','coverLayoutExplicit','bukaExplicit','darkMode','goldOrn'];
- const saved=Object.fromEntries(keys.map(k=>[k,state[k]]));
- try{applyTplToState(t,{skipTier:true});return barisUndangan()}finally{Object.assign(state,saved)}
-}
-function compareThemeSelect(side,current){const options=tplsFor(state.event);return `<label class="theme-compare-select">Tema ${side==='a'?'A':'B'}<select data-compare-side="${side}" aria-label="Pilih tema ${side==='a'?'A':'B'} untuk dibandingkan" onchange="setThemeComparison('${side}',this.value)">${options.map(t=>`<option value="${esc(t.id)}" ${t.id===current?'selected':''}>${esc(t.nama)}${t.id===state.tpl?' · aktif':''}</option>`).join('')}</select></label>`}
-function themeCompareCard(side,id){const t=tplById(id);return `<article class="theme-compare-card"><div class="theme-compare-card-head"><strong>${side==='a'?'Tema A':'Tema B'}</strong>${t&&t.id===state.tpl?'<span class="theme-compare-active">Sedang dipakai</span>':''}</div>${compareThemeSelect(side,id)}<div class="theme-compare-screen"><div class="pv-phone"><iframe class="pv-frame" data-compare-side="${side}" src="undangan.html?preview=1" title="Pratinjau perbandingan tema ${side==='a'?'A':'B'}" loading="eager" referrerpolicy="no-referrer"></iframe></div></div><div class="theme-compare-card-foot"><span>${esc(t?t.nama:'Pilih tema')}</span><button type="button" class="sm-btn dark" onclick="useThemeComparison('${side}')">Gunakan tema ini</button></div></article>`}
-function themeComparePanel(){ensureCompareThemes();const choices=tplsFor(state.event);return `<div class="theme-compare-tool"><div class="theme-compare-intro"><div><strong>Bandingkan dua tema</strong><p>Pratinjau data acara yang sama pada dua tema. Membandingkan tidak mengubah draft aktif.</p></div><button type="button" class="sm-btn dark" aria-expanded="${compareThemesOpen}" aria-controls="themeCompareDialog" onclick="toggleThemeComparison()">⚖️ Bandingkan tema</button></div>${compareThemesOpen?`<div class="theme-compare-overlay" onclick="if(event.target===this)toggleThemeComparison()"><section class="theme-compare-dialog" role="dialog" aria-modal="true" aria-labelledby="themeCompareTitle"><header class="theme-compare-dialog-head"><div><h3 id="themeCompareTitle">Bandingkan dua tema</h3><p>Nama, acara, tanggal, dan isian tetap sama di kedua pratinjau.</p></div><button type="button" class="sm-btn" aria-label="Tutup perbandingan tema" onclick="toggleThemeComparison()">✕ Tutup</button></header>${choices.length>1?`<div class="theme-compare-grid">${themeCompareCard('a',compareThemeA)}${themeCompareCard('b',compareThemeB)}</div>`:'<p class="theme-compare-empty">Belum ada dua tema yang tersedia untuk acara ini.</p>'}</section></div>`:''}</div>`}
 function tplGrad(t){return `linear-gradient(160deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]})`}
 function patCss(t,skala){return polaCss(t&&t.pat,t,skala)}
 
@@ -1376,7 +1361,8 @@ const DEF={
 let state;
 try{
  const stored=JSON.parse(localStorage.getItem('asproject_studio_v3')||'{}')||{};
-if(stored.tab==='master'||stored.tab==='domain')stored.tab='terbit'; /* susunan tab baru */
+if(stored.tab==='master'||stored.tab==='domain')stored.tab='terbit';
+ if(stored.tab==='desain')stored.tab='cover'; /* tab Desain dipindah ke Studio Template */ /* susunan tab baru */
  state=Object.assign({},JSON.parse(JSON.stringify(DEF)),stored);
  state.tplCustom=normalizeTplCustom(state.tplCustom);
  state.form=Object.assign({},DEF.form,state.form||{});state.amplop=Object.assign({},DEF.amplop,amplopNormal(state.amplop));
@@ -1921,48 +1907,8 @@ function applyTplToState(t,options){if(!t)return false;
  if(t.buka&&CARA_BUKA_ID.includes(t.buka)&&!state.bukaExplicit)state.buka=t.buka;
  syncDefaultCoverStyle(t);if(!(options&&options.skipTier))paksaTier();return true
 }
-function newCustomTplId(){let id;do{id='custom-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7)}while(tplById(id));return id}
 function pickTpl(id){const t=tplById(id);if(!t)return;applyTplToState(t);save();render();notify('Template: '+t.nama)}
 function evPick(ev){state.event=ev;state.doa=ev;state.page='editor';state.tab='info';const ft=tplsFor(ev)[0];if(ft)applyTplToState(ft);save();render()}
-function prevKat(id){const row=state.katalog.find(k=>k.id===id),t=tplById(row&&(row.tpl||row.id)||id);if(!t)return;if(t.ev!=='all'){state.event=t.ev;state.doa=t.ev}applyTplToState(t);save();render();notify('Preview: '+t.nama)}
-function makeCustomTemplate(name,isPublic){
- const source=tplOf(),id=newCustomTplId();
- return normalizeTplCustom([...state.tplCustom,{id,nama:name,ev:state.event,g:source.g,accent:state.accent,ink:source.ink,
-  deco:source.deco,pat:source.pat,ft:state.fontTitle,char:source.char,arch:source.arch,baseTpl:source.custom?(source.baseTpl||TPL[0].id):source.id,
-  bg3d:source.bg3d,bgPaper:source.bgPaper,studioOnly:!isPublic,
-  desc:'Tema kustom berdasarkan '+source.nama,
-  design:{fontBody:state.fontBody,border:state.border,orn:state.orn||'',pat:state.pat||'',ornSudut:state.ornSudut,coverLayout:state.coverLayout||'amplop',coverLayoutExplicit:!!state.coverLayoutExplicit,
-   coverStyle:state.coverStyle||'kotak',coverStyleExplicit:!!state.coverStyleExplicit,coverSize:state.coverSize||'sedang',buka:state.buka||'pita',bukaExplicit:!!state.bukaExplicit,darkMode:!!state.darkMode,goldOrn:!!state.goldOrn}}]).slice(-80).find(t=>t.id===id)
-}
-function saveCustomTemplate(){
- const nama=String(state.tplDraftName||'').trim().slice(0,60);
- if(!nama){notify('Tulis nama untuk template baru terlebih dahulu.');document.getElementById('tplCustomName')?.focus();return}
- if(state.tplCustom.length>=80){notifyWarn('Maksimal 80 template kustom. Hapus template lama sebelum menyimpan yang baru.');return}
- const publik=!!state.tplDraftPublic,template=makeCustomTemplate(nama,publik);
- if(!template){notifyErr('Template tidak dapat disimpan. Coba nama lain.');return}
- state.tplCustom=normalizeTplCustom([...state.tplCustom,template]);
- const saved=state.tplCustom.find(t=>t.id===template.id);if(!saved){notifyErr('Template gagal divalidasi dan tidak disimpan.');return}
- applyTplToState(saved);state.tplDraftName='';state.tplDraftPublic=false;
- if(publik)addKat(saved.id,{silent:true,nama:saved.nama});
- save();render();renderPreview();notify(publik?'Template kustom disimpan dan ditambahkan ke Katalog Harga & Promo.':'Template kustom disimpan khusus di Studio.')
-}
-function renameCustomTpl(id){const t=state.tplCustom.find(x=>x.id===id);if(!t)return;
- const lama=t.nama,nama=window.prompt('Nama baru untuk template kustom:',lama);if(nama===null)return;
- const bersih=String(nama).replace(/[<>]/g,'').trim().slice(0,60);if(!bersih){notify('Nama template tidak boleh kosong.');return}
- t.nama=bersih;state.katalog.filter(k=>k.tpl===id&&k.nama===lama).forEach(k=>k.nama=bersih);save();render();notify('Nama template diperbarui.')
-}
-function duplicateCustomTpl(id){const t=state.tplCustom.find(x=>x.id===id);if(!t)return;
- if(state.tplCustom.length>=80){notifyWarn('Maksimal 80 template kustom. Hapus template lama sebelum menggandakan.');return}
- const copy=JSON.parse(JSON.stringify(t));copy.id=newCustomTplId();copy.nama=(t.nama+' — Salinan').slice(0,60);copy.studioOnly=true;copy.badge='CUSTOM';
- state.tplCustom=normalizeTplCustom([...state.tplCustom,copy]);const created=state.tplCustom.find(x=>x.id===copy.id);
- if(created)applyTplToState(created);save();render();notify('Salinan template dibuat khusus di Studio.')
-}
-function deleteCustomTpl(id){const t=state.tplCustom.find(x=>x.id===id);if(!t)return;
- if(!window.confirm('Hapus template kustom “'+t.nama+'”?'))return;
- state.tplCustom=state.tplCustom.filter(x=>x.id!==id);state.katalog=state.katalog.filter(k=>(k.tpl||k.id)!==id);state.katalogHide=state.katalogHide.filter(x=>x!==id);
- if(state.tpl===id){const fallback=([...TPL,...state.tplCustom].find(x=>(x.ev===state.event||x.ev==='all')))||TPL[0];applyTplToState(fallback)}
- save();render();renderPreview();notify('Template kustom dihapus. Undangan memakai template aman: '+tplOf().nama+'.')
-}
 function upd(k,v){state[k]=v;save();renderPreview()}
 function updF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();renderPreview()}
 function setF(k,v){state.form[k]=v;if(['namaPria','namaWanita','namaAnak'].includes(k))autoSlug();save();render()}
@@ -2595,12 +2541,7 @@ function barisPilihanTpl(t){
   <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px">${nama}${badge?`<span style="font-size:8px;padding:2px 6px;border-radius:99px;background:${t.custom?'#111':'var(--gold)'};color:${t.custom?'#fff':'#000'};font-weight:700">${esc(badge)}</span>`:''}</div>
   <div class="sub">${layNama(t)?`<b style="color:#8a6a2f;font-weight:600">▦ ${esc(layNama(t))}</b>${t.desc?' · ':''}`:''}${esc(t.desc||'')}</div></div>
   <div style="width:20px;height:20px;border-radius:99px;display:grid;place-items:center;border:1px solid ${state.tpl===t.id?'#fff':'#ddd'};background:#fff;color:#000;font-size:11px;flex:none">${state.tpl===t.id?'✓':''}</div></button>`;
- if(!t.custom)return utama;
- return `<div class="tpl-custom-entry">${utama}<div class="tpl-custom-actions">
-  <button class="sm-btn" type="button" aria-label="Ganti nama template ${nama}" title="Ganti nama" data-help="Ganti nama template kustom ini; desain dan undangan tidak berubah." onclick="renameCustomTpl('${id}')">✎ Nama</button>
-  <button class="sm-btn" type="button" aria-label="Duplikat template ${nama}" title="Duplikat" data-help="Buat salinan pribadi dari template kustom ini." onclick="duplicateCustomTpl('${id}')">⧉ Salin</button>
-  <button class="sm-btn del" type="button" aria-label="Hapus template ${nama}" title="Hapus" data-help="Hapus template kustom ini. Bila sedang dipakai, undangan beralih ke template yang aman." onclick="deleteCustomTpl('${id}')">🗑 Hapus</button>
- </div></div>`
+ return utama
 }
 
 /* ============ VIEW: SIDEBAR ============ */
@@ -2624,10 +2565,15 @@ function sidebar(){
  </div>
  <div>
   <div class="lbl" style="display:block;margin-bottom:12px">Menu Studio</div>
-  ${[['editor','✦','Editor Undangan','Info, Desain, Musik...',''],['katalog','◫','Katalog Template','Harga & promosi',state.katalog.length],['arsip','⧉','Folder / Arsip','Kelompok per jenis',state.arsip.length]]
+  ${[['editor','✦','Editor Undangan','Isi data undangan',''],['arsip','⧉','Folder / Arsip','Kelompok per jenis',state.arsip.length]]
    .map(([id,ic,l,d,b])=>`<button class="menubtn ${state.page===id?'on':''}" onclick="goPage('${id}')">
    <div class="icbox">${ic}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${l}</div><div class="sub">${d}</div></div>
    ${b!==''?`<span class="chip" style="${state.page===id?'background:#fff;color:#000':''}">${b}</span>`:''}</button>`).join('')}
+
+  <div style="margin-top:16px;display:grid;gap:6px">
+   <a class="menubtn" href="studio-template.html" style="text-decoration:none" data-help="Halaman terpisah untuk meracik tema baru dari template yang ada."><div class="icbox">🎨</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Studio Template</div><div class="sub">Racik tema baru</div></div><span class="chip">ADMIN</span></a>
+   <a class="menubtn" href="studio-katalog.html" style="text-decoration:none" data-help="Atur visibilitas, urutan, harga, dan promo katalog publik."><div class="icbox">🏷️</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Setting Katalog</div><div class="sub">Harga, promo, urutan</div></div><span class="chip">ADMIN</span></a>
+  </div>
   <div style="margin-top:24px;border-radius:16px;background:var(--cream);border:1px solid var(--cream2);padding:12px">
    <div style="font-size:12px;font-weight:600">✨ Tips Premium</div>
    <div style="font-size:11px;color:#8a6d0f;margin-top:4px;line-height:1.6">Upload musik dari folder HP akan tersimpan otomatis di Supabase untuk dipakai ulang di undangan lain.</div>
@@ -2687,8 +2633,19 @@ function tabInfo(){const f=state.form,e=state.event;
    <label class="f">Jam Resepsi<input type="time" value="${esc(f.jamResepsi)}" oninput="updF('jamResepsi',this.value)"></label></div>`:''}
  </div></div>`}
 
-function tabDesain(){return `<div style="display:grid;gap:16px">
- <div class="card"><h4>🆚 Bandingkan tema</h4>${themeComparePanel()}</div>
+function tabCover(){
+ /* Tampilan identitas template (aksen, font, border, ornamen, pola, bandingkan
+    tema) sudah pindah ke studio-template.html. Tab ini hanya menyimpan pilihan
+    presentasi per undangan: model cover, cara buka, ornamen sudut, dan animasi. */
+ return `<div style="display:grid;gap:16px">
+ <div class="card" style="background:var(--cream);border-color:var(--cream2)">
+  <h4>🎨 Identitas tema diatur di Studio Template</h4>
+  <p style="font-size:11px;color:#8a6d0f;line-height:1.7;margin-top:2px">Warna aksen, font, border, ornamen, dan pola adalah bagian dari template — sekarang dirapikan di <b>Studio Template</b> supaya 44 template yang ada tidak ikut berubah saat mengisi data undangan.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+   <a class="sm-btn dark" href="studio-template.html" data-help="Buka Studio Template untuk meracik tema baru di halaman terpisah (khusus admin).">🎨 Buka Studio Template</a>
+   <a class="sm-btn" href="studio-katalog.html" data-help="Buka Setting Katalog untuk mengatur harga, promo, dan visibilitas tema.">🏷️ Setting Katalog</a>
+  </div>
+ </div>
  <div class="card"><h4>💌 Model Cover Pembuka <span class="chip" style="margin-left:auto">15 model</span></h4>
   <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-top:-4px">Pilih satu dari 15 tampilan pembuka; pratinjau di kanan langsung mengikuti pilihan.</div>
   <div class="cv-layout-grid" role="group" aria-label="Pilih model cover pembuka">
@@ -2703,51 +2660,6 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    ${CARA_BUKA_STYLES.map(([id,nama,ic,desc])=>{const on=bukaId()===id;
     return `<button type="button" class="bo-btn ${on?'on':''}" aria-label="Pilih cara buka ${nama}" aria-pressed="${on}" onclick="setBuka('${id}')" data-help="${esc(desc)}">
      <span class="bo-sample" aria-hidden="true">${ic} ${nama}</span><span class="bo-name">Ketuk untuk membuka</span></button>`}).join('')}
-  </div>
- </div>
- <div class="card"><h4>🎨 Warna & Font</h4>
-  <div style="display:grid;gap:16px">
-   <div><div class="f" style="margin-bottom:8px">Warna Aksen Custom</div>
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-     <input type="color" value="${state.accent}" onchange="set('accent',this.value)" style="width:40px;height:40px;border-radius:12px;border:1px solid var(--line);padding:2px;cursor:pointer">
-     <div style="display:flex;gap:8px">${['#D4AF37','#0EA5E9','#10B981','#EC4899','#111827'].map(c=>`<button onclick="set('accent','${c}')" style="width:32px;height:32px;border-radius:99px;background:${c};border:2px solid ${state.accent===c?'#000':'#fff'};box-shadow:0 1px 2px rgba(0,0,0,.1);${state.accent===c?'transform:scale(1.1)':''}"></button>`).join('')}</div>
-     <span class="chip" style="font-family:ui-monospace,monospace">${state.accent}</span>
-    </div></div>
-   <div class="grid2">
-    <label class="f">Font Judul (17 pilihan)<select onchange="setFontK('fontTitle',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontTitle===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
-    <label class="f">Font Isi (17 pilihan)<select onchange="setFontK('fontBody',this.value)">${FONTS.map(ft=>`<option value="${ft.id}" style="font-family:${fontAttr(ft.id)}" ${state.fontBody===ft.id?'selected':''}>${ft.name}</option>`).join('')}</select></label>
-   </div>
-   <div class="card" style="padding:14px;background:#111;color:#fff;border-color:#111">
-    <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.65)">Preview Font — berubah saat dipilih</div>
-    <div class="font-preview-title" style="margin-top:10px;font-size:22px;line-height:1.2;font-family:${fontAttr(state.fontTitle)}">The Beauty of ${esc(state.form.namaWanita||'Your Name')} · Aa Bb 123</div>
-    <div class="font-preview-body" style="font-size:12px;color:rgba(255,255,255,.78);margin-top:8px;font-family:${fontAttr(state.fontBody)}">Dengan penuh rasa syukur, kami mengundang Anda untuk hadir.</div>
-   </div>
-   <div><div class="f" style="margin-bottom:8px">Background Type</div>
-    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
-    ${[['polos','Polos'],['gradient','Gradient'],['foto','Foto'],['pattern','Batik']].map(([id,l])=>`<button class="tabbtn ${state.bgType===id?'on':''}" style="height:40px;border-radius:12px" onclick="set('bgType','${id}')">${l}</button>`).join('')}</div></div>
-   <div style="border-top:1px solid var(--line);padding-top:12px">
-    <div><div class="f" style="margin-bottom:8px">Border Undangan (${BORDERS.length} jenis) — berlaku semua kategori</div>
-     <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
-     ${BORDERS.map(b=>{const lk=lockOfB(b.id);const rg=lk==='vip'?'box-shadow:inset 0 0 0 1px #8E4E92;':lk==='eks'?'box-shadow:inset 0 0 0 1px #D4AF37;':lk==='premium'?'box-shadow:inset 0 0 0 1px #C9A548;':'';return `<button class="tabbtn ${state.border===b.id?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setBorder('${b.id}')" title="${lk?'Border '+LOCK_LABEL[lk]+' — butuh tema tier '+LOCK_LABEL[lk]+' ke atas':b.n}"><span style="width:26px;height:16px;border-radius:4px;background:#fff;${rg}${miniBorder(b)}"></span><span style="font-size:9px;line-height:1.05;text-align:center">${lockIcon(lk)}${b.n}</span></button>`}).join('')}
-     </div>
-     <div style="font-size:10px;color:var(--mut);margin-top:6px">Warna border mengikuti aksen tema (mode gelap: emas) • ikut tersimpan ke undangan live saat publish.</div>
-    </div>
-    <div><div class="f" style="margin-bottom:8px">Ornamen Tema (${Object.keys(ORN_NAMA).length} motif) — pembatas bagian &amp; footer</div>
-     <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
-     <button class="tabbtn ${state.orn?'':'on'}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setOrn('')" title="Pakai motif bawaan tema"><span style="font-size:14px;line-height:1">▦</span><span style="font-size:9px;line-height:1.05;text-align:center">Ikut tema</span></button>
-     ${Object.keys(ORN_NAMA).map(oid=>`<button class="tabbtn ${state.orn===oid?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setOrn('${oid}')" title="${ORN_NAMA[oid]}"><span class="ornpick" style="color:${state.accent||'#8b7358'}">${ORNAMEN[oid]()}</span><span style="font-size:9px;line-height:1.05;text-align:center">${ORN_NAMA[oid]}</span></button>`).join('')}
-     </div>
-     <div style="font-size:10px;color:var(--mut);margin-top:6px">Motif muncul di pembatas antar bagian dan footer, bukan di sampul. “Ikut tema” memakai bawaan tema; pilihanmu ikut tersimpan ke undangan live saat publish.</div>
-    </div>
-    <div><div class="f" style="margin-bottom:8px">Pola Latar (${POLA_IDS.length} motif) &mdash; sampul &amp; latar halaman</div>
-     <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
-     <button class="tabbtn ${state.pat?'':'on'}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setPat('')" title="Pakai pola bawaan tema"><span style="font-size:14px;line-height:1">&#9638;</span><span style="font-size:9px;line-height:1.05;text-align:center">Ikut tema</span></button>
-     ${POLA_IDS.map(pid=>`<button class="tabbtn ${state.pat===pid?'on':''}" style="height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 4px" onclick="setPat('${pid}')" title="${POLA[pid].d}"><span style="width:26px;height:16px;border-radius:4px;background:#fff;${polaCss(pid,{accent:state.accent||'#8b7358'},1)}"></span><span style="font-size:9px;line-height:1.05;text-align:center">${POLA[pid].n}</span></button>`).join('')}
-     </div>
-     <div style="font-size:10px;color:var(--mut);margin-top:6px">Pola tampil samar di sampul dan di latar seluruh halaman. &ldquo;Ikut tema&rdquo; memakai bawaan tema; pilihanmu ikut tersimpan ke undangan live saat publish.</div>
-    </div>
-    ${[['goldOrn','Ornamen Gold Foil'],['darkMode','Mode Gelap (Emerald)']].map(([k,l])=>`<label class="togglerow">${l}<input type="checkbox" ${state[k]?'checked':''} onchange="set('${k}',this.checked)"></label>`).join('')}
-   </div>
   </div>
  </div>
  <div class="card"><h4>🌸 Ornamen Sudut</h4>
@@ -2779,14 +2691,6 @@ function tabDesain(){return `<div style="display:grid;gap:16px">
    </div>
    <label class="togglerow" style="margin-top:10px"><span><span style="font-size:12px;font-weight:500">Variasikan efek tiap bagian</span><span style="display:block;font-size:10px;color:var(--mut)">ON: gerak atas/bawah dan kiri/kanan bergantian. OFF: pakai satu efek sama di semua bagian.</span></span><input type="checkbox" ${state.anim.scrollMix!==false?'checked':''} onchange="setAnim('scrollMix',this.checked)"></label>
   </div></div>
- <div class="card tpl-save-card">
-  <h4>💾 Simpan sebagai Template Baru</h4>
-  <p style="font-size:11px;color:var(--mut);line-height:1.6;margin:-4px 0 10px">Simpan warna, font, border, ornamen, dan model cover saat ini sebagai pilihan tema yang bisa dipakai lagi. Template tersimpan di perangkat ini dan ikut dibawa pada publish.</p>
-  <label class="f">Nama template baru<input id="tplCustomName" maxlength="60" value="${esc(state.tplDraftName||'')}" placeholder="Contoh: Kebun Sage Buatan Saya" oninput="state.tplDraftName=this.value;save()"></label>
-  <label class="togglerow" style="margin-top:10px"><span><span style="font-size:12px;font-weight:500">Tambahkan ke Katalog Publik</span><span style="display:block;font-size:10px;color:var(--mut);line-height:1.5">Tidak dicentang = khusus Studio. Jika dicentang, baris harga & promo dibuat otomatis.</span></span><input id="tplCustomPublic" type="checkbox" ${state.tplDraftPublic?'checked':''} onchange="state.tplDraftPublic=this.checked;save()"></label>
-  <button type="button" class="sm-btn dark" style="width:100%;justify-content:center;min-height:42px;margin-top:12px" onclick="saveCustomTemplate()" data-help="Simpan salinan desain aktif ke daftar tema kustom. Tanpa pilihan katalog, tema tetap khusus di Studio.">💾 Simpan sebagai Template Baru</button>
-  <div style="font-size:10px;color:var(--mut);margin-top:8px">${state.tplCustom.length} template kustom tersimpan • maksimal 80</div>
- </div>
  </div></div>`}
 
 /* ============ VIEW: SLIDE (10 slide konten baru) ============ */
@@ -3169,20 +3073,20 @@ function shareReadyLink(action){if(!linkReady())return;
  if(action==='open')window.open(baseUrl(),'_blank','noopener,noreferrer');
 }
 function readyView(){return `<main class="flow-page"><section class="card" aria-labelledby="ready-title"><div role="status" aria-live="polite"><div style="font-size:36px;margin-bottom:12px">✓</div><h1 id="ready-title">Undangan sudah jadi!</h1><p>Link siap dibagikan. Undangan berhasil dipublish dan tersimpan di arsip.</p></div><label class="f" style="margin-top:20px">Link undangan tamu<input class="flow-link" readonly value="${esc(baseUrl())}" onclick="this.select()"></label><div class="flow-actions"><button class="sm-btn dark" onclick="shareReadyLink('copy')">Salin Link Undangan</button><button class="sm-btn wa" onclick="shareReadyLink('wa')">Bagikan via WhatsApp</button><button class="sm-btn" onclick="shareReadyLink('open')">Lihat Undangan ↗</button></div><div class="flow-actions"><button class="sm-btn" onclick="openMasterMenu()">Kirim Master ke Pemilik</button><button class="sm-btn" onclick="editInvitation()">Edit Undangan</button></div><p style="font-size:11px;margin-top:12px">Link master terpisah dan privat. Untuk tamu, gunakan link undangan di atas.</p></section><button class="sm-btn" style="min-height:44px" onclick="startInvitation()">Membuat Undangan Baru</button></main>`}
-function keChecklistTab(tab){if(!['info','desain','musik','tamu','terbit'].includes(tab))return;state.page='editor';state.tab=tab;save();render();const main=document.querySelector('.mainc');if(main)main.scrollTo({top:0,behavior:'smooth'})}
+function keChecklistTab(tab){if(!['info','cover','slide','musik','tamu','terbit'].includes(tab))return;state.page='editor';state.tab=tab;save();render();const main=document.querySelector('.mainc');if(main)main.scrollTo({top:0,behavior:'smooth'})}
 function checklistSiap(){const f=state.form||{};
  const wajib=[
   ['Nama',state.event==='pernikahan'?!!(String(f.namaPria||'').trim()&&String(f.namaWanita||'').trim()):!!String(f.namaAnak||'').trim(),'info'],
   ['Tanggal',!!f.tanggalAcara,'info'],['Jam',!!f.jamAcara,'info'],['Lokasi',!!String(f.venue||'').trim(),'info'],['Link',!!String(state.slug||'').trim(),'terbit']];
  const opsional=[
   ['Peta',!!String(f.mapsLink||'').trim(),'info'],
-  ['Foto cover',!!(state.cover||state.fotoPria||state.fotoWanita),'desain'],
+  ['Foto cover',!!(state.cover||state.fotoPria||state.fotoWanita),'cover'],
   ['Galeri',Array.isArray(state.gallery)&&state.gallery.some(Boolean),'musik'],
   ['Daftar tamu',!!String(state.guestsRaw||'').trim(),'tamu']];
  const siap=wajib.filter(x=>x[1]).length,bonus=opsional.filter(x=>x[1]).length;
  const chip=(item,optional)=>`<button type="button" class="chk ${item[1]?'ok':''} ${optional?'optional':''}" data-check-tab="${item[2]}" onclick="keChecklistTab('${item[2]}')" aria-label="${item[1]?'Sudah siap':'Belum diisi'}: ${item[0]}${optional?' (opsional)':''}"><span class="cd"></span>${item[0]}${item[1]?' ✓':''}</button>`;
  return `<section class="readiness" aria-label="Checklist kesiapan undangan"><div class="readiness-head" role="status" aria-live="polite"><div><b>Checklist sebelum terbit</b><p>${siap}/${wajib.length} wajib siap · ${bonus}/${opsional.length} tambahan terisi</p></div><span class="readiness-badge ${siap===wajib.length?'ready':''}">${siap===wajib.length?'Siap diterbitkan':(wajib.length-siap)+' wajib tersisa'}</span></div><div class="readiness-group"><span class="readiness-label">Wajib untuk publish</span><div class="checkbar">${wajib.map(item=>chip(item,false)).join('')}</div></div><div class="readiness-group"><span class="readiness-label">Opsional · bisa dilengkapi kapan saja</span><div class="checkbar">${opsional.map(item=>chip(item,true)).join('')}</div></div></section>`}
-function stepbar(){const L=[['1','Isi Acara',['info','amplop']],['2','Tampilan',['desain','slide','musik']],['3','Tamu',['tamu']],['4','Terbit',['terbit','master','domain']]]; const aktif=L.findIndex(([,,tabs])=>tabs.includes(state.tab));
+function stepbar(){const L=[['1','Isi Acara',['info','amplop']],['2','Tampilan',['cover','slide','musik']],['3','Tamu',['tamu']],['4','Terbit',['terbit','master','domain']]]; const aktif=L.findIndex(([,,tabs])=>tabs.includes(state.tab));
  return `<div class="stepbar sb" role="navigation" aria-label="Langkah pembuatan undangan">${L.map(([n,nama,tabs],i)=>`${i?'<span class="step-sep"></span>':''}<button class="step ${i===aktif?'on':''} ${i<aktif?'done':''}" onclick="set('tab','${tabs[0]}')" aria-current="${i===aktif?'step':'false'}"><span class="num">${i<aktif?'✓':n}</span><span class="stxt">${nama}</span></button>`).join('')}</div>`}
 function editorActions(){
  const dirty=draftDirty();
@@ -3201,8 +3105,8 @@ function editorActions(){
  <button class="sm-btn" onclick="startInvitation()">+ Undangan Baru</button>${state.published?'<button class="sm-btn" onclick="showReady()">Link Siap Dibagikan</button>':''}</div>`}
 
 function editor(){
- const tabs=[['info','Info Acara'],['desain','Desain & Cover'],['slide','Slide & Animasi'],['musik','Musik & Galeri'],['amplop','Amplop & Ucapan'],['tamu','Tamu & QR'],['terbit','Terbit & Bagikan']];
- const bodyMap={info:tabInfo,desain:tabDesain,slide:tabSlide,musik:tabMusik,amplop:tabAmplop,tamu:tabTamu,terbit:tabDomain,master:tabMaster,domain:tabDomain};
+ const tabs=[['info','Info Acara'],['cover','Cover & Animasi'],['slide','Slide & Animasi'],['musik','Musik & Galeri'],['amplop','Amplop & Ucapan'],['tamu','Tamu & QR'],['terbit','Terbit & Bagikan']];
+ const bodyMap={info:tabInfo,cover:tabCover,slide:tabSlide,musik:tabMusik,amplop:tabAmplop,tamu:tabTamu,terbit:tabDomain,master:tabMaster,domain:tabDomain};
  const idxTab=tabs.findIndex(([id])=>id===state.tab);
  const body=(bodyMap[state.tab]||tabInfo)();
  const navPrev=idxTab>0?tabs[idxTab-1][0]:null,navNext=idxTab>=0&&idxTab<tabs.length-1?tabs[idxTab+1][0]:null;
@@ -3211,51 +3115,6 @@ function editor(){
   <div class="tabnav">${navPrev?`<button class="sm-btn" onclick="set('tab','${navPrev}')" data-help="Kembali ke langkah sebelumnya.">← ${tabs.find(([id])=>id===navPrev)[1]}</button>`:'<span></span>'}
    ${navNext?`<button class="sm-btn dark" onclick="set('tab','${navNext}')" data-help="Lanjut ke langkah berikutnya sesuai urutan pengisian.">Lanjut: ${tabs.find(([id])=>id===navNext)[1]} →</button>`:''}</div>
  </div>`}
-
-/* ============ VIEW: KATALOG ============ */
-function katalog(){return `${pageActions('Katalog Template • '+state.katalog.length+' baris')}<div style="padding:16px;display:grid;gap:16px">
- <div class="card kat-head" style="background:#111;color:#fff;border-color:#111">
-  <div><div style="font-size:13px;font-weight:600">Katalog Template • Edit Harga & Promo</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px">Ubah tema, harga normal/promo, badge BEST SELLER — preview live di HP kanan</div></div>
-  <div class="kat-head-acts"><button class="sm-btn" style="background:#fff;color:#000;border:0" onclick="addKat()" data-help="Tambah baris template baru memakai tema yang sedang aktif">+ Tambah Template</button>${state.katalogDel.length?`<button class="sm-btn" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)" onclick="pulihkanKat()" data-help="Kembalikan template bawaan yang pernah dihapus">↺ Pulihkan Bawaan (${state.katalogDel.length})</button>`:''}</div>
- </div>
- <div class="card"><h4>🎯 Setting Promosi Global</h4>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-   <label class="f">Diskon %<input type="number" value="${state.promo.diskon}" oninput="state.promo.diskon=Number(this.value);save()"></label>
-   <label class="f">Mulai<input type="date" value="${state.promo.tglMulai}" oninput="state.promo.tglMulai=this.value;save()"></label>
-   <label class="f">Selesai<input type="date" value="${state.promo.tglSelesai}" oninput="state.promo.tglSelesai=this.value;save()"></label>
-  </div>
-  <label class="f" style="margin-top:12px">Badge Text (BEST SELLER, LUXURY, etc)<input value="${esc(state.promo.badgeText)}" oninput="state.promo.badgeText=this.value;save()"></label>
- </div>
- <div class="card kat-list" style="padding:0;overflow:hidden">
-  <div style="padding:16px;border-bottom:1px solid var(--line)">
-   <div style="font-size:13px;font-weight:600">Daftar Template</div>
-   <div style="font-size:11px;color:var(--mut)">Klik Preview untuk lihat di phone kanan • Edit inline harga & promo • 🗑 untuk menghapus baris</div>
-  </div>
-  ${state.katalog.length?'':`<div class="kat-empty">Katalog kosong.<br><button class="sm-btn dark" style="margin-top:10px" onclick="pulihkanKat()">↺ Pulihkan Template Bawaan</button></div>`}
-  ${['pernikahan','khitanan','ultah','aqiqah'].map(ev=>{const katHid=(state.kategoriHide||[]).includes(ev);const rows=state.katalog.filter(k=>{const te=(tplById(k.tpl||k.id)||TPL[0]).ev;return te===ev||te==='all'});if(!rows.length)return'';return `<div style="padding:8px 16px;background:var(--soft);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;justify-content:space-between;gap:8px">${EV_ICON[ev]} ${EV_LABEL[ev]} • ${rows.length} template <button class="sm-btn" style="text-transform:none;letter-spacing:0;font-weight:600" title="Sembunyikan/tampilkan kategori ini" data-help="Sembunyikan kategori ini dari pilihan template & katalog. Baris di bawahnya teredup, bukan dihapus." onclick="tglKatEv('${ev}')">${katHid?'🙈 tersembunyi':'👁️'}</button></div>
- ${rows.map(k=>{const t=tplById(k.tpl||k.id)||TPL[0];const hid=katHid||state.katalogHide.includes(t.id);return `<div class="kat-row ${hid?'hid':''}" data-kid="${esc(k.id)}">
-   <div class="kat-thumb" style="background:linear-gradient(135deg,${t.g[0]},${t.g[1]} 55%,${t.g[2]});font-size:${t.char?(t.char.length>2?10:17):13}px;font-weight:${t.char&&t.char.length>2?800:400};letter-spacing:${t.char&&t.char.length>2?'.02em':'normal'}">${t.char||t.deco.split(' ')[0]||''}</div>
-   <div class="kat-main">
-    <input value="${esc(k.nama)}" aria-label="Nama template" oninput="updKat('${k.id}','nama',this.value)">
-    <div class="kat-meta">
-     <span class="kat-ev">${EV_ICON[t.ev]} ${EV_LABEL[t.ev]}</span>
-     ${hid?'<span class="kat-hid">disembunyikan</span>':''}
-     <span class="kat-sold">${k.terjual} terjual</span>
-    </div></div>
-   <div class="kat-price">
-    <input type="number" class="kat-normal" aria-label="Harga normal" value="${k.hargaNormal}" oninput="updKat('${k.id}','hargaNormal',this.value)">
-    <input type="number" class="kat-promo-price" aria-label="Harga promo" value="${k.hargaPromo}" oninput="updKat('${k.id}','hargaPromo',this.value)">
-   </div>
-   <label class="kat-promo"><input type="checkbox" ${k.promoActive?'checked':''} onchange="updKat('${k.id}','promoActive',this.checked)">Promo</label>
-   <input class="kat-badge" value="${esc(k.badge)}" placeholder="Badge" aria-label="Badge" oninput="updKat('${k.id}','badge',this.value)">
-   <div class="kat-acts">
-    <button class="sm-btn" title="Sembunyikan/tampilkan di pilihan tema (buat demo)" data-help="Sembunyikan atau tampilkan tema ini di pilihan tema Studio" onclick="tglKatHide('${t.id}')">${hid?'🙈':'👁️'}</button>
-    <button class="sm-btn dark" data-help="Tampilkan tema ini di pratinjau undangan" onclick="prevKat('${k.id}')">Preview</button>
-    <button class="sm-btn del" title="Hapus dari katalog" aria-label="Hapus ${esc(k.nama)} dari katalog" data-help="Hapus baris ini dari katalog (ada konfirmasi)" onclick="delKat('${k.id}')">🗑 Hapus</button>
-   </div>
-  </div>`}).join('')}`}).join('')}
- </div></div>`}
 
 /* ============ VIEW: ARSIP ============ */
 function arsip(){
@@ -3391,7 +3250,7 @@ function render(){
   $('root').innerHTML=(!state.started||_welcome)?welcomeView():readyView();syncAudio();return;
  }
  $('root').innerHTML=header()+`<div class="layout">${sidebar()}
-  <main class="mainc sb">${state.page==='editor'?editor():state.page==='katalog'?katalog():arsip()}</main>
+  <main class="mainc sb">${state.page==='editor'?editor():arsip()}</main>
   <aside class="prevc sb"><div id="phoneWrap" class="pv-stage"></div></aside>
  </div>`;
  cvGambar();syncAudio();syncFloat();
@@ -3458,15 +3317,6 @@ function pvPasang(ifr){
  pvUkur(ifr);pvKirim(ifr);
 }
 /* Semua pratinjau (panel kanan & kotak melayang) memakai berkas undangan yang sama. */
-const _themeCompareBound=new WeakSet();
-function syncThemeCompare(){document.querySelectorAll('.theme-compare-screen iframe[data-compare-side]').forEach(ifr=>{
- const side=ifr.dataset.compareSide,id=side==='a'?compareThemeA:compareThemeB,row=themeCompareRow(id);
- ifr.__aspRow=row;
- if(!_themeCompareBound.has(ifr)){_themeCompareBound.add(ifr);ifr.addEventListener('load',()=>{
-  pvUkur(ifr);try{const t=ifr.contentWindow;if(t)t.postMessage({type:'asproject:preview',row:ifr.__aspRow||themeCompareRow(ifr.dataset.compareSide==='a'?compareThemeA:compareThemeB)},'*')}catch(e){}
- })}
- pvUkur(ifr);try{const t=ifr.contentWindow;if(t)t.postMessage({type:'asproject:preview',row},'*')}catch(e){}
-})}
 function syncPreview(){
  const panel=$('phoneWrap');
  if(panel&&!panel.querySelector('iframe.pv-frame'))panel.innerHTML=pvHtml();
@@ -3474,7 +3324,6 @@ function syncPreview(){
  if(fl&&state.floatPrevOn){const layar=fl.querySelector('.fp-screen');
   if(layar&&!layar.querySelector('iframe.pv-frame'))layar.innerHTML=pvHtml()}
  document.querySelectorAll('.pv-stage iframe.pv-frame, #floatPrev .fp-screen iframe.pv-frame').forEach(pvPasang);
- syncThemeCompare();
 }
 let _pvTimer=null;
 /* Ketikan pemilik tidak me-render ulang seluruh editor, jadi pratinjau
@@ -3545,7 +3394,6 @@ function fpDragStart(e){if(e.button!==0||e.target.closest('button'))return;
  head.addEventListener('pointermove',mv);head.addEventListener('pointerup',up);head.addEventListener('pointercancel',up);head.addEventListener('lostpointercapture',up);e.preventDefault();
 }
 window.addEventListener('resize',function(){fitFloat();syncPreview()});
-document.addEventListener('keydown',function(e){if(compareThemesOpen&&e.key==='Escape'){e.preventDefault();toggleThemeComparison()}});
 /* Musik gagal dimuat (link privat/rusak) → beri tahu, jangan diam saja. */
 document.addEventListener('error',e=>{const t=e.target;if(t&&t.id==='player'&&state.music&&!state.music.local)
  notifyErr('Musik <b>'+esc(state.music.name||'')+'</b> gagal dimuat dari penyimpanan — file mungkin privat/terhapus. Upload ulang atau pilih musik lain.',10000)},true);

@@ -157,9 +157,9 @@ async function renderUndangan(data) {
     for (const tag of ws.document.querySelectorAll('script:not([src])')) ws.eval(tag.textContent);
     ws.startInvitation();
 
-    ws.set('tab', 'desain');
+    ws.set('tab', 'cover');
     cek(ws.document.querySelectorAll('.bo-btn').length === bukaStudio.length,
-      `tab Desain menampilkan ${bukaStudio.length} model cara buka`);
+      `tab Cover menampilkan ${bukaStudio.length} model cara buka`);
     ws.setBuka('gerbang');
     cek(ws.eval('barisUndangan().data.buka') === 'gerbang', 'payload pratinjau membawa model Gerbang');
     cek(JSON.parse(ws.localStorage.getItem('asproject_studio_v3') || '{}').buka === 'gerbang', 'model Gerbang tersimpan pada draft lokal');

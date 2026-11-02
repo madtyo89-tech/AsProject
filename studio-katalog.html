@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="id" class="asp-locked">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#111">
+<title>Setting Katalog — AsProject</title>
+<meta name="description" content="Setting Katalog AsProject: atur visibilitas, urutan, harga, promo, dan badge template yang tampil di katalog publik.">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/studio-admin.css">
+</head>
+<body>
+<header class="asp-top">
+  <a class="asp-brand" href="./" aria-label="AsProject — beranda">
+    <img src="assets/logo-asproject.svg" alt="" width="30" height="30">
+    <span>AsProject<small>Admin</small></span>
+  </a>
+  <div class="asp-top-title">Setting Katalog</div>
+  <span class="asp-pill" id="pillSync">Memuat…</span>
+  <nav class="asp-top-nav" aria-label="Navigasi admin">
+    <a href="studio.html">✦ Studio Undangan</a>
+    <a href="studio-template.html">🎨 Studio Template</a>
+    <a href="katalog/" target="_blank" rel="noopener">Katalog publik ↗</a>
+  </nav>
+</header>
+
+<main class="asp-wrap">
+  <div class="asp-layout no-preview">
+    <aside class="asp-side" aria-label="Ringkasan">
+      <div class="asp-card">
+        <h3>📊 Ringkasan</h3>
+        <div class="asp-stats">
+          <div class="asp-stat"><b id="statTampil">—</b><small>Tampil</small></div>
+          <div class="asp-stat"><b id="statSembunyi">—</b><small>Disembunyikan</small></div>
+          <div class="asp-stat"><b id="statPromo">—</b><small>Promo</small></div>
+          <div class="asp-stat"><b id="statUnggulan">—</b><small>Unggulan</small></div>
+        </div>
+        <p class="asp-small asp-muted" id="statusTeks">Menghubungi Supabase…</p>
+      </div>
+
+      <div class="asp-card">
+        <h3>☁️ Simpan & sebarkan</h3>
+        <div class="asp-actions">
+          <button class="asp-btn asp-btn-dark asp-btn-sm" id="btnSimpan">Simpan ke cloud</button>
+          <button class="asp-btn asp-btn-sm" id="btnMuat">↻ Muat ulang</button>
+        </div>
+        <div class="asp-actions">
+          <button class="asp-btn asp-btn-sm" id="btnEkspor">⬇ Ekspor katalog-setting.json</button>
+          <button class="asp-btn asp-btn-sm" id="btnImpor">⬆ Impor JSON</button>
+        </div>
+        <input type="file" id="fileImpor" accept=".json,application/json" hidden>
+        <button class="asp-btn asp-btn-sm" id="btnReset" style="color:var(--err)">↺ Reset ke bawaan</button>
+        <p class="asp-small asp-muted">Tersimpan di cloud = katalog publik ikut berubah saat halaman dibuka. Ekspor JSON = nilai ikut “dibakar” saat build supaya SEO & HTML statis juga sinkron.</p>
+      </div>
+
+      <div class="asp-card">
+        <h3>⏳ Menunggu rilis</h3>
+        <p class="hint">Tema yang dikirim dari Studio Template. Tema ini belum ada di <code>kerangka/</code>, jadi belum bisa tampil.</p>
+        <div id="daftarPending" class="asp-rows"></div>
+      </div>
+    </aside>
+
+    <section class="asp-panel" aria-label="Pengaturan katalog">
+      <div class="asp-panel-head">
+        <div><h2>Pengaturan katalog publik</h2><p>Yang diubah di sini berlaku untuk katalog, halaman kategori, dan detail tema.</p></div>
+        <div class="asp-actions" style="margin-left:auto">
+          <label class="asp-check" style="align-items:center"><input type="checkbox" id="filterSembunyi"> <span>Tampilkan yang disembunyikan</span></label>
+        </div>
+      </div>
+
+      <div class="asp-panel-body">
+        <div class="asp-card">
+          <h3><span class="num">1</span> Promosi global</h3>
+          <div class="asp-grid asp-grid-3">
+            <label class="asp-check"><input type="checkbox" data-g="promoAktif"> <span>Promo aktif<small>Mematikan ini menyembunyikan harga promo di kartu.</small></span></label>
+            <label class="asp-field">Harga normal (coret)<input type="number" data-g="hargaCoret" min="0" step="1000"></label>
+            <label class="asp-field">Judul pita promo<input data-g="ribbon" maxlength="60"></label>
+          </div>
+          <div class="asp-grid asp-grid-2">
+            <label class="asp-field">Sub-teks pita promo<input data-g="ribbonSub" maxlength="120"></label>
+            <label class="asp-field">Catatan di halaman tema<input data-g="catatan" maxlength="160"></label>
+          </div>
+          <p class="asp-note"><b>Hati-hati:</b> harga & promo juga masuk ke data terstruktur (JSON-LD) di HTML. Supaya Google ikut melihat angka baru, jangan lupa ekspor JSON lalu bangun ulang halaman publik.</p>
+        </div>
+
+        <div class="asp-card">
+          <h3><span class="num">2</span> Daftar tema</h3>
+          <div class="asp-search" style="border:0;padding:0">
+            <label class="sr-only" for="cari">Cari tema</label>
+            <input id="cari" type="search" placeholder="Cari nama, id, atau kategori…" autocomplete="off">
+            <button class="asp-btn asp-btn-sm" id="btnUrut">Urutkan A–Z</button>
+          </div>
+          <div id="daftarTema" class="asp-rows"></div>
+        </div>
+
+        <div class="asp-card">
+          <h3><span class="num">3</span> Cara perubahan sampai ke pengunjung</h3>
+          <p class="hint">Dua jalur, keduanya disediakan supaya tidak ada lagi setting yang “hilang”.</p>
+          <div class="asp-grid asp-grid-2">
+            <div class="asp-note"><b>Jalur cepat (cloud):</b> Simpan ke cloud → <code>assets/katalog-live.js</code> membaca tabel <code>catalog_settings</code> saat katalog dibuka, lalu menyembunyikan tema, mengganti harga/badge, dan menyusun ulang urutan. Tidak perlu build, tapi HTML & JSON-LD yang dirayapi Google tetap versi lama.</div>
+            <div class="asp-note"><b>Jalur permanen (build):</b> Ekspor <code>katalog-setting.json</code> ke akar repo → <code>node tools/bangun-halaman-publik.cjs</code> → <code>python3 tools/bangun-sitemap.py</code>. HTML, harga, dan JSON-LD ikut berubah permanen.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="assets/tpl-data.js"></script>
+<script src="assets/studio-core.js"></script>
+<script src="assets/studio-katalog.js"></script>
+</body>
+</html>
