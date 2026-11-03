@@ -128,6 +128,41 @@ tema dibuat dari kerangka, bukan diketik di browser.
 - `tools/test-simulasi.cjs` — studio isi data tetap merender 7 tab tanpa error
   dan **tidak lagi** memuat picker identitas tema.
 
+## Memakai proyek Supabase yang sudah ada (tanpa bikin baru)
+
+**Tidak perlu proyek Supabase baru.** Situs ini memang sudah menunjuk satu
+proyek (`aalrhvirqwjtbbxmteeg`). Kalau proyek itu yang Anda maksud "yang sudah
+ada", cukup tambahkan tabel barunya saja:
+
+1. `supabase-diagnosa.sql` → cek apa yang belum ada.
+2. `supabase-migrasi-aman.sql` → Run (aditif; data lama tidak berubah).
+3. Selesai — `catalog_settings` siap dipakai `studio-katalog.html` dan
+   `assets/katalog-live.js`.
+
+### Kalau proyek "yang sudah ada" itu ref-nya BERBEDA
+
+Ganti URL + anon key di seluruh halaman sekaligus, jangan satu-satu:
+
+```bash
+node tools/pakai-proyek-supabase.cjs --cek
+node tools/pakai-proyek-supabase.cjs   --url https://<ref-proyek-lama>.supabase.co   --key '<anon key proyek lama>'          # tambahkan --tulis untuk menerapkan
+```
+
+Sifat alat ini:
+
+- **dry-run** kecuali `--tulis`; menampilkan berapa penggantian per berkas;
+- **menolak `service_role`** (key itu bisa melewati RLS — jangan pernah di repo);
+- menolak key yang ref-nya tidak sama dengan URL;
+- setelah menulis, langsung memverifikasi ulang bahwa semua halaman konsisten;
+- mengganti di 7 berkas runtime + 3 berkas uji, tanpa menyentuh berkas lain.
+
+Setelah berganti proyek, jalankan `node tools/bangun-tpl.cjs` (studio.html ikut
+ditulis ulang bagian `TPL`-nya, konstanta Supabase tetap) lalu
+`python3 tools/cek-kesehatan.py`.
+
+Berkas uji boleh memuat contoh (`example.supabase.co`) — pemeriksaan konsistensi
+hanya menghitung berkas runtime.
+
 ## Supabase: menambah ke proyek yang SUDAH berisi (2026-11-03)
 
 Ada dua berkas SQL dengan tugas berbeda:

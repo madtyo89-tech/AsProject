@@ -997,6 +997,14 @@ def cek_katalog_admin():
     if probe.returncode != 0:
         lapor("info", "jsdom belum terpasang (npm i jsdom) — uji jsdom katalog dilewati")
         return
+    if os.path.exists(os.path.join(ROOT, "tools", "pakai-proyek-supabase.cjs")):
+        r = subprocess.run(["node", os.path.join(ROOT, "tools", "pakai-proyek-supabase.cjs"), "--cek"],
+                           capture_output=True, text=True, cwd=ROOT)
+        proyek = [b2 for b2 in r.stdout.splitlines() if b2.startswith("Proyek Supabase")]
+        lapor("ok" if r.returncode == 0 else "masalah",
+              "alat pakai-proyek-supabase --cek: "
+              + (proyek[0] if proyek else (r.stderr.strip() or r.stdout.strip())[:160]))
+
     if mig:
         r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-supabase-migrasi.cjs")],
                            capture_output=True, text=True, cwd=ROOT,
@@ -1007,6 +1015,14 @@ def cek_katalog_admin():
               "uji migrasi Supabase (PGlite: DB berisi, idempoten, data lama utuh): "
               + ("dilewati — npm i --no-save @electric-sql/pglite" if lewat
                  else ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200])))
+
+    r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-pakai-supabase.cjs")],
+                       capture_output=True, text=True, cwd=ROOT,
+                       env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})
+    baris2 = [b2.strip() for b2 in r.stdout.splitlines() if b2.strip().startswith("Ringkasan")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji pindah proyek Supabase (dry-run, tolak service_role, konsisten): "
+          + ("; ".join(baris2) if baris2 else (r.stderr.strip() or r.stdout.strip())[:200]))
 
     skrip = os.path.join(ROOT, "tools", "test-katalog-admin.cjs")
     r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT,
