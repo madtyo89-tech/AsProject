@@ -958,6 +958,19 @@ def cek_katalog_admin():
                                'katalog-setting.json', 'function saveCloud(', 'function loadCloud('))
     lapor("ok" if ok else "masalah",
           "Setting Katalog: visibilitas/harga tersimpan ke Supabase + bisa diekspor untuk build")
+    # Semua halaman klien harus menunjuk proyek Supabase yang SAMA; kalau
+    # seseorang mengganti URL/key di satu berkas saja, katalog & undangan
+    # akan diam-diam membaca proyek berbeda.
+    berkas_sb = ["studio.html", "undangan.html", "master.html", "checkin.html", "scan.html",
+                 "assets/studio-core.js", "assets/katalog-live.js"]
+    ref = set()
+    for b_sb in berkas_sb:
+        if os.path.exists(os.path.join(ROOT, b_sb)):
+            ref |= set(re.findall(r"https://([a-z0-9]{6,})\.supabase\.co", baca(b_sb)))
+    lapor("ok" if len(ref) == 1 else "masalah",
+          "Supabase: seluruh halaman memakai proyek yang sama" +
+          (" (" + ", ".join(sorted(ref)) + ")" if ref else " (tanpa URL Supabase?!)"))
+
     ok = 'catalog_settings' in baca("assets/katalog-live.js") and \
          'assets/katalog-live.js' in baca("katalog/index.html")
     lapor("ok" if ok else "masalah",
@@ -965,6 +978,17 @@ def cek_katalog_admin():
     skema = baca("supabase-schema.sql")
     ok = 'create table if not exists public.catalog_settings' in skema
     lapor("ok" if ok else "masalah", "supabase-schema.sql: Bagian 4 tabel catalog_settings tersedia")
+
+    # Migrasi untuk proyek Supabase yang SUDAH berisi data: aditif, tanpa drop.
+    mig = baca("supabase-migrasi-aman.sql") if os.path.exists(os.path.join(ROOT, "supabase-migrasi-aman.sql")) else ""
+    diag = baca("supabase-diagnosa.sql") if os.path.exists(os.path.join(ROOT, "supabase-diagnosa.sql")) else ""
+    kode_mig = re.sub(r"--.*", "", mig)
+    ok = bool(mig) and "create table if not exists public.catalog_settings" in mig \
+        and not re.search(r"drop\s+table|drop\s+column|truncate|\bdelete\s+from\b", kode_mig, re.I)
+    lapor("ok" if ok else "masalah",
+          "supabase-migrasi-aman.sql: aditif (tanpa drop/truncate/delete) untuk DB yang sudah berisi")
+    ok = bool(diag) and "HANYA MEMBACA" in diag and "catalog_settings" in diag
+    lapor("ok" if ok else "masalah", "supabase-diagnosa.sql: pemeriksaan hanya-baca sebelum migrasi")
     if not shutil.which("node"):
         lapor("info", "node tidak tersedia — uji jsdom katalog dilewati")
         return
@@ -973,6 +997,17 @@ def cek_katalog_admin():
     if probe.returncode != 0:
         lapor("info", "jsdom belum terpasang (npm i jsdom) — uji jsdom katalog dilewati")
         return
+    if mig:
+        r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-supabase-migrasi.cjs")],
+                           capture_output=True, text=True, cwd=ROOT,
+                           env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})
+        baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+        lewat = "pglite belum terpasang" in r.stdout
+        lapor("ok" if (r.returncode == 0 or lewat) else "masalah",
+              "uji migrasi Supabase (PGlite: DB berisi, idempoten, data lama utuh): "
+              + ("dilewati — npm i --no-save @electric-sql/pglite" if lewat
+                 else ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200])))
+
     skrip = os.path.join(ROOT, "tools", "test-katalog-admin.cjs")
     r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT,
                        env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})

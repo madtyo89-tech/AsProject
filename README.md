@@ -128,6 +128,52 @@ tema dibuat dari kerangka, bukan diketik di browser.
 - `tools/test-simulasi.cjs` — studio isi data tetap merender 7 tab tanpa error
   dan **tidak lagi** memuat picker identitas tema.
 
+## Supabase: menambah ke proyek yang SUDAH berisi (2026-11-03)
+
+Ada dua berkas SQL dengan tugas berbeda:
+
+| Berkas | Untuk | Sifat |
+|---|---|---|
+| `supabase-schema.sql` | proyek **baru** (sekaligus dokumentasi lengkap skema) | idempoten, tetapi menimpa policy bernama sama |
+| `supabase-migrasi-aman.sql` | proyek **yang sudah jalan & berisi data** | aditif: hanya menambah yang belum ada, **tanpa** `drop table` / `drop column` / `truncate` / `delete` |
+| `supabase-diagnosa.sql` | sebelum/sesudah migrasi | **hanya membaca**, tidak mengubah apa pun |
+
+Urutan yang disarankan:
+
+1. `supabase-diagnosa.sql` → lihat tabel/policy mana yang belum ada.
+2. `supabase-migrasi-aman.sql` → Run. Boleh diulang kapan saja.
+3. `supabase-diagnosa.sql` lagi → bagian terakhir harus berbunyi
+   “Setting Katalog siap dipakai”.
+
+Yang dijaga migrasi (diuji `tools/test-supabase-migrasi.cjs` di Postgres
+sungguhan via PGlite): data undangan lama tidak berubah, policy kustom pemilik
+**tidak** dihapus, seed `catalog_settings` tidak menggandakan baris, dan berkas
+itu aman dijalankan berulang.
+
+### Kalau tetap gagal, biasanya salah satu dari ini
+
+| Gejala | Sebab | Jalan keluar |
+|---|---|---|
+| `must be owner of table objects` (42501) | policy `storage.objects` hanya boleh dibuat pemilik tabel | migrasi menangkapnya (NOTICE, lanjut); buat policy lewat **Dashboard → Storage → music → Policies** |
+| `policy "…" for table "…" already exists` | memakai `supabase-schema.sql` di proyek berisi | pakai `supabase-migrasi-aman.sql` yang membuat policy hanya bila belum ada |
+| `relation "catalog_settings" does not exist` | migrasi belum dijalankan, atau dijalankan di proyek lain | jalankan Bagian 1 migrasi; pastikan URL proyek di klien sama (cek di bawah) |
+| `permission denied for table invitation_drafts` | RLS menyala tanpa policy baca | migrasi menambah policy baca bila belum ada |
+| katalog/undangan kosong padahal data ada | klien menunjuk proyek berbeda | lihat “Satu proyek untuk semua halaman” |
+
+### Satu proyek untuk semua halaman
+
+URL + anon key Supabase tertanam di tujuh berkas runtime:
+
+```
+studio.html   undangan.html   master.html   checkin.html   scan.html
+assets/studio-core.js   assets/katalog-live.js
+```
+
+(tiga berkas di `tools/test-*.cjs` hanya untuk uji lokal). Kalau memindahkan
+proyek, ganti **semuanya** — kalau tidak, studio menulis ke satu proyek
+sementara katalog membaca proyek lain. `cek-kesehatan.py` bagian [23] sekarang
+memeriksa bahwa semua halaman menunjuk proyek yang sama.
+
 ## AI tema: deskripsi → 3 kandidat draf (2026-11-03)
 
 Studio Template punya tombol **✨ AI** untuk membuat tema baru dari deskripsi
