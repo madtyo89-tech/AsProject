@@ -1030,6 +1030,68 @@ def cek_template_custom():
               judul + ": " + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:200]))
 
 
+def cek_ai_tema():
+    """AI tema hanya hidup di Studio Template dan hanya menghasilkan draf.
+    Kosakata (font/ornamen/pola/border/cover/cara buka) dibangkitkan dari
+    sumber, jadi mesin tidak bisa mengarang id yang tidak dikenal renderer."""
+    print("\n[25] AI tema (studio-template.html — lokal, tanpa kunci API)")
+    ada = lambda f: os.path.exists(os.path.join(ROOT, f))
+    modul = baca("assets/tema-ai.js") if ada("assets/tema-ai.js") else ""
+    kosakata = baca("assets/tema-kosakata.js") if ada("assets/tema-kosakata.js") else ""
+    proxy = baca("assets/tema-ai-proxy.js") if ada("assets/tema-ai-proxy.js") else ""
+    html = baca("studio-template.html")
+    lab = baca("assets/studio-template.js")
+
+    ok = bool(modul) and all(x in modul for x in ("root.TEMA_AI", "function buat(", "function validasi(", "function dariJSON(", "paksaKontras("))
+    lapor("ok" if ok else "masalah",
+          "assets/tema-ai.js: mesin lokal (buat / validasi / dariJSON / koreksi kontras) tersedia")
+    ok = not any(x in modul for x in ("fetch(", "XMLHttpRequest", "WebSocket"))
+    lapor("ok" if ok else "masalah",
+          "AI lokal tidak memanggil jaringan (tanpa kunci API yang bisa dicuri)")
+    ok = "DIBANGKITKAN tools/bangun-tema-kosakata.cjs" in kosakata and '"fonts"' in kosakata
+    lapor("ok" if ok else "masalah", "assets/tema-kosakata.js dibangkitkan dari registry renderer")
+
+    if shutil.which("node"):
+        kode = ("const k=require('./tools/bangun-tema-kosakata.cjs').kosakata();"
+                "const fs=require('fs');const s=fs.readFileSync('assets/tema-kosakata.js','utf8');"
+                "const j=JSON.parse(s.slice(s.indexOf('{'),s.lastIndexOf(';')));"
+                "const beda=['fonts','ornamen','pola','borders','covers','buka'].filter(x=>JSON.stringify(k[x])!==JSON.stringify(j[x]));"
+                "console.log(beda.length?'BEDA '+beda.join(','):'SINKRON')")
+        r = subprocess.run(["node", "-e", kode], capture_output=True, text=True, cwd=ROOT)
+        lapor("ok" if r.stdout.strip() == "SINKRON" else "masalah",
+              "kosakata AI sinkron dengan FONTS/ORNAMEN/POLA/BORDERS/CV_LAYOUTS/CARA_BUKA "
+              + (r.stdout.strip() or r.stderr.strip())[:120])
+
+    ok = ("assets/tema-ai.js" in html and "assets/tema-kosakata.js" in html
+          and 'id="btnAI"' in html and "assets/tema-ai-proxy.js" in html)
+    lapor("ok" if ok else "masalah", "studio-template.html memuat mesin AI + tombol ✨ AI")
+    ok = all(x in lab for x in ('data-act="aibuat"', "function pakaiKandidat(", "d.origin = null", "TEMA_AI_PROXY"))
+    lapor("ok" if ok else "masalah",
+          "panel AI: buat kandidat, pakai sebagai draf baru (origin null), opsi LLM bila endpoint ada")
+    ok = bool(proxy) and "asp-ai-endpoint" in proxy and "AI.validasi(t)" in proxy and "fetch(url" in proxy
+    lapor("ok" if ok else "masalah",
+          "tema-ai-proxy.js: hanya aktif bila endpoint diisi, hasil server tetap divalidasi lokal")
+    ok = "Supabase Edge Function" not in modul and "OPENAI" not in modul and "GEMINI_KEY" not in modul
+    lapor("ok" if ok else "masalah", "tidak ada kunci API yang tertanam di berkas klien")
+
+    if not shutil.which("node"):
+        lapor("info", "node tidak tersedia — uji AI tema dilewati")
+        return
+    probe = subprocess.run(["node", "-e", "require('jsdom')"], capture_output=True, text=True, cwd=ROOT,
+                           env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})
+    env = {**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")}
+    r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-tema-ai.cjs")],
+                       capture_output=True, text=True, cwd=ROOT, env=env)
+    baris = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+    gagal = [b.strip() for b in r.stdout.splitlines() if b.startswith("FAIL")]
+    lapor("ok" if r.returncode == 0 else "masalah",
+          "uji AI tema (200 prompt, kontras, determinisme, validasi JSON, UI): "
+          + ("; ".join(baris) if baris else (r.stderr.strip() or r.stdout.strip())[:300])
+          + ("" if not gagal else " — " + " | ".join(gagal)[:300]))
+    if probe.returncode != 0:
+        lapor("info", "jsdom belum terpasang — uji UI AI (klik & draf) dilewati")
+
+
 def cek_peta_undangan():
     """2026-10-16: tamu melaporkan embed Google Maps berhenti di bidang biru
     walau iframe-nya sudah dimuat lambat & query-nya sudah bersih — kotak galat
@@ -1590,7 +1652,7 @@ def main():
                cek_fitur_terbaru, cek_alur_master, cek_kontras_tema,
                cek_tema_3d, cek_foto_cover, cek_skrip_build, cek_scan_panitia,
                cek_template_pernikahan, cek_vip_4d, cek_simulasi, cek_katalog_admin,
-               cek_template_custom, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
+               cek_template_custom, cek_ai_tema, cek_pesan_wa, cek_peta_undangan, cek_qr_undangan,
                cek_mode_link_master, cek_kerapian_halaman, cek_nama_tamu_aman,
                cek_robots_sitemap, cek_manifest_pwa, cek_pembatas_laju,
                cek_amplop_digital, cek_kerangka_bebas, cek_kartu_katalog,

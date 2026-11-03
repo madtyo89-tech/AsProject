@@ -38,6 +38,7 @@
         <label class="sr-only" for="cariTema">Cari template</label>
         <input id="cariTema" type="search" placeholder="Cari nama template…" autocomplete="off">
         <button class="asp-btn asp-btn-dark asp-btn-sm" id="btnBaru" title="Salin template terpilih menjadi tema draf baru">+ Baru</button>
+        <button class="asp-btn asp-btn-gold asp-btn-sm" id="btnAI" title="Buat tema baru dari deskripsi (AI lokal, tanpa internet)">✨ AI</button>
       </div>
       <div class="asp-filter" id="filterTema" role="group" aria-label="Saring kategori"></div>
       <div class="asp-side-scroll" id="daftarTema"></div>
@@ -89,8 +90,12 @@
 </main>
 
 <div id="compareWrap" hidden></div>
+<div id="aiWrap" hidden></div>
 
 <script src="assets/tpl-data.js"></script>
+<script src="assets/tema-kosakata.js"></script>
+<script src="assets/tema-ai.js"></script>
+<script src="assets/tema-ai-proxy.js"></script>
 <script src="assets/studio-core.js"></script>
 <script src="assets/studio-template.js"></script>
 </body>

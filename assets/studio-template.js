@@ -252,7 +252,7 @@
     var box = $('editor');
     if (!active) {
       box.innerHTML = '<div class="asp-empty" style="padding:60px 24px"><strong>Belum ada tema yang dibuka</strong>' +
-        'Pilih satu template di kiri untuk dijadikan <b>salinan draf</b>, atau tekan <b>+ Baru</b>.<br>' +
+        'Pilih satu template di kiri untuk dijadikan <b>salinan draf</b>, tekan <b>+ Baru</b>, atau tekan <b>✨ AI</b> untuk membuat tema dari deskripsi.<br>' +
         'Template asli tidak akan berubah — semua perubahan di sini hanya tersimpan sebagai draf.</div>';
       return;
     }
@@ -359,6 +359,244 @@
       '</div>' +
 
       '</div>';
+  }
+
+  /* ---------- AI tema (lokal, tanpa jaringan) ---------- */
+  var AI = window.TEMA_AI;
+  var AI_PROXY = window.TEMA_AI_PROXY;
+  var AI_KEY = 'asproject_studio_ai_v1';
+  var aiState = {
+    prompt: '', ev: 'pernikahan', jumlah: 3, berani: 1, seed: 0,
+    hasil: [], kunci: { palet: false, font: false }, terakhir: null, pesan: ''
+  };
+
+  function aiRiwayat() {
+    var s = ASP.load(AI_KEY, { riwayat: [] });
+    if (!Array.isArray(s.riwayat)) s.riwayat = [];
+    return s;
+  }
+  function aiCatatRiwayat(prompt, ev) {
+    var s = aiRiwayat();
+    s.riwayat = s.riwayat.filter(function (r) { return !(r.prompt === prompt && r.ev === ev); });
+    s.riwayat.unshift({ prompt: prompt.slice(0, 220), ev: ev, waktu: new Date().toISOString() });
+    s.riwayat = s.riwayat.slice(0, 5);
+    ASP.save(AI_KEY, s);
+  }
+
+  function aiSwatch(k) {
+    return '<span class="asp-ai-swatch" aria-hidden="true">' +
+      k.g.map(function (c) { return '<i style="background:' + esc(c) + '"></i>'; }).join('') +
+      '<i style="background:' + esc(k.accent) + '"></i></span>';
+  }
+
+  function aiKartu(k, i) {
+    var skor = AI.kontras(k.ink, k.g[0]);
+    var skorAksen = AI.kontras(k.accent, k.g[0]);
+    var aman = skor >= 4.5 && skorAksen >= 4.5;
+    return '<article class="asp-ai-kartu" data-kandidat="' + i + '">' +
+      aiSwatch(k) +
+      '<div class="asp-ai-main">' +
+        '<div class="asp-ai-judul"><strong>' + esc(k.nama) + '</strong>' +
+          '<span class="asp-ai-badge ' + (aman ? 'ok' : 'warn') + '" title="Rasio kontras WCAG teks terhadap latar">' +
+            (aman ? '✓' : '!') + ' ' + skor.toFixed(1) + ':1</span>' +
+          (k.arch ? '<span class="asp-ai-badge">arch</span>' : '') +
+        '</div>' +
+        '<p class="asp-small asp-muted">' + esc(AI.namaFont(k.ft)) + ' · ' + esc(AI.namaPola(k.pat) || 'tanpa pola') +
+          ' · ' + esc(AI.namaBorder(k.border)) + ' · ' + esc(AI.namaCover(k.cover)) + '/' + esc(AI.namaBuka(k.buka)) + '</p>' +
+        '<p class="asp-small">' + esc(k.desc) + '</p>' +
+      '</div>' +
+      '<div class="asp-ai-aksi">' +
+        '<button class="asp-btn asp-btn-gold asp-btn-sm" data-ai-pakai="' + i + '">Pakai jadi draf</button>' +
+        '<button class="asp-btn asp-btn-sm" data-ai-salin="' + i + '">Salin JSON</button>' +
+      '</div>' +
+    '</article>';
+  }
+
+  function renderAIHasil() {
+    var box = $('aiHasil');
+    if (!box) return;
+    if (!aiState.hasil.length) {
+      box.innerHTML = '<div class="asp-empty" style="padding:18px"><strong>Belum ada kandidat</strong>' +
+        'Tulis deskripsi lalu tekan <b>Buat kandidat</b>. Semua hasil hanya draf — 44 template produksi tidak tersentuh.</div>';
+      return;
+    }
+    box.innerHTML = aiState.hasil.map(aiKartu).join('');
+  }
+
+  function renderAIRiwayat() {
+    var box = $('aiRiwayat');
+    if (!box) return;
+    var r = aiRiwayat().riwayat;
+    box.innerHTML = r.length
+      ? '<div class="asp-field" style="margin-bottom:6px">Terakhir dipakai</div>' + r.map(function (x) {
+          return '<button class="asp-ai-riwayat" data-ai-ulang="' + esc(x.prompt) + '">' +
+            '<span>' + esc(x.prompt) + '</span><small>' + esc((EV[x.ev] || {}).label || x.ev) + '</small></button>';
+        }).join('')
+      : '';
+  }
+
+  function renderAIModal() {
+    var wrap = $('aiWrap');
+    if (!wrap) return;
+    wrap.hidden = false;
+    var proxyAktif = !!(AI_PROXY && AI_PROXY.aktif && AI_PROXY.aktif());
+    wrap.innerHTML =
+      '<div class="asp-gate asp-ai-gate" data-closeai>' +
+      '<section role="dialog" aria-modal="true" aria-labelledby="aiJudul" class="asp-ai-dialog">' +
+        '<div class="asp-ai-head">' +
+          '<div><h2 id="aiJudul">✨ Buat tema dengan AI</h2>' +
+          '<p class="asp-small asp-muted">Deskripsikan suasana; mesin menyusun palet, font, pola, border, cover, dan cara buka dari daftar yang sah.</p></div>' +
+          '<span class="asp-pill">' + (proxyAktif ? 'LLM + validasi' : 'Lokal · tanpa internet') + '</span>' +
+          '<button class="asp-btn asp-btn-sm" data-act="tutupai" style="margin-left:auto">✕ Tutup</button>' +
+        '</div>' +
+        '<div class="asp-ai-body">' +
+          '<label class="asp-field">Deskripsi tema' +
+            '<textarea id="aiPrompt" rows="3" maxlength="400" placeholder="contoh: pernikahan adat Sunda, hijau zaitun, elegan, motif kawung">' + esc(aiState.prompt) + '</textarea>' +
+            '<small>Boleh bahasa Indonesia atau Inggris. Sebut warna, suasana, budaya, atau jenis acara.</small>' +
+          '</label>' +
+          '<div class="asp-grid asp-grid-3">' +
+            '<label class="asp-field">Acara<select id="aiEvent">' +
+              ['pernikahan', 'khitanan', 'ultah', 'aqiqah', 'all'].map(function (k) {
+                return '<option value="' + k + '" ' + (aiState.ev === k ? 'selected' : '') + '>' + EV[k].label + '</option>';
+              }).join('') + '</select></label>' +
+            '<label class="asp-field">Jumlah kandidat<select id="aiJumlah">' +
+              [1, 3, 5].map(function (n) { return '<option value="' + n + '" ' + (aiState.jumlah === n ? 'selected' : '') + '>' + n + '</option>'; }).join('') +
+            '</select></label>' +
+            '<label class="asp-field">Keberanian<select id="aiBerani">' +
+              [[1, 'Aman — tetap dekat arketipe'], [2, 'Berani — variasi warna'], [3, 'Eksperimen — silang gaya']].map(function (o) {
+                return '<option value="' + o[0] + '" ' + (aiState.berani === o[0] ? 'selected' : '') + '>' + o[1] + '</option>';
+              }).join('') + '</select></label>' +
+          '</div>' +
+          '<div class="asp-ai-kunci">' +
+            '<label><input type="checkbox" id="aiKunciPalet" ' + (aiState.kunci.palet ? 'checked' : '') + '> Kunci palet kandidat terakhir</label>' +
+            '<label><input type="checkbox" id="aiKunciFont" ' + (aiState.kunci.font ? 'checked' : '') + '> Kunci font judul</label>' +
+            (aiState.terakhir ? '<span class="asp-small asp-muted">Acuan: ' + esc(aiState.terakhir.nama) + '</span>' : '') +
+          '</div>' +
+          '<div class="asp-actions">' +
+            '<button class="asp-btn asp-btn-gold" data-act="aibuat">Buat kandidat</button>' +
+            '<button class="asp-btn" data-act="aiacak">🎲 Acak lagi</button>' +
+            (proxyAktif ? '<button class="asp-btn" data-act="aiproxy">Pakai LLM</button>' : '') +
+          '</div>' +
+          '<div id="aiPesan" class="asp-small" role="status" aria-live="polite">' + (aiState.pesan ? esc(aiState.pesan) : '') + '</div>' +
+          '<div id="aiHasil" class="asp-ai-hasil"></div>' +
+          '<details class="asp-ai-tempel">' +
+            '<summary>Tempel JSON dari LLM (ChatGPT/Gemini/mana pun)</summary>' +
+            '<p class="asp-small asp-muted">Minta LLM menghasilkan JSON dengan field: nama, ev, g (3 warna hex), accent, ink, ft, orn, pat, border, deco, desc, cover, buka. Hanya id terdaftar yang diterima.</p>' +
+            '<textarea id="aiJson" rows="6" placeholder=\'{ "nama": "…", "ev": "pernikahan", "g": ["#F6F1E7","#E7D8C0","#CDB79D"], "accent": "#7A5C3E", "ink": "#463829", "ft": "lora", "orn": "zaitun", "pat": "kawung", "border": "frame2", "deco": "❀ ✦ ❀", "desc": "…", "cover": "kartu", "buka": "pita" }\'></textarea>' +
+            '<div class="asp-actions"><button class="asp-btn" data-act="aipakaijson">Validasi JSON</button></div>' +
+          '</details>' +
+          '<div id="aiRiwayat"></div>' +
+        '</div>' +
+      '</section></div>';
+    renderAIHasil();
+    renderAIRiwayat();
+  }
+
+  function buatKandidat(sumber) {
+    var prompt = ($('aiPrompt') || {}).value || aiState.prompt;
+    var ev = ($('aiEvent') || {}).value || aiState.ev;
+    var jumlah = Number(($('aiJumlah') || {}).value || aiState.jumlah);
+    var berani = Number(($('aiBerani') || {}).value || aiState.berani);
+    var kunci = {};
+    if ($('aiKunciPalet') && $('aiKunciPalet').checked && aiState.terakhir) {
+      kunci.g = aiState.terakhir.g; kunci.accent = aiState.terakhir.accent; kunci.ink = aiState.terakhir.ink;
+    }
+    if ($('aiKunciFont') && $('aiKunciFont').checked && aiState.terakhir) kunci.ft = aiState.terakhir.ft;
+    aiState.prompt = prompt; aiState.ev = ev; aiState.jumlah = jumlah; aiState.berani = berani;
+    aiState.kunci.palet = !!($('aiKunciPalet') && $('aiKunciPalet').checked);
+    aiState.kunci.font = !!($('aiKunciFont') && $('aiKunciFont').checked);
+    var hasil = AI.buat(prompt, { ev: ev, jumlah: jumlah, keberanian: berani, seed: aiState.seed, kunci: kunci });
+    if (!hasil.length) {
+      aiState.pesan = 'Mesin tidak menemukan kombinasi yang lolos validasi. Coba ubah deskripsi.';
+      return;
+    }
+    aiState.hasil = hasil;
+    aiState.terakhir = hasil[0];
+    aiState.pesan = hasil.length + ' kandidat siap. Semua id sah dan kontras ≥ 4.5:1.';
+    if (prompt.trim()) aiCatatRiwayat(prompt.trim(), ev);
+    if (sumber !== 'modal') {
+      renderAIHasil();
+      var p = $('aiPesan'); if (p) p.textContent = aiState.pesan;
+      renderAIRiwayat();
+    }
+  }
+
+  /* AI hanya membuat DRAF: tidak menyentuh 44 template, tidak publish. */
+  function pakaiKandidat(i) {
+    var k = aiState.hasil[i];
+    if (!k) return;
+    var seed = TPL.filter(function (t) { return t.ev === k.ev; })[0] || TPL[0];
+    if (!seed) return;
+    var d = draftFrom(seed);
+    d.origin = null;
+    d.nama = k.nama;
+    d.slug = slugify(k.nama) || 'tema-ai';
+    d.ev = k.ev;
+    d.g = k.g.slice();
+    d.accent = k.accent;
+    d.ink = k.ink;
+    d.ft = k.ft;
+    d.char = k.char || '';
+    d.pat = k.pat || '';
+    d.border = k.border;
+    d.orn = k.orn || '';
+    d.deco = k.deco;
+    d.deskripsi = k.desc;
+    d.cover = k.cover;
+    d.buka = k.buka;
+    d.ai = {
+      prompt: aiState.prompt, mood: (AI.analisa(aiState.prompt, k.ev) || {}).mood,
+      dibuat: new Date().toISOString(), versi: AI.versi
+    };
+    d.savedAt = null;
+    db.drafts.push(d);
+    db.activeId = d.id;
+    active = JSON.parse(JSON.stringify(d));
+    persist();
+    tutupAI();
+    renderEditor(); renderList(); renderStatus(); syncPreview(true);
+    ASP.toast('Tema <b>' + esc(k.nama) + '</b> dibuat sebagai draf. Template asli tetap utuh.');
+  }
+
+  function tutupAI() {
+    var wrap = $('aiWrap');
+    if (!wrap) return;
+    wrap.hidden = true;
+    wrap.innerHTML = '';
+  }
+
+  function prosesJSON() {
+    var ta = $('aiJson');
+    if (!ta) return;
+    var r = AI.dariJSON(ta.value);
+    if (!r.ok) {
+      aiState.pesan = 'JSON ditolak — ' + (r.galat[0] || 'tidak ada kandidat sah');
+      var p = $('aiPesan'); if (p) p.textContent = aiState.pesan;
+      return;
+    }
+    aiState.hasil = r.kandidat;
+    aiState.terakhir = r.kandidat[0];
+    aiState.pesan = r.kandidat.length + ' kandidat dari JSON lolos validasi' +
+      (r.galat.length ? ' · ' + r.galat.length + ' ditolak' : '') + '.';
+    renderAIHasil();
+    var el = $('aiPesan'); if (el) el.textContent = aiState.pesan;
+  }
+
+  function mintaProxy() {
+    if (!AI_PROXY || !AI_PROXY.aktif()) return;
+    var p = $('aiPesan');
+    if (p) p.textContent = 'Menghubungi AI…';
+    AI_PROXY.minta(aiState.prompt, { ev: aiState.ev, jumlah: aiState.jumlah, keberanian: aiState.berani })
+      .then(function (kandidat) {
+        aiState.hasil = kandidat;
+        aiState.terakhir = kandidat[0];
+        aiState.pesan = kandidat.length + ' kandidat dari LLM lolos validasi lokal.';
+        renderAIHasil();
+        var el = $('aiPesan'); if (el) el.textContent = aiState.pesan;
+      })
+      .catch(function (e) {
+        var el = $('aiPesan'); if (el) el.textContent = 'LLM gagal: ' + e.message + ' — pakai generator lokal saja.';
+      });
   }
 
   /* ---------- status ---------- */
@@ -517,6 +755,7 @@
       else openTpl(v.slice(4));
     });
     $('btnBaru').addEventListener('click', newDraft);
+    $('btnAI').addEventListener('click', function () { if (!AI) { ASP.toast('Mesin AI belum dimuat.', 'warn'); return; } renderAIModal(); });
 
     $('editor').addEventListener('input', function (e) {
       var el = e.target.closest('[data-k]');
@@ -626,9 +865,42 @@
     document.addEventListener('click', function (e) {
       if (e.target.closest('[data-closecmp]') && !e.target.closest('section')) closeCompare();
       if (e.target.closest('[data-act="tutupcmp"]')) closeCompare();
+      if (e.target.closest('[data-closeai]') && !e.target.closest('section')) { tutupAI(); return; }
+      var aiAct = e.target.closest('[data-act]');
+      if (aiAct && aiAct.dataset.act && aiAct.dataset.act.indexOf('ai') === 0) {
+        var a = aiAct.dataset.act;
+        if (a === 'tutupai') tutupAI();
+        else if (a === 'aibuat') buatKandidat();
+        else if (a === 'aiacak') { aiState.seed = (aiState.seed + 1) % 99991; buatKandidat(); }
+        else if (a === 'aipakaijson') prosesJSON();
+        else if (a === 'aiproxy') mintaProxy();
+        return;
+      }
+      var pakai = e.target.closest('[data-ai-pakai]');
+      if (pakai) { pakaiKandidat(Number(pakai.dataset.aiPakai)); return; }
+      var salin = e.target.closest('[data-ai-salin]');
+      if (salin) {
+        var k = aiState.hasil[Number(salin.dataset.aiSalin)];
+        if (!k) return;
+        var teks = JSON.stringify(k, null, 2);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(teks).then(function () { ASP.toast('JSON kandidat disalin.'); },
+            function () { ASP.toast('Clipboard ditolak browser — salin manual dari kotak JSON.', 'warn'); });
+        } else { ASP.toast('Clipboard tidak tersedia di browser ini.', 'warn'); }
+        return;
+      }
+      var ulang = e.target.closest('[data-ai-ulang]');
+      if (ulang) {
+        aiState.prompt = ulang.dataset.aiUlang || '';
+        aiState.seed = (aiState.seed + 1) % 99991;
+        buatKandidat('modal');
+        renderAIModal();
+        return;
+      }
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && compareOn) closeCompare();
+      if (e.key === 'Escape' && $('aiWrap') && !$('aiWrap').hidden) tutupAI();
     });
     window.addEventListener('resize', function () {
       ASP.scalePreview($('pvFrame'));

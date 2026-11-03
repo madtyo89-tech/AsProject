@@ -128,6 +128,44 @@ tema dibuat dari kerangka, bukan diketik di browser.
 - `tools/test-simulasi.cjs` — studio isi data tetap merender 7 tab tanpa error
   dan **tidak lagi** memuat picker identitas tema.
 
+## AI tema: deskripsi → 3 kandidat draf (2026-11-03)
+
+Studio Template punya tombol **✨ AI** untuk membuat tema baru dari deskripsi
+bebas ("pernikahan adat Sunda, hijau zaitun, elegan, motif kawung"). Hasilnya
+**selalu draf** — 44 template produksi tidak pernah tersentuh, dan tema baru
+tetap masuk situs lewat jalur resmi (ekspor ke `kerangka/` → `bangun-tpl.cjs`).
+
+**Tiga mesin, satu UI:**
+
+| Jalur | Berkas | Butuh | Catatan |
+|---|---|---|---|
+| Lokal (default) | `assets/tema-ai.js` | tidak ada | 8 arketipe suasana, palet disusun dari warna yang disebut, kontras dikoreksi otomatis, RNG ber-seed (deterministik) |
+| Tempel JSON | validator yang sama | tidak ada | Minta ChatGPT/Gemini menulis JSON token, tempel, divalidasi ketat |
+| LLM proxy | `assets/tema-ai-proxy.js` + `supabase/functions/ai-tema/` | kunci API di secret | **belum aktif**; lihat `docs/ai-tema-proxy.md` |
+
+**Kenapa hasilnya tidak bisa "ngawur":**
+
+- `assets/tema-kosakata.js` dibangkitkan `tools/bangun-tema-kosakata.cjs`
+  (dipanggil di akhir `bangun-tpl.cjs`) dari `undangan.html` (FONTS, ORNAMEN,
+  POLA, BORDERS) dan `studio.html` (CV_LAYOUTS, CARA_BUKA_STYLES). AI hanya
+  memilih dari daftar itu.
+- Kontras `ink`/`accent` terhadap `g[0]` dipaksa **≥ 4.5:1** sebelum kandidat
+  dikembalikan.
+- `TEMA_AI.validasi()` menolak field asing, hex salah, id tak dikenal, dan teks
+  kepanjangan — dipakai juga untuk JSON tempelan maupun balasan LLM.
+- Tidak ada `fetch` di `assets/tema-ai.js`: tanpa kunci API yang bisa dicuri.
+
+**Panelnya:** pilih acara, tulis deskripsi, atur jumlah kandidat (1/3/5) dan
+keberanian (aman → eksperimen), lalu **Buat kandidat**. Tiap kartu menampilkan
+swatch 4 warna, font/pola/border/cover, dan skor kontras; **Pakai jadi draf**
+memasukkan tema ke editor (dengan `ai.prompt` tersimpan sebagai asal-usul).
+Ada juga kunci palet/font, acak ulang, riwayat 5 deskripsi terakhir, dan
+"Salin JSON" untuk dipakai di LLM mana pun.
+
+Uji: `node tools/test-tema-ai.cjs` (200 prompt, kontras, determinisme,
+validasi JSON, alur UI jsdom) — dijalankan juga oleh `tools/cek-kesehatan.py`
+bagian [25].
+
 ## Pratinjau tema di kartu katalog (2026-10-20)
 
 Kartu katalog di `index.html` menampilkan undangan **asli** (`undangan.html`)

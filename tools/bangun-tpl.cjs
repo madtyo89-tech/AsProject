@@ -89,6 +89,11 @@ if(require.main===module){
     bersama TPL agar urutan & isinya tidak pernah basi. */
  const d=require('./bangun-tpl-data.cjs').bangun();
  console.log('assets/tpl-data.js → '+d.jumlah+' tema');
+ /* AI tema hanya boleh memakai id yang ada di renderer; daftar itu ikut
+    dibangkitkan di sini supaya tidak pernah menunjuk pola/border yang sudah
+    dihapus atau melewatkan yang baru. */
+ const k=require('./bangun-tema-kosakata.cjs').bangun();
+ console.log('assets/tema-kosakata.js → '+k.fonts.length+' font, '+k.ornamen.length+' ornamen, '+k.pola.length+' pola, '+k.borders.length+' border, '+k.covers.length+' cover');
  console.log('studio.html   → '+s.jumlah+' template ('+s.pub+' publik + '+(s.jumlah-s.pub)+' Studio-only)');
  console.log('undangan.html → '+u.jumlah+' template (tanpa harga, seperti semula)');
  console.log('Urutan id 0–23 tidak berubah; entry baru di akhir (index Supabase aman).');
