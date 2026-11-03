@@ -1431,9 +1431,9 @@ state.tplCustom.forEach((t,i)=>{if(!t.studioOnly&&!state.katalog.some(k=>(k.tpl|
 if(state.dblBorder===false)state.border='none';else if(state.dblBorder===true)state.border='double';delete state.dblBorder
 /* Riwayat undo sesi ini saja; simpan snapshot kecil sebelum perubahan penting. */
 let _undoStack=[],_undoBusy=false,_lastUndoCheckpoint=0,_saveState='saved',_savedAt=0;
-const CLOUD_DRAFT_ENABLED=false; /* Ditahan sementara atas permintaan pengguna; aktifkan setelah setup cloud disetujui. */
+const CLOUD_DRAFT_ENABLED=true; /* Aktif 2026-11-03: lihat README & supabase-schema.sql bagian 3. */
 const CLOUD_SYNC_PREF='asproject_cloud_sync_v1',CLOUD_SYNC_TIME='asproject_cloud_sync_at_v1',CLOUD_SYNC_USER='asproject_cloud_sync_user_v1';
-let _cloudSyncEnabled=CLOUD_DRAFT_ENABLED&&localStorage.getItem(CLOUD_SYNC_PREF)==='1',_cloudSession=null,_cloudRemoteDraft=null,_cloudNeedsChoice=false,_cloudBusy=false,_cloudAuthBusy=false,_cloudSyncTimer=null,_cloudStatus='Draft Cloud dinonaktifkan sementara',_cloudAuthMessage='',_cloudFetchedUid='';
+let _cloudSyncEnabled=CLOUD_DRAFT_ENABLED&&localStorage.getItem(CLOUD_SYNC_PREF)==='1',_cloudSession=null,_cloudRemoteDraft=null,_cloudNeedsChoice=false,_cloudBusy=false,_cloudAuthBusy=false,_cloudSyncTimer=null,_cloudStatus='Belum terhubung ke cloud',_cloudAuthMessage='',_cloudFetchedUid='';
 /* kunci master (akses dashboard privat) — dibuat sekali, dipakai di link master */
 function mkRand(){const c='abcdefghjkmnpqrstuvwxyz23456789';let s='';for(let i=0;i<10;i++)s+=c[Math.floor(Math.random()*c.length)];return s}
 if(!state.masterKey){state.masterKey=mkRand();save()}

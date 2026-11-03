@@ -51,7 +51,9 @@ create policy "public read music" on storage.objects for select to anon, authent
 
 -- ============================================================
 -- BAGIAN 3 — Draft Studio privat lintas perangkat (email OTP)
--- Jalankan setelah mengaktifkan Email provider di Supabase Auth.
+-- Aktif di produksi sejak 2026-11-03 (migrasi
+-- 20261103053557_aktifkan_studio_cloud_drafts_20261103). Jalankan ulang
+-- bila memakai project Supabase lain, setelah Email provider di Auth diaktifkan.
 -- Hanya pemilik yang sedang login boleh membaca/menulis barisnya.
 -- ============================================================
 create table if not exists public.studio_cloud_drafts (
