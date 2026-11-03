@@ -282,10 +282,18 @@ atasnya. Sekarang, khusus `body.foto-full`:
 - Navigasi editor pada HP menumpuk stepbar dan tab tanpa saling menutupi. Tombol Lanjut/Mundur
   menempel di bawah dengan mempertimbangkan safe area; preview mini dinaikkan agar tidak
   menutupi tombol navigasi tersebut.
-- **Draft Cloud lintas perangkat saat ini ditunda** di balik feature flag (`CLOUD_DRAFT_ENABLED=false`)
-  atas permintaan pengguna. Studio tidak meminta login email dan tidak mengirim/membaca draft cloud;
-  penyimpanan lokal tetap berjalan. Bagian 3 `supabase-schema.sql` disiapkan untuk aktivasi di kemudian hari,
-  tetapi tidak perlu dijalankan saat cloud dinonaktifkan.
+- **Draft Cloud lintas perangkat aktif** sejak 2026-11-03 (`CLOUD_DRAFT_ENABLED=true`). Studio meminta
+  login email OTP lewat Supabase Auth, menyimpan snapshot draft privat di `studio_cloud_drafts`, dan
+  meminta pilihan saat draft lokal dan cloud berbeda supaya perubahan tidak saling menimpa. Foto ikut
+  selama ukuran snapshot tidak melebihi 1,3 MB; musik yang hanya tersimpan di perangkat tidak ikut.
+  Draft lokal tetap tersimpan dan dipakai saat belum login atau sedang offline.
+- **Setup produksi yang menyertainya:** Bagian 3 `supabase-schema.sql` sudah dijalankan sebagai migrasi
+  `20261103053557_aktifkan_studio_cloud_drafts_20261103`; RLS hanya mengizinkan pemilik barisnya
+  (`auth.uid() = user_id`). `site_url` Supabase Auth diarahkan ke `https://asproject.my.id`, dengan
+  redirect allow-list `https://asproject.my.id/studio.html` dan `https://asproject.my.id/**`.
+  Email provider sudah aktif; SMTP kustom belum disetel, jadi pengiriman tautan OTP masih memakai
+  layanan email bawaan Supabase dan perlu disiapkan bila dipakai untuk banyak pengguna. Jalankan ulang
+  Bagian 3 hanya bila memakai project Supabase lain.
 - Membuat undangan baru meminta konfirmasi sebelum mengganti draft aktif.
   Arsip/katalog tetap dipertahankan dan kunci master baru dibuat.
 
