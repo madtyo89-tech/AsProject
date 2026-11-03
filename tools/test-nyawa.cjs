@@ -26,16 +26,19 @@ const t = (name, cond, extra) => {
 };
 
 const undSrc = read('undangan.html');
+/* Countdown hanya berdetak bila acara masih di depan. Tanggal uji dibuat
+   dinamis supaya tes ini tidak berhenti lulus setelah tanggal tetap lewat. */
+const TANGGAL_UJI = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
 
 function draft(coverLayout) {
   return {
     slug: 'uji-nyawa', name1: 'Satrio', name2: 'Pandu', theme: 0,
-    venue: 'Bendo Gede', event_date: '2026-11-02', event_time: '08:00',
+    venue: 'Bendo Gede', event_date: TANGGAL_UJI, event_time: '08:00',
     data: {
       event: 'pernikahan',
       coverLayout: coverLayout,
       form: {
-        namaPria: 'Satrio', namaWanita: 'Pandu', tanggalAcara: '2026-11-02',
+        namaPria: 'Satrio', namaWanita: 'Pandu', tanggalAcara: TANGGAL_UJI,
         jamAcara: '08:00', venue: 'Bendo Gede', zona: 'WIB',
       },
     },
