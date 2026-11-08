@@ -1024,6 +1024,17 @@ def cek_katalog_admin():
           "uji pindah proyek Supabase (dry-run, tolak service_role, konsisten): "
           + ("; ".join(baris2) if baris2 else (r.stderr.strip() or r.stdout.strip())[:200]))
 
+    if os.path.exists(os.path.join(ROOT, "tools", "test-katalog-live.cjs")):
+        r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-katalog-live.cjs")],
+                           capture_output=True, text=True, cwd=ROOT,
+                           env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})
+        baris3 = [b3.strip() for b3 in r.stdout.splitlines() if b3.strip().startswith("Ringkasan")]
+        lewat3 = "jsdom belum terpasang" in r.stdout
+        lapor("ok" if (r.returncode == 0 or lewat3) else "masalah",
+              "uji katalog-live (badge/harga/lacak/urutan/pita promo, aman saat gagal): "
+              + ("dilewati — npm i jsdom" if lewat3
+                 else ("; ".join(baris3) if baris3 else (r.stderr.strip() or r.stdout.strip())[:200])))
+
     skrip = os.path.join(ROOT, "tools", "test-katalog-admin.cjs")
     r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT,
                        env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})

@@ -49,9 +49,9 @@
     if (document.getElementById('asp-live-style')) return;
     var s = document.createElement('style');
     s.id = 'asp-live-style';
-    s.textContent = '.asp-live-badge{position:absolute;top:10px;right:10px;z-index:3;background:#111;color:#fff;font:800 9px/1 Inter,system-ui,sans-serif;letter-spacing:.08em;padding:5px 8px;border-radius:99px;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,0,0,.22)}'
-      + '.asp-live-hide{display:none!important}'
-      + '.ap-favorite{position:relative;z-index:4}';
+    s.textContent = '.asp-live-hide{display:none!important}'
+      + '.ap-favorite{position:relative;z-index:4}'
+      + '.ap-new-badge.asp-live-badge-baru{box-shadow:0 4px 12px rgba(0,0,0,.22)}';
     document.head.appendChild(s);
   }
 
@@ -94,16 +94,22 @@
       }
     }
 
-    if (theme.badge) {
+    /* Badge: perbarui badge bawaan kartu (.ap-new-badge di dalam .ap-swatch),
+       jangan menambah badge kedua yang menumpuk. String kosong = hapus badge;
+       tidak diisi (undefined) = biarkan seperti dari build. */
+    if (typeof theme.badge === 'string') {
       var host = card.querySelector('.ap-swatch') || card.querySelector('.ap-template-card-body');
-      if (host) {
-        var badge = host.querySelector('.asp-live-badge');
-        if (!badge) {
+      var badge = card.querySelector('.ap-new-badge');
+      var teksBadge = theme.badge.trim();
+      if (!teksBadge) {
+        if (badge) badge.remove();
+      } else {
+        if (!badge && host) {
           badge = document.createElement('span');
-          badge.className = 'asp-live-badge';
+          badge.className = 'ap-new-badge';
           host.appendChild(badge);
         }
-        badge.textContent = theme.badge;
+        if (badge) badge.textContent = teksBadge;
       }
     }
 

@@ -196,7 +196,7 @@ const NOMINATIM = [{ lat: '-8.012345', lon: '110.712345', display_name: 'Bendo G
   {
     const pos = [...ubin].map(i => i.style.left + '/' + i.style.top);
     t('Ubin: tersusun rapi 0/256/512', JSON.stringify([...new Set(pos)].sort()) === JSON.stringify(['0px/0px', '0px/256px', '0px/512px', '256px/0px', '256px/256px', '256px/512px', '512px/0px', '512px/256px', '512px/512px']), JSON.stringify([...new Set(pos)].sort()));
-    const m = /translate\(([-\d.]+)px,([-\d.]+)px\) scale\(([\d.]+)\)/.exec(wrap.querySelector('.ubin').style.transform || '');
+    const m = /translate\(\s*([-\d.]+)px\s*,\s*([-\d.]+)px\s*\)\s*scale\(\s*([\d.]+)\s*\)/.exec(wrap.querySelector('.ubin').style.transform || '');
     t('Ubin: skala penutup memakai transform', !!m, wrap.querySelector('.ubin').style.transform);
     if (m) {
       const X = +m[1], Y = +m[2], S = +m[3], W = 360, H = 210, L = 768;
@@ -222,7 +222,7 @@ const NOMINATIM = [{ lat: '-8.012345', lon: '110.712345', display_name: 'Bendo G
         wr.getBoundingClientRect = function () { return { width: W, height: H, left: 0, top: 0, right: W, bottom: H }; };
         D.body.appendChild(host);
         w.petaGambarUbin(wr, pt[0], pt[1]);
-        const m = /translate\(([-\d.]+)px,([-\d.]+)px\) scale\(([\d.]+)\)/.exec(wr.querySelector('.ubin').style.transform || '');
+        const m = /translate\(\s*([-\d.]+)px\s*,\s*([-\d.]+)px\s*\)\s*scale\(\s*([\d.]+)\s*\)/.exec(wr.querySelector('.ubin').style.transform || '');
         kasus++;
         if (!m) { gagal.push(W + 'x' + H + ' @' + pt.join(',') + ': tanpa transform'); return; }
         const X = +m[1], Y = +m[2], S = +m[3];
