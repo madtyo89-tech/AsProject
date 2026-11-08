@@ -41,9 +41,19 @@
     if (favoritesCount) favoritesCount.textContent = String(favorites.size);
   }
 
+  /* Setting Katalog (katalog-live.js) boleh menyusun ulang kartu. Urutan itu
+     disimpan sebagai data-live-rank; "Unggulan" wajib menghormatinya supaya
+     pengurutan dari cloud tidak hilang begitu pengunjung menyentuh kontrol. */
+  const bangunRank = new Map(cards.map((card, i) => [card, i]));
+  const rankKartu = card => {
+    const v = Number(card.dataset.liveRank);
+    if (card.dataset.liveRank !== undefined && card.dataset.liveRank !== '' && Number.isFinite(v)) return v;
+    return bangunRank.has(card) ? bangunRank.get(card) : 0;
+  };
+
   function sortedCards() {
     const mode = sort?.value || 'featured';
-    if (mode === 'featured') return cards.slice();
+    if (mode === 'featured') return cards.slice().sort((a, b) => rankKartu(a) - rankKartu(b));
     return cards.slice().sort((a, b) => {
       const nameA = norm(a.querySelector('h3')?.textContent);
       const nameB = norm(b.querySelector('h3')?.textContent);
@@ -62,7 +72,10 @@
     let shown = 0;
     ordered.forEach(card => {
       const favoriteId = card.querySelector('[data-favorite]')?.dataset.favorite;
-      const matches = (category === 'all' || card.dataset.category === category)
+      /* Tema yang dinonaktifkan lewat Setting Katalog tidak boleh ikut
+         dihitung atau muncul lagi karena pencarian/filter. */
+      const matches = !card.classList.contains('asp-live-hide')
+        && (category === 'all' || card.dataset.category === category)
         && (!query || norm(card.dataset.search).includes(query))
         && (!favoritesOnly || favorites.has(favoriteId));
       card.hidden = !matches;

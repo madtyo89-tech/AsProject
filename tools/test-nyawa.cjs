@@ -27,15 +27,20 @@ const t = (name, cond, extra) => {
 
 const undSrc = read('undangan.html');
 
+/* Tanggal acara dibuat DINAMIS (tiga hari ke depan). Dulu ditulis tetap
+   '2026-11-02'; begitu tanggal itu lewat, hitungan mundur masuk mode "hari
+   bahagia telah tiba" dan uji animasi detik gagal padahal aplikasinya wajar. */
+const TANGGAL_UJI = new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10);
+
 function draft(coverLayout) {
   return {
     slug: 'uji-nyawa', name1: 'Satrio', name2: 'Pandu', theme: 0,
-    venue: 'Bendo Gede', event_date: '2026-11-02', event_time: '08:00',
+    venue: 'Bendo Gede', event_date: TANGGAL_UJI, event_time: '08:00',
     data: {
       event: 'pernikahan',
       coverLayout: coverLayout,
       form: {
-        namaPria: 'Satrio', namaWanita: 'Pandu', tanggalAcara: '2026-11-02',
+        namaPria: 'Satrio', namaWanita: 'Pandu', tanggalAcara: TANGGAL_UJI,
         jamAcara: '08:00', venue: 'Bendo Gede', zona: 'WIB',
       },
     },

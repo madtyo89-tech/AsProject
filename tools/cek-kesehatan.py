@@ -1035,6 +1035,17 @@ def cek_katalog_admin():
               + ("dilewati — npm i jsdom" if lewat3
                  else ("; ".join(baris3) if baris3 else (r.stderr.strip() or r.stdout.strip())[:200])))
 
+    if os.path.exists(os.path.join(ROOT, "tools", "test-katalog-ketahanan.cjs")):
+        r = subprocess.run(["node", os.path.join(ROOT, "tools", "test-katalog-ketahanan.cjs")],
+                           capture_output=True, text=True, cwd=ROOT,
+                           env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})
+        barisT = [b.strip() for b in r.stdout.splitlines() if b.strip().startswith("Ringkasan")]
+        lewatT = "jsdom belum terpasang" in r.stdout
+        lapor("ok" if (r.returncode == 0 or lewatT) else "masalah",
+              "uji ketahanan setting katalog (data aneh, XSS, tabrakan filter, halaman kategori): "
+              + ("dilewati — npm i jsdom" if lewatT
+                 else ("; ".join(barisT) if barisT else (r.stderr.strip() or r.stdout.strip())[:200])))
+
     skrip = os.path.join(ROOT, "tools", "test-katalog-admin.cjs")
     r = subprocess.run(["node", skrip], capture_output=True, text=True, cwd=ROOT,
                        env={**os.environ, "NODE_PATH": os.path.join(ROOT, "node_modules")})

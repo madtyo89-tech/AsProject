@@ -21,6 +21,16 @@
 
   function rp(n) { return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); }
 
+  /* Baca angka dari teks harga bawaan ("Rp 99.000" -> 99000). */
+  function angkaRp(txt) {
+    var m = String(txt || '').replace(/\s/g, '').match(/rp([\d.]+)/i);
+    return m ? Number(m[1].replace(/\./g, '')) || 0 : 0;
+  }
+  function normalDariCoret(box) {
+    var del = box && box.querySelector('del');
+    return del ? angkaRp(del.textContent) : 0;
+  }
+
   function endpoint() {
     return SUPABASE_URL + '/rest/v1/catalog_settings?id=eq.default&select=data,updated_at';
   }
@@ -33,7 +43,12 @@
       return r.json();
     }).then(function (rows) {
       if (!Array.isArray(rows) || !rows[0] || !rows[0].data) throw new Error('kosong');
-      return rows[0].data;
+      var d = rows[0].data;
+      /* Sebagian klien menyimpan JSON sebagai teks (dobel-encode). */
+      if (typeof d === 'string') {
+        try { d = JSON.parse(d); } catch (e) { throw new Error('data bukan JSON'); }
+      }
+      return d;
     }).catch(function () {
       /* Cadangan lokal: hanya ada di browser admin, berguna saat menguji
          halaman sebelum tabel cloud dibuat. Pengunjung biasa tidak punya. */
@@ -64,14 +79,40 @@
     return m ? m[1] : '';
   }
 
+  /* Promo global dimatikan: kartu tanpa setting tetap harus berhenti
+     menampilkan harga promo. Harga normal diambil dari angka coret bawaan. */
+  function matikanPromoBawaan(card) {
+    var box = card.querySelector('.ap-card-price');
+    if (!box) return;
+    var normal = normalDariCoret(box);
+    if (!(normal > 0)) return;
+    var strong = box.querySelector('strong');
+    if (strong) strong.textContent = rp(normal);
+    var del = box.querySelector('del');
+    if (del) del.remove();
+    var note = box.querySelector('.ap-new-customer-price');
+    if (note) note.hidden = true;
+    card.dataset.price = String(normal);
+  }
+
   function applyCard(card, s, g, baseIndex) {
     var id = cardId(card);
     if (!id) return null;
     var theme = (s.themes && s.themes[id]) || null;
-    if (!theme) return null;
+    /* Tanpa setting, kartu tetap memakai urutan build-nya (bukan 0) supaya
+       tema yang diatur tidak terlempar ke belakang oleh tema lain. */
+    if (!theme) {
+      card.dataset.liveOrder = String(10000 + baseIndex);
+      if (g.promoAktif === false) matikanPromoBawaan(card);
+      return null;
+    }
     var promoOn = theme.promoAktif === null || typeof theme.promoAktif === 'undefined' ? !!g.promoAktif : !!theme.promoAktif;
     var promoPrice = Number(theme.hargaPromo);
     var normal = Number(theme.hargaNormal);
+    var adaPromo = isFinite(promoPrice) && promoPrice > 0;
+    var adaNormal = isFinite(normal) && normal > 0;
+    var coretGlobal = Number(g.hargaCoret) > 0 ? Number(g.hargaCoret) : null;
+    var hargaTampil = 0;
 
     if (theme.visible === false) {
       card.classList.add('asp-live-hide');
@@ -79,18 +120,31 @@
     }
 
     var priceBox = card.querySelector('.ap-card-price');
-    if (priceBox) {
+    var promoMati = theme.promoAktif === false
+      || ((theme.promoAktif === null || typeof theme.promoAktif === 'undefined') && g.promoAktif === false);
+    if (priceBox && (adaPromo || adaNormal || promoMati)) {
       var del = priceBox.querySelector('del');
       var strong = priceBox.querySelector('strong');
       var note = priceBox.querySelector('.ap-new-customer-price');
-      if (promoOn && promoPrice > 0 && promoPrice < normal) {
-        if (del) del.textContent = rp(g.hargaCoret || normal);
-        if (strong) strong.textContent = rp(promoPrice);
-        if (note) { note.textContent = 'Pelanggan baru'; note.hidden = false; }
-      } else {
-        if (del) del.textContent = rp(g.hargaCoret || normal);
-        if (strong) strong.textContent = rp(promoPrice || normal);
-        if (note) note.hidden = true;
+      /* Harga normal cadangan: angka coret bawaan kartu. Dipakai saat promo
+         dimatikan tetapi tema tidak mengirim harga normal sendiri. */
+      if (!adaNormal) { var nb = normalDariCoret(priceBox); if (nb > 0) { normal = nb; adaNormal = true; } }
+      var promoHidup = promoOn && adaPromo && adaNormal && promoPrice < normal;
+      /* Promo yang dimatikan TIDAK boleh menampilkan harga promo maupun coretan
+         promo: harga kembali ke harga normal. Kalau angka tidak dikirim sama
+         sekali, harga bawaan dibiarkan (jangan jadi "Rp 0"). */
+      hargaTampil = promoHidup ? promoPrice : (adaNormal ? normal : (adaPromo ? promoPrice : 0));
+      if (hargaTampil > 0) {
+        if (strong) strong.textContent = rp(hargaTampil);
+        if (promoHidup) {
+          var coret = coretGlobal || (adaNormal ? normal : 0);
+          if (del && coret > hargaTampil) del.textContent = rp(coret);
+        } else if (del) {
+          del.remove();
+        }
+        if (note) { note.hidden = !promoHidup; if (promoHidup) note.textContent = 'Pelanggan baru'; }
+        /* data-price dipakai kontrol urut katalog (katalog-v2.js). */
+        card.dataset.price = String(hargaTampil);
       }
     }
 
@@ -128,8 +182,14 @@
       var span = el.querySelector('span');
       if (strong && g.ribbon) strong.textContent = g.ribbon;
       if (span && g.ribbonSub) {
-        var coret = g.hargaCoret ? '<del>Rp' + Number(g.hargaCoret).toLocaleString('id-ID') + '</del> ' : '';
-        span.innerHTML = coret + String(g.ribbonSub).replace(/[<>]/g, '');
+        while (span.firstChild) span.removeChild(span.firstChild);
+        if (Number(g.hargaCoret) > 0) {
+          var d2 = document.createElement('del');
+          d2.textContent = 'Rp' + Number(g.hargaCoret).toLocaleString('id-ID');
+          span.appendChild(d2);
+          span.appendChild(document.createTextNode(' '));
+        }
+        span.appendChild(document.createTextNode(String(g.ribbonSub)));
       }
       if (g.promoAktif === false) el.classList.add('asp-live-hide');
     });
@@ -147,19 +207,31 @@
     if (!el) return;
     var id = el.dataset.templateId;
     var theme = s.themes && s.themes[id];
-    if (!theme) return;
+    if (!theme) {
+      if (g.promoAktif === false) matikanPromoDetail();
+      return;
+    }
     var promoOn = theme.promoAktif === null || typeof theme.promoAktif === 'undefined' ? !!g.promoAktif : !!theme.promoAktif;
     var promoPrice = Number(theme.hargaPromo), normal = Number(theme.hargaNormal);
+    var adaPromo = isFinite(promoPrice) && promoPrice > 0, adaNormal = isFinite(normal) && normal > 0;
     var price = document.querySelector('.ap-price');
-    if (price) {
+    if (price && !adaNormal) { var nb2 = normalDariCoret(price); if (nb2 > 0) { normal = nb2; adaNormal = true; } }
+    if (price && (adaPromo || adaNormal || promoOn === false)) {
       var del = price.querySelector('del');
-      if (del) del.textContent = 'Rp' + Number(normal).toLocaleString('id-ID');
+      var coret = Number(g.hargaCoret) > 0 ? Number(g.hargaCoret) : (adaNormal ? normal : 0);
+      var tampil = promoOn && adaPromo && adaNormal && promoPrice < normal ? promoPrice : (adaNormal ? normal : promoPrice);
+      var promoHidupDetail = promoOn && adaPromo && adaNormal && promoPrice < normal;
+      if (del) {
+        if (promoHidupDetail && coret > tampil) del.textContent = 'Rp' + coret.toLocaleString('id-ID');
+        else del.remove();
+      }
       /* Ganti angka harga tanpa menghapus keterangan di dalamnya. */
       Array.prototype.forEach.call(price.childNodes, function (node) {
         if (node.nodeType === 3 && /^\s*Rp\s?[\d.]+/.test(node.nodeValue)) {
-          node.nodeValue = ' Rp ' + Number(promoOn && promoPrice < normal ? promoPrice : (promoPrice || normal)).toLocaleString('id-ID') + ' ';
+          node.nodeValue = ' Rp ' + tampil.toLocaleString('id-ID') + ' ';
         }
       });
+      price.dataset.price = String(tampil);
     }
     var badgeHost = document.querySelector('.ap-product-copy');
     if (badgeHost && theme.badge) {
@@ -182,6 +254,21 @@
     }
   }
 
+  function matikanPromoDetail() {
+    var price = document.querySelector('.ap-price');
+    if (!price) return;
+    var normal = normalDariCoret(price);
+    if (!(normal > 0)) return;
+    var del = price.querySelector('del');
+    if (del) del.remove();
+    Array.prototype.forEach.call(price.childNodes, function (node) {
+      if (node.nodeType === 3 && /^\s*Rp\s?[\d.]+/.test(node.nodeValue)) {
+        node.nodeValue = ' Rp ' + normal.toLocaleString('id-ID') + ' ';
+      }
+    });
+    price.dataset.price = String(normal);
+  }
+
   function reorder(grid) {
     if (!grid) return;
     var cards = Array.prototype.slice.call(grid.querySelectorAll('[data-template-card]'));
@@ -194,14 +281,22 @@
       if (fa !== fb) return fa - fb;
       return Number(a.dataset.liveOrder || 0) - Number(b.dataset.liveOrder || 0);
     });
-    cards.forEach(function (c) { grid.appendChild(c); });
+    var rank = 0;
+    cards.forEach(function (c) {
+      grid.appendChild(c);
+      /* liveRank dipakai katalog-v2.js supaya "Unggulan" tetap urutan ini
+         setelah pengunjung memakai pencarian/urut. */
+      c.dataset.liveRank = String(rank++);
+    });
   }
 
   function apply(s) {
     if (!s || !s.themes) return;
     var g = s.global || {};
     style();
-    var grid = document.querySelector('[data-catalog-grid]');
+    /* Halaman kategori (undangan/<acara>/) memakai grid biasa tanpa
+       data-catalog-grid; urutan & unggulan tetap harus berlaku di sana. */
+    var grid = document.querySelector('[data-catalog-grid]') || document.querySelector('.ap-template-grid');
     var cards = document.querySelectorAll('[data-template-card]');
     var results = [];
     cards.forEach(function (card, i) {
@@ -213,12 +308,23 @@
     detailPage(s, g);
 
     var count = document.querySelector('[data-catalog-count]');
-    if (count) count.textContent = String(visibleCount());
-    var empty = document.querySelector('[data-catalog-empty]');
-    if (empty) {
-      var anyVisible = visibleCount();
-      if (!anyVisible) empty.hidden = false;
+    var tampil = visibleCount();
+    if (count) {
+      /* Pertahankan kalimat bawaan ("N tema ditampilkan"), jangan tinggalkan
+         angka telanjang yang terlihat seperti salah render. */
+      var kalimat = /tema/i.test(count.textContent || '');
+      count.textContent = kalimat ? tampil + ' tema ditampilkan' : String(tampil);
     }
+    else {
+      /* Judul kategori berbunyi "22 pilihan untuk dijelajahi" — angkanya ikut
+         berubah kalau ada tema yang disembunyikan. */
+      Array.prototype.forEach.call(document.querySelectorAll('h2'), function (h) {
+        var m = /^(\d+)(\s+pilihan\b)/.exec((h.textContent || '').trim());
+        if (m) h.textContent = h.textContent.replace(/^\s*\d+(?=\s+pilihan\b)/, String(tampil));
+      });
+    }
+    var empty = document.querySelector('[data-catalog-empty]');
+    if (empty && !tampil) empty.hidden = false;
     document.documentElement.setAttribute('data-katalog-live', s.updatedAt || 'on');
   }
   function visibleCount() {

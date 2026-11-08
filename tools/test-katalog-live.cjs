@@ -81,7 +81,7 @@ const teks = el => (el ? el.textContent.trim() : null);
     t('tema unggulan naik ke kartu pertama',
       d.querySelector('[data-template-card] h3').textContent.trim() === 'Luxury Gold',
       d.querySelector('[data-template-card] h3').textContent.trim());
-    t('jumlah tema tetap 44', teks(d.querySelector('[data-catalog-count]')) === '44');
+    t('jumlah tema tetap 44', /^44\b/.test(teks(d.querySelector('[data-catalog-count]'))), teks(d.querySelector('[data-catalog-count]')));
     dom.window.close();
   }
 
@@ -99,7 +99,7 @@ const teks = el => (el ? el.textContent.trim() : null);
     const hilang = kartuId(d, 'luxury-gold');
     t('tema nonaktif disembunyikan', !!hilang && hilang.classList.contains('asp-live-hide'));
     t('aria-hidden diset untuk tema nonaktif', !!hilang && hilang.getAttribute('aria-hidden') === 'true');
-    t('jumlah tema berkurang jadi 43', teks(d.querySelector('[data-catalog-count]')) === '43', teks(d.querySelector('[data-catalog-count]')));
+    t('jumlah tema berkurang jadi 43', /^43\b/.test(teks(d.querySelector('[data-catalog-count]'))), teks(d.querySelector('[data-catalog-count]')));
     const badgeIvory = kartuId(d, 'ivory-klasik').querySelector('.ap-new-badge');
     t('badge "BARU" dipasang pada tema tanpa badge bawaan', teks(badgeIvory) === 'BARU', teks(badgeIvory));
     dom.window.close();

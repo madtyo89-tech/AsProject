@@ -196,10 +196,12 @@
   /* ---------- simpan / muat ---------- */
   function saveCloud(manual) {
     setStatus('lokal', 'Menyimpan ke Supabase…');
+    /* updatedAt di dalam JSON disamakan dengan baris supaya pembaca cloud
+       tidak melihat cap waktu yang tertinggal satu simpanan. */
+    settings.updatedAt = new Date().toISOString();
     return ASP.writeRow(TABLE, settings, ROW_ID).then(function () {
       source = 'cloud';
       dirty = false;
-      settings.updatedAt = new Date().toISOString();
       setStatus('cloud', 'Tersimpan ' + new Date(settings.updatedAt).toLocaleString('id-ID') + '. Katalog publik membaca pengaturan ini saat dibuka.');
       ASP.save(LOCAL_KEY, Object.assign({}, ASP.load(LOCAL_KEY, {}), { cache: settings }));
       if (manual) ASP.toast('Setting katalog tersimpan di cloud.');

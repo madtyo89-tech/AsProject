@@ -243,8 +243,10 @@ async function render(theme, ev, orn, ornSudut, coverLayout, coverStyle) {
     const nPayload = (studioSrc.match(/orn:state\.orn\|\|''/g) || []).length;
     t('studio: 3 payload publish/export membawa orn (desain template pindah ke Studio Template)',
       nPayload === 3, nPayload + ' titik, harap 3');
-    t('studio-template.html: token ornamen tersedia untuk tema baru',
-      (read('studio-template.html').includes('Ornamen pembatas')));
+    /* Editor pindah ke assets/studio-template.js (UI dirakit di sana), jadi
+       labelnya dicari di HTML + JS-nya. */
+    t('studio-template: token ornamen tersedia untuk tema baru',
+      (read('studio-template.html') + read('assets/studio-template.js')).includes('Ornamen pembatas'));
     t('studio: draftSig memperhitungkan orn agar pratinjau ikut berubah',
       studioSrc.includes("state.border,state.orn||'',state.pat||'',state.ornSudut"));
     t('studio: normalizeTplCustom memutihkan design.orn',
