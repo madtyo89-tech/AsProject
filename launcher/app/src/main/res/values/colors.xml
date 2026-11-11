@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Palet AsProject: hitam pekat + emas onyx + neon sirkuit (dari wallpaper). -->
+    <color name="ink">#0A0A0A</color>
+    <color name="ink_soft">#141414</color>
+    <color name="gold">#D4AF37</color>
+    <color name="gold_soft">#F0DCA0</color>
+    <color name="neon">#7FD8FF</color>
+    <color name="neon_soft">#B3E8FF</color>
+    <color name="neon_dim">#4FA8D8</color>
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="text_hint">#8CFFFFFF</color>
+    <color name="surface">#1A1A1A</color>
+    <color name="surface_stroke">#33D4AF37</color>
+    <color name="icon_background">#0A0A0A</color>
+    <color name="nav_bar_scrim">#66000000</color>
+
+    <!-- Pratinjau warna aksen (Pengaturan → Warna aksen); harus cocok persis
+         dengan Accent.java (hue dipertahankan sama, S/V dasar dari #5FD8FF). -->
+    <color name="accent_biru">#5FD7FF</color>
+    <color name="accent_hijau">#5FFF94</color>
+    <color name="accent_ungu">#BC5FFF</color>
+    <color name="accent_pink">#FF5FB4</color>
+</resources>

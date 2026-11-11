@@ -1,0 +1,21 @@
+// AsProject Launcher — proyek Android (jalur build Gradle / Android Studio).
+// Tanpa AndroidX dan tanpa pustaka pihak ketiga: cukup Android SDK + JDK 17.
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "AsProjectLauncher"
+include ':app'

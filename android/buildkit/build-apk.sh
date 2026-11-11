@@ -19,14 +19,20 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-APP_DIR="$ROOT/app"
-WEB_DIR="$ROOT/web"
+
+# Semua jalur & identitas bisa ditimpa lewat variabel lingkungan. Ini dipakai oleh
+# launcher/buildkit/build-apk.sh yang memakai skrip yang sama untuk aplikasi kedua
+# (AsProject Launcher) tanpa menduplikasi logika aapt2 → d8 → apksigner.
+APP_DIR="${APP_DIR:-$ROOT/app}"
+WEB_DIR="${WEB_DIR:-$ROOT/web}"
 TOOLS_DIR="${ANDROID_TOOLS_DIR:-$ROOT/.tools}"
 
 BUILD_DIR="${BUILD_DIR:-$ROOT/out/build}"
 OUT_DIR="${OUT_DIR:-$ROOT/out}"
 
-APP_ID="my.id.asproject.studio"
+APP_ID="${APP_ID:-my.id.asproject.studio}"
+OUTPUT_NAME="${OUTPUT_NAME:-asproject-studio}"
+SKIP_WEB_ASSETS="${SKIP_WEB_ASSETS:-0}"
 MIN_SDK=21
 TARGET_SDK=34
 VERSION_CODE="${VERSION_CODE:-1}"
@@ -116,9 +122,14 @@ if [[ -n "$JAVAC_BIN" ]]; then log "javac     : $JAVAC_BIN"; else log "javac    
 
 # ---------------------------------------------------------------- aset web
 
-mkdir -p "$APP_DIR/src/main/assets"
-cp "$WEB_DIR/native-bridge.js" "$APP_DIR/src/main/assets/native-bridge.js"
-log "native-bridge.js disalin ke assets/"
+if [[ "$SKIP_WEB_ASSETS" == "1" ]]; then
+  log "aset web dilewati (SKIP_WEB_ASSETS=1)"
+else
+  [[ -f "$WEB_DIR/native-bridge.js" ]] || die "native-bridge.js tidak ditemukan di $WEB_DIR"
+  mkdir -p "$APP_DIR/src/main/assets"
+  cp "$WEB_DIR/native-bridge.js" "$APP_DIR/src/main/assets/native-bridge.js"
+  log "native-bridge.js disalin ke assets/"
+fi
 
 # ---------------------------------------------------------------- manifest
 
@@ -140,12 +151,18 @@ log "[1/6] aapt2 compile"
 "$AAPT2" compile --dir "$APP_DIR/src/main/res" -o "$BUILD_DIR/compiled/res.zip"
 
 log "[2/6] aapt2 link"
+# -A hanya diberikan bila folder assets benar-benar berisi (aapt2 menolak folder kosong
+# pada sebagian versi); aplikasi launcher tidak memakai aset web sama sekali.
+AAPT_ASSETS=()
+if [[ -d "$APP_DIR/src/main/assets" && -n "$(ls -A "$APP_DIR/src/main/assets" 2>/dev/null)" ]]; then
+  AAPT_ASSETS=(-A "$APP_DIR/src/main/assets")
+fi
 "$AAPT2" link \
   -o "$BUILD_DIR/resources.apk" \
   -I "$ANDROID_JAR" \
   --manifest "$MANIFEST" \
   --java "$BUILD_DIR/gen" \
-  -A "$APP_DIR/src/main/assets" \
+  "${AAPT_ASSETS[@]}" \
   --min-sdk-version "$MIN_SDK" \
   --target-sdk-version "$TARGET_SDK" \
   --version-code "$VERSION_CODE" \
@@ -176,7 +193,8 @@ else
   "$JAVA_BIN" -jar "$ECJ_JAR" -1.8 -nowarn -proc:none \
     -classpath "$ANDROID_JAR" -d "$BUILD_DIR/classes" "${SOURCES[@]}"
 fi
-[[ -d "$BUILD_DIR/classes/my" ]] || die "kompilasi gagal: tidak ada kelas yang dihasilkan"
+find "$BUILD_DIR/classes" -name '*.class' | grep -q . \
+  || die "kompilasi gagal: tidak ada kelas yang dihasilkan"
 
 # ---------------------------------------------------------------- 3. d8
 
@@ -214,7 +232,7 @@ if [[ "$BUILD_TYPE" == "release" ]]; then
   : "${KEYSTORE_PASSWORD:?Set KEYSTORE_PASSWORD}"
   : "${KEY_ALIAS:?Set KEY_ALIAS}"
   : "${KEY_PASSWORD:?Set KEY_PASSWORD}"
-  OUTPUT_APK="$OUT_DIR/asproject-studio-$VERSION_NAME-release.apk"
+  OUTPUT_APK="$OUT_DIR/$OUTPUT_NAME-$VERSION_NAME-release.apk"
   "${APKSIGNER[@]}" \
     --ks "$KEYSTORE" \
     --ks-pass "env:KEYSTORE_PASSWORD" \
@@ -234,7 +252,7 @@ else
       -dname "CN=Android Debug,O=Android,C=US" >/dev/null 2>&1 \
       || die "gagal membuat debug keystore (butuh keytool dari JDK)"
   fi
-  OUTPUT_APK="$OUT_DIR/asproject-studio-$VERSION_NAME-debug.apk"
+  OUTPUT_APK="$OUT_DIR/$OUTPUT_NAME-$VERSION_NAME-debug.apk"
   "${APKSIGNER[@]}" \
     --ks "$DEBUG_KEYSTORE" \
     --ks-pass pass:android \

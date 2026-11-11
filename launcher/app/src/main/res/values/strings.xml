@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AsProject Launcher</string>
+
+    <string name="search_hint">Cari aplikasi</string>
+    <string name="drawer_search_hint">Cari semua aplikasi</string>
+    <string name="clear_search">Kosongkan</string>
+    <string name="empty_search">Tidak ada aplikasi yang cocok</string>
+    <string name="no_apps">Belum ada aplikasi yang bisa ditampilkan</string>
+    <string name="home_options">Opsi beranda</string>
+
+    <string name="action_open">Buka</string>
+    <string name="action_add_dock">Taruh di dock</string>
+    <string name="action_remove_dock">Keluarkan dari dock</string>
+    <string name="action_hide">Sembunyikan dari beranda</string>
+    <string name="action_app_info">Info aplikasi</string>
+    <string name="action_wallpaper">Ganti wallpaper</string>
+    <string name="action_settings">Pengaturan beranda</string>
+    <string name="action_about">Tentang</string>
+    <string name="action_group">Kelompokkan ke folder…</string>
+    <string name="action_ungroup">Bongkar folder</string>
+    <string name="action_icon_style">Ganti bentuk ikon…</string>
+    <string name="new_folder">Folder baru…</string>
+    <string name="folder_name_hint">Nama folder</string>
+    <string name="added_to_folder">%1$s ditambahkan ke folder “%2$s”</string>
+    <string name="folder_ungrouped">Folder “%1$s” dibongkar</string>
+    <string name="icon_style_auto">Otomatis (squircle)</string>
+    <string name="icon_style_circle">Lingkaran</string>
+    <string name="icon_style_square">Kotak tegas</string>
+    <string name="icon_style_octagon">Segi delapan</string>
+    <string name="action_add_widget">Tambah widget…</string>
+    <string name="no_widgets">Tidak ada widget yang bisa dipasang</string>
+    <string name="remove_widget">Lepas widget ini dari beranda?</string>
+
+    <string name="dock_added">%1$s ditambahkan ke dock</string>
+    <string name="dock_removed">%1$s dikeluarkan dari dock</string>
+    <string name="dock_full">Dock sudah penuh (maksimal 5 ikon)</string>
+    <string name="app_hidden">%1$s disembunyikan dari beranda</string>
+    <string name="app_unavailable">%1$s tidak bisa dibuka</string>
+    <string name="app_info_unavailable">Info aplikasi tidak tersedia</string>
+    <string name="wallpaper_unavailable">Tidak ada aplikasi wallpaper yang tersedia</string>
+    <string name="choose_wallpaper">Pilih wallpaper</string>
+
+    <string name="settings_title">Pengaturan beranda</string>
+    <string name="section_appearance">Tampilan</string>
+    <string name="show_clock">Jam dan tanggal besar</string>
+    <string name="show_search">Kolom pencarian</string>
+    <string name="show_labels">Nama aplikasi di bawah ikon</string>
+    <string name="section_grid">Kolom ikon</string>
+    <string name="section_dock">Dock</string>
+    <string name="reset_dock">Atur ulang dock</string>
+    <string name="dock_reset">Dock diatur ulang ke bawaan</string>
+    <string name="section_hidden">Aplikasi tersembunyi</string>
+    <string name="pick_hidden">Pilih aplikasi…</string>
+    <string name="hidden_saved">%1$d aplikasi disembunyikan</string>
+    <string name="section_about">Tentang</string>
+    <string name="version_format">AsProject Launcher %1$s</string>
+    <string name="about_body">Launcher beranda tanpa iklan dan tanpa pelacakan. Semua pengaturan disimpan di perangkat ini saja. Satu-satunya izin yang pernah diminta adalah untuk fitur opsional Spidometer mengambang (nonaktif bawaan).</string>
+    <string name="about_message">AsProject Launcher\n\nLauncher beranda ringan untuk Android 5.0 ke atas.\n\n• Tanpa izin apa pun — tidak ada akses internet maupun kontak. Satu-satunya pengecualian: fitur opsional "Spidometer mengambang" (nonaktif bawaan) butuh izin Lokasi + overlay saat dinyalakan sendiri.\n• Jam besar, pencarian instan, dock 5 ikon, sembunyikan aplikasi.\n• Tekan lama ikon untuk opsi; tekan lama area kosong untuk mengganti wallpaper.
+• HUD menampilkan data asli: jam, daya baterai, dan suhu baterai. Angka
+  "SECURE LINK / EST ms / INTEGRITAS" hanya dekorasi, bukan pengukuran.\n\nasproject.my.id</string>
+    <string name="back">Kembali</string>
+
+    <!-- Layar kunci -->
+    <string name="lock_label">ASPROJECT SECURE</string>
+    <string name="lock_chip_status">SISTEM AKTIF</string>
+    <string name="lock_battery_desc">Daya baterai</string>
+    <string name="lock_hint">Geser ke atas untuk membuka</string>
+    <string name="action_lock_now">Kunci layar</string>
+
+    <!-- Wallpaper & ikon -->
+    <string name="section_wallpaper">Wallpaper</string>
+    <string name="use_figure_wallpaper">Pakai wallpaper neon AsProject</string>
+    <string name="wallpaper_note">Beranda memakai gambar liquid-chrome + HUD. Layar kunci memakai papan sirkuit liquid 3D yang digambar sendiri (tanpa berkas gambar).</string>
+    <string name="section_accent">Warna aksen</string>
+    <string name="accent_biru">Biru</string>
+    <string name="accent_hijau">Hijau</string>
+    <string name="accent_ungu">Ungu</string>
+    <string name="accent_pink">Pink</string>
+    <string name="accent_note">Berlaku sekaligus di ikon neon, HUD, baterai, jam, wallpaper sirkuit, dan slide bar. 8 ikon aplikasi populer (bawaan dari gambar asli) tidak ikut berganti warna.</string>
+
+    <string name="section_lock">Layar kunci</string>
+    <string name="enable_lock_screen">Aktifkan layar kunci</string>
+    <string name="lock_note">Layar kunci muncul saat ponsel dibuka. Geser ke atas untuk masuk ke beranda.</string>
+    <string name="section_icons">Ikon</string>
+    <string name="use_neon_icons">Ikon neon sirkuit</string>
+    <string name="neon_note_all">Semua aplikasi mendapat ikon neon otomatis dari bentuk ikon aslinya; 8 aplikasi populer memakai ikon neon khusus.</string>
+    <string name="section_motion">Animasi</string>
+    <string name="liquid_motion">Wallpaper liquid bergerak (3D)</string>
+    <string name="hud_animation">HUD layar kunci beranimasi</string>
+    <string name="motion_note">Efek 3D dan HUD berjalan 30–60 fps hanya saat layar tampil. Matikan bila baterai terasa lebih cepat habis.</string>
+
+    <string name="section_slidebar">Slide bar laci</string>
+    <string name="slide_bar_note">Pilih gaya gagang tarik laci aplikasi. Pratinjau di atas bergerak persis seperti di laci sungguhan — sentuh untuk memicu riaknya.</string>
+    <string name="slide_bar_ombak">Ombak cair</string>
+    <string name="slide_bar_pil">Pil neon berdenyut</string>
+    <string name="slide_bar_titik">Titik sirkuit berjalan</string>
+    <string name="slide_bar_sirkuit">Sirkuit zigzag</string>
+
+    <string name="section_speedometer">Spidometer mengambang</string>
+    <string name="enable_speedometer">Aktifkan spidometer mengambang</string>
+    <string name="speedometer_note">Bubble kaca cair neon yang tetap tampil di atas aplikasi lain, bisa digeser bebas, dan membuat layar tidak meredup/terkunci selama tampil. Ketuk bubble untuk ganti satuan, tekan lama untuk mematikan. Satu-satunya fitur yang memakai izin Lokasi, \"Gambar di atas aplikasi lain\", dan notifikasi tetap tampil.</string>
+    <string name="speed_unit_kmh">km/h</string>
+    <string name="speed_unit_mph">mph</string>
+    <string name="speedometer_need_location">Izinkan akses Lokasi dulu supaya kecepatan bisa dibaca dari GPS</string>
+    <string name="speedometer_need_overlay">Izinkan \"Gambar di atas aplikasi lain\" dulu di halaman Pengaturan Android yang terbuka</string>
+    <string name="speedometer_need_notif">Izinkan notifikasi dulu — wajib selama bubble kecepatan aktif</string>
+    <string name="speedometer_channel">Spidometer mengambang</string>
+    <string name="speedometer_channel_desc">Notifikasi wajib selama bubble kecepatan tampil di layar</string>
+    <string name="speedometer_notif_title">Spidometer aktif</string>
+    <string name="speedometer_notif_text">Bubble kecepatan tampil di atas layar — layar tidak akan meredup</string>
+    <string name="speedometer_notif_stop">Matikan</string>
+    <string name="speedometer_stopped">Spidometer mengambang dimatikan</string>
+</resources>
